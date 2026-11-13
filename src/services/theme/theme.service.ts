@@ -1,30 +1,28 @@
 import { inject, Injectable } from '@angular/core';
 
-import { DarkMode } from '@aparajita/capacitor-dark-mode';
-import { Capacitor, SystemBars, SystemBarsStyle } from '@capacitor/core';
-import { Keyboard, KeyboardStyle } from '@capacitor/keyboard';
-import { StatusBar, Style } from '@capacitor/status-bar';
-import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
+import { SystemBarsStyle } from '@capacitor/core';
+import { KeyboardStyle } from '@capacitor/keyboard';
+import { Style } from '@capacitor/status-bar';
 
 import { THEME_MODE_ENUM } from 'src/enums/settings/themeMode';
 import { UISettingsStorage } from '../uiSettingsStorage';
+import { THEME_PLUGINS } from './theme-plugins';
 
 interface Theme {
   isDark: boolean;
   statusBarStyle: Style;
   systemBarsStyle: SystemBarsStyle;
-  statusBarColor: string;
-  navigationBarColor: string;
+  /** Token holding the bar colour of this mode, defined on :root in bq-tokens.scss. */
+  systemBarColorToken: string;
   keyboardStyle: KeyboardStyle;
 }
 
+// Style.Dark / SystemBarsStyle.Dark mean light icons for a dark bar.
 const DarkTheme: Theme = {
   isDark: true,
   statusBarStyle: Style.Dark,
   systemBarsStyle: SystemBarsStyle.Dark,
-  statusBarColor: '#121212',
-  navigationBarColor: '#121212',
-  // navigationBarColor: '#222428',
+  systemBarColorToken: '--bq-system-bar-dark',
   keyboardStyle: KeyboardStyle.Dark,
 };
 
@@ -32,16 +30,19 @@ const LightTheme: Theme = {
   isDark: false,
   statusBarStyle: Style.Light,
   systemBarsStyle: SystemBarsStyle.Light,
-  statusBarColor: '#F0F0F0',
-  navigationBarColor: '#F0F0F0',
+  systemBarColorToken: '--bq-system-bar-light',
   keyboardStyle: KeyboardStyle.Light,
 };
+
+// The native plugins only accept #rrggbb.
+const HEX_COLOR = /^#[0-9a-f]{6}$/i;
 
 @Injectable({
   providedIn: 'root',
 })
 export class ThemeService {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly plugins = inject(THEME_PLUGINS);
 
   private prefersDark: MediaQueryList;
 
@@ -55,7 +56,7 @@ export class ThemeService {
       void this.adjustTheme();
     });
 
-    await DarkMode.addAppearanceListener(() => {
+    await this.plugins.darkMode.addAppearanceListener(() => {
       void this.adjustTheme();
     });
 
@@ -63,8 +64,8 @@ export class ThemeService {
   }
 
   public async initializeBeforeAppReady() {
-    await DarkMode.init();
-    const { dark } = await DarkMode.isDarkMode();
+    await this.plugins.darkMode.init();
+    const { dark } = await this.plugins.darkMode.isDarkMode();
     await this.applyTheme(dark ? DarkTheme : LightTheme);
   }
 
@@ -80,10 +81,10 @@ export class ThemeService {
         isDark = true;
         break;
       case THEME_MODE_ENUM.DEVICE:
-        if (Capacitor.getPlatform() === 'web') {
+        if (this.plugins.getPlatform() === 'web') {
           isDark = this.prefersDark.matches;
         } else {
-          isDark = (await DarkMode.isDarkMode()).dark;
+          isDark = (await this.plugins.darkMode.isDarkMode()).dark;
         }
         break;
     }
@@ -95,37 +96,75 @@ export class ThemeService {
     await this.applyTheme(LightTheme);
   }
 
+  /**
+   * Reads the bar colour from the design tokens so status bar, navigation bar
+   * and theme-color follow the page colour. Returns undefined when the
+   * stylesheet is missing or the token is no plain hex value; the bars then
+   * keep their current colour instead of receiving an invalid one.
+   */
+  private getSystemBarColor(theme: Theme): string | undefined {
+    const value = getComputedStyle(document.documentElement)
+      .getPropertyValue(theme.systemBarColorToken)
+      .trim();
+    return HEX_COLOR.test(value) ? value : undefined;
+  }
+
+  /**
+   * The static theme-color tags in index.html follow the system scheme; once
+   * the app setting is known, every tag gets the colour of the applied mode.
+   */
+  private setThemeColorMeta(color: string) {
+    document
+      .querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')
+      .forEach((meta) => {
+        meta.content = color;
+      });
+  }
+
   private async applyTheme(theme: Theme) {
     const promises = [];
 
     this._darkMode = theme.isDark;
     document.documentElement.classList.toggle('ion-palette-dark', theme.isDark);
 
-    const isAndroid = Capacitor.getPlatform() === 'android';
-    const isIOS = Capacitor.getPlatform() === 'ios';
+    const barColor = this.getSystemBarColor(theme);
+    if (barColor) {
+      this.setThemeColorMeta(barColor);
+    }
+
+    const isAndroid = this.plugins.getPlatform() === 'android';
+    const isIOS = this.plugins.getPlatform() === 'ios';
     if (isAndroid || isIOS) {
       // Status bar handling must be done both by the legacy status bar plugin...
-      promises.push(StatusBar.setStyle({ style: theme.statusBarStyle }));
       promises.push(
-        StatusBar.setBackgroundColor({ color: theme.statusBarColor }),
+        this.plugins.statusBar.setStyle({ style: theme.statusBarStyle }),
       );
+      if (barColor) {
+        promises.push(
+          this.plugins.statusBar.setBackgroundColor({ color: barColor }),
+        );
+      }
       // ...and the new SystemBars plugin to work on all supported API levels
-      promises.push(SystemBars.setStyle({ style: theme.systemBarsStyle }));
+      promises.push(
+        this.plugins.systemBars.setStyle({ style: theme.systemBarsStyle }),
+      );
 
-      if (isAndroid) {
+      if (isAndroid && barColor) {
         // On Android we let the Android-specific edge-to-edge plugin handle the bar colors
         // iOS should just work natively according to documentation.
         promises.push(
-          EdgeToEdge.setNavigationBarColor({ color: theme.navigationBarColor }),
+          this.plugins.edgeToEdge.setNavigationBarColor({ color: barColor }),
         );
         promises.push(
-          EdgeToEdge.setStatusBarColor({ color: theme.statusBarColor }),
+          this.plugins.edgeToEdge.setStatusBarColor({ color: barColor }),
         );
       }
 
       // Keyboard
       if (isIOS) {
-        promises.push(Keyboard.setStyle({ style: theme.keyboardStyle }));
+        promises.push(
+          this.plugins.keyboard.setStyle({ style: theme.keyboardStyle }),
+        );
       }
     }
     // Await all promises at the end only, the plugin calls can happen in parallel

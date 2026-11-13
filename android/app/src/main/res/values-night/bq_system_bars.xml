@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Same value as the dark system bar token in src/theme/bq-tokens.scss -->
+  <color name="bq_system_bar">#211914</color>
+  <!-- Light navigation bar icons on the dark bar -->
+  <bool name="bq_light_system_bars">false</bool>
+</resources>

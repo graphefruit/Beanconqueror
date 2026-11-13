@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Page colour behind status and navigation bar until the web app styles
+       them, and the Android 12+ splash background. Same value as the light
+       system bar token in src/theme/bq-tokens.scss. -->
+  <color name="bq_system_bar">#EAD9C4</color>
+  <!-- Dark navigation bar icons on the light bar -->
+  <bool name="bq_light_system_bars">true</bool>
+</resources>

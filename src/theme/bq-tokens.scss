@@ -25,6 +25,13 @@ $bq-on-action-primary: #ffffff;
   --bq-surface-page: var(--bq-palette-cream-200);
   --bq-surface-card: var(--bq-palette-white);
   --bq-surface-mid: var(--bq-palette-sand-400);
+  // Status and navigation bar, browser theme-color: the page colour of each
+  // mode. Both live on :root so the theme service can read the target mode's
+  // value before the palette class switches. Native plugins take plain hex, so
+  // these must resolve to a #rrggbb palette value. src/index.html and the
+  // Android resources (bq_system_bar) repeat them because they cannot read CSS.
+  --bq-system-bar-light: var(--bq-palette-cream-200);
+  --bq-system-bar-dark: var(--bq-palette-espresso-900);
 
   // Text
   --bq-text-primary: var(--bq-palette-espresso-900);
