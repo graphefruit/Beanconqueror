@@ -417,10 +417,30 @@ export function countChangedEntries(_result: DuplicateCleanupResult): number {
 }
 
 /**
- * Number of entries left once removeDuplicateEntries removed the identical
- * copies: differing copies and entries without a uuid count, they are never
- * removed. `_entries` is not changed, and references are not looked for, as
- * they only decide about new uuids.
+ * The entries at `_positions` as a backup file holds them: written as JSON
+ * and read back. JSON writes NaN, Infinity and holes or undefined in a list
+ * as null, and a date as text.
+ */
+function asInBackupFile(
+  _entries: readonly unknown[],
+  _positions: readonly number[],
+): unknown[] {
+  const copies: unknown[] = JSON.parse(
+    JSON.stringify(_positions.map((_position) => _entries[_position])),
+  );
+  return copies;
+}
+
+/**
+ * Number of entries a backup of `_entries` keeps once an import removed the
+ * identical copies with removeDuplicateEntries: differing copies and entries
+ * without a uuid count, they are never removed. Copies are compared as the
+ * backup file holds them, so a copy that only differs in a value JSON writes
+ * alike counts as identical, as it does in the backup. Stored entries and a
+ * backup of them are counted alike that way. Only the entries sharing a uuid
+ * are written as JSON; when one cannot be, this throws, as writing a backup
+ * of it does. `_entries` is not changed, and references are not looked for,
+ * as they only decide about new uuids.
  */
 export function countWithoutIdenticalCopies(
   _entries: readonly unknown[],
@@ -428,7 +448,9 @@ export function countWithoutIdenticalCopies(
   let identical = 0;
   for (const found of positionsByUuid(_entries).values()) {
     if (found.length > 1) {
-      identical += splitIdenticalCopies(_entries, found).identical.length;
+      const copies = asInBackupFile(_entries, found);
+      identical += splitIdenticalCopies(copies, [...copies.keys()]).identical
+        .length;
     }
   }
   return _entries.length - identical;

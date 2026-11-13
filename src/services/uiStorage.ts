@@ -242,8 +242,9 @@ export class UIStorage {
             if (_value?.length > 0) {
               hasDataObj[_key] = _value?.length;
               // Counted as an import stores them, like the backup these
-              // numbers are compared with: identical copies of an entry do
-              // not count, also before data update UPDATE_17 removed them.
+              // numbers are compared with: copies of an entry that are
+              // identical in a backup file do not count, also before data
+              // update UPDATE_17 removed them.
               if (Array.isArray(_value)) {
                 hasDataObj[_key] = countWithoutIdenticalCopies(_value);
               }

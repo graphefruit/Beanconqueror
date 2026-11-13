@@ -639,5 +639,44 @@ describe('duplicateEntries', () => {
       removeDuplicateEntries('BEANS', entries, {}, uuidSource());
       expect(entries.length).toBe(count);
     });
+
+    it('compares the copies as a backup file holds them', () => {
+      // A backup file is JSON: NaN, Infinity and holes or undefined in a
+      // list are written as null, and a date as text.
+      const withHole: unknown[] = [];
+      withHole[1] = 'b';
+      const at = new Date(1000);
+      const pairs: [Entry, Entry][] = [
+        [entry('nan', { n: NaN }), entry('nan', { n: null })],
+        [entry('infinity', { n: Infinity }), entry('infinity', { n: null })],
+        [
+          entry('hole', { values: withHole }),
+          entry('hole', { values: [null, 'b'] }),
+        ],
+        [
+          entry('undefined', { values: [undefined, 'b'] }),
+          entry('undefined', { values: [null, 'b'] }),
+        ],
+        [entry('date', { at }), entry('date', { at: at.toISOString() })],
+      ];
+      const entries: Entry[] = [
+        ...pairs.flat(),
+        entry('differs', { n: NaN }),
+        entry('differs', { n: 0 }),
+      ];
+      const before = structuredClone(entries);
+      // As the device stores them, the copies differ from their first entry.
+      for (const [first, copy] of pairs) {
+        expect(isSameEntry(first, copy)).toBeFalse();
+      }
+
+      const count = countWithoutIdenticalCopies(entries);
+
+      expect(entries).toEqual(before);
+      expect(count).toBe(pairs.length + 2);
+      const backup = JSON.parse(JSON.stringify(entries));
+      removeDuplicateEntries('BREWS', backup, {}, uuidSource());
+      expect(backup.length).toBe(count);
+    });
   });
 });
