@@ -23,8 +23,8 @@ const WAIT_TIMEOUT_MS = 120_000;
 /**
  * Share of the machine's CPU time (all cores) above which a test warns that it ran on a busy
  * machine. Other processes slow the throttled page down further: with parallel test runs values
- * were up to twice as high (the longest frame almost five times), so they say nothing about the
- * budgets.
+ * were up to 2.3 times the median on a quiet machine (the longest frame almost five times), so
+ * they say nothing about the budgets.
  */
 export const BUSY_LIMIT = 0.3;
 
