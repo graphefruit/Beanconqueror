@@ -281,33 +281,35 @@ describe('PreImportBackupService', () => {
     );
   });
 
-  it('keeps only the newest backup of data that was not just imported', async () => {
+  it('keeps backups of data that was not just imported before those of unchanged imports', async () => {
     const fake = createFakeFiles([
       backupPath('2026-11-01_10-00-00-000'),
       backupPath('2026-11-02_10-00-00-000'),
-      importedBackupPath('2026-11-03_10-00-00-000'),
+      backupPath('2026-11-03_10-00-00-000'),
       importedBackupPath('2026-11-04_10-00-00-000'),
+      importedBackupPath('2026-11-05_10-00-00-000'),
     ]);
     const { service } = setUp(fake.files);
 
     const written = await service.write(new Blob(['zip']), {
       unchangedImport: true,
-      now: new Date(Date.UTC(2026, 10, 5, 10, 0, 0, 0)),
+      now: new Date(Date.UTC(2026, 10, 6, 10, 0, 0, 0)),
     });
     await service.removeOldBackups(written);
 
     expect([...fake.stored.keys()].sort()).toEqual(
       [
         written,
-        importedBackupPath('2026-11-04_10-00-00-000'),
+        backupPath('2026-11-03_10-00-00-000'),
         backupPath('2026-11-02_10-00-00-000'),
       ].sort(),
     );
   });
 
-  it(`keeps the ${PRE_IMPORT_BACKUPS_KEPT} newest backups when the one just written was not of an unchanged import`, async () => {
+  it('keeps the data from before several imports in a row also when the backup just written is of changed data', async () => {
+    const beforeFirstImport = backupPath('2026-11-01_10-00-00-000');
     const fake = createFakeFiles([
-      backupPath('2026-11-01_10-00-00-000'),
+      beforeFirstImport,
       importedBackupPath('2026-11-02_10-00-00-000'),
       importedBackupPath('2026-11-03_10-00-00-000'),
     ]);
@@ -321,8 +323,8 @@ describe('PreImportBackupService', () => {
     expect([...fake.stored.keys()].sort()).toEqual(
       [
         written,
+        beforeFirstImport,
         importedBackupPath('2026-11-03_10-00-00-000'),
-        importedBackupPath('2026-11-02_10-00-00-000'),
       ].sort(),
     );
   });

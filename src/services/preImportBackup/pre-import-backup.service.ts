@@ -221,17 +221,17 @@ export class PreImportBackupService {
 
   /**
    * Deletes older backups, so PRE_IMPORT_BACKUPS_KEPT are left: `_keep`, the
-   * path write() resolved, and the newest others. When `_keep` is the backup
-   * of an unchanged import, the newest backup that is not one is among them.
-   * `_keep` always stays, also when a clock set back gave it an older name.
-   * Other files are never touched. Never rejects: the backups are only kept
-   * longer when deleting fails.
+   * path write() resolved, and of the others first the newest ones that are
+   * not backups of an unchanged import. Those only get a place that is left,
+   * the newest ones first: their data can be imported again from the file it
+   * came from. `_keep` always stays, also when a clock set back gave it an
+   * older name. Other files are never touched. Never rejects: the backups
+   * are only kept longer when deleting fails.
    *
    * After a few imports in a row, the newest backups only hold the data of
-   * the files imported before, which can be imported again. The data from
-   * before the first of them is kept: once that import is done, the
-   * automatic backups are written with the imported data, so this backup is
-   * the only copy of it.
+   * the files imported before. The data from before the first of them is
+   * kept: once that import is done, the automatic backups are written with
+   * the imported data, so this backup is the only copy of it.
    */
   public async removeOldBackups(_keep: string): Promise<void> {
     let backups: FileInfo[];
@@ -250,14 +250,10 @@ export class PreImportBackupService {
     const others = backups
       .filter((_file) => _file.name !== kept)
       .sort(newestFirst);
-    const ownData = isUnchangedImport(kept)
-      ? others.find((_file) => !isUnchangedImport(_file.name))
-      : undefined;
-    const older = (
-      ownData
-        ? [ownData, ...others.filter((_file) => _file !== ownData)]
-        : others
-    ).slice(PRE_IMPORT_BACKUPS_KEPT - 1);
+    const older = [
+      ...others.filter((_file) => !isUnchangedImport(_file.name)),
+      ...others.filter((_file) => isUnchangedImport(_file.name)),
+    ].slice(PRE_IMPORT_BACKUPS_KEPT - 1);
     for (const file of older) {
       const path = `${PRE_IMPORT_BACKUP_FOLDER}/${file.name}`;
       try {
