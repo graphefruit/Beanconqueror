@@ -79,6 +79,7 @@ import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popov
 import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
 import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popover.component';
 import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
+import { AttachmentManifestService } from '../services/attachmentManifest/attachment-manifest.service';
 import { CleanupService } from '../services/cleanupService/cleanup.service';
 import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { DeletionJournalService } from '../services/deletionJournal/deletion-journal.service';
@@ -176,6 +177,7 @@ export class AppComponent implements AfterViewInit {
   private readonly uiStorage = inject(UIStorage);
   private readonly deviceIdentity = inject(DeviceIdentityService);
   private readonly deletionJournal = inject(DeletionJournalService);
+  private readonly attachmentManifest = inject(AttachmentManifestService);
   private readonly androidPlatformService = inject(AndroidPlatformService);
   private readonly iosPlatformService = inject(IosPlatformService);
   private readonly themeService = inject(ThemeService);
@@ -554,6 +556,12 @@ export class AppComponent implements AfterViewInit {
             await this.__checkCleanup();
             await this.__initApp();
             this.uiHelper.setAppReady(1);
+            try {
+              // Not awaited: builds in the background after the app is ready.
+              void this.attachmentManifest.start();
+            } catch {
+              this.uiLog.info('Attachment manifest could not be started');
+            }
           },
           async () => {
             await this.uiAlert.showAppShetItSelfMessage();
