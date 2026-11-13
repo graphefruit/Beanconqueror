@@ -86,7 +86,6 @@ import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
-import { BrewFieldOrder } from '../../../pipes/brew/brewFieldOrder';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
 import {
   CoffeeBluetoothDevicesService,
@@ -119,7 +118,6 @@ declare let Plotly;
   imports: [
     FormsModule,
     TranslatePipe,
-    BrewFieldOrder,
     BrewFunction,
     IonButton,
     IonCol,

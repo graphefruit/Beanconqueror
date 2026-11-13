@@ -16,9 +16,7 @@
   </ion-grid>
 }
 @if(!baristamode) {
-<ion-item [hidden]="shallProfileHidden" [style.order]="(settings | brewFieldOrderPipe: [settings.brew_order.while.brew_time,
-                      brewComponent.choosenPreparation.brew_order.while.brew_time,
-                      brewComponent.choosenPreparation.use_custom_parameters])" class="ion-padding-bottom-half" lines="none">
+<ion-item [hidden]="shallProfileHidden" class="ion-padding-bottom-half" lines="none">
     <div class="ion-text-center" style="width:100%">
       @if( uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS) || (isDetail === true && this.traces.weightTrace?.x?.length >0)) {
         <ion-chip (click)="toggleChartLines('weight')" [outline]="!this.traces.weightTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.weightTrace?.visible" [style.--chip-color]="this.traces.weightTrace?.line?.color">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
