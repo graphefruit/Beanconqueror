@@ -210,7 +210,9 @@ describe('SettingsPage importing a backup file', () => {
         .createSpy('importBackup')
         .and.resolveTo({ BACKUP: false }),
       reinitializeStorage: (_path) =>
-        _path === 'BEANS' ? Promise.reject() : Promise.resolve(),
+        _path === 'BEANS'
+          ? Promise.reject(new Error('could not be read'))
+          : Promise.resolve(),
     });
 
     await page.__importJSON(parsedBackup(), '');
@@ -318,8 +320,10 @@ describe('SettingsPage loading the collections again after an import', () => {
     };
   }
 
-  const uuids = (_entries: unknown) =>
-    (_entries as any[]).map((_entry) => _entry.config.uuid);
+  const uuids = (_entries: unknown): string[] =>
+    (_entries as { config: { uuid: string } }[]).map(
+      (_entry) => _entry.config.uuid,
+    );
 
   it('reads every collection and runs the update check', async () => {
     const { page, storages, importData, checkUpdate } = await pageAfterStart();
