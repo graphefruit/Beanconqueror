@@ -29,7 +29,7 @@ test('a new user can finish onboarding and move between the main sections', asyn
     'aria-selected',
     'true',
   );
-  await page.getByRole('link', { name: 'Methods' }).click();
+  await page.getByRole('link', { name: /^Preparation methods/ }).click();
   await expect(
     page.getByRole('button', { name: 'Add preparation method' }),
   ).toBeVisible();

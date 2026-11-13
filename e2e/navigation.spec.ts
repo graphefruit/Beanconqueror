@@ -49,7 +49,7 @@ test('preparation methods and grinders open from the profile and lead back', asy
   await completeFirstRun(page);
 
   await openProfile(page);
-  await page.getByRole('link', { name: 'Methods' }).click();
+  await page.getByRole('link', { name: /^Preparation methods/ }).click();
   await expect(page).toHaveURL(/\/home\/profile\/preparations$/);
   await expect(
     page.getByRole('button', { name: 'Add preparation method' }),
@@ -149,7 +149,9 @@ for (const { from, to, add } of [
     // Opened from elsewhere, back still leads to the profile.
     await page.getByRole('button', { name: 'back' }).click();
     await expect(page).toHaveURL(/\/home\/profile$/);
-    await expect(page.getByRole('link', { name: 'Methods' })).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /^Preparation methods/ }),
+    ).toBeVisible();
   });
 }
 
@@ -172,4 +174,40 @@ test('the brewing parameters page still links to the preparation methods', async
   await expectProfileTabSelected(page);
   await page.getByRole('button', { name: 'back' }).click();
   await expect(page).toHaveURL(/\/home\/profile$/);
+});
+
+test('tabs and profile entries use the glossary terms in German', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+
+  await openProfile(page);
+  await page.getByRole('link', { name: /^Settings/ }).click();
+  await page.getByRole('button', { name: /^Language Settings/ }).press('Enter');
+  await page.getByRole('radio', { name: 'German' }).click();
+  await page.getByRole('button', { name: 'Choose' }).click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+  await page.goBack();
+  await expect(page).toHaveURL(/\/home\/profile$/);
+
+  const tabs = tabBar(page).getByRole('tab');
+  for (const [index, name] of [
+    'Home',
+    'Brühungen',
+    'Bohnen',
+    'Profil',
+  ].entries()) {
+    await expect(tabs.nth(index)).toHaveAccessibleName(new RegExp(`^${name}`));
+  }
+  for (const name of [
+    'Zubereitungsmethoden',
+    'Mühlen',
+    'Statistiken',
+    'Einstellungen',
+  ]) {
+    await expect(
+      page.getByRole('link', { name: new RegExp(`^${name}`) }),
+    ).toBeVisible();
+  }
 });
