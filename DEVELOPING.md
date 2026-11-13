@@ -218,8 +218,10 @@ Measure the same flows there:
 6. Read the long tasks (red corners in the Main track), the Frames track (dropped frames) and the
    time until the screen is complete. Note app version, data set and values together with the
    `pnpm e2e:perf` values of the same commit. Search and brew charts on the phone include the
-   app's fixed waits (`FIXED_DELAYS`), so compare them with `settled` in the `PERF` lines, not
-   with `work`; the 250 ms before the export download only exists in the web build.
+   app's fixed waits (`FIXED_DELAYS`), so compare them with the totals in the `PERF` lines:
+   `settled` in the `search` line and `brewCharts` in the `statistics` line, not `work` and
+   `brewChartsWork`. The 250 ms before the export download only exists in the web build, so
+   compare the export with `work` in the `export` line.
 
 ## Building and Running Beanconqueror
 
