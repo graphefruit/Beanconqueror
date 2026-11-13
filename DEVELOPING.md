@@ -4,6 +4,7 @@ This file contains instructions on how to perform Beanconqueror development work
 The instructions given are very brief, but should show you how to get started.
 
 Make yourself familiar with our tech stack, which uses [Ionic](https://ionicframework.com/), [Angular](https://angular.dev/), and [Capacitor](https://capacitorjs.com/).
+How the app is structured, and the rules for new code and tests, are described in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Prerequisites
 
