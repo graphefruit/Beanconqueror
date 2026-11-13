@@ -14,8 +14,15 @@ const CHUNKS = [
   { key: 'BARISTAMODE_BREWS', fileName: 'Baristamode', size: 250 },
 ] as const;
 
-/** Builds a backup ZIP that the app imports under Settings > Import. */
-export async function buildBackupZip(data: SyntheticDataSet): Promise<Buffer> {
+/**
+ * Builds a backup ZIP that the app imports under Settings > Import. Every entry is dated `date`
+ * instead of the current time, so the same data gives the same file. (ZIP stores that date in
+ * local time, so the bytes also depend on the time zone.)
+ */
+export async function buildBackupZip(
+  data: SyntheticDataSet,
+  date: Date,
+): Promise<Buffer> {
   // Node has no web workers; compression runs on the calling thread.
   configure({ useWebWorkers: false });
 
@@ -32,7 +39,9 @@ export async function buildBackupZip(data: SyntheticDataSet): Promise<Buffer> {
     }
   }
 
-  const writer = new ZipWriter(new BlobWriter('application/zip'));
+  const writer = new ZipWriter(new BlobWriter('application/zip'), {
+    lastModDate: date,
+  });
   await writer.add(MAIN_FILE, new TextReader(JSON.stringify(main)));
   for (const file of chunkFiles) {
     await writer.add(file.name, new TextReader(JSON.stringify(file.content)));

@@ -251,7 +251,7 @@ for (const tier of TIERS) {
     });
 
     test('import of a backup ZIP', async ({ page }, testInfo) => {
-      const zip = await buildBackupZip(dataSet(tier).data);
+      const zip = await buildBackupZip(dataSet(tier).data, END_DATE);
       await installPerfObserver(page);
       await page.goto('/');
       await completeFirstRun(page);

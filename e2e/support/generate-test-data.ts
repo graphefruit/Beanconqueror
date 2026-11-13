@@ -5,7 +5,8 @@
  *        [--beans 1000] [--file-references] [--out dist/test-data/<name>.zip]
  *
  * Without --end-date the data ends at the current full hour, so it looks current after an import.
- * The same options (including the end date) always produce the same file.
+ * The same options (including the end date) always produce the same data, and on the same machine
+ * the same file: the ZIP entries are dated at the end date.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -49,7 +50,7 @@ const data = generateDataSet({
   endDate,
   fileReferences: values['file-references'],
 });
-const zip = await buildBackupZip(data);
+const zip = await buildBackupZip(data, endDate);
 const out =
   values.out ?? `dist/test-data/Beanconqueror-${brews}-brews-seed-${seed}.zip`;
 mkdirSync(dirname(out), { recursive: true });
