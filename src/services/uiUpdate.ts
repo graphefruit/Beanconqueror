@@ -125,7 +125,7 @@ export class UIUpdate {
               const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
               for (const brew of brews) {
                 brew.mill = data.config.uuid;
-                await this.uiBrewStorage.update(brew);
+                await this.uiBrewStorage.update(brew, { touch: false });
               }
             }
             // We made an update, filePath just could storage one image, but we want to storage multiple ones.
@@ -179,7 +179,7 @@ export class UIUpdate {
                   needsUpdate = true;
                 }
                 if (bean.fixDataTypes() || needsUpdate) {
-                  await this.uiBeanStorage.update(bean);
+                  await this.uiBeanStorage.update(bean, { touch: false });
                 }
               }
             }
@@ -211,11 +211,13 @@ export class UIUpdate {
                         brew.brew_beverage_quantity = brew.brew_quantity;
                         brew.brew_beverage_quantity_type =
                           brew.brew_quantity_type;
-                        await this.uiBrewStorage.update(brew);
+                        await this.uiBrewStorage.update(brew, { touch: false });
                       }
                     }
                   }
-                  await this.uiPreparationStorage.update(preparation);
+                  await this.uiPreparationStorage.update(preparation, {
+                    touch: false,
+                  });
                 }
               }
             }
@@ -224,7 +226,7 @@ export class UIUpdate {
               const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
               for (const brew of brews) {
                 if (brew.fixDataTypes()) {
-                  await this.uiBrewStorage.update(brew);
+                  await this.uiBrewStorage.update(brew, { touch: false });
                 }
               }
             }
@@ -429,7 +431,7 @@ export class UIUpdate {
                       } else if (entry instanceof Bean) {
                         storageToUpdate = this.uiBeanStorage;
                       }
-                      await storageToUpdate.update(entry);
+                      await storageToUpdate.update(entry, { touch: false });
                     }
                   } catch (ex) {
                     this.uiLog.log(
@@ -464,7 +466,7 @@ export class UIUpdate {
                 prep.brew_order.before.water = highestNumber + 1;
                 prep.brew_order.before.bean_weight_in = highestNumber + 2;
                 prep.brew_order.before.vessel = highestNumber + 3;
-                await this.uiPreparationStorage.update(prep);
+                await this.uiPreparationStorage.update(prep, { touch: false });
               }
             }
             break;
@@ -475,7 +477,7 @@ export class UIUpdate {
               bean.bean_information = this.uiHelper.cloneData(
                 bean.bean_information,
               );
-              await this.uiBeanStorage.update(bean);
+              await this.uiBeanStorage.update(bean, { touch: false });
             }
 
             const settings_v6: any = this.uiSettingsStorage.getSettings();
@@ -493,7 +495,7 @@ export class UIUpdate {
               for (const tool of prep_v6.tools) {
                 tool.archived = false;
               }
-              await this.uiPreparationStorage.update(prep_v6);
+              await this.uiPreparationStorage.update(prep_v6, { touch: false });
             }
 
             break;
@@ -554,7 +556,7 @@ export class UIUpdate {
               prep.repeat_coffee_parameters.coffee_first_drip_time = false;
               prep.repeat_coffee_parameters.brew_beverage_quantity = false;
               prep.repeat_coffee_parameters.brew_quantity = false;
-              await this.uiPreparationStorage.update(prep);
+              await this.uiPreparationStorage.update(prep, { touch: false });
             }
 
             break;
@@ -618,7 +620,7 @@ export class UIUpdate {
                 updated = true;
               }
               if (updated) {
-                await this.uiBeanStorage.update(bean);
+                await this.uiBeanStorage.update(bean, { touch: false });
               }
             }
             break;
