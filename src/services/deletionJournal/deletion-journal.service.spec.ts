@@ -92,6 +92,35 @@ describe('DeletionJournalService', () => {
     );
   });
 
+  it('never lets an older write finish after a newer one', async () => {
+    const storage = createStorage();
+    const { service } = createService(storage);
+    // Like a write that is retried later: the value is taken when the write
+    // starts, and earlier writes take longer to finish than later ones.
+    let started = 0;
+    let running = 0;
+    let mostAtOnce = 0;
+    storage.set.and.callFake(async (key: string, value: unknown) => {
+      const copy = structuredClone(value);
+      const delay = 20 - started++;
+      running++;
+      mostAtOnce = Math.max(mostAtOnce, running);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      storage.data.set(key, copy);
+      running--;
+      return true;
+    });
+
+    await Promise.all(
+      Array.from({ length: 10 }, (_, i) => service.record(note(`brew-${i}`))),
+    );
+
+    expect(mostAtOnce).toBe(1);
+    expect(stored(storage)?.map((_note) => _note.uuid)).toEqual(
+      Array.from({ length: 10 }, (_, i) => `brew-${i}`),
+    );
+  });
+
   it('reads the stored journal on the next start and adds to it', async () => {
     const storage = createStorage();
     await createService(storage).service.record(note('brew-1'));
