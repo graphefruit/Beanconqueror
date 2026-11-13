@@ -33,6 +33,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import moment from 'moment';
 import { EMPTY, Subject } from 'rxjs';
 
 import { Brew } from '../../../../classes/brew/brew';
@@ -63,6 +64,7 @@ import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 import { UIToast } from '../../../../services/uiToast';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 import { createMockUISettingsStorage } from '../../../../test-utils';
+import { TimerComponent } from '../../../timer/timer.component';
 import { BrewBrewingComponent } from '../brew-brewing.component';
 
 /**
@@ -104,8 +106,9 @@ class BrewBrewingGraphStubComponent implements OnDestroy {
 /**
  * The brew form renders its fields in the configured order, so screen
  * readers and the Tab key meet them as they are shown. Uses the real
- * template; the timers and other child components stay inert custom
- * elements, the graph is a stand-in that counts its instances.
+ * template with the real timers of the stored times; the brew timer and
+ * other child components stay inert custom elements, the graph is a
+ * stand-in that counts its instances.
  */
 describe('BrewBrewingComponent field order', () => {
   let component: BrewBrewingComponent;
@@ -144,6 +147,7 @@ describe('BrewBrewingComponent field order', () => {
           FormsModule,
           NgTemplateOutlet,
           BrewBrewingGraphStubComponent,
+          TimerComponent,
           IonBadge,
           IonButton,
           IonCard,
@@ -312,8 +316,9 @@ describe('BrewBrewingComponent field order', () => {
   /** The label of the field in each row, or the tag of a row without one. */
   function labels(_title: string): string[] {
     return rows(_title).map((row) => {
+      // A timer labels the input it renders.
       const field = row.querySelector<Element & { label?: string }>(
-        'ion-input, ion-select, timer, brew-timer',
+        'ion-input, ion-select, brew-timer',
       );
       return field?.label ?? row.tagName.toLowerCase();
     });
@@ -323,6 +328,99 @@ describe('BrewBrewingComponent field order', () => {
     return fixture.debugElement.query(
       By.directive(BrewBrewingGraphStubComponent),
     ).componentInstance as BrewBrewingGraphStubComponent;
+  }
+
+  /**
+   * The timers that show a time stored with the brew, each with a time of
+   * its own so none can stand in for another.
+   */
+  const STORED_TIMERS = [
+    {
+      name: 'temperature time',
+      parameter: 'brew_temperature_time',
+      label: 'BREW_DATA_TEMPERATURE_TIME',
+      seconds: 95,
+      milliseconds: 120,
+      shown: '01:35.120',
+      timer: () => component.brewTemperatureTime,
+    },
+    {
+      name: 'bloom time',
+      parameter: 'coffee_blooming_time',
+      label: 'BREW_DATA_COFFEE_BLOOMING_TIME',
+      seconds: 30,
+      milliseconds: 250,
+      shown: '00:30.250',
+      timer: () => component.brewCoffeeBloomingTime,
+    },
+    {
+      name: 'first drip time',
+      parameter: 'coffee_first_drip_time',
+      label: 'BREW_DATA_COFFEE_FIRST_DRIP_TIME',
+      seconds: 8,
+      milliseconds: 5,
+      shown: '00:08.005',
+      timer: () => component.brewFirstDripTime,
+    },
+  ] as const;
+  type StoredTimer = (typeof STORED_TIMERS)[number];
+
+  /** An espresso method shows the first drip time besides the other two. */
+  function chooseEspressoMethod(): void {
+    settings.manage_parameters.coffee_first_drip_time = true;
+    preparation.style_type = PREPARATION_STYLE_TYPE.ESPRESSO;
+    component.setChoosenPreparation();
+    fixture.detectChanges();
+  }
+
+  /**
+   * Stores a time for each of the three timers, as the form does with the
+   * times of the last brew or of a brew that is edited.
+   */
+  function storeTimes(): void {
+    for (const stored of STORED_TIMERS) {
+      brew[stored.parameter] = stored.seconds;
+      brew[`${stored.parameter}_milliseconds` as const] = stored.milliseconds;
+    }
+  }
+
+  /** Sorts a timer before or after the graph, as saved in the settings. */
+  function sortToSideOfGraph(
+    _stored: StoredTimer,
+    _side: 'before' | 'after',
+  ): void {
+    // The graph is placed with the brew time, which has the order 2.
+    settings.brew_order.while[_stored.parameter] = _side === 'before' ? 0 : 9;
+    settingsEvents.next({ type: 'UPDATE' });
+    fixture.detectChanges();
+
+    const shown = labels('BREW_HEADER_WHILE_BREW');
+    expect(shown).toContain(_stored.label);
+    expect(
+      shown.indexOf(_stored.label) < shown.indexOf('brew-brewing-graph')
+        ? 'before'
+        : 'after',
+    )
+      .withContext(_stored.name)
+      .toBe(_side);
+  }
+
+  /** Expects a timer to show the time stored for it, which is unchanged. */
+  function expectStoredTimeShown(_stored: StoredTimer, _when: string): void {
+    const context = `${_stored.name}, ${_when}`;
+    const timer = _stored.timer();
+    expect(moment(timer.displayingTime).format('mm:ss.SSS'))
+      .withContext(context)
+      .toBe(_stored.shown);
+    expect([timer.getSeconds(), timer.getMilliseconds()])
+      .withContext(context)
+      .toEqual([_stored.seconds, _stored.milliseconds]);
+    expect([
+      brew[_stored.parameter],
+      brew[`${_stored.parameter}_milliseconds` as const],
+    ])
+      .withContext(context)
+      .toEqual([_stored.seconds, _stored.milliseconds]);
   }
 
   it('renders the fields while brewing in the configured order, the graph with the brew time', () => {
@@ -441,5 +539,98 @@ describe('BrewBrewingComponent field order', () => {
     fixture.detectChanges();
 
     expect(labels('BREW_HEADER_AFTER_BREW')).toEqual(['BREW_DATA_TDS']);
+  });
+
+  for (const stored of STORED_TIMERS) {
+    it(`shows the stored ${stored.name} when its timer changes sides at the graph`, () => {
+      chooseEspressoMethod();
+      sortToSideOfGraph(stored, 'before');
+      storeTimes();
+
+      // The fields on either side of the graph are rendered apart, so a
+      // timer that changes sides is created anew.
+      sortToSideOfGraph(stored, 'after');
+      expectStoredTimeShown(stored, 'sorted after the graph');
+
+      sortToSideOfGraph(stored, 'before');
+      expectStoredTimeShown(stored, 'sorted before the graph again');
+    });
+
+    it(`shows the stored ${stored.name} when its timer is shown again`, () => {
+      chooseEspressoMethod();
+      storeTimes();
+
+      settings.manage_parameters[stored.parameter] = false;
+      settingsEvents.next({ type: 'UPDATE' });
+      fixture.detectChanges();
+      expect(labels('BREW_HEADER_WHILE_BREW')).not.toContain(stored.label);
+      expect(stored.timer()).toBeUndefined();
+
+      settings.manage_parameters[stored.parameter] = true;
+      settingsEvents.next({ type: 'UPDATE' });
+      fixture.detectChanges();
+      expect(labels('BREW_HEADER_WHILE_BREW')).toContain(stored.label);
+      expectStoredTimeShown(stored, 'shown again');
+    });
+  }
+
+  it('shows the stored times in the timers of a newly chosen preparation with its own sort order', () => {
+    // The last brew had a first drip time, which a filter method hides.
+    storeTimes();
+    const filter = preparation;
+    expect(labels('BREW_HEADER_WHILE_BREW')).toEqual([
+      'BREW_DATA_TEMPERATURE_TIME',
+      'brew-brewing-graph',
+      'BREW_DATA_TIME',
+      'BREW_DATA_COFFEE_BLOOMING_TIME',
+    ]);
+
+    // This one sorts the bloom time first and the temperature time last,
+    // and shows the first drip time by its custom parameters.
+    const custom = new Preparation();
+    custom.style_type = PREPARATION_STYLE_TYPE.POUR_OVER;
+    custom.use_custom_parameters = true;
+    for (const key of Object.keys(custom.manage_parameters)) {
+      (custom.manage_parameters as any)[key] = false;
+    }
+    custom.manage_parameters.brew_time = true;
+    custom.manage_parameters.brew_temperature_time = true;
+    custom.manage_parameters.coffee_blooming_time = true;
+    custom.manage_parameters.coffee_first_drip_time = true;
+    Object.assign(custom.brew_order.while, {
+      coffee_blooming_time: 0,
+      coffee_first_drip_time: 1,
+      brew_time: 2,
+      brew_temperature_time: 3,
+    });
+    preparation = custom;
+    component.setChoosenPreparation();
+    fixture.detectChanges();
+
+    expect(labels('BREW_HEADER_WHILE_BREW')).toEqual([
+      'BREW_DATA_COFFEE_BLOOMING_TIME',
+      'BREW_DATA_COFFEE_FIRST_DRIP_TIME',
+      'brew-brewing-graph',
+      'BREW_DATA_TIME',
+      'ion-item',
+      'BREW_DATA_TEMPERATURE_TIME',
+    ]);
+    for (const stored of STORED_TIMERS) {
+      expectStoredTimeShown(stored, 'preparation with its own sort order');
+    }
+
+    preparation = filter;
+    component.setChoosenPreparation();
+    fixture.detectChanges();
+
+    expect(labels('BREW_HEADER_WHILE_BREW')).toEqual([
+      'BREW_DATA_TEMPERATURE_TIME',
+      'brew-brewing-graph',
+      'BREW_DATA_TIME',
+      'BREW_DATA_COFFEE_BLOOMING_TIME',
+    ]);
+    const [temperatureTime, bloomTime] = STORED_TIMERS;
+    expectStoredTimeShown(temperatureTime, 'first preparation again');
+    expectStoredTimeShown(bloomTime, 'first preparation again');
   });
 });

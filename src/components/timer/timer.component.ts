@@ -42,6 +42,13 @@ export class TimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;
   @Input('label-id') public labelId: string;
   @Input('hide-control-buttons') public hideControlButtons: boolean = false;
+  /**
+   * The time a new timer starts with, e.g. the stored time of a field that
+   * is rendered again. It is only read when the timer is created; after that
+   * the timer keeps its own time.
+   */
+  @Input() public initialSeconds: number;
+  @Input() public initialMilliseconds: number;
   @Output() public timerStarted = new EventEmitter();
   @Output() public timerPaused = new EventEmitter();
   @Output() public timerReset = new EventEmitter();
@@ -87,6 +94,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.initTimer();
+    this.setTime(this.initialSeconds ?? 0, this.initialMilliseconds ?? 0);
   }
 
   public isTimerRunning() {

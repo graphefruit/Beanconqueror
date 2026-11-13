@@ -416,11 +416,14 @@
                 label="{{'BREW_DATA_TIME' | translate}}"></brew-timer>
   </ion-item>
 }
+<!-- A new layout can take a field to the other side of the graph or show it again, which creates its timer anew.
+     The timers of the stored times start with that time, so they never show another time than the one that is saved. -->
 <ng-template #whileBrewField let-field="field">
   @switch(field) {
     @case ('brew_temperature_time') {
       <ion-item lines="inset">
         <timer #brewTemperatureTime (timerTicked)="temperatureTimeChanged($event)"
+               [initialSeconds]="data.brew_temperature_time" [initialMilliseconds]="data.brew_temperature_time_milliseconds"
                label-id='brewTemperatureTime' label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"></timer>
       </ion-item>
     }
@@ -451,12 +454,14 @@
     @case ('coffee_blooming_time') {
       <ion-item lines="inset">
         <timer #brewCoffeeBloomingTime [hide-control-buttons]="true" (timerTicked)="coffeeBloomingTimeChanged($event)"
+               [initialSeconds]="data.coffee_blooming_time" [initialMilliseconds]="data.coffee_blooming_time_milliseconds"
                label-id='brewTemperatureTime' label="{{'BREW_DATA_COFFEE_BLOOMING_TIME' | translate}}"></timer>
       </ion-item>
     }
     @case ('coffee_first_drip_time') {
       <ion-item lines="inset">
         <timer #brewFirstDripTime [hide-control-buttons]="true" (timerTicked)="coffeeFirstDripTimeChanged($event)"
+               [initialSeconds]="data.coffee_first_drip_time" [initialMilliseconds]="data.coffee_first_drip_time_milliseconds"
                label-id='brewFirstDripTime' label="{{'BREW_DATA_COFFEE_FIRST_DRIP_TIME' | translate}}"></timer>
       </ion-item>
     }
