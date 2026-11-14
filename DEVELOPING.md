@@ -254,13 +254,15 @@ phone connected over ADB (`e2e/device/`, `playwright.device.config.ts`). It is n
 run deletes the app's data.
 
 1. Enable USB debugging, connect the phone (`adb devices`; with several devices set
-   `ANDROID_SERIAL`), unlock it and keep the screen on during the run. Behind the lock screen the
-   WebView draws nothing, so the run stops with a message when the app is behind it.
-2. Build the debug app with the production web bundle (needs JDK 21 as `JAVA_HOME` and the
-   Android SDK):
+   `ANDROID_SERIAL`), unlock it and keep the screen on during the run. While the lock screen
+   shows, the app is not shown and its WebView draws nothing, so the run stops with a message
+   before each start if the lock screen is there.
+2. Build the app with the production web bundle (needs JDK 21 as `JAVA_HOME` and the Android
+   SDK), the debug build, the release build or both:
 
    ```shell
-   pnpm e2e:device:build
+   pnpm e2e:device:build           # debug
+   pnpm e2e:device:build:release   # release (build type measure)
    ```
 
 3. Run the measurements (several minutes; `ANDROID_HOME` or `ADB` must point to `adb`), then
@@ -269,17 +271,32 @@ run deletes the app's data.
    ```shell
    pnpm e2e:device | grep '^DEVICE'
    DEVICE_TIERS=7000 DEVICE_RUNS=3 pnpm e2e:device   # one data set, three runs
+   DEVICE_BUILDS=release pnpm e2e:device             # the release build
+   DEVICE_BUILDS=debug,release pnpm e2e:device       # both, alternating
    adb uninstall com.beanconqueror.app
    ```
 
+The release build is the build type `measure` in `android/app/build.gradle`: the `release`
+build type (R8, resource shrinking) signed with the debug key, so no release key is needed. The
+test needs WebView debugging, which only debug builds switch on by themselves. The measure build
+gets its own `capacitor.config.json` with `android.webContentsDebuggingEnabled` (generated from the
+synced one by the Gradle task `measureCapacitorConfig`); the synced file and the `debug` and
+`release` builds stay as they are, and nothing in the app's code changes. Store builds use
+`release`, so the setting cannot end up in them, also not by a forgotten `cap sync`. The measure
+build is not debuggable, like the store build, so `run-as` does not work for it (see storage
+below).
+
 How it works:
 
-- The run installs `android/app/build/outputs/apk/debug/app-debug.apk` (`DEVICE_APK` for another
-  file) and touches only the package `com.beanconqueror.app`.
-- Playwright connects to the app's WebView with `chromium.connectOverCDP`: debug builds open the
-  DevTools socket `webview_devtools_remote_<pid>`, which `adb forward` makes the local port
-  `DEVICE_CDP_PORT` (default 9333). Playwright's experimental `_android` API is not used: it
-  installs driver apps of its own on the phone.
+- The run installs `android/app/build/outputs/apk/debug/app-debug.apk` or
+  `android/app/build/outputs/apk/measure/app-measure.apk` (`DEVICE_APK_DEBUG` and
+  `DEVICE_APK_RELEASE` for other files) and touches only the package `com.beanconqueror.app`.
+  Both are signed with the same debug key, so `adb install -r` switches between them and keeps
+  the app's data.
+- Playwright connects to the app's WebView with `chromium.connectOverCDP`: with WebView debugging
+  on, the app opens the DevTools socket `webview_devtools_remote_<pid>`, which `adb forward` makes
+  the local port `DEVICE_CDP_PORT` (default 9333). Playwright's experimental `_android` API is
+  not used: it installs driver apps of its own on the phone.
 - Per data set (`DEVICE_TIERS`, default 0, 7,000 and 15,000 synthetic brews, each with 1,000
   beans) the app's data is deleted, the data set is written into the running app's IndexedDB as
   in `e2e/support/seed.ts`, and the app is stopped. The generated backup ZIP is copied into the
@@ -287,22 +304,41 @@ How it works:
 - Each run (`DEVICE_RUNS`, default 5) starts the app cold twice (`am force-stop`, caches kept):
   start, memory, brew list and saving a new brew; then start, bean list, export and import. The
   import puts the data set back for the next run.
+- `DEVICE_BUILDS` (default `debug`) picks the builds. With several, the runs alternate (debug,
+  release, debug, release, …), so a slow drift of the phone (temperature, background work) hits
+  every build alike; the app is installed again at every switch. Every build first gets a
+  warm-up run (run 0): its lines carry `"warmup": true` and are left out of the evaluation.
+- Before and after each run the thermal status (`dumpsys thermalservice`, 0 = none) and the
+  battery and skin temperatures are recorded (`thermal before`, `thermal after`). Runs with a
+  thermal status above 0 or a clearly warmer phone are not comparable.
 - The app is already running when the test connects, so the recording of `e2e/perf/perf.ts` is
   installed right after connecting, and times come from the page's clock as in `pnpm e2e:perf`.
   The start counts from the WebView's navigation start (`visible`, like `startVisible` in the
   budgets) and from `am start` (`fromLaunch`, device clock, including the native start and the
   splash screen). `shownOnConnect: true` means the home screen was complete before the test
   connected; that value is too late.
+- The test disturbs the cold start as little as it can: the lock screen is checked before the
+  start, and the wait for the app process and its DevTools socket runs in one shell on the phone
+  (`pidof` and `/proc/net/unix` every 50 ms, about one short process per check) instead of one
+  ADB call per check. What remains is that loop until the socket exists, the `am start -W` that
+  waits for the first frame, and the DevTools connection itself, which enables a few domains in
+  the WebView while the page still loads. These costs are the same for every build.
 - The test answers two native dialogs, so the flows run without a person: the share sheet after
   the export (the export counts until the app opens it, like the download in the browser) and the
   file picker of the import (it returns the copied ZIP). Storage, file system and the other
   plugins are the real ones.
 - "Save brew" counts until the transaction that writes the brews has completed (`written`) and
   until the form has closed (`closed`). Memory is `dumpsys meminfo` of the app process and of its
-  WebView renderer (a separate process) plus the JavaScript heap; storage is the size of the
-  WebView's IndexedDB directory and of all private app data (`run-as`).
-- Every value is printed as a `DEVICE {…}` line. No budget is checked: the budgets are set for the
-  throttled browser.
+  WebView renderer (a separate process: the `sandboxed_process` of the current WebView package
+  that the app started, from `dumpsys activity services`) plus the JavaScript heap, as it is
+  (`jsHeapUsedKiB`) and after a garbage collection (`jsHeapAfterGcKiB`,
+  `HeapProfiler.collectGarbage`). The collection runs after the process sizes are read; the step
+  after a memory line starts with a clean heap, in every build alike.
+- Storage is the size of the WebView's IndexedDB directory and of all private app data
+  (`run-as`, debug build only) and the usage the WebView reports for the app's origin
+  (`originUsageKiB`, `navigator.storage.estimate()`, both builds).
+- Every value is printed as a `DEVICE {…}` line with `build`, `brews` and `run`. No budget is
+  checked: the budgets are set for the throttled browser.
 
 ## Building and Running Beanconqueror
 
