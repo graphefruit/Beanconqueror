@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   inject,
@@ -52,6 +53,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
   selector: 'mill-information-card',
   templateUrl: './mill-information-card.component.html',
   styleUrls: ['./mill-information-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     LongPressDirective,
     AsyncImageComponent,
@@ -266,7 +268,7 @@ export class MillInformationCardComponent implements OnInit {
         deletingBrewIndex.push(i);
       }
     }
-    for (let i = deletingBrewIndex.length; i--; ) {
+    for (let i = deletingBrewIndex.length; i--;) {
       await this.uiBrewStorage.removeByUUID(
         brews[deletingBrewIndex[i]].config.uuid,
       );

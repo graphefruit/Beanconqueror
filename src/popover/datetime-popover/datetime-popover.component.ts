@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -37,6 +38,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   selector: 'app-datetime-popover',
   templateUrl: './datetime-popover.component.html',
   styleUrls: ['./datetime-popover.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     MaxNumberValueDirective,

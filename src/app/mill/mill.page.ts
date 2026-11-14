@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -40,6 +41,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   selector: 'mill',
   templateUrl: './mill.page.html',
   styleUrls: ['./mill.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     AgVirtualScrollComponent,

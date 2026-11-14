@@ -1,4 +1,9 @@
-import { Component, inject, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -43,6 +48,7 @@ import { UIWaterStorage } from '../../../../services/uiWaterStorage';
   selector: 'app-water-edit',
   templateUrl: './water-edit.component.html',
   styleUrls: ['./water-edit.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     PhotoAddComponent,

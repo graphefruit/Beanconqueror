@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -47,6 +48,7 @@ import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-c
   selector: 'brew-graph-reference-card',
   templateUrl: './brew-graph-reference-card.component.html',
   styleUrls: ['./brew-graph-reference-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     NgxStarsModule,
     GraphDisplayCardComponent,

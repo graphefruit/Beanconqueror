@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -35,6 +36,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   selector: 'brew-timer',
   templateUrl: './brew-timer.component.html',
   styleUrls: ['./brew-timer.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonItem, IonInput, IonButton, IonIcon],
 })
 export class BrewTimerComponent implements OnInit, OnDestroy {

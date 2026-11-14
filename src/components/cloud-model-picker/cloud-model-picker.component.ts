@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -30,6 +36,7 @@ import {
 @Component({
   selector: 'app-cloud-model-picker',
   templateUrl: './cloud-model-picker.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

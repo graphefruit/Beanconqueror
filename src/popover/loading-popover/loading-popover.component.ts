@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonButton,
@@ -22,6 +28,7 @@ import { UILog } from '../../services/uiLog';
   selector: 'loading-popover',
   templateUrl: './loading-popover.component.html',
   styleUrls: ['./loading-popover.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TranslatePipe, IonContent, IonSpinner, IonFooter, IonButton],
 })
 export class LoadingPopoverComponent implements OnInit {

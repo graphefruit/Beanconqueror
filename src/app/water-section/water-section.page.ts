@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 import {
   IonContent,
@@ -17,6 +17,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'water-section',
   templateUrl: './water-section.page.html',
   styleUrls: ['./water-section.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonContent,

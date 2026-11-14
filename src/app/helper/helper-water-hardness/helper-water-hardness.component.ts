@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -25,6 +25,7 @@ import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-numb
   selector: 'helper-water-hardness',
   templateUrl: './helper-water-hardness.component.html',
   styleUrls: ['./helper-water-hardness.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     PreventCharacterDirective,

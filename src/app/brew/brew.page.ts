@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -52,6 +53,7 @@ import { BrewFilterComponent } from './brew-filter/brew-filter.component';
   selector: 'brew',
   templateUrl: './brew.page.html',
   styleUrls: ['./brew.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     NgTemplateOutlet,

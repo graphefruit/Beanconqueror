@@ -1,4 +1,9 @@
-import { Component, inject, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -33,6 +38,7 @@ import { UIToast } from '../../../services/uiToast';
   selector: 'app-preparation-edit-tool',
   templateUrl: './preparation-edit-tool.component.html',
   styleUrls: ['./preparation-edit-tool.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

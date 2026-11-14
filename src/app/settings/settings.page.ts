@@ -1,5 +1,10 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -138,6 +143,7 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
   selector: 'settings',
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TooltipDirective,
@@ -233,12 +239,7 @@ export class SettingsPage {
 
   private __cleanupAttachmentData(
     _data: (
-      | IBean
-      | IBrew
-      | IMill
-      | IPreparation
-      | IGreenBean
-      | IRoastingMachine
+      IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine
     )[],
   ): any {
     if (_data !== undefined && _data.length > 0) {

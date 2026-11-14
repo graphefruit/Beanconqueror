@@ -34,7 +34,7 @@
               <ion-label>
                 <h2>{{"BEAN_DATA_BUY_DATE" | translate}}:</h2>
                 @if (data.date) {
-                  <h3>{{data.date | formatDate:[settings?.date_format]}}</h3>
+                  <h3>{{data.date | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</h3>
                 }
                 @if (!data.date) {
                   <h3>-</h3>

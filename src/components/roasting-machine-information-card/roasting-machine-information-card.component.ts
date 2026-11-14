@@ -1,5 +1,12 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+} from '@angular/core';
 
 import {
   IonButton,
@@ -40,6 +47,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
   selector: 'roasting-machine-information-card',
   templateUrl: './roasting-machine-information-card.component.html',
   styleUrls: ['./roasting-machine-information-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     LongPressDirective,
     AsyncImageComponent,

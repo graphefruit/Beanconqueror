@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   inject,
@@ -56,6 +57,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
   selector: 'green-bean-information',
   templateUrl: './green-bean-information.component.html',
   styleUrls: ['./green-bean-information.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     LongPressDirective,
     NgxStarsModule,

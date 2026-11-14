@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonContent,
@@ -29,6 +34,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'app-brew-choose-preparation-to-brew',
   templateUrl: './brew-choose-preparation-to-brew.component.html',
   styleUrls: ['./brew-choose-preparation-to-brew.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     FormatDatePipe,

@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonButton,
@@ -26,6 +31,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   selector: 'app-please-activate-analytics-popover',
   templateUrl: './please-activate-analytics-popover.component.html',
   styleUrls: ['./please-activate-analytics-popover.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonHeader,

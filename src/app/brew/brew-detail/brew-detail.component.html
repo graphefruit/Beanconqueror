@@ -174,7 +174,7 @@
       <ion-item>
         <ion-label>
           <h3>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.SELECT_MODE" | translate}}</h3>
-          @switch(data?.preparationDeviceBrew?.params.selectedMode) {
+          @switch($safeNavigationMigration(data?.preparationDeviceBrew?.params.selectedMode)) {
             @case (SanremoYOUMode.LISTENING) {
               <span>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MODE_LISTENING" | translate}}</span>
             }
@@ -418,7 +418,7 @@
       }
       <!-- The creation date has no sort order of its own and always comes last. -->
       <ion-item lines="none">
-        <ion-label><h2>{{"BREW_CREATION_DATE" | translate}}</h2><h3>{{ brew.config.unix_timestamp | formatDate:[settings?.date_format] }}&nbsp;{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</h3></ion-label>
+        <ion-label><h2>{{"BREW_CREATION_DATE" | translate}}</h2><h3>{{ brew.config.unix_timestamp | formatDate:[$safeNavigationMigration(settings?.date_format)] }}&nbsp;{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</h3></ion-label>
       </ion-item>
       <div class="last-item"></div>
     </ion-card>

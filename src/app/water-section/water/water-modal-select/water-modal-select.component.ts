@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -30,6 +36,7 @@ import { UIWaterStorage } from '../../../../services/uiWaterStorage';
   selector: 'app-water-modal-select',
   templateUrl: './water-modal-select.component.html',
   styleUrls: ['./water-modal-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

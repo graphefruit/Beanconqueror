@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -27,6 +28,7 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
   selector: 'app-bean-popover-frozen-list',
   templateUrl: './bean-popover-frozen-list.component.html',
   styleUrls: ['./bean-popover-frozen-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     AgVirtualScrollComponent,
     BeanInformationComponent,

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
@@ -56,6 +57,7 @@ import { HeaderComponent } from '../header/header.component';
   templateUrl: './ai-import-photo-gallery.component.html',
   styleUrls: ['./ai-import-photo-gallery.component.scss'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

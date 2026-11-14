@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 import { IonButtons, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 
@@ -12,6 +12,7 @@ import { IonButtons, IonTitle, IonToolbar } from '@ionic/angular/standalone';
       margin-top: 12px;
     }**/
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ion-toolbar>
       <ion-buttons slot="start">

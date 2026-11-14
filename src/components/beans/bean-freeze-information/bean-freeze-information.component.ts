@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -37,6 +38,7 @@ declare var cordova;
   selector: 'bean-freeze-information',
   templateUrl: './bean-freeze-information.component.html',
   styleUrls: ['./bean-freeze-information.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TransformDateDirective,
     FormsModule,

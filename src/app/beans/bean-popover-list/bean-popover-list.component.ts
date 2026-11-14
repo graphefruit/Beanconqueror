@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -26,6 +27,7 @@ import { HeaderComponent } from '../../../components/header/header.component';
   selector: 'app-bean-popover-list',
   templateUrl: './bean-popover-list.component.html',
   styleUrls: ['./bean-popover-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     AgVirtualScrollComponent,
     BeanInformationComponent,

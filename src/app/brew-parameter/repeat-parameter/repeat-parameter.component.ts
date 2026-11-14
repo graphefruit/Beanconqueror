@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonBackButton,
@@ -18,6 +23,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'app-repeat-parameter',
   templateUrl: './repeat-parameter.component.html',
   styleUrls: ['./repeat-parameter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RepeatCustomParameterComponent,
     TranslatePipe,

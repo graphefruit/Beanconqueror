@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -27,6 +33,7 @@ import { UIToast } from '../../../services/uiToast';
   selector: 'mill-add',
   templateUrl: './mill-add.component.html',
   styleUrls: ['./mill-add.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     DisableDoubleClickDirective,

@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -25,6 +30,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   selector: 'app-qr-code-scanner-popover',
   templateUrl: './qr-code-scanner-popover.component.html',
   styleUrls: ['./qr-code-scanner-popover.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

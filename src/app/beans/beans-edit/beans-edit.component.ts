@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -40,6 +46,7 @@ import { UIToast } from '../../../services/uiToast';
   selector: 'beans-edit',
   templateUrl: './beans-edit.component.html',
   styleUrls: ['./beans-edit.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     BeanRoastInformationComponent,

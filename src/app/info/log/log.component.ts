@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonBackButton,
@@ -30,6 +35,7 @@ import { LogTextComponent } from './log-text/log-text.component';
   selector: 'log',
   templateUrl: './log.component.html',
   styleUrls: ['./log.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonHeader,

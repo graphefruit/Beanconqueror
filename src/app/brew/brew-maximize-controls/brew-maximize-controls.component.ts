@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -40,6 +41,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'app-brew-maximize-controls',
   templateUrl: './brew-maximize-controls.component.html',
   styleUrls: ['./brew-maximize-controls.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     IonHeader,
     IonGrid,

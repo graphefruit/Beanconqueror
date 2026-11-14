@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   inject,
@@ -58,6 +59,7 @@ import { UIStatistic } from '../../services/uiStatistic';
   selector: 'statistic',
   templateUrl: './statistic.page.html',
   styleUrls: ['./statistic.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     DecimalPipe,

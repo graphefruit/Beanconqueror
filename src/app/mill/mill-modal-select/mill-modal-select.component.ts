@@ -1,5 +1,11 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -41,6 +47,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'mill-modal-select',
   templateUrl: './mill-modal-select.component.html',
   styleUrls: ['./mill-modal-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     NgTemplateOutlet,

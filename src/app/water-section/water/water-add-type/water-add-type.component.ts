@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -29,6 +35,7 @@ import { UIWaterStorage } from '../../../../services/uiWaterStorage';
   selector: 'water-add-type',
   templateUrl: './water-add-type.component.html',
   styleUrls: ['./water-add-type.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     DisableDoubleClickDirective,

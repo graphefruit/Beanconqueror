@@ -1,10 +1,11 @@
-import { Component, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, output } from '@angular/core';
 
 import { HeaderButtonComponent } from './header-button.component';
 
 @Component({
   selector: 'app-header-dismiss-button',
   imports: [HeaderButtonComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <app-header-button
       icon="beanconqueror-back"

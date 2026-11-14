@@ -1,4 +1,11 @@
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -31,6 +38,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'app-brew-rating',
   templateUrl: './brew-rating.component.html',
   styleUrls: ['./brew-rating.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     NgxStarsModule,

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   inject,
@@ -29,6 +30,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'manage-custom-parameter',
   templateUrl: './manage-custom-parameter.component.html',
   styleUrls: ['./manage-custom-parameter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

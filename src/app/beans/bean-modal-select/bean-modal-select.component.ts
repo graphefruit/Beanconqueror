@@ -1,5 +1,6 @@
 import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -62,6 +63,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'bean-modal-select',
   templateUrl: './bean-modal-select.component.html',
   styleUrls: ['./bean-modal-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     NgTemplateOutlet,

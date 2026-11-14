@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -22,6 +27,7 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
   selector: 'app-brew-brix-calculator',
   templateUrl: './brew-brix-calculator.component.html',
   styleUrls: ['./brew-brix-calculator.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     DisableDoubleClickDirective,

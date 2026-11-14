@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -90,6 +91,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
     './bean-information.component.scss',
     '../../theme/variables.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     LongPressDirective,
     NgxStarsModule,
@@ -758,7 +760,7 @@ export class BeanInformationComponent implements OnInit {
         deletingBrewIndex.push(i);
       }
     }
-    for (let i = deletingBrewIndex.length; i--; ) {
+    for (let i = deletingBrewIndex.length; i--;) {
       await this.uiBrewStorage.removeByUUID(
         brews[deletingBrewIndex[i]].config.uuid,
       );

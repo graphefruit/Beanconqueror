@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   inject,
@@ -29,6 +30,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'sort-custom-parameter',
   templateUrl: './sort-custom-parameter.component.html',
   styleUrls: ['./sort-custom-parameter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonCard,

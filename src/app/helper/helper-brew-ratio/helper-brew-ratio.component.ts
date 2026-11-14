@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 import {
   IonBackButton,
@@ -15,6 +15,7 @@ import { HeaderComponent } from '../../../components/header/header.component';
   selector: 'helper-brew-ratio',
   templateUrl: './helper-brew-ratio.component.html',
   styleUrls: ['./helper-brew-ratio.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     BrewRatioCardComponent,
     TranslatePipe,

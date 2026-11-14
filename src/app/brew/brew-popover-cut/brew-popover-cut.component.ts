@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -50,6 +51,7 @@ declare var Plotly: any;
   selector: 'app-brew-popover-cut',
   templateUrl: './brew-popover-cut.component.html',
   styleUrls: ['./brew-popover-cut.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     DecimalPipe,

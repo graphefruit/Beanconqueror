@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -32,6 +37,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   selector: 'app-settings-choose-automatic-backup-to-import',
   templateUrl: './settings-choose-automatic-backup-to-import.component.html',
   styleUrls: ['./settings-choose-automatic-backup-to-import.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

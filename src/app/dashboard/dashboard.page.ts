@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import {
@@ -43,6 +49,7 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RouterLink,
     BrewInformationComponent,

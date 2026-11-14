@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonButton,
@@ -23,6 +29,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-data-corruption-found',
   templateUrl: './data-corruption-found.component.html',
   styleUrls: ['./data-corruption-found.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonHeader,

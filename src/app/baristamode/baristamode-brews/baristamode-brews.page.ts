@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -29,6 +30,7 @@ import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewSto
   selector: 'app-baristamode-brews',
   templateUrl: './baristamode-brews.page.html',
   styleUrls: ['./baristamode-brews.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     AgVirtualScrollComponent,
     BaristamodeBrewInformationComponent,

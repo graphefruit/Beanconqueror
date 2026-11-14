@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -45,6 +51,7 @@ import { UIToast } from '../../../../services/uiToast';
   selector: 'app-graph-edit',
   templateUrl: './graph-edit.component.html',
   styleUrls: ['./graph-edit.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     GraphDisplayCardComponent,

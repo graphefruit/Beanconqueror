@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   inject,
@@ -50,6 +51,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
   selector: 'water-information-card',
   templateUrl: './water-information-card.component.html',
   styleUrls: ['./water-information-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     LongPressDirective,
     AsyncImageComponent,

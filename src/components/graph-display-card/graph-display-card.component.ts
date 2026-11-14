@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -29,6 +30,7 @@ declare var Plotly;
   selector: 'graph-display-card',
   templateUrl: './graph-display-card.component.html',
   styleUrls: ['./graph-display-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [],
 })
 export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {

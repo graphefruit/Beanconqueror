@@ -1,5 +1,6 @@
 import { NgStyle } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   inject,
@@ -33,6 +34,7 @@ import { UIHelper } from '../../services/uiHelper';
   selector: 'cupping-flavors',
   templateUrl: './cupping-flavors.component.html',
   styleUrls: ['./cupping-flavors.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     NgStyle,

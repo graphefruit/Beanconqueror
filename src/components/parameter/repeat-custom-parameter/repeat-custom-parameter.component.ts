@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   inject,
@@ -27,6 +28,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'repeat-custom-parameter',
   templateUrl: './repeat-custom-parameter.component.html',
   styleUrls: ['./repeat-custom-parameter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

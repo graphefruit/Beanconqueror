@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -31,6 +32,7 @@ declare var Plotly;
   selector: 'app-brew-popover-extraction',
   templateUrl: './brew-popover-extraction.component.html',
   styleUrls: ['./brew-popover-extraction.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonHeader,

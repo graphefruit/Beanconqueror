@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
@@ -21,6 +22,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
   templateUrl: './photo-view.component.html',
   styleUrls: ['./photo-view.component.scss'],
   imports: [AsyncImageComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PhotoViewComponent implements OnInit {
@@ -29,8 +31,7 @@ export class PhotoViewComponent implements OnInit {
     Brew | Bean | GreenBean | Mill | Preparation
   >();
   @ViewChild('photoSlides', { static: false }) public photoSlides:
-    | ElementRef
-    | undefined;
+    ElementRef | undefined;
 
   constructor() {}
 

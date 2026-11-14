@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonContent,
@@ -15,6 +21,7 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
   selector: 'app-brew-ratio-calculator',
   templateUrl: './brew-ratio-calculator.component.html',
   styleUrls: ['./brew-ratio-calculator.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [BrewRatioCardComponent, IonHeader, IonContent],
 })
 export class BrewRatioCalculatorComponent implements OnInit {

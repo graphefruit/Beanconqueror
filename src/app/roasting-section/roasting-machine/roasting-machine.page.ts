@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -31,6 +37,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'app-roasting-machine',
   templateUrl: './roasting-machine.page.html',
   styleUrls: ['./roasting-machine.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     RoastingMachineInformationCardComponent,

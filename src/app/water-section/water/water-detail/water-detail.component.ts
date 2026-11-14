@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -31,6 +37,7 @@ import { UIWaterHelper } from '../../../../services/uiWaterHelper';
   selector: 'app-water-detail',
   templateUrl: './water-detail.component.html',
   styleUrls: ['./water-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -45,6 +51,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'brew-filter',
   templateUrl: './brew-filter.component.html',
   styleUrls: ['./brew-filter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     PreparationOverlayDirective,

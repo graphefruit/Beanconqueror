@@ -1,5 +1,11 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -46,6 +52,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'preparation-modal-select',
   templateUrl: './preparation-modal-select.component.html',
   styleUrls: ['./preparation-modal-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     NgTemplateOutlet,

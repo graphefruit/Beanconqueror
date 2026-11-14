@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -43,6 +44,7 @@ import { UIWaterStorage } from '../../../services/uiWaterStorage';
   selector: 'app-water',
   templateUrl: './water.page.html',
   styleUrls: ['./water.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     AgVirtualScrollComponent,

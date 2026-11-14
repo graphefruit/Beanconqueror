@@ -105,7 +105,7 @@
 }
 @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.rating])) {
   <ion-item style="top:-10px;">
-    <ion-range [pinFormatter]="pinFormatter" style="padding-left:20px;padding-bottom:0px;padding-right:10px;" [pin]="true" (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBeanRating" min="0" snaps="true" [step]="settings?.bean_rating_steps">
+    <ion-range [pinFormatter]="pinFormatter" style="padding-left:20px;padding-bottom:0px;padding-right:10px;" [pin]="true" (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBeanRating" min="0" snaps="true" [step]="$safeNavigationMigration(settings?.bean_rating_steps)">
       @if (maxBeanRating === 5 && settings?.bean_rating_steps === 1) {
         <div slot="end">
           <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>

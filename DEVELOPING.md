@@ -11,7 +11,8 @@ How the app is structured, and the rules for new code and tests, are described i
 You need to have the following prerequisites
 
 - Git
-- Node.js 24 (see `.nvmrc`; `nvm use` picks it up)
+- Node.js 24.15 or later in the 24 line (see `.nvmrc`; `nvm use` picks it up). Angular 22 supports
+  Node.js 22.22.3+, 24.15+ and 26+; odd versions such as 25 are not supported.
 - `pnpm` (tested with version 10.33.0)
 - Android Studio (if you want to work on the Android App)
 - Xcode (if you want to work on the iOS App)
@@ -23,6 +24,28 @@ After cloning the repository, you need to install `pnpm` dependencies:
 ```shell
 pnpm install --frozen-lockfile
 ```
+
+### Updating Angular
+
+Update Angular with `ng update`, which also runs Angular's migrations. With pnpm it needs a few
+workarounds:
+
+- `ng update` looks packages up with `npm`, which refuses this project because `devEngines`
+  requires pnpm. `npm_config_force=true` lets it continue.
+- When the installed CLI is older than the target version, `ng update` installs a temporary CLI
+  inside the workspace and writes it into `pnpm-lock.yaml`. Run the target CLI with `pnpm dlx`
+  and skip that step with `NG_DISABLE_VERSION_CHECK=1` instead.
+- pnpm only installs versions that are at least seven days old (`minimumReleaseAge` in
+  `pnpm-workspace.yaml`), so name versions that old explicitly.
+- Update the packages whose peer dependencies follow Angular's major version in the same call.
+
+```shell
+NG_DISABLE_VERSION_CHECK=1 npm_config_force=true pnpm dlx @angular/cli@22.2.6 update \
+  @angular/core@22.2.5 @angular/cli@22.2.6 @angular/cdk@22.2.6 angular-eslint@22.6.0
+```
+
+Optional migrations run with the installed CLI, e.g.
+`pnpm exec ng generate @angular/core:self-closing-tags-migration`.
 
 ## Running tests
 

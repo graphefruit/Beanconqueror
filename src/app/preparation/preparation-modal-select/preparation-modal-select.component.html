@@ -99,7 +99,7 @@
   </h6>
   <p>{{ "LAST_USE" | translate }}:
     @if (getBrewsCount(prep)> 0) {
-      <span>{{ lastUsed(prep) | formatDate:[settings?.date_format] }}</span>
+      <span>{{ lastUsed(prep) | formatDate:[$safeNavigationMigration(settings?.date_format)] }}</span>
     }
     @if (getBrewsCount(prep) <= 0) {
       <span>-</span>

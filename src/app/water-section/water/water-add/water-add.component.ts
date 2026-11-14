@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonCard,
@@ -32,6 +38,7 @@ import { WaterAddTypeComponent } from '../water-add-type/water-add-type.componen
   selector: 'app-water-add',
   templateUrl: './water-add.component.html',
   styleUrls: ['./water-add.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     KeysPipe,

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -36,6 +37,7 @@ import { UIWaterHelper } from '../../../services/uiWaterHelper';
   selector: 'app-bean-associated-brews',
   templateUrl: './associated-brews.component.html',
   styleUrls: ['./associated-brews.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     AgVirtualScrollComponent,
     BrewInformationComponent,

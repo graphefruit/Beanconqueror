@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import {
@@ -20,6 +20,7 @@ import { HeaderComponent } from '../../components/header/header.component';
   selector: 'app-bean-parameter',
   templateUrl: './bean-parameter.page.html',
   styleUrls: ['./bean-parameter.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     HeaderComponent,

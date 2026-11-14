@@ -1,4 +1,11 @@
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import {
@@ -30,6 +37,7 @@ import { PreparationAddTypeComponent } from '../preparation-add-type/preparation
   selector: 'preparation-add',
   templateUrl: './preparation-add.component.html',
   styleUrls: ['./preparation-add.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     KeysPipe,

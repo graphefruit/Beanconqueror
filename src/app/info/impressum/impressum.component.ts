@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 import {
   IonBackButton,
@@ -15,6 +15,7 @@ import { HeaderComponent } from '../../../components/header/header.component';
   selector: 'app-impressum',
   templateUrl: './impressum.component.html',
   styleUrls: ['./impressum.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonHeader,

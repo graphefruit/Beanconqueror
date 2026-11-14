@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
@@ -41,6 +42,7 @@ import { HeaderComponent } from '../../components/header/header.component';
     HeaderDismissButtonComponent,
     IonFooter,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PhotoPopoverComponent implements OnInit {
@@ -49,16 +51,9 @@ export class PhotoPopoverComponent implements OnInit {
   public static COMPONENT_ID: string = 'photo-popover';
 
   @Input() public data:
-    | Bean
-    | GreenBean
-    | Brew
-    | RoastingMachine
-    | Water
-    | Mill
-    | Preparation;
+    Bean | GreenBean | Brew | RoastingMachine | Water | Mill | Preparation;
   @ViewChild('photoSlides', { static: false }) public photoSlides:
-    | ElementRef
-    | undefined;
+    ElementRef | undefined;
   private async updateSlider() {
     if (this.photoSlides) {
       //TODO await this.photoSlides.update();

@@ -180,11 +180,11 @@
   }
   @if (bean?.frozenDate) {
     <p>{{ "BEAN_DATA_FROZEN_DATE" | translate }}
-      : {{ bean.frozenDate  | formatDate:[settings?.date_format] }}</p>
+      : {{ bean.frozenDate  | formatDate:[$safeNavigationMigration(settings?.date_format)] }}</p>
   }
   @if (bean?.unfrozenDate) {
     <p>{{ "BEAN_DATA_UNFROZEN_DATE" | translate }}
-      : {{ bean.unfrozenDate  | formatDate:[settings?.date_format] }}</p>
+      : {{ bean.unfrozenDate  | formatDate:[$safeNavigationMigration(settings?.date_format)] }}</p>
   }
   @if (bean?.frozenStorageType && bean?.frozenStorageType !== beanFreezingStorageTypeEnum.UNKNOWN) {
     <p>{{ "BEAN_DATA_FROZEN_STORAGE_TYPE" | translate }}
@@ -197,7 +197,7 @@
   }
   @if (bean?.roastingDate) {
     <p>{{ "BEAN_DATA_ROASTING_DATE" | translate }}
-      : {{ bean.roastingDate | formatDate:[settings?.date_format] }}&nbsp;
+      : {{ bean.roastingDate | formatDate:[$safeNavigationMigration(settings?.date_format)] }}&nbsp;
       ({{ bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS }}
       @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1) {
         <span>{{ "DAY" | translate }}</span>
@@ -216,7 +216,7 @@
   @if (bean?.weight > 0) {
     <p>
       {{ "BEANS_AMOUNT_USED" | translate }}:&nbsp;<span
-      [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight, leftOver: bean?.weight - getUsedWeightCount(bean)| number : '.0-2'}"
+      [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: $safeNavigationMigration(bean?.weight), leftOver: $safeNavigationMigration(bean?.weight) - getUsedWeightCount(bean)| number : '.0-2'}"
       style='margin: 0;padding: 0;display: inline;'></span>
     </p>
   }

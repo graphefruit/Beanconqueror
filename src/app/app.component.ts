@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   inject,
   ViewChild,
@@ -96,6 +97,7 @@ register();
   selector: 'app-root',
   templateUrl: 'app.component.html',
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent implements AfterViewInit {

@@ -1,4 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -21,6 +26,7 @@ import { RemoveEmptyNumberDirective } from '../../directive/remove-empty-number.
   selector: 'brew-ratio-card',
   templateUrl: './brew-ratio-card.component.html',
   styleUrls: ['./brew-ratio-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     PreventCharacterDirective,

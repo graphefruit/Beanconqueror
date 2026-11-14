@@ -1,4 +1,11 @@
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 
 import {
   IonButton,
@@ -23,6 +30,7 @@ import { UIHelper } from '../../../services/uiHelper';
   selector: 'app-brew-flavor-picker',
   templateUrl: './brew-flavor-picker.component.html',
   styleUrls: ['./brew-flavor-picker.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     CuppingFlavorsComponent,
     DisableDoubleClickDirective,

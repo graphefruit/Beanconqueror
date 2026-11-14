@@ -134,7 +134,7 @@
                 <ion-label>
                   <h2>{{"BEAN_DATA_BUY_DATE" | translate}}:</h2>
                   @if (data.buyDate) {
-                    <h3>{{data.buyDate | formatDate:[settings?.date_format]}}</h3>
+                    <h3>{{data.buyDate | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</h3>
                   }
                   @if (!data.buyDate) {
                     <h3>-</h3>
@@ -147,7 +147,7 @@
                 <ion-label>
                   <h2>{{"BEAN_DATA_BEST_DATE" | translate}}:</h2>
                   @if (data.bestDate) {
-                    <h3>{{data.bestDate | formatDate:[settings?.date_format]}}</h3>
+                    <h3>{{data.bestDate | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</h3>
                   }
                   @if (!data.bestDate) {
                     <h3>-</h3>
@@ -160,7 +160,7 @@
                 <ion-label>
                   <h2>{{"BEAN_DATA_OPEN_DATE" | translate}}:</h2>
                   @if (data.openDate) {
-                    <h3>{{data.openDate | formatDate:[settings?.date_format]}}</h3>
+                    <h3>{{data.openDate | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</h3>
                   }
                   @if (!data.openDate) {
                     <h3>-</h3>
@@ -172,7 +172,7 @@
               <ion-item>
                 <ion-label>
                   <h2>{{"BEAN_DATA_ROASTING_DATE" | translate}}:</h2>
-                  <h3>{{data.roastingDate | formatDate:[settings?.date_format]}}</h3>
+                  <h3>{{data.roastingDate | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</h3>
                 </ion-label>
               </ion-item>
             }
@@ -228,7 +228,7 @@
           }
           @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.rating])) {
             <ion-item style='margin-top:-10px;'>
-              <ion-range  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" [(ngModel)]="data.rating" [max]="maxBeanRating" [step]="settings?.bean_rating_steps" debounce="500s"  disabled="true" min="0" snaps="true">
+              <ion-range  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" [(ngModel)]="data.rating" [max]="maxBeanRating" [step]="$safeNavigationMigration(settings?.bean_rating_steps)" debounce="500s"  disabled="true" min="0" snaps="true">
                 <div slot="end">
                   @if (bean?.rating !== 0 && hasCustomRatingRange() === false) {
                     <ngx-stars  #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
@@ -344,13 +344,13 @@
           <ion-item >
             <ion-label>
               <h2>{{"BEAN_DATA_FROZEN_DATE" | translate}}:</h2>
-              <h3>{{data.frozenDate | formatDate:[settings?.date_format]}}</h3>
+              <h3>{{data.frozenDate | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</h3>
             </ion-label>
           </ion-item>
           <ion-item>
             <ion-label>
               <h2>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}:</h2>
-              <h3>{{data.unfrozenDate | formatDate:[settings?.date_format]}}</h3>
+              <h3>{{data.unfrozenDate | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</h3>
             </ion-label>
           </ion-item>
           <ion-item>

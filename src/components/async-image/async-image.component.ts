@@ -1,5 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, Input, OnChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnChanges,
+} from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
 
 import { UIFileHelper } from '../../services/uiFileHelper';
@@ -8,6 +14,7 @@ import { UIFileHelper } from '../../services/uiFileHelper';
   selector: 'async-image',
   templateUrl: './async-image.component.html',
   styleUrls: ['./async-image.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [AsyncPipe],
 })
 export class AsyncImageComponent implements OnChanges {

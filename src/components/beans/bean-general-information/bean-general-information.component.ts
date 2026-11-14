@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -56,6 +57,7 @@ declare var cordova;
   selector: 'bean-general-information',
   templateUrl: './bean-general-information.component.html',
   styleUrls: ['./bean-general-information.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TransformDateDirective,

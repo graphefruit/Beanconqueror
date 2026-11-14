@@ -1,4 +1,11 @@
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -33,6 +40,7 @@ import { UIToast } from '../../../services/uiToast';
   selector: 'app-bean-archive-popover',
   templateUrl: './bean-archive-popover.component.html',
   styleUrls: ['./bean-archive-popover.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     NgxStarsModule,

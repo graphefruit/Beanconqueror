@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -51,6 +52,7 @@ import { BrewFilterComponent } from '../brew-filter/brew-filter.component';
   selector: 'app-brew-choose-graph-reference',
   templateUrl: './brew-choose-graph-reference.component.html',
   styleUrls: ['./brew-choose-graph-reference.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     AgVirtualScrollComponent,

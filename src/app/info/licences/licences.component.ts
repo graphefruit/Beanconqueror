@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonBackButton,
@@ -28,6 +33,7 @@ import { UIHelper } from '../../../services/uiHelper';
   selector: 'licences',
   templateUrl: './licences.component.html',
   styleUrls: ['./licences.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     KeysPipe,

@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonButton,
@@ -15,6 +20,7 @@ import { LogTextComponent } from '../../app/info/log/log-text/log-text.component
   selector: 'app-filesystem-error-popover',
   templateUrl: './filesystem-error-popover.component.html',
   styleUrls: ['./filesystem-error-popover.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [IonContent, IonButton, IonIcon],
 })
 export class FilesystemErrorPopoverComponent implements OnInit {

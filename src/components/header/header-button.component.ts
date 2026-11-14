@@ -1,4 +1,9 @@
-import { Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
 
 import { IonButton, IonIcon } from '@ionic/angular/standalone';
 
@@ -8,6 +13,7 @@ import { ShortPressDirective } from '../../directive/short-press.directive';
 @Component({
   selector: 'app-header-button',
   imports: [IonButton, IonIcon, LongPressDirective, ShortPressDirective],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @if (longPressEnabled()) {
       <ion-button

@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import {
@@ -22,6 +27,7 @@ import { HeaderComponent } from '../../components/header/header.component';
   selector: 'brew-parameter',
   templateUrl: './brew-parameter.page.html',
   styleUrls: ['./brew-parameter.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RouterLink,
     TranslatePipe,

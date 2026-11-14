@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -59,6 +60,7 @@ declare var Plotly;
   selector: 'app-graph-detail',
   templateUrl: './graph-detail.component.html',
   styleUrls: ['./graph-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     DecimalPipe,
     TranslatePipe,

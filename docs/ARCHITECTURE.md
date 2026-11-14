@@ -19,16 +19,17 @@ Contents:
 
 ### Platform and stack
 
-| Concern          | Choice                                                                  | Where                                                                            |
-| ---------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Framework        | Angular 21, standalone components, bootstrapped without NgModules       | `package.json`, `src/main.ts`                                                    |
-| UI kit           | Ionic 8, `md` mode on every platform (iOS included)                     | `src/main.ts` (`provideIonicAngular({ mode: 'md' })`)                            |
-| Native shell     | Capacitor 8 (Android, iOS), plus a few Cordova plugins (BLE, NFC)       | `capacitor.config.ts`, `package.json`                                            |
-| Storage          | Ionic Storage (IndexedDB first)                                         | `src/main.ts`, `src/services/uiStorage.ts`                                       |
-| i18n             | ngx-translate, JSON files per language                                  | `src/main.ts`, `src/assets/i18n/`                                                |
-| Charts           | Chart.js                                                                | `src/app/app.component.ts` (`Chart.register`)                                    |
-| Change detection | zone.js (`provideZoneChangeDetection()`)                                | `src/main.ts`, `src/polyfills.ts`                                                |
-| Tooling          | pnpm, ESLint (with a suppressions ratchet), Prettier, Karma, Playwright | `package.json`, `eslint.config.mjs`, `src/karma.conf.js`, `playwright.config.ts` |
+| Concern          | Choice                                                                                        | Where                                                                            |
+| ---------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Framework        | Angular 22, standalone components, bootstrapped without NgModules                             | `package.json`, `src/main.ts`                                                    |
+| Language         | TypeScript 6, with the defaults of TypeScript 5 (`strict: false`, …)                          | `tsconfig.json`                                                                  |
+| UI kit           | Ionic 8, `md` mode on every platform (iOS included)                                           | `src/main.ts` (`provideIonicAngular({ mode: 'md' })`)                            |
+| Native shell     | Capacitor 8 (Android, iOS), plus a few Cordova plugins (BLE, NFC)                             | `capacitor.config.ts`, `package.json`                                            |
+| Storage          | Ionic Storage (IndexedDB first)                                                               | `src/main.ts`, `src/services/uiStorage.ts`                                       |
+| i18n             | ngx-translate, JSON files per language                                                        | `src/main.ts`, `src/assets/i18n/`                                                |
+| Charts           | Chart.js                                                                                      | `src/app/app.component.ts` (`Chart.register`)                                    |
+| Change detection | zone.js (`provideZoneChangeDetection()`); existing components `ChangeDetectionStrategy.Eager` | `src/main.ts`, `src/polyfills.ts`                                                |
+| Tooling          | pnpm, ESLint (with a suppressions ratchet), Prettier, Karma, Playwright                       | `package.json`, `eslint.config.mjs`, `src/karma.conf.js`, `playwright.config.ts` |
 
 ### Start sequence
 
@@ -614,18 +615,32 @@ The app depends on zone.js for change detection (`src/polyfills.ts`,
 `provideZoneChangeDetection()` in `src/main.ts`); almost all state is plain
 mutable fields. Counts at the time of writing:
 
-| Pattern                                      | Occurrences         | Files |
-| -------------------------------------------- | ------------------- | ----- |
-| `detectChanges()`                            | 40                  | 34    |
-| `markForCheck()`                             | 6                   | 2     |
-| `ngZone.run(` / `zone.run(`                  | 5                   | 3     |
-| `runOutsideAngular`                          | 23                  | 6     |
-| `setTimeout(` (many used to defer an update) | 193                 | 79    |
-| `ChangeDetectionStrategy.OnPush`             | 1 of 163 components | 1     |
-| `signal(` / `computed(`                      | 9                   | 4     |
+| Pattern                                      | Occurrences           | Files |
+| -------------------------------------------- | --------------------- | ----- |
+| `detectChanges()`                            | 40                    | 34    |
+| `markForCheck()`                             | 6                     | 2     |
+| `ngZone.run(` / `zone.run(`                  | 5                     | 3     |
+| `runOutsideAngular`                          | 23                    | 6     |
+| `setTimeout(` (many used to defer an update) | 193                   | 79    |
+| `ChangeDetectionStrategy.OnPush`             | 1 of 163 components   | 1     |
+| `ChangeDetectionStrategy.Eager`              | 162 of 163 components | 162   |
+| `signal(` / `computed(`                      | 9                     | 4     |
 
 Re-count with, for example:
 `grep -rE "detectChanges\(" src --include='*.ts' --exclude='*.spec.ts' | wc -l`.
+
+Since Angular 22, `OnPush` is the default. The update migration set
+`ChangeDetectionStrategy.Eager` (the former default) on every component that had no
+strategy, so their behaviour did not change. ESLint reports `Eager` as an error
+(`@angular-eslint/prefer-on-push-component-change-detection`); the existing components are
+recorded in `eslint-suppressions.json`, so only new components fail.
+
+Angular 22 also changed optional chaining in templates: `a?.b` now yields `undefined`
+instead of `null` when `a` is missing. The update migration wrapped the existing
+expressions in `$safeNavigationMigration(…)`, which keeps the old result, and turned off
+the `nullishCoalescingNotNullable` and `optionalChainNotNullable` diagnostics
+(`src/tsconfig.app.json`, `src/tsconfig.spec.json`). New template code does not need the
+wrapper.
 
 ### Function calls in templates
 
@@ -659,7 +674,8 @@ code is not changed only to satisfy them.
   Angular `signal()` and `computed()`; one-off events (device readings, storage
   events) stay `Observable`s and are converted at the edge (`toSignal`) where
   useful.
-- **`ChangeDetectionStrategy.OnPush`** on every new component.
+- **`ChangeDetectionStrategy.OnPush`** on every new component (the default since
+  Angular 22; never `Eager`).
 - **No function calls in templates for derived values.** Use `computed()` (or a
   pure pipe); event handlers like `(click)="save()"` are fine.
 - **No component references through inputs.** Children receive data through

@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -45,6 +46,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   selector: 'preparation',
   templateUrl: './preparation.page.html',
   styleUrls: ['./preparation.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     AgVirtualScrollComponent,

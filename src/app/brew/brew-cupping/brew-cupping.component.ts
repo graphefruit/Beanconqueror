@@ -1,5 +1,11 @@
 import { KeyValuePipe } from '@angular/common';
-import { Component, inject, Input, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -44,6 +50,7 @@ import { BrewFlavorPickerComponent } from '../brew-flavor-picker/brew-flavor-pic
   selector: 'brew-cupping',
   templateUrl: './brew-cupping.component.html',
   styleUrls: ['./brew-cupping.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     CuppingRadarComponent,

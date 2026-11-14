@@ -1,5 +1,6 @@
 import { DecimalPipe, KeyValuePipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
@@ -57,8 +58,12 @@ import { createMockUISettingsStorage } from '../../../../test-utils';
 import { BrewDetailComponent } from '../brew-detail.component';
 
 /** Stands in for the graph of the flow profile and counts its instances. */
-// eslint-disable-next-line @angular-eslint/component-selector -- the selector of the real graph
-@Component({ selector: 'brew-brewing-graph', template: '' })
+@Component({
+  // eslint-disable-next-line @angular-eslint/component-selector -- the selector of the real graph
+  selector: 'brew-brewing-graph',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  template: '',
+})
 class BrewBrewingGraphStubComponent implements OnDestroy {
   public static created = 0;
   public static destroyed = 0;

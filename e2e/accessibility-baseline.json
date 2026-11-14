@@ -69,14 +69,14 @@
   },
   "mills": {
     "light": [
-      "color-contrast | mill > ion-content > .ion-padding.ion-text-center > .text-color-inactive.ion-margin-top",
+      "color-contrast | .text-color-inactive.ion-margin-top",
       "landmark-banner-is-top-level | mill > ion-header",
       "landmark-main-is-top-level | mill > ion-content",
       "landmark-no-duplicate-main | app-home > ion-content",
       "landmark-unique | app-home > ion-content"
     ],
     "dark": [
-      "color-contrast | mill > ion-content > .ion-padding.ion-text-center > .text-color-inactive.ion-margin-top",
+      "color-contrast | .text-color-inactive.ion-margin-top",
       "landmark-banner-is-top-level | mill > ion-header",
       "landmark-main-is-top-level | mill > ion-content",
       "landmark-no-duplicate-main | app-home > ion-content",

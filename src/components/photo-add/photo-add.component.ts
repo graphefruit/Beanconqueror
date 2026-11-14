@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
@@ -35,6 +36,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
   templateUrl: './photo-add.component.html',
   styleUrls: ['./photo-add.component.scss'],
   imports: [AsyncImageComponent, TranslatePipe, IonItem, IonIcon, IonButton],
+  changeDetection: ChangeDetectionStrategy.Eager,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PhotoAddComponent implements OnInit, OnDestroy {
@@ -45,18 +47,12 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
   private readonly translate = inject(TranslateService);
 
   @Input() public data:
-    | Brew
-    | Bean
-    | GreenBean
-    | Mill
-    | Preparation
-    | RoastingMachine;
+    Brew | Bean | GreenBean | Mill | Preparation | RoastingMachine;
   @Output() public dataChange = new EventEmitter<
     Brew | Bean | GreenBean | Mill | Preparation | RoastingMachine
   >();
   @ViewChild('photoSlides', { static: false }) public photoSlides:
-    | ElementRef
-    | undefined;
+    ElementRef | undefined;
 
   constructor() {
     addIcons({ arrowBackOutline, arrowForwardOutline, trash });

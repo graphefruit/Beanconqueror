@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -26,6 +31,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'app-bean-manage-parameter',
   templateUrl: './bean-manage-parameter.component.html',
   styleUrls: ['./bean-manage-parameter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

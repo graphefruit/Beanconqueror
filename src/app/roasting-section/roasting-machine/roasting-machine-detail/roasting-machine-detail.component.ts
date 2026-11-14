@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonButton,
@@ -27,6 +33,7 @@ import { UIHelper } from '../../../../services/uiHelper';
   selector: 'app-roasting-machine-detail',
   templateUrl: './roasting-machine-detail.component.html',
   styleUrls: ['./roasting-machine-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     HeaderComponent,

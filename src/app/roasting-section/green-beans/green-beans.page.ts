@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -46,6 +47,7 @@ import { GreenBeanSortComponent } from './green-bean-sort/green-bean-sort.compon
   selector: 'app-green-beans',
   templateUrl: './green-beans.page.html',
   styleUrls: ['./green-beans.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     AgVirtualScrollComponent,

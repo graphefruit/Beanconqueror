@@ -1,5 +1,6 @@
 import { DecimalPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
@@ -70,6 +71,7 @@ import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-c
     IonCol,
     IonButton,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class BaristamodeBrewInformationComponent implements OnInit {

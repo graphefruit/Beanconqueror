@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
@@ -45,6 +46,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
     IonCol,
     IonButton,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class WelcomePopoverComponent implements OnInit {
@@ -59,8 +61,7 @@ export class WelcomePopoverComponent implements OnInit {
 
   public slide: number = 1;
   @ViewChild('slider', { static: false }) public welcomeSlider:
-    | ElementRef
-    | undefined;
+    ElementRef | undefined;
 
   private settings: Settings;
 

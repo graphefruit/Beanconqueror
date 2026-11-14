@@ -1,4 +1,9 @@
-import { Component, inject, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -54,6 +59,7 @@ import { UIToast } from '../../../services/uiToast';
   selector: 'app-preparation-connected-device',
   templateUrl: './preparation-connected-device.component.html',
   styleUrls: ['./preparation-connected-device.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

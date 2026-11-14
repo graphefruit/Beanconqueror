@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -36,6 +42,7 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
   selector: 'preparation-tool-modal-select',
   templateUrl: './preparation-tool-modal-select.component.html',
   styleUrls: ['./preparation-tool-modal-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

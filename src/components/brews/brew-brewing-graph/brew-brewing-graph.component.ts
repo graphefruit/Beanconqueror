@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -116,6 +117,7 @@ declare let Plotly;
   selector: 'brew-brewing-graph',
   templateUrl: './brew-brewing-graph.component.html',
   styleUrls: ['./brew-brewing-graph.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

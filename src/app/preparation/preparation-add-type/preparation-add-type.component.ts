@@ -1,4 +1,11 @@
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 
 import {
@@ -39,6 +46,7 @@ import { UIToast } from '../../../services/uiToast';
   selector: 'preparation-add-type',
   templateUrl: './preparation-add-type.component.html',
   styleUrls: ['./preparation-add-type.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TooltipDirective,

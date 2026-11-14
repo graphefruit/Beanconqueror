@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -87,6 +88,7 @@ declare var Plotly;
   selector: 'app-barista',
   templateUrl: './barista.page.html',
   styleUrls: ['./barista.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     LongPressDirective,
     BrewBrewingComponent,

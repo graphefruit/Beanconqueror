@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   inject,
@@ -41,6 +42,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'bean-sort-information',
   templateUrl: './bean-sort-information.component.html',
   styleUrls: ['./bean-sort-information.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     PreventCharacterDirective,

@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -35,6 +41,7 @@ import { UIToast } from '../../../../services/uiToast';
   selector: 'green-bean-add',
   templateUrl: './green-bean-add.component.html',
   styleUrls: ['./green-bean-add.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     GreenBeanGeneralInformationComponent,

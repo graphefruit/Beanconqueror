@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonButton,
@@ -26,6 +32,7 @@ import { UIHelper } from '../../../services/uiHelper';
   selector: 'app-preparation-sort',
   templateUrl: './preparation-sort.component.html',
   styleUrls: ['./preparation-sort.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonHeader,

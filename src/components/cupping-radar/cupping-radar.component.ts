@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   inject,
@@ -35,6 +36,7 @@ import { UIBrewHelper } from '../../services/uiBrewHelper';
   selector: 'cupping-radar',
   templateUrl: './cupping-radar.component.html',
   styleUrls: ['./cupping-radar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TooltipDirective,
     FormsModule,

@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
@@ -80,8 +81,12 @@ import { BrewBrewingComponent } from '../brew-brewing.component';
  * brew by weight). This stand-in counts how often it is created and
  * destroyed, and offers what the section header reads from it.
  */
-// eslint-disable-next-line @angular-eslint/component-selector -- the selector of the real graph
-@Component({ selector: 'brew-brewing-graph', template: '' })
+@Component({
+  // eslint-disable-next-line @angular-eslint/component-selector -- the selector of the real graph
+  selector: 'brew-brewing-graph',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  template: '',
+})
 class BrewBrewingGraphStubComponent implements OnDestroy {
   public static created = 0;
   public static destroyed = 0;

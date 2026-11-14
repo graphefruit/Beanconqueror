@@ -5,7 +5,7 @@
     @if(brewBrewing?.brewBrewingPreparationDeviceEl?.uiHasAPreparationDeviceSet) {
       @if (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected) {
         <ion-chip header-slot="end" outline='true' class='machine-connected'>
-          @switch (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType) {
+          @switch ($safeNavigationMigration(brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType)) {
             @case (PreparationDeviceType.METICULOUS) {
               <ion-icon name="beanconqueror-meticulous-logo" size='large'></ion-icon>
               <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
@@ -34,7 +34,7 @@
         </ion-chip>
       } @else {
         <ion-chip header-slot="end" outline='true' class='machine-disconnected'>
-          @switch (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType) {
+          @switch ($safeNavigationMigration(brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType)) {
             @case (PreparationDeviceType.METICULOUS) {
               <ion-icon name="beanconqueror-meticulous-logo" size='large'></ion-icon>
               <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>

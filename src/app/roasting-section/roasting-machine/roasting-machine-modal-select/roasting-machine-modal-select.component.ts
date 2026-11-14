@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -31,6 +37,7 @@ import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachine
   selector: 'app-roasting-machine-modal-select',
   templateUrl: './roasting-machine-modal-select.component.html',
   styleUrls: ['./roasting-machine-modal-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

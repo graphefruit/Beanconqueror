@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 import {
   IonBackButton,
@@ -14,6 +14,7 @@ import { HeaderComponent } from '../../../components/header/header.component';
   selector: 'thanks',
   templateUrl: './thanks.component.html',
   styleUrls: ['./thanks.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonHeader,

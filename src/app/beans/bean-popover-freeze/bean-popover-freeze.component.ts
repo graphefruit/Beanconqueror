@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   inject,
@@ -60,6 +61,7 @@ declare var cordova;
   selector: 'app-bean-popover-freeze',
   templateUrl: './bean-popover-freeze.component.html',
   styleUrls: ['./bean-popover-freeze.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TransformDateDirective,
     FormsModule,

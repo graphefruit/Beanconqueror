@@ -36,7 +36,7 @@
                       <ion-icon name='analytics-outline'
                       style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
                     }
-                    <strong>{{ brew.config.unix_timestamp | formatDate:[settings?.date_format] }}</strong><span
+                    <strong>{{ brew.config.unix_timestamp | formatDate:[$safeNavigationMigration(settings?.date_format)] }}</strong><span
                   class='ion-padding-start'>{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</span></ion-title>
                 </ion-col>
               </ion-row>
@@ -69,14 +69,14 @@
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate }}</ion-label>
               <br />
-              <ion-text>{{ brew?.brew_beverage_quantity | number : '.0-2' }} {{ brewQuantityEnum[brew?.brew_beverage_quantity_type] }}</ion-text>
+              <ion-text>{{ $safeNavigationMigration(brew?.brew_beverage_quantity) | number : '.0-2' }} {{ brewQuantityEnum[brew?.brew_beverage_quantity_type] }}</ion-text>
             </ion-col>
           }
           @if (brew?.desired_beverage_quantity > 0) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_DESIRED_BEVERAGE_QUANTITY" | translate }}</ion-label>
               <br />
-              <ion-text>{{ brew?.desired_beverage_quantity | number : '.0-2' }} {{ brewQuantityEnum[brew?.brew_beverage_quantity_type] }}</ion-text>
+              <ion-text>{{ $safeNavigationMigration(brew?.desired_beverage_quantity) | number : '.0-2' }} {{ brewQuantityEnum[brew?.brew_beverage_quantity_type] }}</ion-text>
             </ion-col>
           }
           @if (brew?.brew_time > 0) {
@@ -104,7 +104,7 @@
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ 'BREW_DATA_WATER_VOLUME_INTAKE' | translate }}</ion-label>
               <br />
-              <ion-text>{{ brew?.water_volume_intake | number : '.0-2' }} ml</ion-text>
+              <ion-text>{{ $safeNavigationMigration(brew?.water_volume_intake) | number : '.0-2' }} ml</ion-text>
             </ion-col>
           }
           @if (brew?.coffee_first_drip_time > 0) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 import {
   IonContent,
@@ -15,6 +15,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-roasting-section',
   templateUrl: './roasting-section.page.html',
   styleUrls: ['./roasting-section.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonContent,

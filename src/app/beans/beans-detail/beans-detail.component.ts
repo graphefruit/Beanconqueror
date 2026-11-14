@@ -1,4 +1,11 @@
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -51,6 +58,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'app-beans-detail',
   templateUrl: './beans-detail.component.html',
   styleUrls: ['./beans-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     NgxStarsModule,

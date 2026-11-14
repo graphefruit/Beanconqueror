@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   EventEmitter,
@@ -64,6 +65,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
   selector: 'preparation-information-card',
   templateUrl: './preparation-information-card.component.html',
   styleUrls: ['./preparation-information-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     LongPressDirective,
     AsyncImageComponent,
@@ -264,8 +266,7 @@ export class PreparationInformationCardComponent implements OnInit {
     }
 
     const device = this.preparation.getConnectedDevice() as
-      | SanremoYOUDevice
-      | XeniaDevice;
+      SanremoYOUDevice | XeniaDevice;
     try {
       const connected = await device.deviceConnected();
       if (!connected) {
@@ -510,7 +511,7 @@ export class PreparationInformationCardComponent implements OnInit {
         deletingBrewIndex.push(i);
       }
     }
-    for (let i = deletingBrewIndex.length; i--; ) {
+    for (let i = deletingBrewIndex.length; i--;) {
       await this.uiBrewStorage.removeByUUID(
         brews[deletingBrewIndex[i]].config.uuid,
       );

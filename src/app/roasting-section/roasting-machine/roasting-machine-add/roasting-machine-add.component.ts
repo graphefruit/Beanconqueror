@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -25,6 +30,7 @@ import { UIToast } from '../../../../services/uiToast';
   selector: 'app-roasting-machine-add',
   templateUrl: './roasting-machine-add.component.html',
   styleUrls: ['./roasting-machine-add.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     DisableDoubleClickDirective,

@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonButton,
@@ -28,6 +34,7 @@ import { UIHelper } from '../../../../services/uiHelper';
   selector: 'app-green-bean-sort',
   templateUrl: './green-bean-sort.component.html',
   styleUrls: ['./green-bean-sort.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonHeader,

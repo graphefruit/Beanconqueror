@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonButton,
@@ -22,6 +27,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   selector: 'app-meticulous-help-popover',
   templateUrl: './meticulous-help-popover.component.html',
   styleUrls: ['./meticulous-help-popover.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonHeader,

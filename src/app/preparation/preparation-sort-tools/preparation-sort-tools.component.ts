@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   inject,
@@ -29,6 +30,7 @@ import { UIHelper } from '../../../services/uiHelper';
   selector: 'app-preparation-sort-tools',
   templateUrl: './preparation-sort-tools.component.html',
   styleUrls: ['./preparation-sort-tools.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonHeader,

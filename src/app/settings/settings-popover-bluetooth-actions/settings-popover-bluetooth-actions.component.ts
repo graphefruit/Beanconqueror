@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonContent,
@@ -32,6 +37,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   selector: 'app-settings-popover-bluetooth-actions',
   templateUrl: './settings-popover-bluetooth-actions.component.html',
   styleUrls: ['./settings-popover-bluetooth-actions.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     IonHeader,

@@ -112,7 +112,7 @@
 }
 
 <ng-template #brewCardTemplate>
-  @let choosenImageDisplayingType = settings?.brew_display_image_type;
+  @let choosenImageDisplayingType = $safeNavigationMigration(settings?.brew_display_image_type);
   <ion-card class='long-card brew-layout' [class.best-brew]="brew.best_brew" [class.favourite-brew]="brew.favourite" tappable (click)='showBrew()' (long-press)='longPressEditBrew($event)'>
     <ion-card-content #card class='no-ion-col-vertical-padding ion-padding-top' [ngClass]="brew.flow_profile?'add-bottom-spacing':''">
       <ion-grid class='no-padding-bottom' style='padding-top:0px;'>
@@ -125,7 +125,7 @@
               @let hasBeanPhoto = (bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS);
               @if (hasBeanPhoto) {
                 <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
-                  <async-image [filePath]='bean?.attachments[0]' class='bean-slider'></async-image>
+                  <async-image [filePath]='$safeNavigationMigration(bean?.attachments[0])' class='bean-slider'></async-image>
                 </div>
               } @else {
                 <ng-container [ngTemplateOutlet]="preparationImage"></ng-container>
@@ -134,7 +134,7 @@
               @let hasBrewPhoto = (brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.HAS_PHOTOS);
               @if (hasBrewPhoto) {
                 <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
-                  <async-image [filePath]='brew?.attachments[0]' class='bean-slider'></async-image>
+                  <async-image [filePath]='$safeNavigationMigration(brew?.attachments[0])' class='bean-slider'></async-image>
                 </div>
               } @else {
                 <ng-container [ngTemplateOutlet]="preparationImage"></ng-container>
@@ -161,7 +161,7 @@
                         <ion-icon name='analytics-outline'
                         style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
                       }
-                      <strong>{{ brew.config.unix_timestamp | formatDate:[settings?.date_format] }}</strong><span
+                      <strong>{{ brew.config.unix_timestamp | formatDate:[$safeNavigationMigration(settings?.date_format)] }}</strong><span
                     class='ion-padding-start brew-time'>{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</span>
                     </span></ion-title>
                 </ion-col>
@@ -187,8 +187,8 @@
                 </div>
               </ion-col>
               @if ((settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.rating,
-                preparation?.visible_list_view_parameters.rating,
-                preparation?.use_custom_parameters]) && (brew?.rating > 0 && uiHasCustomRatingRange === false)) {
+                $safeNavigationMigration(preparation?.visible_list_view_parameters.rating),
+                $safeNavigationMigration(preparation?.use_custom_parameters)]) && (brew?.rating > 0 && uiHasCustomRatingRange === false)) {
                 <ion-col
                   size='4'>
                   <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]='brew.rating' [maxStars]='5'
@@ -197,8 +197,8 @@
                 </ion-col>
               }
               @if ((settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.rating,
-                preparation?.visible_list_view_parameters.rating,
-                preparation?.use_custom_parameters]) && (brew?.rating > 0  && uiHasCustomRatingRange === true)) {
+                $safeNavigationMigration(preparation?.visible_list_view_parameters.rating),
+                $safeNavigationMigration(preparation?.use_custom_parameters)]) && (brew?.rating > 0  && uiHasCustomRatingRange === true)) {
                 <ion-col
                   size='2' class='ion-text-right'>
                   <ion-badge>{{ brew.rating | toFixed: 2 }}</ion-badge>
@@ -257,8 +257,8 @@
       <ion-grid class='no-ion-col-vertical-padding limit-grid-overflow'>
         <ion-row class='ion-padding-bottom-half'>
           @if ((settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.method_of_preparation,
-            preparation?.visible_list_view_parameters.method_of_preparation,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.method_of_preparation),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_PREPARATION_METHOD" | translate }}</ion-label>
               <br />
@@ -266,8 +266,8 @@
             </ion-col>
           }
           @if ((settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.mill,
-            preparation?.visible_list_view_parameters.mill,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.mill),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_MILL" |translate }}</ion-label>
               <br />
@@ -279,20 +279,20 @@
             <br />
             @if (preparation?.style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
               <ion-text>
-                {{ brew?.grind_weight | number : '.0-2' }}gr
+                {{ $safeNavigationMigration(brew?.grind_weight) | number : '.0-2' }}gr
                 / {{ brew.brew_quantity | number : '.0-2' }}{{ brewQuantityEnum[brew?.brew_quantity_type] }}&nbsp;({{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}})
               </ion-text>
             }
             @if (preparation?.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
               <ion-text>
-                {{ brew?.grind_weight | number : '.0-2' }}gr
+                {{ $safeNavigationMigration(brew?.grind_weight) | number : '.0-2' }}gr
                 / {{ brew.brew_beverage_quantity | number : '.0-2' }}{{ brewQuantityEnum[brew?.brew_beverage_quantity_type] }}&nbsp;({{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}})
               </ion-text>
             }
           </ion-col>
           @if (brew?.brew_time && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.brew_time,
-            preparation?.visible_list_view_parameters.brew_time,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.brew_time),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ 'BREW_DATA_TIME' | translate }}</ion-label>
               <br />
@@ -300,20 +300,20 @@
             </ion-col>
           }
           @if ((brew?.grind_size != '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.grind_size,
-            preparation?.visible_list_view_parameters.grind_size,
-            preparation?.use_custom_parameters])) ||  (brew?.mill_speed > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.mill_speed,
-            preparation?.visible_list_view_parameters.mill_speed,
-            preparation?.use_custom_parameters]))) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.grind_size),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) ||  (brew?.mill_speed > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.mill_speed,
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.mill_speed),
+            $safeNavigationMigration(preparation?.use_custom_parameters)]))) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ 'BREW_DATA_GRIND_SIZE' | translate }}</ion-label>
               <br />
               <ion-text>@if (brew?.grind_size != '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.grind_size,
-                preparation?.visible_list_view_parameters.grind_size,
-                preparation?.use_custom_parameters])) {
+                $safeNavigationMigration(preparation?.visible_list_view_parameters.grind_size),
+                $safeNavigationMigration(preparation?.use_custom_parameters)])) {
                 <span>{{ brew?.grind_size }}</span>
                 }@if (brew?.mill_speed > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.mill_speed,
-                preparation?.visible_list_view_parameters.mill_speed,
-                preparation?.use_custom_parameters])) {
+                $safeNavigationMigration(preparation?.visible_list_view_parameters.mill_speed),
+                $safeNavigationMigration(preparation?.use_custom_parameters)])) {
                 <span>&nbsp;&#64;&nbsp;{{ brew?.mill_speed }}</span>
               }</ion-text>
             </ion-col>
@@ -326,8 +326,8 @@
             </ion-col>
           }
           @if (brew?.brew_temperature > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.brew_temperature,
-            preparation?.visible_list_view_parameters.brew_temperature,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.brew_temperature),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ 'BREW_DATA_BREW_TEMPERATURE' | translate }}</ion-label>
               <br />
@@ -335,8 +335,8 @@
             </ion-col>
           }
           @if (brew?.pressure_profile !=='' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.pressure_profile,
-            preparation?.visible_list_view_parameters.pressure_profile,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.pressure_profile),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ 'BREW_DATA_PRESSURE_PROFILE' | translate }}</ion-label>
               <br />
@@ -344,8 +344,8 @@
             </ion-col>
           }
           @if (brew?.bean_weight_in > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.bean_weight_in,
-            preparation?.visible_list_view_parameters.bean_weight_in,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.bean_weight_in),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_BEAN_WEIGHT_IN" | translate }}</ion-label>
               <br />
@@ -353,8 +353,8 @@
             </ion-col>
           }
           @if (brew?.mill_timer > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.mill_timer,
-            preparation?.visible_list_view_parameters.mill_timer,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.mill_timer),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_MILL_TIMER" | translate }}</ion-label>
               <br />
@@ -362,8 +362,8 @@
             </ion-col>
           }
           @if (brew?.vessel_name !== '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.vessel,
-            preparation?.visible_list_view_parameters.vessel,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.vessel),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_VESSEL_NAME_WEIGHT" | translate }}</ion-label>
               <br />
@@ -371,8 +371,8 @@
             </ion-col>
           }
           @if (brew?.brew_temperature_time > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.brew_temperature_time,
-            preparation?.visible_list_view_parameters.brew_temperature_time,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.brew_temperature_time),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_TEMPERATURE_TIME" | translate }}</ion-label>
               <br />
@@ -380,8 +380,8 @@
             </ion-col>
           }
           @if (brew?.coffee_blooming_time > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.coffee_blooming_time,
-            preparation?.visible_list_view_parameters.coffee_blooming_time,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.coffee_blooming_time),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_COFFEE_BLOOMING_TIME" | translate }}</ion-label>
               <br />
@@ -389,8 +389,8 @@
             </ion-col>
           }
           @if ((preparation?.style_type === PREPARATION_STYLE_TYPE.ESPRESSO && brew?.coffee_first_drip_time > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.coffee_first_drip_time,
-            preparation?.visible_list_view_parameters.coffee_first_drip_time,
-            preparation?.use_custom_parameters])) || (preparation?.use_custom_parameters &&  preparation?.visible_list_view_parameters.coffee_first_drip_time && brew?.coffee_first_drip_time > 0)) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.coffee_first_drip_time),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) || (preparation?.use_custom_parameters &&  preparation?.visible_list_view_parameters.coffee_first_drip_time && brew?.coffee_first_drip_time > 0)) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate }}</ion-label>
               <br />
@@ -398,8 +398,8 @@
             </ion-col>
           }
           @if (brew?.water !== '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.water,
-            preparation?.visible_list_view_parameters.water,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.water),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_WATER" | translate }}</ion-label>
               <br />
@@ -407,8 +407,8 @@
             </ion-col>
           }
           @if (brew?.coffee_type !== '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.coffee_type,
-            preparation?.visible_list_view_parameters.coffee_type,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.coffee_type),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_COFFEE_TYPE" | translate }}</ion-label>
               <br />
@@ -416,8 +416,8 @@
             </ion-col>
           }
           @if (brew?.coffee_concentration !== '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.coffee_concentration,
-            preparation?.visible_list_view_parameters.coffee_concentration,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.coffee_concentration),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_DATA_COFFEE_CONCENTRATION" | translate }}</ion-label>
               <br />
@@ -425,8 +425,8 @@
             </ion-col>
           }
           @if (bean?.roastingDate && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.bean_age_by_brew_date,
-            preparation?.visible_list_view_parameters.bean_age_by_brew_date,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.bean_age_by_brew_date),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ "BREW_INFORMATION_BEAN_AGE" | translate }}</ion-label>
               <br />
@@ -434,8 +434,8 @@
             </ion-col>
           }
           @if (brew?.method_of_preparation_tools.length > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.method_of_preparation_tool,
-            preparation?.visible_list_view_parameters.method_of_preparation_tool,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.method_of_preparation_tool),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='12'>
               <ion-label class='card-headline'>{{ "BREW_DATA_PREPARATION_METHOD_TOOL" | translate }}</ion-label>
               <div>
@@ -455,8 +455,8 @@
             </ion-col>
           }
           @if (brew?.note != '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.note,
-            preparation?.visible_list_view_parameters.note,
-            preparation?.use_custom_parameters])) {
+            $safeNavigationMigration(preparation?.visible_list_view_parameters.note),
+            $safeNavigationMigration(preparation?.use_custom_parameters)])) {
             <ion-col size='12'>
               <ion-label class='card-headline'>{{ "BREW_DATA_NOTES" | translate }}</ion-label>
               <br />
@@ -479,7 +479,7 @@
     <ion-icon class='full-sized-icon' name='{{preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON}}'></ion-icon>
   } @else {
     <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
-      <async-image [filePath]='preparation?.attachments[0]' class='bean-slider'></async-image>
+      <async-image [filePath]='$safeNavigationMigration(preparation?.attachments[0])' class='bean-slider'></async-image>
     </div>
   }
 </ng-template>

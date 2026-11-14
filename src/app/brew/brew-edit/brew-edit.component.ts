@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   HostListener,
   inject,
@@ -60,6 +61,7 @@ declare var window;
   selector: 'brew-edit',
   templateUrl: './brew-edit.component.html',
   styleUrls: ['./brew-edit.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     BrewBrewingComponent,
     TranslatePipe,

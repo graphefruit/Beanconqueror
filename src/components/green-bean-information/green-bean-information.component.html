@@ -32,7 +32,7 @@
 
                 @if (greenBean?.date) {
                   <ion-text>
-                  {{greenBean.date | formatDate:[settings?.date_format]}}</ion-text>
+                  {{greenBean.date | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</ion-text>
                 }
                 @if (!greenBean?.date) {
                   <ion-text>
@@ -60,7 +60,7 @@
               </ion-col>
               <ion-col size="6">
                 <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label><br/>
-                <ion-text [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: greenBean?.weight,leftOver: greenBean?.weight - getUsedWeightCount() | number : '.0-2'}">{{daysOld()}}</ion-text>
+                <ion-text [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: $safeNavigationMigration(greenBean?.weight),leftOver: $safeNavigationMigration(greenBean?.weight) - getUsedWeightCount() | number : '.0-2'}">{{daysOld()}}</ion-text>
               </ion-col>
             </ion-row>
           </ion-grid>

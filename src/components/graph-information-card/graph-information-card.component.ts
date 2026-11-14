@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -51,6 +52,7 @@ declare var Plotly;
   selector: 'graph-information-card',
   templateUrl: './graph-information-card.component.html',
   styleUrls: ['./graph-information-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     LongPressDirective,
     GraphDisplayCardComponent,

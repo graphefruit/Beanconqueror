@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import {
@@ -21,6 +26,7 @@ import { HeaderComponent } from '../../components/header/header.component';
   selector: 'info',
   templateUrl: './info.component.html',
   styleUrls: ['./info.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RouterLink,
     TranslatePipe,

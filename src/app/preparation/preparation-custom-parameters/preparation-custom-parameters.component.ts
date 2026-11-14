@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -34,6 +40,7 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
   selector: 'app-preparation-custom-parameters',
   templateUrl: './preparation-custom-parameters.component.html',
   styleUrls: ['./preparation-custom-parameters.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     ManageCustomParameterComponent,

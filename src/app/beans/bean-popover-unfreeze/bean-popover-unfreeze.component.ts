@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -38,6 +44,7 @@ import { UIToast } from '../../../services/uiToast';
   selector: 'app-bean-popover-unfreeze',
   templateUrl: './bean-popover-unfreeze.component.html',
   styleUrls: ['./bean-popover-unfreeze.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

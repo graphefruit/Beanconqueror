@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -41,6 +42,7 @@ import { UIHelper } from '../../../services/uiHelper';
   selector: 'app-brew-modal-import-shot-gaggimate',
   templateUrl: './brew-modal-import-shot-gaggimate.component.html',
   styleUrls: ['./brew-modal-import-shot-gaggimate.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     AgVirtualScrollComponent,

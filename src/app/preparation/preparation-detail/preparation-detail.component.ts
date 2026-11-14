@@ -1,4 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+  OnInit,
+} from '@angular/core';
 
 import {
   IonBadge,
@@ -33,6 +39,7 @@ import { UIHelper } from '../../../services/uiHelper';
   selector: 'app-preparation-detail',
   templateUrl: './preparation-detail.component.html',
   styleUrls: ['./preparation-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     HeaderComponent,

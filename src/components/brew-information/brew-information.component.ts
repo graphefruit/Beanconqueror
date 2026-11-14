@@ -1,5 +1,6 @@
 import { DecimalPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
@@ -130,6 +131,7 @@ declare let window;
     IonCol,
     IonChip,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class BrewInformationComponent implements OnInit, OnChanges {

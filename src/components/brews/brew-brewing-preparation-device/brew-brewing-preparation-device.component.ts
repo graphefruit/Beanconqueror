@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -99,6 +100,7 @@ import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
   selector: 'brew-brewing-preparation-device',
   templateUrl: './brew-brewing-preparation-device.component.html',
   styleUrls: ['./brew-brewing-preparation-device.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     PreventCharacterDirective,

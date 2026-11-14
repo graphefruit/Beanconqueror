@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -93,6 +94,7 @@ interface IEventPayload {
   selector: 'brew-add',
   templateUrl: './brew-add.component.html',
   styleUrls: ['./brew-add.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     BrewBrewingComponent,
     DisableDoubleClickDirective,

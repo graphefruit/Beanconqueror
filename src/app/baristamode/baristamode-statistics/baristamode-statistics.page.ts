@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -39,6 +40,7 @@ import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewSto
   selector: 'app-baristamode-statistics',
   templateUrl: './baristamode-statistics.page.html',
   styleUrls: ['./baristamode-statistics.page.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     DecimalPipe,

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   inject,
@@ -35,6 +36,7 @@ import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetooth
   selector: 'bean-roast-information',
   templateUrl: './bean-roast-information.component.html',
   styleUrls: ['./bean-roast-information.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     PreventCharacterDirective,

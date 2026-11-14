@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   inject,
@@ -48,6 +49,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   selector: 'app-bluetooth-device-chooser-popover',
   templateUrl: './bluetooth-device-chooser-popover.component.html',
   styleUrls: ['./bluetooth-device-chooser-popover.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     TranslatePipe,

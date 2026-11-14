@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -66,6 +67,7 @@ declare var Plotly;
   selector: 'brew-flow',
   templateUrl: './brew-flow.component.html',
   styleUrls: ['./brew-flow.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
     BrewFunction,

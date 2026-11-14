@@ -237,7 +237,7 @@
         <ion-item lines="none">
           <ion-label position="stacked" style="min-height:30px;">
             <h2>{{ "PREPARATION_DEVICE.RESIDUAL_LAG_TIME" | translate }}&nbsp;<ion-badge
-              style="vertical-align: top;">{{ data.connectedPreparationDevice.customParams?.residualLagTime| toFixed: 2 }}
+              style="vertical-align: top;">{{ $safeNavigationMigration(data.connectedPreparationDevice.customParams?.residualLagTime)| toFixed: 2 }}
             </ion-badge>
             </h2>
           </ion-label>

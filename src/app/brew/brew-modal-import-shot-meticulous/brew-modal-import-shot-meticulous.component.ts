@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -39,6 +40,7 @@ import { UIHelper } from '../../../services/uiHelper';
   selector: 'app-brew-modal-import-shot-meticulous',
   templateUrl: './brew-modal-import-shot-meticulous.component.html',
   styleUrls: ['./brew-modal-import-shot-meticulous.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
     AgVirtualScrollComponent,

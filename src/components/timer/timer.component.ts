@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   inject,
@@ -31,6 +32,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   selector: 'timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TransformDateDirective, IonItem, IonInput, IonButton, IonIcon],
 })
 export class TimerComponent implements OnInit, OnDestroy {

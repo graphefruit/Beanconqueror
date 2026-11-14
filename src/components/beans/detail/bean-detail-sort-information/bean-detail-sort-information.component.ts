@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   inject,
@@ -23,6 +24,7 @@ import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
   selector: 'bean-detail-sort-information',
   templateUrl: './bean-detail-sort-information.component.html',
   styleUrls: ['./bean-detail-sort-information.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [TranslatePipe, BeanFunction, IonCard, IonItem, IonLabel],
 })
 export class BeanDetailSortInformationComponent implements OnInit {

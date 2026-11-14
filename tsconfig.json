@@ -1,7 +1,10 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
+    // TypeScript 6 deprecates "baseUrl"; this keeps the "src/..." imports working.
+    "paths": {
+      "src/*": ["./src/*"]
+    },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
@@ -15,6 +18,10 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "useDefineForClassFields": false,
+    // Defaults that changed in TypeScript 6, set to the values of TypeScript 5.
+    "strict": false,
+    "noUncheckedSideEffectImports": false,
+    "types": ["*"],
 
     // This is currently required because of a typing issue in Ionic 8.
     // See https://github.com/ionic-team/ionic-framework/issues/30650#issuecomment-3254931600

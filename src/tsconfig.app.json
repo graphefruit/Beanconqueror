@@ -4,5 +4,13 @@
     "outDir": "../out-tsc/app",
     "types": []
   },
-  "exclude": ["test.ts", "**/*.spec.ts", "**/*.worker.ts", "**/test-utils/**"]
+  "exclude": ["test.ts", "**/*.spec.ts", "**/*.worker.ts", "**/test-utils/**"],
+  "angularCompilerOptions": {
+    "extendedDiagnostics": {
+      "checks": {
+        "nullishCoalescingNotNullable": "suppress",
+        "optionalChainNotNullable": "suppress"
+      }
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import { DecimalPipe, KeyValuePipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   computed,
@@ -103,6 +104,7 @@ declare var Plotly;
   selector: 'brew-detail',
   templateUrl: './brew-detail.component.html',
   styleUrls: ['./brew-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     BrewBrewingGraphComponent,
     PhotoViewComponent,

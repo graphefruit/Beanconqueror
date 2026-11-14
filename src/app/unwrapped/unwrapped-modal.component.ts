@@ -1,5 +1,6 @@
 import { DatePipe, DecimalPipe, SlicePipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
@@ -39,6 +40,7 @@ register();
     IonIcon,
     IonButton,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UnwrappedModalComponent implements OnInit {

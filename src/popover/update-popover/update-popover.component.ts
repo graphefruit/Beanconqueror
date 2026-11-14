@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
@@ -34,6 +35,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
     IonCol,
     IonButton,
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UpdatePopoverComponent implements OnInit {
@@ -45,8 +47,7 @@ export class UpdatePopoverComponent implements OnInit {
 
   public slide: number = 1;
   @ViewChild('slider', { static: false }) public updateSlider:
-    | ElementRef
-    | undefined;
+    ElementRef | undefined;
   @ViewChild('updateContent', { static: false })
   public updateContentElement: IonContent;
 
