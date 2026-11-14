@@ -89,6 +89,24 @@ export class DatetimePopoverComponent implements OnInit, OnDestroy {
     this.timer.SECONDS = passedDisplayingTime.seconds();
     this.timer.MILLISECONDS = passedDisplayingTime.milliseconds();
     this.colSize = this.getColSize();
+    this.skipScrollAssistOnTriggerRefocus();
+  }
+
+  /**
+   * Ionic refocuses the opening (readonly) timer input after dismiss. With the keyboard still
+   * open on iOS, scroll assist then fires a synthetic click on it, which reopens this popover.
+   * `data-ionic-skip-scroll-assist` is Ionic's internal marker to skip scroll assist on the
+   * next focus; re-check this after Ionic upgrades.
+   */
+  private skipScrollAssistOnTriggerRefocus(): void {
+    const trigger = document.activeElement;
+    if (
+      trigger instanceof HTMLInputElement &&
+      trigger.readOnly &&
+      !this.elementRef.nativeElement.contains(trigger)
+    ) {
+      trigger.setAttribute('data-ionic-skip-scroll-assist', 'true');
+    }
   }
 
   public ngOnDestroy(): void {
@@ -97,7 +115,8 @@ export class DatetimePopoverComponent implements OnInit, OnDestroy {
 
   @HostListener('document:focusin', ['$event'])
   public onDocumentFocusIn(event: FocusEvent): void {
-    if (this.isDismissing) {
+    // A detached popover must never trap focus, otherwise no input in the app can be focused.
+    if (this.isDismissing || !this.elementRef.nativeElement.isConnected) {
       return;
     }
     const target = event.target as HTMLElement;
@@ -269,6 +288,11 @@ export class DatetimePopoverComponent implements OnInit, OnDestroy {
   }
 
   private async safeDismiss(data?: any): Promise<void> {
+    // All datetime popovers share one id, so the fallback below must only touch this instance's
+    // modal; otherwise it can remove a newly opened popover without destroying its component.
+    const ownModal = (this.elementRef.nativeElement as HTMLElement).closest(
+      'ion-modal',
+    );
     try {
       const dismissPromise = this.modalCtrl.dismiss(
         data,
@@ -295,10 +319,8 @@ export class DatetimePopoverComponent implements OnInit, OnDestroy {
       } catch (innerErr) {}
     } finally {
       setTimeout(() => {
-        const stuckModal = document.getElementById(
-          'datetime-popover',
-        ) as HTMLIonModalElement;
-        if (stuckModal) {
+        const stuckModal = ownModal;
+        if (stuckModal?.isConnected) {
           stuckModal.style.removeProperty('pointer-events');
           try {
             (stuckModal as any).didDismiss?.emit({ data, role: 'timeout' });
