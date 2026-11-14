@@ -38,7 +38,6 @@ import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import _ from 'lodash';
 
 import { Bean } from '../../../classes/bean/bean';
-import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
@@ -54,6 +53,7 @@ import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
 import { BeanFunction } from '../../../pipes/bean/beanFunction';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { BeanSortFilterHelperService } from '../../../services/beanSortFilterHelper/bean-sort-filter-helper.service';
+import { sumUsedBeanWeight } from '../../../services/beanUsage/used-bean-weight';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -309,17 +309,9 @@ export class BeanModalSelectComponent implements OnInit {
 
   public getUsedWeightCount(_bean: Bean): number {
     if (this.uiUsedWeightCountCache[_bean.config.uuid] === undefined) {
-      let usedWeightCount: number = 0;
-      const relatedBrews: Array<Brew> =
-        this.uiBeanHelper.getAllBrewsForThisBean(_bean.config.uuid);
-      for (const brew of relatedBrews) {
-        if (brew.bean_weight_in > 0) {
-          usedWeightCount += brew.bean_weight_in;
-        } else {
-          usedWeightCount += brew.grind_weight;
-        }
-      }
-      this.uiUsedWeightCountCache[_bean.config.uuid] = usedWeightCount;
+      this.uiUsedWeightCountCache[_bean.config.uuid] = sumUsedBeanWeight(
+        this.uiBeanHelper.getAllBrewsForThisBean(_bean.config.uuid),
+      );
     }
     /**We cache this one, because its called many times, and its a way faster so**/
     return this.uiUsedWeightCountCache[_bean.config.uuid];

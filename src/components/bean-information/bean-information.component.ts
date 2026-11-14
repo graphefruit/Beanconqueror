@@ -62,6 +62,7 @@ import { BeanFieldVisiblePipe } from '../../pipes/bean/beanFieldVisible';
 import { BeanFunction } from '../../pipes/bean/beanFunction';
 import { FormatDatePipe } from '../../pipes/formatDate';
 import { ToFixedPipe } from '../../pipes/toFixed';
+import { sumUsedBeanWeight } from '../../services/beanUsage/used-bean-weight';
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import { ServerCommunicationService } from '../../services/serverCommunication/server-communication.service';
 import { ShareService } from '../../services/shareService/share-service.service';
@@ -226,18 +227,9 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public getUsedWeightCount(): number {
-    let usedWeightCount: number = 0;
-    const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      this.bean.config.uuid,
+    return sumUsedBeanWeight(
+      this.uiBeanHelper.getAllBrewsForThisBean(this.bean.config.uuid),
     );
-    for (const brew of relatedBrews) {
-      if (brew.bean_weight_in > 0) {
-        usedWeightCount += brew.bean_weight_in;
-      } else {
-        usedWeightCount += brew.grind_weight;
-      }
-    }
-    return usedWeightCount;
   }
 
   public getRoastEnum(_key: ROASTS_ENUM) {

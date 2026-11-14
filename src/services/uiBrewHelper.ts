@@ -30,6 +30,7 @@ import { IBrewPageSort } from '../interfaces/brew/iBrewPageSort';
 import { ICupping } from '../interfaces/cupping/iCupping';
 import { IMill } from '../interfaces/mill/iMill';
 import { IPreparation } from '../interfaces/preparation/iPreparation';
+import { sumUsedBeanWeight } from './beanUsage/used-bean-weight';
 import { CoffeeBluetoothDevicesService } from './coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { UIAlert } from './uiAlert';
 import { UIAnalytics } from './uiAnalytics';
@@ -213,17 +214,10 @@ export class UIBrewHelper {
     const bean: Bean = _bean;
     if (bean.weight > 0) {
       const beanPackageWeight = bean.weight;
-      let usedWeightCount: number = 0;
       const brews: Array<Brew> = this.uiBrewStorage
         .getAllEntries()
         .filter((e) => e.getBean().config.uuid === bean.config.uuid);
-      for (const brew of brews) {
-        if (brew.bean_weight_in > 0) {
-          usedWeightCount += brew.bean_weight_in;
-        } else {
-          usedWeightCount += brew.grind_weight;
-        }
-      }
+      const usedWeightCount = sumUsedBeanWeight(brews);
 
       // 5 grams is threshold
       // If we just got 5 grams left, ask the user if he wants to archive his beans

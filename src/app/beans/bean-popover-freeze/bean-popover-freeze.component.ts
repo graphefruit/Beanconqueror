@@ -45,6 +45,7 @@ import { TransformDateDirective } from '../../../directive/transform-date';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { KeysPipe } from '../../../pipes/keys';
 import { ToFixedPipe } from '../../../pipes/toFixed';
+import { sumUsedBeanWeight } from '../../../services/beanUsage/used-bean-weight';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -150,18 +151,9 @@ export class BeanPopoverFreezeComponent implements OnInit {
   }
 
   public getUsedWeightCount(): number {
-    let usedWeightCount: number = 0;
-    const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      this.bean.config.uuid,
+    return sumUsedBeanWeight(
+      this.uiBeanHelper.getAllBrewsForThisBean(this.bean.config.uuid),
     );
-    for (const brew of relatedBrews) {
-      if (brew.bean_weight_in > 0) {
-        usedWeightCount += brew.bean_weight_in;
-      } else {
-        usedWeightCount += brew.grind_weight;
-      }
-    }
-    return usedWeightCount;
   }
 
   public async dismiss(): Promise<void> {
