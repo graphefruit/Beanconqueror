@@ -109,8 +109,8 @@ importers:
         specifier: ^8.14.4
         version: 8.14.4(@capacitor/core@8.6.0)
       '@capgo/capacitor-llm':
-        specifier: ^8.2.0
-        version: 8.2.0(@capacitor/core@8.6.0)(@mediapipe/tasks-genai@0.10.30)
+        specifier: ~8.0.19
+        version: 8.0.19(@capacitor/core@8.6.0)(@mediapipe/tasks-genai@0.10.30)
       '@ionic/angular':
         specifier: ^8.8.19
         version: 8.8.19(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/forms@22.2.5(@angular/common@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.2.5(@angular/common@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3)))(rxjs@7.8.2))(@angular/router@22.2.5(@angular/common@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.2.5(@angular/common@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3)))(rxjs@7.8.2))(rxjs@7.8.2)(zone.js@0.16.3)
@@ -824,11 +824,11 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capgo/capacitor-llm@8.2.0':
-    resolution: {integrity: sha512-A1pI/Y1jXnzeAgUiE7HgGMwMw6hQ7vWIbNgdtv+b1rA8bQ2Zs5VhqbwAJrgaEg2L7wNPewW2tUm54s1AZNtoUA==}
+  '@capgo/capacitor-llm@8.0.19':
+    resolution: {integrity: sha512-EdbhlRnreZ51W1VDD/VKGexI+6uGX6m64RNDywrFi4WBuuJqyOATvpdLGNOECv5XDkUVIiJhksTzdGFfUtePJw==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
-      '@mediapipe/tasks-genai': ^0.10.24
+      '@mediapipe/tasks-genai': ^0.10.27
 
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -6461,7 +6461,7 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capgo/capacitor-llm@8.2.0(@capacitor/core@8.6.0)(@mediapipe/tasks-genai@0.10.30)':
+  '@capgo/capacitor-llm@8.0.19(@capacitor/core@8.6.0)(@mediapipe/tasks-genai@0.10.30)':
     dependencies:
       '@capacitor/core': 8.6.0
       '@mediapipe/tasks-genai': 0.10.30

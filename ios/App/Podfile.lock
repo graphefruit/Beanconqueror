@@ -40,7 +40,7 @@ PODS:
     - Capacitor
   - CapgoCameraPreview (8.14.4):
     - Capacitor
-  - CapgoCapacitorLlm (8.2.0):
+  - CapgoCapacitorLlm (8.0.19):
     - Capacitor
     - MediaPipeTasksGenAI
     - MediaPipeTasksGenAIC
@@ -127,7 +127,7 @@ DEPENDENCIES:
   - "CapacitorStatusBar (from `../../node_modules/.pnpm/@capacitor+status-bar@8.0.4_@capacitor+core@8.6.0/node_modules/@capacitor/status-bar`)"
   - "CapawesomeCapacitorFilePicker (from `../../node_modules/.pnpm/@capawesome+capacitor-file-picker@8.1.1_@capacitor+core@8.6.0/node_modules/@capawesome/capacitor-file-picker`)"
   - "CapgoCameraPreview (from `../../node_modules/.pnpm/@capgo+camera-preview@8.14.4_@capacitor+core@8.6.0/node_modules/@capgo/camera-preview`)"
-  - "CapgoCapacitorLlm (from `../../node_modules/.pnpm/@capgo+capacitor-llm@8.2.0_@capacitor+core@8.6.0_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm`)"
+  - "CapgoCapacitorLlm (from `../../node_modules/.pnpm/@capgo+capacitor-llm@8.0.19_@capacitor+core@8.6.0_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
   - "PantristCapacitorPluginMlKitTextRecognition (from `../../node_modules/.pnpm/@pantrist+capacitor-plugin-ml-kit-text-recognition@8.1.1_@capacitor+core@8.6.0/node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition`)"
 
@@ -192,7 +192,7 @@ EXTERNAL SOURCES:
   CapgoCameraPreview:
     :path: "../../node_modules/.pnpm/@capgo+camera-preview@8.14.4_@capacitor+core@8.6.0/node_modules/@capgo/camera-preview"
   CapgoCapacitorLlm:
-    :path: "../../node_modules/.pnpm/@capgo+capacitor-llm@8.2.0_@capacitor+core@8.6.0_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm"
+    :path: "../../node_modules/.pnpm/@capgo+capacitor-llm@8.0.19_@capacitor+core@8.6.0_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm"
   CordovaPlugins:
     :path: "../capacitor-cordova-ios-plugins"
   PantristCapacitorPluginMlKitTextRecognition:
@@ -218,7 +218,7 @@ SPEC CHECKSUMS:
   CapacitorStatusBar: ff844df1f126da6c4fbc4028272425fa3a91e7e3
   CapawesomeCapacitorFilePicker: 7ae3700f2fee0d0a3ab54dcd0e74de6d914d7195
   CapgoCameraPreview: d11dbb18585abf59ee3168c914497b48d3359bee
-  CapgoCapacitorLlm: f0d739c82ae2f02c1f0aafaefe6ca56dce0b215c
+  CapgoCapacitorLlm: 49597eace2908bfed5a2624d1551e73ad1a4f3d4
   CordovaPlugins: be8d378e42cb3bf5a173f0d9bea3923061def834
   GoogleDataTransport: a24e58982ab3ba2f64d79613e027fe7f57e88539
   GoogleMLKit: b1eee21a41c57704fe72483b15c85cb2c0cd7444
@@ -240,6 +240,6 @@ SPEC CHECKSUMS:
   PantristCapacitorPluginMlKitTextRecognition: 22330573cd47ebbe1370bab03cfde514cedb9f4a
   PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
 
-PODFILE CHECKSUM: 9125507c93409d086071dbf147ffd5f5c0a3eac3
+PODFILE CHECKSUM: ce58b9f2dde3b813077abbb9bf36114f6e4d6760
 
 COCOAPODS: 1.16.2
