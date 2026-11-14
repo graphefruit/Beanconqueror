@@ -440,14 +440,12 @@ export class UIExportImportHelper {
       this.uiLog.log(
         'checkBackupAndSeeIfDataAreCorrupted - Check if we got a corruption',
       );
+      if (this.databaseNotRead) {
+        // A backup was chosen in its place (checkDatabaseReadable).
+        return;
+      }
       const dataState = await this.uiStorage.getDataState();
       if (dataState === 'unknown') {
-        // Not an empty database: the entries can still be stored and be
-        // newer than the internal backup, so nothing is imported by itself.
-        this.databaseNotRead = true;
-        this.uiLog.error(
-          'checkBackupAndSeeIfDataAreCorrupted - The database could not be read, the internal backup is not imported by itself and kept as it is',
-        );
         await this.__importChosenBackupOfUnreadableDatabase();
         return;
       }
@@ -588,13 +586,30 @@ export class UIExportImportHelper {
   }
 
   /**
+   * Called right after UIStorage.init() in the app. A database that cannot
+   * be read is not taken for an empty one (see
+   * __importChosenBackupOfUnreadableDatabase).
+   */
+  public async checkDatabaseReadable(): Promise<void> {
+    if ((await this.uiStorage.getDataState()) === 'unknown') {
+      await this.__importChosenBackupOfUnreadableDatabase();
+    }
+  }
+
+  /**
    * The start does not go on with a database that could not be read. The
+   * entries can still be stored and be newer than the internal backup, so
+   * nothing is imported by itself and the internal backup is kept. The
    * database dialog asks to close the app and start it again, which mostly
    * helps, or to choose a backup from the list of the settings, the
-   * internal backup first. Nothing is chosen for the user. Resolves once
-   * the chosen backup was imported; asks again otherwise.
+   * internal backup first. Resolves once the chosen backup was imported;
+   * asks again otherwise.
    */
   private async __importChosenBackupOfUnreadableDatabase(): Promise<void> {
+    this.databaseNotRead = true;
+    this.uiLog.error(
+      'The database could not be read, the internal backup is not imported by itself and kept as it is',
+    );
     while (true) {
       await this.uiAlert.showIOSIndexedDBIssues(
         'DATABASE_NOT_READ_DESCRIPTION',
@@ -616,11 +631,13 @@ export class UIExportImportHelper {
         const parsedJSON = await this.getJSONFromZIPArrayBufferContent(
           await this.uiFileHelper.readFileAsUint8Array(uri),
         );
+        // Read again with all attempts: only data that still cannot be
+        // read is imported over without a backup of it.
         const result = await this.importBackup(
           parsedJSON,
           'import',
           uri.substring(uri.lastIndexOf('/') + 1),
-          true,
+          (await this.uiStorage.getDataState()) === 'unknown',
         );
         if (result?.BACKUP === false) {
           this.uiLog.log('Imported the backup chosen at start-up');

@@ -400,6 +400,11 @@ export class AppComponent implements AfterViewInit {
       } catch (ex) {}
 
       await this.uiStorage.init();
+      if (this.platform.is('capacitor')) {
+        // Before anything else reads the database, which would wait in the
+        // database dialog that offers no backup.
+        await this.uiExportImportHelper.checkDatabaseReadable();
+      }
       try {
         // Before any entry can be written, so changes know their device.
         await this.deviceIdentity.initialize();

@@ -48,7 +48,7 @@ sequenceDiagram
     Main->>App: bootstrapApplication()
     App->>App: ngOnInit: ThemeService.initializeBeforeAppReady()
     App->>App: ngAfterViewInit: Chart.register(), __appReady()
-    App->>Storage: platform.ready() → UIStorage.init(),<br/>requestPersistentStorage() (not awaited)
+    App->>Storage: platform.ready() → UIStorage.init(),<br/>(native only) UIExportImportHelper.checkDatabaseReadable()
     App->>Storage: DeviceIdentityService.initialize() (awaited),<br/>DeletionJournalService.initialize() (not awaited)
     App->>App: status bar, logging, iOS quick actions
     App->>App: (native only) UIExportImportHelper.checkBackup()
@@ -183,31 +183,23 @@ UIStorage                            (src/services/uiStorage.ts)
   - `StorageClass.__initializeStorage` reads with `getOrFail`. When that
     fails, `initializeStorage()` and `storageReady()` reject and the
     collection refuses `add`, `update`, `remove` and `backfillWithoutTouch`
-    (logged, reported with the alert of a failed save, no event) until a
-    later `reinitializeStorage()` has read it. The same holds while it is
+    (logged, no event) until a later `reinitializeStorage()` has read it. The same holds while it is
     being read and before it was read for the first time. Every write stores
     the whole array, so a write on a list that was not read would replace
     the stored entries.
   - After an import, `SettingsPage.__reinitializeStorages` reads every
     collection again, also after one that could not be read, and then
-    rejects with a `StorageReloadError` naming those. A collection left with
-    the entries from before the import would store them over the imported
-    ones with its next write. The user is told that the data was imported
-    and the app has to be started again
-    (`IMPORT_DATA_NOT_LOADED_RESTART_NEEDED`).
+    rejects naming those. A collection left with the entries from before
+    the import would store them over the imported ones with its next write.
   - `UIStorage.getDataState()` tells whether the database holds data of a
     used installation: `'data'`, `'empty'` or `'unknown'` when it could not
     be read. It reads with the attempts of `get` (reconnecting after 11),
-    but shows no dialog itself. The callers (`checkBackup`,
-    `saveAutomaticBackups`, `UIUpdate.checkUpdate`) leave everything as it
-    is for `'unknown'`.
-  - A refused write tells the user that the change was not saved and to
-    start the app again (`STORAGE_NOT_READ_NOTHING_SAVED`); the details are
-    only logged.
-- `UIStorage.requestPersistentStorage()` asks the browser once at start-up
-  not to clear the database under storage pressure
-  (`navigator.storage.persist()`), where that exists. The start does not wait
-  for the answer, which is only logged.
+    but shows no dialog itself. `checkDatabaseReadable`, `checkBackup` and
+    `saveAutomaticBackups` neither import nor write a backup for
+    `'unknown'`.
+  - The first refused write of a session tells the user that the change was
+    not saved and to start the app again (`STORAGE_NOT_READ_NOTHING_SAVED`);
+    the details are only logged.
 
 ### Change info in the write path
 
@@ -366,7 +358,8 @@ flowchart LR
   `checkBackupAndSeeIfDataAreCorrupted`, an empty database imports the file
   directly; otherwise the data corruption dialog offers the file when it holds
   more beans, brews, preparations or grinders than the database. When the
-  database could not be read (`getDataState()` is `'unknown'`), nothing is
+  database could not be read (`getDataState()` is `'unknown'`), checked right
+  after `UIStorage.init()` before anything else reads it, nothing is
   imported by itself and the start does not go on: the database dialog
   (`IOS_DATABASE_ISSUE_TITLE`, `DATABASE_NOT_READ_DESCRIPTION`) asks to close
   the app and start it again, or to choose a backup in the list of
@@ -392,9 +385,7 @@ flowchart LR
 `__updateDataVersion()` returns `false` or throws, nothing is recorded and the
 migration runs again on the next start (`__checkUpdateForDataVersion`). When
 `UIStorage.getDataState()` is `'empty'` and a migration is pending, a loading
-spinner is shown while they run; with existing data they run without it. When the
-database could not be read (`getDataState()` is `'unknown'`), no migration
-runs and none is recorded; they are left for the next start.
+spinner is shown while they run; with existing data they run without it.
 
 `UPDATE_16` fills in the change info of all stored entries and stores the user
 profile of existing installations

@@ -246,6 +246,73 @@ describe('Checking the internal backup at start-up with a database that cannot b
     expect(popover).not.toHaveBeenCalled();
   });
 
+  it('offers the backups right after the database was opened, before anything else reads it', async () => {
+    const data = createLegacyData({ brews: 20, beans: 4 });
+    const backupFile = await writeBackupFile(data);
+    const { helper, importBackup, showIOSIndexedDBIssues } = await startApp(
+      data,
+      { readable: false },
+      backupFile,
+      [INTERNAL_BACKUP_URI],
+    );
+
+    await helper.checkDatabaseReadable();
+
+    expect(showIOSIndexedDBIssues).toHaveBeenCalledOnceWith(
+      'DATABASE_NOT_READ_DESCRIPTION',
+      'IOS_DATABASE_ISSUE_TITLE',
+      true,
+      'CHOOSE_BACKUP',
+    );
+    expect(importBackup).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not check the internal backup again once a backup was chosen at start-up', async () => {
+    const data = createLegacyData({ brews: 20, beans: 4 });
+    const backupFile = await writeBackupFile(
+      createLegacyData({ brews: 30, beans: 4 }),
+    );
+    const state = { readable: false };
+    const { helper, importBackup, popover } = await startApp(
+      data,
+      state,
+      backupFile,
+      [INTERNAL_BACKUP_URI],
+    );
+    await helper.checkDatabaseReadable();
+    state.readable = true;
+
+    await helper.checkBackup();
+
+    expect(importBackup).toHaveBeenCalledTimes(1);
+    expect(popover).not.toHaveBeenCalled();
+  });
+
+  it('reads the current data again with all attempts before it imports without a backup of it', async () => {
+    const data = createLegacyData({ brews: 20, beans: 4 });
+    const backupFile = await writeBackupFile(data);
+    const state = { readable: false };
+    const { helper, importBackup, showIOSIndexedDBIssues } = await startApp(
+      data,
+      state,
+      backupFile,
+      [INTERNAL_BACKUP_URI],
+    );
+    // Only connecting anew after the dialog helps.
+    const storage = TestBed.inject(Storage);
+    const connect: () => Promise<Storage> = storage.create.bind(storage);
+    spyOn(storage, 'create').and.callFake(() => {
+      state.readable = showIOSIndexedDBIssues.calls.count() > 0;
+      return connect();
+    });
+
+    await helper.checkDatabaseReadable();
+
+    expect(importBackup).toHaveBeenCalledTimes(1);
+    // Readable again: the import saves the current data first.
+    expect(importBackup.calls.mostRecent().args[3]).toBeFalse();
+  });
+
   it('logs that the internal backup was not imported by itself', async () => {
     const data = createLegacyData({ brews: 20, beans: 4 });
     const backupFile = await writeBackupFile(data);
