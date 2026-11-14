@@ -14,6 +14,8 @@ import { FormsModule } from '@angular/forms';
 import {
   IonButton,
   IonContent,
+  IonFab,
+  IonFabButton,
   IonHeader,
   IonIcon,
   IonLabel,
@@ -22,6 +24,8 @@ import {
   IonSegmentButton,
   ModalController,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { add } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
@@ -32,6 +36,8 @@ import { Settings } from '../../classes/settings/settings';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
+import { LongPressDirective } from '../../directive/long-press.directive';
+import { ShortPressDirective } from '../../directive/short-press.directive';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
@@ -62,6 +68,10 @@ import { BrewFilterComponent } from './brew-filter/brew-filter.component';
     IonSearchbar,
     IonIcon,
     IonButton,
+    IonFab,
+    IonFabButton,
+    LongPressDirective,
+    ShortPressDirective,
   ],
 })
 export class BrewPage implements OnInit, OnDestroy {
@@ -129,6 +139,7 @@ export class BrewPage implements OnInit, OnDestroy {
   private forceScrollToTop = false;
 
   constructor() {
+    addIcons({ add });
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
     this.openBrewsFilter = this.settings.GET_BREW_FILTER();

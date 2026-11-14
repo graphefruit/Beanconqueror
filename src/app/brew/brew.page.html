@@ -1,14 +1,6 @@
 <ion-header>
   <app-header [title]="'NAV_BREWS' | translate">
     <app-header-button header-slot="end" icon="beanconqueror-list-add" ariaLabel="Import brew" (clicked)="longPressAdd($event)" />
-    <app-header-button
-      header-slot="end"
-      icon="beanconqueror-add"
-      ariaLabel="Add brew"
-      [longPressEnabled]="true"
-      (clicked)="add()"
-      (longPressed)="longPressAdd($event)"
-    />
   </app-header>
 </ion-header>
 <ion-content #brewContent>
@@ -98,6 +90,12 @@
       }
     }
   }
+  <!-- Last in the page: it floats over the bottom right corner of the list. -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button color="accent" aria-label="Add brew" (short-press)="add()" (long-press)="longPressAdd($event)">
+      <ion-icon name="add" aria-hidden="true" />
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
 <ng-template #brewSearchToolbar>
   <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="uiSearchText"

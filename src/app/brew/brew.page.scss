@@ -2,4 +2,18 @@
   .container {
     display: flex;
   }
+
+  // The add button floats over the end of the list; the list scrolls on past
+  // it (56px is the size of Ionic's button) so the last brew can be read
+  // and opened.
+  ag-virtual-scroll {
+    box-sizing: border-box;
+    padding-bottom: calc(56px + 2 * var(--bq-space-4));
+  }
+
+  // The global icon colour is a faint legacy tone; the plus takes the label
+  // colour of the fill (5.22:1).
+  ion-fab-button ion-icon {
+    color: var(--bq-text-on-accent);
+  }
 }
