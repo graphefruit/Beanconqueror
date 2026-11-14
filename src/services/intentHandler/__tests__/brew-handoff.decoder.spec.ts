@@ -251,21 +251,46 @@ describe('brew handoff decoder', () => {
     expect(decoded).toEqual(validEnvelope());
   });
 
-  it('bounds zip.js fallback inflation when the gzip footer lies about size', async () => {
+  it('stops zip.js fallback inflation when the gzip footer understates the size', async () => {
     (
       window as unknown as { DecompressionStream?: typeof DecompressionStream }
     ).DecompressionStream = undefined;
     const gzipped = await gzipRawBytes(
       new TextEncoder().encode(JSON.stringify({ note: 'x'.repeat(600000) })),
     );
-    gzipped[gzipped.length - 4] = 1;
-    gzipped[gzipped.length - 3] = 0;
-    gzipped[gzipped.length - 2] = 0;
-    gzipped[gzipped.length - 1] = 0;
+    gzipped.set([1, 0, 0, 0], gzipped.length - 4);
+
+    await expectAsync(
+      decodeHandoffPayload(base64Url(gzipped)),
+    ).toBeRejectedWithError('Payload is not gzip');
+  });
+
+  it('rejects a gzip footer above the cap before the zip.js fallback inflates', async () => {
+    (
+      window as unknown as { DecompressionStream?: typeof DecompressionStream }
+    ).DecompressionStream = undefined;
+    const gzipped = await gzipRawBytes(
+      new TextEncoder().encode(JSON.stringify(validEnvelope())),
+    );
+    gzipped.set([0, 0, 0, 1], gzipped.length - 4);
 
     await expectAsync(
       decodeHandoffPayload(base64Url(gzipped)),
     ).toBeRejectedWithError('Inflated payload exceeds 524288 bytes');
+  });
+
+  it('rejects a gzip checksum mismatch in the zip.js fallback', async () => {
+    (
+      window as unknown as { DecompressionStream?: typeof DecompressionStream }
+    ).DecompressionStream = undefined;
+    const gzipped = await gzipRawBytes(
+      new TextEncoder().encode(JSON.stringify(validEnvelope())),
+    );
+    gzipped[gzipped.length - 8] ^= 0xff;
+
+    await expectAsync(
+      decodeHandoffPayload(base64Url(gzipped)),
+    ).toBeRejectedWithError('Payload is not gzip');
   });
 
   it('rejects gzip that inflates past the cap', async () => {
