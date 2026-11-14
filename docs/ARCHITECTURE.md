@@ -23,7 +23,7 @@ Contents:
 | ---------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | Framework        | Angular 22, standalone components, bootstrapped without NgModules                             | `package.json`, `src/main.ts`                                                    |
 | Language         | TypeScript 6, with the defaults of TypeScript 5 (`strict: false`, …)                          | `tsconfig.json`                                                                  |
-| UI kit           | Ionic 8, `md` mode on every platform (iOS included)                                           | `src/main.ts` (`provideIonicAngular({ mode: 'md' })`)                            |
+| UI kit           | Ionic 9, `md` mode on every platform (iOS included)                                           | `src/main.ts` (`provideIonicAngular({ mode: 'md' })`)                            |
 | Native shell     | Capacitor 8 (Android, iOS), plus a few Cordova plugins (BLE, NFC)                             | `capacitor.config.ts`, `package.json`                                            |
 | Storage          | Ionic Storage (IndexedDB first)                                                               | `src/main.ts`, `src/services/uiStorage.ts`                                       |
 | i18n             | ngx-translate, JSON files per language                                                        | `src/main.ts`, `src/assets/i18n/`                                                |
@@ -495,9 +495,10 @@ stand in for.
 
 ### Ionic
 
-Ionic standalone components are imported per component from
-`@ionic/angular/standalone`. `md` mode is forced on all platforms, ripple is off
-and inputs use `useSetInputAPI` so signal inputs work in modals (`src/main.ts`).
+Ionic standalone components are imported per component from `@ionic/angular`
+(Ionic 9 no longer has the `@ionic/angular/standalone` entry point). `md` mode
+is forced on all platforms, ripple is off and inputs use `useSetInputAPI` so
+signal inputs work in modals (`src/main.ts`).
 Custom icons are registered once in `AppComponent.addAllCustomIcons()` from
 `src/generated/icon-registry.ts`.
 

@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Announcer } from './a11y/announcer.service';
 
 /**
- * Live regions in the shadow root of an Ionic toast. Ionic 8 renders one, the
+ * Live regions in the shadow root of an Ionic toast. Ionic 9 renders one, the
  * role="status" element around the message; the selector also catches others
  * a later version might add.
  */
