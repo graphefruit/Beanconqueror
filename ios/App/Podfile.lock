@@ -127,7 +127,7 @@ DEPENDENCIES:
   - "CapacitorStatusBar (from `../../node_modules/.pnpm/@capacitor+status-bar@8.0.2_@capacitor+core@8.6.0/node_modules/@capacitor/status-bar`)"
   - "CapawesomeCapacitorFilePicker (from `../../node_modules/.pnpm/@capawesome+capacitor-file-picker@8.0.2_@capacitor+core@8.6.0/node_modules/@capawesome/capacitor-file-picker`)"
   - "CapgoCameraPreview (from `../../node_modules/.pnpm/@capgo+camera-preview@8.3.1_@capacitor+core@8.6.0/node_modules/@capgo/camera-preview`)"
-  - "CapgoCapacitorLlm (from `../../node_modules/.pnpm/@capgo+capacitor-llm@8.0.11_@capacitor+core@8.6.0_@mediapipe+tasks-genai@0.10.27/node_modules/@capgo/capacitor-llm`)"
+  - "CapgoCapacitorLlm (from `../../node_modules/.pnpm/@capgo+capacitor-llm@8.0.11_@capacitor+core@8.6.0_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
   - "PantristCapacitorPluginMlKitTextRecognition (from `../../node_modules/.pnpm/@pantrist+capacitor-plugin-ml-kit-text-recognition@8.0.0_@capacitor+core@8.6.0/node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition`)"
 
@@ -192,7 +192,7 @@ EXTERNAL SOURCES:
   CapgoCameraPreview:
     :path: "../../node_modules/.pnpm/@capgo+camera-preview@8.3.1_@capacitor+core@8.6.0/node_modules/@capgo/camera-preview"
   CapgoCapacitorLlm:
-    :path: "../../node_modules/.pnpm/@capgo+capacitor-llm@8.0.11_@capacitor+core@8.6.0_@mediapipe+tasks-genai@0.10.27/node_modules/@capgo/capacitor-llm"
+    :path: "../../node_modules/.pnpm/@capgo+capacitor-llm@8.0.11_@capacitor+core@8.6.0_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm"
   CordovaPlugins:
     :path: "../capacitor-cordova-ios-plugins"
   PantristCapacitorPluginMlKitTextRecognition:
@@ -240,6 +240,6 @@ SPEC CHECKSUMS:
   PantristCapacitorPluginMlKitTextRecognition: 2963fc7e2a6bd042e2952f2b3fd938963a8fce0f
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
 
-PODFILE CHECKSUM: 1f5d6ca0f87d1cfee7d2c18b11859b3b4cd6b409
+PODFILE CHECKSUM: 3fda78a339aec481eb6062cbea9d3b97bc37aa40
 
 COCOAPODS: 1.16.2
