@@ -229,7 +229,7 @@ export class CoffeeBluetoothDevicesService {
     });
   }
 
-  private clearScanAllBluetoothDevicesAndPassBackTimeout() {
+  public clearScanAllBluetoothDevicesAndPassBackTimeout() {
     if (this.scanBluetoothTimeout !== null) {
       clearTimeout(this.scanBluetoothTimeout);
       this.scanBluetoothTimeout = null;
