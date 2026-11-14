@@ -85,6 +85,13 @@ $bq-on-action-primary: #ffffff;
   --bq-toggle-handle-size: 26px;
   --bq-toggle-handle-inset: 3px;
   --bq-toggle-border-width: 1.5px;
+  // Segmented control: a track with the chosen option as a raised pill. The
+  // track is opaque: translucent buttons overlap at their edges and draw seams.
+  // Labels 6.51:1 on the track, 7.20:1 on the pill; the pill's accent outline
+  // 4.23:1 against the track (dark 8.60:1, 6.91:1 and 5.13:1).
+  --bq-segment-track: var(--bq-surface-mid);
+  --bq-segment-selected: var(--bq-palette-white);
+  --bq-shadow-segment: 0 1px 3px rgba(33, 25, 20, 0.15);
   // Minimum touch target for controls that stand on their own.
   --bq-touch-target: 44px;
 
@@ -305,6 +312,11 @@ brew-timer,
   --bq-control-error: #ff7a88;
   --bq-control-toggle-off: #8a7464;
   --bq-control-toggle-off-border: var(--bq-palette-cream-200);
+  // The pill takes the page colour, darker than the track around it.
+  --bq-segment-track: #3a302a;
+  --bq-segment-selected: var(--bq-palette-espresso-900);
+  // A list item, not `none`: it is combined with the outline.
+  --bq-shadow-segment: 0 0 0 transparent;
 
   --bq-shadow-overlay: 0 4px 16px rgba(0, 0, 0, 0.4);
   // An espresso scrim would vanish on the espresso page; black still dims it.

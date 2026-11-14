@@ -111,12 +111,10 @@ ion-card.small-card {
   }
 }
 
-ion-segment-button::part(indicator) {
-  /* Styles to apply to the `foo` part */
-  margin: 0 auto;
-  width: 35%;
-}
-
+// Segmented control: the buttons form a track and the chosen one is a raised
+// pill inside it. The track is drawn on the buttons rather than on ion-segment,
+// whose vertical padding would otherwise end up inside the track. The pill has
+// an accent outline, so the choice does not rest on the label colour alone.
 ion-segment-button {
   letter-spacing: -0.63px;
   font-size: var(--bq-type-subhead);
@@ -125,18 +123,53 @@ ion-segment-button {
   // instead of overlapping.
   height: auto;
   min-height: var(--bq-touch-target);
-  margin: auto;
+  margin: 0;
 
-  --color: var(--ion-text-color);
+  --background: var(--bq-segment-track);
+  --background-checked: var(--bq-segment-track);
+  // The focus ring marks keyboard focus; Ionic's tint would cover the pill.
+  --background-focused-opacity: 0;
+  --padding-start: var(--bq-space-3);
+  --padding-end: var(--bq-space-3);
+  --color: var(--bq-text-secondary);
   // The selected label is text, so it takes the text accent rather than the fill.
   --color-checked: var(--bq-text-accent);
-  --indicator-color: var(--bq-text-accent);
+  --indicator-color: var(--bq-segment-selected);
+  --indicator-height: 100%;
+  --indicator-box-shadow:
+    inset 0 0 0 var(--bq-control-border-width) var(--bq-text-accent),
+    var(--bq-shadow-segment);
 
   ion-label,
   .ion-label {
     font-size: var(--bq-type-lead) !important;
     line-height: var(--bq-leading-heading);
   }
+}
+// The track keeps clear of the screen edges, like the cards below it.
+ion-segment {
+  padding-inline: var(--bq-space-3);
+}
+ion-segment-button:first-of-type {
+  border-start-start-radius: var(--bq-radius-field);
+  border-end-start-radius: var(--bq-radius-field);
+}
+// Buttons end on fractional pixels; a 1px spill of the track closes the hairline
+// gaps that would otherwise show between them.
+ion-segment-button:not(:last-of-type) {
+  box-shadow: 1px 0 0 var(--bq-segment-track);
+}
+ion-segment-button:last-of-type {
+  border-start-end-radius: var(--bq-radius-field);
+  border-end-end-radius: var(--bq-radius-field);
+}
+// Ionic anchors the indicator to the bottom edge as an underline; inset on all
+// sides it becomes the pill, with the track showing around it.
+ion-segment-button::part(indicator) {
+  inset: var(--bq-space-1);
+}
+ion-segment-button::part(indicator-background) {
+  border-radius: calc(var(--bq-radius-field) - var(--bq-space-1));
 }
 .ion-palette-dark {
   ion-card:not(.best-brew):not(.favourite-brew) {
@@ -862,9 +895,9 @@ ion-segment.tabs {
   ion-segment-button {
     width: 100%;
 
+    // Full label colour: faded, the count misses AA on the segment track.
     .value {
       font-size: var(--bq-type-caption);
-      opacity: 0.8;
     }
   }
 }

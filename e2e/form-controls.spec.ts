@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { completeFirstRun } from './support/first-run';
@@ -8,7 +8,9 @@ import { openFromProfile } from './support/profile';
  * The basic form controls stay operable by role and expose their state to
  * assistive technology: checkboxes, radios and switches report checked,
  * sliders move with the arrow keys, and text fields have a visible label and
- * announce a missing required value.
+ * announce a missing required value. In light and dark, every state of a
+ * control stands out from its surroundings (WCAG 1.4.11, 3:1) and the choice
+ * is never marked by colour alone.
  */
 
 /**
@@ -23,6 +25,63 @@ async function openAddBean(page: Page): Promise<void> {
   await page.getByRole('tab', { name: 'Beans' }).click();
   await page.getByRole('button', { name: 'Add bean' }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
+}
+
+type Rgb = [number, number, number];
+
+/** The first colour in a computed value, e.g. of a background or box-shadow. */
+function firstColour(value: string): Rgb {
+  const match = /rgba?\((\d+), (\d+), (\d+)/.exec(value);
+  if (!match) throw new Error(`no colour in "${value}"`);
+  return [Number(match[1]), Number(match[2]), Number(match[3])];
+}
+
+function contrast(a: Rgb, b: Rgb): number {
+  const luminance = (rgb: Rgb) => {
+    const [r, g, b] = rgb.map((channel) => {
+      const c = channel / 255;
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (light + 0.05) / (dark + 0.05);
+}
+
+async function setDark(page: Page, dark: boolean): Promise<void> {
+  await page.evaluate(
+    (on) => document.documentElement.classList.toggle('ion-palette-dark', on),
+    dark,
+  );
+}
+
+/**
+ * Label, track and pill colours of a segment button. The tab role sits on the
+ * native button inside the host's shadow root, next to the pill.
+ */
+async function segmentColours(tab: Locator) {
+  const values = await tab.evaluate((native) => {
+    const host = (native.getRootNode() as ShadowRoot).host;
+    const pill = host.shadowRoot!.querySelector(
+      '.segment-button-indicator-background',
+    )!;
+    const pillStyle = getComputedStyle(pill);
+    const hostStyle = getComputedStyle(host);
+    return {
+      label: hostStyle.color,
+      track: hostStyle.backgroundColor,
+      pill: pillStyle.backgroundColor,
+      outline: pillStyle.boxShadow,
+      pillShown: getComputedStyle(pill.parentElement!).opacity,
+    };
+  });
+  return {
+    label: firstColour(values.label),
+    track: firstColour(values.track),
+    pill: firstColour(values.pill),
+    outline: values.outline,
+    pillShown: values.pillShown === '1',
+  };
 }
 
 test.beforeEach(async ({ page }) => {
@@ -117,3 +176,31 @@ test('the favourites filter switch can be turned on and off', async ({
   await favourites.click();
   await expect(favourites).not.toBeChecked();
 });
+
+for (const dark of [false, true]) {
+  const theme = dark ? 'dark' : 'light';
+
+  test(`the chosen segment is an outlined pill on the track (${theme})`, async ({
+    page,
+  }) => {
+    await page.getByRole('tab', { name: 'Beans' }).click();
+    await setDark(page, dark);
+    const chosen = page.getByRole('tab', { name: /^Available/ });
+    const other = page.getByRole('tab', { name: /^Archive/ });
+    await expect(chosen).toHaveAttribute('aria-selected', 'true');
+
+    const selected = await segmentColours(chosen);
+    const unselected = await segmentColours(other);
+    expect(selected.pillShown).toBe(true);
+    expect(unselected.pillShown).toBe(false);
+    expect(contrast(selected.label, selected.pill)).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(unselected.label, unselected.track)).toBeGreaterThanOrEqual(
+      4.5,
+    );
+    // Not colour alone: the pill has an outline that stands out from the track.
+    expect(selected.outline).toMatch(/ inset/);
+    expect(
+      contrast(firstColour(selected.outline), selected.track),
+    ).toBeGreaterThanOrEqual(3);
+  });
+}

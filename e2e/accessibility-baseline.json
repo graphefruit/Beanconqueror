@@ -13,7 +13,6 @@
   },
   "beans": {
     "light": [
-      "color-contrast | .segment-button-checked > ion-label > .value",
       "color-contrast | .text-color-inactive.ion-margin-top",
       "landmark-banner-is-top-level | beans > ion-header",
       "landmark-main-is-top-level | beans > ion-content",
@@ -32,7 +31,6 @@
   },
   "brews": {
     "light": [
-      "color-contrast | .segment-button-checked > ion-label > .value",
       "color-contrast | .text-color-inactive.ion-margin-top",
       "landmark-banner-is-top-level | brew > ion-header",
       "landmark-main-is-top-level | brew > ion-content",
@@ -87,7 +85,6 @@
   },
   "preparations": {
     "light": [
-      "color-contrast | .segment-button-checked > ion-label > .value",
       "color-contrast | .text-color-inactive.ion-margin-top",
       "landmark-banner-is-top-level | preparation > ion-header",
       "landmark-main-is-top-level | preparation > ion-content",

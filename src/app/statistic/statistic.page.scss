@@ -16,14 +16,9 @@
     margin: 0 8px 8px;
 
     .range-segment {
-      --background: transparent;
       font-size: 0.8em;
 
       ion-segment-button {
-        --indicator-color: transparent;
-        --background-checked: transparent;
-        --color: var(--ion-color-medium);
-        --color-checked: var(--ion-color-accent-secondary);
         min-width: auto;
       }
     }
