@@ -1207,14 +1207,15 @@ export class AppComponent implements AfterViewInit {
         this.routerOutlet.canGoBack()
       ) {
         this.routerOutlet.pop();
-      } else if (this.router.url.startsWith('/home/profile/')) {
-        // Preparation methods and grinders are opened from the profile tab.
-        void this.navCtrl.navigateBack('/home/profile');
-      } else if (this.router.url.indexOf('/home') >= 0) {
+      } else if (
+        this.router.url.startsWith('/home/') &&
+        !this.router.url.startsWith('/home/profile/')
+      ) {
         App.minimizeApp();
       } else {
-        this.router.navigate(['/home/dashboard'], { replaceUrl: true });
-        // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
+        // Every page that is not a tab is opened from the profile, so one
+        // level up is the profile, also when the page has no history.
+        void this.navCtrl.navigateBack('/home/profile');
       }
     });
   }

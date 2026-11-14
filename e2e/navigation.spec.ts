@@ -1,4 +1,5 @@
 import type { AppPlugin } from '@capacitor/app';
+import type { AppLauncherPlugin } from '@capacitor/app-launcher';
 import type { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
@@ -83,28 +84,82 @@ test('preparation methods and grinders open from the profile and lead back', asy
   await expect(page.getByRole('link', { name: 'Grinders' })).toBeVisible();
 });
 
-test('statistics and settings open from the profile and lead back', async ({
-  page,
-}) => {
-  await page.goto('/');
-  await completeFirstRun(page);
-
-  await openProfile(page);
-  await page.getByRole('link', { name: 'Statistics' }).click();
-  await expect(page).toHaveURL(/\/statistic$/);
-  await expect(page.getByRole('tab', { name: 'General' })).toBeVisible();
+/** Switches optional sections on in the settings and returns to the profile. */
+async function switchOnSections(page: Page, toggles: string[]): Promise<void> {
+  await page.getByRole('link', { name: /^Settings/ }).click();
+  for (const name of toggles) {
+    const toggle = page.getByRole('checkbox', { name });
+    await toggle.scrollIntoViewIfNeeded();
+    await toggle.click();
+    await expect(toggle).toBeChecked();
+  }
   await page.goBack();
   await expect(page).toHaveURL(/\/home\/profile$/);
+}
 
-  await page.getByRole('link', { name: 'Settings' }).click();
-  await expect(page).toHaveURL(/\/settings$/);
-  await expect(
-    page.getByRole('button', { name: /^Language Settings/ }),
-  ).toBeVisible();
-  await page.goBack();
-  await expect(page).toHaveURL(/\/home\/profile$/);
-  await expectProfileTabSelected(page);
-});
+/**
+ * Every page of the former side menu: the hub entry that opens it (the second
+ * tap after the Profile tab), the page and its screen title. Optional sections
+ * first have to be switched on.
+ */
+const FORMER_MENU_PAGES = [
+  { entry: 'Statistics', url: /\/statistic$/, title: 'Statistics' },
+  {
+    entry: 'Brewing Parameters',
+    url: /\/brew-parameter$/,
+    title: 'Brewing Parameters',
+  },
+  {
+    entry: 'Bean parameters',
+    url: /\/bean-parameter$/,
+    title: 'Bean parameters',
+  },
+  { entry: 'Calculations', url: /\/helper\/brew-ratio$/, title: 'Brew Ratio' },
+  { entry: 'Settings', url: /\/settings$/, title: 'Settings' },
+  { entry: 'Info & support', url: /\/info$/, title: 'About Beanconqueror' },
+  {
+    entry: 'Water',
+    url: /\/water-section\/water$/,
+    title: 'Water',
+    switchOn: 'Activate water section',
+  },
+  {
+    entry: 'Graphs',
+    url: /\/graph-section\/graph$/,
+    title: 'Graphs',
+    switchOn: 'Activate graph section',
+  },
+  {
+    entry: 'Bean Roasting',
+    url: /\/roasting-section\/dashboard$/,
+    title: 'Green Beans',
+    switchOn: 'Activate roasting section',
+  },
+] as const;
+
+for (const target of FORMER_MENU_PAGES) {
+  test(`${target.entry} opens in two taps from the profile and leads back`, async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await completeFirstRun(page);
+    if ('switchOn' in target) {
+      await openProfile(page);
+      await switchOnSections(page, [target.switchOn]);
+      await page.getByRole('tab', { name: 'Home', exact: true }).click();
+    }
+
+    await openFromProfile(page, target.entry);
+    await expect(page).toHaveURL(target.url);
+    const banner = page.getByRole('banner').filter({ hasText: target.title });
+    await expect(banner.getByText(target.title, { exact: true })).toBeVisible();
+
+    // The arrow in the header leads back to the profile.
+    await banner.getByRole('button', { name: 'back' }).click();
+    await expect(page).toHaveURL(/\/home\/profile$/);
+    await expectProfileTabSelected(page);
+  });
+}
 
 test('water is listed in the profile once the section is switched on', async ({
   page,
@@ -465,9 +520,83 @@ test.describe('the Android back key', () => {
     expect(await minimizeCalls(native)).toEqual([]);
   });
 
+  test('returns from the former menu pages to the profile', async ({
+    page,
+    native,
+  }) => {
+    for (const target of FORMER_MENU_PAGES) {
+      if ('switchOn' in target) {
+        continue;
+      }
+      await openFromProfile(page, target.entry);
+      await expect(page).toHaveURL(target.url);
+      await pressHardwareBack(page);
+      await expect(page).toHaveURL(/\/home\/profile$/);
+    }
+    expect(await minimizeCalls(native)).toEqual([]);
+  });
+
   test('leaves the app from the profile itself', async ({ page, native }) => {
     await pressHardwareBack(page);
     await expect.poll(() => minimizeCalls(native)).toHaveLength(1);
     await expect(page).toHaveURL(/\/home\/profile$/);
   });
+});
+
+test('the profile opens the community links of the former menu', async ({
+  page,
+  native,
+}) => {
+  const opened: string[] = [];
+  await native.mockCapacitor<AppLauncherPlugin>('AppLauncher', {
+    openUrl: ({ url }) => {
+      opened.push(url);
+      return { completed: true };
+    },
+  });
+  await page.goto('/');
+  await completeFirstRun(page);
+  await openProfile(page);
+
+  const content = page.locator('app-profile ion-content');
+  for (const name of ['Instagram', 'Facebook', 'GitHub', 'Discord']) {
+    await content.getByRole('button', { name, exact: true }).click();
+  }
+  await expect
+    .poll(() => opened)
+    .toEqual([
+      'https://www.instagram.com/beanconqueror/',
+      'https://www.facebook.com/Beanconqueror/',
+      'https://github.com/graphefruit/Beanconqueror',
+      'https://discord.gg/vDzA5dZjG8',
+    ]);
+});
+
+test('the barista mode is listed under equipment once a Sanremo YOU method exists', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await openProfile(page);
+  const baristaMode = page.getByRole('link', { name: /^Baristamode/ });
+  await expect(baristaMode).toHaveCount(0);
+
+  await page.getByRole('link', { name: /^Preparation methods/ }).click();
+  await page.getByRole('button', { name: 'Add preparation method' }).click();
+  await page.getByText('Sanremo YOU', { exact: true }).click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  // A machine method asks for its connection next; it can be set up later.
+  await expect(
+    page.getByRole('banner').getByText('Device connection'),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'back' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByRole('button', { name: 'back' }).click();
+  await expect(page).toHaveURL(/\/home\/profile$/);
+
+  // The barista mode itself needs the machine, so the link is checked only.
+  await expect(baristaMode).toHaveAccessibleName(
+    'Baristamode Brews on the Sanremo YOU',
+  );
+  await expect(baristaMode).toHaveAttribute('href', '/baristamode');
 });
