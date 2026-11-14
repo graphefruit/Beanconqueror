@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -13,9 +13,7 @@ import { CameraOcrService, MultiPassOcrResult } from './camera-ocr.service';
 import { CloudFieldExtractionService } from './cloud-field-extraction.service';
 import { OcrMetadataService } from './ocr-metadata.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class CloudAIBeanImportService {
   private readonly uiAlert = inject(UIAlert);
   private readonly translate = inject(TranslateService);

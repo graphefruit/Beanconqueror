@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 
@@ -14,9 +14,7 @@ import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { UIBeanHelper } from '../uiBeanHelper';
 import { UIHelper } from '../uiHelper';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class BeanSortFilterHelperService {
   private readonly modalCtrl = inject(ModalController);
   private readonly uiHelper = inject(UIHelper);

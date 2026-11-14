@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 
@@ -10,9 +10,7 @@ import { PREPARATION_SORT_ORDER } from '../../enums/preparations/preparationSort
 import { IPreparationPageSort } from '../../interfaces/preparation/iPreparationPageSort';
 import { UIHelper } from '../uiHelper';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class PreparationSortFilterHelperService {
   private readonly modalCtrl = inject(ModalController);
   private readonly uiHelper = inject(UIHelper);

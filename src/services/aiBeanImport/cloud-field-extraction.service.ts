@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Bean } from '../../classes/bean/bean';
 import {
@@ -33,7 +33,7 @@ import {
 import { parseWeightToGrams } from './weight-parsing';
 
 // Orchestrates cloud LLM-based extraction of all bean fields from OCR text.
-@Injectable({ providedIn: 'root' })
+@Service()
 export class CloudFieldExtractionService {
   private uiSettingsStorage = inject(UISettingsStorage, { optional: true });
   private uiLog = inject(UILog, { optional: true });

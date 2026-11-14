@@ -1,10 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 import { Haptics } from '@capacitor/haptics';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class HapticService {
   constructor() {}
 

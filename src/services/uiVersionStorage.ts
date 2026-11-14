@@ -1,12 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 import { StorageClass } from '../classes/storageClass';
 import { Version } from '../classes/version/iVersion';
 import { IVersion } from '../interfaces/version/iVersion';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UiVersionStorage extends StorageClass {
   private version: Version = new Version();
   private isVersionInitialized: number = -1;

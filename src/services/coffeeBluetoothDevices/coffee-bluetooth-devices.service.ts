@@ -1,4 +1,4 @@
-import { EventEmitter, inject, Injectable } from '@angular/core';
+import { EventEmitter, inject, Service } from '@angular/core';
 
 import { Capacitor } from '@capacitor/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -84,9 +84,7 @@ export enum CoffeeBluetoothServiceEvent {
   DISCONNECTED_REFRACTOMETER,
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class CoffeeBluetoothDevicesService {
   private readonly uiStettingsStorage = inject(UISettingsStorage);
   private readonly translate = inject(TranslateService);

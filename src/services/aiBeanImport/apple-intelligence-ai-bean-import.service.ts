@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Platform } from '@ionic/angular/standalone';
 
@@ -25,9 +25,7 @@ export interface AIReadinessResult {
   message?: string;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AppleIntelligenceAIBeanImportService {
   private readonly uiAlert = inject(UIAlert);
   private readonly translate = inject(TranslateService);

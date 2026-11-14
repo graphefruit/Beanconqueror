@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -46,9 +46,7 @@ import {
 /**
  * Service for multi-step field extraction using focused LLM prompts.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class FieldExtractionService {
   private readonly translate = inject(TranslateService);
   private readonly uiLog = inject(UILog);

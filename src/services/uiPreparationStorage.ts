@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -6,9 +6,7 @@ import { Preparation } from '../classes/preparation/preparation';
 import { StorageClass } from '../classes/storageClass';
 import { IPreparation } from '../interfaces/preparation/iPreparation';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIPreparationStorage extends StorageClass {
   private readonly translate = inject(TranslateService);
 

@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ModalController, Platform } from '@ionic/angular/standalone';
 
@@ -32,9 +32,7 @@ import { UISettingsStorage } from './uiSettingsStorage';
 import { UIStorage } from './uiStorage';
 import { UiVersionStorage } from './uiVersionStorage';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIUpdate {
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiMillStorage = inject(UIMillStorage);

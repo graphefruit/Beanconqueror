@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Platform } from '@ionic/angular/standalone';
 
@@ -14,9 +14,7 @@ import { UIToast } from '../uiToast';
 /**https://github.com/EYALIN/community-cordova-plugin-nfc**/
 /** The plugin only clobbers NfcPlugin globally (not nfc/ndef). Use NfcPlugin.**/
 declare var NfcPlugin;
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class NfcService {
   private readonly platform = inject(Platform);
   private readonly uiAlert = inject(UIAlert);

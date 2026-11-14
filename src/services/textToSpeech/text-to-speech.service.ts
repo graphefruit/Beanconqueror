@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Platform } from '@ionic/angular/standalone';
 
@@ -7,9 +7,7 @@ import { UISettingsStorage } from '../uiSettingsStorage';
 
 declare var TTS;
 declare var window;
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class TextToSpeechService {
   private readonly platform = inject(Platform);
 

@@ -1,13 +1,11 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
 import { StorageClass } from '../classes/storageClass';
 import { Water } from '../classes/water/water';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIWaterStorage extends StorageClass {
   private readonly translate = inject(TranslateService);
 

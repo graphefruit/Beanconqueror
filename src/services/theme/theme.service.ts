@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { SystemBarsStyle } from '@capacitor/core';
 import { KeyboardStyle } from '@capacitor/keyboard';
@@ -37,9 +37,7 @@ const LightTheme: Theme = {
 // The native plugins only accept #rrggbb.
 const HEX_COLOR = /^#[0-9a-f]{6}$/i;
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ThemeService {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly plugins = inject(THEME_PLUGINS);

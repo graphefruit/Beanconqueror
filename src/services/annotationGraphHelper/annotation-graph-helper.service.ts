@@ -1,12 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 import moment from 'moment/moment';
 
 declare var Plotly: any;
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AnnotationGraphHelperService {
   private getTimestampMs(val: any): number {
     if (!val) return 0;

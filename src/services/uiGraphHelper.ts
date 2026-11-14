@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ModalController, Platform } from '@ionic/angular/standalone';
 
@@ -17,9 +17,7 @@ import { UIFileHelper } from './uiFileHelper';
  * Handles every helping functionalities
  */
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIGraphHelper {
   private readonly modalController = inject(ModalController);
   private readonly platform = inject(Platform);

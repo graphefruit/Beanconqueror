@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { FileInfo } from '@capacitor/filesystem';
 import moment from 'moment';
@@ -161,9 +161,7 @@ function newestFirst(_a: FileInfo, _b: FileInfo): number {
  * Android, so they are also listed with the automatic backup files, from
  * where they can be imported again on both platforms.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class PreImportBackupService {
   private readonly files = inject(PRE_IMPORT_BACKUP_FILES);
   private readonly uiLog = inject(UILog);

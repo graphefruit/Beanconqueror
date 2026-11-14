@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { AnnouncementPoliteness, LIVE_REGION } from './live-region';
 
@@ -36,9 +36,7 @@ function normalize(message: string | null | undefined): string {
  * the loading message. All of them go through the one live region of
  * LIVE_REGION, so a message is never announced from two places at once.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class Announcer {
   private readonly liveRegion = inject(LIVE_REGION);
 

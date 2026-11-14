@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 import {
   OCR_LARGE_TEXT_AVG_MULTIPLIER,
@@ -73,9 +73,7 @@ export interface EnrichedOCRResult {
  */
 const LAYOUT_HEADER = '=== OCR WITH LAYOUT ===\n\n';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class OcrMetadataService {
   /**
    * Enrich OCR result with layout metadata annotations.

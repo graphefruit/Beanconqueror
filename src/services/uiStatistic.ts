@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -25,9 +25,7 @@ import { UIPreparationStorage } from './uiPreparationStorage';
 import { UIRoastingMachineStorage } from './uiRoastingMachineStorage';
 import { UISettingsStorage } from './uiSettingsStorage';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIStatistic {
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiBeanStorage = inject(UIBeanStorage);

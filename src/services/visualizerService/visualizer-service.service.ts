@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { CapacitorCookies, CapacitorHttp } from '@capacitor/core';
 
@@ -16,9 +16,7 @@ import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIToast } from '../uiToast';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class VisualizerService {
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiToast = inject(UIToast);

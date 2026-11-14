@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 import { MAX_VALID_ELEVATION_METERS } from '../../data/ai-import/ai-import-constants';
 import { isNullLikeValue } from './llm-communication.service';
@@ -297,9 +297,7 @@ export function sanitizeElevation(
  * Service for normalizing OCR text before LLM processing.
  * Handles case normalization, number formatting, and elevation standardization.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class TextNormalizationService {
   /**
    * Normalize ALL CAPS text to Title Case.

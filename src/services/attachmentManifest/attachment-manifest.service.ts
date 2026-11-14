@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Platform } from '@ionic/angular/standalone';
 
@@ -56,9 +56,7 @@ interface WantedAttachment {
  * Only on native platforms; in the browser there are no files to check and
  * the service does nothing.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AttachmentManifestService {
   /** Stat calls per portion; the event loop runs between portions. */
   public static readonly STAT_PORTION = 25;

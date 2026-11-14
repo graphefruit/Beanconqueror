@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Platform } from '@ionic/angular/standalone';
 
@@ -16,9 +16,7 @@ import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIStorage } from '../uiStorage';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class IosPlatformService {
   private readonly uiStorage = inject(UIStorage);
   private readonly uiLog = inject(UILog);

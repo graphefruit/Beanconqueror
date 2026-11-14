@@ -1,13 +1,11 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Brew } from '../../classes/brew/brew';
 import { ServerBrew } from '../../classes/server/brew/brew';
 import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
 import { UIHelper } from '../uiHelper';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class BrewTrackingService {
   private readonly serverCommunication = inject(ServerCommunicationService);
   private readonly uiHelper = inject(UIHelper);

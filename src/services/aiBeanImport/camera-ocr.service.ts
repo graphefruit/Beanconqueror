@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import {
   Camera,
@@ -47,9 +47,7 @@ export function collectRawText(result: MultiPassOcrResult): string {
     .join('\n');
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class CameraOcrService {
   private readonly uiImage = inject(UIImage);
   private readonly uiAlert = inject(UIAlert);

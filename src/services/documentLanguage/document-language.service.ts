@@ -1,4 +1,4 @@
-import { DOCUMENT, inject, Injectable } from '@angular/core';
+import { DOCUMENT, inject, Service } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -9,9 +9,7 @@ const RTL_LANGUAGES = new Set(['ar', 'he']);
  * so screen readers pick the right voice, browsers pick the right CJK glyphs and
  * right-to-left languages are laid out correctly.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class DocumentLanguageService {
   private readonly document = inject(DOCUMENT);
   private readonly translate = inject(TranslateService);

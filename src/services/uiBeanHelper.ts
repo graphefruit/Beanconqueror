@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, Injector } from '@angular/core';
+import { inject, Injector, Service } from '@angular/core';
 
 import {
   ActionSheetController,
@@ -49,9 +49,7 @@ import { UIToast } from './uiToast';
  * Handles every helping functionalities
  */
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIBeanHelper {
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiBeanStorage = inject(UIBeanStorage);

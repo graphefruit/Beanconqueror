@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 
@@ -12,9 +12,7 @@ import { UIAnalytics } from './uiAnalytics';
  * Handles every helping functionalities
  */
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIRoastingMachineHelper {
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly modalController = inject(ModalController);

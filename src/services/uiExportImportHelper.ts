@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ModalController, Platform } from '@ionic/angular/standalone';
 
@@ -127,9 +127,7 @@ function holdsUnchangedImport(_stored: any, _now: number): boolean {
   return !changed && !deleted;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIExportImportHelper {
   private readonly uiSettings = inject(UISettingsStorage);
   uiStorage = inject(UIStorage);

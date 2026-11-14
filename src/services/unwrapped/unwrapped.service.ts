@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { DateTime } from 'luxon';
 
@@ -32,9 +32,7 @@ export interface UnwrappedStats {
   bestRatedBean: { name: string; rating: number; roaster: string } | null;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UnwrappedService {
   private uiBeanStorage = inject(UIBeanStorage);
   private uiBrewStorage = inject(UIBrewStorage);

@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -6,9 +6,7 @@ import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
 import { StorageClass } from '../classes/storageClass';
 import { IRoastingMachine } from '../interfaces/roasting-machine/iRoastingMachine';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIRoastingMachineStorage extends StorageClass {
   private readonly translate = inject(TranslateService);
 

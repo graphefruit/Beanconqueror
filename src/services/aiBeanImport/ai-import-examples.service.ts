@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
@@ -33,9 +33,7 @@ const EXAMPLE_KEYS: (keyof MergedExamples)[] = [
   'ROASTER_KEYWORDS',
 ];
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AIImportExamplesService {
   private readonly translate = inject(TranslateService);
 

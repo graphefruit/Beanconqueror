@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 import { MergedExamples } from './ai-import-examples.service';
 
@@ -6,9 +6,7 @@ import { MergedExamples } from './ai-import-examples.service';
  * Service for correcting common OCR errors using fuzzy matching
  * against known coffee terminology vocabularies.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class OCRCorrectionService {
   /**
    * Character substitution map for common OCR confusions.

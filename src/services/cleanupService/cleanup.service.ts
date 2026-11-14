@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Platform } from '@ionic/angular/standalone';
 
@@ -8,9 +8,7 @@ import { UIBrewStorage } from '../uiBrewStorage';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class CleanupService {
   private readonly platform = inject(Platform);
   private readonly uiHelper = inject(UIHelper);

@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { of } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
@@ -9,9 +9,7 @@ import { environment } from '../../environments/environment';
 import { ServerBean } from '../../models/bean/serverBean';
 import { UILog } from '../uiLog';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ServerCommunicationService {
   private http = inject(HttpClient);
   private readonly uiLog = inject(UILog);

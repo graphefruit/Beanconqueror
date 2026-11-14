@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { AlertController, ModalController } from '@ionic/angular/standalone';
 
@@ -14,9 +14,7 @@ import { EventQueueService } from './queueService/queue-service.service';
 
 export type ConfirmationDialogResult = 'YES' | 'NO';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIAlert {
   private readonly alertController = inject(AlertController);
   private readonly translate = inject(TranslateService);

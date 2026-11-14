@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -6,9 +6,7 @@ import { Bean } from '../classes/bean/bean';
 import { StorageClass } from '../classes/storageClass';
 import { IBean } from '../interfaces/bean/iBean';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIBeanStorage extends StorageClass {
   private readonly translate = inject(TranslateService);
 

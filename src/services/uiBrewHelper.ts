@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 
@@ -54,9 +54,7 @@ interface IEventPayload {
   name?: string;
   value?: number;
 }
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIBrewHelper {
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiMillStorage = inject(UIMillStorage);

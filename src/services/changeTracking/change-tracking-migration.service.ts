@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import {
   FillChangeInfoStats,
@@ -34,9 +34,7 @@ interface CollectionResult {
  * in, the next run continues where the last one stopped and writes nothing
  * for collections that are already done.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ChangeTrackingMigrationService {
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiBrewStorage = inject(UIBrewStorage);

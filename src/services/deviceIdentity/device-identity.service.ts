@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { DEVICE_STORAGE_KEY } from '../../classes/changeTracking/localStorageKeys';
 import { UILog } from '../uiLog';
@@ -28,9 +28,7 @@ export interface IDeviceIdentity {
  * Every stored entry depends on this service, so it only imports services
  * that do not depend on the entry storages themselves.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class DeviceIdentityService {
   private readonly uiStorage = inject(UIStorage);
   private readonly uiLog = inject(UILog);

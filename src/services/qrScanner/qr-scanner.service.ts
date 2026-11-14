@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import {
   CapacitorBarcodeScanner,
@@ -9,9 +9,7 @@ import {
 import QR_TRACKING from '../../data/tracking/qrTracking';
 import { UIAnalytics } from '../uiAnalytics';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class QrScannerService {
   private readonly uiAnalytics = inject(UIAnalytics);
 

@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import moment from 'moment';
 
@@ -65,9 +65,7 @@ interface IStoredNamedEntry {
   config: { uuid: string };
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class BrewImportService {
   private readonly beanStorage = inject(UIBeanStorage);
   private readonly millStorage = inject(UIMillStorage);

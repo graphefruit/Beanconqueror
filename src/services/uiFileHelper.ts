@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 import { Platform } from '@ionic/angular/standalone';
@@ -28,9 +28,7 @@ declare let navigator: any;
 /**
  * Handles every helping functionalities
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIFileHelper extends InstanceClass {
   private readonly uiLog = inject(UILog);
   private readonly platform = inject(Platform);

@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Platform } from '@ionic/angular/standalone';
 
@@ -22,9 +22,7 @@ import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ShareService {
   private readonly translate = inject(TranslateService);
   private readonly uiHelper = inject(UIHelper);

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 import moment from 'moment';
 import { stringify } from 'safe-stable-stringify';
@@ -7,9 +7,7 @@ import { serializeError } from 'serialize-error';
 import { LogLevel } from '../enums/logs/log-level';
 import { LogEntry } from '../interfaces/log/log-entry';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UILog {
   private static instance: UILog;
 

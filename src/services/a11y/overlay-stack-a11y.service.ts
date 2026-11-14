@@ -1,10 +1,4 @@
-import {
-  DestroyRef,
-  DOCUMENT,
-  inject,
-  Injectable,
-  NgZone,
-} from '@angular/core';
+import { DestroyRef, DOCUMENT, inject, NgZone, Service } from '@angular/core';
 
 /**
  * Ionic overlays that are modal, with the prefix of their lifecycle events
@@ -125,9 +119,7 @@ function childOfRootHolding(root: Element, element: Element): Element | null {
  * guards, focusable but hidden from assistive technology, sit right before
  * and after such an overlay on top.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class OverlayStackA11yService {
   private readonly document = inject(DOCUMENT);
   private readonly zone = inject(NgZone);

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 
@@ -33,9 +33,7 @@ import { UIToast } from './uiToast';
  * Handles every helping functionalities
  */
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIPreparationHelper {
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly modalController = inject(ModalController);

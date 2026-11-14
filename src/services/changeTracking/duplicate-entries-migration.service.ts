@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import {
   countChangedEntries,
@@ -41,9 +41,7 @@ interface CollectionResult {
  * next run continues with the collections that still contain copies and
  * writes nothing for the others.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class DuplicateEntriesMigrationService {
   private readonly storages: StorageClass[] = [
     inject(UIBeanStorage),

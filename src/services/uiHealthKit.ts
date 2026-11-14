@@ -1,12 +1,10 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Platform } from '@ionic/angular/standalone';
 
 declare var navigator;
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIHealthKit {
   private platform = inject(Platform);
 

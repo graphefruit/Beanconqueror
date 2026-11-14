@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -6,9 +6,7 @@ import { Mill } from '../classes/mill/mill';
 import { StorageClass } from '../classes/storageClass';
 import { IMill } from '../interfaces/mill/iMill';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIMillStorage extends StorageClass {
   private readonly translate = inject(TranslateService);
 

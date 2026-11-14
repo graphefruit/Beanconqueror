@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ModalController } from '@ionic/angular/standalone';
 
@@ -14,9 +14,7 @@ import { UIBrewStorage } from './uiBrewStorage';
  * Handles every helping functionalities
  */
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIWaterHelper {
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly modalController = inject(ModalController);

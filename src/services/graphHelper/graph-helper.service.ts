@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Platform } from '@ionic/angular/standalone';
 
@@ -57,9 +57,7 @@ export function expandLiveAxisRangeForSample(
   return range;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class GraphHelperService {
   private readonly translate = inject(TranslateService);
   private readonly uiSettingsStorage = inject(UISettingsStorage);

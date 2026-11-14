@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ToastController } from '@ionic/angular/standalone';
 
@@ -38,9 +38,7 @@ function turnOffOwnLiveRegion(toast: HTMLElement): void {
  * assertive one would cut off what it is saying, for example the control the
  * user has just activated.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIToast {
   private readonly translate = inject(TranslateService);
   private readonly toastController = inject(ToastController);

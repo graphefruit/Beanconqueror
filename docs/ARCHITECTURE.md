@@ -141,7 +141,9 @@ layer").
   (e.g. `src/classes/settings/__tests__/`) or, in the newer service folders,
   as `*.spec.ts` beside the file
   (e.g. `src/services/deviceIdentity/device-identity.service.spec.ts`).
-- Dependencies are injected with `inject()`. Several legacy services also expose
+- Services are declared with `@Service()` (Angular 22; automatically provided like
+  `@Injectable({ providedIn: 'root' })`), and dependencies are injected with
+  `inject()`. Several legacy services also expose
   a static `instance` or `getInstance()` for code that cannot inject
   (e.g. `src/services/uiBeanStorage.ts`, `src/services/uiAlert.ts`).
 

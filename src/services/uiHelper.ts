@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Platform } from '@ionic/angular/standalone';
 
@@ -36,9 +36,7 @@ import { UIToast } from './uiToast';
 /**
  * Handles every helping functionalities
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIHelper {
   private readonly platform = inject(Platform);
   private readonly sanitizer = inject(DomSanitizer);

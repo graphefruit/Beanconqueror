@@ -1,13 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 import { Settings } from '../classes/settings/settings';
 import { StorageClass } from '../classes/storageClass';
 import { EXPERIENCE_MODE_ENUM } from '../enums/settings/experienceMode';
 import { ISettings } from '../interfaces/settings/iSettings';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UISettingsStorage extends StorageClass {
   /**
    * Singelton instance

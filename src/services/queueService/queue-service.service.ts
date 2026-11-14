@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -6,9 +6,7 @@ import { filter } from 'rxjs/operators';
 import { AppEvent } from '../../classes/appEvent/appEvent';
 import { AppEventType } from '../../enums/appEvent/appEvent';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class EventQueueService {
   private eventBrocker = new Subject<AppEvent<any>>();
 

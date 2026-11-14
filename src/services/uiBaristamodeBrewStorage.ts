@@ -1,11 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
 import BaristamodeBrew from '../classes/brew/baristamodeBrew';
 import { StorageClass } from '../classes/storageClass';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIBaristamodeBrewStorage extends StorageClass {
   /**
    * Singelton instance

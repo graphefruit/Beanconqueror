@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { DELETION_JOURNAL_STORAGE_KEY } from '../../classes/changeTracking/localStorageKeys';
 import { IDeletionJournalEntry } from '../../interfaces/changeTracking/iDeletionJournalEntry';
@@ -21,9 +21,7 @@ import { UIStorage } from '../uiStorage';
  * Every stored entry depends on this service, so it only imports services
  * that do not depend on the entry storages themselves.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class DeletionJournalService {
   private readonly uiStorage = inject(UIStorage);
   private readonly uiLog = inject(UILog);

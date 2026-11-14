@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { Storage } from '@ionic/storage';
 
@@ -32,9 +32,7 @@ export interface StoredValues {
   writeCount: number;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIStorage {
   private readonly storage = inject(Storage);
   private eventQueue = inject(EventQueueService);

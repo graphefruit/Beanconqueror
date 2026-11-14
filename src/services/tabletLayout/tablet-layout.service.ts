@@ -1,4 +1,4 @@
-import { DOCUMENT, inject, Injectable } from '@angular/core';
+import { DOCUMENT, inject, Service } from '@angular/core';
 
 /** Class on the document element that switches on the tablet layout rules in app.scss. */
 export const TABLET_CLASS = 'bq-tablet';
@@ -17,9 +17,7 @@ export const TABLET_MIN_SHORTEST_SIDE = 600;
  * rotation nor the keyboard changes. Folding a device changes the screen and
  * fires a resize, so the mark is checked again then.
  */
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class TabletLayoutService {
   private readonly document = inject(DOCUMENT);
 

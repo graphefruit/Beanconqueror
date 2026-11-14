@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 
 import { AlertController } from '@ionic/angular/standalone';
@@ -20,9 +20,7 @@ interface IEventPayload {
   value?: number;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIAnalytics {
   private readonly alertController = inject(AlertController);
   private readonly translate = inject(TranslateService);

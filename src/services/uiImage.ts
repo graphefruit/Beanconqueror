@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import {
   AlertController,
@@ -35,9 +35,7 @@ import { UIFileHelper } from './uiFileHelper';
 import { UIHelper } from './uiHelper';
 import { UISettingsStorage } from './uiSettingsStorage';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UIImage {
   private readonly alertController = inject(AlertController);
   private readonly platform = inject(Platform);
@@ -175,13 +173,7 @@ export class UIImage {
 
   public async viewPhotos(
     _data:
-      | Bean
-      | GreenBean
-      | Brew
-      | RoastingMachine
-      | Water
-      | Mill
-      | Preparation,
+      Bean | GreenBean | Brew | RoastingMachine | Water | Mill | Preparation,
   ) {
     const modal = await this.modalCtrl.create({
       component: PhotoPopoverComponent,
