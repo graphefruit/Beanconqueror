@@ -167,12 +167,7 @@ export class UIExportImportHelper {
 
   /** Called once every collection was read, at start-up or after an import. */
   public allCollectionsRead(): void {
-    if (this.databaseNotRead) {
-      this.uiLog.info(
-        'Every collection was read, the internal backup is written again',
-      );
-      this.databaseNotRead = false;
-    }
+    this.databaseNotRead = false;
   }
 
   /** Whether importBackup() writes the current data into a file first. */
@@ -216,8 +211,8 @@ export class UIExportImportHelper {
    * (holdsUnchangedImport).
    *
    * `_currentDataUnreadable` is only set for a backup chosen at start-up
-   * because the database could not be read: the current data that still
-   * cannot be read is then not saved first, instead of stopping the import.
+   * because the database still could not be read right before: the current
+   * data is then not saved first, instead of stopping the import.
    */
   public async importBackup(
     _data: unknown,
@@ -264,20 +259,14 @@ export class UIExportImportHelper {
       );
       return undefined;
     }
+    if (_currentDataUnreadable) {
+      this.uiLog.error(
+        'Backup before import - skipped, the current data could not be read at start-up',
+      );
+      return undefined;
+    }
     try {
-      let stored: any;
-      try {
-        stored = await this.uiStorage.export();
-      } catch (ex) {
-        if (!_currentDataUnreadable) {
-          throw ex;
-        }
-        this.uiLog.error(
-          'Backup before import - skipped, the current data could not be read at start-up',
-          ex,
-        );
-        return undefined;
-      }
+      const stored = await this.uiStorage.export();
       if (!holdsDataToSave(stored)) {
         this.uiLog.info('Backup before import - skipped, no data stored');
         return undefined;

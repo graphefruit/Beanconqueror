@@ -827,8 +827,8 @@ describe('Importing a backup', () => {
 
     it('imports without a backup of the current data while it cannot be read', async () => {
       const device = await startDevice(storedData('own'));
-      // The backup file and the copy the import rolls back to.
-      device.failingReads.count = 2;
+      // The copy the import rolls back to.
+      device.failingReads.count = 1;
 
       const result = await device.helper.importBackup(
         next(),
@@ -842,23 +842,12 @@ describe('Importing a backup', () => {
       expect(device.data.get('BREWS')).toEqual(imported(entries('brew', 1)));
       expect(device.uiLog.error).toHaveBeenCalledWith(
         'Backup before import - skipped, the current data could not be read at start-up',
-        jasmine.anything(),
       );
-    });
-
-    it('still saves the current data first when it can be read again', async () => {
-      const before = storedData('own');
-      const device = await startDevice(before);
-
-      await device.helper.importBackup(next(), 'import', 'x.zip', true);
-
-      const [file] = writtenBackups(device);
-      expect((await readBackupFile(device, file)).BREWS).toEqual(before.BREWS);
     });
 
     it('fails as an import that could not be rolled back when storing it fails', async () => {
       const device = await startDevice(storedData('own'));
-      device.failingReads.count = 2;
+      device.failingReads.count = 1;
       device.failingWrites.add('BREWS');
 
       await expectAsync(
