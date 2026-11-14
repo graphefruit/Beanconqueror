@@ -7,7 +7,6 @@ import moment from 'moment/moment';
 import { BeanFilterComponent } from '../../app/beans/bean-filter/bean-filter.component';
 import { BeanSortComponent } from '../../app/beans/bean-sort/bean-sort.component';
 import { Bean } from '../../classes/bean/bean';
-import { Brew } from '../../classes/brew/brew';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
@@ -285,12 +284,13 @@ export class BeanSortFilterHelperService {
             return 0;
           });
           break;
-        case BEAN_SORT_AFTER.WEIGHT_REMAINING:
+        case BEAN_SORT_AFTER.WEIGHT_REMAINING: {
+          const usedWeightPerBean = this.uiBeanHelper.getUsedWeightPerBean();
           filterBeans = filterBeans.sort((a, b) => {
             const remainingWeightA =
-              a?.weight - this.getUsedWeightCount(a.config.uuid);
+              a?.weight - (usedWeightPerBean.get(a.config.uuid) ?? 0);
             const remainingWeightB =
-              b?.weight - this.getUsedWeightCount(b.config.uuid);
+              b?.weight - (usedWeightPerBean.get(b.config.uuid) ?? 0);
             if (remainingWeightA < remainingWeightB) {
               return -1;
             }
@@ -300,6 +300,7 @@ export class BeanSortFilterHelperService {
             return 0;
           });
           break;
+        }
         case BEAN_SORT_AFTER.AROMATICS:
           filterBeans = filterBeans.sort((a, b) => {
             const nameA = a.aromatics.toUpperCase();
@@ -386,20 +387,6 @@ export class BeanSortFilterHelperService {
       }
     }
     return filterBeans;
-  }
-
-  public getUsedWeightCount(_uuid: string): number {
-    let usedWeightCount: number = 0;
-    const relatedBrews: Array<Brew> =
-      this.uiBeanHelper.getAllBrewsForThisBean(_uuid);
-    for (const brew of relatedBrews) {
-      if (brew.bean_weight_in > 0) {
-        usedWeightCount += brew.bean_weight_in;
-      } else {
-        usedWeightCount += brew.grind_weight;
-      }
-    }
-    return usedWeightCount;
   }
 
   private manageRoastingDateEnd(filter: IBeanPageFilter, filterBeans: Bean[]) {
