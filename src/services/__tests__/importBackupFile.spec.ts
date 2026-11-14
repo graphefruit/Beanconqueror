@@ -1524,3 +1524,31 @@ describe('The collections counted by the check at start-up', () => {
     expect(reads).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('The check of the internal backup at start-up', () => {
+  it('reads the internal backup while the database is counted', async () => {
+    const stored = storedData('own', {
+      MILL: imported(entries('own-mill', 1)),
+      PREPARATION: imported(entries('own-preparation', 1)),
+    });
+    const device = await startDevice(stored, {
+      internalBackup: await backupFileOf(stored),
+    });
+    const readFile = spyOn(
+      device.fileHelper,
+      'readInternalFileAsUint8Array',
+    ).and.callThrough();
+    const forEach = device.database.forEach;
+    let fileReadBeforeCounting = false;
+    spyOn(device.database, 'forEach').and.callFake((_callback) => {
+      fileReadBeforeCounting = readFile.calls.count() === 1;
+      return forEach(_callback);
+    });
+    const popover = spyOn(device.helper, 'showDataCorruptionPopover');
+
+    await device.helper.checkBackup();
+
+    expect(fileReadBeforeCounting).toBeTrue();
+    expect(popover).not.toHaveBeenCalled();
+  });
+});

@@ -443,6 +443,8 @@ export class UIExportImportHelper {
       }
       const hasData = dataState === 'data';
 
+      // Read while the database is counted, neither changes anything.
+      const backup = this.__getBiggerFileBackupOrAutomatic();
       let actualUIStorageDataObj;
       if (hasData) {
         actualUIStorageDataObj = await this.uiStorage.hasCorruptedData(
@@ -451,8 +453,7 @@ export class UIExportImportHelper {
         );
       }
 
-      const { fileData, isAutomaticBackup }: any =
-        await this.__getBiggerFileBackupOrAutomatic();
+      const { fileData, isAutomaticBackup }: any = await backup;
 
       if (fileData) {
         // Counted as an import would store it: after the copies of entries
