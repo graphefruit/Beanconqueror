@@ -48,6 +48,14 @@ export class UIStorage {
    */
   private writeCount = 0;
 
+  /**
+   * Collections hasCorruptedData() read at start-up, handed to the first
+   * read of each (getOrFail) while nothing was written since, so the start
+   * does not read them twice.
+   */
+  private readAhead:
+    { values: Map<string, unknown>; writeCount: number } | undefined;
+
   public async init() {
     // If using, define drivers here: await this.storage.defineDriver(/*...*/);
     this._storage = await this.storage.create();
@@ -151,11 +159,32 @@ export class UIStorage {
    * so they never replace a stored value they could not read.
    */
   public async getOrFail(_key: string): Promise<any> {
+    const readAhead = this.__takeReadAhead(_key);
+    if (readAhead) {
+      return readAhead.value;
+    }
     const result = await this.__getWithRetries(_key);
     if (!result.read) {
       throw new Error('UIStorage - Get Key - ' + _key + ' could not be read');
     }
     return result.value;
+  }
+
+  private __takeReadAhead(_key: string): { value: unknown } | undefined {
+    const readAhead = this.readAhead;
+    if (readAhead?.writeCount !== this.writeCount) {
+      this.readAhead = undefined;
+      return undefined;
+    }
+    if (!readAhead.values.has(_key)) {
+      return undefined;
+    }
+    const value = readAhead.values.get(_key);
+    readAhead.values.delete(_key);
+    if (readAhead.values.size === 0) {
+      this.readAhead = undefined;
+    }
+    return { value };
   }
 
   /**
@@ -262,9 +291,14 @@ export class UIStorage {
   /**
    * Counts the brews, mills, preparations and beans, and whether brews are
    * stored without the others. `_stored` are the values of export() when
-   * the caller already read them; otherwise the database is read.
+   * the caller already read them; otherwise the database is read, and with
+   * `_keepForFirstRead` the collections counted are kept for their first
+   * read (see readAhead).
    */
-  public async hasCorruptedData(_stored?: Record<string, unknown>): Promise<{
+  public async hasCorruptedData(
+    _stored?: Record<string, unknown>,
+    _keepForFirstRead = false,
+  ): Promise<{
     CORRUPTED: boolean;
     DATA: {
       BREWS: number;
@@ -279,6 +313,8 @@ export class UIStorage {
       PREPARATION: 0,
       BEANS: 0,
     };
+    const writeCount = this.writeCount;
+    const counted = new Map<string, unknown>();
     const count = (_value: any, _key: string) => {
       if (
         _key === 'BREWS' ||
@@ -286,6 +322,7 @@ export class UIStorage {
         _key === 'PREPARATION' ||
         _key === 'BEANS'
       ) {
+        counted.set(_key, _value);
         try {
           if (_value?.length > 0) {
             hasDataObj[_key] = _value?.length;
@@ -309,6 +346,9 @@ export class UIStorage {
         }
       } else {
         await this._storage.forEach(count);
+        if (_keepForFirstRead) {
+          this.readAhead = { values: counted, writeCount };
+        }
       }
       if (
         hasDataObj.BREWS > 0 &&

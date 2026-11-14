@@ -1440,3 +1440,87 @@ describe('The copy an import rolls back to', () => {
     expect(Object.fromEntries(device.data)).toEqual(before);
   });
 });
+
+describe('The collections counted by the check at start-up', () => {
+  const COUNTED = ['BREWS', 'BEANS', 'MILL', 'PREPARATION'];
+
+  function completeData(_prefix: string): Record<string, any> {
+    return storedData(_prefix, {
+      MILL: imported(entries(`${_prefix}-mill`, 1)),
+      PREPARATION: imported(entries(`${_prefix}-preparation`, 1)),
+    });
+  }
+
+  /** A device whose internal backup holds the data it stores. */
+  async function startChecked(_stored: Record<string, any>) {
+    const device = await startDevice(_stored, {
+      internalBackup: await backupFileOf(_stored),
+    });
+    await device.helper.checkBackup();
+    const reads = spyOn(device.database, 'get').and.callThrough();
+    return { device, reads, uiStorage: TestBed.inject(UIStorage) };
+  }
+
+  it('are not read again by the first read of each', async () => {
+    const stored = completeData('own');
+    const { reads, uiStorage } = await startChecked(stored);
+
+    for (const key of COUNTED) {
+      expect(await uiStorage.getOrFail(key)).toEqual(stored[key]);
+    }
+    expect(await uiStorage.getOrFail('SETTINGS')).toEqual(stored.SETTINGS);
+
+    expect(reads.calls.allArgs()).toEqual([['SETTINGS']]);
+  });
+
+  it('are read again by every further read', async () => {
+    const stored = completeData('own');
+    const { reads, uiStorage } = await startChecked(stored);
+    await uiStorage.getOrFail('BREWS');
+
+    expect(await uiStorage.getOrFail('BREWS')).toEqual(stored.BREWS);
+
+    expect(reads.calls.allArgs()).toEqual([['BREWS']]);
+  });
+
+  it('are read again once something was written', async () => {
+    const stored = completeData('own');
+    const { reads, uiStorage } = await startChecked(stored);
+    const brews = imported(entries('new-brew', 3));
+
+    await uiStorage.set('BREWS', brews);
+
+    expect(await uiStorage.getOrFail('BREWS')).toEqual(brews);
+    expect(await uiStorage.getOrFail('BEANS')).toEqual(stored.BEANS);
+    expect(reads.calls.allArgs()).toEqual([['BREWS'], ['BEANS']]);
+  });
+
+  it('are read again once the internal backup was restored', async () => {
+    const backup = completeData('backup');
+    backup.BREWS = imported(entries('backup-brew', 5));
+    const device = await startDevice(completeData('own'), {
+      internalBackup: await backupFileOf(backup),
+    });
+    spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(true);
+    await device.helper.checkBackup();
+
+    expect(await TestBed.inject(UIStorage).getOrFail('BREWS')).toEqual(
+      backup.BREWS,
+    );
+  });
+
+  it('are not kept when the database cannot be read completely', async () => {
+    const stored = completeData('own');
+    const device = await startDevice(stored, {
+      internalBackup: await backupFileOf(stored),
+    });
+    device.failingReads.count = 1;
+    await device.helper.checkBackup();
+    const reads = spyOn(device.database, 'get').and.callThrough();
+
+    expect(await TestBed.inject(UIStorage).getOrFail('BREWS')).toEqual(
+      stored.BREWS,
+    );
+    expect(reads).toHaveBeenCalledTimes(1);
+  });
+});

@@ -445,7 +445,10 @@ export class UIExportImportHelper {
 
       let actualUIStorageDataObj;
       if (hasData) {
-        actualUIStorageDataObj = await this.uiStorage.hasCorruptedData();
+        actualUIStorageDataObj = await this.uiStorage.hasCorruptedData(
+          undefined,
+          true,
+        );
       }
 
       const { fileData, isAutomaticBackup }: any =
