@@ -51,7 +51,7 @@ describe('OverlayStackA11yService', () => {
   beforeEach(() => {
     doc = document.implementation.createHTMLDocument('');
     app = doc.createElement('ion-app');
-    page = doc.createElement('ion-router-outlet');
+    page = doc.createElement('div');
     app.append(page);
     doc.body.append(app);
     nextOverlayIndex = 1;
