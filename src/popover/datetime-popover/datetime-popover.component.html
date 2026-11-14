@@ -1,5 +1,4 @@
-<ion-header translucent>
-</ion-header>
+<ion-header translucent />
 <ion-content [scrollY]="false" (click)="onContentClick($event)">
   <ion-grid  class="ion-no-padding">
     <ion-row>
@@ -40,14 +39,14 @@
     </ion-row>
     <ion-row>
       @if (settings?.brew_timer_show_hours) {
-        <ion-col size="{{colSize}}"><ion-input #hourInput maxlength="2" [(ngModel)]="timer.HOURS" (keydown)="onInputKeydown($event, 'HOURS')" [max-number-value]="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+        <ion-col size="{{colSize}}"><ion-input #hourInput maxlength="2" [(ngModel)]="timer.HOURS" (keydown)="onInputKeydown($event, 'HOURS')" [max-number-value]="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal" /></ion-col>
       }
       @if (settings?.brew_timer_show_minutes) {
-        <ion-col  size="{{colSize}}"><ion-input #minuteInput maxlength="2" [(ngModel)]="timer.MINUTES" (keydown)="onInputKeydown($event, 'MINUTES')" [max-number-value]="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+        <ion-col  size="{{colSize}}"><ion-input #minuteInput maxlength="2" [(ngModel)]="timer.MINUTES" (keydown)="onInputKeydown($event, 'MINUTES')" [max-number-value]="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal" /></ion-col>
       }
-      <ion-col size="{{colSize}}"><ion-input #secondInput maxlength="2" [(ngModel)]="timer.SECONDS" (keydown)="onInputKeydown($event, 'SECONDS')" [max-number-value]="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      <ion-col size="{{colSize}}"><ion-input #secondInput maxlength="2" [(ngModel)]="timer.SECONDS" (keydown)="onInputKeydown($event, 'SECONDS')" [max-number-value]="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal" /></ion-col>
       @if (settings?.brew_milliseconds) {
-        <ion-col  size="{{colSize}}"><ion-input #millisecondInput maxlength="3" [(ngModel)]="timer.MILLISECONDS" (keydown)="onInputKeydown($event, 'MILLISECONDS')" [max-number-value]="maxMilliSecond" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+        <ion-col  size="{{colSize}}"><ion-input #millisecondInput maxlength="3" [(ngModel)]="timer.MILLISECONDS" (keydown)="onInputKeydown($event, 'MILLISECONDS')" [max-number-value]="maxMilliSecond" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal" /></ion-col>
       }
     </ion-row>
 

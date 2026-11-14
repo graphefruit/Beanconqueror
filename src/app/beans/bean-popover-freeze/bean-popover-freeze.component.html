@@ -1,9 +1,8 @@
-<ion-header translucent>
-</ion-header>
+<ion-header translucent />
 <ion-content>
   <ion-card>
     <ion-item>
-      <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_EDIT_FREEZE_DATE" | translate}}' readonly (click)="chooseDate($event);" [(data)]="frozenDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN_POPOVER_EDIT_FREEZE_DATE' | translate}}"></ion-input>
+      <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_EDIT_FREEZE_DATE" | translate}}' readonly (click)="chooseDate($event);" [(data)]="frozenDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN_POPOVER_EDIT_FREEZE_DATE' | translate}}" />
     </ion-item>
     <ion-item>
       <ion-checkbox label-placement='start' [(ngModel)]="copyAttachments">
@@ -53,14 +52,14 @@
       <ion-label id='frozenNote' position="stacked">{{"BEAN_DATA_FROZEN_NOTE" | translate }}</ion-label>
       <ion-textarea style='margin-top:20px;' aria-labelledby='frozenNote'  [(ngModel)]="frozenNote" autocapitalize="sentences" autocomplete="true"
         autocorrect="true" [autoGrow]="true"
-      name="frozenNote" placeholder="{{'BEAN.PLACE_HOLDER.FROZEN_NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
+      name="frozenNote" placeholder="{{'BEAN.PLACE_HOLDER.FROZEN_NOTES' | translate}}" rows="5" spellcheck="true" />
     </ion-item>
     <ion-item [lines]="leftOverBeanBagWeight<=0?'none':'full'">
       <ion-label>{{"BEAN_POPOVER_LEFT_UNFROZEN" | translate}}: {{leftOverBeanBagWeight| toFixed: 2}}g / {{ getActualFreezingQuantity() | toFixed: 2 }}g</ion-label>
     </ion-item>
     @if (leftOverBeanBagWeight<=0) {
       <ion-item lines='full' style='margin-top:-15px;'>
-        <ion-icon color='warning' aria-hidden="true" name="warning-outline" slot="start"></ion-icon>
+        <ion-icon color='warning' aria-hidden="true" name="warning-outline" slot="start" />
         <ion-label class='break-whitespaces'>{{"BEAN_POPOVER_YOU_CANT_FREEZE_WITH_ZERO_WEIGHT_LEFT" | translate}}</ion-label>
       </ion-item>
     }
@@ -68,17 +67,16 @@
       <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_FREEZE_PARTIAL_BAG" | translate}}'  [(ngModel)]="freezePartialBagGrams" autocapitalize="off" inputmode="decimal"
         name="weight"
         prevent-characters remove-empty-number spellcheck="false"
-        type="text" tabIndex="2">
-      </ion-input>
+        type="text" tabIndex="2" />
       <ion-button style='margin-left:0px;' [disabled]='isAddingBagDisabled()' tabIndex="1" (click)='addOnePartialBag()'
         aria-label="Add single frozen bag"
         class="big-icon-only" fill="clear" slot="end" tappable>
-        <ion-icon aria-hidden="true" name="beanconqueror-add-single-entry" slot='icon-only'></ion-icon>
+        <ion-icon aria-hidden="true" name="beanconqueror-add-single-entry" slot='icon-only' />
       </ion-button>
       <ion-button  style='margin-left:0px;' [disabled]='isAddingBagDisabled()' tabIndex="3" (click)='addMaxPartialBags()'
         aria-label="Add all remaining frozen bags"
         class="big-icon-only"  fill="clear" slot="end" tappable>
-        <ion-icon aria-hidden="true" name="beanconqueror-add-list" slot='icon-only'></ion-icon>
+        <ion-icon aria-hidden="true" name="beanconqueror-add-list" slot='icon-only' />
       </ion-button>
     </ion-item>
   </ion-card>
@@ -103,7 +101,7 @@
             </ion-select>
             <ion-button (click)="deleteBag(i)" aria-label="Delete bag" fill="clear" size="small" slot="end" tappable>
               <ion-icon aria-hidden="true" name="trash-outline"
-              slot="icon-only"></ion-icon>
+              slot="icon-only" />
             </ion-button>
           </ion-item>
         }

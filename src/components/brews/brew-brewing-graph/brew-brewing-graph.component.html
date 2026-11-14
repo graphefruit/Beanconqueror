@@ -65,9 +65,9 @@
         <ion-col size="2"  style="display:flex; flex-direction: column;">
           <ion-button style="position:relative;top:12px;" [attr.aria-label]="showAdvancedBarista ? 'Collapse barista graph' : 'Expand barista graph'" fill="clear" tappable (click)="toggleGraphOnBaristaMode()">
             @if(!showAdvancedBarista) {
-              <ion-icon aria-hidden="true" class="ion-color-accent" name="chevron-expand-outline" slot="icon-only"></ion-icon>
+              <ion-icon aria-hidden="true" class="ion-color-accent" name="chevron-expand-outline" slot="icon-only" />
             } @else{
-              <ion-icon aria-hidden="true" class="ion-color-accent" name="chevron-collapse-outline" slot="icon-only"></ion-icon>
+              <ion-icon aria-hidden="true" class="ion-color-accent" name="chevron-collapse-outline" slot="icon-only" />
             }
           </ion-button>
         </ion-col>
@@ -76,28 +76,28 @@
         <ion-col size="6" size-md="3">
           <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.weightTrace?.line?.color || 'var(--beanconqueror-icon-color)'">
             <ion-card-header>
-              <div><ion-icon name="beanconqueror-scale-outline"></ion-icon><span #smartScaleWeightPerSecondBarista>? g</span></div>
+              <div><ion-icon name="beanconqueror-scale-outline" /><span #smartScaleWeightPerSecondBarista>? g</span></div>
             </ion-card-header>
           </ion-card>
         </ion-col>
         <ion-col size="6" size-md="3" >
           <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.realtimeFlowTrace?.line?.color || '#09485d'">
             <ion-card-header>
-              <div><ion-icon name="water-outline"></ion-icon><span #smartScaleAvgFlowPerSecondBarista>? g/s</span></div>
+              <div><ion-icon name="water-outline" /><span #smartScaleAvgFlowPerSecondBarista>? g/s</span></div>
             </ion-card-header>
           </ion-card>
         </ion-col>
         <ion-col size="6" size-md="3">
           <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%; --card-color: #5b7391;">
             <ion-card-header>
-              <div><ion-icon name="timer-outline"></ion-icon><span #timerBarista>? g</span></div>
+              <div><ion-icon name="timer-outline" /><span #timerBarista>? g</span></div>
             </ion-card-header>
           </ion-card>
         </ion-col>
         <ion-col size="6" size-md="3">
           <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%; --card-color: #5b7391;">
             <ion-card-header>
-              <div><ion-icon name="beaker-outline"></ion-icon><span #shotVolume>? ml</span></div>
+              <div><ion-icon name="beaker-outline" /><span #shotVolume>? ml</span></div>
             </ion-card-header>
           </ion-card>
         </ion-col>
@@ -110,8 +110,7 @@
     <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
       @if (settings.bluetooth_scale_espresso_just_one_cup === true && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
         <ion-row>
-          <ion-col size="12">
-          </ion-col>
+          <ion-col size="12" />
         </ion-row>
       }
       <ion-row style="padding-bottom:5px;">
@@ -133,7 +132,7 @@
                 }
               </ion-card-header>
               <ion-card-content>
-                <ion-icon name="beanconqueror-scale-outline"></ion-icon>
+                <ion-icon name="beanconqueror-scale-outline" />
               </ion-card-content>
             </ion-card>
           </ion-col>
@@ -150,7 +149,7 @@
                 }
               </ion-card-header>
               <ion-card-content>
-                <ion-icon name="water-outline"></ion-icon>
+                <ion-icon name="water-outline" />
               </ion-card-content>
             </ion-card>
           </ion-col>
@@ -163,7 +162,7 @@
                 <div #pressure>? bar</div>
               </ion-card-header>
               <ion-card-content>
-                <ion-icon name="beanconqueror-pressure"></ion-icon>
+                <ion-icon name="beanconqueror-pressure" />
               </ion-card-content>
             </ion-card>
           </ion-col>
@@ -176,7 +175,7 @@
                 <div #temperature>? °C</div>
               </ion-card-header>
               <ion-card-content>
-                <ion-icon name="thermometer-outline"></ion-icon>
+                <ion-icon name="thermometer-outline" />
               </ion-card-content>
             </ion-card>
           </ion-col>

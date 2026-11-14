@@ -29,16 +29,16 @@
                     @if (multiple) {
                       <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[prep.config.uuid]">
                         <ng-container [ngTemplateOutlet]="preparationInformationCard"
-                        [ngTemplateOutletContext]="{prep:prep}"></ng-container>
+                        [ngTemplateOutletContext]="{prep:prep}" />
                       </ion-checkbox>
                     } @else {
                       <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}">
                         <ng-container [ngTemplateOutlet]="preparationInformationCard"
-                        [ngTemplateOutletContext]="{prep:prep}"></ng-container>
+                        [ngTemplateOutletContext]="{prep:prep}" />
                       </ion-radio>
                     }
                     <ng-container [ngTemplateOutlet]="preparationThumbnailCard"
-                    [ngTemplateOutletContext]="{prep:prep}"></ng-container>
+                    [ngTemplateOutletContext]="{prep:prep}" />
                   </ion-item>
                 }
               </ion-card>
@@ -55,16 +55,16 @@
                   @if (multiple) {
                     <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[prep.config.uuid]">
                       <ng-container [ngTemplateOutlet]="preparationInformationCard"
-                      [ngTemplateOutletContext]="{prep:prep}"></ng-container>
+                      [ngTemplateOutletContext]="{prep:prep}" />
                     </ion-checkbox>
                   } @else {
                     <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}">
                       <ng-container [ngTemplateOutlet]="preparationInformationCard"
-                      [ngTemplateOutletContext]="{prep:prep}"></ng-container>
+                      [ngTemplateOutletContext]="{prep:prep}" />
                     </ion-radio>
                   }
                   <ng-container [ngTemplateOutlet]="preparationThumbnailCard"
-                  [ngTemplateOutletContext]="{prep:prep}"></ng-container>
+                  [ngTemplateOutletContext]="{prep:prep}" />
                 </ion-item>
               }
             </ion-card>
@@ -93,7 +93,7 @@
   <h6>
     @if ((prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_DEVICE_CONNECTION)) {
       <ion-icon style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
-      ></ion-icon>
+       />
     }
     {{ prep.name }}
   </h6>
@@ -109,14 +109,13 @@
 <ng-template #preparationThumbnailCard let-prep='prep'>
   <ion-thumbnail slot="end">
     @if (!(prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)) {
-      <ion-icon
-        class="full-sized-icon"
-      name="{{prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON}}"></ion-icon>
+      <ion-icon class="full-sized-icon"
+      name="{{prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON}}" />
     }
     @if ((prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)) {
       <div
         style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-        <async-image [filePath]="prep.attachments[0]" class="bean-slider"></async-image>
+        <async-image [filePath]="prep.attachments[0]" class="bean-slider" />
       </div>
     }
   </ion-thumbnail>

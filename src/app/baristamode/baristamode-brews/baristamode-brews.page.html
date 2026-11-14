@@ -7,7 +7,7 @@
   @if (brews?.length == 0) {
     <div class="ion-padding ion-text-center">
       <div>
-        <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
+        <ion-icon color="inactive" name="beanconqueror-cup" size="large" />
       </div>
       <div class="text-color-inactive ion-margin-top">
         {{ "PAGE_BREWS_NO_ENTRIES" | translate }}
@@ -18,7 +18,7 @@
   <ag-virtual-scroll #brewsScroll [items]="brews" [height]="'100vh'"
                      [min-row-height]="180">
     @for (brew of brewsScroll.items; track brew) {
-      <baristamode-brew-information [brew]="brew"></baristamode-brew-information>
+      <baristamode-brew-information [brew]="brew" />
     }
   </ag-virtual-scroll>
 </ion-content>

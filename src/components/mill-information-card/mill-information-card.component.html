@@ -7,7 +7,7 @@
           <ion-col size="1">
             <ion-button (click)="showMillActions($event)" aria-label="Grinder options" class="button-top-absolute" tappable
               color="accent" fill="clear">
-              <ion-icon aria-hidden="true" name="beanconqueror-dots" slot="icon-only"></ion-icon>
+              <ion-icon aria-hidden="true" name="beanconqueror-dots" slot="icon-only" />
             </ion-button>
           </ion-col>
         </ion-row>
@@ -65,7 +65,7 @@
           @if ((mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_PHOTOS)) {
             <ion-col class="ion-no-padding" size="3" (click)="showPhoto($event)">
               <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-                <async-image [filePath]="mill.attachments[0]" class="bean-slider"></async-image>
+                <async-image [filePath]="mill.attachments[0]" class="bean-slider" />
               </div>
             </ion-col>
           }

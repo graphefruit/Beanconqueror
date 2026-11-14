@@ -37,27 +37,27 @@
         @switch (segment) {
           @case ('manage') {
             <div>
-              <manage-custom-parameter [data]="data"></manage-custom-parameter>
+              <manage-custom-parameter [data]="data" />
             </div>
           }
           @case ('default') {
             <div>
-              <default-custom-parameter [data]="data"></default-custom-parameter>
+              <default-custom-parameter [data]="data" />
             </div>
           }
           @case ('sort') {
             <div>
-              <sort-custom-parameter [data]="data"></sort-custom-parameter>
+              <sort-custom-parameter [data]="data" />
             </div>
           }
           @case ('view') {
             <div>
-              <list-view-custom-parameter [data]="data"></list-view-custom-parameter>
+              <list-view-custom-parameter [data]="data" />
             </div>
           }
           @case ('repeat') {
             <div>
-              <repeat-custom-parameter [data]="data"></repeat-custom-parameter>
+              <repeat-custom-parameter [data]="data" />
             </div>
           }
         }
@@ -66,4 +66,4 @@
   }
 </ion-content>
 <!--Needs to be empty-->
-<ion-footer></ion-footer>
+<ion-footer />

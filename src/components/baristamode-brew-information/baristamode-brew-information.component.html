@@ -2,22 +2,20 @@
   @if (brew.flow_profile) {
     <swiper-container pager="true" [pagination]="{ draggable: true, clickable: true }">
       <swiper-slide>
-        <ng-container *ngTemplateOutlet="brewCardTemplate">
-        </ng-container>
+        <ng-container *ngTemplateOutlet="brewCardTemplate" />
       </swiper-slide>
       <swiper-slide>
         <ion-card class='long-card brew-layout' style='z-index:-1'>
           <ion-card-content class='no-ion-col-vertical-padding ion-padding-top'>
             @if (informationContainerWidth) {
-              <graph-display-card [staticChart]="true" [chartWidth]='informationContainerWidth' [chartHeight]='informationContainerHeight' [flowProfilePath]='brew.flow_profile'></graph-display-card>
+              <graph-display-card [staticChart]="true" [chartWidth]='informationContainerWidth' [chartHeight]='informationContainerHeight' [flowProfilePath]='brew.flow_profile' />
             }
           </ion-card-content>
         </ion-card>
       </swiper-slide>
     </swiper-container>
   } @else {
-    <ng-container *ngTemplateOutlet="brewCardTemplate">
-    </ng-container>
+    <ng-container *ngTemplateOutlet="brewCardTemplate" />
   }
   <div style='height:10px;'></div>
 </div>
@@ -34,7 +32,7 @@
                   <ion-title class='ion-no-padding font-size-18'>
                     @if (brew?.flow_profile) {
                       <ion-icon name='analytics-outline'
-                      style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
+                      style='top: 3px;position: relative;margin-right:5px;' />
                     }
                     <strong>{{ brew.config.unix_timestamp | formatDate:[$safeNavigationMigration(settings?.date_format)] }}</strong><span
                   class='ion-padding-start'>{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</span></ion-title>
@@ -53,7 +51,7 @@
           </ion-col>
           <ion-col size='2'>
             <ion-button (click)='showBrewActions($event)' aria-label="Brew options" class='button-top-absolute' color='accent' fill='clear'>
-              <ion-icon aria-hidden="true" name='beanconqueror-dots' slot='icon-only'></ion-icon>
+              <ion-icon aria-hidden="true" name='beanconqueror-dots' slot='icon-only' />
             </ion-button>
           </ion-col>
         </ion-row>

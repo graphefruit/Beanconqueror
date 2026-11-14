@@ -10,12 +10,12 @@
             <ion-item lines="inset">
               @if(settings.use_numeric_keyboard_for_grind_size !== true) {
                 <ion-input label-placement="stacked" label='{{"BREW_DATA_GRIND_SIZE" | translate}}' [(ngModel)]="data.grind_size"
-                           placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_SIZE' | translate}}" type="text"></ion-input>
+                           placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_SIZE' | translate}}" type="text" />
               }
               @if(settings.use_numeric_keyboard_for_grind_size === true) {
                 <ion-input label-placement="stacked" label='{{"BREW_DATA_GRIND_SIZE" | translate}}' [(ngModel)]="data.grind_size"
                            inputmode="decimal" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_SIZE' | translate}}" prevent-characters
-                           remove-empty-number type="text"></ion-input>
+                           remove-empty-number type="text" />
               }
             </ion-item>
           }
@@ -23,15 +23,15 @@
             <ion-item lines="inset">
               <ion-input label-placement="stacked" label='{{"BREW_DATA_GRIND_WEIGHT" | translate}}' [(ngModel)]="data.grind_weight" inputmode="decimal"
                          placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_WEIGHT' | translate}}" prevent-characters remove-empty-number
-                         tabIndex="1" type="text"></ion-input>
+                         tabIndex="1" type="text" />
               <ion-button (click)="brewRatioCalculator()" aria-label="Brew ratio calculator" class="big-icon-only" fill="clear" slot="end" style="margin-left:0px;"
                           tabIndex="2" tappable>
-                <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-brew-ratio" slot="icon-only"></ion-icon>
+                <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-brew-ratio" slot="icon-only" />
               </ion-button>
               @if(brewBrewingGraphEl?.uiSmartScaleConnected) {
                 <ion-button (click)="bluetoothScaleSetGrindWeight()" aria-label="Set grind dose from scale" style="margin-left:0px;"
                             tabIndex="3" class="big-icon-only" fill="clear" slot="end" tappable>
-                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only" />
                 </ion-button>
               }
             </ion-item>
@@ -40,29 +40,26 @@
             <ion-item lines="inset">
               <ion-input label-placement="stacked" label='{{"BREW_DATA_BREW_TEMPERATURE" | translate}}' [(ngModel)]="data.brew_temperature" inputmode="decimal"
                          placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_TEMPERATURE' | translate}}" prevent-characters
-                         remove-empty-number type="text"></ion-input>
+                         remove-empty-number type="text" />
             </ion-item>
           }
           @case ('method_of_preparation') {
             <ion-item lines="inset">
               <ion-select label-placement="stacked" label='{{"BREW_DATA_PREPARATION_METHOD" | translate}}' [(ngModel)]="data.method_of_preparation"
                           placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}" [show-finished]="false"
-                          preparation-overlay (click)="preparationMethodFocused()">
-              </ion-select>
+                          preparation-overlay (click)="preparationMethodFocused()" />
             </ion-item>
           }
           @case ('bean_type') {
             <ion-item lines="inset">
               <ion-select label-placement="stacked" label='{{"BREW_DATA_BEAN_TYPE" | translate}}' [(ngModel)]="data.bean" bean-overlay [show-finished]="false"
-                          placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BEAN_TYPE' | translate}}">
-              </ion-select>
+                          placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BEAN_TYPE' | translate}}" />
             </ion-item>
           }
           @case ('mill') {
             <ion-item lines="inset">
               <ion-select label-placement="stacked" label='{{"BREW_DATA_MILL" | translate}}' [(ngModel)]="data.mill" (ngModelChange)="setChoosenMill()" mill-overlay [show-finished]="false"
-                          placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_MILL' | translate}}">
-              </ion-select>
+                          placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_MILL' | translate}}" />
             </ion-item>
           }
           @case ('mill_speed') {
@@ -70,7 +67,7 @@
               <ion-item lines="inset">
                 <ion-input label-placement="stacked" label='{{"BREW_DATA_MILL_SPEED" | translate}}' [(ngModel)]="data.mill_speed" inputmode="decimal"
                            placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_MILL_SPEED' | translate}}" prevent-characters remove-empty-number
-                           type="text"></ion-input>
+                           type="text" />
               </ion-item>
             }
           }
@@ -78,7 +75,7 @@
             @if(!(choosenMill) || (choosenMill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_TIMER)) {
               <ion-item lines="inset">
                 <timer #brewMillTimer (timerTicked)="millTimerChanged($event)"
-                       label-id='brewMillTimer' label="{{'BREW_DATA_MILL_TIMER' | translate}}" timeInSeconds="0"></timer>
+                       label-id='brewMillTimer' label="{{'BREW_DATA_MILL_TIMER' | translate}}" timeInSeconds="0" />
               </ion-item>
             }
           }
@@ -90,12 +87,12 @@
                          (ionFocus)="onSearchFocus('pressure_profile');"
                          [(ngModel)]="data.pressure_profile" autocapitalize="sentences"
                          placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PRESSURE_PROFILE' | translate}}" spellcheck="false"
-                         type="text"></ion-input>
+                         type="text" />
               @if((data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.IS_PRESSURE_PARAMETER_URL,data.pressure_profile])) {
                 <ion-button style="margin-left:0px;" (click)="openURL(data.pressure_profile)"
                             aria-label="Open pressure profile URL"
                             tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
-                  <ion-icon aria-hidden="true" class="ion-color-accent" name="globe-outline" slot="icon-only"></ion-icon>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="globe-outline" slot="icon-only" />
                 </ion-button>
               }
             </ion-item>
@@ -116,26 +113,25 @@
               [disabled]="!uiHasActivePreparationTools" lines="inset">
               <ion-select label-placement="stacked" label='{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}' [(ngModel)]="data.method_of_preparation_tools"
                           placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}" [show-finished]="true"
-                          [multiple]="true" [preparation-id]="data.method_of_preparation" preparation-tool-overlay></ion-select>
+                          [multiple]="true" [preparation-id]="data.method_of_preparation" preparation-tool-overlay />
             </ion-item>
           }
           @case ('water') {
             <ion-item [disabled]="!uiHasWaterEntries" lines="inset">
               <ion-select label-placement="stacked" label='{{"BREW_DATA_WATER" | translate}}' [(ngModel)]="data.water" water-overlay [show-finished]="isEdit === true"
-                          placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_WATER' | translate}}">
-              </ion-select>
+                          placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_WATER' | translate}}" />
             </ion-item>
           }
           @case ('bean_weight_in') {
             <ion-item lines="inset">
               <ion-input label-placement="stacked" label='{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}' [(ngModel)]="data.bean_weight_in" inputmode="decimal"
                          placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BEAN_WEIGHT_IN' | translate}}" prevent-characters remove-empty-number
-                         type="text"></ion-input>
+                         type="text" />
               @if(brewBrewingGraphEl?.uiSmartScaleConnected) {
                 <ion-button style="margin-left:0px;" (click)="bluetoothScaleSetBeanWeightIn()"
                             aria-label="Set bean weight in from scale"
                             tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
-                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only" />
                 </ion-button>
               }
             </ion-item>
@@ -149,12 +145,12 @@
                              (ionInput)="onSearchChange('vessel',$event)"
                              (ionFocus)="onSearchFocus('vessel');"
                              [(ngModel)]="data.vessel_name"
-                             placeholder="{{'BREW_DATA_VESSEL_NAME' | translate}}" type="text"></ion-input>
+                             placeholder="{{'BREW_DATA_VESSEL_NAME' | translate}}" type="text" />
                 </ion-col>
                 <ion-col class="ion-no-padding" size="5">
                   <ion-input label-placement="stacked" label='{{"BREW_DATA_VESSEL_WEIGHT" | translate}}' [(ngModel)]="data.vessel_weight" inputmode="decimal"
                              placeholder="{{'BREW_DATA_VESSEL_WEIGHT' | translate}}" prevent-characters remove-empty-number
-                             type="text"></ion-input>
+                             type="text" />
                 </ion-col>
               </ion-row>
             </ion-item>
@@ -175,7 +171,7 @@
       <div class="last-item"></div>
     </ion-card>
   }
-  <brew-brewing-preparation-device #brewBrewingPreparationDeviceEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data'></brew-brewing-preparation-device>
+  <brew-brewing-preparation-device #brewBrewingPreparationDeviceEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data' />
   @if(uiShowSectionWhileBrew) {
     <ion-card class="popover" style="display:flex; flex-direction: column;">
       <ion-item lines="none">
@@ -184,30 +180,30 @@
           <ion-button (click)="downloadFlowProfile()"
                       aria-label="Download flow profile"
                       fill="clear" slot="end" style="margin-top: -4px;" tappable>
-            <ion-icon aria-hidden="true" name="download" slot="icon-only"></ion-icon>
+            <ion-icon aria-hidden="true" name="download" slot="icon-only" />
           </ion-button>
         }
         @if(brewBrewingGraphEl?.shallFlowProfileBeHidden()) {
           <ion-button (click)="maximizeControlButtons()" aria-label="Maximize controls" fill="clear" slot="end" tappable>
-            <ion-icon aria-hidden="true" name="expand-outline" slot="icon-only"></ion-icon>
+            <ion-icon aria-hidden="true" name="expand-outline" slot="icon-only" />
           </ion-button>
         } @else {
           <ion-button (click)="chooseGraphToSetAsReference()" aria-label="Choose reference graph" fill="clear" slot="end" tappable>
-            <ion-icon aria-hidden="true" name="analytics-outline" slot="icon-only"></ion-icon>
+            <ion-icon aria-hidden="true" name="analytics-outline" slot="icon-only" />
           </ion-button>
           <ion-button (click)="maximizeFlowGraph()" aria-label="Maximize flow graph" fill="clear" slot="end" tappable>
-            <ion-icon aria-hidden="true" name="expand-outline" slot="icon-only"></ion-icon>
+            <ion-icon aria-hidden="true" name="expand-outline" slot="icon-only" />
           </ion-button>
         }
       </ion-item>
       <!-- The graph runs the brew with connected devices, and the header above reads it by its reference. It is
            not repeated with the fields, which are laid out before and after it, so a new layout never recreates it. -->
       @for(field of whileFieldsBeforeGraph(); track field) {
-        <ng-container [ngTemplateOutlet]="whileBrewField" [ngTemplateOutletContext]="{field: field}"></ng-container>
+        <ng-container [ngTemplateOutlet]="whileBrewField" [ngTemplateOutletContext]="{field: field}" />
       }
-      <brew-brewing-graph #brewBrewingGraphEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data'></brew-brewing-graph>
+      <brew-brewing-graph #brewBrewingGraphEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data' />
       @for(field of whileFieldsAfterGraph(); track field) {
-        <ng-container [ngTemplateOutlet]="whileBrewField" [ngTemplateOutletContext]="{field: field}"></ng-container>
+        <ng-container [ngTemplateOutlet]="whileBrewField" [ngTemplateOutletContext]="{field: field}" />
       }
       <div class="last-item"></div>
     </ion-card>
@@ -230,7 +226,7 @@
                     </ion-label>
                     <ion-input aria-labelledby='brew_quantity' [(ngModel)]="data.brew_quantity" inputmode="decimal"
                                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_QUANTITY' | translate}}" prevent-characters
-                               remove-empty-number type="text" tabIndex="2"></ion-input>
+                               remove-empty-number type="text" tabIndex="2" />
                   </ion-item>
                 </ion-col>
                 <ion-col class="ion-no-padding ion-align-self-end" size="2">
@@ -251,19 +247,18 @@
                 <ion-button style="margin-left:0px;" (click)="bluetoothScaleSetBrewQuantityWeight()"
                             aria-label="Set brew water quantity from scale"
                             tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
-                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only" />
                 </ion-button>
               }
             </ion-item>
           }
           @case ('coffee_type') {
             <ion-item lines="inset">
-              <ion-input
-                (ionBlur)="onSearchLeave('coffee_type')"
+              <ion-input (ionBlur)="onSearchLeave('coffee_type')"
                 (ionInput)="onSearchChange('coffee_type',$event)"
                 (ionFocus)="onSearchFocus('coffee_type');"
                 label-placement="stacked" label='{{"BREW_DATA_COFFEE_TYPE" | translate}}' [(ngModel)]="data.coffee_type" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_TYPE' | translate}}"
-                type="text"></ion-input>
+                type="text" />
             </ion-item>
             @if(searchResultsAvailable('coffee_type')) {
               <ion-item lines="none" style="margin-top: 5px;margin-bottom: 5px;">
@@ -280,7 +275,7 @@
           @case ('coffee_concentration') {
             <ion-item lines="inset">
               <ion-input label-placement="stacked" label='{{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}' [(ngModel)]="data.coffee_concentration"
-                         placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_CONCENTRATION' | translate}}" type="text"></ion-input>
+                         placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_CONCENTRATION' | translate}}" type="text" />
             </ion-item>
           }
           @case ('rating') {
@@ -295,7 +290,7 @@
                 @if(maxBrewRating=== 5 && settings.brew_rating_steps === 1) {
                   <div slot="end">
                     <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="data.rating" [maxStars]="5" [readonly]="true"
-                               [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
+                               [wholeStars]="true" class="ion-float-right brew-stars" />
                   </div>
                 }
               </ion-range>
@@ -305,7 +300,7 @@
             <ion-item lines="inset">
               <ion-label id='note' position="stacked">{{"BREW_DATA_NOTES" | translate }}</ion-label>
               <ion-textarea style='margin-top:20px;' [autoGrow]="true" aria-labelledby='note' [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true" autocorrect="true"
-                            placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
+                            placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_NOTES' | translate}}" rows="5" spellcheck="true" />
             </ion-item>
           }
           @case ('brew_beverage_quantity') {
@@ -323,7 +318,7 @@
                       </ion-label>
                       <ion-input aria-labelledby='brew_beverage_quantity' [(ngModel)]="data.brew_beverage_quantity" inputmode="decimal"
                                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_BEVERAGE_QUANTITY' | translate}}" prevent-characters
-                                 remove-empty-number type="text" tabIndex="2"></ion-input>
+                                 remove-empty-number type="text" tabIndex="2" />
                     </ion-item>
                   </ion-col>
                   <ion-col class="ion-no-padding ion-align-self-end" size="2">
@@ -343,13 +338,13 @@
               </ion-grid>
               <ion-button style="margin-left:0px;" (click)="calculateBrewBeverageQuantity()" aria-label="Calculate beverage quantity" class="big-icon-only" fill="clear"
                           slot="end" tappable>
-                <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-calculator" slot="icon-only"></ion-icon>
+                <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-calculator" slot="icon-only" />
               </ion-button>
               @if(brewBrewingGraphEl?.uiSmartScaleConnected) {
                 <ion-button style="margin-left:0px;"
                             (click)="bluetoothScaleSetBrewBeverageQuantityWeight()" aria-label="Set beverage quantity from scale" tabIndex="1" class="big-icon-only" fill="clear" slot="end"
                             tappable>
-                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only" />
                 </ion-button>
               }
             </ion-item>
@@ -358,13 +353,13 @@
             <ion-item lines="inset">
               <ion-input label-placement="stacked" label='{{"BREW_DATA_TDS" | translate}}' [(ngModel)]="data.tds" inputmode="decimal"
                          placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_TDS' | translate}}" prevent-characters remove-empty-number
-                         type="text"></ion-input>
+                         type="text" />
               <ion-button (click)="calculateBrixToTds()" aria-label="Calculate Brix to TDS" class="big-icon-only" fill="clear" slot="end" tappable>
-                <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-refractometer" slot="icon-only"></ion-icon>
+                <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-refractometer" slot="icon-only" />
               </ion-button>
               @if(uiRefractometerConnected) {
                 <ion-button style="margin-left:0px;" (click)="requestRefractometerRead()" aria-label="Read from refractometer" class="big-icon-only" fill="clear" slot="end" tappable>
-                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-microscope" slot="icon-only"></ion-icon>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-microscope" slot="icon-only" />
                 </ion-button>
               }
             </ion-item>
@@ -378,7 +373,7 @@
                 <ion-button style="margin-left:0px;"
                             (click)="showExtractionChart($event)" aria-label="Show extraction chart" tabIndex="1" class="big-icon-only" fill="clear" slot="end"
                             tappable>
-                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-extraction-chart" slot="icon-only"></ion-icon>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-extraction-chart" slot="icon-only" />
                 </ion-button>
               }
             </ion-item>
@@ -386,12 +381,12 @@
           @case ('set_custom_brew_time') {
             <ion-item lines="inset">
               <ion-input label-placement="stacked" label='{{"BREW_CREATION_DATE" | translate}}' readonly (click)="chooseDateTime($event);" [(data)]="customCreationDate" [transform-date]
-                         displayFormat="{{settings?.date_format}} HH:mm"></ion-input>
+                         displayFormat="{{settings?.date_format}} HH:mm" />
             </ion-item>
           }
           @case ('attachments') {
             <div lines="inset">
-              <photo-add [(data)]="data"></photo-add>
+              <photo-add [(data)]="data" />
             </div>
           }
         }
@@ -401,8 +396,8 @@
   }
 }
 @if(choosenPreparation && baristamode === true) {
-  <brew-brewing-preparation-device #brewBrewingPreparationDeviceEl [isEdit]='isEdit' [baristamode]="baristamode" [brewComponent]='this' [(data)]='data'></brew-brewing-preparation-device>
-  <brew-brewing-graph  [baristamode]="baristamode" #brewBrewingGraphEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data'></brew-brewing-graph>
+  <brew-brewing-preparation-device #brewBrewingPreparationDeviceEl [isEdit]='isEdit' [baristamode]="baristamode" [brewComponent]='this' [(data)]='data' />
+  <brew-brewing-graph [baristamode]="baristamode" #brewBrewingGraphEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data' />
 
   <ion-item style="display:none"  lines="inset">
     <brew-timer [baristamode]="baristamode" #timer (bloomTimer)="setCoffeeBloomingTime($event)" (dripTimer)="setCoffeeDripTime($event)" (listeningToScaleChange)='startListeningToScaleChange($event)'
@@ -413,7 +408,7 @@
                 (unignoreWeight)="unignoreWeightClicked()"
                 (tareScale)="tareScale($event)" [bloomTimerVisible]="false"
                 [dripTimerVisible]="false"
-                label="{{'BREW_DATA_TIME' | translate}}"></brew-timer>
+                label="{{'BREW_DATA_TIME' | translate}}" />
   </ion-item>
 }
 <!-- A new layout can take a field to the other side of the graph or show it again, which creates its timer anew.
@@ -424,7 +419,7 @@
       <ion-item lines="inset">
         <timer #brewTemperatureTime (timerTicked)="temperatureTimeChanged($event)"
                [initialSeconds]="data.brew_temperature_time" [initialMilliseconds]="data.brew_temperature_time_milliseconds"
-               label-id='brewTemperatureTime' label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"></timer>
+               label-id='brewTemperatureTime' label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0" />
       </ion-item>
     }
     @case ('brew_time') {
@@ -441,7 +436,7 @@
                     [dripTimerVisible]="(uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
           choosenPreparation.manage_parameters.coffee_first_drip_time,
           choosenPreparation.use_custom_parameters) && choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) || (choosenPreparation.use_custom_parameters &&  choosenPreparation.manage_parameters.coffee_first_drip_time)"
-                    label="{{'BREW_DATA_TIME' | translate}}"></brew-timer>
+                    label="{{'BREW_DATA_TIME' | translate}}" />
       </ion-item>
     }
     @case ('calculated_coffee_brew_time') {
@@ -455,14 +450,14 @@
       <ion-item lines="inset">
         <timer #brewCoffeeBloomingTime [hide-control-buttons]="true" (timerTicked)="coffeeBloomingTimeChanged($event)"
                [initialSeconds]="data.coffee_blooming_time" [initialMilliseconds]="data.coffee_blooming_time_milliseconds"
-               label-id='brewTemperatureTime' label="{{'BREW_DATA_COFFEE_BLOOMING_TIME' | translate}}"></timer>
+               label-id='brewTemperatureTime' label="{{'BREW_DATA_COFFEE_BLOOMING_TIME' | translate}}" />
       </ion-item>
     }
     @case ('coffee_first_drip_time') {
       <ion-item lines="inset">
         <timer #brewFirstDripTime [hide-control-buttons]="true" (timerTicked)="coffeeFirstDripTimeChanged($event)"
                [initialSeconds]="data.coffee_first_drip_time" [initialMilliseconds]="data.coffee_first_drip_time_milliseconds"
-               label-id='brewFirstDripTime' label="{{'BREW_DATA_COFFEE_FIRST_DRIP_TIME' | translate}}"></timer>
+               label-id='brewFirstDripTime' label="{{'BREW_DATA_COFFEE_FIRST_DRIP_TIME' | translate}}" />
       </ion-item>
     }
   }

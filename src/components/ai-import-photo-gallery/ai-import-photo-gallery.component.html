@@ -8,7 +8,7 @@
   <!-- Empty state -->
   @if (photoPaths.length === 0) {
     <div class="empty-state">
-      <ion-icon name="images-outline" class="empty-icon" aria-hidden="true"></ion-icon>
+      <ion-icon name="images-outline" class="empty-icon" aria-hidden="true" />
       <p class="empty-text">{{ 'AI_IMPORT_MULTI_NO_PHOTOS_YET' | translate }}</p>
     </div>
   }
@@ -33,10 +33,10 @@
               color="danger"
               fill="clear"
               [attr.aria-label]="('AI_IMPORT_REMOVE_PHOTO' | translate) + ' ' + (i + 1)">
-              <ion-icon slot="icon-only" name="trash" aria-hidden="true"></ion-icon>
+              <ion-icon slot="icon-only" name="trash" aria-hidden="true" />
             </ion-button>
             <!-- Reuses existing async-image component -->
-            <async-image class="gallery-image" filePath="{{ path }}"></async-image>
+            <async-image class="gallery-image" filePath="{{ path }}" />
           </swiper-slide>
         }
       </swiper-container>
@@ -52,7 +52,7 @@
     (keydown.enter)="addPhoto()"
     [disabled]="photoPaths.length >= maxPhotos"
     class="add-photo-button">
-    <ion-icon name="add" slot="start" aria-hidden="true"></ion-icon>
+    <ion-icon name="add" slot="start" aria-hidden="true" />
     {{ 'AI_IMPORT_MULTI_ADD_PHOTO' | translate }} ({{ photoPaths.length }}/{{ maxPhotos }})
   </ion-button>
 
@@ -60,7 +60,7 @@
   <ion-item lines="none" class="attach-toggle">
     <ion-label id="attach-photos-label">{{ 'AI_IMPORT_MULTI_ATTACH_PHOTOS' | translate }}</ion-label>
     <ion-toggle [(ngModel)]="attachPhotos"
-                aria-labelledby="attach-photos-label"></ion-toggle>
+                aria-labelledby="attach-photos-label" />
   </ion-item>
 </ion-content>
 

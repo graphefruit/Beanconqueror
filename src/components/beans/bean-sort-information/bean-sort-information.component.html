@@ -9,12 +9,12 @@
       }
       @if ((data | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_BLEND)) {
         <ion-button (click)="copyInformation(i);$event.stopPropagation()" aria-label="Copy variety information" fill="clear" slot="end" tappable>
-          <ion-icon aria-hidden="true" color="accent" name="copy-outline" slot="icon-only"></ion-icon>
+          <ion-icon aria-hidden="true" color="accent" name="copy-outline" slot="icon-only" />
         </ion-button>
       }
       @if (!first) {
         <ion-button (click)="deleteSortInformation(i);$event.stopPropagation()" aria-label="Delete variety" fill="clear" slot="end" tappable>
-          <ion-icon aria-hidden="true" color="accent" name="close-outline" slot="icon-only"></ion-icon>
+          <ion-icon aria-hidden="true" color="accent" name="close-outline" slot="icon-only" />
         </ion-button>
       }
     </ion-item>
@@ -27,8 +27,7 @@
             (ionFocus)="onSearchFocus(beanInformation,'country');"
             [(ngModel)]="beanInformation.country" autocapitalize="sentences"
             name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_COUNTRY' | translate}}" spellcheck="false"
-            type="text">
-          </ion-input>
+            type="text" />
         </ion-item>
       }
       @if (searchResultsAvailable(beanInformation,'country')) {
@@ -50,8 +49,7 @@
             (ionFocus)="onSearchFocus(beanInformation,'region');"
             [(ngModel)]="beanInformation.region" autocapitalize="sentences"
             name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_REGION' | translate}}" spellcheck="false"
-            type="text">
-          </ion-input>
+            type="text" />
         </ion-item>
       }
       @if (searchResultsAvailable(beanInformation,'region')) {
@@ -73,8 +71,7 @@
             (ionFocus)="onSearchFocus(beanInformation,'farm');"
             [(ngModel)]="beanInformation.farm" autocapitalize="sentences"
             name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FARM' | translate}}" spellcheck="false"
-            type="text">
-          </ion-input>
+            type="text" />
         </ion-item>
       }
       @if (searchResultsAvailable(beanInformation,'farm')) {
@@ -96,8 +93,7 @@
             (ionFocus)="onSearchFocus(beanInformation,'farmer');"
             [(ngModel)]="beanInformation.farmer" autocapitalize="sentences"
             name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FARMER' | translate}}" spellcheck="false"
-            type="text">
-          </ion-input>
+            type="text" />
         </ion-item>
       }
       @if (searchResultsAvailable(beanInformation,'farmer')) {
@@ -115,8 +111,7 @@
         <ion-item>
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_ELEVATION" | translate}}' #elevation="ngModel" [(ngModel)]="beanInformation.elevation" autocapitalize="sentences"
             name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ELEVATION' | translate}}" spellcheck="false"
-            type="text">
-          </ion-input>
+            type="text" />
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.variety)) {
@@ -127,8 +122,7 @@
             (ionFocus)="onSearchFocus(beanInformation,'variety');"
             [(ngModel)]="beanInformation.variety" autocapitalize="sentences"
             name="variety" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_VARIETY' | translate}}" spellcheck="false"
-            type="text">
-          </ion-input>
+            type="text" />
         </ion-item>
       }
       @if (searchResultsAvailable(beanInformation,'variety')) {
@@ -150,8 +144,7 @@
             (ionFocus)="onSearchFocus(beanInformation,'processing');"
             [(ngModel)]="beanInformation.processing" autocapitalize="sentences"
             name="processing" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PROCESSING' | translate}}" spellcheck="false"
-            type="text">
-          </ion-input>
+            type="text" />
         </ion-item>
       }
       @if (searchResultsAvailable(beanInformation,'processing')) {
@@ -169,8 +162,7 @@
         <ion-item>
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_HARVEST_TIME" | translate}}' #harvestTime="ngModel" [(ngModel)]="beanInformation.harvest_time" autocapitalize="sentences"
             name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_HARVEST_TIME' | translate}}" spellcheck="false"
-            type="text">
-          </ion-input>
+            type="text" />
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.percentage) && (data | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_BLEND)) {
@@ -178,7 +170,7 @@
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_PERCENTAGE" | translate}}' #percentage="ngModel" [(ngModel)]="beanInformation.percentage" inputmode="decimal"
             placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PERCENTAGE' | translate}}" prevent-characters
             remove-empty-number
-          type="text"></ion-input>
+          type="text" />
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.certification)) {
@@ -189,8 +181,7 @@
             (ionFocus)="onSearchFocus(beanInformation,'certification');"
             [(ngModel)]="beanInformation.certification" autocapitalize="sentences"
             name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CERTIFICATION' | translate}}" spellcheck="false"
-            type="text">
-          </ion-input>
+            type="text" />
         </ion-item>
       }
       @if (searchResultsAvailable(beanInformation,'certification')) {
@@ -209,8 +200,7 @@
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_PURCHASING_PRICE" | translate}}' #purchasingprice="ngModel" [(ngModel)]="beanInformation.purchasing_price" autocapitalize="off" inputmode="decimal"
             name="purchasingprice" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PURCHASING_PRICE' | translate}}"
             prevent-characters remove-empty-number spellcheck="false"
-            type="text">
-          </ion-input>
+            type="text" />
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.fob_price)) {
@@ -218,8 +208,7 @@
           <ion-input label-placement="stacked" label='{{"BEAN_DATA_FOB_PRICE" | translate}}' #fobprice="ngModel" [(ngModel)]="beanInformation.fob_price" autocapitalize="off" inputmode="decimal"
             name="fobprice" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FOB_PRICE' | translate}}"
             prevent-characters remove-empty-number spellcheck="false"
-            type="text">
-          </ion-input>
+            type="text" />
         </ion-item>
       }
     </div>
@@ -227,7 +216,7 @@
 }
 @if ((data | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_BLEND)) {
   <ion-button (click)="addAnotherSort()" add-next-sort color="accent" expand="block">
-    <ion-icon name="beanconqueror-dashboard-add-fill" size="large" slot="start"></ion-icon>
+    <ion-icon name="beanconqueror-dashboard-add-fill" size="large" slot="start" />
     <span class="ion-text-bold" slot="end">{{"BEAN_ADD_ANOTHER_SORT" | translate}}</span>
   </ion-button>
 }

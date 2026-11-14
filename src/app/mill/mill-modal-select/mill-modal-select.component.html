@@ -29,17 +29,17 @@
                 @if (multiple) {
                   <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]">
                     <ng-container [ngTemplateOutlet]="millInformationCard"
-                                  [ngTemplateOutletContext]="{mill:mill}"></ng-container>
+                                  [ngTemplateOutletContext]="{mill:mill}" />
 
                   </ion-checkbox>
                 } @else {
                   <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}">
                     <ng-container [ngTemplateOutlet]="millInformationCard"
-                                  [ngTemplateOutletContext]="{mill:mill}"></ng-container>
+                                  [ngTemplateOutletContext]="{mill:mill}" />
                   </ion-radio>
                 }
                 <ng-container [ngTemplateOutlet]="millThumbnailCard"
-                              [ngTemplateOutletContext]="{mill:mill}"></ng-container>
+                              [ngTemplateOutletContext]="{mill:mill}" />
               </ion-item>
             }
           </ion-card>
@@ -54,16 +54,16 @@
               @if (multiple) {
                 <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]">
                   <ng-container [ngTemplateOutlet]="millInformationCard"
-                                [ngTemplateOutletContext]="{mill:mill}"></ng-container>
+                                [ngTemplateOutletContext]="{mill:mill}" />
                 </ion-checkbox>
               } @else {
                 <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}">
                   <ng-container [ngTemplateOutlet]="millInformationCard"
-                                [ngTemplateOutletContext]="{mill:mill}"></ng-container>
+                                [ngTemplateOutletContext]="{mill:mill}" />
                 </ion-radio>
               }
               <ng-container [ngTemplateOutlet]="millThumbnailCard"
-                            [ngTemplateOutletContext]="{mill:mill}"></ng-container>
+                            [ngTemplateOutletContext]="{mill:mill}" />
             </ion-item>
           }
         </ion-card>
@@ -108,7 +108,7 @@
   @if ((mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_PHOTOS)) {
     <ion-thumbnail slot="end">
       <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-        <async-image [filePath]="mill.attachments[0]" class="bean-slider"></async-image>
+        <async-image [filePath]="mill.attachments[0]" class="bean-slider" />
       </div>
     </ion-thumbnail>
   }

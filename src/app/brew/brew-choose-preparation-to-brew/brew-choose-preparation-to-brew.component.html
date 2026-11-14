@@ -1,5 +1,4 @@
-<ion-header translucent>
-</ion-header>
+<ion-header translucent />
 <ion-content>
   <!--Div element is needed, else you can't scroll -->
   <div>
@@ -10,7 +9,7 @@
   @for(prep of preparationMethods; track prep.config.uuid; let last = $last) {
     <ion-item detail="true" (click)="choosePreparation(prep)" lines="{{last?'none':''}}" tappable>
       @if(prep.hasDeviceConnection()) {
-        <ion-icon style="position: relative;margin-right:5px;" name="wifi-outline"></ion-icon>
+        <ion-icon style="position: relative;margin-right:5px;" name="wifi-outline" />
       }
       {{prep.name}}<span style='font-size: 12px; margin-top: 2px;'>&nbsp;({{"LAST_USE" | translate}}:
       @if(getBrewsCount(prep)> 0) {

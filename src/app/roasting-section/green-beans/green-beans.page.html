@@ -23,12 +23,12 @@
       @if (openBeans?.length > 0 || isFilterActive()) {
         <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
-          <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+          <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
           <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
             @if (isFilterActive()) {
-              <ion-icon name="beanconqueror-sort-active" slot="icon-only"></ion-icon>
+              <ion-icon name="beanconqueror-sort-active" slot="icon-only" />
             } @else {
-              <ion-icon name="beanconqueror-sort-inactive" slot="icon-only"></ion-icon>
+              <ion-icon name="beanconqueror-sort-inactive" slot="icon-only" />
             }
           </ion-button>
         </div>
@@ -36,7 +36,7 @@
       @if (openBeans.length == 0) {
         <div class="ion-padding ion-text-center">
           <div>
-            <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+            <ion-icon color="inactive" name="beanconqueror-beans" size="large" />
           </div>
           <div class="text-color-inactive ion-margin-top">
             {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
@@ -45,7 +45,7 @@
       }
       <ag-virtual-scroll #openScroll [items]="openBeans" [height]="'100vh'" [min-row-height]="165">
         @for (bean of openScroll.items; track bean) {
-          <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" [greenBean]="bean"></green-bean-information>
+          <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" [greenBean]="bean" />
         }
       </ag-virtual-scroll>
     }
@@ -54,12 +54,12 @@
         @if (finishedBeans?.length > 0 || isFilterActive()) {
           <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
-            <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+            <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
             <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
               @if (isFilterActive()) {
-                <ion-icon name="beanconqueror-sort-active" slot="icon-only"></ion-icon>
+                <ion-icon name="beanconqueror-sort-active" slot="icon-only" />
               } @else {
-                <ion-icon name="beanconqueror-sort-inactive" slot="icon-only"></ion-icon>
+                <ion-icon name="beanconqueror-sort-inactive" slot="icon-only" />
               }
             </ion-button>
           </div>
@@ -67,7 +67,7 @@
         @if (finishedBeans.length == 0) {
           <div class="ion-padding ion-text-center">
             <div>
-              <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+              <ion-icon color="inactive" name="beanconqueror-beans" size="large" />
             </div>
             <div class="text-color-inactive ion-margin-top">
               {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
@@ -77,7 +77,7 @@
 
         <ag-virtual-scroll #archivedScroll [items]="finishedBeans" [height]="'100vh'" [min-row-height]="165">
           @for (bean of archivedScroll.items; track bean) {
-            <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" [greenBean]="bean"></green-bean-information>
+            <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" [greenBean]="bean" />
           }
         </ag-virtual-scroll>
       }

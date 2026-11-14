@@ -1,5 +1,4 @@
-<ion-header translucent>
-</ion-header>
+<ion-header translucent />
 <ion-content>
   <ion-list lines="full">
     @if (settings.scale_id) {
@@ -7,7 +6,7 @@
       <ion-label>
         <h2>{{"DISCONNECT_SCALE" | translate}}</h2>
       </ion-label>
-      <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+      <ion-icon name="beanconqueror-bluetooth-off" slot="end" />
     </ion-item>
 }
     @if (settings.pressure_id) {
@@ -15,7 +14,7 @@
       <ion-label>
         <h2>{{"DISCONNECT_PRESSURE" | translate}}</h2>
       </ion-label>
-      <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+      <ion-icon name="beanconqueror-bluetooth-off" slot="end" />
     </ion-item>
 }
     @if (settings.temperature_id) {
@@ -23,7 +22,7 @@
       <ion-label>
         <h2>{{"DISCONNECT_TEMPERATURE" | translate}}</h2>
       </ion-label>
-      <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+      <ion-icon name="beanconqueror-bluetooth-off" slot="end" />
     </ion-item>
 }
     @if (settings.refractometer_id) {
@@ -31,7 +30,7 @@
       <ion-label>
         <h2>{{"DISCONNECT_REFRACTOMETER" | translate}}</h2>
       </ion-label>
-      <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+      <ion-icon name="beanconqueror-bluetooth-off" slot="end" />
     </ion-item>
 }
     <!--<ion-item (click)="reconnectScale()" *ngIf="this.settings.scale_id" button tappable>
@@ -58,7 +57,7 @@
       <ion-label>
         <h2>{{"CONNECT_SCALE" | translate}}</h2>
       </ion-label>
-      <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+      <ion-icon name="bluetooth-outline" slot="end" />
     </ion-item>
 }
     @if (settings.pressure_id === '') {
@@ -66,7 +65,7 @@
       <ion-label>
         <h2>{{"CONNECT_PRESSURE" | translate}}</h2>
       </ion-label>
-      <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+      <ion-icon name="bluetooth-outline" slot="end" />
     </ion-item>
 }
     @if (settings.temperature_id === '') {
@@ -74,7 +73,7 @@
       <ion-label>
         <h2>{{"CONNECT_TEMPERATURE" | translate}}</h2>
       </ion-label>
-      <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+      <ion-icon name="bluetooth-outline" slot="end" />
     </ion-item>
 }
     @if (settings.refractometer_id === '') {
@@ -82,7 +81,7 @@
       <ion-label>
         <h2>{{"CONNECT_REFRACTOMETER" | translate}}</h2>
       </ion-label>
-      <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+      <ion-icon name="bluetooth-outline" slot="end" />
     </ion-item>
 }
   </ion-list>

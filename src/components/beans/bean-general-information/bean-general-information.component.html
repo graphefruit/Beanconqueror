@@ -2,16 +2,14 @@
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.name])) {
     <ion-item>
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_NAME' | translate}}"
-        errorText="{{'BEAN.VALIDATION.NAME_REQUIRED' | translate}}" required spellcheck="false" type="text">
-      </ion-input>
+        errorText="{{'BEAN.VALIDATION.NAME_REQUIRED' | translate}}" required spellcheck="false" type="text" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roaster])) {
     <ion-item>
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_ROASTER" | translate}}' #roaster="ngModel" (ionFocus)="onRoasterSearchFocus($event);" (ionBlur)="onRoasterSearchLeave($event)" (ionInput)="onRoasterSearchChange($event)" [(ngModel)]="data.roaster" autocapitalize="sentences"
         name="roaster" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTER' | translate}}" spellcheck="false"
-        type="text">
-      </ion-input>
+        type="text" />
     </ion-item>
   }
   @if (roasterResultsAvailable) {
@@ -27,22 +25,22 @@
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.buyDate])) {
     <ion-item>
-      <ion-input label-placement="stacked" label='{{"BEAN_DATA_BUY_DATE" | translate}}' readonly (click)="chooseDate($event,'buyDate');" [(data)]="data.buyDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BUY_DATE' | translate}}"></ion-input>
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_BUY_DATE" | translate}}' readonly (click)="chooseDate($event,'buyDate');" [(data)]="data.buyDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BUY_DATE' | translate}}" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.bestDate])) {
     <ion-item>
-      <ion-input label-placement="stacked" label='{{"BEAN_DATA_BEST_DATE" | translate}}' readonly (click)="chooseDate($event,'bestDate');" [(data)]="data.bestDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BEST_DATE' | translate}}"></ion-input>
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_BEST_DATE" | translate}}' readonly (click)="chooseDate($event,'bestDate');" [(data)]="data.bestDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BEST_DATE' | translate}}" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.openDate])) {
     <ion-item>
-      <ion-input label-placement="stacked" label='{{"BEAN_DATA_OPEN_DATE" | translate}}' readonly (click)="chooseDate($event,'openDate');" [(data)]="data.openDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_OPEN_DATE' | translate}}"></ion-input>
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_OPEN_DATE" | translate}}' readonly (click)="chooseDate($event,'openDate');" [(data)]="data.openDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_OPEN_DATE' | translate}}" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roastingDate])) {
     <ion-item>
-      <ion-input label-placement="stacked" label='{{"BEAN_DATA_ROASTING_DATE" | translate}}' readonly (click)="chooseDate($event,'roastingDate');" [(data)]="data.roastingDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"></ion-input>
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_ROASTING_DATE" | translate}}' readonly (click)="chooseDate($event,'roastingDate');" [(data)]="data.roastingDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}" />
     </ion-item>
   }
 
@@ -69,7 +67,7 @@
   <ion-item style="top:-10px;">
     <ion-range style='padding-left:20px;padding-right:10px;' (ionChange)="onRoastRate($event)" [(ngModel)]="data.roast_range" snaps="true" max="5" min="0" step="0.5">
       <div slot="end">
-        <ngx-stars #beanStars [readonly]="true" [initialStars]="data.roast_range"  class="bean-display ion-margin-top"></ngx-stars>
+        <ngx-stars #beanStars [readonly]="true" [initialStars]="data.roast_range"  class="bean-display ion-margin-top" />
       </div>
     </ion-range>
   </ion-item>
@@ -91,8 +89,7 @@
   <ion-item>
     <ion-input label-placement="stacked" label='{{"BEAN_DATA_CUSTOM_ROAST_NAME" | translate}}' #roast_custom="ngModel" [(ngModel)]="data.roast_custom" autocapitalize="off"
       name="roast_custom" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROAST_NAME' | translate}}" spellcheck="false"
-      type="text">
-    </ion-input>
+      type="text" />
   </ion-item>
 }
 
@@ -108,7 +105,7 @@
     <ion-range [pinFormatter]="pinFormatter" style="padding-left:20px;padding-bottom:0px;padding-right:10px;" [pin]="true" (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBeanRating" min="0" snaps="true" [step]="$safeNavigationMigration(settings?.bean_rating_steps)">
       @if (maxBeanRating === 5 && settings?.bean_rating_steps === 1) {
         <div slot="end">
-          <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
+          <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars"  />
         </div>
       }
     </ion-range>
@@ -136,12 +133,11 @@
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_WEIGHT" | translate}}' #weight="ngModel" [(ngModel)]="data.weight" autocapitalize="off" inputmode="decimal"
         name="weight" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_WEIGHT' | translate}}"
         prevent-characters remove-empty-number spellcheck="false"
-        type="text" tabIndex="2">
-      </ion-input>
+        type="text" tabIndex="2" />
       @if (smartScaleConnected()) {
         <ion-button style="margin-left:0px;" (click)="bluetoothScaleSetBeanWeight()" aria-label="Set bean weight from scale" tabIndex="1"
           class="big-icon-only" fill="clear" slot="end" tappable>
-          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
+          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only" />
         </ion-button>
       }
     </ion-item>
@@ -151,16 +147,14 @@
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_COST" | translate}}' #cost="ngModel" [(ngModel)]="data.cost" autocapitalize="off" inputmode="decimal"
         name="cost" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_COST' | translate}}"
         prevent-characters remove-empty-number spellcheck="false"
-        type="text">
-      </ion-input>
+        type="text" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.aromatics])) {
     <ion-item>
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_AROMATICS" | translate}}' #aromatics="ngModel" [(ngModel)]="data.aromatics" autocapitalize="sentences"
         name="aromatics" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_AROMATICS' | translate}}" spellcheck="false"
-        type="text">
-      </ion-input>
+        type="text" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.cupping_points])) {
@@ -168,8 +162,7 @@
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_CUPPING_POINTS" | translate}}' #cupping_points="ngModel" [(ngModel)]="data.cupping_points" autocapitalize="off" inputmode="decimal"
         name="cupping_points" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CUPPING_POINTS' | translate}}"
         prevent-characters remove-empty-number spellcheck="false"
-        type="text">
-      </ion-input>
+        type="text" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.decaffeinated])) {
@@ -180,15 +173,13 @@
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.url])) {
     <ion-item>
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_URL" | translate}}'  #url="ngModel" [(ngModel)]="data.url" autocapitalize="sentences" name="ean_article_number" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_URL' | translate}}"
-        spellcheck="false" type="text">
-      </ion-input>
+        spellcheck="false" type="text" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.ean_article_number])) {
     <ion-item>
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_EAN" | translate}}' #ean_article_number="ngModel" [(ngModel)]="data.ean_article_number" autocapitalize="sentences" name="ean_article_number" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_EAN' | translate}}"
-        spellcheck="false" type="text">
-      </ion-input>
+        spellcheck="false" type="text" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.co2e_kg])) {
@@ -196,8 +187,7 @@
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_CO2E_KG" | translate}}' #co2e_kg="ngModel" [(ngModel)]="data.co2e_kg" autocapitalize="off" inputmode="decimal"
         name="cupping_points"
         prevent-characters remove-empty-number spellcheck="false"
-        type="text">
-      </ion-input>
+        type="text" />
     </ion-item>
   }
   @if (data?.config.uuid !== '') {
@@ -210,10 +200,10 @@
       <ion-label id='note' position="stacked">{{"NOTES" | translate }}</ion-label>
       <ion-textarea style='margin-top:20px;' aria-labelledby='note' #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
         autocorrect="true" [autoGrow]="true"
-      name="note" placeholder="{{'BEAN.PLACE_HOLDER.NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
+      name="note" placeholder="{{'BEAN.PLACE_HOLDER.NOTES' | translate}}" rows="5" spellcheck="true" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.attachments])) {
-    <photo-add  [(data)]="data" ></photo-add>
+    <photo-add [(data)]="data"  />
   }
 </ion-card>

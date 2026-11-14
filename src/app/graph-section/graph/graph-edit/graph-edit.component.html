@@ -9,37 +9,36 @@
       <ion-item>
         <ion-input label-placement="stacked" label='{{"NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" name="name"
           placeholder="{{'GRAPH.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
-          autocapitalize="sentences" required>
-        </ion-input>
+          autocapitalize="sentences" required />
       </ion-item>
       @if (flowData === undefined) {
         <ion-item tappable [button]="true" (click)='uploadGraph()'>
           <ion-label>{{"GRAPH.UPLOAD" | translate}}</ion-label>
-          <ion-icon slot="end" name="cloud-upload-outline"></ion-icon>
+          <ion-icon slot="end" name="cloud-upload-outline" />
         </ion-item>
       }
       @if (flowData === undefined) {
         <ion-item >
           <ion-label>
-            <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
+            <ion-icon style="top: 3px; position: relative;" name="information-circle-outline" />
             <p style="display: inline;">{{"GRAPH.UPLOAD_DESCRIPTION" | translate}}</p>
           </ion-label>
         </ion-item>
       }
       @if (flowData !== undefined) {
         <div style='padding-left:10px;padding-right:10px;'>
-          <graph-display-card (click)='showGraph()' [flowProfileData]='flowData'></graph-display-card>
+          <graph-display-card (click)='showGraph()' [flowProfileData]='flowData' />
         </div>
         <ion-item tappable [button]="true" (click)='deleteGraph()'>
           <ion-label>{{"GRAPH.DELETE" | translate}}</ion-label>
-          <ion-icon slot="end" name="trash-outline"></ion-icon>
+          <ion-icon slot="end" name="trash-outline" />
         </ion-item>
       }
       <ion-item lines="none">
         <ion-label id='notes' position="stacked">{{"NOTES" | translate}}</ion-label>
         <ion-textarea style='margin-top:20px;' aria-labelledby='notes' #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
           placeholder="{{'GRAPH.PLACE_HOLDER.NOTES' | translate}}"
-        autocorrect="true" name="note" rows="5" spellcheck="true"></ion-textarea>
+        autocorrect="true" name="note" rows="5" spellcheck="true" />
       </ion-item>
     </form>
   </ion-card>

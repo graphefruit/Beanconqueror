@@ -1,5 +1,4 @@
-<ion-header translucent>
-</ion-header>
+<ion-header translucent />
 <ion-content>
   <ion-item lines='none'>
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
@@ -14,7 +13,7 @@
       @if (maxBrewRating=== 5 && settings.brew_rating_steps === 1) {
 <div slot="end">
         <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="data.rating" [maxStars]="5" [readonly]="true"
-                   [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
+                   [wholeStars]="true" class="ion-float-right brew-stars" />
       </div>
 }
     </ion-range>
@@ -23,7 +22,7 @@
   <ion-item lines="inset">
     <ion-label id='note' position="stacked">{{"BREW_DATA_NOTES" | translate }}</ion-label>
     <ion-textarea style='margin-top:20px;' [autoGrow]="true" aria-labelledby='note' [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true" autocorrect="true"
-                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
+                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_NOTES' | translate}}" rows="5" spellcheck="true" />
   </ion-item>
   <ion-row>
     <ion-col>

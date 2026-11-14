@@ -16,10 +16,10 @@ import { IonButtons, IonTitle, IonToolbar } from '@ionic/angular/standalone';
   template: `
     <ion-toolbar>
       <ion-buttons slot="start">
-        <ng-content select="[header-slot=start]"></ng-content>
+        <ng-content select="[header-slot=start]" />
       </ion-buttons>
       <ion-buttons slot="end">
-        <ng-content select="[header-slot=end]"></ng-content>
+        <ng-content select="[header-slot=end]" />
       </ion-buttons>
       <ion-title>
         <span

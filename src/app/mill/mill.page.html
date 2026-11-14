@@ -26,7 +26,7 @@
       @if (openMillsView?.length == 0) {
 <div class="ion-padding ion-text-center">
         <div>
-          <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large" aria-hidden="true"></ion-icon>
+          <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large" aria-hidden="true" />
         </div>
         <div class="text-color-inactive ion-margin-top">
           {{"PAGE_MILL_LIST_NO_MILL_EXISTING" | translate}}
@@ -35,7 +35,7 @@
 }
       <ag-virtual-scroll #openScroll [items]="openMillsView" [height]="'100vh'" [min-row-height]="263">
         @for (mill of openScroll.items; track mill) {
-<mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
+<mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill" />
 }
       </ag-virtual-scroll>
     }
@@ -43,7 +43,7 @@
       @if (archiveMillsView?.length == 0) {
 <div class="ion-padding ion-text-center">
         <div>
-          <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large" aria-hidden="true"></ion-icon>
+          <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large" aria-hidden="true" />
         </div>
         <div class="text-color-inactive ion-margin-top">
           {{"PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING" | translate}}
@@ -53,7 +53,7 @@
 
       <ag-virtual-scroll #archivedScroll [items]="archiveMillsView" [height]="'100vh'" [min-row-height]="263">
         @for (mill of archivedScroll.items; track mill) {
-<mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
+<mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill" />
 }
       </ag-virtual-scroll>
     }

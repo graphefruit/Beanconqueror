@@ -15,7 +15,7 @@
                 <h2>{{entry.profileName}}&nbsp;({{entry.id}})</h2>
                 <div class='font-size-16'>{{this.uiHelper.formateDate(entry.timestamp)}}</div>
                 </ion-grid>
-                <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggiuinoHistoryData]='entry.brewFlow'></graph-display-card>
+                <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggiuinoHistoryData]='entry.brewFlow' />
               </ion-radio>
             </ion-item>
           }

@@ -42,13 +42,13 @@
         <div>
           @if (openPreparationsView?.length > 0 || uiShallBarBeDisplayed || uiIsTextSearchActive || uiIsSortActive) {
             <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-              <ng-container [ngTemplateOutlet]="preparationSearchToolbar"></ng-container>
+              <ng-container [ngTemplateOutlet]="preparationSearchToolbar" />
             </div>
           }
           @if (openPreparationsView?.length == 0) {
             <div class="ion-padding ion-text-center">
               <div>
-                <ion-icon color="inactive" name="beanconqueror-preparation" size="large" aria-hidden="true"></ion-icon>
+                <ion-icon color="inactive" name="beanconqueror-preparation" size="large" aria-hidden="true" />
               </div>
               <div class="text-color-inactive ion-margin-top">
                 {{"PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING" | translate}}
@@ -59,7 +59,7 @@
             @for (preparation of openScroll.items; track preparation) {
               <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
                 [preparation]="preparation"
-              ></preparation-information-card>
+               />
             }
           </ag-virtual-scroll>
         </div>
@@ -68,13 +68,13 @@
         <div >
           @if (archivePreparationsView?.length > 0 || uiShallBarBeDisplayed || uiIsTextSearchActive || uiIsSortActive) {
             <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-              <ng-container [ngTemplateOutlet]="preparationSearchToolbar"></ng-container>
+              <ng-container [ngTemplateOutlet]="preparationSearchToolbar" />
             </div>
           }
           @if (archivePreparationsView?.length == 0) {
             <div class="ion-padding ion-text-center">
               <div>
-                <ion-icon color="inactive" name="beanconqueror-preparation" size="large" aria-hidden="true"></ion-icon>
+                <ion-icon color="inactive" name="beanconqueror-preparation" size="large" aria-hidden="true" />
               </div>
               <div class="text-color-inactive ion-margin-top">
                 {{"PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING" | translate}}
@@ -85,7 +85,7 @@
             @for (preparation of archivedScroll.items; track preparation) {
               <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
                 [preparation]="preparation"
-              ></preparation-information-card>
+               />
             }
           </ag-virtual-scroll>
         </div>
@@ -99,12 +99,12 @@
 <ng-template #preparationSearchToolbar>
   <ion-searchbar (ionChange)="research()" (ionInput)='research()' [(ngModel)]="uiSearchText"
     class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
-    search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+    search-icon="beanconqueror-detail" showCancelButton="never" />
   <ion-button (click)="showSort()" [attr.aria-label]="uiIsSortActive ? 'Sort preparations (active)' : 'Sort preparations'" fill="clear" size="small" tappable>
     @if (uiIsSortActive) {
-    <ion-icon aria-hidden="true" name="beanconqueror-sort-active" slot="icon-only"></ion-icon>
+    <ion-icon aria-hidden="true" name="beanconqueror-sort-active" slot="icon-only" />
     } @else {
-    <ion-icon aria-hidden="true" name="beanconqueror-sort-inactive" slot="icon-only"></ion-icon>
+    <ion-icon aria-hidden="true" name="beanconqueror-sort-inactive" slot="icon-only" />
     }
   </ion-button>
 </ng-template>

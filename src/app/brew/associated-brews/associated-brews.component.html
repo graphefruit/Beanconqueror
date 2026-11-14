@@ -9,13 +9,13 @@
       <ag-virtual-scroll #openScrollAssociatedBrews [items]="associatedBrews"  [height]="'100vh'" [min-row-height]="180">
         @for(brew of openScrollAssociatedBrews.items; track brew.config.uuid) {
           <brew-information [collapsed]="isCollapsed" (brewAction)="brewAction()"
-                            [brew]="brew"></brew-information>
+                            [brew]="brew" />
         }
       </ag-virtual-scroll>
     } @else {
       <div class="ion-padding ion-text-center">
         <div>
-          <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
+          <ion-icon color="inactive" name="beanconqueror-cup" size="large" />
         </div>
         <div class="text-color-inactive ion-margin-top">
           {{"PAGE_BREWS_NO_ENTRIES" | translate}}
@@ -24,4 +24,4 @@
     }
 </ion-content>
 <!--Needs to be empty-->
-<ion-footer></ion-footer>
+<ion-footer />

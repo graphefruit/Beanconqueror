@@ -4,15 +4,14 @@
     @if (brew.flow_profile) {
       <swiper-container pager="true" [pagination]="{ draggable: true, clickable: true }">
         <swiper-slide>
-          <ng-container *ngTemplateOutlet="brewCardTemplate">
-          </ng-container>
+          <ng-container *ngTemplateOutlet="brewCardTemplate" />
         </swiper-slide>
         <swiper-slide >
           <!--Z-index -1 to let it scroll all good-->
           <ion-card class='long-card brew-layout' [class.best-brew]="brew.best_brew" [class.favourite-brew]="brew.favourite" style='z-index:-1'>
             <ion-card-content class='no-ion-col-vertical-padding ion-padding-top' >
               @if (informationContainerWidth) {
-                <graph-display-card [staticChart]="true" [chartWidth]='informationContainerWidth' [chartHeight]='informationContainerHeight' [flowProfilePath]='brew.flow_profile'></graph-display-card>
+                <graph-display-card [staticChart]="true" [chartWidth]='informationContainerWidth' [chartHeight]='informationContainerHeight' [flowProfilePath]='brew.flow_profile' />
               }
             </ion-card-content>
           </ion-card>
@@ -20,8 +19,7 @@
         </swiper-slide>
       </swiper-container>
     } @else {
-      <ng-container *ngTemplateOutlet="brewCardTemplate">
-      </ng-container>
+      <ng-container *ngTemplateOutlet="brewCardTemplate" />
     }
     <div style='height:10px;'></div>
   </div>
@@ -54,22 +52,22 @@
                         <ion-col class='ion-text-bold' size='12'>
                           @if (brew.best_brew) {
                             <ion-icon name='trophy'
-                            style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
+                            style='top: 3px;position: relative;margin-right:5px;' />
                           }
                           @if (brew.favourite) {
                             <ion-icon name='heart'
-                            style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
+                            style='top: 3px;position: relative;margin-right:5px;' />
                           }
                           @if (brew?.flow_profile) {
                             <ion-icon name='analytics-outline'
-                            style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
+                            style='top: 3px;position: relative;margin-right:5px;' />
                           }
                           @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)) {
                             <ion-icon style='top: 3px;position: relative;margin-right:5px;' name='snow-outline'
-                            ></ion-icon>
+                             />
                           }
                           @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_UNFROZEN)) {
-                            (<ion-icon style='top: 3px;position: relative;' name='snow-outline'></ion-icon>)
+                            (<ion-icon style='top: 3px;position: relative;' name='snow-outline' />)
                           }
                           {{ bean?.name }}
                         </ion-col>
@@ -92,12 +90,12 @@
                         aria-label="Brew options"
                         class='button-top-absolute' color='accent'
                         fill='clear' tappable>
-                        <ion-icon aria-hidden="true" name='beanconqueror-dots' slot='icon-only'></ion-icon>
+                        <ion-icon aria-hidden="true" name='beanconqueror-dots' slot='icon-only' />
                       </ion-button>
                     }
                     @if ((brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.IS_ARCHIVED) === true) {
                       <ion-button aria-label="Archived brew" class='button-top-absolute' color='accent' fill='clear'>
-                        <ion-icon aria-hidden="true" name='archive' slot='icon-only'></ion-icon>
+                        <ion-icon aria-hidden="true" name='archive' slot='icon-only' />
                       </ion-button>
                     }
                   </ion-col>
@@ -120,24 +118,24 @@
 
           <ion-col size-xs='3' size-xl='1' size-sm='1' size-md='1' size-lg='1' size="1" class='ion-no-padding'>
             @if (choosenImageDisplayingType === BREW_DISPLAY_IMAGE_TYPE.PREPARATION) {
-              <ng-container [ngTemplateOutlet]="preparationImage"></ng-container>
+              <ng-container [ngTemplateOutlet]="preparationImage" />
             } @else if  (choosenImageDisplayingType === BREW_DISPLAY_IMAGE_TYPE.BEAN) {
               @let hasBeanPhoto = (bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS);
               @if (hasBeanPhoto) {
                 <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
-                  <async-image [filePath]='$safeNavigationMigration(bean?.attachments[0])' class='bean-slider'></async-image>
+                  <async-image [filePath]='$safeNavigationMigration(bean?.attachments[0])' class='bean-slider' />
                 </div>
               } @else {
-                <ng-container [ngTemplateOutlet]="preparationImage"></ng-container>
+                <ng-container [ngTemplateOutlet]="preparationImage" />
               }
             } @else if  (choosenImageDisplayingType === BREW_DISPLAY_IMAGE_TYPE.BREW) {
               @let hasBrewPhoto = (brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.HAS_PHOTOS);
               @if (hasBrewPhoto) {
                 <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
-                  <async-image [filePath]='$safeNavigationMigration(brew?.attachments[0])' class='bean-slider'></async-image>
+                  <async-image [filePath]='$safeNavigationMigration(brew?.attachments[0])' class='bean-slider' />
                 </div>
               } @else {
-                <ng-container [ngTemplateOutlet]="preparationImage"></ng-container>
+                <ng-container [ngTemplateOutlet]="preparationImage" />
               }
             }
           </ion-col>
@@ -151,15 +149,15 @@
                     <span class='brew-date-time'>
                       @if (brew.best_brew) {
                         <ion-icon name='trophy'
-                        style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
+                        style='top: 3px;position: relative;margin-right:5px;' />
                       }
                       @if (brew.favourite) {
                         <ion-icon name='heart'
-                        style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
+                        style='top: 3px;position: relative;margin-right:5px;' />
                       }
                       @if (brew?.flow_profile) {
                         <ion-icon name='analytics-outline'
-                        style='top: 3px;position: relative;margin-right:5px;'></ion-icon>
+                        style='top: 3px;position: relative;margin-right:5px;' />
                       }
                       <strong>{{ brew.config.unix_timestamp | formatDate:[$safeNavigationMigration(settings?.date_format)] }}</strong><span
                     class='ion-padding-start brew-time'>{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</span>
@@ -167,7 +165,7 @@
                 </ion-col>
                 <ion-col size='2'>
                   <ion-button (click)='showBrewActions($event)' aria-label="Brew options" class='button-top-absolute' color='accent' fill='clear'>
-                    <ion-icon aria-hidden="true" name='beanconqueror-dots' slot='icon-only'></ion-icon>
+                    <ion-icon aria-hidden="true" name='beanconqueror-dots' slot='icon-only' />
                   </ion-button>
                 </ion-col>
               </ion-row>
@@ -176,10 +174,10 @@
                   <div class='ion-no-padding font-size-20 ion-title brew-title'>
                     @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)) {
                       <ion-icon style='top: 3px;position: relative;margin-right:5px;' name='snow-outline'
-                      ></ion-icon>
+                       />
                     }
                     @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_UNFROZEN)) {
-                      (<ion-icon style='top: 3px;position: relative;' name='snow-outline'></ion-icon>)
+                      (<ion-icon style='top: 3px;position: relative;' name='snow-outline' />)
                     }
                     {{ bean?.name }}@if (bean?.roaster) {
                     <span class='font-size-16'>&nbsp;({{ bean?.roaster }})</span>
@@ -192,8 +190,7 @@
                 <ion-col
                   size='4'>
                   <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]='brew.rating' [maxStars]='5'
-                    [readonly]='true' [wholeStars]='true' class='ion-float-right brew-stars'>
-                  </ngx-stars>
+                    [readonly]='true' [wholeStars]='true' class='ion-float-right brew-stars' />
                 </ion-col>
               }
               @if ((settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.rating,
@@ -238,14 +235,14 @@
                   data-testid="brew-imported-source-link"
                   (click)="openImportedProvenance($event, importedProvenanceChip.sourceUrl)"
                 >
-                  <ng-container *ngTemplateOutlet="importedChipBody"></ng-container>
+                  <ng-container *ngTemplateOutlet="importedChipBody" />
                 </ion-chip>
               } @else {
                 <ion-chip
                   class="brew-imported-chip"
                   data-testid="brew-imported-source-chip"
                 >
-                  <ng-container *ngTemplateOutlet="importedChipBody"></ng-container>
+                  <ng-container *ngTemplateOutlet="importedChipBody" />
                 </ion-chip>
               }
             </ion-col>
@@ -476,10 +473,10 @@
 <ng-template #preparationImage>
   @let hasPreparationPhoto = (preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS);
   @if(hasPreparationPhoto === false) {
-    <ion-icon class='full-sized-icon' name='{{preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON}}'></ion-icon>
+    <ion-icon class='full-sized-icon' name='{{preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON}}' />
   } @else {
     <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
-      <async-image [filePath]='$safeNavigationMigration(preparation?.attachments[0])' class='bean-slider'></async-image>
+      <async-image [filePath]='$safeNavigationMigration(preparation?.attachments[0])' class='bean-slider' />
     </div>
   }
 </ng-template>

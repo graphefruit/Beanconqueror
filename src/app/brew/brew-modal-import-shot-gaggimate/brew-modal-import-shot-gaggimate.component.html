@@ -6,7 +6,7 @@
 <ion-content #historyShotContent>
   @if(loading) {
   <div class="ion-text-center ion-padding">
-    <ion-spinner></ion-spinner>
+    <ion-spinner />
     @if(loadingImportedShot) {
     <p>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.LOADING_IMPORTED_SHOT" | translate}}</p>
     } @else if(loadingTotal > 0) {
@@ -29,7 +29,7 @@
                 <h3 class="ion-text-wrap">{{entry.profile}}&nbsp;({{entry.id}})</h3>
                 <div class='font-size-16'>{{this.uiHelper.formateDate(entry.timestamp)}}</div>
                 </ion-grid>
-                <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggimateHistoryData]='entry.brewFlow'></graph-display-card>
+                <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggimateHistoryData]='entry.brewFlow' />
               </ion-radio>
             </ion-item>
           }

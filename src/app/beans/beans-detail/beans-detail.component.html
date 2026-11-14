@@ -193,7 +193,7 @@
               <ion-item style='margin-top:-10px;'>
                 <ion-range  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" disabled="true" [(ngModel)]="data.roast_range" snaps="true" max="5" min="0" step="0.5">
                   <div slot="end">
-                    <ngx-stars #beanStars [readonly]="true" [initialStars]="data.roast_range"  class="bean-display ion-margin-top"></ngx-stars>
+                    <ngx-stars #beanStars [readonly]="true" [initialStars]="data.roast_range"  class="bean-display ion-margin-top" />
                   </div>
                 </ion-range>
               </ion-item>
@@ -231,7 +231,7 @@
               <ion-range  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" [(ngModel)]="data.rating" [max]="maxBeanRating" [step]="$safeNavigationMigration(settings?.bean_rating_steps)" debounce="500s"  disabled="true" min="0" snaps="true">
                 <div slot="end">
                   @if (bean?.rating !== 0 && hasCustomRatingRange() === false) {
-                    <ngx-stars  #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
+                    <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars"  />
                   }
                   @if (bean?.rating > 0  && hasCustomRatingRange() === true) {
                     <div  class="ion-text-right">
@@ -299,7 +299,7 @@
                 <h3>{{data.url}}</h3>
               </ion-label>
               @if (data.url) {
-                <ion-icon style="position: relative; top: 5px;" name="globe-outline" slot="end"></ion-icon>
+                <ion-icon style="position: relative; top: 5px;" name="globe-outline" slot="end" />
               }
             </ion-item>
           }
@@ -332,7 +332,7 @@
           }
           @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.attachments]) && data?.attachments?.length > 0) {
             <div>
-              <photo-view [(data)]="data"></photo-view>
+              <photo-view [(data)]="data" />
             </div>
           }
         </ion-card>
@@ -371,7 +371,7 @@
     @case ('sortinformation') {
       <div>
         @if (data) {
-          <bean-detail-sort-information  [(data)]="data"></bean-detail-sort-information>
+          <bean-detail-sort-information [(data)]="data" />
         }
       </div>
     }

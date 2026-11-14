@@ -100,7 +100,7 @@
       @case ('sortinformation') {
         <div>
           @if (data) {
-            <bean-detail-sort-information [(data)]="data"></bean-detail-sort-information>
+            <bean-detail-sort-information [(data)]="data" />
           }
         </div>
       }
@@ -109,7 +109,7 @@
           @if (linkedRoasts.length <=0) {
             <div  class="ion-padding ion-text-center">
               <div>
-                <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+                <ion-icon color="inactive" name="beanconqueror-beans" size="large" />
               </div>
               <div class="text-color-inactive ion-margin-top">
                 {{"ROASTING_SECTION.GREEN_BEAN.NO_ROASTS_YET" | translate}}
@@ -120,7 +120,7 @@
             <div>
               @for (bean of linkedRoasts; track bean) {
                 <bean-information (beanAction)="beanAction()" [showActions]="false"
-                [bean]="bean"></bean-information>
+                [bean]="bean" />
               }
             </div>
           }

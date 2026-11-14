@@ -18,7 +18,7 @@
         <ion-card class="ion-no-margin" (click)="openUnwrapped(2026)" tappable>
           <ion-card-header>
             <ion-card-title>
-              <ion-icon color='accent' name="gift-outline"></ion-icon>
+              <ion-icon color='accent' name="gift-outline" />
               {{ 'UNWRAPPED.BUTTON.TITLE' | translate }}
             </ion-card-title>
             <ion-card-subtitle>{{ 'UNWRAPPED.BUTTON.SUBTITLE' | translate }}</ion-card-subtitle>
@@ -74,9 +74,8 @@
             <ion-card-title>
               @if(settings.freeze_coffee_beans) {
               <ion-icon color='accent-secondary' style="top: 3px;position: relative;"
-                name="thermometer-outline"></ion-icon>&nbsp;{{leftOverBeansWeight}}<br /><ion-icon
-                color='accent-secondary' style="top: 3px;position: relative;"
-                name="snow-outline"></ion-icon>&nbsp;{{leftOverFrozenBeansWeight}}
+                name="thermometer-outline" />&nbsp;{{leftOverBeansWeight}}<br /><ion-icon color='accent-secondary' style="top: 3px;position: relative;"
+                name="snow-outline" />&nbsp;{{leftOverFrozenBeansWeight}}
               } @else {
               {{leftOverBeansWeight}}
               }
@@ -96,12 +95,12 @@
   @if (brews?.length > 0) {
   @for(brew of brews; track brew.config.uuid) {
   <brew-information [layout]="'dashboard'" (brewAction)="brewAction($event[0],$event[1])"
-    [brew]="brew"></brew-information>
+    [brew]="brew" />
   }
   } @else {
   <div class="ion-padding ion-text-center">
     <div>
-      <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
+      <ion-icon color="inactive" name="beanconqueror-cup" size="large" />
     </div>
     <div class="text-color-inactive ion-margin-top">
       {{"PAGE_BREWS_NO_ENTRIES" | translate}}

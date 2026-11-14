@@ -1,5 +1,5 @@
 <ion-item (click)="addImage()" button tappable>
-  <ion-icon class="icon-16" name="beanconqueror-add"></ion-icon>&nbsp;{{"ADD_PHOTO" | translate}}
+  <ion-icon class="icon-16" name="beanconqueror-add" />&nbsp;{{"ADD_PHOTO" | translate}}
 </ion-item>
 @if (data?.attachments && data.attachments.length > 0) {
   <div>
@@ -7,15 +7,15 @@
       @for (attachment of data.attachments; track attachment; let i = $index) {
         <swiper-slide>
           <ion-button [disabled]='i===0' (click)="sortLeft(i)" class="position-absolute-button-sort-left" tappable color="accent" fill="clear">
-            <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+            <ion-icon slot="icon-only" name="arrow-back-outline" />
           </ion-button>
           <ion-button [disabled]='i===data.attachments.length-1'  (click)="sortRight(i)" class="position-absolute-button-sort-right" tappable color="accent" fill="clear">
-            <ion-icon slot="icon-only" name="arrow-forward-outline"></ion-icon>
+            <ion-icon slot="icon-only" name="arrow-forward-outline" />
           </ion-button>
           <ion-button (click)="deleteImage(i)" class="position-absolute-button" tappable color="accent" fill="clear">
-            <ion-icon slot="icon-only" name="trash"></ion-icon>
+            <ion-icon slot="icon-only" name="trash" />
           </ion-button>
-          <async-image class="brew-image" filePath="{{attachment}}"></async-image>
+          <async-image class="brew-image" filePath="{{attachment}}" />
         </swiper-slide>
       }
     </swiper-container>

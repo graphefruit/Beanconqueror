@@ -23,7 +23,7 @@
       @if (openWaters.length == 0) {
         <div class="ion-padding ion-text-center">
           <div>
-            <ion-icon color="inactive" name="water-outline" size="large"></ion-icon>
+            <ion-icon color="inactive" name="water-outline" size="large" />
           </div>
           <div class="text-color-inactive ion-margin-top">
             {{"WATER_SECTION.YOU_GOT_NO_WATER" | translate}}
@@ -32,7 +32,7 @@
       }
       <ag-virtual-scroll #openScroll [items]="openWaters" [height]="'100vh'" [min-row-height]="165">
         @for (water of openScroll.items; track water) {
-          <water-information-card (waterAction)="triggerAction($event[0],$event[1])" [water]="water"></water-information-card>
+          <water-information-card (waterAction)="triggerAction($event[0],$event[1])" [water]="water" />
         }
       </ag-virtual-scroll>
     }
@@ -41,7 +41,7 @@
         @if (finishedWaters.length == 0) {
           <div class="ion-padding ion-text-center">
             <div>
-              <ion-icon color="inactive" name="water-outline" size="large"></ion-icon>
+              <ion-icon color="inactive" name="water-outline" size="large" />
             </div>
             <div class="text-color-inactive ion-margin-top">
               {{"WATER_SECTION.YOU_GOT_NO_ARCHIVED_WATER" | translate}}
@@ -50,7 +50,7 @@
         }
         <ag-virtual-scroll #archivedScroll [items]="finishedWaters" [height]="'100vh'" [min-row-height]="165">
           @for (water of archivedScroll.items; track water) {
-            <water-information-card (waterAction)="triggerAction($event[0],$event[1])" [water]="water"></water-information-card>
+            <water-information-card (waterAction)="triggerAction($event[0],$event[1])" [water]="water" />
           }
         </ag-virtual-scroll>
       }

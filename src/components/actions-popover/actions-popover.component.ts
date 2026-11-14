@@ -83,7 +83,7 @@ export function popoverDivider(
 @Component({
   selector: 'actions-popover',
   template: `
-    <ion-header translucent></ion-header>
+    <ion-header translucent />
     <ion-content>
       <ion-list lines="full">
         @for (item of visibleItems(); track $index) {
@@ -99,7 +99,7 @@ export function popoverDivider(
                   [name]="item.icon"
                   [style.color]="item.iconColor"
                   slot="start"
-                ></ion-icon>
+                />
                 @if (item.subtitleTranslationKey) {
                   <ion-label>
                     <span>{{ item.translationKey | translate }}</span>

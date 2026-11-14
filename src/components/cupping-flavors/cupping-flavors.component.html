@@ -4,19 +4,19 @@
 
   </ion-list-header>
   <ion-item class="ion-margin-horizontal">
-    <ion-input id="customFlavorInput" (keyup.enter)="addCustomFlavor()" [(ngModel)]="customFlavor" name="customFlavor" placeholder='{{"CUSTOM_FLAVORS_AROMAS_PLACEHOLDER" | translate}}' type="text"></ion-input>
+    <ion-input id="customFlavorInput" (keyup.enter)="addCustomFlavor()" [(ngModel)]="customFlavor" name="customFlavor" placeholder='{{"CUSTOM_FLAVORS_AROMAS_PLACEHOLDER" | translate}}' type="text" />
 
-    <ion-icon tappable (click)="addCustomFlavor()" class="ion-margin-end" slot="end" name="add-circle-outline"></ion-icon>
+    <ion-icon tappable (click)="addCustomFlavor()" class="ion-margin-end" slot="end" name="add-circle-outline" />
   </ion-item>
   <div class="ion-margin-horizontal">
     @for (flavor of customFlavors; track flavor; let i = $index) {
-      <ion-chip (click)="removeCustomFlavor(i)">{{flavor}} <ion-icon name="close"></ion-icon></ion-chip>
+      <ion-chip (click)="removeCustomFlavor(i)">{{flavor}} <ion-icon name="close" /></ion-chip>
     }
   </div>
   <ion-list-header>
     {{"PREDEFINED_FLAVORS_AROMAS" | translate }}
   </ion-list-header>
-  <ion-searchbar [(ngModel)]="searchFlavorText" debounce="500" (ionInput)='searchFlavors()' (ionChange)="searchFlavors()" (ionClear)="resetFlavors()"></ion-searchbar>
+  <ion-searchbar [(ngModel)]="searchFlavorText" debounce="500" (ionInput)='searchFlavors()' (ionChange)="searchFlavors()" (ionClear)="resetFlavors()" />
   @for (flavor of displayingFlavors; track flavor) {
     <div class="ion-margin-horizontal">
       @if (flavor.display) {

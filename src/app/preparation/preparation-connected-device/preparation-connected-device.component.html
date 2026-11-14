@@ -26,10 +26,10 @@
       @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.XENIA) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save()" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
-          tabIndex="1" type="text"></ion-input>
+          tabIndex="1" type="text" />
           <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
             slot="end" style="margin-left:0px;" tabIndex="2" tappable>
-            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only" />
           </ion-button>
         </ion-item>
         <ion-item>
@@ -51,9 +51,8 @@
           </ion-label>
         </ion-item>
         <ion-item lines='inset'>
-          <ion-range    [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTime" [max]="2" min="0.1" snaps="true"
-            [step]="0.05" >
-          </ion-range>
+          <ion-range [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTime" [max]="2" min="0.1" snaps="true"
+            [step]="0.05"  />
         </ion-item>
         <ion-item lines="none">
           <ion-checkbox label-placement='start' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.saveLogfilesFromMachine" >
@@ -65,20 +64,20 @@
       @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.METICULOUS) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save()" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
-          tabIndex="1" type="text"></ion-input>
+          tabIndex="1" type="text" />
           <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
             slot="end" style="margin-left:0px;" tabIndex="2" tappable>
-            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only" />
           </ion-button>
         </ion-item>
       }
       @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.SANREMO_YOU) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save();" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
-          tabIndex="1" type="text"></ion-input>
+          tabIndex="1" type="text" />
           <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
             slot="end" style="margin-left:0px;" tabIndex="2" tappable>
-            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only" />
           </ion-button>
         </ion-item>
         <ion-item lines='none'>
@@ -93,9 +92,8 @@
           </ion-label>
         </ion-item>
         <ion-item lines='inset'>
-          <ion-range    [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTime" [max]="2" min="0" snaps="true"
-            [step]="0.05" >
-          </ion-range>
+          <ion-range [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTime" [max]="2" min="0" snaps="true"
+            [step]="0.05"  />
         </ion-item>
         <!--<hr>
         <ion-item lines='none'>
@@ -167,10 +165,10 @@
       @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.GAGGIUINO) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save();" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
-          tabIndex="1" type="text"></ion-input>
+          tabIndex="1" type="text" />
           <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
             slot="end" style="margin-left:0px;" tabIndex="2" tappable>
-            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only" />
           </ion-button>
         </ion-item>
       }
@@ -178,10 +176,10 @@
       @if (data.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.GAGGIMATE) {
         <ion-item>
           <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.URL" | translate}}' (ionBlur)="save();" [(ngModel)]="data.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
-                     tabIndex="1" type="text"></ion-input>
+                     tabIndex="1" type="text" />
           <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
                       slot="end" style="margin-left:0px;" tabIndex="2" tappable>
-            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only" />
           </ion-button>
         </ion-item>
         <ion-item lines='none'>
@@ -196,9 +194,8 @@
           </ion-label>
         </ion-item>
         <ion-item lines='inset'>
-          <ion-range    [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.latestShotsToImport" [max]="10" [min]="1" [snaps]="true"
-                        [step]="1" >
-          </ion-range>
+          <ion-range [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.latestShotsToImport" [max]="10" [min]="1" [snaps]="true"
+                        [step]="1"  />
         </ion-item>
         <ion-item lines="none">
           <ion-toggle [checked]="true" label-placement='start' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.confirmDuplicateImport" >
@@ -244,8 +241,7 @@
         </ion-item>
         <ion-item lines='inset'>
           <ion-range [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="save()" [(ngModel)]="data.connectedPreparationDevice.customParams.residualLagTime" [max]="2" min="0.1" snaps="true"
-            [step]="0.05" >
-          </ion-range>
+            [step]="0.05"  />
         </ion-item>
       }
 
@@ -255,4 +251,4 @@
 
 </ion-content>
 <!--Needs to be empty-->
-<ion-footer></ion-footer>
+<ion-footer />

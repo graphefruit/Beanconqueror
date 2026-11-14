@@ -26,7 +26,7 @@
             <ion-radio-group [(ngModel)]="radioSelection">
               <ag-virtual-scroll #graphOpenScroll [items]="graphOpenView" [height]="'100vh'" [min-row-height]="180">
                 @for (graph of graphOpenScroll.items; track graph.config.uuid) {
-                  <brew-graph-reference-card [graph]="graph"></brew-graph-reference-card>
+                  <brew-graph-reference-card [graph]="graph" />
                 }
               </ag-virtual-scroll>
             </ion-radio-group>
@@ -41,12 +41,12 @@
             <div class="ion-justify-content-end container">
               <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText"
                              class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
-                             search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+                             search-icon="beanconqueror-detail" showCancelButton="never" />
               <ion-button class="margin-right-5" (click)="showFilter('brews-open')" fill="clear" size="small" tappable>
                 @if (isFilterActive('brews-open')) {
-                  <ion-icon name="beanconqueror-filter-active" slot="icon-only"></ion-icon>
+                  <ion-icon name="beanconqueror-filter-active" slot="icon-only" />
                 } @else {
-                  <ion-icon name="beanconqueror-filter-inactive" slot="icon-only"></ion-icon>
+                  <ion-icon name="beanconqueror-filter-inactive" slot="icon-only" />
                 }
               </ion-button>
             </div>
@@ -56,14 +56,14 @@
             <ion-radio-group [(ngModel)]="radioSelection">
               <ag-virtual-scroll #openScroll [items]="openBrewsView" [height]="'100vh'" [min-row-height]="180">
                 @for (brew of openScroll.items; track brew.config.uuid) {
-                  <brew-graph-reference-card [brew]="brew"></brew-graph-reference-card>
+                  <brew-graph-reference-card [brew]="brew" />
                 }
               </ag-virtual-scroll>
             </ion-radio-group>
           } @else {
             <div class="ion-padding ion-text-center">
               <div>
-                <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
+                <ion-icon color="inactive" name="beanconqueror-cup" size="large" />
               </div>
               <div class="text-color-inactive ion-margin-top">
                 {{ "NO_BREWS_FOUND" | translate }}
@@ -80,13 +80,13 @@
             <div class="ion-justify-content-end container">
               <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText"
                              class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
-                             search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+                             search-icon="beanconqueror-detail" showCancelButton="never" />
               <ion-button class="margin-right-5" (click)="showFilter('brews-archive')" fill="clear" size="small"
                           tappable>
                 @if (isFilterActive('brews-archive')) {
-                  <ion-icon name="beanconqueror-filter-active" slot="icon-only"></ion-icon>
+                  <ion-icon name="beanconqueror-filter-active" slot="icon-only" />
                 } @else {
-                  <ion-icon name="beanconqueror-filter-inactive" slot="icon-only"></ion-icon>
+                  <ion-icon name="beanconqueror-filter-inactive" slot="icon-only" />
                 }
               </ion-button>
             </div>
@@ -96,14 +96,14 @@
             <ion-radio-group [(ngModel)]="radioSelection">
               <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" [height]="'100vh'" [min-row-height]="385">
                 @for (brew of archivedScroll.items; track brew.config.uuid) {
-                  <brew-graph-reference-card [brew]="brew"></brew-graph-reference-card>
+                  <brew-graph-reference-card [brew]="brew" />
                 }
               </ag-virtual-scroll>
             </ion-radio-group>
           } @else {
             <div class="ion-padding ion-text-center">
               <div>
-                <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
+                <ion-icon color="inactive" name="beanconqueror-cup" size="large" />
               </div>
               <div class="text-color-inactive ion-margin-top">
                 {{ "NO_BREWS_FOUND" | translate }}

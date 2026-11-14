@@ -35,7 +35,7 @@
       <ion-card-title>{{ "PAGE_SETTINGS_TRANSFER" | translate }}</ion-card-title>
       <ion-item (click)="import()" button tappable>
         <ion-label>{{ "IMPORT" | translate }}</ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-icon name="chevron-forward-outline" slot="end" />
       </ion-item>
       @if (isAndroid) {
       <ion-item (click)="importFromDirectoryAndroid()" button tappable>
@@ -43,7 +43,7 @@
           <h2>{{ "FULL_IMPORT_FROM_DIRECTORY" | translate }}</h2>
           <p>{{ "FULL_IMPORT_FROM_DIRECTORY_DESCRIPTION" | translate }}</p>
         </ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-icon name="chevron-forward-outline" slot="end" />
       </ion-item>
       }
       <ion-item (click)="export()" button tappable>
@@ -55,7 +55,7 @@
           <p>{{ "EXPORT_CAUTION_IOS" | translate }}</p>
           }
         </ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-icon name="chevron-forward-outline" slot="end" />
       </ion-item>
       @if (isAndroid) {
       <ion-item (click)="exportToSafDirectoryAndroid()" button tappable>
@@ -63,7 +63,7 @@
           <h2>{{ "FULL_EXPORT_TO_DIRECTORY" | translate }}</h2>
           <p>{{ "FULL_EXPORT_TO_DIRECTORY_DESCRIPTION" | translate }}</p>
         </ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-icon name="chevron-forward-outline" slot="end" />
       </ion-item>
       }
       <ion-item (click)="findAndImportAutomaticBackupFile()" button tappable>
@@ -71,37 +71,37 @@
           <h2>{{ "FIND_AUTOMATIC_BACKUP_FILES" | translate }}</h2>
           <p>{{ "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION" | translate }}</p>
         </ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-icon name="chevron-forward-outline" slot="end" />
       </ion-item>
       @if (doWeHaveBrewByWeights('xenia')) {
       <ion-item (click)="exportBrewByWeight('xenia')" button tappable>
         <ion-label>Temp: Export Brew By Weight - Xenia</ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-icon name="chevron-forward-outline" slot="end" />
       </ion-item>
       }
       @if (doWeHaveBrewByWeights('sanremo')) {
       <ion-item (click)="exportBrewByWeight('sanremo')" button tappable>
         <ion-label>Temp: Export Brew By Weight - Sanremo</ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-icon name="chevron-forward-outline" slot="end" />
       </ion-item>
       }
       <ion-item (click)="excelExport()" button tappable>
         <ion-label>{{ "EXCEL_EXPORT" | translate }}</ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-icon name="chevron-forward-outline" slot="end" />
       </ion-item>
       <ion-item (click)="importBeansExcel()" button tappable>
         <ion-label>{{ "IMPORT_ROASTED_BEANS_EXCEL" | translate }}</ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-icon name="chevron-forward-outline" slot="end" />
       </ion-item>
       @if (settings.show_roasting_section) {
       <ion-item (click)="importBeansExcel('green')" tappable>
         <ion-label>{{ "IMPORT_GREEN_BEANS_EXCEL" | translate }}</ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-icon name="chevron-forward-outline" slot="end" />
       </ion-item>
       }
       <ion-item (click)='downloadImportExcelTemplates()' lines="none">
         <ion-label>{{ "DOWNLOAD_IMPORT_EXCEL_TEMPLATES" | translate }}</ion-label>
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-icon name="chevron-forward-outline" slot="end" />
       </ion-item>
     </ion-card-content>
   </ion-card>
@@ -173,7 +173,7 @@
           <h2>{{ "PAGE_SETTINGS_IMAGE_QUALITY" | translate }}</h2>
         </ion-label>
         <ion-icon name="information-outline" slot="end"
-          tooltip='{{"PAGE_SETTINGS_IMAGE_QUALITY_TOOLTIP" | translate}}'></ion-icon>
+          tooltip='{{"PAGE_SETTINGS_IMAGE_QUALITY_TOOLTIP" | translate}}' />
       </ion-item>
       <ion-item style="top:-10px;">
         <ion-range [disabled]='isScrolling'
@@ -187,7 +187,7 @@
           <h2>{{ "PAGE_SETTINGS_BREW_RATING" | translate }}</h2>
         </ion-label>
         <ion-icon name="information-outline" slot="end"
-          tooltip='{{"PAGE_SETTINGS_BREW_RATING_TOOLTIP" | translate}}'></ion-icon>
+          tooltip='{{"PAGE_SETTINGS_BREW_RATING_TOOLTIP" | translate}}' />
       </ion-item>
       <ion-item style="top:-10px;" lines="none">
         <ion-range [disabled]='isScrolling'
@@ -224,7 +224,7 @@
           <h2>{{ "PAGE_SETTINGS_BEAN_RATING" | translate }}</h2>
         </ion-label>
         <ion-icon name="information-outline" slot="end"
-          tooltip='{{"PAGE_SETTINGS_BEAN_RATING_TOOLTIP" | translate}}'></ion-icon>
+          tooltip='{{"PAGE_SETTINGS_BEAN_RATING_TOOLTIP" | translate}}' />
       </ion-item>
       <ion-item style="top:-10px;" lines="none">
         <ion-range [disabled]='isScrolling'
@@ -600,12 +600,11 @@
             (ionBlur)='checkVisualizerURL();' (ngModelChange)="saveSettings();" label-placement="stacked"
             label='{{"VISUALIZER.URL" | translate}}' #visualizer_url="ngModel" [(ngModel)]="settings.visualizer_url"
             autocapitalize="sentences" name="visualizer_url" placeholder="{{'VISUALIZER.URL' | translate}}"
-            spellcheck="false" type="text">
-          </ion-input>
+            spellcheck="false" type="text" />
 
           <ion-button (click)="checkVisualizerConnection()" class="big-icon-only" fill="clear" slot="end"
             style="margin-left:0px;" tabIndex="2" tappable>
-            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only" />
           </ion-button>
         </ion-item>
 
@@ -613,16 +612,14 @@
           <ion-input label-placement="stacked" label='{{"VISUALIZER.USERNAME" | translate}}'
             (ngModelChange)="saveSettings();" #visualizer_username="ngModel" [(ngModel)]="settings.visualizer_username"
             name="visualizer_username" placeholder="{{'VISUALIZER.USERNAME' | translate}}" spellcheck="false"
-            type="text">
-          </ion-input>
+            type="text" />
         </ion-item>
 
         <ion-item>
           <ion-input label-placement="stacked" label='{{"VISUALIZER.PASSWORD" | translate}}'
             (ngModelChange)="saveSettings();" #visualizer_password="ngModel" [(ngModel)]="settings.visualizer_password"
             name="visualizer_password" placeholder="{{'VISUALIZER.PASSWORD' | translate}}" spellcheck="false"
-            type="password">
-          </ion-input>
+            type="password" />
         </ion-item>
         <ion-item>
           <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
@@ -636,7 +633,7 @@
         @if (howManyBrewsAreNotUploadedToVisualizer() > 0 && settings.visualizer_password &&
         settings.visualizer_username) {
         <ion-item [button]="true" tappable (click)='uploadBrewsToVisualizer()'>
-          <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+          <ion-icon slot="start" name="cloud-upload-outline" />
           <ion-label>{{ "VISUALIZER.UPLOAD_ALL" | translate }}</ion-label>
           <ion-note slot="end">{{ howManyBrewsAreNotUploadedToVisualizer() }}</ion-note>
         </ion-item>
@@ -691,12 +688,11 @@
             [(ngModel)]="settings.brew_by_weight_webhook.url"
             name="brew_by_weight_webhook_url"
             placeholder='{{ "BREW_BY_WEIGHT_WEBHOOK.URL_PLACEHOLDER" | translate }}'
-            spellcheck="false" autocapitalize="none" type="url">
-          </ion-input>
+            spellcheck="false" autocapitalize="none" type="url" />
         </ion-item>
         <ion-item lines="none">
           <ion-button (click)="testBrewByWeightWebhook()" fill="outline" expand="block" style="width:100%">
-            <ion-icon name="flash-outline" slot="start"></ion-icon>
+            <ion-icon name="flash-outline" slot="start" />
             {{ "BREW_BY_WEIGHT_WEBHOOK.TEST" | translate }}
           </ion-button>
         </ion-item>
@@ -718,7 +714,7 @@
         <!-- http:// + auth warning -->
         @if (settings.brew_by_weight_webhook.authType !== webhookAuthTypeEnum.NONE && isWebhookUrlHttp()) {
         <ion-item lines="none" color="warning">
-          <ion-icon name="warning-outline" slot="start"></ion-icon>
+          <ion-icon name="warning-outline" slot="start" />
           <ion-label class="ion-text-wrap">
             <p>{{ "BREW_BY_WEIGHT_WEBHOOK.HTTP_AUTH_WARNING" | translate }}</p>
           </ion-label>
@@ -730,8 +726,7 @@
         <ion-item>
           <ion-input label-placement="stacked" label='{{ "BREW_BY_WEIGHT_WEBHOOK.BEARER_TOKEN" | translate }}'
             (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_by_weight_webhook.bearerToken"
-            name="brew_by_weight_webhook_bearer" spellcheck="false" type="password">
-          </ion-input>
+            name="brew_by_weight_webhook_bearer" spellcheck="false" type="password" />
         </ion-item>
         }
 
@@ -740,14 +735,12 @@
         <ion-item>
           <ion-input label-placement="stacked" label='{{ "BREW_BY_WEIGHT_WEBHOOK.BASIC_USERNAME" | translate }}'
             (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_by_weight_webhook.basicUsername"
-            name="brew_by_weight_webhook_basic_user" spellcheck="false" autocapitalize="none" type="text">
-          </ion-input>
+            name="brew_by_weight_webhook_basic_user" spellcheck="false" autocapitalize="none" type="text" />
         </ion-item>
         <ion-item>
           <ion-input label-placement="stacked" label='{{ "BREW_BY_WEIGHT_WEBHOOK.BASIC_PASSWORD" | translate }}'
             (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_by_weight_webhook.basicPassword"
-            name="brew_by_weight_webhook_basic_pass" spellcheck="false" type="password">
-          </ion-input>
+            name="brew_by_weight_webhook_basic_pass" spellcheck="false" type="password" />
         </ion-item>
         }
 
@@ -757,14 +750,12 @@
           <ion-input label-placement="stacked" label='{{ "BREW_BY_WEIGHT_WEBHOOK.CUSTOM_HEADER_NAME" | translate }}'
             (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_by_weight_webhook.customHeaderName"
             name="brew_by_weight_webhook_header_name" spellcheck="false" autocapitalize="none" type="text"
-            placeholder='{{ "BREW_BY_WEIGHT_WEBHOOK.CUSTOM_HEADER_NAME_PLACEHOLDER" | translate }}'>
-          </ion-input>
+            placeholder='{{ "BREW_BY_WEIGHT_WEBHOOK.CUSTOM_HEADER_NAME_PLACEHOLDER" | translate }}' />
         </ion-item>
         <ion-item>
           <ion-input label-placement="stacked" label='{{ "BREW_BY_WEIGHT_WEBHOOK.CUSTOM_HEADER_VALUE" | translate }}'
             (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_by_weight_webhook.customHeaderValue"
-            name="brew_by_weight_webhook_header_value" spellcheck="false" type="password">
-          </ion-input>
+            name="brew_by_weight_webhook_header_value" spellcheck="false" type="password" />
         </ion-item>
         }
       </div>
@@ -830,7 +821,7 @@
             <p>{{ "TEXT_TO_SPEECH.FOLLOWING_NUMBERS_WILL_BE_TEST_SPOKEN" | translate }}: 182.5, 28, 1072, 1.2,
               0.1, 203.5</p>
           </ion-label>
-          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          <ion-icon name="chevron-forward-outline" slot="end" />
         </ion-item>
       </div>
       }
@@ -902,25 +893,22 @@
         <ion-input label-placement="stacked" label='{{"CLOUD_AI_API_KEY" | translate}}'
           (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_api_key"
           name="cloud_ai_api_key" placeholder="sk-..." spellcheck="false"
-          type="password">
-        </ion-input>
+          type="password" />
       </ion-item>
       <ion-item>
         <ion-input label-placement="stacked" label='{{"CLOUD_AI_MODEL" | translate}}'
           (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_model"
           name="cloud_ai_model" [placeholder]="getModelPlaceholder()" spellcheck="false"
-          type="text">
-        </ion-input>
+          type="text" />
         <ion-button slot="end" fill="clear" (click)="openModelPicker()">
-          <ion-icon name="list-outline"></ion-icon>
+          <ion-icon name="list-outline" />
         </ion-button>
       </ion-item>
       <ion-item>
         <ion-textarea label-placement="stacked" label='{{"CLOUD_AI_PROMPT_APPENDIX" | translate}}'
           placeholder='{{"CLOUD_AI_PROMPT_APPENDIX_PLACEHOLDER" | translate}}'
           (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_prompt_appendix"
-          name="cloud_ai_prompt_appendix" [autoGrow]="true" rows="4">
-        </ion-textarea>
+          name="cloud_ai_prompt_appendix" [autoGrow]="true" rows="4" />
       </ion-item>
       }
       @if (settings.ai_provider === aiProviderEnum.CUSTOM) {
@@ -928,8 +916,7 @@
         <ion-input label-placement="stacked" label='{{"CLOUD_AI_BASE_URL" | translate}}'
           (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_base_url"
           name="cloud_ai_base_url" placeholder="https://my-llm-server.com/v1" spellcheck="false"
-          type="text">
-        </ion-input>
+          type="text" />
       </ion-item>
       }
     </ion-card-content>
@@ -948,7 +935,7 @@
           <ion-label>
             <h2>{{ "CONNECT" | translate }}</h2>
           </ion-label>
-          <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+          <ion-icon name="bluetooth-outline" slot="end" />
         </ion-item>
         }
         @if (settings.scale_id !== '') {
@@ -956,7 +943,7 @@
           <ion-label>
             <h2>{{ "DISCONNECT" | translate }}</h2>
           </ion-label>
-          <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+          <ion-icon name="beanconqueror-bluetooth-off" slot="end" />
         </ion-item>
         }
         <ion-item>
@@ -1145,7 +1132,7 @@
             <h2>{{ "SMART_SCALE_COMMAND_DELAY" | translate }}</h2>
           </ion-label>
           <ion-icon name="information-outline" slot="end"
-            tooltip='{{"SMART_SCALE_COMMAND_DELAY_TOOLTIP" | translate}}'></ion-icon>
+            tooltip='{{"SMART_SCALE_COMMAND_DELAY_TOOLTIP" | translate}}' />
         </ion-item>
         <ion-item style="top:-10px;">
           <ion-range [disabled]='isScrolling'
@@ -1179,7 +1166,7 @@
             <h2>{{ "SMART_SCALE_ACAIA_HEARTBEAT_TIMER" | translate }}</h2>
           </ion-label>
           <ion-icon name="information-outline" slot="end"
-            tooltip='{{"SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP" | translate}}'></ion-icon>
+            tooltip='{{"SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP" | translate}}' />
         </ion-item>
         <ion-item style="top:-10px;">
           <ion-range [disabled]='isScrolling'
@@ -1224,7 +1211,7 @@
       </ion-list>
 
       <ion-label>
-        <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
+        <ion-icon style="top: 3px; position: relative;" name="information-circle-outline" />
         <p style="display: inline;">{{ "SCALE.INFORMATION_DESCRIPTION" | translate }}</p>
       </ion-label>
     </ion-card-content>
@@ -1314,8 +1301,7 @@
         </ion-item>
         <ion-item style="top:-10px;">
           <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();" min="0" dualKnobs="true" snaps="true"
-            [max]="300" step="1" [(ngModel)]="settings.graph_weight.FILTER">
-          </ion-range>
+            [max]="300" step="1" [(ngModel)]="settings.graph_weight.FILTER" />
         </ion-item>
         <ion-item lines="none">
           <ion-label>{{ "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW" | translate }}&nbsp;<ion-badge
@@ -1326,8 +1312,7 @@
         </ion-item>
         <ion-item style="top:-10px;">
           <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();" min="0" dualKnobs="true" snaps="true"
-            [max]="20" step="0.1" [(ngModel)]="settings.graph_flow.FILTER">
-          </ion-range>
+            [max]="20" step="0.1" [(ngModel)]="settings.graph_flow.FILTER" />
         </ion-item>
         <ion-item lines="none">
           <ion-label>{{ "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT" | translate }}&nbsp;<ion-badge
@@ -1338,8 +1323,7 @@
         </ion-item>
         <ion-item style="top:-10px;">
           <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();" min="0" dualKnobs="true" snaps="true"
-            [max]="70" step="1" [(ngModel)]="settings.graph_weight.ESPRESSO">
-          </ion-range>
+            [max]="70" step="1" [(ngModel)]="settings.graph_weight.ESPRESSO" />
         </ion-item>
         <ion-item lines="none">
           <ion-label>{{ "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW" | translate }}&nbsp;<ion-badge
@@ -1350,8 +1334,7 @@
         </ion-item>
         <ion-item style="top:-10px;">
           <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();" min="0" dualKnobs="true" snaps="true"
-            [max]="10" step="0.1" [(ngModel)]="settings.graph_flow.ESPRESSO">
-          </ion-range>
+            [max]="10" step="0.1" [(ngModel)]="settings.graph_flow.ESPRESSO" />
         </ion-item>
       </ion-list>
     </ion-card-content>
@@ -1371,8 +1354,7 @@
         </ion-item>
         <ion-item style="top:-10px;">
           <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();" min="20" snaps="true" [max]="40"
-            step="1" [(ngModel)]="settings.graph_time.FILTER.NORMAL_SCREEN">
-          </ion-range>
+            step="1" [(ngModel)]="settings.graph_time.FILTER.NORMAL_SCREEN" />
         </ion-item>
         <ion-item lines="none">
           <ion-label>{{ "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_FULL_SCREEN_SCREEN" | translate
@@ -1382,8 +1364,7 @@
         </ion-item>
         <ion-item style="top:-10px;">
           <ion-range [disabled]='isScrolling' min="30" (ngModelChange)="saveSettings();" snaps="true" [max]="60"
-            step="1" [(ngModel)]="settings.graph_time.FILTER.FULL_SCREEN">
-          </ion-range>
+            step="1" [(ngModel)]="settings.graph_time.FILTER.FULL_SCREEN" />
         </ion-item>
         <ion-item lines="none">
           <ion-label>{{ "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_NORMAL_SCREEN" | translate
@@ -1393,8 +1374,7 @@
         </ion-item>
         <ion-item style="top:-10px;">
           <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();" min="20" snaps="true" [max]="40"
-            step="1" [(ngModel)]="settings.graph_time.ESPRESSO.NORMAL_SCREEN">
-          </ion-range>
+            step="1" [(ngModel)]="settings.graph_time.ESPRESSO.NORMAL_SCREEN" />
         </ion-item>
         <ion-item lines="none">
           <ion-label>{{ "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_FULL_SCREEN_SCREEN" | translate
@@ -1404,8 +1384,7 @@
         </ion-item>
         <ion-item style="top:-10px;">
           <ion-range [disabled]='isScrolling' min="30" (ngModelChange)="saveSettings();" snaps="true" [max]="60"
-            step="1" [(ngModel)]="settings.graph_time.ESPRESSO.FULL_SCREEN">
-          </ion-range>
+            step="1" [(ngModel)]="settings.graph_time.ESPRESSO.FULL_SCREEN" />
         </ion-item>
       </ion-list>
     </ion-card-content>
@@ -1421,29 +1400,29 @@
           <ion-item slot="header" color="light">
             <ion-label>{{ "BREW_FLOW_WEIGHT" | translate }}</ion-label>
             <ion-button fill="clear" slot="end" (click)="resetGraphColor('weight'); $event.stopPropagation()">
-              <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+              <ion-icon slot="icon-only" name="refresh-outline" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.weight.active.light"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.weight.active.dark"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.weight.reference.light"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.weight.reference.dark"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
           </div>
         </ion-accordion>
@@ -1453,30 +1432,30 @@
           <ion-item slot="header" color="light">
             <ion-label>{{ "BREW_FLOW_WEIGHT_PER_SECOND" | translate }}</ion-label>
             <ion-button fill="clear" slot="end" (click)="resetGraphColor('flowPerSecond'); $event.stopPropagation()">
-              <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+              <ion-icon slot="icon-only" name="refresh-outline" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
-                [(ngModel)]="settings.graph_colors.flowPerSecond.active.light" (ionBlur)="saveSettings()"></ion-input>
+                [(ngModel)]="settings.graph_colors.flowPerSecond.active.light" (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
-                [(ngModel)]="settings.graph_colors.flowPerSecond.active.dark" (ionBlur)="saveSettings()"></ion-input>
+                [(ngModel)]="settings.graph_colors.flowPerSecond.active.dark" (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
                 [(ngModel)]="settings.graph_colors.flowPerSecond.reference.light"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
-                [(ngModel)]="settings.graph_colors.flowPerSecond.reference.dark" (ionBlur)="saveSettings()"></ion-input>
+                [(ngModel)]="settings.graph_colors.flowPerSecond.reference.dark" (ionBlur)="saveSettings()" />
             </ion-item>
           </div>
         </ion-accordion>
@@ -1486,29 +1465,29 @@
           <ion-item slot="header" color="light">
             <ion-label>{{ "BREW_FLOW_WEIGHT_REALTIME" | translate }}</ion-label>
             <ion-button fill="clear" slot="end" (click)="resetGraphColor('realtimeFlow'); $event.stopPropagation()">
-              <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+              <ion-icon slot="icon-only" name="refresh-outline" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
-                [(ngModel)]="settings.graph_colors.realtimeFlow.active.light" (ionBlur)="saveSettings()"></ion-input>
+                [(ngModel)]="settings.graph_colors.realtimeFlow.active.light" (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.realtimeFlow.active.dark"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
-                [(ngModel)]="settings.graph_colors.realtimeFlow.reference.light" (ionBlur)="saveSettings()"></ion-input>
+                [(ngModel)]="settings.graph_colors.realtimeFlow.reference.light" (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
-                [(ngModel)]="settings.graph_colors.realtimeFlow.reference.dark" (ionBlur)="saveSettings()"></ion-input>
+                [(ngModel)]="settings.graph_colors.realtimeFlow.reference.dark" (ionBlur)="saveSettings()" />
             </ion-item>
           </div>
         </ion-accordion>
@@ -1518,29 +1497,29 @@
           <ion-item slot="header" color="light">
             <ion-label>{{ "BREW_PRESSURE_FLOW" | translate }}</ion-label>
             <ion-button fill="clear" slot="end" (click)="resetGraphColor('pressure'); $event.stopPropagation()">
-              <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+              <ion-icon slot="icon-only" name="refresh-outline" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.pressure.active.light"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.pressure.active.dark"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.pressure.reference.light"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.pressure.reference.dark"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
           </div>
         </ion-accordion>
@@ -1550,29 +1529,29 @@
           <ion-item slot="header" color="light">
             <ion-label>{{ "BREW_TEMPERATURE_REALTIME" | translate }}</ion-label>
             <ion-button fill="clear" slot="end" (click)="resetGraphColor('temperature'); $event.stopPropagation()">
-              <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+              <ion-icon slot="icon-only" name="refresh-outline" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.temperature.active.light"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.temperature.active.dark"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
-                [(ngModel)]="settings.graph_colors.temperature.reference.light" (ionBlur)="saveSettings()"></ion-input>
+                [(ngModel)]="settings.graph_colors.temperature.reference.light" (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
-                [(ngModel)]="settings.graph_colors.temperature.reference.dark" (ionBlur)="saveSettings()"></ion-input>
+                [(ngModel)]="settings.graph_colors.temperature.reference.dark" (ionBlur)="saveSettings()" />
             </ion-item>
           </div>
         </ion-accordion>
@@ -1583,33 +1562,33 @@
             <ion-label>{{"BREW_FLOW_WATER_DISPENSED_VOLUME" | translate}}</ion-label>
             <ion-button fill="clear" slot="end"
               (click)="resetGraphColor('waterDispensed'); $event.stopPropagation(); $event.preventDefault()">
-              <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+              <ion-icon name="refresh-outline" slot="icon-only" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
             <ion-note color="medium" class="ion-margin-bottom" style="display: block;">
-              <ion-icon name="information-circle-outline"></ion-icon>
+              <ion-icon name="information-circle-outline" />
               {{"SANREMO_YOU_EXCLUSIVE_METRIC_HINT" | translate:-{default: 'Just available on Sanremo YOU'} }}
             </ion-note>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.waterDispensed.active.light"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.waterDispensed.active.dark"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
-                [(ngModel)]="settings.graph_colors.waterDispensed.reference.light" (ionBlur)="saveSettings()"></ion-input>
+                [(ngModel)]="settings.graph_colors.waterDispensed.reference.light" (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
-                [(ngModel)]="settings.graph_colors.waterDispensed.reference.dark" (ionBlur)="saveSettings()"></ion-input>
+                [(ngModel)]="settings.graph_colors.waterDispensed.reference.dark" (ionBlur)="saveSettings()" />
             </ion-item>
           </div>
         </ion-accordion>
@@ -1620,33 +1599,33 @@
             <ion-label>{{"BREW_FLOW_WATER_DISPENSED_REALTIME" | translate}}</ion-label>
             <ion-button fill="clear" slot="end"
               (click)="resetGraphColor('waterDispensedFlowSecond'); $event.stopPropagation(); $event.preventDefault()">
-              <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+              <ion-icon name="refresh-outline" slot="icon-only" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
             <ion-note color="medium" class="ion-margin-bottom" style="display: block;">
-              <ion-icon name="information-circle-outline"></ion-icon>
+              <ion-icon name="information-circle-outline" />
               {{"SANREMO_YOU_EXCLUSIVE_METRIC_HINT" | translate:-{default: 'Just available on Sanremo YOU'} }}
             </ion-note>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.active.light"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_ACTIVE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color" [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.active.dark"
-                (ionBlur)="saveSettings()"></ion-input>
+                (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_LIGHT_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
-                [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.reference.light" (ionBlur)="saveSettings()"></ion-input>
+                [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.reference.light" (ionBlur)="saveSettings()" />
             </ion-item>
             <ion-item lines="none">
               <ion-label position="stacked">{{"GRAPH_REFERENCE_DARK_MODE" | translate}}</ion-label>
               <ion-input class="margin-top-5" type="color"
-                [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.reference.dark" (ionBlur)="saveSettings()"></ion-input>
+                [(ngModel)]="settings.graph_colors.waterDispensedFlowSecond.reference.dark" (ionBlur)="saveSettings()" />
             </ion-item>
           </div>
         </ion-accordion>
@@ -1667,7 +1646,7 @@
           <ion-label>
             <h2>{{ "CONNECT" | translate }}</h2>
           </ion-label>
-          <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+          <ion-icon name="bluetooth-outline" slot="end" />
         </ion-item>
         }
         @if (settings.pressure_id !== '') {
@@ -1675,7 +1654,7 @@
           <ion-label>
             <h2>{{ "DISCONNECT" | translate }}</h2>
           </ion-label>
-          <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+          <ion-icon name="beanconqueror-bluetooth-off" slot="end" />
         </ion-item>
         }
         <ion-item>
@@ -1754,12 +1733,12 @@
         </ion-item>
       </ion-list>
       <ion-label>
-        <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
+        <ion-icon style="top: 3px; position: relative;" name="information-circle-outline" />
         <p style="display: inline;">{{ "PRESSURE.INFORMATION_DESCRIPTION" | translate }}</p>
       </ion-label>
       <br />
       <ion-label>
-        <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
+        <ion-icon style="top: 3px; position: relative;" name="information-circle-outline" />
         <p style="display: inline;">{{ "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO" | translate }}</p>
       </ion-label>
     </ion-card-content>
@@ -1781,8 +1760,7 @@
         <ion-item style="top:-10px;">
           <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();" [pinFormatter]="pinFormatter"
             [pin]="true" min="0" dualKnobs="true" snaps="true" [max]="16" step="0.1"
-            [(ngModel)]="settings.graph_pressure">
-          </ion-range>
+            [(ngModel)]="settings.graph_pressure" />
         </ion-item>
       </ion-list>
     </ion-card-content>
@@ -1800,7 +1778,7 @@
           <ion-label>
             <h2>{{ "CONNECT" | translate }}</h2>
           </ion-label>
-          <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+          <ion-icon name="bluetooth-outline" slot="end" />
         </ion-item>
         }
         @if (settings.temperature_id !== '') {
@@ -1808,7 +1786,7 @@
           <ion-label>
             <h2>{{ "DISCONNECT" | translate }}</h2>
           </ion-label>
-          <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+          <ion-icon name="beanconqueror-bluetooth-off" slot="end" />
         </ion-item>
         }
         <ion-item>
@@ -1851,7 +1829,7 @@
       </ion-list>
 
       <ion-label>
-        <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
+        <ion-icon style="top: 3px; position: relative;" name="information-circle-outline" />
         <p style="display: inline;">{{ "TEMPERATURE.INFORMATION_DESCRIPTION" | translate }}</p>
       </ion-label>
     </ion-card-content>
@@ -1870,7 +1848,7 @@
           <ion-label>
             <h2>{{ "CONNECT" | translate }}</h2>
           </ion-label>
-          <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+          <ion-icon name="bluetooth-outline" slot="end" />
         </ion-item>
         }
         @if (settings.refractometer_id !== '') {
@@ -1878,7 +1856,7 @@
           <ion-label>
             <h2>{{ "DISCONNECT" | translate }}</h2>
           </ion-label>
-          <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+          <ion-icon name="beanconqueror-bluetooth-off" slot="end" />
         </ion-item>
         }
         <ion-item>
@@ -1937,7 +1915,7 @@
       </ion-list>
 
       <ion-label>
-        <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
+        <ion-icon style="top: 3px; position: relative;" name="information-circle-outline" />
         <p style="display: inline;">{{ "REFRACTOMETER.INFORMATION_DESCRIPTION" | translate }}</p>
       </ion-label>
     </ion-card-content>

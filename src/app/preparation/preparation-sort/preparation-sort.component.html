@@ -1,6 +1,4 @@
-<ion-header translucent>
-
-</ion-header>
+<ion-header translucent />
 <ion-content>
   <ion-list class="ion-no-padding">
     <ion-list-header>
@@ -12,14 +10,14 @@
       <ion-row>
         <ion-col size="6">
           <ion-item (click)="setSortOrder(preparationSortOrderEnum.ASCENDING)" [class.active]="isOrderActive(preparationSortOrderEnum.ASCENDING)" lines="none" tappable>
-            <ion-icon name="beanconqueror-order-asc" slot="start"></ion-icon>
+            <ion-icon name="beanconqueror-order-asc" slot="start" />
             <ion-label>{{"ASCENDING" | translate}}</ion-label>
           </ion-item>
 
         </ion-col>
         <ion-col size="6">
           <ion-item (click)="setSortOrder(preparationSortOrderEnum.DESCENDING)" [class.active]="isOrderActive(preparationSortOrderEnum.DESCENDING)" lines="none" tappable>
-            <ion-icon name="beanconqueror-order-desc" slot="start"></ion-icon>
+            <ion-icon name="beanconqueror-order-desc" slot="start" />
             <ion-label>{{"DESCENDING" | translate}}</ion-label>
           </ion-item>
 
@@ -32,11 +30,11 @@
       </ion-item>
     </ion-list-header>
     <ion-item (click)="setSortAfter(preparationSortAfterEnum.NAME)" [class.active]="isSortActive(preparationSortAfterEnum.NAME)" lines="none" tappable>
-      <ion-icon name="beanconqueror-filter-aa" slot="start"></ion-icon>
+      <ion-icon name="beanconqueror-filter-aa" slot="start" />
       <ion-label>{{"PREPARATION_SORT_NAME" | translate}}</ion-label>
     </ion-item>
     <ion-item (click)="setSortAfter(preparationSortAfterEnum.TYPE)" [class.active]="isSortActive(preparationSortAfterEnum.TYPE)" class="ion-margin-top" lines="none" tappable>
-      <ion-icon name="beanconqueror-preparation" slot="start"></ion-icon>
+      <ion-icon name="beanconqueror-preparation" slot="start" />
       <ion-label>{{"PREPARATION_SORT_TYPE" | translate}}</ion-label>
     </ion-item>
   </ion-list>

@@ -7,11 +7,11 @@
           <ion-row>
             <ion-col size="12">
               @if (brew?.best_brew) {
-                <ion-icon name="trophy" style="top: 3px;position: relative;margin-right:5px;"></ion-icon>
+                <ion-icon name="trophy" style="top: 3px;position: relative;margin-right:5px;" />
                 }@if (brew?.favourite) {
-                <ion-icon name="heart" style="top: 3px;position: relative;margin-right:5px;"></ion-icon>
+                <ion-icon name="heart" style="top: 3px;position: relative;margin-right:5px;" />
                 }@if (brew?.flow_profile) {
-                <ion-icon name="analytics-outline" style="top: 3px;position: relative;margin-right:5px;"></ion-icon>
+                <ion-icon name="analytics-outline" style="top: 3px;position: relative;margin-right:5px;" />
                 }<strong>{{brew.config.unix_timestamp | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</strong><span class="ion-padding-start">{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</span>
               </ion-col>
             </ion-row>
@@ -26,8 +26,7 @@
               $safeNavigationMigration(preparation?.visible_list_view_parameters.rating),
               $safeNavigationMigration(preparation?.use_custom_parameters)]) && (brew?.rating > 0 && isCustomRatingRange === false)) {
               <ion-col size="4">
-                <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="brew.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
-                </ngx-stars>
+                <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="brew.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars"  />
               </ion-col>
             }
             @if ((settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.rating,
@@ -190,10 +189,10 @@
         </ion-grid>
       }
       @if (isGraph && graph?.flow_profile) {
-        <graph-display-card [staticChart]="true" [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='graph.flow_profile'></graph-display-card>
+        <graph-display-card [staticChart]="true" [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='graph.flow_profile' />
       }
       @if (!isGraph && brew?.flow_profile) {
-        <graph-display-card [staticChart]="true" [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='brew.flow_profile'></graph-display-card>
+        <graph-display-card [staticChart]="true" [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='brew.flow_profile' />
       }
     </div>
     <div style="height:10px;"></div>

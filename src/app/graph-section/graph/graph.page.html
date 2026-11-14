@@ -23,7 +23,7 @@
       @if (openGraphs.length == 0) {
         <div class="ion-padding ion-text-center">
           <div>
-            <ion-icon color="inactive" name="analytics-outline" size="large"></ion-icon>
+            <ion-icon color="inactive" name="analytics-outline" size="large" />
           </div>
           <div class="text-color-inactive ion-margin-top">
             {{"GRAPH_SECTION.NO_ENTRIES" | translate}}
@@ -32,7 +32,7 @@
       }
       <ag-virtual-scroll #openScroll [items]="openGraphs" [height]="'100vh'" [min-row-height]="165">
         @for (graph of openScroll.items; track graph) {
-          <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" [graph]="graph"></graph-information-card>
+          <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" [graph]="graph" />
         }
       </ag-virtual-scroll>
     }
@@ -41,7 +41,7 @@
         @if (finishedGraphs.length == 0) {
           <div class="ion-padding ion-text-center">
             <div>
-              <ion-icon color="inactive" name="analytics-outline" size="large"></ion-icon>
+              <ion-icon color="inactive" name="analytics-outline" size="large" />
             </div>
             <div class="text-color-inactive ion-margin-top">
               {{"GRAPH_SECTION.NO_ARCHIVED_ENTRIES" | translate}}
@@ -50,7 +50,7 @@
         }
         <ag-virtual-scroll #archivedScroll [items]="finishedGraphs" [height]="'100vh'" [min-row-height]="165">
           @for (graph of archivedScroll.items; track graph) {
-            <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" [graph]="graph"></graph-information-card>
+            <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" [graph]="graph" />
           }
         </ag-virtual-scroll>
       }

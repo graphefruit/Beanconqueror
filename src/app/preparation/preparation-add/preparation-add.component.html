@@ -14,7 +14,7 @@
               @if (key !== 'CUSTOM_PREPARATION') {
                 <ion-card-content>
                   <div class="ion-text-center">
-                    <ion-icon name="{{data.getIcon(key)}}" slot="icon-only"></ion-icon>
+                    <ion-icon name="{{data.getIcon(key)}}" slot="icon-only" />
                   </div>
                   <div class="ion-text-center">
                     {{'PREPARATION_TYPE_' + key | translate}}
@@ -24,7 +24,7 @@
               @if (key === 'CUSTOM_PREPARATION') {
                 <ion-card-content>
                   <div class="ion-text-center">
-                    <ion-icon  name="beanconqueror-preparation-custom" slot="icon-only"></ion-icon>
+                    <ion-icon name="beanconqueror-preparation-custom" slot="icon-only" />
                   </div>
                   <div class="ion-text-center" style="line-height:initial;">
                     {{ 'PREPARATION_TYPE_ADD_CUSTOM' | translate }}
@@ -39,5 +39,4 @@
   </ion-grid>
 </ion-content>
 <!-- Import empty for stretching content to full height and aligning footer to bottom -->
-<ion-footer>
-</ion-footer>
+<ion-footer />

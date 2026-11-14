@@ -1,30 +1,30 @@
 
 <ion-item class="no-bottom-border item" lines="none">
 
-  <ion-input  label-placement="stacked" label='{{label}}' readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{returnWantedDisplayFormat()}}"></ion-input>
+  <ion-input label-placement="stacked" label='{{label}}' readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{returnWantedDisplayFormat()}}" />
 
   @if (hideControlButtons == false && timer.runTimer && timer.hasStarted && !timer.hasFinished) {
     <ion-button  (click)="pauseTimer($event)"
       class="big-icon-only" fill="clear" slot="end" tappable>
-      <ion-icon class="ion-color-accent" name="beanconqueror-pause" slot="icon-only"></ion-icon>
+      <ion-icon class="ion-color-accent" name="beanconqueror-pause" slot="icon-only" />
     </ion-button>
   }
   @if (hideControlButtons == false && (!timer.hasStarted || !timer.runTimer && timer.hasStarted && !timer.hasFinished) && this.getSeconds()>0) {
     <ion-button (click)="reset($event)"
       class="big-icon-only" fill="clear" slot="end" tappable>
-      <ion-icon class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only"></ion-icon>
+      <ion-icon class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only" />
     </ion-button>
   }
 
   @if (hideControlButtons == false && !timer.runTimer && timer.hasStarted && !timer.hasFinished) {
     <ion-button (click)="resumeTimer($event)"
       class="big-icon-only" fill="clear" slot="end" tappable>
-      <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
+      <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
     </ion-button>
   }
   @if (hideControlButtons == false && !timer.hasStarted) {
     <ion-button (click)="startTimer(false,$event)" class="big-icon-only" fill="clear" slot="end" tappable>
-      <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
+      <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
     </ion-button>
   }
 

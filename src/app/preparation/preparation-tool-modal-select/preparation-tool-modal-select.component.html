@@ -25,7 +25,7 @@
               <div>
                 <ion-card>
                   <div class="ion-justify-content-end container">
-                    <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="activePreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+                    <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="activePreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
                   </div>
                   <hr />
                   @if (openTools.length > 0) {
@@ -38,7 +38,7 @@
                   @if (openTools.length == 0) {
                     <div class="ion-padding ion-text-center">
                       <div>
-                        <ion-icon color="inactive" size='large' name="eye-off-outline"></ion-icon>
+                        <ion-icon color="inactive" size='large' name="eye-off-outline" />
                       </div>
                       <div class="text-color-inactive ion-margin-top">
                         {{"NO_ENTRIES_FOUND" | translate}}
@@ -52,7 +52,7 @@
               <div>
                 <ion-card>
                   <div class="ion-justify-content-end container">
-                    <ion-searchbar  (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedPreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+                    <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedPreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
                   </div>
                   <hr />
                   @for (prep of archivedTools; track prep) {
@@ -63,7 +63,7 @@
                   @if (archivedTools.length == 0) {
                     <div class="ion-padding ion-text-center">
                       <div>
-                        <ion-icon color="inactive" size='large' name="eye-off-outline"></ion-icon>
+                        <ion-icon color="inactive" size='large' name="eye-off-outline" />
                       </div>
                       <div class="text-color-inactive ion-margin-top">
                         {{"NO_ENTRIES_FOUND" | translate}}
@@ -86,7 +86,7 @@
                 <div>
                   <ion-card>
                     <div class="ion-justify-content-end container">
-                      <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="activePreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+                      <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="activePreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
                     </div>
                     <hr />
                     @if (openTools.length > 0) {
@@ -99,7 +99,7 @@
                     @if (openTools.length == 0) {
                       <div class="ion-padding ion-text-center">
                         <div>
-                          <ion-icon color="inactive" size='large' name="eye-off-outline"></ion-icon>
+                          <ion-icon color="inactive" size='large' name="eye-off-outline" />
                         </div>
                         <div class="text-color-inactive ion-margin-top">
                           {{"NO_ENTRIES_FOUND" | translate}}
@@ -115,7 +115,7 @@
                 <div>
                   <ion-card>
                     <div class="ion-justify-content-end container">
-                      <ion-searchbar  (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedPreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+                      <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedPreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
                     </div>
                     <hr />
                     @for (prep of archivedTools; track prep) {
@@ -126,7 +126,7 @@
                     @if (archivedTools.length == 0) {
                       <div class="ion-padding ion-text-center">
                         <div>
-                          <ion-icon color="inactive" size='large' name="eye-off-outline"></ion-icon>
+                          <ion-icon color="inactive" size='large' name="eye-off-outline" />
                         </div>
                         <div class="text-color-inactive ion-margin-top">
                           {{"NO_ENTRIES_FOUND" | translate}}

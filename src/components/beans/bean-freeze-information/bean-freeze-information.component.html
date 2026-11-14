@@ -1,10 +1,10 @@
 <ion-card style="display:flex; flex-direction: column;">
 
   <ion-item>
-    <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_EDIT_FREEZE_DATE" | translate}}' readonly (click)="chooseDate($event,'freeze');" [(data)]="data.frozenDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN_DATA_FROZEN_DATE' | translate}}"></ion-input>
+    <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_EDIT_FREEZE_DATE" | translate}}' readonly (click)="chooseDate($event,'freeze');" [(data)]="data.frozenDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN_DATA_FROZEN_DATE' | translate}}" />
   </ion-item>
   <ion-item>
-    <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_EDIT_UNFREEZE_DATE" | translate}}' readonly (click)="chooseDate($event,'unfreeze');" [(data)]="data.unfrozenDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN_DATA_UNFROZEN_DATE' | translate}}"></ion-input>
+    <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_EDIT_UNFREEZE_DATE" | translate}}' readonly (click)="chooseDate($event,'unfreeze');" [(data)]="data.unfrozenDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN_DATA_UNFROZEN_DATE' | translate}}" />
   </ion-item>
   <ion-item>
     <ion-select label-placement='stacked' label='{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}'
@@ -23,6 +23,6 @@
     <ion-label id='frozenNote' position="stacked">{{"BEAN_DATA_FROZEN_NOTE" | translate }}</ion-label>
     <ion-textarea style='margin-top:20px;' aria-labelledby='frozenNote'  [(ngModel)]="data.frozenNote" autocapitalize="sentences" autocomplete="true"
       autocorrect="true" [autoGrow]="true"
-    name="frozenNote" placeholder="{{'BEAN.PLACE_HOLDER.FROZEN_NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
+    name="frozenNote" placeholder="{{'BEAN.PLACE_HOLDER.FROZEN_NOTES' | translate}}" rows="5" spellcheck="true" />
   </ion-item>
 </ion-card>

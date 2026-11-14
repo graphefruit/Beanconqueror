@@ -8,7 +8,7 @@
   <ag-virtual-scroll #openScroll [items]="beansList" [height]="'100vh'" [min-row-height]="210">
     @for (bean of openScroll.items; track bean) {
       <bean-information [disabled]='true' [showActions]='false'
-      [bean]="bean"></bean-information>
+      [bean]="bean" />
     }
 
   </ag-virtual-scroll>

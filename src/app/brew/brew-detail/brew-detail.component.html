@@ -112,7 +112,7 @@
                 <ion-button style="margin-left:0px;" (click)="openURL(data.pressure_profile)"
                             aria-label="Open pressure profile URL"
                             tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
-                  <ion-icon aria-hidden="true" class="ion-color-accent" name="globe-outline" slot="icon-only"></ion-icon>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="globe-outline" slot="icon-only" />
                 </ion-button>
               }
             </ion-item>
@@ -237,7 +237,7 @@
                     </ion-col>
                     <ion-col size="2" style="margin:auto">
                       <ion-button fill="clear" id="popover-button" aria-label="Download flow profile" tappable>
-                        <ion-icon aria-hidden="true" name="download" slot="icon-only"></ion-icon>
+                        <ion-icon aria-hidden="true" name="download" slot="icon-only" />
                       </ion-button>
                       <ion-popover [dismissOnSelect]="true" trigger="popover-button">
                         <ng-template>
@@ -256,17 +256,17 @@
                     </ion-col>
                     <ion-col size="2" style="margin:auto">
                       <ion-button (click)="cutFlowProfile($event)" aria-label="Cut flow profile" tappable fill="clear">
-                        <ion-icon aria-hidden="true" name="cut-outline" slot="icon-only"></ion-icon>
+                        <ion-icon aria-hidden="true" name="cut-outline" slot="icon-only" />
                       </ion-button>
                     </ion-col>
                     <ion-col size="2" style="margin:auto">
                       <ion-button (click)="shareFlowProfile()" aria-label="Share flow profile" tappable fill="clear">
-                        <ion-icon aria-hidden="true" name="share-social-outline" slot="icon-only"></ion-icon>
+                        <ion-icon aria-hidden="true" name="share-social-outline" slot="icon-only" />
                       </ion-button>
                     </ion-col>
                     <ion-col size="2" style="margin:auto">
                       <ion-button (click)="maximizeFlowGraph()" aria-label="Maximize flow graph" tappable fill="clear">
-                        <ion-icon aria-hidden="true" name="expand-outline" slot="icon-only"></ion-icon>
+                        <ion-icon aria-hidden="true" name="expand-outline" slot="icon-only" />
                       </ion-button>
                     </ion-col>
                   </ion-row>
@@ -280,7 +280,7 @@
                          Fixing this in brew-brewing-graph doesn't look trivial, so
                          for now we silence this error by casting to any with
                          $any(this). -->
-              <brew-brewing-graph #brewBrewingGraphEl [isDetail]='true' [brewComponent]='$any(this)' [(data)]='data'></brew-brewing-graph>
+              <brew-brewing-graph #brewBrewingGraphEl [isDetail]='true' [brewComponent]='$any(this)' [(data)]='data' />
             }
           }
           @case ('brew_time') {
@@ -387,7 +387,7 @@
                 <ion-button style="margin-left:0px;"
                             (click)="showExtractionChart($event)" aria-label="Show extraction chart" tabIndex="1" class="big-icon-only" fill="clear" slot="end"
                             tappable>
-                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-extraction-chart" slot="icon-only"></ion-icon>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-extraction-chart" slot="icon-only" />
                 </ion-button>
               }
             </ion-item>
@@ -402,7 +402,7 @@
                 <ion-button (click)='copyNotesToClipboard()'
                             aria-label="Copy notes to clipboard"
                             tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
-                  <ion-icon aria-hidden="true" class="ion-color-accent" name="clipboard-outline" slot="icon-only"></ion-icon>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="clipboard-outline" slot="icon-only" />
                 </ion-button>
               }
             </ion-item>
@@ -410,7 +410,7 @@
           @case ('attachments') {
             @if(data?.attachments?.length>0) {
               <div>
-                <photo-view [(data)]="data"></photo-view>
+                <photo-view [(data)]="data" />
               </div>
             }
           }

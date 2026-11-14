@@ -6,30 +6,30 @@
         <ion-col class="expand-fill-space" style="margin: auto 0;">
           <div class="ion-no-padding font-size-20 ion-title no-overflow-ellipsis center-icons-to-text add-child-margin">
             @if(beanGroup) {
-            <ion-icon name="file-tray-full-outline">&nbsp;</ion-icon>
+            <ion-icon name="file-tray-full-outline" />
             }
             @if ((bean.decaffeinated)) {
-            <ion-icon name="moon">&nbsp;</ion-icon>
+            <ion-icon name="moon" />
             }
             @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)) {
-            <ion-icon name="snow-outline">&nbsp;</ion-icon>
+            <ion-icon name="snow-outline" />
             }
             @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN) === false && bean.frozenId) {
             <div style="display: flex;">
-              (<ion-icon name="snow-outline"></ion-icon>)
+              (<ion-icon name="snow-outline" />)
             </div>
             }
             @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_SELF_ROASTED) ) {
-            <ion-icon name="flame-outline"></ion-icon>
+            <ion-icon name="flame-outline" />
             }
             @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_SCANNED_BEAN) ) {
-            <ion-icon name="qr-code-outline"></ion-icon>
+            <ion-icon name="qr-code-outline" />
             }
             @if (bean.shared) {
-            <ion-icon name="share-social-outline"></ion-icon>
+            <ion-icon name="share-social-outline" />
             }
             @if (bean.favourite) {
-            <ion-icon name="heart"></ion-icon>
+            <ion-icon name="heart" />
             }
             <div class="ion-justify-content-start center-icons-to-text expand-fill-space">
               <div class="expand-fill-space no-overflow-ellipsis" style="margin-right:-5px;">
@@ -47,7 +47,7 @@
         <ion-col size="auto" class="stacked-info children-force-newline hide-if-empty">
           @if (bean.frozenId) {
           <div class="ion-justify-content-end center-icons-to-text frozen-id-label">
-            <ion-icon name="pricetag-outline"></ion-icon>
+            <ion-icon name="pricetag-outline" />
             <div>
               {{bean.frozenId}}
             </div>
@@ -56,12 +56,12 @@
           @if (bean?.roast_range !== 0 && (settings | beanFieldVisiblePipe:
           [settings.bean_visible_list_view_parameters.roast_range])) {
           <ngx-stars #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1"
-            class="bean-display ion-float-right"></ngx-stars>
+            class="bean-display ion-float-right" />
           }
           @if (bean?.rating !== 0 && (settings | beanFieldVisiblePipe:
           [settings.bean_visible_list_view_parameters.rating]) && hasCustomRatingRange() === false) {
           <ngx-stars #beanRating [color]="'#BFB9B0'" [initialStars]="bean.rating" [maxStars]="5" [readonly]="true"
-            [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
+            [wholeStars]="true" class="ion-float-right brew-stars" />
           }
           @if (bean?.rating > 0 && (settings | beanFieldVisiblePipe:
           [settings.bean_visible_list_view_parameters.rating]) && hasCustomRatingRange() === true) {
@@ -73,7 +73,7 @@
         @if (showActions) {
         <ion-col size="1">
           <ion-button (click)="showBeanActions($event)" aria-label="Bean options" class="button-top-absolute" color="accent" fill="clear">
-            <ion-icon aria-hidden="true" name="beanconqueror-dots" slot="icon-only"></ion-icon>
+            <ion-icon aria-hidden="true" name="beanconqueror-dots" slot="icon-only" />
           </ion-button>
         </ion-col>
         }
@@ -416,7 +416,7 @@
         [settings.bean_visible_list_view_parameters.attachments])) {
         <ion-col (click)="showPhoto($event)" class="ion-no-padding" size="3">
           <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
-            <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
+            <async-image [filePath]="bean.attachments[0]" class="bean-slider" />
           </div>
         </ion-col>
         }
@@ -426,7 +426,7 @@
     @if (beanGroup) {
     <div class="ion-text-center">
       <ion-button fill="clear" size="small" [attr.aria-label]="beanGroup.expanded ? 'Collapse bean group' : 'Expand bean group'" (click)="toggleGroupExpansion($event)">
-        <ion-icon aria-hidden="true" [name]="beanGroup.expanded ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+        <ion-icon aria-hidden="true" [name]="beanGroup.expanded ? 'chevron-up-outline' : 'chevron-down-outline'" />
       </ion-button>
     </div>
     @if (beanGroup.expanded) {
@@ -434,7 +434,7 @@
       @for (childBean of beanGroup.beans; track childBean; let i = $index) {
       @if (i > 0) {
       <bean-information [bean]="childBean" [collapsed]="collapsed" [isGroupChild]="true"
-        (beanAction)="beanAction.emit($event)"></bean-information>
+        (beanAction)="beanAction.emit($event)" />
       }
       }
     </div>

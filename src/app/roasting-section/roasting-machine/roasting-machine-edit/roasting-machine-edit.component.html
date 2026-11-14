@@ -9,8 +9,7 @@
       <ion-item>
         <ion-input label-placement="stacked" label='{{"NAME" | translate}}*' aria-labelledby='roastMachineName' #name="ngModel" [(ngModel)]="data.name" name="name"
                    placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
-                   autocapitalize="sentences" required>
-        </ion-input>
+                   autocapitalize="sentences" required />
       </ion-item>
       <ion-item>
         <ion-checkbox label-placement='start' #finished="ngModel" [(ngModel)]="data.finished" name="finished">
@@ -21,9 +20,9 @@
         <ion-label id='note' position="stacked">{{"NOTES" | translate}}</ion-label>
         <ion-textarea aria-labelledby='note' style='margin-top:20px;' #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
                       placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NOTES' | translate}}"
-                      autocorrect="true" name="note" rows="5" spellcheck="true"></ion-textarea>
+                      autocorrect="true" name="note" rows="5" spellcheck="true" />
       </ion-item>
-      <photo-add [(data)]="data"></photo-add>
+      <photo-add [(data)]="data" />
     </form>
   </ion-card>
 </ion-content>

@@ -1,12 +1,10 @@
-<ion-header translucent>
-</ion-header>
+<ion-header translucent />
 <ion-content>
   <ion-item>
     <ion-select label-placement="stacked" label='{{"BREW_DATA_PREPARATION_METHOD" | translate}}' [(ngModel)]="filter.method_of_preparation"
                 [show-finished]="segment !== 'open'"
                 [multiple]="true"
-                preparation-overlay (click)="preparationMethodFocused();">
-    </ion-select>
+                preparation-overlay (click)="preparationMethodFocused();" />
   </ion-item>
   @if(preparationToolsExist) {
     <ion-item>
@@ -15,28 +13,25 @@
                 [show-finished]="true"
                 [multiple]="true"
                 [preparation-ids]="filter.method_of_preparation"
-                preparation-tool-overlay></ion-select>
+                preparation-tool-overlay />
     </ion-item>
   }
   <ion-item>
     <ion-select label-placement="stacked" label='{{"BREW_DATA_BEAN_TYPE" | translate}}' [(ngModel)]="filter.bean"
                 [multiple]="true"
                 [show-finished]="segment !== 'open'"
-                bean-overlay>
-    </ion-select>
+                bean-overlay />
   </ion-item>
   <ion-item>
     <ion-select label-placement="stacked" label='{{"BREW_DATA_MILL" | translate}}'  [(ngModel)]="filter.mill"
                 [show-finished]="segment !== 'open'"
                 mill-overlay
-                [multiple]="true">
-    </ion-select>
+                [multiple]="true" />
   </ion-item>
   @if (filterParameterActive) {
     <ion-item>
       <ion-select label-placement="stacked" label='{{"BREW_DATA_WATER" | translate}}' [(ngModel)]="filter.water" water-overlay   [show-finished]="segment !== 'open'" [multiple]="true"
-                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_WATER' | translate}}">
-      </ion-select>
+                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_WATER' | translate}}" />
     </ion-item>
   }
   <ion-item>
@@ -71,8 +66,8 @@
     </ion-item>
   <ion-item style="top:-10px;">
     <ion-range  min="-1" dualKnobs="true" [pinFormatter]='pinFormatter' pin='true' snaps="true" [max]="maxBrewRating" [step]="$safeNavigationMigration(settings?.brew_rating_steps)" [(ngModel)]="filter.rating">
-      <ion-icon size="small" slot="start" name="beanconqueror-brew-rating-empty"></ion-icon>
-      <ion-icon slot="end" name="beanconqueror-brew-rating-full"></ion-icon>
+      <ion-icon size="small" slot="start" name="beanconqueror-brew-rating-empty" />
+      <ion-icon slot="end" name="beanconqueror-brew-rating-full" />
     </ion-range>
   </ion-item>
 

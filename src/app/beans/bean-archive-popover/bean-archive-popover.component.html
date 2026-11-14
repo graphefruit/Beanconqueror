@@ -1,5 +1,4 @@
-<ion-header translucent>
-</ion-header>
+<ion-header translucent />
 <ion-content>
   <ion-item>
     <ion-label>
@@ -25,7 +24,7 @@
 
       @if (maxBeanRating === 5 && settings.bean_rating_steps === 1) {
         <div slot="end">
-          <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
+          <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars"  />
         </div>
       }
 
@@ -35,7 +34,7 @@
     <ion-label id='note' position="stacked">{{"NOTES" | translate }}</ion-label>
     <ion-textarea style='margin-top:20px;' aria-labelledby='note' #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
                   autocorrect="true" [autoGrow]="true"
-                  name="note" placeholder="{{'BEAN.PLACE_HOLDER.NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
+                  name="note" placeholder="{{'BEAN.PLACE_HOLDER.NOTES' | translate}}" rows="5" spellcheck="true" />
   </ion-item>
   <ion-row>
     <ion-col>
