@@ -7,10 +7,11 @@ import { chromium, type Browser, type Page } from '@playwright/test';
 import { observePerf, type PerfWindow } from '../perf/perf';
 
 /**
- * Drives the debug build of the app on an Android phone over ADB (see DEVELOPING.md, "Device
- * tests"). Playwright connects to the app's WebView through the Chrome DevTools Protocol: debug
- * builds open the socket `webview_devtools_remote_<pid>`, which `adb forward` makes a local port.
- * Only the package below is installed, started, stopped and cleared.
+ * Drives the debug or the release build of the app on an Android phone over ADB (see
+ * DEVELOPING.md, "Device tests"). Playwright connects to the app's WebView through the Chrome
+ * DevTools Protocol: with WebView debugging on (debug builds, and the release build made for these
+ * measurements) the app opens the socket `webview_devtools_remote_<pid>`, which `adb forward` makes
+ * a local port. Only the package below is installed, started, stopped and cleared.
  */
 
 export const APP_ID = 'com.beanconqueror.app';
@@ -82,14 +83,31 @@ export interface RunningApp {
   activityTotalTime: Promise<number | undefined>;
 }
 
+/** Fails if the lock screen shows; nothing here gets past it. */
+async function assertUnlocked(): Promise<void> {
+  // While the lock screen shows, the app's activity is not shown (the app does not set
+  // `showWhenLocked`) and its WebView draws no frames, so every measurement would hang. The page
+  // cannot tell: its visibilityState stays "visible".
+  if ((await shell('dumpsys window')).includes('isKeyguardShowing=true')) {
+    throw new Error(
+      'The lock screen shows: unlock the phone and keep the screen on.',
+    );
+  }
+}
+
 /**
  * Cold start: stops the app (its caches stay), wakes the screen and starts the activity, then
  * connects to the WebView as soon as its DevTools socket is there. The page usually still loads
  * then; times are taken from the page's own clock, so the connection does not count.
+ *
+ * To disturb the start as little as possible, the lock screen is checked before it, and the wait
+ * for the app process and the socket runs on the phone in one shell (`pidof` and a look into
+ * `/proc/net/unix` every 50 ms) instead of one ADB call per check.
  */
 export async function coldStart(): Promise<RunningApp> {
   await stopApp();
   await shell('input keyevent KEYCODE_WAKEUP');
+  await assertUnlocked();
   // The device clock right before the start; `am start -W` answers once the activity is drawn.
   let launchedAt: (time: number) => void = () => undefined;
   const launched = new Promise<number>((resolve) => (launchedAt = resolve));
@@ -108,16 +126,19 @@ export async function coldStart(): Promise<RunningApp> {
     child.on('error', reject);
     child.on('close', () => resolve(out));
   });
-  const pid = await poll('app process', async () => {
-    const out = (await shell(`pidof ${APP_ID}`).catch(() => '')).trim();
-    return out ? Number(out.split(/\s+/)[0]) : undefined;
+  const { stdout } = await run(
+    ADB,
+    [
+      'shell',
+      `until p=$(pidof ${APP_ID}); do sleep 0.05; done; echo $p; ` +
+        `until grep -q "@webview_devtools_remote_\${p%% *}" /proc/net/unix; do sleep 0.05; done`,
+    ],
+    { timeout: 60_000 },
+  ).catch(() => {
+    throw new Error('App process or WebView DevTools socket not found');
   });
+  const pid = Number(stdout.trim().split(/\s+/)[0]);
   const socket = `webview_devtools_remote_${pid}`;
-  await poll('WebView DevTools socket', async () =>
-    (await shell('cat /proc/net/unix')).includes(`@${socket}`)
-      ? true
-      : undefined,
-  );
   await adb('forward', `tcp:${CDP_PORT}`, `localabstract:${socket}`);
   const browser = await chromium.connectOverCDP(
     `http://127.0.0.1:${CDP_PORT}`,
@@ -133,23 +154,6 @@ export async function coldStart(): Promise<RunningApp> {
         .find((p) => p.url().startsWith('https://')),
     ),
   );
-  // While the lock screen shows, the app's activity is not shown (the app does not set
-  // `showWhenLocked`) and its WebView draws no frames, so every measurement would hang. The page
-  // cannot tell: its visibilityState stays "visible". Nothing here gets past the lock screen.
-  try {
-    await poll(
-      'unlocked screen',
-      async () => {
-        const windows = await shell('dumpsys window');
-        return windows.includes('isKeyguardShowing=true') ? undefined : true;
-      },
-      5_000,
-    );
-  } catch {
-    throw new Error(
-      'The lock screen shows: unlock the phone and keep the screen on.',
-    );
-  }
   return {
     browser,
     page,
@@ -452,49 +456,124 @@ async function rendererPid(): Promise<number | undefined> {
 
 /**
  * Memory of the app process and of its WebView renderer (a separate process), in KiB, plus the
- * JavaScript heap.
+ * JavaScript heap as it is and after a garbage collection (`HeapProfiler.collectGarbage`). The
+ * process sizes are read before the collection. The collection also changes what comes next: the
+ * following step starts with a clean heap.
  */
 export async function memory(app: RunningApp): Promise<{
   appPssKiB?: number;
   rendererPssKiB?: number;
   jsHeapUsedKiB: number;
+  jsHeapAfterGcKiB: number;
 }> {
   const renderer = await rendererPid();
+  const appPssKiB = await pss(APP_ID);
+  const rendererPssKiB =
+    renderer === undefined ? undefined : await pss(renderer);
   const session = await app.page.context().newCDPSession(app.page);
-  const heap = (await session.send('Runtime.getHeapUsage')) as {
-    usedSize: number;
-  };
+  const heapUsed = async () =>
+    (
+      (await session.send('Runtime.getHeapUsage')) as {
+        usedSize: number;
+      }
+    ).usedSize;
+  const before = await heapUsed();
+  await session.send('HeapProfiler.collectGarbage');
+  const after = await heapUsed();
   await session.detach();
   return {
-    appPssKiB: await pss(APP_ID),
-    rendererPssKiB: renderer === undefined ? undefined : await pss(renderer),
-    jsHeapUsedKiB: Math.round(heap.usedSize / 1024),
+    appPssKiB,
+    rendererPssKiB,
+    jsHeapUsedKiB: Math.round(before / 1024),
+    jsHeapAfterGcKiB: Math.round(after / 1024),
   };
 }
 
 /**
  * Sizes in KiB of the WebView's IndexedDB directory (large entries such as the brews are files
- * of their own in it) and of all of the app's private data. Debug builds allow `run-as`.
+ * of their own in it) and of all of the app's private data. Only debug builds allow `run-as`; the
+ * release build leaves both out. `originUsageKiB` is what the WebView itself reports for the
+ * app's origin (`navigator.storage.estimate()`), in both builds.
  */
-export async function storageKiB(): Promise<{
-  databaseKiB: number;
-  appDataKiB: number;
+export async function storageKiB(page: Page): Promise<{
+  databaseKiB?: number;
+  appDataKiB?: number;
+  originUsageKiB?: number;
 }> {
   const sizes = (
-    await shell(`run-as ${APP_ID} du -sk app_webview/Default/IndexedDB .`)
+    await shell(
+      `run-as ${APP_ID} du -sk app_webview/Default/IndexedDB .`,
+    ).catch(() => '')
   )
     .trim()
     .split('\n')
+    .filter((line) => /^\d+\s/.test(line))
     .map((line) => Number(line.trim().split(/\s+/)[0]));
-  return { databaseKiB: sizes[0], appDataKiB: sizes[1] };
+  const usage = await page.evaluate(
+    async () => (await navigator.storage.estimate()).usage,
+  );
+  return {
+    databaseKiB: sizes.length === 2 ? sizes[0] : undefined,
+    appDataKiB: sizes.length === 2 ? sizes[1] : undefined,
+    originUsageKiB: usage === undefined ? undefined : Math.round(usage / 1024),
+  };
 }
 
-/** Prints one measurement as a `DEVICE {…}` line; collect them with `grep '^DEVICE'`. */
+/** Thermal status (0 = none … 6 = shutdown) and temperatures of the phone, in °C. */
+export async function thermal(): Promise<{
+  thermalStatus?: number;
+  batteryTempC?: number;
+  skinTempC?: number;
+}> {
+  const service = await shell('dumpsys thermalservice');
+  const battery = await shell('dumpsys battery');
+  const status = /Thermal Status: (\d+)/.exec(service);
+  const batteryTemp = /temperature: (\d+)/.exec(battery);
+  // The current values from the HAL, not the cached ones; type 3 is the skin (board) sensor.
+  const current = service.split('Current temperatures from HAL:')[1] ?? '';
+  const skin = /mValue=([\d.]+), mType=3,/.exec(current);
+  return {
+    thermalStatus: status ? Number(status[1]) : undefined,
+    batteryTempC: batteryTemp ? Number(batteryTemp[1]) / 10 : undefined,
+    skinTempC: skin ? Number(skin[1]) : undefined,
+  };
+}
+
+/** The build of the app (DEVELOPING.md, "Device tests"). */
+export type Build = 'debug' | 'release';
+
+/** APK of each build; `DEVICE_APK_DEBUG` and `DEVICE_APK_RELEASE` point to other files. */
+export const APKS: Record<Build, string> = {
+  debug:
+    process.env.DEVICE_APK_DEBUG ??
+    'android/app/build/outputs/apk/debug/app-debug.apk',
+  release:
+    process.env.DEVICE_APK_RELEASE ??
+    'android/app/build/outputs/apk/measure/app-measure.apk',
+};
+
+/** One measured run: the build, the data set and the run (0 is the warm-up run). */
+export interface Series {
+  build: Build;
+  brews: number;
+  run: number;
+}
+
+/**
+ * Prints one measurement as a `DEVICE {…}` line; collect them with `grep '^DEVICE'`. Lines of
+ * the warm-up run carry `warmup: true` and are left out of the evaluation.
+ */
 export function report(
-  brews: number,
-  run: number,
+  series: Series,
   name: string,
   values: Record<string, number | boolean | undefined>,
 ): void {
-  console.log(`DEVICE ${JSON.stringify({ brews, run, name, ...values })}`);
+  console.log(
+    `DEVICE ${JSON.stringify({
+      ...series,
+      ...(series.run === 0 ? { warmup: true } : {}),
+      name,
+      ...values,
+    })}`,
+  );
 }
