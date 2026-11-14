@@ -222,6 +222,29 @@ export async function saveBean(page: Page): Promise<void> {
   await expect(page.getByRole('dialog')).toHaveCount(0);
 }
 
+/** The filter of a segment as the app stores it when nothing is filtered. */
+export const NO_BEAN_FILTER = {
+  favourite: false,
+  rating: { upper: 5, lower: 0 },
+  roast_range: { upper: 5, lower: 0 },
+  bean_roasting_type: [],
+  roastingDateStart: '',
+  roastingDateEnd: '',
+};
+
+/** The stored filters of the bean list ("OPEN", "FROZEN", "ARCHIVED") or of the bean chooser. */
+export async function storedBeanFilters(
+  page: Page,
+  key: 'bean_filter' | 'bean_filter_selection' = 'bean_filter',
+): Promise<Record<string, unknown> | undefined> {
+  const [settings] =
+    (await readStoredValue<Record<string, Record<string, unknown>>[]>(
+      page,
+      'SETTINGS',
+    )) ?? [];
+  return settings?.[key];
+}
+
 export async function storedBeans(page: Page): Promise<StoredBean[]> {
   return (await readStoredValue<StoredBean[]>(page, 'BEANS')) ?? [];
 }
