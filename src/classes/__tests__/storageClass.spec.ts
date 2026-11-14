@@ -913,3 +913,119 @@ describe('StorageClass deletion journal', () => {
     expect(brews.getAllEntries().length).toBe(1);
   });
 });
+
+describe('StorageClass getByUUID', () => {
+  let mockUIStorage: jasmine.SpyObj<UIStorage>;
+  let storage: TestStorage;
+
+  const raw = (uuid: string, name = uuid) => ({ config: { uuid }, name });
+
+  beforeEach(async () => {
+    mockUIStorage = jasmine.createSpyObj<UIStorage>('UIStorage', [
+      'get',
+      'getOrFail',
+      'set',
+    ]);
+    mockUIStorage.getOrFail.and.resolveTo([raw('a'), raw('b')]);
+    mockUIStorage.set.and.returnValue(Promise.resolve(true));
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: UIStorage, useValue: mockUIStorage },
+        { provide: UILog, useValue: createMockUILog() },
+      ],
+    });
+    spyOn(UIAlert, 'getInstance').and.returnValue(createMockUIAlert());
+    storage = await read(
+      TestBed.runInInjectionContext(() => new TestStorage()),
+    );
+  });
+
+  it('finds the stored entries that were read', () => {
+    expect(storage.getByUUID('a')).toBe(storage.getAllEntries()[0]);
+    expect(storage.getByUUID('b')).toBe(storage.getAllEntries()[1]);
+    expect(storage.getByUUID('unknown')).toBeUndefined();
+  });
+
+  it('finds nothing for an empty uuid', () => {
+    expect(storage.getByUUID('')).toBeUndefined();
+    expect(storage.getByUUID(null)).toBeUndefined();
+    expect(storage.getByUUID(undefined)).toBeUndefined();
+  });
+
+  it('finds the first of two entries sharing a uuid', () => {
+    const first = raw('same', 'first');
+    storage.setEntries([first, raw('same', 'second')]);
+
+    expect(storage.getByUUID('same')).toBe(first);
+  });
+
+  it('follows adds, updates and deletes', async () => {
+    expect(storage.getByUUID('a')).toBeDefined();
+
+    const added = await storage.add(raw('', 'new'));
+    expect(storage.getByUUID(added.config.uuid).name).toBe('new');
+
+    await storage.update(raw('a', 'changed'));
+    expect(storage.getByUUID('a').name).toBe('changed');
+
+    await storage.removeByUUID('a');
+    expect(storage.getByUUID('a')).toBeUndefined();
+    expect(storage.getByUUID('b').name).toBe('b');
+  });
+
+  it('follows uuids changed by a fill', async () => {
+    expect(storage.getByUUID('a')).toBeDefined();
+
+    await storage.backfillWithoutTouch((_entries) => {
+      _entries[0].config.uuid = 'renamed';
+      return 1;
+    });
+
+    expect(storage.getByUUID('a')).toBeUndefined();
+    expect(storage.getByUUID('renamed').name).toBe('a');
+  });
+
+  it('follows the entries read again', async () => {
+    expect(storage.getByUUID('a')).toBeDefined();
+    mockUIStorage.getOrFail.and.resolveTo([raw('c')]);
+
+    await storage.reinitializeStorage();
+
+    expect(storage.getByUUID('a')).toBeUndefined();
+    expect(storage.getByUUID('c').name).toBe('c');
+  });
+
+  it('finds entries changed outside the storage', () => {
+    expect(storage.getByUUID('a')).toBeDefined();
+
+    storage.getAllEntries().push(raw('pushed'));
+    storage.getAllEntries()[0].config.uuid = 'moved';
+
+    expect(storage.getByUUID('pushed').name).toBe('pushed');
+    expect(storage.getByUUID('moved').name).toBe('a');
+    expect(storage.getByUUID('a')).toBeUndefined();
+  });
+
+  it('does not walk the entries again for every lookup', () => {
+    const entries = Array.from({ length: 1000 }, (_v, i) => raw('uuid-' + i));
+    let reads = 0;
+    storage.setEntries(
+      new Proxy(entries, {
+        get(_target, _property, _receiver) {
+          if (typeof _property === 'string' && /^\d+$/.test(_property)) {
+            reads++;
+          }
+          return Reflect.get(_target, _property, _receiver) as unknown;
+        },
+      }),
+    );
+
+    for (let i = 0; i < 1000; i++) {
+      expect(storage.getByUUID('uuid-' + i).name).toBe('uuid-' + i);
+    }
+
+    // One pass to build the index instead of about 500 000 reads.
+    expect(reads).toBeLessThanOrEqual(1000);
+  });
+});

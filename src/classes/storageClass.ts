@@ -51,6 +51,14 @@ export abstract class StorageClass {
   protected storedData: Array<any> = [];
 
   /**
+   * Entries by uuid for getByUUID, built on the first lookup for the
+   * `storedData` array it was built from. Forgotten whenever this class
+   * changes the entries.
+   */
+  private uuidIndex: Map<string, any> | undefined;
+  private uuidIndexData: Array<any> | undefined;
+
+  /**
    * -1 = Nothing started, or being read
    * 0 = Error occured
    * 1 = Initialized
@@ -235,6 +243,7 @@ export abstract class StorageClass {
         );
       }
       this.storedData.push(newEntry);
+      this.forgetUuidIndex();
       saved = await this.__save();
       this.__sendEvent('ADD', newEntry.config.uuid);
     } catch (ex) {
@@ -292,6 +301,7 @@ export abstract class StorageClass {
             );
           }
           this.storedData[i] = updatedObj;
+          this.forgetUuidIndex();
           const saved = await this.__save();
           this.__sendEvent('UPDATE', updatedObj.config.uuid);
           didUpdate = true;
@@ -343,6 +353,7 @@ export abstract class StorageClass {
     }
     try {
       const changed = _fill(this.storedData);
+      this.forgetUuidIndex();
       if (!changed) {
         return true;
       }
@@ -380,13 +391,40 @@ export abstract class StorageClass {
 
   public getByUUID(_uuid: string): any {
     if (_uuid !== null && _uuid !== undefined && _uuid !== '') {
-      const findUUID = _uuid;
+      const indexed = this.getUuidIndex().get(_uuid);
+      if (indexed?.config?.uuid === _uuid) {
+        return indexed;
+      }
+      // Entries changed from outside, through getAllEntries(), are not in
+      // the index; looking through all entries still finds them.
       for (const data of this.storedData) {
-        if (data.config.uuid === findUUID) {
+        if (data.config.uuid === _uuid) {
           return data;
         }
       }
     }
+  }
+
+  private getUuidIndex(): Map<string, any> {
+    if (
+      this.uuidIndex === undefined ||
+      this.uuidIndexData !== this.storedData
+    ) {
+      this.uuidIndex = new Map();
+      this.uuidIndexData = this.storedData;
+      for (const data of this.storedData) {
+        const uuid = data?.config?.uuid;
+        // The first entry wins, as when looking through all entries.
+        if (!this.uuidIndex.has(uuid)) {
+          this.uuidIndex.set(uuid, data);
+        }
+      }
+    }
+    return this.uuidIndex;
+  }
+
+  private forgetUuidIndex(): void {
+    this.uuidIndex = undefined;
   }
 
   public async removeByUUID(_beanUUID: string): Promise<boolean> {
@@ -488,6 +526,7 @@ export abstract class StorageClass {
             this.uiLog.log(`Storage - Delete - Successfully -${deleteUUID}`);
             const rev = StorageClass.revisionOf(this.storedData[i]);
             this.storedData.splice(i, 1);
+            this.forgetUuidIndex();
             const saved = await this.__save();
             this.__sendRemoveMessage(deleteUUID);
             this.__sendEvent('DELETE');
