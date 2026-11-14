@@ -54,21 +54,22 @@ export class BrewInstanceHelper {
   }
 
   /**
-   * Drops the cached objects a change of the storage concerns: the entry an
-   * event names, or the whole collection for events without one (delete,
+   * Drops the cached objects a change of their storage concerns: the entry
+   * an event names, or the whole collection for events without one (delete,
    * read again).
    */
   public static forgetOnChange(
-    _storage: StorageClass,
-    _cache: BrewRelatedCache,
-  ): Subscription {
-    return _storage.attachOnEvent().subscribe((_event) => {
-      if (_event?.uuid === undefined) {
-        this[_cache] = {};
-      } else {
-        delete this[_cache][_event.uuid];
-      }
-    });
+    _storages: Record<BrewRelatedCache, StorageClass>,
+  ): Subscription[] {
+    return Object.entries(_storages).map(([_cache, _storage]) =>
+      _storage.attachOnEvent().subscribe((_event) => {
+        if (_event?.uuid === undefined) {
+          this[_cache] = {};
+        } else {
+          delete this[_cache][_event.uuid];
+        }
+      }),
+    );
   }
 }
 export class Brew implements IBrew {

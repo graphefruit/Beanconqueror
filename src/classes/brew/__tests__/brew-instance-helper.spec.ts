@@ -85,12 +85,12 @@ describe('BrewInstanceHelper', () => {
     UIWaterStorage.instance = waters;
 
     BrewInstanceHelper.setEntryAmountBackToZero();
-    subscriptions = [
-      BrewInstanceHelper.forgetOnChange(beans, 'beans'),
-      BrewInstanceHelper.forgetOnChange(mills, 'mills'),
-      BrewInstanceHelper.forgetOnChange(preparations, 'preparations'),
-      BrewInstanceHelper.forgetOnChange(waters, 'waters'),
-    ];
+    subscriptions = BrewInstanceHelper.forgetOnChange({
+      beans,
+      mills,
+      preparations,
+      waters,
+    });
   });
 
   afterEach(() => {

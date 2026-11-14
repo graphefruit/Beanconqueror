@@ -643,13 +643,12 @@ export class AppComponent implements AfterViewInit {
     this.__attachOnDevicePause();
     this.__attachOnDeviceResume();
 
-    BrewInstanceHelper.forgetOnChange(this.uiBeanStorage, 'beans');
-    BrewInstanceHelper.forgetOnChange(this.uiMillStorage, 'mills');
-    BrewInstanceHelper.forgetOnChange(
-      this.uiPreparationStorage,
-      'preparations',
-    );
-    BrewInstanceHelper.forgetOnChange(this.uiWaterStorage, 'waters');
+    BrewInstanceHelper.forgetOnChange({
+      beans: this.uiBeanStorage,
+      mills: this.uiMillStorage,
+      preparations: this.uiPreparationStorage,
+      waters: this.uiWaterStorage,
+    });
 
     await this.initialDataTrackings();
   }
