@@ -159,6 +159,17 @@ function escapeRegExp(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * Types into the search field above the list and leaves the field. The list is filtered 750 ms
+ * after the last key and once more when the field is left; a tap on a card right after typing
+ * would hit the list while it is rebuilt.
+ */
+export async function searchBeans(page: Page, text: string): Promise<void> {
+  const search = page.getByRole('searchbox').filter({ visible: true });
+  await search.fill(text);
+  await search.blur();
+}
+
 /** Opens the menu of a bean card and picks an entry. */
 export async function beanAction(
   page: Page,
