@@ -13,4 +13,6 @@ ext {
     androidxJunitVersion = '1.3.0'
     androidxEspressoCoreVersion = '3.7.0'
     cordovaAndroidVersion = '14.0.1'
+    // Kotlin version recommended by Capacitor 8, used by the Kotlin based plugins
+    kotlin_version = '2.2.20'
 }
