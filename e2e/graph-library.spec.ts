@@ -1,9 +1,11 @@
 import { expect, test } from './fixtures';
-import { openAddBrew } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithBeans } from './support/beans';
+import { openAddBrew, showBrewsTab } from './support/brew-form';
 
 const PLOTLY_SCRIPT = '/assets/js/plotly.min.js';
 
+// Starts from stored data instead of adding a brew through the form, because
+// the brew form draws its graph and would load the library before the check.
 test('the graph library is loaded once a graph is shown, not at start-up', async ({
   page,
 }) => {
@@ -13,12 +15,12 @@ test('the graph library is loaded once a graph is shown, not at start-up', async
       requested.push(_request.url());
     }
   });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithBeans(page);
 
   expect(requested).toEqual([]);
   expect(await page.evaluate(() => 'Plotly' in window)).toBe(false);
 
+  await showBrewsTab(page);
   await openAddBrew(page);
 
   await expect(page.locator('.js-plotly-plot').first()).toBeAttached({
