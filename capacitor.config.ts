@@ -71,6 +71,9 @@ const createConfig = () => {
     },
     android: {
       allowMixedContent: true, //Needed because Websockets are maybe not working with https thats why we enable it here
+      // Angular 22 supports Chrome 119+ (see .browserslistrc). An older WebView loads
+      // server.errorPath instead of the app (set for Android below).
+      minWebViewVersion: 119,
     },
     plugins: {
       CapacitorHttp: {
@@ -104,6 +107,8 @@ const createConfig = () => {
       // to the __baristaDB on Android when updating from Cordova builds
       config.server.hostname = 'beanconqueror.com';
       config.server.androidScheme = 'https';
+      // Explains an outdated WebView, and a failed app start otherwise.
+      config.server.errorPath = 'assets/webview-unsupported.html';
       config.plugins.Keyboard = {
         resizeOnFullScreen: false, // We use @capawesome/capacitor-android-edge-to-edge-support instead
       };
