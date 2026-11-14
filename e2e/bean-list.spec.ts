@@ -82,10 +82,8 @@ test('the collapsed list shows the beans by name and stays collapsed after a res
   await openBeansTab(page);
   await expect(beanCards(page)).toHaveCount(7);
   await expect(beanCard(page, BEANS.alpha)).not.toContainText('Roast date');
-  // Known defect: right after a restart the button of the collapsed list is
-  // still named "Collapse bean list items".
-  await expect(page.getByRole('button', collapse)).toBeVisible();
-  await expect(page.getByRole('button', expand)).toHaveCount(0);
+  await expect(page.getByRole('button', expand)).toBeVisible();
+  await expect(page.getByRole('button', collapse)).toHaveCount(0);
 
   // Each segment is collapsed on its own.
   await showBeanSegment(page, 'Frozen');

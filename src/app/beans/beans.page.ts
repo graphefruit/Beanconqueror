@@ -282,9 +282,11 @@ export class BeansPage implements OnDestroy {
     }
 
     this.__initializeBeans();
+    // Before rendering, so the toolbar buttons get their names right away:
+    // ion-button misses a name change that follows its first render.
+    this.setUIParams();
     this.changeDetectorRef.detectChanges();
     this.retriggerScroll();
-    this.setUIParams();
   }
 
   private saveScrollPositions(): void {
