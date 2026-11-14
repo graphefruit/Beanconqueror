@@ -1,4 +1,3 @@
-import { NgStyle } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -37,7 +36,6 @@ import { UIHelper } from '../../services/uiHelper';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
-    NgStyle,
     TranslatePipe,
     IonList,
     IonListHeader,

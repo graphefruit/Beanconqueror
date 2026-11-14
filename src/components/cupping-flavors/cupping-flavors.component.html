@@ -23,7 +23,7 @@
         <div >
           <ion-item style="--background:{{flavor.color}}">
             <ion-checkbox label-placement='start' [(ngModel)]="selectedFlavors[flavor.value]" class="ion-margin-end">
-              <div class='ion-label margin-left-first' [ngStyle]="{'color': flavor.text}">
+              <div class='ion-label margin-left-first' [style.color]="flavor.text">
                 {{flavor.translatedLabel}}
               </div>
             </ion-checkbox>
@@ -37,7 +37,7 @@
                       <ion-item style="--background:{{childFlavor.color}}">
                         <ion-checkbox label-placement='start' [(ngModel)]="selectedFlavors[childFlavor.value]"
                           class="ion-margin-end">
-                          <div class='ion-label margin-left-second' [ngStyle]="{'color': childFlavor.text}">
+                          <div class='ion-label margin-left-second' [style.color]="childFlavor.text">
                             {{childFlavor.translatedLabel}}
                           </div>
                         </ion-checkbox>
@@ -49,7 +49,7 @@
                             <ion-item style="--background:{{childChildFlavor.color}}">
                               <ion-checkbox label-placement='start' [(ngModel)]="selectedFlavors[childChildFlavor.value]"
                                 class="ion-margin-end">
-                                <div class='ion-label margin-left-third' [ngStyle]="{'color': childChildFlavor.text}">
+                                <div class='ion-label margin-left-third' [style.color]="childChildFlavor.text">
                                   {{childChildFlavor.translatedLabel}}
                                 </div>
                               </ion-checkbox>
