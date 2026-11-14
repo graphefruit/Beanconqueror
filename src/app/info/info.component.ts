@@ -2,13 +2,13 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import {
+  IonBackButton,
   IonCard,
   IonContent,
   IonHeader,
   IonIcon,
   IonItem,
   IonLabel,
-  IonMenuButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { chevronForwardOutline } from 'ionicons/icons';
@@ -25,7 +25,7 @@ import { HeaderComponent } from '../../components/header/header.component';
     RouterLink,
     TranslatePipe,
     IonHeader,
-    IonMenuButton,
+    IonBackButton,
     IonContent,
     IonCard,
     IonItem,

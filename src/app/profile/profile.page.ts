@@ -11,7 +11,6 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonMenuButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -178,7 +177,6 @@ const SOCIAL_LINKS: SocialLink[] = [
     RouterLink,
     TranslatePipe,
     IonHeader,
-    IonMenuButton,
     IonContent,
     IonList,
     IonItem,

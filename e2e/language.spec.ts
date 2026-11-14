@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures';
 import { completeFirstRun } from './support/first-run';
+import { openFromProfile } from './support/profile';
 
 test('the chosen app language is announced to assistive technology', async ({
   page,
@@ -8,13 +9,7 @@ test('the chosen app language is announced to assistive technology', async ({
   await completeFirstRun(page);
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 
-  await page.getByRole('button', { name: 'menu' }).click();
-  await page
-    .getByRole('link', { name: 'Settings' })
-    .or(page.getByRole('button', { name: 'Settings' }))
-    .or(page.getByRole('menuitem', { name: 'Settings' }))
-    .first()
-    .click();
+  await openFromProfile(page, 'Settings');
   // Opened by keyboard, as screen reader users do.
   await page.getByRole('button', { name: /^Language Settings/ }).press('Enter');
   await page.getByRole('radio', { name: 'German' }).click();

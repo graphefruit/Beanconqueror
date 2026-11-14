@@ -3,6 +3,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import { completeFirstRunWithBrew } from './support/first-brew';
 import { completeFirstRun } from './support/first-run';
+import { openFromProfile } from './support/profile';
 import { toast } from './support/toast';
 
 /**
@@ -120,13 +121,7 @@ async function forgetRecorded(page: Page): Promise<void> {
 }
 
 async function openSettings(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'menu' }).click();
-  await page
-    .getByRole('link', { name: 'Settings' })
-    .or(page.getByRole('button', { name: 'Settings' }))
-    .or(page.getByRole('menuitem', { name: 'Settings' }))
-    .first()
-    .click();
+  await openFromProfile(page, 'Settings');
   await expect(
     page.getByRole('button', { name: /^Language Settings/ }),
   ).toBeVisible();

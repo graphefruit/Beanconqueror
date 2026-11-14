@@ -1,5 +1,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
+import { openFromProfile } from './profile';
+
 /**
  * Helpers for the "Add brew" / "Edit brew" form and the brew parameter
  * settings. Everything is located by role and accessible name so the
@@ -133,7 +135,7 @@ export async function addPreparationMethod(
 }
 
 /**
- * Opens one page of "Brewing Parameters" from the side menu. The entries are
+ * Opens one page of "Brewing Parameters" from the profile. The entries are
  * clickable cards without a button or link role, so they are found by text.
  */
 export async function openBrewParameterPage(
@@ -144,17 +146,7 @@ export async function openBrewParameterPage(
     | 'Define default parameters'
     | 'Define repeat parameters',
 ): Promise<void> {
-  // Tab pages stay in the page while a tab change animates, so the visible
-  // menu button can be swapped out under the click; retry until it opens.
-  const link = page.getByRole('link', { name: 'Brewing Parameters' });
-  await expect(async () => {
-    await page
-      .getByRole('button', { name: 'menu' })
-      .filter({ visible: true })
-      .click({ timeout: 3000 });
-    await expect(link).toBeVisible({ timeout: 3000 });
-  }).toPass();
-  await link.click();
+  await openFromProfile(page, 'Brewing Parameters');
   await page.getByText(entry, { exact: true }).click();
   await expect(
     page.getByRole('banner').filter({ hasText: entry }),
@@ -162,23 +154,25 @@ export async function openBrewParameterPage(
 }
 
 /**
- * Leaves a brew parameter page and returns to the brew list through the side
- * menu and the Home tab.
+ * Leaves a brew parameter page and returns to the brew list through the
+ * profile.
  */
 export async function backToBrews(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'back', exact: true }).click();
+  // The parameter page below stays in the page with its own back button; the
+  // page on top comes last.
+  await page.getByRole('button', { name: 'back', exact: true }).last().click();
   await page
     .getByRole('banner')
     .filter({ hasText: 'Brewing Parameters' })
-    .getByRole('button', { name: 'menu' })
+    .getByRole('button', { name: 'back', exact: true })
     .click();
-  await page.getByRole('link', { name: 'Home' }).click();
+  await expect(page).toHaveURL(/\/home\/profile$/);
   await showBrewsTab(page);
 }
 
 /**
  * Switches to the Brews tab and waits until the previous tab page, which may
- * have its own menu, add and brew option buttons, is hidden again.
+ * have its own add and brew option buttons, is hidden again.
  */
 export async function showBrewsTab(page: Page): Promise<void> {
   await page.getByRole('tab', { name: 'Brews' }).click();
@@ -186,9 +180,6 @@ export async function showBrewsTab(page: Page): Promise<void> {
     'aria-selected',
     'true',
   );
-  await expect(
-    page.getByRole('button', { name: 'menu' }).filter({ visible: true }),
-  ).toHaveCount(1);
   await expect(
     page.getByRole('button', { name: 'Add brew' }).filter({ visible: true }),
   ).toHaveCount(1);

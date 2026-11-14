@@ -3,6 +3,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import { setParameter } from './support/brew-form';
 import { completeFirstRun } from './support/first-run';
+import { openFromProfile } from './support/profile';
 import { readStoredValue } from './support/stored-values';
 
 interface StoredBean {
@@ -39,8 +40,7 @@ async function showTab(page: Page, name: string): Promise<void> {
 
 /** The variety information is switched off in a fresh install. */
 async function enableVarietyInformation(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'menu' }).click();
-  await page.getByRole('link', { name: 'Bean parameters' }).click();
+  await openFromProfile(page, 'Bean parameters');
   await page.getByText('Manage parameters', { exact: true }).click();
   await showTab(page, 'Variety information');
   await setParameter(page, 'Enable variety information', true);
@@ -49,9 +49,9 @@ async function enableVarietyInformation(page: Page): Promise<void> {
   await page
     .getByRole('banner')
     .filter({ hasText: 'Bean parameters' })
-    .getByRole('button', { name: 'menu' })
+    .getByRole('button', { name: 'back', exact: true })
     .click();
-  await page.getByRole('link', { name: 'Home' }).click();
+  await expect(page).toHaveURL(/\/home\/profile$/);
 }
 
 async function openAddBean(page: Page): Promise<void> {

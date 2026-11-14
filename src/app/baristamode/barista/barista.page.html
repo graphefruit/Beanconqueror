@@ -1,6 +1,6 @@
 <ion-header #ionHeader>
   <app-header [title]="'NAV_BARISTAMODE_SECTION' | translate">
-    <ion-menu-button header-slot="start" />
+    <ion-back-button header-slot="start" icon="beanconqueror-back" defaultHref="/home/profile" />
     @if (isWebSocketConnected() === true ) {
       <ion-chip header-slot="end" (click)="showPreparationEdit()" (long-press)="toggleDevInformation()" outline='true' class='machine-connected'>
         <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>

@@ -11,6 +11,7 @@ import {
   shortenViewportForKeyboard,
   waitForAnimations,
 } from './support/layout';
+import { openFromProfile } from './support/profile';
 
 /**
  * Tablet layout rules (tablet projects in playwright.config.ts): content sits in a centred
@@ -67,13 +68,7 @@ const areas: { name: string; open: (page: Page) => Promise<void> }[] = [
   {
     name: 'settings',
     open: async (page) => {
-      await page.getByRole('button', { name: 'menu' }).click();
-      await page
-        .getByRole('link', { name: 'Settings' })
-        .or(page.getByRole('button', { name: 'Settings' }))
-        .or(page.getByRole('menuitem', { name: 'Settings' }))
-        .first()
-        .click();
+      await openFromProfile(page, 'Settings');
       await expect(
         page.getByRole('button', { name: /^Language Settings/ }),
       ).toBeVisible();

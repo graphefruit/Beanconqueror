@@ -5,6 +5,7 @@ import { expect, test } from './fixtures';
 import { pressHardwareBack } from './support/back-button';
 import { completeFirstRun } from './support/first-run';
 import type { NativeBoundary } from './support/native';
+import { openFromProfile } from './support/profile';
 
 /**
  * The tab bar holds Home, Brews, Beans and Profile. Preparation methods,
@@ -175,8 +176,7 @@ test('the brewing parameters page still links to the preparation methods', async
   await page.goto('/');
   await completeFirstRun(page);
 
-  await page.getByRole('button', { name: 'menu' }).click();
-  await page.getByRole('link', { name: 'Brewing Parameters' }).click();
+  await openFromProfile(page, 'Brewing Parameters');
   await page
     .getByRole('link', { name: 'Navigate to preparation methods' })
     .click();
@@ -186,7 +186,11 @@ test('the brewing parameters page still links to the preparation methods', async
     page.getByRole('button', { name: 'Add preparation method' }),
   ).toBeVisible();
   await expectProfileTabSelected(page);
-  await page.getByRole('button', { name: 'back' }).click();
+  await page
+    .getByRole('banner')
+    .filter({ hasText: 'Methods' })
+    .getByRole('button', { name: 'back' })
+    .click();
   await expect(page).toHaveURL(/\/home\/profile$/);
 });
 

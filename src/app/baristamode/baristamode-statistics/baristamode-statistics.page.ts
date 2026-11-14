@@ -10,6 +10,7 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonBackButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -20,7 +21,6 @@ import {
   IonGrid,
   IonHeader,
   IonLabel,
-  IonMenuButton,
   IonRow,
   IonSegment,
   IonSegmentButton,
@@ -45,7 +45,7 @@ import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewSto
     TranslatePipe,
     HeaderComponent,
     IonHeader,
-    IonMenuButton,
+    IonBackButton,
     IonContent,
     IonSegment,
     IonSegmentButton,

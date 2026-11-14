@@ -10,10 +10,10 @@ import {
 } from '@angular/core';
 
 import {
+  IonBackButton,
   IonContent,
   IonHeader,
   IonIcon,
-  IonMenuButton,
 } from '@ionic/angular/standalone';
 
 import { TranslatePipe } from '@ngx-translate/core';
@@ -34,7 +34,7 @@ import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewSto
     BaristamodeBrewInformationComponent,
     TranslatePipe,
     IonHeader,
-    IonMenuButton,
+    IonBackButton,
     IonContent,
     IonIcon,
     HeaderComponent,

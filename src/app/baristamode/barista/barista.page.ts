@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 
 import {
+  IonBackButton,
   IonButton,
   IonCard,
   IonCardContent,
@@ -25,7 +26,6 @@ import {
   IonGrid,
   IonHeader,
   IonIcon,
-  IonMenuButton,
   IonRow,
   ModalController,
   Platform,
@@ -92,7 +92,7 @@ declare var Plotly;
     BrewBrewingComponent,
     TranslatePipe,
     IonHeader,
-    IonMenuButton,
+    IonBackButton,
     IonChip,
     IonIcon,
     IonButton,

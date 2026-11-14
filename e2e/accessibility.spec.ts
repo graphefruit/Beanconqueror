@@ -6,6 +6,7 @@ import type { Page, TestInfo } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { completeFirstRun } from './support/first-run';
+import { openFromProfile } from './support/profile';
 
 /**
  * axe scan of the main areas after first run, in light and dark.
@@ -202,13 +203,7 @@ const areas: { name: string; open: (page: Page) => Promise<void> }[] = [
   {
     name: 'settings',
     open: async (page) => {
-      await page.getByRole('button', { name: 'menu' }).click();
-      await page
-        .getByRole('link', { name: 'Settings' })
-        .or(page.getByRole('button', { name: 'Settings' }))
-        .or(page.getByRole('menuitem', { name: 'Settings' }))
-        .first()
-        .click();
+      await openFromProfile(page, 'Settings');
       await expect(
         page.getByRole('button', { name: /^Language Settings/ }),
       ).toBeVisible();

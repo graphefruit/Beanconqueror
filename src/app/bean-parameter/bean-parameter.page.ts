@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import {
+  IonBackButton,
   IonCard,
   IonCardContent,
   IonCardTitle,
@@ -9,7 +10,6 @@ import {
   IonHeader,
   IonIcon,
   IonItem,
-  IonMenuButton,
 } from '@ionic/angular/standalone';
 
 import { TranslatePipe } from '@ngx-translate/core';
@@ -24,7 +24,7 @@ import { HeaderComponent } from '../../components/header/header.component';
     TranslatePipe,
     HeaderComponent,
     IonHeader,
-    IonMenuButton,
+    IonBackButton,
     IonContent,
     IonCard,
     IonCardTitle,

@@ -9,6 +9,7 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonBackButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -18,7 +19,6 @@ import {
   IonDatetimeButton,
   IonHeader,
   IonLabel,
-  IonMenuButton,
   IonPopover,
   IonRow,
   IonSegment,
@@ -64,7 +64,7 @@ import { UIStatistic } from '../../services/uiStatistic';
     TranslatePipe,
     HeaderComponent,
     IonHeader,
-    IonMenuButton,
+    IonBackButton,
     IonContent,
     IonSegment,
     IonSegmentButton,

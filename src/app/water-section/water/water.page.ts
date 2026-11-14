@@ -10,11 +10,11 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonBackButton,
   IonContent,
   IonHeader,
   IonIcon,
   IonLabel,
-  IonMenuButton,
   IonSegment,
   IonSegmentButton,
   ModalController,
@@ -51,7 +51,7 @@ import { UIWaterStorage } from '../../../services/uiWaterStorage';
     HeaderComponent,
     HeaderButtonComponent,
     IonHeader,
-    IonMenuButton,
+    IonBackButton,
     IonContent,
     IonSegment,
     IonSegmentButton,

@@ -2,11 +2,11 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonBackButton,
   IonContent,
   IonHeader,
   IonIcon,
   IonLabel,
-  IonMenuButton,
   IonSegment,
   IonSegmentButton,
   ModalController,
@@ -38,7 +38,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     HeaderComponent,
     HeaderButtonComponent,
     IonHeader,
-    IonMenuButton,
+    IonBackButton,
     IonContent,
     IonSegment,
     IonSegmentButton,

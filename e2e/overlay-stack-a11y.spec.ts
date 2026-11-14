@@ -261,12 +261,12 @@ test('a half-height sheet keeps the page and its tab bar out of reach', async ({
   const scanQrCode = page.getByRole('button', { name: 'Scan QR Code' });
   await expect(scanQrCode).toBeVisible();
 
-  // The page shows above the sheet, but neither its content nor its menu
+  // The page shows above the sheet, but neither its content nor its add
   // button and tab bar can be reached.
   await expect(page.getByRole('dialog')).toHaveCount(1);
   await expect(importBeans).toHaveCount(0);
   await expect(page.getByRole('tab', { name: 'Beans' })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'menu' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Add bean' })).toHaveCount(0);
   // Ionic would pull focus to one of the two actions, so the drag handle
   // of the sheet is the probe.
   await expectFocusStaysOn(
@@ -292,7 +292,12 @@ test('an open side menu is out of reach while a dialog is open above it', async 
 }) => {
   await page.goto('/');
   await completeFirstRun(page);
-  await page.getByRole('button', { name: 'menu' }).click();
+  // No button opens the side menu any more; a swipe from the edge still can.
+  await page
+    .locator('ion-menu')
+    .evaluate((menu) =>
+      (menu as unknown as { open(): Promise<boolean> }).open(),
+    );
   const menu = page.getByRole('navigation', { name: 'menu' });
   const settings = menu.getByRole('link', { name: 'Settings' });
   await expect(settings).toBeVisible();

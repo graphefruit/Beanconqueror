@@ -35,6 +35,13 @@
     --min-height: var(--bq-touch-target);
   }
 
+  // Tabbing scrolls a row or button only just into view; the margin keeps
+  // its focus ring, which sits outside it, inside the scrolling content.
+  ion-item::part(native),
+  ion-button::part(native) {
+    scroll-margin-block: var(--bq-space-2);
+  }
+
   ion-item:first-child {
     --border-radius: var(--bq-radius-card) var(--bq-radius-card) 0 0;
   }

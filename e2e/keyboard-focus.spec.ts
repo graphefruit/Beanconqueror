@@ -2,10 +2,11 @@ import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { completeFirstRun } from './support/first-run';
+import { openFromProfile } from './support/profile';
 
 /**
  * Keyboard and switch users must see where focus is (WCAG 2.4.7, 1.4.11).
- * Walks Home, the menu and Settings with the Tab key only and checks that each
+ * Walks Home, the profile and Settings with the Tab key only and checks that each
  * stop draws the focus ring token (espresso in light, white in dark) instead of
  * one of Ionic's faint background tints.
  */
@@ -148,12 +149,16 @@ for (const theme of ['light', 'dark'] as const) {
     await completeFirstRun(page);
     await setTheme(page, theme);
 
-    await expectFocusRing(page, page.getByRole('button', { name: 'menu' }));
     await expectFocusRing(page, page.getByRole('button', { name: 'Add brew' }));
     await expectFocusRing(page, page.getByRole('link', { name: /Brews/ }));
 
-    await page.getByRole('button', { name: 'menu' }).click();
-    const settingsEntry = page.getByRole('link', { name: 'Settings' });
+    await expectFocusRing(
+      page,
+      page.getByRole('tab', { name: 'Profile', exact: true }),
+    );
+    await page.keyboard.press(' ');
+    await expect(page).toHaveURL(/\/home\/profile$/);
+    const settingsEntry = page.getByRole('link', { name: /^Settings/ });
     await expectFocusRing(page, settingsEntry);
     await page.keyboard.press('Enter');
     await expect(
@@ -285,7 +290,11 @@ for (const theme of ['light', 'dark'] as const) {
       /^Grinders/,
       /^Water/,
       /^Statistics/,
+      /^Brewing Parameters/,
+      /^Bean parameters/,
+      /^Calculations/,
       /^Settings/,
+      /^Info & support/,
     ]) {
       const entry = page.getByRole('link', { name });
       await expectFocusRing(page, entry);
@@ -357,8 +366,7 @@ test('tapping a settings slider does not draw the keyboard focus ring', async ({
 }) => {
   await page.goto('/');
   await completeFirstRun(page);
-  await page.getByRole('button', { name: 'menu' }).click();
-  await page.getByRole('link', { name: 'Settings' }).click();
+  await openFromProfile(page, 'Settings');
 
   const slider = page.getByRole('slider').first();
   await slider.scrollIntoViewIfNeeded();

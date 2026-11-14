@@ -11,7 +11,6 @@ import {
   IonGrid,
   IonHeader,
   IonIcon,
-  IonMenuButton,
   IonRow,
   ModalController,
 } from '@ionic/angular/standalone';
@@ -51,7 +50,6 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     HeaderComponent,
     HeaderButtonComponent,
     IonHeader,
-    IonMenuButton,
     IonContent,
     IonGrid,
     IonRow,

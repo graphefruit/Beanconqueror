@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { completeFirstRun } from './support/first-run';
+import { openFromProfile } from './support/profile';
 
 /**
  * The basic form controls stay operable by role and expose their state to
@@ -30,8 +31,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('a settings checkbox can be switched on and off', async ({ page }) => {
-  await page.getByRole('button', { name: 'menu' }).click();
-  await page.getByRole('link', { name: 'Settings' }).click();
+  await openFromProfile(page, 'Settings');
 
   const fastRepeat = page.getByRole('checkbox', { name: /^Fast brew repeat/ });
   await expect(fastRepeat).not.toBeChecked();

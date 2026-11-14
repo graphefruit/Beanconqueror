@@ -10,12 +10,12 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonBackButton,
   IonButton,
   IonContent,
   IonHeader,
   IonIcon,
   IonLabel,
-  IonMenuButton,
   IonSearchbar,
   IonSegment,
   IonSegmentButton,
@@ -54,7 +54,7 @@ import { GreenBeanSortComponent } from './green-bean-sort/green-bean-sort.compon
     HeaderComponent,
     HeaderButtonComponent,
     IonHeader,
-    IonMenuButton,
+    IonBackButton,
     IonContent,
     IonSegment,
     IonSegmentButton,

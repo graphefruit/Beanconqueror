@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
 import {
+  IonBackButton,
   IonContent,
   IonHeader,
-  IonMenuButton,
 } from '@ionic/angular/standalone';
 
 import { TranslatePipe } from '@ngx-translate/core';
@@ -19,7 +19,7 @@ import { HeaderComponent } from '../../../components/header/header.component';
     BrewRatioCardComponent,
     TranslatePipe,
     IonHeader,
-    IonMenuButton,
+    IonBackButton,
     IonContent,
     HeaderComponent,
   ],

@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { completeFirstRun } from './support/first-run';
+import { openFromProfile } from './support/profile';
 
 /**
  * Fonts Chromium actually rendered a piece of visible text with (DevTools
@@ -34,13 +35,7 @@ async function renderedFontsOfText(page: Page, text: string) {
 }
 
 async function openSettings(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'menu' }).click();
-  await page
-    .getByRole('link', { name: 'Settings' })
-    .or(page.getByRole('button', { name: 'Settings' }))
-    .or(page.getByRole('menuitem', { name: 'Settings' }))
-    .first()
-    .click();
+  await openFromProfile(page, 'Settings');
 }
 
 test('English text is set in the bundled Inter font', async ({ page }) => {

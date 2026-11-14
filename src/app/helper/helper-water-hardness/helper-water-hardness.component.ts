@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonBackButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -11,7 +12,6 @@ import {
   IonHeader,
   IonInput,
   IonItem,
-  IonMenuButton,
   IonRow,
 } from '@ionic/angular/standalone';
 
@@ -31,7 +31,7 @@ import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-numb
     RemoveEmptyNumberDirective,
     TranslatePipe,
     IonHeader,
-    IonMenuButton,
+    IonBackButton,
     IonContent,
     IonGrid,
     IonRow,
