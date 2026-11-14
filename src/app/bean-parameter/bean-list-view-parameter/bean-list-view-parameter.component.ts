@@ -18,7 +18,7 @@ import {
   IonSegment,
   IonSegmentButton,
   IonTitle,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject } from 'rxjs';

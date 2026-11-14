@@ -5,7 +5,7 @@ import {
   tick,
 } from '@angular/core/testing';
 
-import { AlertController, ModalController } from '@ionic/angular/standalone';
+import { AlertController, ModalController } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 

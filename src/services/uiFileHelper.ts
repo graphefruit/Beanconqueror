@@ -1,7 +1,7 @@
 import { inject, Service } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-import { Platform } from '@ionic/angular/standalone';
+import { Platform } from '@ionic/angular';
 
 import { Capacitor, CapacitorException } from '@capacitor/core';
 import {

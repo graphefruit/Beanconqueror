@@ -35,7 +35,7 @@ import {
   IonTextarea,
   ModalController,
   Platform,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';

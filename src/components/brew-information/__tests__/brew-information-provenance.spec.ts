@@ -2,7 +2,7 @@ import { DecimalPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { ModalController, Platform } from '@ionic/angular/standalone';
+import { ModalController, Platform } from '@ionic/angular';
 
 import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 

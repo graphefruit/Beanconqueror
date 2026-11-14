@@ -10,7 +10,7 @@ import {
   IonContent,
   IonIcon,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { arrowDownOutline } from 'ionicons/icons';
 

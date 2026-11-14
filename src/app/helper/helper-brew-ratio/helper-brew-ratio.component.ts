@@ -1,10 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
-import {
-  IonBackButton,
-  IonContent,
-  IonHeader,
-} from '@ionic/angular/standalone';
+import { IonBackButton, IonContent, IonHeader } from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 

@@ -976,6 +976,12 @@ ion-input {
 [hidden] {
   display: none !important;
 }
+// Since Ionic 9 an icon has no size containment any more, so an icon that
+// fills its column would otherwise sit on the text baseline and leave the
+// descender gap below it.
+ion-icon.full-sized-icon {
+  vertical-align: top;
+}
 .ion-label:not([slot='end']) {
   flex: 1 1 0%;
 }

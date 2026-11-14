@@ -16,7 +16,7 @@ import {
   IonItem,
   ModalController,
   Platform,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { Device } from '@capacitor/device';
 import moment from 'moment';

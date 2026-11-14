@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import { BeanModalSelectComponent } from '../app/beans/bean-modal-select/bean-modal-select.component';
 import { Bean } from '../classes/bean/bean';

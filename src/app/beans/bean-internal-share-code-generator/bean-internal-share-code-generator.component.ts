@@ -21,7 +21,7 @@ import {
   IonSelect,
   IonSelectOption,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { clipboardOutline, download } from 'ionicons/icons';
 

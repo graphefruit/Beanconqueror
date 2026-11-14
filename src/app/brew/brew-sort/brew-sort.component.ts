@@ -19,7 +19,7 @@ import {
   IonListHeader,
   IonRow,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
 

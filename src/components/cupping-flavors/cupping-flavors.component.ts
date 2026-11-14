@@ -18,7 +18,7 @@ import {
   IonList,
   IonListHeader,
   IonSearchbar,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { addCircleOutline, close } from 'ionicons/icons';
 

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-import { IonButtons, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonButtons, IonTitle, IonToolbar } from '@ionic/angular';
 
 @Component({
   selector: 'app-header',

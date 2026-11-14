@@ -14,7 +14,7 @@ import {
   IonHeader,
   IonIcon,
   IonItem,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { chevronForwardOutline, logoGithub } from 'ionicons/icons';
 

@@ -24,7 +24,7 @@ import {
   IonRadioGroup,
   IonRow,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';

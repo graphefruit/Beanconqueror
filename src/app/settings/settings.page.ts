@@ -35,7 +35,7 @@ import {
   ModalController,
   Platform,
   ScrollDetail,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   bluetoothOutline,

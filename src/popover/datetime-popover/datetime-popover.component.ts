@@ -22,7 +22,7 @@ import {
   IonItem,
   IonRow,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { Keyboard } from '@capacitor/keyboard';
 import { TranslatePipe } from '@ngx-translate/core';

@@ -19,7 +19,7 @@ import {
   IonLabel,
   IonRange,
   IonTextarea,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { informationOutline } from 'ionicons/icons';
 

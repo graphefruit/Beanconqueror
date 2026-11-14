@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { Platform } from '@ionic/angular/standalone';
+import { Platform } from '@ionic/angular';
 
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { debounceTime } from 'rxjs/operators';

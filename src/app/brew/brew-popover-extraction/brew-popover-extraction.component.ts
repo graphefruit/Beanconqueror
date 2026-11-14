@@ -15,7 +15,7 @@ import {
   IonFooter,
   IonHeader,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 

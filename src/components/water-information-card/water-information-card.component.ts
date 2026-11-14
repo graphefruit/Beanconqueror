@@ -20,7 +20,7 @@ import {
   IonRow,
   IonText,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { waterOutline } from 'ionicons/icons';
 

@@ -1,11 +1,12 @@
 import { NgZone } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
+
 import { TranslateService } from '@ngx-translate/core';
 
-import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { Settings } from '../../../classes/settings/settings';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import type { IHandoffEnvelope } from '../../../interfaces/brew/IHandoff';
 import {
   BrewImportRollbackError,
@@ -449,7 +450,6 @@ describe('IntentHandlerService', () => {
   });
 
   it('imports a brew handoff with a trailing slash before the query', async () => {
-
     await service.handleDeepLink(withTrailingSlash(url));
 
     expect(brewImportService.import.calls.allArgs()).toEqual([[envelope]]);
@@ -673,16 +673,13 @@ describe('IntentHandlerService', () => {
         }
         const name = candidate.bean?.name ?? '';
         const uuid =
-          name === 'Any coffee Natural'
-            ? 'bean-any-natural'
-            : 'bean-second';
+          name === 'Any coffee Natural' ? 'bean-any-natural' : 'bean-second';
         createdByName.set(name, uuid);
         return Promise.resolve(uuid);
       },
     );
     brewImportService.import.and.callFake((candidate: IHandoffEnvelope) => {
-      const uuid =
-        createdByName.get(candidate.bean?.name ?? '') ?? 'bean-any';
+      const uuid = createdByName.get(candidate.bean?.name ?? '') ?? 'bean-any';
       importedBeans.push(uuid ?? 'missing');
       return Promise.resolve(importResult(uuid ?? 'missing'));
     });
@@ -695,12 +692,10 @@ describe('IntentHandlerService', () => {
     expect(uiAlert.showConfirm.calls.allArgs()).toEqual([
       ['Create 2 coffees before importing?', 'Create 2 coffees?', false],
     ]);
-    expect(brewImportService.canCreateBeanFromHandoff.calls.allArgs()).toEqual(
-      [
-        [natural, 'exact'],
-        [second, 'exact'],
-      ],
-    );
+    expect(brewImportService.canCreateBeanFromHandoff.calls.allArgs()).toEqual([
+      [natural, 'exact'],
+      [second, 'exact'],
+    ]);
     expect(brewImportService.createBeanFromHandoff.calls.allArgs()).toEqual([
       [natural, 'exact'],
       [second, 'exact'],
@@ -731,8 +726,7 @@ describe('IntentHandlerService', () => {
       },
     );
     brewImportService.import.and.callFake((candidate: IHandoffEnvelope) => {
-      const uuid =
-        createdByName.get(candidate.bean?.name ?? '') ?? 'bean-any';
+      const uuid = createdByName.get(candidate.bean?.name ?? '') ?? 'bean-any';
       importedBeans.push(uuid);
       return Promise.resolve(importResult(uuid));
     });
@@ -742,9 +736,9 @@ describe('IntentHandlerService', () => {
 
     await service.handleDeepLink(batchUrl);
 
-    expect(brewImportService.canCreateBeanFromHandoff.calls.allArgs()).toEqual(
-      [[natural, 'exact']],
-    );
+    expect(brewImportService.canCreateBeanFromHandoff.calls.allArgs()).toEqual([
+      [natural, 'exact'],
+    ]);
     expect(
       (brewImportService.ensureBeanFromHandoff as jasmine.Spy).calls.allArgs(),
     ).toEqual([[natural, 'exact']]);
@@ -766,9 +760,9 @@ describe('IntentHandlerService', () => {
 
     await service.handleDeepLink(batchUrl);
 
-    expect(brewImportService.canCreateBeanFromHandoff.calls.allArgs()).toEqual(
-      [[exact, 'exact']],
-    );
+    expect(brewImportService.canCreateBeanFromHandoff.calls.allArgs()).toEqual([
+      [exact, 'exact'],
+    ]);
     expect(brewImportService.ensureBeanFromHandoff.calls.count()).toBe(0);
     expect(brewImportService.createBeanFromHandoff.calls.count()).toBe(0);
     expect(brewImportService.import.calls.allArgs()).toEqual([[exact]]);
@@ -793,9 +787,9 @@ describe('IntentHandlerService', () => {
 
     await service.handleDeepLink(batchUrl);
 
-    expect(brewImportService.canCreateBeanFromHandoff.calls.allArgs()).toEqual(
-      [[natural, 'exact']],
-    );
+    expect(brewImportService.canCreateBeanFromHandoff.calls.allArgs()).toEqual([
+      [natural, 'exact'],
+    ]);
     expect(
       (brewImportService.ensureBeanFromHandoff as jasmine.Spy).calls.allArgs(),
     ).toEqual([[natural, 'exact']]);

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ModalController, Platform } from '@ionic/angular/standalone';
+import { ModalController, Platform } from '@ionic/angular';
 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 

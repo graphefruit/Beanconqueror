@@ -20,7 +20,7 @@ import {
   IonRow,
   IonTextarea,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';

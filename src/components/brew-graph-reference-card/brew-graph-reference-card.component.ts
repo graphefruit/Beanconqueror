@@ -20,7 +20,7 @@ import {
   IonRadio,
   IonRow,
   IonText,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { analyticsOutline, heart, trophy } from 'ionicons/icons';
 

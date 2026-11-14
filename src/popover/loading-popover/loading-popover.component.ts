@@ -12,7 +12,7 @@ import {
   IonFooter,
   IonSpinner,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';

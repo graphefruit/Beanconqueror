@@ -7,7 +7,7 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 

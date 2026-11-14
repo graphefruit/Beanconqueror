@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import moment from 'moment/moment';
 

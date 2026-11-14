@@ -10,12 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import {
-  IonBackButton,
-  IonContent,
-  IonHeader,
-  IonIcon,
-} from '@ionic/angular/standalone';
+import { IonBackButton, IonContent, IonHeader, IonIcon } from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';

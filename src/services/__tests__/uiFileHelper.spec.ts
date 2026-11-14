@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Platform } from '@ionic/angular/standalone';
+import { Platform } from '@ionic/angular';
 
 import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
 

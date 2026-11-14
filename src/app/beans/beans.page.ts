@@ -22,7 +22,7 @@ import {
   IonSegmentButton,
   ModalController,
   Platform,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';

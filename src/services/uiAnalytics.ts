@@ -1,7 +1,7 @@
 import { inject, Service } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 
-import { AlertController } from '@ionic/angular/standalone';
+import { AlertController } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 

@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { ToastController } from '@ionic/angular/standalone';
+import { ToastController } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 

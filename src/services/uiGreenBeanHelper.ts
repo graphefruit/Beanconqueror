@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import { GreenBeanAddComponent } from '../app/roasting-section/green-beans/green-bean-add/green-bean-add.component';
 import { GreenBeanDetailComponent } from '../app/roasting-section/green-beans/green-bean-detail/green-bean-detail.component';

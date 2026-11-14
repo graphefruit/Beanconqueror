@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { AlertController, ModalController } from '@ionic/angular/standalone';
+import { AlertController, ModalController } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 

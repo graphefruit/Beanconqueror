@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import { WaterAddComponent } from '../app/water-section/water/water-add/water-add.component';
 import { WaterDetailComponent } from '../app/water-section/water/water-detail/water-detail.component';

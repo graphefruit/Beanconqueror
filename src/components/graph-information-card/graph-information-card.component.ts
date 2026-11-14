@@ -21,7 +21,7 @@ import {
   IonRow,
   ModalController,
   Platform,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 

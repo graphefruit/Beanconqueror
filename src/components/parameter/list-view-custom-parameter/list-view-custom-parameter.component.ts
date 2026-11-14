@@ -8,12 +8,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import {
-  IonCard,
-  IonCheckbox,
-  IonItem,
-  IonTitle,
-} from '@ionic/angular/standalone';
+import { IonCard, IonCheckbox, IonItem, IonTitle } from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 

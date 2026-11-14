@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import { MillModalSelectComponent } from '../app/mill/mill-modal-select/mill-modal-select.component';
 import { Mill } from '../classes/mill/mill';

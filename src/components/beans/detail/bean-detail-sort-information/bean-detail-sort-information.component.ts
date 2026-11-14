@@ -8,7 +8,7 @@ import {
   Output,
 } from '@angular/core';
 
-import { IonCard, IonItem, IonLabel } from '@ionic/angular/standalone';
+import { IonCard, IonItem, IonLabel } from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 

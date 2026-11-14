@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, NgZone } from '@angular/core';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 

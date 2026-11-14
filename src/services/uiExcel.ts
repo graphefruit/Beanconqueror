@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { AlertController, Platform } from '@ionic/angular/standalone';
+import { AlertController, Platform } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';

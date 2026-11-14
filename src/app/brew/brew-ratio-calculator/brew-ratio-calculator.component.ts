@@ -6,11 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 
-import {
-  IonContent,
-  IonHeader,
-  ModalController,
-} from '@ionic/angular/standalone';
+import { IonContent, IonHeader, ModalController } from '@ionic/angular';
 
 import { Brew } from '../../../classes/brew/brew';
 import { BrewRatioCardComponent } from '../../../components/brew-ratio-card/brew-ratio-card.component';

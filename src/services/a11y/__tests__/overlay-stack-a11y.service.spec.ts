@@ -19,7 +19,6 @@ const EVENT_PREFIX: Record<string, string> = {
   'ion-alert': 'ionAlert',
   'ion-action-sheet': 'ionActionSheet',
   'ion-loading': 'ionLoading',
-  'ion-picker-legacy': 'ionPicker',
   'ion-toast': 'ionToast',
 };
 
@@ -184,7 +183,6 @@ describe('OverlayStackA11yService', () => {
       'ion-alert',
       'ion-action-sheet',
       'ion-loading',
-      'ion-picker-legacy',
     ]) {
       const form = await present('ion-modal');
       const overlay = await present(tag);
@@ -508,12 +506,7 @@ describe('OverlayStackA11yService', () => {
   });
 
   it('leaves alerts, action sheets and loading messages to their own guards', async () => {
-    for (const tag of [
-      'ion-alert',
-      'ion-action-sheet',
-      'ion-loading',
-      'ion-picker-legacy',
-    ]) {
+    for (const tag of ['ion-alert', 'ion-action-sheet', 'ion-loading']) {
       const overlay = await present(tag);
       expect(focusGuards()).withContext(tag).toEqual([]);
       await dismiss(overlay);

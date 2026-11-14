@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import { RoastingMachineModalSelectComponent } from '../app/roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component';
 import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';

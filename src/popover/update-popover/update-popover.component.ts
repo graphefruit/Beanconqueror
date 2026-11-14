@@ -18,7 +18,7 @@ import {
   IonTitle,
   ModalController,
   Platform,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 

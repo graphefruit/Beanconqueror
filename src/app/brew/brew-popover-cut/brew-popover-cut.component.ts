@@ -26,7 +26,7 @@ import {
   IonRange,
   IonRow,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';

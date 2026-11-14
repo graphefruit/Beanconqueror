@@ -24,7 +24,7 @@ import {
   IonSegment,
   IonSegmentButton,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 

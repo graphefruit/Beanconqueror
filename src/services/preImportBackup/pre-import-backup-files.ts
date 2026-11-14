@@ -1,6 +1,6 @@
 import { inject, InjectionToken } from '@angular/core';
 
-import { Platform } from '@ionic/angular/standalone';
+import { Platform } from '@ionic/angular';
 
 import { FileInfo, Filesystem } from '@capacitor/filesystem';
 

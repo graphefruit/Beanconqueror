@@ -16,11 +16,7 @@ import {
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import {
-  AlertController,
-  ModalController,
-  Platform,
-} from '@ionic/angular/standalone';
+import { AlertController, ModalController, Platform } from '@ionic/angular';
 
 import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { Subject } from 'rxjs';

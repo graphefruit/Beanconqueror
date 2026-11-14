@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { Platform } from '@ionic/angular/standalone';
+import { Platform } from '@ionic/angular';
 
 import { CapgoLLM } from '@capgo/capacitor-llm';
 import { TranslateService } from '@ngx-translate/core';

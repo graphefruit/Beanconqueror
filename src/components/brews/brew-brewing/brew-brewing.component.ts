@@ -38,7 +38,7 @@ import {
   IonTextarea,
   ModalController,
   Platform,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   analyticsOutline,
@@ -1458,6 +1458,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       component: BrewRatioCalculatorComponent,
       cssClass: 'popover-actions',
       breakpoints: [0, 0.75],
+      // One sheet size only: the drag handle cannot change anything, so it stays
+      // out of the tab order (Ionic 9 makes it a keyboard stop by default).
+      handleBehavior: 'none',
       initialBreakpoint: 0.75,
       id: BrewRatioCalculatorComponent.COMPONENT_ID,
       componentProps: {
@@ -1475,6 +1478,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       component: BrewBrixCalculatorComponent,
       cssClass: 'popover-actions',
       breakpoints: [0, 0.35],
+      // One sheet size only: the drag handle cannot change anything, so it stays
+      // out of the tab order (Ionic 9 makes it a keyboard stop by default).
+      handleBehavior: 'none',
       initialBreakpoint: 0.35,
       id: BrewBrixCalculatorComponent.COMPONENT_ID,
     });

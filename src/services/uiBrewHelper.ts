@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -729,6 +729,9 @@ export class UIBrewHelper {
       cssClass: 'popover-actions',
       backdropDismiss: false,
       breakpoints: [0, 1],
+      // One sheet size only: the drag handle cannot change anything, so it stays
+      // out of the tab order (Ionic 9 makes it a keyboard stop by default).
+      handleBehavior: 'none',
       initialBreakpoint: 1,
     });
     //A hack - when the user long-presses to upen op the modal, the backdrop would be "triggered" by removing the thumb, and the menu would dismiss directly.

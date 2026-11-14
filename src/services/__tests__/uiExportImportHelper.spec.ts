@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ModalController, Platform } from '@ionic/angular/standalone';
+import { ModalController, Platform } from '@ionic/angular';
 
 import { BlobReader, ZipReader } from '@zip.js/zip.js';
 

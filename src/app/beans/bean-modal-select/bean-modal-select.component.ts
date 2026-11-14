@@ -30,7 +30,7 @@ import {
   IonSegmentButton,
   IonThumbnail,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { snowOutline } from 'ionicons/icons';
 

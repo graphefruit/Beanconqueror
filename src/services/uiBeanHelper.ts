@@ -5,7 +5,7 @@ import {
   ActionSheetController,
   ModalController,
   Platform,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';

@@ -20,7 +20,7 @@ import {
   IonRadioGroup,
   IonRow,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { FileInfo } from '@capacitor/filesystem';
 import { TranslatePipe } from '@ngx-translate/core';

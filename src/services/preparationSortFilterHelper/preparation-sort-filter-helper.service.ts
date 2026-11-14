@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import { PreparationSortComponent } from '../../app/preparation/preparation-sort/preparation-sort.component';
 import { Preparation } from '../../classes/preparation/preparation';

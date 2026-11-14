@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { Platform } from '@ionic/angular/standalone';
+import { Platform } from '@ionic/angular';
 
 import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../uiSettingsStorage';

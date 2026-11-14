@@ -26,7 +26,7 @@ import {
   IonSelect,
   IonSelectOption,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { cloudDownloadOutline, informationCircleOutline } from 'ionicons/icons';
 

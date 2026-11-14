@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import { MillAddComponent } from '../app/mill/mill-add/mill-add.component';
 import { MillDetailComponent } from '../app/mill/mill-detail/mill-detail.component';

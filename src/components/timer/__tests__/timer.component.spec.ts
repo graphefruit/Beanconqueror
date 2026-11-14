@@ -6,7 +6,7 @@ import {
   waitForAsync,
 } from '@angular/core/testing';
 
-import { ModalController, Platform } from '@ionic/angular/standalone';
+import { ModalController, Platform } from '@ionic/angular';
 
 import moment from 'moment';
 

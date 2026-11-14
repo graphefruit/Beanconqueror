@@ -30,7 +30,7 @@ import {
   IonRow,
   ModalController,
   Platform,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { download } from 'ionicons/icons';
 
@@ -590,6 +590,9 @@ export class BaristaPage implements OnInit, OnDestroy {
       id: SettingsPopoverBluetoothActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
       breakpoints: [0, 0.5],
+      // One sheet size only: the drag handle cannot change anything, so it stays
+      // out of the tab order (Ionic 9 makes it a keyboard stop by default).
+      handleBehavior: 'none',
       initialBreakpoint: 0.5,
     });
     await popover.present();

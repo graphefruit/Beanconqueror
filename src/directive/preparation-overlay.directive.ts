@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import { PreparationModalSelectComponent } from '../app/preparation/preparation-modal-select/preparation-modal-select.component';
 import { AppEvent } from '../classes/appEvent/appEvent';

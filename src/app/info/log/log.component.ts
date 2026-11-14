@@ -14,7 +14,7 @@ import {
   IonRow,
   IonText,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { sendOutline } from 'ionicons/icons';
 

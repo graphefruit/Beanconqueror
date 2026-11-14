@@ -12,10 +12,7 @@ import {
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideRouter, RouteReuseStrategy } from '@angular/router';
 
-import {
-  IonicRouteStrategy,
-  provideIonicAngular,
-} from '@ionic/angular/standalone';
+import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular';
 import { Drivers } from '@ionic/storage';
 import { IonicStorageModule } from '@ionic/storage-angular';
 

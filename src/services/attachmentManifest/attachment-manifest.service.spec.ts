@@ -1,6 +1,6 @@
 import { fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 
-import { Platform } from '@ionic/angular/standalone';
+import { Platform } from '@ionic/angular';
 
 import { ATTACHMENT_MANIFEST_STORAGE_KEY } from '../../classes/changeTracking/localStorageKeys';
 import { StorageClass } from '../../classes/storageClass';
@@ -202,8 +202,7 @@ function fillSyntheticData(_setup: Setup, _brews: number, _beans: number) {
 
 function storedManifest(_setup: Setup): IAttachmentManifest | undefined {
   return _setup.database.data.get(ATTACHMENT_MANIFEST_STORAGE_KEY) as
-    | IAttachmentManifest
-    | undefined;
+    IAttachmentManifest | undefined;
 }
 
 function entryFor(

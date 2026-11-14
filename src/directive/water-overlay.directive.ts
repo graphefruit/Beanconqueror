@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import { WaterModalSelectComponent } from '../app/water-section/water/water-modal-select/water-modal-select.component';
 import { Water } from '../classes/water/water';

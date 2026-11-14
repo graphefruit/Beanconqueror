@@ -5,12 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 
-import {
-  IonBackButton,
-  IonCard,
-  IonContent,
-  IonHeader,
-} from '@ionic/angular/standalone';
+import { IonBackButton, IonCard, IonContent, IonHeader } from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 

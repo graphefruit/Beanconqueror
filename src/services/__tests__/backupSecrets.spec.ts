@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ModalController, Platform } from '@ionic/angular/standalone';
+import { ModalController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 
 import { EXPERIENCE_MODE_ENUM } from '../../enums/settings/experienceMode';

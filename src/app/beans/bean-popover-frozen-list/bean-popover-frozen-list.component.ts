@@ -9,11 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import {
-  IonContent,
-  IonHeader,
-  ModalController,
-} from '@ionic/angular/standalone';
+import { IonContent, IonHeader, ModalController } from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';

@@ -1,10 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import {
-  AlertController,
-  ModalController,
-  Platform,
-} from '@ionic/angular/standalone';
+import { AlertController, ModalController, Platform } from '@ionic/angular';
 
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import {

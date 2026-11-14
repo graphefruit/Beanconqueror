@@ -19,7 +19,7 @@ import {
   IonIcon,
   IonRow,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { giftOutline, snowOutline, thermometerOutline } from 'ionicons/icons';
 

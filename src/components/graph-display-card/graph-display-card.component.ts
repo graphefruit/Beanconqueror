@@ -12,7 +12,7 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import { Platform } from '@ionic/angular/standalone';
+import { Platform } from '@ionic/angular';
 
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 

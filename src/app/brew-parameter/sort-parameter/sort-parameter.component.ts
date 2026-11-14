@@ -10,7 +10,7 @@ import {
   IonContent,
   IonFooter,
   IonHeader,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 

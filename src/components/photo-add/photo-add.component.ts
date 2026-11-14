@@ -12,7 +12,7 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import { IonButton, IonIcon, IonItem } from '@ionic/angular/standalone';
+import { IonButton, IonIcon, IonItem } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, arrowForwardOutline, trash } from 'ionicons/icons';
 

@@ -12,7 +12,6 @@ const MODAL_OVERLAY_EVENT_PREFIXES: Readonly<Record<string, string>> = {
   'ion-alert': 'ionAlert',
   'ion-action-sheet': 'ionActionSheet',
   'ion-loading': 'ionLoading',
-  'ion-picker-legacy': 'ionPicker',
 };
 
 const MODAL_OVERLAYS = Object.keys(MODAL_OVERLAY_EVENT_PREFIXES).join(',');

@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular';
 
 import { RoastingMachineAddComponent } from '../app/roasting-section/roasting-machine/roasting-machine-add/roasting-machine-add.component';
 import { RoastingMachineDetailComponent } from '../app/roasting-section/roasting-machine/roasting-machine-detail/roasting-machine-detail.component';

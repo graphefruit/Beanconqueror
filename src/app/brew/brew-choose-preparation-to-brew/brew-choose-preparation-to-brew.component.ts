@@ -11,7 +11,7 @@ import {
   IonIcon,
   IonItem,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { wifiOutline } from 'ionicons/icons';
 

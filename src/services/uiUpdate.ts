@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { ModalController, Platform } from '@ionic/angular/standalone';
+import { ModalController, Platform } from '@ionic/angular';
 
 import { App } from '@capacitor/app';
 import { Directory, Filesystem } from '@capacitor/filesystem';

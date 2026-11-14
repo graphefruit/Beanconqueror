@@ -15,7 +15,7 @@ import {
   IonLabel,
   IonList,
   ModalController,
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   analyticsOutline,
@@ -194,6 +194,13 @@ export class ActionsPopoverComponent {
       cssClass: 'popover-actions',
       breakpoints: opts.breakpoints,
       initialBreakpoint: opts.initialBreakpoint,
+      // Ionic 9 makes the drag handle a keyboard stop that cycles through the
+      // sheet sizes. With a single size it could not change anything, so it
+      // stays out of the tab order then.
+      handleBehavior:
+        opts.breakpoints.filter((breakpoint) => breakpoint > 0).length > 1
+          ? 'cycle'
+          : 'none',
     });
   }
 
