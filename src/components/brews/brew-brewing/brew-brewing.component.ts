@@ -62,6 +62,7 @@ import { BluetoothScale, sleep } from '../../../classes/devices';
 import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { GaggimateDevice } from '../../../classes/preparationDevice/gaggimate/gaggimateDevice';
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { SanremoShotData } from '../../../classes/preparationDevice/sanremo/sanremoShotData';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
@@ -242,7 +243,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public brewTimerTickedSubject: EventEmitter<any> = new EventEmitter();
   public maximizeFlowGraphIsShown: boolean = false;
 
-  public preparationDevice: XeniaDevice | MeticulousDevice = undefined;
+  public preparationDevice: XeniaDevice | MeticulousDevice | GaggimateDevice =
+    undefined;
 
   public bluetoothSubscription: Subscription = undefined;
 
@@ -793,6 +795,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       ) {
         this.uiAlert.showMessage(
           'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION',
+          'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE',
+          undefined,
+          true,
+        );
+        return;
+      } else if (
+        this.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+        this.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+          PreparationDeviceType.GAGGIMATE
+      ) {
+        this.uiAlert.showMessage(
+          'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION',
           'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE',
           undefined,
           true,

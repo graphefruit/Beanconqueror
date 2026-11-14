@@ -20,7 +20,7 @@
                       brewComponent.choosenPreparation.brew_order.while.brew_time,
                       brewComponent.choosenPreparation.use_custom_parameters])" class="ion-padding-bottom-half" lines="none">
     <div class="ion-text-center" style="width:100%">
-      @if( uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS) || (isDetail === true && this.traces.weightTrace?.x?.length >0)) {
+      @if( uiSmartScaleConnected || uiPreparationDeviceConnected && [PREPARATION_DEVICE_TYPE_ENUM.METICULOUS, PREPARATION_DEVICE_TYPE_ENUM.GAGGIMATE].includes(uiPreparationDeviceType)|| (isDetail === true && this.traces.weightTrace?.x?.length >0)) {
         <ion-chip (click)="toggleChartLines('weight')" [outline]="!this.traces.weightTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.weightTrace?.visible" [style.--chip-color]="this.traces.weightTrace?.line?.color">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
         <ion-chip (click)="toggleChartLines('calc_flow')" [outline]="!this.traces.flowPerSecondTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.flowPerSecondTrace?.visible" [style.--chip-color]="this.traces.flowPerSecondTrace?.line?.color">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
         <ion-chip (click)="toggleChartLines('realtime_flow')" [outline]="!this.traces.realtimeFlowTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.realtimeFlowTrace?.visible" [style.--chip-color]="this.traces.realtimeFlowTrace?.line?.color">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
@@ -39,7 +39,7 @@
         <ion-chip (click)="toggleChartLines('waterDispensed')"
           [outline]="!this.traces.waterDispensedTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.waterDispensedTrace?.visible" [style.--chip-color]="this.traces.waterDispensedTrace?.line?.color">{{'BREW_FLOW_WATER_DISPENSED_VOLUME' | translate}}</ion-chip>
       }
-      @if ((uiPreparationDeviceConnected && uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU) || (isDetail === true && this.traces.waterDispensedFlowSecondTrace?.x?.length > 0)) {
+      @if ((uiPreparationDeviceConnected && [PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU, PREPARATION_DEVICE_TYPE_ENUM.GAGGIMATE].includes(uiPreparationDeviceType)) || (isDetail === true && this.traces.waterDispensedFlowSecondTrace?.x?.length > 0)) {
         <ion-chip (click)="toggleChartLines('waterDispensedFlowSecond')"
           [outline]="!this.traces.waterDispensedFlowSecondTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.waterDispensedFlowSecondTrace?.visible" [style.--chip-color]="this.traces.waterDispensedFlowSecondTrace?.line?.color">{{'BREW_FLOW_WATER_DISPENSED_REALTIME' | translate}}</ion-chip>
       }
@@ -117,7 +117,7 @@
         </ion-row>
       }
       <ion-row style="padding-bottom:5px;">
-        @if ((uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS))) {
+        @if ((uiSmartScaleConnected || ( uiPreparationDeviceConnected && ([PREPARATION_DEVICE_TYPE_ENUM.METICULOUS, PREPARATION_DEVICE_TYPE_ENUM.GAGGIMATE].includes(uiPreparationDeviceType))))) {
           <ion-col size="{{graphIconColSize}}"
             style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.weightTrace?.line?.color || 'var(--beanconqueror-icon-color)'">
@@ -140,7 +140,7 @@
             </ion-card>
           </ion-col>
         }
-        @if ((uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS))) {
+        @if ((uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  ([PREPARATION_DEVICE_TYPE_ENUM.METICULOUS, PREPARATION_DEVICE_TYPE_ENUM.GAGGIMATE].includes(uiPreparationDeviceType))))) {
           <ion-col size="{{graphIconColSize}}"
             style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.realtimeFlowTrace?.line?.color || '#09485d'">

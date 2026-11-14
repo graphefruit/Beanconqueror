@@ -11,6 +11,9 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import {
+  IonAccordion,
+  IonAccordionGroup,
+  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
@@ -27,7 +30,12 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cloudDownloadOutline, informationCircleOutline } from 'ionicons/icons';
+import {
+  add,
+  cloudDownloadOutline,
+  informationCircleOutline,
+  remove,
+} from 'ionicons/icons';
 
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -117,6 +125,9 @@ import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
     IonCol,
     IonCardHeader,
     IonCardContent,
+    IonButton,
+    IonAccordionGroup,
+    IonAccordion,
   ],
 })
 export class BrewBrewingPreparationDeviceComponent
@@ -165,7 +176,7 @@ export class BrewBrewingPreparationDeviceComponent
   private eventQueue = inject(EventQueueService);
 
   constructor() {
-    addIcons({ cloudDownloadOutline, informationCircleOutline });
+    addIcons({ cloudDownloadOutline, informationCircleOutline, add, remove });
   }
 
   public async baristaModeWeightChanged(_type: string) {
@@ -530,6 +541,8 @@ export class BrewBrewingPreparationDeviceComponent
       } else if (device instanceof MeticulousDevice) {
         device.disconnectSocket();
       } else if (device instanceof SanremoYOUDevice) {
+        device.disconnectSocket();
+      } else if (device instanceof GaggimateDevice) {
         device.disconnectSocket();
       }
     }
@@ -957,6 +970,68 @@ export class BrewBrewingPreparationDeviceComponent
         );
       },
     );
+
+    try {
+      await connectedDevice.connectToSocket().then(async (_connected) => {
+        if (_connected) {
+          this.preparationDevice = connectedDevice;
+          await this.preparationDevice.cancelConfirmation(); // Send a preventive cancel request to avoid getting stuck if GM is showing the brew confirmation screen due to some warning
+          await this.preparationDevice.loadProfiles();
+          /**Check if this profile is still existing, if yes, preset, if not cancel**/
+          const profileFound = this.preparationDevice
+            .getProfiles()
+            .find(
+              (e) =>
+                e.id === this.data.preparationDeviceBrew.params.chosenProfileId,
+            );
+          if (profileFound) {
+            //Everything great
+          } else {
+            //Revert to zero
+            this.data.preparationDeviceBrew.params.chosenProfileId = '';
+          }
+        }
+      });
+    } catch (ex) {
+      this.uiAlert.showMessage('Error connecting to socket: ' + ex);
+    }
+  }
+
+  /** The user chose a GaggiMate profile, so prepare the machine for it */
+  public async gaggimateProfileChanged() {
+    if (this.data.preparationDeviceBrew.params.chosenProfileId) {
+      await this.activateGaggimateProfile();
+    }
+  }
+
+  public async activateGaggimateProfile() {
+    const device = this.preparationDevice as GaggimateDevice;
+    const profileId = this.data.preparationDeviceBrew.params.chosenProfileId;
+    if (!device || !profileId) {
+      return;
+    }
+    await this.uiAlert.showLoadingSpinner();
+    const activated = await device.activateOnProfile(profileId);
+    await this.uiAlert.hideLoadingSpinner();
+    if (!activated) {
+      await this.uiAlert.showMessage(
+        'PREPARATION_DEVICE.TYPE_GAGGIMATE.ERROR_CANNOT_SET_PROFILE_OR_BREW_MODE',
+        'CARE',
+        'OK',
+        true,
+      );
+    }
+    this.checkChanges();
+  }
+
+  public changeGaggimateTargetTemperature(_raise: boolean) {
+    (this.preparationDevice as GaggimateDevice)?.changeTargetTemperature(
+      _raise,
+    );
+  }
+
+  public changeGaggimateBrewTarget(_raise: boolean) {
+    (this.preparationDevice as GaggimateDevice)?.changeBrewTarget(_raise);
   }
 
   public async importShotFromMeticulous() {
@@ -1204,7 +1279,7 @@ export class BrewBrewingPreparationDeviceComponent
       this.preparation.connectedPreparationDevice.customParams
         .confirmDuplicateImport
     ) {
-      // If a shot has been already imported, ask if it should be imported again (id check)
+      // If a shot has been already imported or saved via real time brew, ask if it should be imported again (id check)
       const isDuplicate = this.uiBrewStorage
         .getAllEntries()
         .some(
