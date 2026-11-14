@@ -1,4 +1,8 @@
-import { loadPlotly, PLOTLY_SCRIPT } from '../load-plotly';
+import {
+  drawWhenPlotlyLoaded,
+  loadPlotly,
+  PLOTLY_SCRIPT,
+} from '../load-plotly';
 
 describe('loadPlotly', () => {
   let appended: HTMLScriptElement[];
@@ -61,5 +65,34 @@ describe('loadPlotly', () => {
     Reflect.set(window, 'Plotly', {});
     appended[1].dispatchEvent(new Event('load'));
     await expectAsync(next).toBeResolved();
+  });
+
+  it('draws once Plotly is loaded', async () => {
+    const draw = jasmine.createSpy('draw');
+
+    drawWhenPlotlyLoaded(draw);
+
+    expect(draw).not.toHaveBeenCalled();
+    Reflect.set(window, 'Plotly', {});
+    appended[0].dispatchEvent(new Event('load'));
+    await loadPlotly();
+    expect(draw).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not draw and logs when Plotly cannot be loaded', async () => {
+    const draw = jasmine.createSpy('draw');
+    const logged = new Promise<unknown[]>((_resolve) => {
+      spyOn(console, 'error').and.callFake((..._args: unknown[]) =>
+        _resolve(_args),
+      );
+    });
+
+    drawWhenPlotlyLoaded(draw);
+    appended[0].dispatchEvent(new Event('error'));
+
+    const [message, error] = await logged;
+    expect(message).toBe('Graph not drawn');
+    expect(error).toEqual(jasmine.any(Error));
+    expect(draw).not.toHaveBeenCalled();
   });
 });

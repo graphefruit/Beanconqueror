@@ -20,7 +20,7 @@ import { MeticulousDevice } from '../../classes/preparationDevice/meticulous/met
 import { Settings } from '../../classes/settings/settings';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { GraphHelperService } from '../../services/graphHelper/graph-helper.service';
-import { loadPlotly } from '../../services/graphHelper/load-plotly';
+import { drawWhenPlotlyLoaded } from '../../services/graphHelper/load-plotly';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIHelper } from '../../services/uiHelper';
 
@@ -213,7 +213,7 @@ export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
 
-      void loadPlotly().then(() => {
+      drawWhenPlotlyLoaded(() => {
         Plotly.newPlot(
           this.profileDiv.nativeElement,
           chartData,

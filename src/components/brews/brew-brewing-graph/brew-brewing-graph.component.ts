@@ -95,7 +95,7 @@ import {
   expandLiveAxisRangeForSample,
   GraphHelperService,
 } from '../../../services/graphHelper/graph-helper.service';
-import { loadPlotly } from '../../../services/graphHelper/load-plotly';
+import { drawWhenPlotlyLoaded } from '../../../services/graphHelper/load-plotly';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
@@ -881,7 +881,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
 
       // The traces are set up already, readings arriving meanwhile go there.
-      void loadPlotly().then(() => {
+      drawWhenPlotlyLoaded(() => {
         try {
           if (this.canWePlot()) {
             Plotly.newPlot(

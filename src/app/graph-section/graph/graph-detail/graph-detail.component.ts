@@ -44,7 +44,7 @@ import { IBrew } from '../../../../interfaces/brew/iBrew';
 import { IGraph } from '../../../../interfaces/graph/iGraph';
 import { AnnotationGraphHelperService } from '../../../../services/annotationGraphHelper/annotation-graph-helper.service';
 import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
-import { loadPlotly } from '../../../../services/graphHelper/load-plotly';
+import { drawWhenPlotlyLoaded } from '../../../../services/graphHelper/load-plotly';
 import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIBrewStorage } from '../../../../services/uiBrewStorage';
@@ -369,7 +369,7 @@ export class GraphDetailComponent implements OnInit {
 
       this.chartData = chartData;
 
-      void loadPlotly().then(() => {
+      drawWhenPlotlyLoaded(() => {
         Plotly.newPlot(
           this.profileDiv.nativeElement,
           chartData,

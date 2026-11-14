@@ -27,3 +27,13 @@ export function loadPlotly(): Promise<void> {
   });
   return loading;
 }
+
+/**
+ * Draws once Plotly is loaded. A graph whose library cannot be loaded is not
+ * drawn, as before, when the script tag failed; the failure is logged.
+ */
+export function drawWhenPlotlyLoaded(_draw: () => void): void {
+  loadPlotly().then(_draw, (_error: unknown) => {
+    console.error('Graph not drawn', _error);
+  });
+}
