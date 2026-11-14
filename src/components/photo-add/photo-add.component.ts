@@ -146,7 +146,8 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
   private async updateSlider() {
     if (this.photoSlides) {
       setTimeout(() => {
-        this.photoSlides.nativeElement.swiper.update();
+        // The slider is gone when the last photo was deleted in the meantime.
+        this.photoSlides?.nativeElement.swiper.update();
       }, 250);
     }
   }

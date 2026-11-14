@@ -69,10 +69,6 @@ test.describe('a bean with a photo', () => {
     await page.getByRole('button', { name: 'Edit', exact: true }).click();
     await expect(beanField(page, /^Name/)).toHaveValue(BEANS.blend);
     await expect(slides(page)).toHaveCount(1);
-    // Known defect: the form refreshes its photos twice within the first
-    // half second. If the last photo is deleted before that, the second
-    // refresh fails with an error on the console. Let that time pass.
-    await page.clock.runFor(600);
     // Known defect: the buttons on a photo (move left, move right, delete)
     // have no names; "delete" is the third.
     await slides(page).getByRole('button').nth(2).click();
