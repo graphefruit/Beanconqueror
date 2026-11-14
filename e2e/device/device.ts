@@ -177,6 +177,24 @@ export async function closeApp(app: RunningApp): Promise<void> {
  * installation.
  */
 export async function seedRunningApp(page: Page, data: object): Promise<void> {
+  // Not before the app has started on its empty data and shows the welcome dialog: before, the
+  // app creates its database (both would create it at the same time, and the seed may find no
+  // object store) and writes its defaults, which would replace the seeded entries.
+  await page
+    .locator('ion-modal')
+    .first()
+    .waitFor({ state: 'visible', timeout: 120_000 });
+  await page.evaluate(async () => {
+    const start = performance.now();
+    while (
+      !(await indexedDB.databases()).some((db) => db.name === '__baristaDB')
+    ) {
+      if (performance.now() - start > 120_000) {
+        throw new Error('the app did not create its database');
+      }
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+  });
   const write = async ({ key, json, clear }: Record<string, string>) => {
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
       const request = indexedDB.open('__baristaDB');
