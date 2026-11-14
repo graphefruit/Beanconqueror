@@ -418,13 +418,18 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
       this.uiBrewHelper.logUsedBrewParameters(this.data);
 
+      // The brew is complete before it is stored, so the brew collection is
+      // written once. Its flow profile files are named after it, so the uuid
+      // is fixed beforehand.
+      const uuid = crypto.randomUUID();
       this.uiLog.log('Brew add - Step 3');
-      const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data);
+      await this.manageFlowProfile(uuid);
 
       this.uiLog.log('Brew add - Step 4');
-      await this.manageFlowProfile(addedBrewObj);
-
-      await this.manageCustomBrewTime(addedBrewObj);
+      const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data, {
+        uuid,
+        unix_timestamp: this.getCustomBrewTime(),
+      });
 
       void this.uiPreparationHelper.doMachineSpecificSyncs(addedBrewObj);
 
@@ -628,16 +633,15 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async manageCustomBrewTime(addedBrewObj: Brew): Promise<void> {
+  /** Undefined stores the brew with the time it is saved. */
+  private getCustomBrewTime(): number | undefined {
     const checkData = this.getSettingsOrPreparation();
 
     if (checkData.manage_parameters.set_custom_brew_time) {
       this.uiLog.log('Brew add - Step 6');
-      addedBrewObj.config.unix_timestamp = moment(
-        this.brewBrewing.customCreationDate,
-      ).unix();
-      await this.uiBrewStorage.update(addedBrewObj);
+      return moment(this.brewBrewing.customCreationDate).unix();
     }
+    return undefined;
   }
 
   private getSettingsOrPreparation(): Settings | Preparation {
@@ -648,39 +652,42 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async manageFlowProfile(addedBrewObj: Brew) {
-    if (this.hasAnyFlowProfileRequisites()) {
-      this.uiLog.log('Brew add - Step 5');
-      const savedPath: string = await this.brewBrewing.saveFlowProfile(
-        addedBrewObj.config.uuid,
-      );
-      if (savedPath !== '') {
-        addedBrewObj.flow_profile = savedPath;
-        await this.uiBrewStorage.update(addedBrewObj);
-      }
+  /**
+   * Writes the flow profile files of the brew to be stored under `_uuid` and
+   * sets their paths on it. A failure here never keeps the brew from being
+   * stored, as before, when the files were written after it was.
+   */
+  private async manageFlowProfile(_uuid: string) {
+    try {
+      if (this.hasAnyFlowProfileRequisites()) {
+        this.uiLog.log('Brew add - Step 5');
+        const savedPath: string = await this.brewBrewing.saveFlowProfile(_uuid);
+        if (savedPath !== '') {
+          this.data.flow_profile = savedPath;
+        }
 
-      /**
-       * if this is true, it means we have a brew flow preset, aswell as having a loaded reference profile, but the choosen reference profile is empty, that means it wasn't stored anywhere **/
-      if (
-        this.brew_flow_preset &&
-        (this.brewBrewing.brewBrewingGraphEl.reference_profile_raw?.weight
-          ?.length > 0 ||
-          this.brewBrewing.brewBrewingGraphEl.reference_profile_raw
-            ?.pressureFlow?.length > 0 ||
-          this.brewBrewing.brewBrewingGraphEl.reference_profile_raw
-            ?.temperatureFlow?.length > 0) &&
-        addedBrewObj.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.NONE
-      ) {
-        const path = await this.brewBrewing.saveReferenceFlowProfile(
-          addedBrewObj.config.uuid,
-        );
+        /**
+         * if this is true, it means we have a brew flow preset, aswell as having a loaded reference profile, but the choosen reference profile is empty, that means it wasn't stored anywhere **/
+        if (
+          this.brew_flow_preset &&
+          (this.brewBrewing.brewBrewingGraphEl.reference_profile_raw?.weight
+            ?.length > 0 ||
+            this.brewBrewing.brewBrewingGraphEl.reference_profile_raw
+              ?.pressureFlow?.length > 0 ||
+            this.brewBrewing.brewBrewingGraphEl.reference_profile_raw
+              ?.temperatureFlow?.length > 0) &&
+          this.data.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.NONE
+        ) {
+          await this.brewBrewing.saveReferenceFlowProfile(_uuid);
 
-        addedBrewObj.reference_flow_profile = new ReferenceGraph();
-        addedBrewObj.reference_flow_profile.type =
-          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH;
-        addedBrewObj.reference_flow_profile.uuid = addedBrewObj.config.uuid;
-        await this.uiBrewStorage.update(addedBrewObj);
+          this.data.reference_flow_profile = new ReferenceGraph();
+          this.data.reference_flow_profile.type =
+            REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH;
+          this.data.reference_flow_profile.uuid = _uuid;
+        }
       }
+    } catch (ex) {
+      this.uiLog.error('Brew add - Flow profile could not be saved', ex);
     }
   }
 

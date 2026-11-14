@@ -476,6 +476,39 @@ describe('StorageClass change info', () => {
     expect(stored.config.unix_timestamp).toBe(Math.floor(T0 / 1000));
   });
 
+  it('adds an entry under a uuid and time fixed beforehand with one save and one event', async () => {
+    const storage = await read(create(() => new UIBrewStorage()));
+    const events: any[] = [];
+    storage.attachOnEvent().subscribe((event) => events.push(event));
+
+    const added = await storage.add(new Brew(), {
+      uuid: 'fixed-uuid',
+      unix_timestamp: 1_700_000_000,
+    });
+
+    const [stored] = storage.getAllEntries();
+    expect(mockUIStorage.set.calls.count()).toBe(1);
+    expect(events).toEqual([{ type: 'ADD', uuid: 'fixed-uuid' }]);
+    expect(added.config.uuid).toBe('fixed-uuid');
+    expect(stored.config.uuid).toBe('fixed-uuid');
+    expect(stored.config.unix_timestamp).toBe(1_700_000_000);
+    expect(stored.config.created_at).toBe(T0);
+    expect(stored.config.rev).toBe(1);
+  });
+
+  it('sets uuid and time itself when they are not fixed beforehand', async () => {
+    const storage = await read(create(() => new UIBrewStorage()));
+    const brew = new Brew();
+    brew.config.uuid = 'copied-uuid';
+    brew.config.unix_timestamp = 5;
+
+    const added = await storage.add(brew, {});
+
+    expect(added.config.uuid).not.toBe('copied-uuid');
+    expect(added.config.uuid).not.toBe('');
+    expect(added.config.unix_timestamp).toBe(Math.floor(T0 / 1000));
+  });
+
   it('overwrites change info copied from another entry on add', async () => {
     const storage = await read(create(() => new UIBrewStorage()));
     const copy = new Brew();

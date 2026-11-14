@@ -20,6 +20,16 @@ export interface StorageClassAddResult {
   saved: boolean;
 }
 
+/**
+ * Values of a new entry that the caller fixes beforehand, for example a uuid
+ * that files belonging to the entry are named after before it is stored.
+ * Left out, add() sets them.
+ */
+export interface StorageAddOptions {
+  uuid?: string;
+  unix_timestamp?: number;
+}
+
 export interface StorageWriteOptions {
   /**
    * Defaults to true. False is the system write path for migrations,
@@ -190,8 +200,8 @@ export abstract class StorageClass {
     return this.isInitialized;
   }
 
-  public async add(_entry): Promise<any> {
-    const result = await this.addAndConfirm(_entry);
+  public async add(_entry, _options: StorageAddOptions = {}): Promise<any> {
+    const result = await this.addAndConfirm(_entry, _options);
     return result.entry;
   }
 
@@ -203,7 +213,10 @@ export abstract class StorageClass {
    * without breaking them. Callers that have to undo their work on a failed
    * write use this instead.
    */
-  public async addAndConfirm(_entry): Promise<StorageClassAddResult> {
+  public async addAndConfirm(
+    _entry,
+    _options: StorageAddOptions = {},
+  ): Promise<StorageClassAddResult> {
     let newEntry: any;
     let saved = false;
     if (await this.__refusesWrite('Add')) {
@@ -211,8 +224,9 @@ export abstract class StorageClass {
     }
     try {
       newEntry = StorageClass.cloneData(this.prepareEntryForStorage(_entry));
-      newEntry.config.uuid = crypto.randomUUID();
-      newEntry.config.unix_timestamp = StorageClass.getUnixTimestamp();
+      newEntry.config.uuid = _options.uuid ?? crypto.randomUUID();
+      newEntry.config.unix_timestamp =
+        _options.unix_timestamp ?? StorageClass.getUnixTimestamp();
       if (this.tracksChanges()) {
         stampAdded(
           newEntry.config,
