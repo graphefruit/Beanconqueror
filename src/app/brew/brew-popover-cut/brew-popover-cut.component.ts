@@ -17,13 +17,9 @@ import {
   IonBadge,
   IonButton,
   IonCard,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
   IonCol,
   IonContent,
   IonFooter,
-  IonGrid,
   IonHeader,
   IonItem,
   IonLabel,
@@ -40,7 +36,6 @@ import { BrewFlow, IBrewWeightFlow } from 'src/classes/brew/brewFlow';
 import { PREPARATION_STYLE_TYPE } from 'src/enums/preparations/preparationStyleTypes';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
-import { ToFixedPipe } from '../../../pipes/toFixed';
 import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
 import { loadPlotly } from '../../../services/graphHelper/load-plotly';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -65,15 +60,10 @@ declare var Plotly: any;
     IonItem,
     IonLabel,
     IonRange,
-    IonGrid,
     HeaderComponent,
     HeaderDismissButtonComponent,
     IonCard,
-    IonCardHeader,
-    IonCardSubtitle,
-    IonCardTitle,
     IonBadge,
-    ToFixedPipe,
   ],
 })
 export class BrewPopoverCutComponent implements OnInit {

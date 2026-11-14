@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 
 import {
   IonButton,
-  IonButtons,
   IonCol,
   IonContent,
   IonFooter,
@@ -19,9 +18,7 @@ import {
   IonItem,
   IonLabel,
   IonRow,
-  IonTitle,
   IonToggle,
-  IonToolbar,
   ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -63,9 +60,6 @@ import { HeaderComponent } from '../header/header.component';
     TranslatePipe,
     AsyncImageComponent,
     IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonButton,
     IonIcon,
     IonContent,
