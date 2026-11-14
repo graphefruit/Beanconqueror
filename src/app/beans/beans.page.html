@@ -6,59 +6,59 @@
 </ion-header>
 <ion-content #beanContent>
 
-  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical tabs">
+  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
     <ion-segment-button value="open">
       <ion-label>
         {{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
         <br />
-        @if (openBeans?.length !== openBeansLength) {
+        @if (rows.open().length !== beanCount().open) {
         <span class="value">
-          ( {{ openBeans?.length }} / {{ openBeansLength }} )
+          ( {{ rows.open().length }} / {{ beanCount().open }} )
         </span>
         } @else {
-        <span class="value">( {{ openBeansLength }} )</span>
+        <span class="value">( {{ beanCount().open }} )</span>
         }
       </ion-label>
     </ion-segment-button>
-    @if (settings?.freeze_coffee_beans) {
+    @if (showFrozen()) {
     <ion-segment-button value="frozen">
       <ion-label>
         {{"FROZEN_BEANS" | translate}}
         <br />
-        @if (frozenBeans?.length !== frozenBeansLength) {
+        @if (rows.frozen().length !== beanCount().frozen) {
         <span class="value">
-          ( {{ frozenBeans?.length }} / {{ frozenBeansLength }} )
+          ( {{ rows.frozen().length }} / {{ beanCount().frozen }} )
         </span>
         } @else {
-        <span class="value">( {{ frozenBeansLength }} )</span>
+        <span class="value">( {{ beanCount().frozen }} )</span>
         }
       </ion-label>
     </ion-segment-button>
     }
-    @if (settings?.show_archived_beans) {
+    @if (showArchive()) {
     <ion-segment-button value="archive">
       <ion-label>
         {{"TAB_ARCHIVE" | translate}}
         <br />
-        @if (finishedBeans?.length !== finishedBeansLength) {
+        @if (rows.archive().length !== beanCount().archive) {
         <span class="value">
-          ( {{ finishedBeans?.length }} / {{ finishedBeansLength }} )
+          ( {{ rows.archive().length }} / {{ beanCount().archive }} )
         </span>
         } @else {
-        <span class="value">( {{ finishedBeansLength }} )</span>
+        <span class="value">( {{ beanCount().archive }} )</span>
         }
       </ion-label>
     </ion-segment-button>
     }
   </ion-segment>
-  @switch (bean_segment) {
+  @switch (segment()) {
   @case ('open') {
-  @if (openBeans?.length > 0 || uiShallBarBeDisplayed || uiIsTextSearchActive || uiIsFilterActive || uiIsSortActive) {
+  @if (showToolbar()) {
   <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
     <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
   </div>
   }
-  @if (openBeans.length == 0) {
+  @if (rows.open().length == 0) {
   <div class="ion-padding ion-text-center">
     <div>
       <ion-icon color="inactive" name="beanconqueror-beans" size="large" />
@@ -68,25 +68,26 @@
     </div>
   </div>
   }
-  <ag-virtual-scroll #openScroll [items]="openBeans" [height]="'100vh'" [min-row-height]="uiIsCollapseActive?60:210">
-    @for (item of openScroll.items; track item) {
-    @if (item['beans']) {
-    <bean-information [id]="'bean-group-' + item['frozenGroupId']" [collapsed]='uiIsCollapseActive' (beanAction)="beanAction($event)" [bean]="item['beans'][0]"
+  <ag-virtual-scroll #openScroll [items]="rows.open()" [height]="'100vh'" [min-row-height]="isCollapseActive()?60:210"
+    (onItemsRender)="renderedRows.open.set($event.items)">
+    @for (item of renderedRows.open(); track item) {
+    @if ('beans' in item) {
+    <bean-information [id]="'bean-group-' + item.frozenGroupId" [collapsed]='isCollapseActive()' (beanAction)="beanAction($event)" [bean]="item.beans[0]"
       [beanGroup]="item" />
     } @else {
-    <bean-information [id]="'bean-' + item['config'].uuid" [collapsed]='uiIsCollapseActive' (beanAction)="beanAction($event)" [bean]="item" />
+    <bean-information [id]="'bean-' + item.config.uuid" [collapsed]='isCollapseActive()' (beanAction)="beanAction($event)" [bean]="item" />
     }
     }
   </ag-virtual-scroll>
   }
   @case ('frozen') {
-  @if (settings?.freeze_coffee_beans) {
-  @if (frozenBeans?.length > 0 || uiShallBarBeDisplayed || uiIsTextSearchActive || uiIsFilterActive || uiIsSortActive) {
+  @if (showFrozen()) {
+  @if (showToolbar()) {
   <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
     <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
   </div>
   }
-  @if (frozenBeans.length == 0) {
+  @if (rows.frozen().length == 0) {
   <div class="ion-padding ion-text-center">
     <div>
       <ion-icon color="inactive" name="beanconqueror-beans" size="large" />
@@ -96,28 +97,27 @@
     </div>
   </div>
   }
-  <ag-virtual-scroll #frozenScroll [items]="frozenBeans" [height]="'100vh'"
-    [min-row-height]="uiIsCollapseActive?60:210">
-    @for (item of frozenScroll.items; track item) {
-    @if (item['beans']) {
-    <bean-information [id]="'bean-group-' + item['frozenGroupId']" [collapsed]='uiIsCollapseActive' (beanAction)="beanAction($event)" [bean]="item['beans'][0]"
+  <ag-virtual-scroll #frozenScroll [items]="rows.frozen()" [height]="'100vh'"
+    [min-row-height]="isCollapseActive()?60:210" (onItemsRender)="renderedRows.frozen.set($event.items)">
+    @for (item of renderedRows.frozen(); track item) {
+    @if ('beans' in item) {
+    <bean-information [id]="'bean-group-' + item.frozenGroupId" [collapsed]='isCollapseActive()' (beanAction)="beanAction($event)" [bean]="item.beans[0]"
       [beanGroup]="item" />
     } @else {
-    <bean-information [id]="'bean-' + item['config'].uuid" [collapsed]='uiIsCollapseActive' (beanAction)="beanAction($event)" [bean]="item" />
+    <bean-information [id]="'bean-' + item.config.uuid" [collapsed]='isCollapseActive()' (beanAction)="beanAction($event)" [bean]="item" />
     }
     }
   </ag-virtual-scroll>
   }
   }
   @case ('archive') {
-  @if (settings?.show_archived_beans) {
-  @if (finishedBeans?.length > 0 || uiShallBarBeDisplayed || uiIsTextSearchActive || uiIsFilterActive || uiIsSortActive)
-  {
+  @if (showArchive()) {
+  @if (showToolbar()) {
   <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
     <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
   </div>
   }
-  @if (finishedBeans.length == 0) {
+  @if (rows.archive().length == 0) {
   <div class="ion-padding ion-text-center">
     <div>
       <ion-icon color="inactive" name="beanconqueror-beans" size="large" />
@@ -127,14 +127,14 @@
     </div>
   </div>
   }
-  <ag-virtual-scroll #archivedScroll [items]="finishedBeans" [height]="'100vh'"
-    [min-row-height]="uiIsCollapseActive?60:210">
-    @for (item of archivedScroll.items; track item) {
-    @if (item['beans']) {
-    <bean-information [id]="'bean-group-' + item['frozenGroupId']" [collapsed]='uiIsCollapseActive' (beanAction)="beanAction($event)" [bean]="item['beans'][0]"
+  <ag-virtual-scroll #archivedScroll [items]="rows.archive()" [height]="'100vh'"
+    [min-row-height]="isCollapseActive()?60:210" (onItemsRender)="renderedRows.archive.set($event.items)">
+    @for (item of renderedRows.archive(); track item) {
+    @if ('beans' in item) {
+    <bean-information [id]="'bean-group-' + item.frozenGroupId" [collapsed]='isCollapseActive()' (beanAction)="beanAction($event)" [bean]="item.beans[0]"
       [beanGroup]="item" />
     } @else {
-    <bean-information [id]="'bean-' + item['config'].uuid" [collapsed]='uiIsCollapseActive' (beanAction)="beanAction($event)" [bean]="item" />
+    <bean-information [id]="'bean-' + item.config.uuid" [collapsed]='isCollapseActive()' (beanAction)="beanAction($event)" [bean]="item" />
     }
     }
   </ag-virtual-scroll>
@@ -148,22 +148,22 @@
   <ion-searchbar (ionChange)="research()" (ionInput)='research()' [(ngModel)]="uiSearchText"
     class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
     search-icon="beanconqueror-detail" showCancelButton="never" />
-  <ion-button (click)="showFilter()" [attr.aria-label]="uiIsFilterActive ? 'Filter beans (active)' : 'Filter beans'" fill="clear" size="small" tappable>
-    @if (uiIsFilterActive) {
+  <ion-button (click)="showFilter()" [attr.aria-label]="isFilterActive() ? 'Filter beans (active)' : 'Filter beans'" fill="clear" size="small" tappable>
+    @if (isFilterActive()) {
     <ion-icon aria-hidden="true" name="beanconqueror-filter-active" slot="icon-only" />
     } @else {
     <ion-icon aria-hidden="true" name="beanconqueror-filter-inactive" slot="icon-only" />
     }
   </ion-button>
-  <ion-button (click)="showSort()" [attr.aria-label]="uiIsSortActive ? 'Sort beans (active)' : 'Sort beans'" fill="clear" size="small" tappable>
-    @if (uiIsSortActive) {
+  <ion-button (click)="showSort()" [attr.aria-label]="isSortActive() ? 'Sort beans (active)' : 'Sort beans'" fill="clear" size="small" tappable>
+    @if (isSortActive()) {
     <ion-icon aria-hidden="true" name="beanconqueror-sort-active" slot="icon-only" />
     } @else {
     <ion-icon aria-hidden="true" name="beanconqueror-sort-inactive" slot="icon-only" />
     }
   </ion-button>
-  <ion-button (click)="toggleCollapseBeans()" [attr.aria-label]="uiIsCollapseActive ? 'Expand bean list items' : 'Collapse bean list items'" fill="clear" size="small" tappable>
-    @if (uiIsCollapseActive) {
+  <ion-button (click)="toggleCollapseBeans()" [attr.aria-label]="isCollapseActive() ? 'Expand bean list items' : 'Collapse bean list items'" fill="clear" size="small" tappable>
+    @if (isCollapseActive()) {
     <ion-icon aria-hidden="true" name="beanconqueror-expand-active" slot="icon-only" />
     } @else {
     <ion-icon aria-hidden="true" name="beanconqueror-expand-inactive" slot="icon-only" />

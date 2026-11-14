@@ -320,22 +320,13 @@
     }
   },
   "src/app/beans/beans.page.ts": {
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
     "@typescript-eslint/no-floating-promises": {
-      "count": 1
-    },
-    "@typescript-eslint/no-misused-promises": {
       "count": 1
     },
     "@typescript-eslint/no-unnecessary-type-assertion": {
       "count": 1
     },
     "@typescript-eslint/no-unsafe-return": {
-      "count": 1
-    },
-    "eqeqeq": {
       "count": 1
     },
     "no-empty": {
@@ -3510,7 +3501,7 @@
       "count": 18
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 28
+      "count": 24
     },
     "@typescript-eslint/no-misused-promises": {
       "count": 10

@@ -1,14 +1,16 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  computed,
   ElementRef,
   HostListener,
   inject,
-  OnDestroy,
+  Signal,
+  signal,
   ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -27,7 +29,6 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import _ from 'lodash';
-import { Subscription } from 'rxjs';
 
 import { Bean } from '../../classes/bean/bean';
 import { Settings } from '../../classes/settings/settings';
@@ -46,6 +47,7 @@ import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
+import { IBean } from '../../interfaces/bean/iBean';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { AppleIntelligenceAIBeanImportService } from '../../services/aiBeanImport/apple-intelligence-ai-bean-import.service';
@@ -57,18 +59,72 @@ import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIImage } from '../../services/uiImage';
 import { UILog } from '../../services/uiLog';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { BeanStore } from '../../stores/beans/bean.store';
+import { DeepReadonly } from '../../stores/core/read-only';
 import { BeansAddComponent } from './beans-add/beans-add.component';
+
+type BeanSegment = 'open' | 'archive' | 'frozen';
+
+function perSegment<T>(create: () => T): Record<BeanSegment, T> {
+  return { open: create(), archive: create(), frozen: create() };
+}
+
+/**
+ * A `Bean` over a store entry, only to be read: its nested values are those of
+ * the entry and are not frozen in production, so a change would alter the
+ * store. The sort helper copies the beans before the cards get them.
+ */
+function readOnlyBean(entry: DeepReadonly<IBean>): Bean {
+  const bean = new Bean();
+  bean.initializeByObject(entry as IBean);
+  return bean;
+}
+
+function segmentOf(bean: Bean): BeanSegment {
+  if (bean.finished) {
+    return 'archive';
+  }
+  return bean.isFrozen() ? 'frozen' : 'open';
+}
+
+/** One entry per frozen group that has more than one bean in `beans`. */
+function groupFrozenPortions(beans: Bean[]): (Bean | BeanGroup)[] {
+  const grouped: (Bean | BeanGroup)[] = [];
+  const processedUuids = new Set<string>();
+
+  for (const bean of beans) {
+    if (processedUuids.has(bean.config.uuid)) {
+      continue;
+    }
+    // Only the beans in the list count, so that filters are respected.
+    const groupMembers = bean.frozenGroupId
+      ? beans.filter((b) => b.frozenGroupId === bean.frozenGroupId)
+      : [bean];
+
+    if (groupMembers.length > 1) {
+      grouped.push({
+        frozenGroupId: bean.frozenGroupId,
+        beans: groupMembers,
+        expanded: false,
+      });
+      groupMembers.forEach((b) => processedUuids.add(b.config.uuid));
+    } else {
+      grouped.push(bean);
+      processedUuids.add(bean.config.uuid);
+    }
+  }
+  return grouped;
+}
 
 @Component({
   selector: 'beans',
   templateUrl: './beans.page.html',
   styleUrls: ['./beans.page.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     NgTemplateOutlet,
@@ -87,10 +143,9 @@ import { BeansAddComponent } from './beans-add/beans-add.component';
     IonButton,
   ],
 })
-export class BeansPage implements OnDestroy {
+export class BeansPage {
   private readonly uiLog = inject(UILog);
-  private readonly changeDetectorRef = inject(ChangeDetectorRef);
-  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly beanStore = inject(BeanStore);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly qrScannerService = inject(QrScannerService);
@@ -108,22 +163,6 @@ export class BeansPage implements OnDestroy {
   private readonly uiAlert = inject(UIAlert);
   private readonly uiFileHelper = inject(UIFileHelper);
 
-  public beans: Bean[] = [];
-
-  public settings: Settings;
-
-  public openBeans: (Bean | BeanGroup)[] = [];
-  public finishedBeans: (Bean | BeanGroup)[] = [];
-  public frozenBeans: (Bean | BeanGroup)[] = [];
-  public finishedBeansLength = 0;
-  public openBeansLength = 0;
-  public frozenBeansLength = 0;
-
-  public openBeansSort: IBeanPageSort = {
-    sort_after: BEAN_SORT_AFTER.UNKOWN,
-    sort_order: BEAN_SORT_ORDER.UNKOWN,
-  };
-
   @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
   public openScroll: AgVirtualScrollComponent;
   @ViewChild('archivedScroll', {
@@ -137,37 +176,105 @@ export class BeansPage implements OnDestroy {
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
 
-  public bean_segment: 'open' | 'archive' | 'frozen' = 'open';
-  public archivedBeansSort: IBeanPageSort = {
-    sort_after: BEAN_SORT_AFTER.UNKOWN,
-    sort_order: BEAN_SORT_ORDER.UNKOWN,
+  public readonly segment = signal<BeanSegment>('open');
+  public readonly showFrozen = signal(false);
+  public readonly showArchive = signal(false);
+  /** The text in the search field, of the segment shown. */
+  public readonly uiSearchText = signal('');
+
+  private readonly searchText = perSegment(() => signal(''));
+  private readonly sort = perSegment(() =>
+    signal<IBeanPageSort>({
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    }),
+  );
+  /** Undefined until the page is entered for the first time. */
+  private readonly filter = perSegment(() =>
+    signal<IBeanPageFilter | undefined>(undefined),
+  );
+  private readonly collapsed = perSegment(() => signal(false));
+
+  private settings: Settings;
+
+  /**
+   * Counts the requests to build the lists anew without a change of the
+   * beans: what a card shows also depends on brews and settings, which are
+   * no signals yet, and a cancelled form leaves its changes on the card's
+   * copy until the lists are built again.
+   */
+  private readonly reloads = signal(0);
+
+  /** All beans by name, for the sort helper and the counts. */
+  private readonly beans = computed(() => {
+    this.reloads();
+    return this.beanStore
+      .entries()
+      .map(readOnlyBean)
+      .sort((a, b) => a.name.localeCompare(b.name));
+  });
+
+  public readonly beanCount = computed(() => {
+    const count: Record<BeanSegment, number> = {
+      open: 0,
+      archive: 0,
+      frozen: 0,
+    };
+    for (const bean of this.beans()) {
+      count[segmentOf(bean)]++;
+    }
+    return count;
+  });
+
+  /** The entries of each list after search, filter and sort. */
+  public readonly rows: Record<BeanSegment, Signal<(Bean | BeanGroup)[]>> = {
+    open: this.rowsOf('open'),
+    archive: this.rowsOf('archive'),
+    frozen: this.rowsOf('frozen'),
   };
-  public frozenBeansSort: IBeanPageSort = {
-    sort_after: BEAN_SORT_AFTER.UNKOWN,
-    sort_order: BEAN_SORT_ORDER.UNKOWN,
-  };
 
-  public openBeansCollapsed = false;
-  public archivedBeansCollapsed = false;
-  public frozenBeansCollapsed = false;
+  /** The entries the virtual scroll of each list renders. */
+  public readonly renderedRows = perSegment(() =>
+    signal<(Bean | BeanGroup)[]>([]),
+  );
 
-  public archivedBeansFilterText = '';
-  public openBeansFilterText = '';
-  public frozenBeansFilterText = '';
+  public readonly isCollapseActive = computed(() =>
+    this.collapsed[this.segment()](),
+  );
 
-  public archivedBeansFilter: IBeanPageFilter;
-  public openBeansFilter: IBeanPageFilter;
-  public frozenBeansFilter: IBeanPageFilter;
+  public readonly isSortActive = computed(() => {
+    const sort = this.sort[this.segment()]();
+    return (
+      sort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
+      sort.sort_after !== BEAN_SORT_AFTER.UNKOWN
+    );
+  });
 
-  private beanStorageChangeSubscription: Subscription;
-  public segmentScrollHeight: string = undefined;
+  public readonly isFilterActive = computed(() => {
+    // The default filter depends on a setting.
+    this.reloads();
+    const filter = this.filter[this.segment()]();
+    return (
+      filter !== undefined &&
+      !_.isEqual(this.settings.GET_BEAN_FILTER(), filter)
+    );
+  });
 
-  public uiIsSortActive = false;
-  public uiIsFilterActive = false;
-  public uiIsCollapseActive = false;
-  public uiShallBarBeDisplayed = false;
-  public uiIsTextSearchActive = false;
-  public uiSearchText = '';
+  public readonly isTextSearchActive = computed(
+    () => this.searchText[this.segment()]() !== '',
+  );
+
+  /** Whether the search field and the buttons next to it are shown. */
+  public readonly showToolbar = computed(() => {
+    const segment = this.segment();
+    return (
+      this.rows[segment]().length > 0 ||
+      this.beanCount()[segment] > 0 ||
+      this.isTextSearchActive() ||
+      this.isFilterActive() ||
+      this.isSortActive()
+    );
+  });
 
   private savedScrollPositions: {
     open: number;
@@ -187,106 +294,85 @@ export class BeansPage implements OnDestroy {
 
   private forceScrollToTop = false;
 
+  private lastInteractedBeanId: string = null;
+
+  public constructor() {
+    // Whoever changed a bean: the scroll positions have to be saved before
+    // the lists get their new entries.
+    this.beanStore.changes
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.loadBeans());
+  }
+
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
-    this.archivedBeansSort = this.settings.bean_sort.ARCHIVED;
-    this.openBeansSort = this.settings.bean_sort.OPEN;
-    this.frozenBeansSort = this.settings.bean_sort.FROZEN;
+    this.sort.archive.set(this.settings.bean_sort.ARCHIVED);
+    this.sort.open.set(this.settings.bean_sort.OPEN);
+    this.sort.frozen.set(this.settings.bean_sort.FROZEN);
 
-    this.archivedBeansFilter = this.settings.bean_filter.ARCHIVED;
-    this.frozenBeansFilter = this.settings.bean_filter.FROZEN;
-    this.openBeansFilter = this.settings.bean_filter.OPEN;
+    this.filter.archive.set(this.settings.bean_filter.ARCHIVED);
+    this.filter.frozen.set(this.settings.bean_filter.FROZEN);
+    this.filter.open.set(this.settings.bean_filter.OPEN);
 
-    this.openBeansCollapsed = this.settings.bean_collapsed.OPEN;
-    this.archivedBeansCollapsed = this.settings.bean_collapsed.ARCHIVED;
-    this.frozenBeansCollapsed = this.settings.bean_collapsed.FROZEN;
+    this.collapsed.open.set(this.settings.bean_collapsed.OPEN);
+    this.collapsed.archive.set(this.settings.bean_collapsed.ARCHIVED);
+    this.collapsed.frozen.set(this.settings.bean_collapsed.FROZEN);
+
+    this.showFrozen.set(this.settings.freeze_coffee_beans);
+    this.showArchive.set(this.settings.show_archived_beans);
     this.loadBeans();
-
-    this.beanStorageChangeSubscription = this.uiBeanStorage
-      .attachOnEvent()
-      .subscribe((val: any) => {
-        // Find if this change emitted a bean we can focus
-        if (val && val.obj && val.obj.config && val.obj.config.uuid) {
-          this.lastInteractedBeanId = val.obj.config.uuid;
-        }
-        // If an bean is added/deleted/changed we trigger this here, why we do this? Because when we import from the Beanconqueror website an bean, and we're actually on this page, this won't get shown.
-        this.loadBeans();
-      });
   }
 
-  private setUIParams() {
-    this.uiIsSortActive = this.isSortActive();
-    this.uiIsFilterActive = this.isFilterActive();
-    this.uiIsCollapseActive = this.isCollapseActive();
-    this.uiShallBarBeDisplayed = this.shallBarBeDisplayed();
-    this.uiIsTextSearchActive = this.isTextSearchActive();
-  }
-
-  public async ngOnDestroy() {
-    if (this.beanStorageChangeSubscription) {
-      this.beanStorageChangeSubscription.unsubscribe();
-      this.beanStorageChangeSubscription = undefined;
-    }
-  }
-
-  public isCollapseActive() {
-    let collapsed = false;
-    if (this.bean_segment === 'open') {
-      collapsed = this.openBeansCollapsed;
-    } else if (this.bean_segment === 'archive') {
-      collapsed = this.archivedBeansCollapsed;
-    } else if (this.bean_segment === 'frozen') {
-      collapsed = this.frozenBeansCollapsed;
-    }
-    return collapsed;
+  private rowsOf(segment: BeanSegment): Signal<(Bean | BeanGroup)[]> {
+    return computed(() => {
+      const filter = this.filter[segment]();
+      if (filter === undefined) {
+        return [];
+      }
+      return groupFrozenPortions(
+        this.beanSortFilterHelper.initializeBeansView(
+          segment,
+          this.beans(),
+          this.searchText[segment]().toLowerCase(),
+          this.sort[segment](),
+          filter,
+        ),
+      );
+    });
   }
 
   public toggleCollapseBeans() {
-    if (this.bean_segment === 'open') {
-      this.openBeansCollapsed = !this.openBeansCollapsed;
-    } else if (this.bean_segment === 'archive') {
-      this.archivedBeansCollapsed = !this.archivedBeansCollapsed;
-    } else if (this.bean_segment === 'frozen') {
-      this.frozenBeansCollapsed = !this.frozenBeansCollapsed;
-    }
+    const collapsed = this.collapsed[this.segment()];
+    collapsed.update((value) => !value);
     this.__saveCollapseFilter();
 
-    this.__initializeBeans();
-    this.changeDetectorRef.detectChanges();
+    this.reloads.update((count) => count + 1);
     this.retriggerScroll();
-    this.setUIParams();
   }
 
   private async __saveCollapseFilter() {
-    this.settings.bean_collapsed.OPEN = this.openBeansCollapsed;
-    this.settings.bean_collapsed.ARCHIVED = this.archivedBeansCollapsed;
-    this.settings.bean_collapsed.FROZEN = this.frozenBeansCollapsed;
+    this.settings.bean_collapsed.OPEN = this.collapsed.open();
+    this.settings.bean_collapsed.ARCHIVED = this.collapsed.archive();
+    this.settings.bean_collapsed.FROZEN = this.collapsed.frozen();
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
 
   public loadBeans(resetScroll: boolean = false): void {
     if (resetScroll) {
-      this.forceScrollToTop = true;
-      if (this.bean_segment === 'open') {
-        this.savedScrollPositions.open = 0;
-        this.savedScrollPositions.openHeights = [];
-      } else if (this.bean_segment === 'archive') {
-        this.savedScrollPositions.archive = 0;
-        this.savedScrollPositions.archiveHeights = [];
-      } else if (this.bean_segment === 'frozen') {
-        this.savedScrollPositions.frozen = 0;
-        this.savedScrollPositions.frozenHeights = [];
-      }
+      this.resetScrollPosition();
     } else {
       this.saveScrollPositions();
     }
 
-    this.__initializeBeans();
-    // Before rendering, so the toolbar buttons get their names right away:
-    // ion-button misses a name change that follows its first render.
-    this.setUIParams();
-    this.changeDetectorRef.detectChanges();
+    this.reloads.update((count) => count + 1);
     this.retriggerScroll();
+  }
+
+  private resetScrollPosition(): void {
+    this.forceScrollToTop = true;
+    const segment = this.segment();
+    this.savedScrollPositions[segment] = 0;
+    this.savedScrollPositions[`${segment}Heights`] = [];
   }
 
   private saveScrollPositions(): void {
@@ -314,17 +400,13 @@ export class BeansPage implements OnDestroy {
   }
 
   public segmentChanged() {
-    this.uiSearchText = this.manageSearchTextScope(this.bean_segment, false);
+    this.uiSearchText.set(this.searchText[this.segment()]());
     this.saveScrollPositions();
     this.retriggerScroll();
-    this.setUIParams();
   }
-
-  private lastInteractedBeanId: string = null;
 
   public async beanAction(event?: any): Promise<void> {
     if (event && event.length > 1) {
-      const action = event[0];
       const bean = event[1];
       if (bean && bean.config && bean.config.uuid) {
         this.lastInteractedBeanId = bean.config.uuid;
@@ -340,16 +422,12 @@ export class BeansPage implements OnDestroy {
   }
 
   public async showSort() {
-    const sortSegment = this.manageSortScope(this.bean_segment);
-    const newSort = await this.beanSortFilterHelper.showSort(sortSegment);
+    const segment = this.segment();
+    const newSort = await this.beanSortFilterHelper.showSort(
+      this.sort[segment](),
+    );
     if (newSort) {
-      if (this.bean_segment === 'open') {
-        this.openBeansSort = newSort;
-      } else if (this.bean_segment === 'archive') {
-        this.archivedBeansSort = newSort;
-      } else if (this.bean_segment === 'frozen') {
-        this.frozenBeansSort = newSort;
-      }
+      this.sort[segment].set(newSort);
 
       await this.__saveBeanFilter();
 
@@ -358,86 +436,23 @@ export class BeansPage implements OnDestroy {
   }
 
   public async showFilter() {
-    const filterSegment = this.manageFilterScope(this.bean_segment);
+    const segment = this.segment();
     const newFilter = await this.beanSortFilterHelper.showFilter(
-      filterSegment,
-      this.bean_segment,
+      this.filter[segment](),
+      segment,
     );
     if (newFilter) {
-      /**We got the filtersegment above, so we got the reference and overwrite it**/
-
-      if (this.bean_segment === 'open') {
-        this.openBeansFilter = newFilter;
-      } else if (this.bean_segment === 'archive') {
-        this.archivedBeansFilter = newFilter;
-      } else if (this.bean_segment === 'frozen') {
-        this.frozenBeansFilter = newFilter;
-      }
+      this.filter[segment].set(newFilter);
       await this.__saveBeanFilter();
 
       this.loadBeans(true);
     }
   }
 
-  public isSortActive(): boolean {
-    const sort = this.manageSortScope(this.bean_segment);
-    return (
-      sort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
-      sort.sort_after !== BEAN_SORT_AFTER.UNKOWN
-    );
-  }
-
-  public isTextSearchActive() {
-    const searchText = this.manageSearchTextScope(this.bean_segment);
-    return searchText != '';
-  }
-
-  public isFilterActive(): boolean {
-    let isFilterActive = false;
-
-    if (this.settings) {
-      const checkingFilter: IBeanPageFilter = this.manageFilterScope(
-        this.bean_segment,
-      );
-
-      isFilterActive = !_.isEqual(
-        this.settings?.GET_BEAN_FILTER(),
-        checkingFilter,
-      );
-    }
-
-    return isFilterActive;
-  }
-
-  public shallBarBeDisplayed() {
-    let shallBarDisplayed = false;
-
-    if (this.bean_segment === 'open') {
-      shallBarDisplayed = this.openBeansLength > 0;
-    } else if (this.bean_segment === 'archive') {
-      shallBarDisplayed = this.finishedBeansLength > 0;
-    } else if (this.bean_segment === 'frozen') {
-      shallBarDisplayed = this.frozenBeansLength > 0;
-    }
-
-    return shallBarDisplayed;
-  }
-
   public research() {
-    this.setSearchTextScope(this.bean_segment, this.uiSearchText);
-    this.forceScrollToTop = true;
-    if (this.bean_segment === 'open') {
-      this.savedScrollPositions.open = 0;
-      this.savedScrollPositions.openHeights = [];
-    } else if (this.bean_segment === 'archive') {
-      this.savedScrollPositions.archive = 0;
-      this.savedScrollPositions.archiveHeights = [];
-    } else if (this.bean_segment === 'frozen') {
-      this.savedScrollPositions.frozen = 0;
-      this.savedScrollPositions.frozenHeights = [];
-    }
-    this.__initializeBeansView(this.bean_segment);
-    this.setUIParams();
+    this.searchText[this.segment()].set(this.uiSearchText());
+    this.resetScrollPosition();
+    this.retriggerScroll();
   }
 
   public async add() {
@@ -947,28 +962,29 @@ export class BeansPage implements OnDestroy {
       clearTimeout(this.retriggerScrollTimeout);
     }
     this.retriggerScrollTimeout = setTimeout(() => {
-      const el = this.beanContent.nativeElement;
+      const el = this.beanContent?.nativeElement;
 
       if (!el || el.offsetHeight === 0) {
         return; // Page is hidden, avoid clearing state
       }
 
+      const segment = this.segment();
       let scrollComponent: AgVirtualScrollComponent;
-      if (this.bean_segment === 'open') {
+      if (segment === 'open') {
         scrollComponent = this.openScroll;
         if (this.savedScrollPositions.openHeights?.length) {
           (scrollComponent as any).previousItemsHeight = [
             ...this.savedScrollPositions.openHeights,
           ];
         }
-      } else if (this.bean_segment === 'archive') {
+      } else if (segment === 'archive') {
         scrollComponent = this.archivedScroll;
         if (this.savedScrollPositions.archiveHeights?.length) {
           (scrollComponent as any).previousItemsHeight = [
             ...this.savedScrollPositions.archiveHeights,
           ];
         }
-      } else if (this.bean_segment === 'frozen') {
+      } else if (segment === 'frozen') {
         scrollComponent = this.frozenScroll;
         if (this.savedScrollPositions.frozenHeights?.length) {
           (scrollComponent as any).previousItemsHeight = [
@@ -983,7 +999,6 @@ export class BeansPage implements OnDestroy {
 
       scrollComponent.el.style.height =
         el.offsetHeight - scrollComponent.el.offsetTop + 'px';
-      this.segmentScrollHeight = scrollComponent.el.style.height;
 
       // HACK: Manually trigger component refresh to work around initialization
       //       bug. For some reason the scroll component sees its own height as
@@ -1003,15 +1018,8 @@ export class BeansPage implements OnDestroy {
         this.forceScrollToTop = false;
         this.lastInteractedBeanId = null;
       } else if (this.lastInteractedBeanId) {
-        let index = -1;
-        const viewArray =
-          this.bean_segment === 'open'
-            ? this.openBeans
-            : this.bean_segment === 'archive'
-              ? this.finishedBeans
-              : this.frozenBeans;
-
-        index = viewArray.findIndex((item) => {
+        const viewArray = this.rows[segment]();
+        const index = viewArray.findIndex((item) => {
           if (item['beans']) {
             return item['beans'].some(
               (b) => b.config.uuid === this.lastInteractedBeanId,
@@ -1029,7 +1037,7 @@ export class BeansPage implements OnDestroy {
             snapToDomId = 'bean-' + item['config'].uuid;
           }
 
-          const rowHeight = this.uiIsCollapseActive ? 60 : 210;
+          const rowHeight = this.isCollapseActive() ? 60 : 210;
           const heights = (scrollComponent as any).previousItemsHeight;
 
           let exactOffset = 0;
@@ -1041,7 +1049,7 @@ export class BeansPage implements OnDestroy {
             exactOffset = index * rowHeight;
           }
 
-          const viewportTop = this.savedScrollPositions[this.bean_segment];
+          const viewportTop = this.savedScrollPositions[segment];
           const viewportBottom = viewportTop + el.offsetHeight;
 
           // Do not aggressively force an element to the uppermost viewport bounds if it is reasonably contained on-screen!
@@ -1057,11 +1065,8 @@ export class BeansPage implements OnDestroy {
         this.lastInteractedBeanId = null;
       }
 
-      if (
-        targetScrollTop === -1 &&
-        this.savedScrollPositions[this.bean_segment] > 0
-      ) {
-        targetScrollTop = this.savedScrollPositions[this.bean_segment];
+      if (targetScrollTop === -1 && this.savedScrollPositions[segment] > 0) {
+        targetScrollTop = this.savedScrollPositions[segment];
       }
 
       if (targetScrollTop >= 0) {
@@ -1070,7 +1075,7 @@ export class BeansPage implements OnDestroy {
         ) as HTMLElement;
         if (contentHeightEl) {
           const h = (scrollComponent as any).previousItemsHeight;
-          const rH = this.uiIsCollapseActive ? 60 : 210;
+          const rH = this.isCollapseActive() ? 60 : 210;
           let cHeight = 0;
           if (h && h.length > 0) {
             cHeight = h.reduce((sum, val) => sum + (val ? val : rH), 0);
@@ -1102,139 +1107,14 @@ export class BeansPage implements OnDestroy {
 
   private async __saveBeanFilter() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
-    settings.bean_sort.OPEN = this.openBeansSort;
-    settings.bean_sort.ARCHIVED = this.archivedBeansSort;
-    settings.bean_sort.FROZEN = this.frozenBeansSort;
+    settings.bean_sort.OPEN = this.sort.open();
+    settings.bean_sort.ARCHIVED = this.sort.archive();
+    settings.bean_sort.FROZEN = this.sort.frozen();
 
-    settings.bean_filter.OPEN = this.openBeansFilter;
-    settings.bean_filter.ARCHIVED = this.archivedBeansFilter;
-    settings.bean_filter.FROZEN = this.frozenBeansFilter;
+    settings.bean_filter.OPEN = this.filter.open();
+    settings.bean_filter.ARCHIVED = this.filter.archive();
+    settings.bean_filter.FROZEN = this.filter.frozen();
     await this.uiSettingsStorage.saveSettings(settings);
-  }
-
-  private __initializeBeans(): void {
-    this.beans = this.uiBeanStorage
-      .getAllEntries()
-      .sort((a, b) => a.name.localeCompare(b.name));
-    this.openBeansLength = this.beans.reduce(
-      (n, e) => (!e.finished && e.isFrozen() === false ? n + 1 : n),
-      0,
-    );
-    this.finishedBeansLength = this.beans.reduce(
-      (n, e) => (e.finished ? n + 1 : n),
-      0,
-    );
-    this.frozenBeansLength = this.beans.reduce(
-      (n, e) => (!e.finished && e.isFrozen() === true ? n + 1 : n),
-      0,
-    );
-
-    this.openBeans = [];
-    this.finishedBeans = [];
-    this.frozenBeans = [];
-    this.__initializeBeansView('open');
-    this.__initializeBeansView('archive');
-    this.__initializeBeansView('frozen');
-  }
-
-  private __initializeBeansView(_type: string) {
-    const searchText = this.manageSearchTextScope(_type);
-    const sort = this.manageSortScope(_type);
-    const filters = this.manageFilterScope(_type);
-
-    const filteredBeans = this.beanSortFilterHelper.initializeBeansView(
-      _type,
-      this.beans,
-      searchText,
-      sort,
-      filters,
-    );
-
-    const groupedBeans: (Bean | BeanGroup)[] = [];
-    const processedUuids = new Set<string>();
-
-    for (const bean of filteredBeans) {
-      if (processedUuids.has(bean.config.uuid)) {
-        continue;
-      }
-
-      if (bean.frozenGroupId) {
-        // Find all beans with this frozenGroupId in the filtered list
-        // We only look in the filtered list to respect current filters
-        const groupMembers = filteredBeans.filter(
-          (b) => b.frozenGroupId === bean.frozenGroupId,
-        );
-
-        if (groupMembers.length > 1) {
-          groupedBeans.push({
-            frozenGroupId: bean.frozenGroupId,
-            beans: groupMembers,
-            expanded: false,
-          });
-          groupMembers.forEach((b) => processedUuids.add(b.config.uuid));
-        } else {
-          groupedBeans.push(bean);
-          processedUuids.add(bean.config.uuid);
-        }
-      } else {
-        groupedBeans.push(bean);
-        processedUuids.add(bean.config.uuid);
-      }
-    }
-
-    if (_type === 'open') {
-      this.openBeans = groupedBeans;
-    } else if (_type === 'archive') {
-      this.finishedBeans = groupedBeans;
-    } else if (_type === 'frozen') {
-      this.frozenBeans = groupedBeans;
-    }
-    this.retriggerScroll();
-  }
-
-  private manageFilterScope(_type: string): IBeanPageFilter {
-    if (_type === 'open') {
-      return this.openBeansFilter;
-    } else if (_type === 'archive') {
-      return this.archivedBeansFilter;
-    } else if (_type === 'frozen') {
-      return this.frozenBeansFilter;
-    }
-  }
-
-  private manageSortScope(_type: string): IBeanPageSort {
-    if (_type === 'open') {
-      return this.openBeansSort;
-    } else if (_type === 'archive') {
-      return this.archivedBeansSort;
-    } else if (_type === 'frozen') {
-      return this.frozenBeansSort;
-    }
-  }
-
-  private manageSearchTextScope(_type: string, _toLowerCase = true) {
-    let searchText = '';
-    if (_type === 'open') {
-      searchText = this.openBeansFilterText;
-    } else if (_type === 'archive') {
-      searchText = this.archivedBeansFilterText;
-    } else if (_type === 'frozen') {
-      searchText = this.frozenBeansFilterText;
-    }
-    if (_toLowerCase) {
-      searchText = searchText.toLowerCase();
-    }
-    return searchText;
-  }
-
-  private setSearchTextScope(_type: string, _text: string) {
-    if (_type === 'open') {
-      this.openBeansFilterText = _text;
-    } else if (_type === 'archive') {
-      this.archivedBeansFilterText = _text;
-    } else if (_type === 'frozen') {
-      this.frozenBeansFilterText = _text;
-    }
   }
 }
 
