@@ -133,23 +133,21 @@ export async function coldStart(): Promise<RunningApp> {
         .find((p) => p.url().startsWith('https://')),
     ),
   );
-  // Behind the lock screen the WebView draws no frames, so every measurement would hang. The
-  // page itself cannot tell: its visibilityState stays "visible".
+  // While the lock screen shows, the app's activity is not shown (the app does not set
+  // `showWhenLocked`) and its WebView draws no frames, so every measurement would hang. The page
+  // cannot tell: its visibilityState stays "visible". Nothing here gets past the lock screen.
   try {
     await poll(
       'unlocked screen',
       async () => {
         const windows = await shell('dumpsys window');
-        return windows.includes('isKeyguardShowing=true') &&
-          !windows.includes('mKeyguardOccluded=true')
-          ? undefined
-          : true;
+        return windows.includes('isKeyguardShowing=true') ? undefined : true;
       },
       5_000,
     );
   } catch {
     throw new Error(
-      'The app is behind the lock screen: unlock the phone and keep the screen on.',
+      'The lock screen shows: unlock the phone and keep the screen on.',
     );
   }
   return {
@@ -422,25 +420,46 @@ async function pss(process: string | number): Promise<number | undefined> {
   return match ? Number(match[1]) : undefined;
 }
 
+/** Package of the WebView implementation the phone uses, e.g. `com.google.android.webview`. */
+async function webViewPackage(): Promise<string | undefined> {
+  const out = await shell('dumpsys webviewupdate');
+  return /Current WebView package \(name, version\): \(([^,]+),/.exec(out)?.[1];
+}
+
 /**
- * Memory of the app process and of its WebView renderer (a separate, isolated process: the
- * newest `sandboxed_process` started after the app), in KiB, plus the JavaScript heap.
+ * PID of the app's WebView renderer: the isolated `sandboxed_process` of the WebView package that
+ * runs a `SandboxedProcessService` started by the app. Renderers of other apps that use the same
+ * WebView (or Chrome) have the same process name, so the name alone is not enough.
+ */
+async function rendererPid(): Promise<number | undefined> {
+  const webView = await webViewPackage();
+  if (webView === undefined) {
+    return undefined;
+  }
+  const services = await shell(`dumpsys activity services ${APP_ID}`);
+  const pids = new Set<number>();
+  // `app=ProcessRecord{1a2b3c 5299:com.google.android.webview:sandboxed_process0:…/u0a268i268}`
+  for (const [, pid, name] of services.matchAll(
+    /^\s*app=ProcessRecord\{\S+ (\d+):([^/\s]+)\//gm,
+  )) {
+    if (name.startsWith(`${webView}:sandboxed_process`)) {
+      pids.add(Number(pid));
+    }
+  }
+  // One renderer per app with WebView's default; with several, none of them is "the" one.
+  return pids.size === 1 ? [...pids][0] : undefined;
+}
+
+/**
+ * Memory of the app process and of its WebView renderer (a separate process), in KiB, plus the
+ * JavaScript heap.
  */
 export async function memory(app: RunningApp): Promise<{
   appPssKiB?: number;
   rendererPssKiB?: number;
   jsHeapUsedKiB: number;
 }> {
-  const processes = (await shell('ps -A -o PID,NAME'))
-    .split('\n')
-    .map((line) => line.trim().split(/\s+/))
-    .filter(
-      ([pid, name]) =>
-        name?.includes(':sandboxed_process') && Number(pid) > app.pid,
-    )
-    .map(([pid]) => Number(pid))
-    .sort((a, b) => a - b);
-  const renderer = processes[0];
+  const renderer = await rendererPid();
   const session = await app.page.context().newCDPSession(app.page);
   const heap = (await session.send('Runtime.getHeapUsage')) as {
     usedSize: number;
