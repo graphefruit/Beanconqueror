@@ -22,6 +22,45 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        // Only for the device measurements (DEVELOPING.md, "Device tests"; `./gradlew assembleMeasure`):
+        // the release build with R8, signed with the debug key and with WebView debugging switched
+        // on through its own copy of capacitor.config.json (see below). Never published.
+        measure {
+            initWith release
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['release']
+        }
+    }
+}
+
+/**
+ * Writes capacitor.config.json of the measure build: the synced config plus
+ * `android.webContentsDebuggingEnabled`, so the test can reach the WebView over DevTools. The file
+ * overrides the synced one only in the measure build; debug and release keep it as it is.
+ */
+abstract class MeasureCapacitorConfig extends DefaultTask {
+    @InputFile
+    abstract RegularFileProperty getSyncedConfig()
+
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDir()
+
+    @TaskAction
+    void write() {
+        def config = new groovy.json.JsonSlurper().parse(syncedConfig.get().asFile)
+        config.android = (config.android ?: [:]) + [webContentsDebuggingEnabled: true]
+        outputDir.get().file('capacitor.config.json').asFile.text =
+            groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(config))
+    }
+}
+
+def measureCapacitorConfig = tasks.register('measureCapacitorConfig', MeasureCapacitorConfig) {
+    syncedConfig = file('src/main/assets/capacitor.config.json')
+}
+
+androidComponents {
+    onVariants(selector().withBuildType('measure')) { variant ->
+        variant.sources.assets.addGeneratedSourceDirectory(measureCapacitorConfig, { it.outputDir })
     }
 }
 
