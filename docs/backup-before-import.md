@@ -58,10 +58,11 @@ collection was read.
 This is the one import that goes on without a backup of the current data:
 that data cannot be read, so it cannot be saved, and the dialog says so. It
 is only made for the backup chosen in that dialog, only when the current
-data still cannot be read once the import starts, and it is logged
-(`Backup before import - skipped, the current data could not be read at
-start-up`). When the data can be read by then, the file is written as
-before. Without a copy in memory nothing can be rolled back either: when
+data still cannot be read when it is read again with all attempts right
+before the import, and it is logged (`Backup before import - skipped, the
+current data could not be read at start-up`). When the data can be read by
+then, the import is one like any other: the file is written first, and
+nothing is imported when that fails. Without a copy in memory nothing can be rolled back either: when
 storing the import fails, the app says that the import was not successful
 and asks again.
 

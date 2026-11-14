@@ -806,6 +806,22 @@ describe('Importing a backup', () => {
     expect(Object.fromEntries(device.data)).toEqual(before);
   });
 
+  it('imports nothing in the browser when the copy to roll back to cannot be read', async () => {
+    const before = storedData('own');
+    const device = await startDevice(before, { fileSystem: false });
+    device.failingReads.count = 1;
+
+    await expectAsync(
+      device.helper.importBackup(
+        { SETTINGS: [{}], BREWS: entries('brew', 1) },
+        'import',
+        'x.zip',
+      ),
+    ).toBeRejected();
+
+    expect(Object.fromEntries(device.data)).toEqual(before);
+  });
+
   describe('chosen at start-up because the database could not be read', () => {
     const next = () => ({ SETTINGS: [{}], BREWS: entries('brew', 1) });
 
