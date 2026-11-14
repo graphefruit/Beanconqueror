@@ -235,24 +235,20 @@ export async function saveBean(page: Page): Promise<void> {
   await dialogsClosed(page);
 }
 
+/** The page behind the dialogs, where it or what it sits in is hidden from assistive technology. */
+const HIDDEN_PAGE =
+  'ion-router-outlet#menu-content:is([aria-hidden="true"], [inert]), ' +
+  ':is([aria-hidden="true"], [inert]) ion-router-outlet#menu-content';
+
 /**
- * Waits until no dialog, question or menu is open any more.
- *
- * Known defect: when a dialog or question follows the menu of a card, the app sometimes leaves
- * its page marked as hidden (`aria-hidden`) after all of them are closed. The page can still be
- * used by touch, but assistive technology, and with it every locator by role, finds nothing on
- * it until the next dialog was opened and closed. It happens in roughly one of five runs, so no
- * test can record it; the mark is removed here to let the tests go on.
+ * Waits until no dialog, question or menu is open any more and the page behind them is back for
+ * assistive technology, and with it for every locator by role.
  */
 export async function dialogsClosed(page: Page): Promise<void> {
   await expect(
     page.locator('ion-modal, ion-alert, ion-action-sheet, ion-popover'),
   ).toHaveCount(0);
-  await page.evaluate(() =>
-    document
-      .querySelector('ion-router-outlet#menu-content')
-      ?.removeAttribute('aria-hidden'),
-  );
+  await expect(page.locator(HIDDEN_PAGE)).toHaveCount(0);
 }
 
 /** The filter of a segment as the app stores it when nothing is filtered. */

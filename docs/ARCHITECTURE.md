@@ -465,8 +465,9 @@ file maps them onto Ionic's variables at the end.
   (`src/services/a11y/overlay-stack-a11y.service.ts`, started in
   `AppComponent`) keeps only the overlay on top in the accessibility tree; the
   page and every dialog below it are `inert` and `aria-hidden` until it starts
-  to close, and Tab goes round inside it. Covered by
-  `e2e/overlay-stack-a11y.spec.ts`.
+  to close, and Tab goes round inside it. It also shows the router outlet
+  again when Ionic has left it `aria-hidden` with no blocking overlay open.
+  Covered by `e2e/overlay-stack-a11y.spec.ts`.
 - Status messages: toasts and loading messages are spoken through `Announcer`
   (`src/services/a11y/announcer.service.ts`) from the one visually hidden live
   region of the Angular CDK (`LIVE_REGION` in `src/services/a11y/live-region.ts`),

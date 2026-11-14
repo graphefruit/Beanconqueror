@@ -558,6 +558,160 @@ describe('OverlayStackA11yService', () => {
     expect(focusDialog).toHaveBeenCalledTimes(2);
   });
 
+  describe('with the view container Ionic hides behind an overlay', () => {
+    let outlet: HTMLElement;
+
+    beforeEach(() => {
+      outlet = doc.createElement('ion-router-outlet');
+      page.append(outlet);
+    });
+
+    function locksViewContainer(overlay: FakeOverlay): boolean {
+      return (
+        overlay.focusTrap !== false &&
+        overlay.showBackdrop !== false &&
+        !((overlay.backdropBreakpoint ?? 0) > 0)
+      );
+    }
+
+    /** Ionic hides the view container right after the event. */
+    function ionicStartsPresenting(overlay: FakeOverlay): void {
+      startPresenting(overlay);
+      if (locksViewContainer(overlay)) {
+        outlet.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    /**
+     * Ionic shows the view container again before the event, but only when
+     * no other locking overlay is on screen. One that is still closing counts
+     * until its animation has ended.
+     */
+    function ionicStartsDismissing(overlay: FakeOverlay): void {
+      const onScreen = [
+        ...doc.querySelectorAll<FakeOverlay>(Object.keys(EVENT_PREFIX).join()),
+      ].filter(
+        (other) =>
+          !other.classList.contains('overlay-hidden') &&
+          other.localName !== 'ion-toast' &&
+          locksViewContainer(other),
+      );
+      if (
+        locksViewContainer(overlay) &&
+        onScreen.length === 1 &&
+        onScreen[0] === overlay
+      ) {
+        outlet.removeAttribute('aria-hidden');
+      }
+      fire(overlay, 'WillDismiss');
+    }
+
+    it('shows it again when a question is answered while the menu before it still closes', async () => {
+      const cardMenu = create('ion-popover');
+      ionicStartsPresenting(cardMenu);
+      finishPresenting(cardMenu);
+      await mutationsDelivered();
+      expect(outlet.getAttribute('aria-hidden')).toBe('true');
+
+      ionicStartsDismissing(cardMenu);
+      expect(outlet.hasAttribute('aria-hidden')).toBeFalse();
+      const question = create('ion-alert');
+      ionicStartsPresenting(question);
+      finishPresenting(question);
+      await mutationsDelivered();
+      expect(outlet.getAttribute('aria-hidden')).toBe('true');
+
+      ionicStartsDismissing(question);
+      expect(outlet.hasAttribute('aria-hidden'))
+        .withContext('nothing that blocks the page is open any more')
+        .toBeFalse();
+
+      finishDismissing(cardMenu);
+      finishDismissing(question);
+      await mutationsDelivered();
+      expect(outlet.hasAttribute('aria-hidden')).toBeFalse();
+      expect(state(page)).toEqual(UNTOUCHED);
+    });
+
+    it('shows it again when the last overlay leaves the DOM without closing', async () => {
+      const dialog = create();
+      ionicStartsPresenting(dialog);
+      finishPresenting(dialog);
+      await mutationsDelivered();
+
+      dialog.remove();
+      await mutationsDelivered();
+      expect(outlet.hasAttribute('aria-hidden')).toBeFalse();
+    });
+
+    it('leaves it hidden as long as a blocking overlay is open', async () => {
+      const cardMenu = create('ion-popover');
+      ionicStartsPresenting(cardMenu);
+      finishPresenting(cardMenu);
+      ionicStartsDismissing(cardMenu);
+      const question = create('ion-alert');
+      ionicStartsPresenting(question);
+      expect(outlet.getAttribute('aria-hidden'))
+        .withContext('while the question opens')
+        .toBe('true');
+      finishPresenting(question);
+      finishDismissing(cardMenu);
+      await mutationsDelivered();
+      expect(outlet.getAttribute('aria-hidden'))
+        .withContext('after the menu is gone')
+        .toBe('true');
+
+      const hint = create('ion-popover', { showBackdrop: false });
+      ionicStartsPresenting(hint);
+      finishPresenting(hint);
+      ionicStartsDismissing(hint);
+      finishDismissing(hint);
+      await mutationsDelivered();
+      expect(outlet.getAttribute('aria-hidden'))
+        .withContext('after an overlay above the question is gone')
+        .toBe('true');
+
+      ionicStartsDismissing(question);
+      finishDismissing(question);
+      await mutationsDelivered();
+      expect(outlet.hasAttribute('aria-hidden')).toBeFalse();
+    });
+
+    it('leaves it hidden while the side menu covers it', async () => {
+      // What ion-menu does to its content from opening until it is closed.
+      outlet.classList.add('menu-content-open');
+      outlet.setAttribute('aria-hidden', 'true');
+
+      const hint = create('ion-popover', { showBackdrop: false });
+      ionicStartsPresenting(hint);
+      finishPresenting(hint);
+      ionicStartsDismissing(hint);
+      finishDismissing(hint);
+      await mutationsDelivered();
+      expect(outlet.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    it('takes the container Ionic takes: the first outlet or the marked element', async () => {
+      const inner = doc.createElement('ion-router-outlet');
+      inner.setAttribute('aria-hidden', 'true');
+      outlet.append(inner);
+      outlet.setAttribute('aria-hidden', 'true');
+      await dismiss(await present());
+      expect(outlet.hasAttribute('aria-hidden')).toBeFalse();
+      expect(inner.getAttribute('aria-hidden'))
+        .withContext('not the container of the views')
+        .toBe('true');
+
+      outlet.remove();
+      const views = doc.createElement('div');
+      views.id = 'ion-view-container-root';
+      views.setAttribute('aria-hidden', 'true');
+      page.append(views);
+      await dismiss(await present());
+      expect(views.hasAttribute('aria-hidden')).toBeFalse();
+    });
+  });
+
   it('starts once and gives everything back when the app is destroyed', async () => {
     TestBed.inject(OverlayStackA11yService).start();
     const form = await present();

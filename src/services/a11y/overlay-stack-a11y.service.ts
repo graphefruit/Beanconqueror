@@ -39,6 +39,12 @@ const UNRENDERED = new Set(['LINK', 'META', 'SCRIPT', 'STYLE', 'TEMPLATE']);
 /** Marks the focus guards, which are neither overlay nor page. */
 const FOCUS_GUARD = 'data-overlay-focus-guard';
 
+/** What Ionic hides behind an overlay that blocks the page. */
+const VIEW_CONTAINER = 'ion-router-outlet, #ion-view-container-root';
+
+/** On the content of an ion-menu from the start of opening until it is closed. */
+const BEHIND_SIDE_MENU = 'menu-content-open';
+
 const CONCEALING_ATTRIBUTES = ['aria-hidden', 'inert'] as const;
 type ConcealingAttribute = (typeof CONCEALING_ATTRIBUTES)[number];
 type SavedAttributes = Record<ConcealingAttribute, string | null>;
@@ -109,6 +115,8 @@ function childOfRootHolding(root: Element, element: Element): Element | null {
  * order (`overlayIndex`). A mutation observer notices overlays that leave the
  * DOM without an event and restores the attributes when Ionic removes them
  * from a covered overlay, which it does whenever an overlay finishes opening.
+ * Once no blocking overlay is open any more, the view container Ionic hides
+ * is shown again in case Ionic has left it hidden.
  *
  * Tab past the last control of a modal or popover, or Shift+Tab before the
  * first, moves focus out of it, and only then does Ionic pull focus back to
@@ -269,8 +277,26 @@ export class OverlayStackA11yService {
       for (const element of conceal) {
         this.conceal(element);
       }
+      if (!top) {
+        this.showViewContainer(root);
+      }
       this.placeFocusGuards(root, guarded);
     });
+  }
+
+  /**
+   * Ionic takes the view container back into the accessibility tree when the
+   * last blocking overlay starts to close, and counts one that is still
+   * closing as open until its animation has ended. A question answered while
+   * the menu that led to it still closes is therefore never the last one, and
+   * the container would stay hidden with nothing open. The side menu hides
+   * its content the same way, on purpose, and shows it again by itself.
+   */
+  private showViewContainer(root: Element): void {
+    const container = root.querySelector(VIEW_CONTAINER);
+    if (container && !container.classList.contains(BEHIND_SIDE_MENU)) {
+      container.removeAttribute('aria-hidden');
+    }
   }
 
   private createFocusGuard(): HTMLElement {
