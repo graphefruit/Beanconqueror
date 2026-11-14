@@ -141,21 +141,24 @@ export class DashboardPage implements OnInit {
     this.uiBeanStorage.attachOnEvent().subscribe((_val) => {
       this.reloadBrews();
     });
+    // Mills and preparations do not change the used bean weight.
     this.uiPreparationStorage.attachOnEvent().subscribe((_val) => {
-      this.reloadBrews();
+      this.reloadBrews(false);
     });
     this.uiMillStorage.attachOnEvent().subscribe((_val) => {
-      this.reloadBrews();
+      this.reloadBrews(false);
     });
 
     this.showUnwrappedButton = this.showUnwrapped;
   }
 
-  private reloadBrews() {
+  private reloadBrews(recalculateLeftOver = true) {
     this.loadBeans();
-    // If an brew is deleted, we need to reset our array for the next call.
-    this.setOpenFrozenBeansLeftOverCount();
-    this.setOpenBeansLeftOverCount();
+    if (recalculateLeftOver) {
+      const usedWeightPerBean = this.uiBeanHelper.getUsedWeightPerBean();
+      this.setOpenFrozenBeansLeftOverCount(usedWeightPerBean);
+      this.setOpenBeansLeftOverCount(usedWeightPerBean);
+    }
     this.getBeansCount = this.uiStatistic.getBeansCount();
     this.getBrewsDrunk = this.uiStatistic.getBrewsDrunk();
     this.getTimePassedSinceLastBrew =
@@ -220,7 +223,7 @@ export class DashboardPage implements OnInit {
     this.loadBrews();
   }
 
-  public setOpenBeansLeftOverCount() {
+  public setOpenBeansLeftOverCount(usedWeightPerBean: Map<string, number>) {
     // #183
     let leftOverCount = 0;
     const openBeans: Bean[] = this.beans.filter(
@@ -228,7 +231,8 @@ export class DashboardPage implements OnInit {
     );
     for (const bean of openBeans) {
       if (bean.weight > 0) {
-        leftOverCount += bean.weight - this.getUsedWeightCount(bean);
+        leftOverCount +=
+          bean.weight - (usedWeightPerBean.get(bean.config.uuid) ?? 0);
       }
     }
 
@@ -240,7 +244,9 @@ export class DashboardPage implements OnInit {
     }
   }
 
-  public setOpenFrozenBeansLeftOverCount() {
+  public setOpenFrozenBeansLeftOverCount(
+    usedWeightPerBean: Map<string, number>,
+  ) {
     // #183
 
     let leftOverCount = 0;
@@ -249,7 +255,8 @@ export class DashboardPage implements OnInit {
     );
     for (const bean of openBeans) {
       if (bean.weight > 0) {
-        leftOverCount += bean.weight - this.getUsedWeightCount(bean);
+        leftOverCount +=
+          bean.weight - (usedWeightPerBean.get(bean.config.uuid) ?? 0);
       }
     }
     if (leftOverCount < 1000) {
@@ -259,21 +266,6 @@ export class DashboardPage implements OnInit {
       this.leftOverFrozenBeansWeight =
         Math.round((leftOverCount / 1000) * 100) / 100 + ' kg';
     }
-  }
-
-  public getUsedWeightCount(_bean: Bean): number {
-    let usedWeightCount = 0;
-    const relatedBrews: Brew[] = this.uiBeanHelper.getAllBrewsForThisBean(
-      _bean.config.uuid,
-    );
-    for (const brew of relatedBrews) {
-      if (brew?.bean_weight_in > 0) {
-        usedWeightCount += brew.bean_weight_in;
-      } else {
-        usedWeightCount += brew.grind_weight;
-      }
-    }
-    return usedWeightCount;
   }
 }
 

@@ -34,6 +34,7 @@ import { IAttachment } from '../interfaces/server/iAttachment';
 import { BeanMapper } from '../mapper/bean/beanMapper';
 import { ServerBean } from '../models/bean/serverBean';
 import { QrCodeScannerPopoverComponent } from '../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
+import { getUsedBeanWeightPerBean } from './beanUsage/used-bean-weight';
 import { UIAlert } from './uiAlert';
 import { UIAnalytics } from './uiAnalytics';
 import { UIBeanStorage } from './uiBeanStorage';
@@ -101,14 +102,17 @@ export class UIBeanHelper {
     return false;
   }
 
-  public getAllBrewsForThisBean(_uuid: string): Array<Brew> {
+  private getAllStoredBrews(): Brew[] {
     if (this.allStoredBrews.length <= 0) {
       // Load just if needed, performance reasons
       this.allStoredBrews = this.uiBrewStorage.getAllEntries();
     }
+    return this.allStoredBrews;
+  }
 
+  public getAllBrewsForThisBean(_uuid: string): Array<Brew> {
     const brewsForBean: Array<Brew> = [];
-    const brews: Array<Brew> = this.allStoredBrews;
+    const brews: Array<Brew> = this.getAllStoredBrews();
     const beanUUID: string = _uuid;
     for (const brew of brews) {
       if (brew.bean === beanUUID) {
@@ -116,6 +120,10 @@ export class UIBeanHelper {
       }
     }
     return brewsForBean;
+  }
+
+  public getUsedWeightPerBean(): Map<string, number> {
+    return getUsedBeanWeightPerBean(this.getAllStoredBrews());
   }
 
   public getAllRoastedBeansForThisGreenBean(_uuid: string): Array<Bean> {
