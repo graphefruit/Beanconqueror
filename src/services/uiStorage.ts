@@ -26,11 +26,6 @@ import {
 import { EventQueueService } from './queueService/queue-service.service';
 import { UILog } from './uiLog';
 
-/**
- * 'unknown': the database could not be read. That is not 'empty'.
- */
-export type StoredDataState = 'data' | 'empty' | 'unknown';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -222,7 +217,7 @@ export class UIStorage {
    * still be stored. Every caller has to decide what it leaves alone and
    * what it shows then.
    */
-  public async getDataState(): Promise<StoredDataState> {
+  public async getDataState(): Promise<'data' | 'empty' | 'unknown'> {
     const version = await this.__getWithRetries('VERSION', false);
     if (!version.read) {
       this.uiLog.error('UIStorage - Data state - could not be read');
