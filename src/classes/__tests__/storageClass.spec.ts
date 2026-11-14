@@ -1007,7 +1007,8 @@ describe('StorageClass getByUUID', () => {
     expect(storage.getByUUID('a')).toBeUndefined();
   });
 
-  it('does not walk the entries again for every lookup', () => {
+  /** Stores 1000 entries and counts how often an entry is read. */
+  function storeCountedEntries(): { reads: () => number } {
     const entries = Array.from({ length: 1000 }, (_v, i) => raw('uuid-' + i));
     let reads = 0;
     storage.setEntries(
@@ -1020,12 +1021,46 @@ describe('StorageClass getByUUID', () => {
         },
       }),
     );
+    return { reads: () => reads };
+  }
+
+  it('does not walk the entries again for every lookup', () => {
+    const { reads } = storeCountedEntries();
 
     for (let i = 0; i < 1000; i++) {
       expect(storage.getByUUID('uuid-' + i).name).toBe('uuid-' + i);
     }
 
     // One pass to build the index instead of about 500 000 reads.
-    expect(reads).toBeLessThanOrEqual(1000);
+    expect(reads()).toBeLessThanOrEqual(1000);
+  });
+
+  it('does not walk the entries for every lookup of an added entry', async () => {
+    const { reads } = storeCountedEntries();
+    storage.getByUUID('uuid-0');
+    const added = await storage.add(raw('', 'new'));
+    const before = reads();
+
+    for (let i = 0; i < 1000; i++) {
+      expect(storage.getByUUID(added.config.uuid).name).toBe('new');
+    }
+
+    expect(reads() - before).toBeLessThanOrEqual(1001);
+  });
+
+  it('does not walk the entries for every lookup of a uuid changed by a fill', async () => {
+    const { reads } = storeCountedEntries();
+    storage.getByUUID('uuid-0');
+    await storage.backfillWithoutTouch((_entries) => {
+      _entries[999].config.uuid = 'renamed';
+      return 1;
+    });
+    const before = reads();
+
+    for (let i = 0; i < 1000; i++) {
+      expect(storage.getByUUID('renamed').name).toBe('uuid-999');
+    }
+
+    expect(reads() - before).toBeLessThanOrEqual(1000);
   });
 });
