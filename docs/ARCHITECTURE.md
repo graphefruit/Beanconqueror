@@ -140,6 +140,7 @@ layer").
 | `src/enums/`                   | Enums used by the data model and the UI                                                       |
 | `src/services/`                | Storage services (`ui*Storage.ts`), helpers (`ui*Helper.ts`), platform and feature services   |
 | `src/brew-session/rules/`      | Rules of the brew views in plain TypeScript (`brewFieldLayout.ts`: which fields, which order) |
+| `src/stores/`                  | Signal stores for new code, one per collection, reading on top of `StorageClass`              |
 | `src/pipes/`, `src/directive/` | Pipes and directives                                                                          |
 | `src/data/`                    | Static data (cupping flavors, default graph colors, tracking names)                           |
 | `src/theme/`                   | Global theme: `variables.scss` (Ionic palette), `bq-tokens.scss` (design tokens)              |
@@ -201,6 +202,9 @@ UIStorage                            (src/services/uiStorage.ts)
   `attachOnRemove()` emits the id of a deleted entry. Services that cache
   class instances (e.g. `UIBeanStorage.getAllEntries()` builds `Bean` objects
   with `initializeByObject`) clear the cache on every event.
+- `getRawEntries()` returns the stored array itself, without the class
+  instances of the typed storages. It exists for the stores (see below) and
+  is read-only.
 - `UIStorage.set` and `UIStorage.get` retry up to 20 times, reconnect the
   database after 11 failed attempts and finally show the iOS database error
   dialog. A successful `set` dispatches `AppEventType.STORAGE_CHANGED`
@@ -316,6 +320,41 @@ new installations start in the beginner mode, stored settings without a
 profile load with the advanced mode (`Settings.normalizeUserProfile`).
 Settings that hold credentials are listed in
 `src/classes/settings/settingsSecrets.ts` (see backups).
+
+### Stores (reading)
+
+New code reads a collection through a store in `src/stores/`, not through the
+`ui*Storage` services. `StorageClass` stays the source of truth: a store keeps
+nothing on disk and only reads; writes still go through the `ui*Storage`
+services and come back to the store as events. `BeanStore`
+(`src/stores/beans/bean.store.ts`) is the first store, the bean list
+(`src/app/beans/beans.page.ts`) its first reader.
+
+```
+legacy code ──▶ UIBeanStorage (StorageClass) ──▶ UIStorage
+                      │  getRawEntries(), attachOnEvent(), storageReady()
+                      ▼
+new code ◀─signal── CollectionStore      entries
+```
+
+- `CollectionStore` (`src/stores/core/collection-store.ts`) knows a
+  collection only through `StoreSource`, the three methods above.
+- Every event of the collection, whatever its type and whoever wrote, makes
+  the next read compare all stored entries with the previous ones by their
+  `JSON.stringify` text. An entry whose text is known keeps its object, so
+  `===` tells whether an entry changed; several events before a read cost one
+  comparison. A change that legacy code makes in place, without saving, shows
+  up with the next event of the collection, which is also when it reaches the
+  disk.
+- Entries are plain data, typed `DeepReadonly<T>` and, in dev mode only, deep
+  frozen (`src/stores/core/read-only.ts`). A bean passes through `new Bean()`
+  and `initializeByObject`, so it has the same defaults as the instances of
+  `UIBeanStorage.getAllEntries()`, but none of the methods. Store objects and
+  legacy objects are never shared: the bean list hands its cards copies made
+  by the sort helper.
+- Until the collection has been read, `entries()` is empty.
+- `changes` repeats the events of the collection for legacy code that has to
+  act before a view shows a change (the bean list saves its scroll position).
 
 ### Files on the file system
 
@@ -645,9 +684,9 @@ mutable fields. Counts at the time of writing:
 | `ngZone.run(` / `zone.run(`                  | 5                     | 3     |
 | `runOutsideAngular`                          | 23                    | 6     |
 | `setTimeout(` (many used to defer an update) | 193                   | 79    |
-| `ChangeDetectionStrategy.OnPush`             | 1 of 163 components   | 1     |
-| `ChangeDetectionStrategy.Eager`              | 162 of 163 components | 162   |
-| `signal(` / `computed(`                      | 9                     | 4     |
+| `ChangeDetectionStrategy.OnPush`             | 2 of 163 components   | 2     |
+| `ChangeDetectionStrategy.Eager`              | 161 of 163 components | 161   |
+| `signal(` / `computed(`                      | 25                    | 6     |
 
 Re-count with, for example:
 `grep -rE "detectChanges\(" src --include='*.ts' --exclude='*.spec.ts' | wc -l`.
@@ -683,7 +722,9 @@ barista mode brews and several selection modals, 16 templates) use the
 third-party `ag-virtual-scroll` (`~1.20.2`, `package.json`). It renders only the
 visible rows, so list tests must scroll to reach entries, and its behaviour with
 dynamic row heights (larger text, tablets) has to be checked when a list
-changes.
+changes. It updates its rows on scroll events of its own, which do not reach
+an `OnPush` parent: such a parent takes the rows from `(onItemsRender)` into a
+signal, as the bean list does.
 
 ## 6. Target picture for new code
 
