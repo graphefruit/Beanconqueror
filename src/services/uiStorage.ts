@@ -228,7 +228,12 @@ export class UIStorage {
       : 'empty';
   }
 
-  public async hasCorruptedData(): Promise<{
+  /**
+   * Counts the brews, mills, preparations and beans, and whether brews are
+   * stored without the others. `_stored` are the values of export() when
+   * the caller already read them; otherwise the database is read.
+   */
+  public async hasCorruptedData(_stored?: Record<string, unknown>): Promise<{
     CORRUPTED: boolean;
     DATA: {
       BREWS: number;
@@ -243,30 +248,37 @@ export class UIStorage {
       PREPARATION: 0,
       BEANS: 0,
     };
-    try {
-      await this._storage.forEach((_value, _key, _index) => {
-        if (
-          _key === 'BREWS' ||
-          _key === 'MILL' ||
-          _key === 'PREPARATION' ||
-          _key === 'BEANS'
-        ) {
-          try {
-            if (_value?.length > 0) {
-              hasDataObj[_key] = _value?.length;
-              // Counted as an import stores them, like the backup these
-              // numbers are compared with: copies of an entry that are
-              // identical in a backup file do not count, also before data
-              // update UPDATE_17 removed them.
-              if (Array.isArray(_value)) {
-                hasDataObj[_key] = countWithoutIdenticalCopies(_value);
-              }
-            } else {
-              hasDataObj[_key] = 0;
+    const count = (_value: any, _key: string) => {
+      if (
+        _key === 'BREWS' ||
+        _key === 'MILL' ||
+        _key === 'PREPARATION' ||
+        _key === 'BEANS'
+      ) {
+        try {
+          if (_value?.length > 0) {
+            hasDataObj[_key] = _value?.length;
+            // Counted as an import stores them, like the backup these
+            // numbers are compared with: copies of an entry that are
+            // identical in a backup file do not count, also before data
+            // update UPDATE_17 removed them.
+            if (Array.isArray(_value)) {
+              hasDataObj[_key] = countWithoutIdenticalCopies(_value);
             }
-          } catch (ex) {}
+          } else {
+            hasDataObj[_key] = 0;
+          }
+        } catch (ex) {}
+      }
+    };
+    try {
+      if (_stored) {
+        for (const [key, value] of Object.entries(_stored)) {
+          count(value, key);
         }
-      });
+      } else {
+        await this._storage.forEach(count);
+      }
       if (
         hasDataObj.BREWS > 0 &&
         (hasDataObj.MILL <= 0 ||

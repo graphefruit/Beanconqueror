@@ -737,30 +737,50 @@ export class UIExportImportHelper {
   }
 
   public async saveAutomaticBackups() {
-    this.buildExportZIP().then(
-      async (_blob) => {
-        try {
-          // Also false for a database that cannot be read: nothing is written.
-          const hasData = (await this.uiStorage.getDataState()) === 'data';
+    this.uiStorage
+      .export()
+      .then(async (_stored) => ({
+        stored: _stored,
+        blob: await this.buildExportZIP(_stored),
+      }))
+      .then(
+        async ({ stored, blob: _blob }) => {
+          try {
+            // Also false for a database that cannot be read: nothing is written.
+            const hasData = (await this.uiStorage.getDataState()) === 'data';
 
-          let actualUIStorageDataObj;
-          if (hasData) {
-            actualUIStorageDataObj = await this.uiStorage.hasCorruptedData();
-          }
-          if (hasData && !actualUIStorageDataObj.CORRUPTED) {
-            this.uiLog.debug('Start writing automatic backups');
-            if (this.internalBackupNotRestored || this.databaseNotRead) {
-              this.uiLog.info(
-                'Internal backup kept, it was not restored at start-up or not everything was read',
-              );
-            } else {
-              this.__saveInternalBeanconquerorDump(_blob);
+            let actualUIStorageDataObj;
+            if (hasData) {
+              // Counted on the values written into the files.
+              actualUIStorageDataObj =
+                await this.uiStorage.hasCorruptedData(stored);
             }
-            this.__saveAutomaticBeanconquerorDump(_blob);
-          } else if (hasData && actualUIStorageDataObj.CORRUPTED) {
-            this.uiLog.error(
-              'Data inside the database seems like corrupted / no data',
-            );
+            if (hasData && !actualUIStorageDataObj.CORRUPTED) {
+              this.uiLog.debug('Start writing automatic backups');
+              if (this.internalBackupNotRestored || this.databaseNotRead) {
+                this.uiLog.info(
+                  'Internal backup kept, it was not restored at start-up or not everything was read',
+                );
+              } else {
+                this.__saveInternalBeanconquerorDump(_blob);
+              }
+              this.__saveAutomaticBeanconquerorDump(_blob);
+            } else if (hasData && actualUIStorageDataObj.CORRUPTED) {
+              this.uiLog.error(
+                'Data inside the database seems like corrupted / no data',
+              );
+              const settings = this.uiSettingsStorage.getSettings();
+              if (settings.show_backup_issues) {
+                this.uiAlert.showMessage(
+                  'ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD',
+                  'CARE',
+                  'OK',
+                  true,
+                );
+              }
+            }
+          } catch (ex) {
+            this.uiLog.error('ZIP file could not be saved');
             const settings = this.uiSettingsStorage.getSettings();
             if (settings.show_backup_issues) {
               this.uiAlert.showMessage(
@@ -771,7 +791,8 @@ export class UIExportImportHelper {
               );
             }
           }
-        } catch (ex) {
+        },
+        () => {
           this.uiLog.error('ZIP file could not be saved');
           const settings = this.uiSettingsStorage.getSettings();
           if (settings.show_backup_issues) {
@@ -782,21 +803,8 @@ export class UIExportImportHelper {
               true,
             );
           }
-        }
-      },
-      () => {
-        this.uiLog.error('ZIP file could not be saved');
-        const settings = this.uiSettingsStorage.getSettings();
-        if (settings.show_backup_issues) {
-          this.uiAlert.showMessage(
-            'ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD',
-            'CARE',
-            'OK',
-            true,
-          );
-        }
-      },
-    );
+        },
+      );
   }
   private async __saveInternalBeanconquerorDump(_blob: Blob) {
     try {

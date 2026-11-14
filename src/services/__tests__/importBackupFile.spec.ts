@@ -191,15 +191,13 @@ function createDataDirectory(
       Promise.resolve(
         [...stored]
           .filter(([_path]) => _path.startsWith(_folder + '/'))
-          .map(
-            ([_path, _data]): FileInfo => ({
-              name: _path.substring(_folder.length + 1),
-              type: 'file',
-              size: _data.size,
-              mtime: 0,
-              uri: `file:///data/${_path}`,
-            }),
-          ),
+          .map(([_path, _data]): FileInfo => ({
+            name: _path.substring(_folder.length + 1),
+            type: 'file',
+            size: _data.size,
+            mtime: 0,
+            uri: `file:///data/${_path}`,
+          })),
       ),
     remove: (_path) => {
       stored.delete(_path);
@@ -1314,6 +1312,71 @@ describe('Restoring the internal backup at start-up', () => {
     expect(device.directory.files.write).not.toHaveBeenCalled();
     expect(device.data.get('BREWS')).toEqual(
       imported(entries('backup-brew', 5)),
+    );
+  });
+});
+
+describe('The automatic backups', () => {
+  /** Data with a mill and a preparation, which is not taken for corrupted. */
+  function completeData(): Record<string, any> {
+    return storedData('own', {
+      MILL: imported(entries('own-mill', 1)),
+      PREPARATION: imported(entries('own-preparation', 1)),
+    });
+  }
+
+  /** Writes the automatic backups as the app does after a change. */
+  async function writeAutomaticBackups(_device: Device): Promise<void> {
+    await _device.helper.saveAutomaticBackups();
+    await new Promise((_resolve) => setTimeout(_resolve, 200));
+  }
+
+  it('read the stored values once and write them into both files', async () => {
+    const stored = completeData();
+    const device = await startDevice(stored);
+    const readAll = spyOn(device.database, 'forEach').and.callThrough();
+
+    await writeAutomaticBackups(device);
+
+    expect(readAll).toHaveBeenCalledTimes(1);
+    for (const write of [
+      device.fileHelper.writeInternalFileFromBlob,
+      device.fileHelper.writeFileFromBlob,
+    ]) {
+      expect(write).toHaveBeenCalledTimes(1);
+      const blob = write.calls.mostRecent().args[0] as Blob;
+      expect(
+        await device.helper.getJSONFromZIPArrayBufferContent(
+          await blob.arrayBuffer(),
+        ),
+      ).toEqual(stored);
+    }
+  });
+
+  it('write neither file when brews are stored without beans', async () => {
+    const stored = completeData();
+    delete stored.BEANS;
+    const device = await startDevice(stored);
+
+    await writeAutomaticBackups(device);
+
+    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
+    expect(device.fileHelper.writeFileFromBlob).not.toHaveBeenCalled();
+    expect(device.uiLog.error).toHaveBeenCalledWith(
+      'Data inside the database seems like corrupted / no data',
+    );
+  });
+
+  it('write neither file when the stored values cannot be read', async () => {
+    const device = await startDevice(completeData());
+    device.failingReads.count = 1;
+
+    await writeAutomaticBackups(device);
+
+    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
+    expect(device.fileHelper.writeFileFromBlob).not.toHaveBeenCalled();
+    expect(device.uiLog.error).toHaveBeenCalledWith(
+      'ZIP file could not be saved',
     );
   });
 });
