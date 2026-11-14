@@ -3,7 +3,10 @@ import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
-import { createMockTranslateService } from '../../../test-utils';
+import {
+  createMockTranslateService,
+  MockTranslateService,
+} from '../../../test-utils';
 import {
   AIImportExamplesService,
   MergedExamples,
@@ -11,10 +14,7 @@ import {
 
 describe('AIImportExamplesService', () => {
   let service: AIImportExamplesService;
-  let mockTranslate: jasmine.SpyObj<TranslateService> & {
-    currentLang: string;
-    currentLoader: { getTranslation: jasmine.Spy };
-  };
+  let mockTranslate: MockTranslateService;
 
   beforeEach(() => {
     mockTranslate = createMockTranslateService();

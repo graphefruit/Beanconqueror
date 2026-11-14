@@ -57,7 +57,10 @@ function createDeviceDatabase(
  * do not wait.
  */
 function withoutRetryDelay() {
-  const original = window.setTimeout;
+  const original = window.setTimeout.bind(window) as (
+    _handler: () => void,
+    _ms?: number,
+  ) => number;
   spyOn(window, 'setTimeout').and.callFake(((
     _handler: () => void,
     _ms?: number,
@@ -66,7 +69,7 @@ function withoutRetryDelay() {
       _handler();
       return 0;
     }
-    return original.call(window, _handler, _ms) as number;
+    return original(_handler, _ms);
   }) as typeof window.setTimeout);
 }
 

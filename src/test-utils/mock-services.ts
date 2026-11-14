@@ -1,15 +1,21 @@
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY, of } from 'rxjs';
 
+/** The loader is a plain spy object, not a TranslateLoader with methods. */
+export type MockTranslateService = Omit<
+  jasmine.SpyObj<TranslateService>,
+  'currentLang' | 'currentLoader'
+> & {
+  currentLang: string;
+  currentLoader: { getTranslation: jasmine.Spy };
+};
+
 /**
  * Create a mock TranslateService for testing.
  */
 export function createMockTranslateService(
   translations: Record<string, any> = {},
-): jasmine.SpyObj<TranslateService> & {
-  currentLang: string;
-  currentLoader: { getTranslation: jasmine.Spy };
-} {
+): MockTranslateService {
   const loaderSpy = jasmine.createSpyObj('TranslateLoader', ['getTranslation']);
   loaderSpy.getTranslation.and.callFake((lang: string) => {
     return of(translations[lang] || {});
@@ -18,10 +24,7 @@ export function createMockTranslateService(
   const spy = jasmine.createSpyObj('TranslateService', [
     'instant',
     'getLangs',
-  ]) as jasmine.SpyObj<TranslateService> & {
-    currentLang: string;
-    currentLoader: { getTranslation: jasmine.Spy };
-  };
+  ]) as MockTranslateService;
 
   spy.instant.and.callFake((key: string) => translations[key] || key);
   spy.getLangs.and.returnValue([]);
