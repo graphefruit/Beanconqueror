@@ -71,7 +71,7 @@
     "@zip.js/zip.js": "~2.24.0",
     "ag-virtual-scroll": "~1.20.2",
     "ble-central-advertisements": "^1.1.0",
-    "chart.js": "~4.5.1",
+    "chart.js": "~4.6.1",
     "community-cordova-plugin-nfc": "^1.9.0",
     "currency-symbol-map": "^5.1.0",
     "html-to-image": "^1.11.13",

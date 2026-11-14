@@ -238,6 +238,15 @@ describe('StatisticPage - Beans Average Rating by Country', () => {
     expect(rScale.suggestedMax).toBe(10);
   });
 
+  it('should draw the chart without the entry animation', () => {
+    beanStorageSpy.getAllEntries.and.returnValue([]);
+    brewStorageSpy.getAllEntries.and.returnValue([]);
+
+    component['__loadAvgBeanRatingByCountryChart']();
+
+    expect(Chart.getChart(canvas).options.animation).toBeFalse();
+  });
+
   it('should destroy existing chart instance on the canvas when reloaded', () => {
     const bean = createBean({
       rating: 4,

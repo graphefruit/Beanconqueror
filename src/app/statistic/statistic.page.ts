@@ -229,7 +229,12 @@ export class StatisticPage implements OnInit {
     if (this.chartRegistry[key]) {
       this.chartRegistry[key].destroy();
     }
-    this.chartRegistry[key] = new Chart(nativeElement, config);
+    // Drawn at once, without the 1 s entry animation: with thousands of brews the charts
+    // otherwise keep the main thread busy for a second after they appear.
+    this.chartRegistry[key] = new Chart(nativeElement, {
+      ...config,
+      options: { ...config.options, animation: false },
+    });
   }
 
   private __getBeansInRange(): Array<Bean> {
