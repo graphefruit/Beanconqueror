@@ -51,7 +51,7 @@ describe('OverlayStackA11yService', () => {
   beforeEach(() => {
     doc = document.implementation.createHTMLDocument('');
     app = doc.createElement('ion-app');
-    page = doc.createElement('ion-split-pane');
+    page = doc.createElement('ion-router-outlet');
     app.append(page);
     doc.body.append(app);
     nextOverlayIndex = 1;
@@ -675,20 +675,6 @@ describe('OverlayStackA11yService', () => {
       finishDismissing(question);
       await mutationsDelivered();
       expect(outlet.hasAttribute('aria-hidden')).toBeFalse();
-    });
-
-    it('leaves it hidden while the side menu covers it', async () => {
-      // What ion-menu does to its content from opening until it is closed.
-      outlet.classList.add('menu-content-open');
-      outlet.setAttribute('aria-hidden', 'true');
-
-      const hint = create('ion-popover', { showBackdrop: false });
-      ionicStartsPresenting(hint);
-      finishPresenting(hint);
-      ionicStartsDismissing(hint);
-      finishDismissing(hint);
-      await mutationsDelivered();
-      expect(outlet.getAttribute('aria-hidden')).toBe('true');
     });
 
     it('takes the container Ionic takes: the first outlet or the marked element', async () => {

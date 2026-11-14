@@ -28,7 +28,6 @@ import {
   IonRow,
   IonText,
   IonTitle,
-  MenuController,
   ModalController,
   Platform,
 } from '@ionic/angular/standalone';
@@ -152,7 +151,6 @@ export class BrewInformationComponent implements OnInit, OnChanges {
   private readonly uiBeanHelper = inject(UIBeanHelper);
   private readonly visualizerService = inject(VisualizerService);
   private readonly uiGraphHelper = inject(UIGraphHelper);
-  private readonly menu = inject(MenuController);
 
   constructor() {
     addIcons({
@@ -175,10 +173,6 @@ export class BrewInformationComponent implements OnInit, OnChanges {
     speed: 400,
     slide: 4,
   };
-
-  @ViewChild('swiper', { static: false }) public brewInformationSlider:
-    | ElementRef
-    | undefined;
 
   @ViewChild('brewInformationContainer', { read: ElementRef, static: false })
   public brewInformationContainer: ElementRef;
@@ -249,23 +243,6 @@ export class BrewInformationComponent implements OnInit, OnChanges {
         timeoutMS = 150;
       }
       if (this.brew.flow_profile) {
-        setTimeout(() => {
-          /**If we slide on a bigger tablet, somehow ionic triggering the menu when sliding from right to left, thats why we need to attach us to touchstart/end and to ignore the slide...**/
-          this.brewInformationSlider?.nativeElement.swiper.on(
-            'touchStart',
-            () => {
-              //We got two slides
-              this.menu.swipeGesture(false);
-            },
-          );
-          this.brewInformationSlider?.nativeElement.swiper.on(
-            'touchEnd',
-            () => {
-              this.menu.swipeGesture(true);
-            },
-          );
-        }, 25);
-
         setTimeout(() => {
           this.calculcationInformationContainer();
         }, timeoutMS);

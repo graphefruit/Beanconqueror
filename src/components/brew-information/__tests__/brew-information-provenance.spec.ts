@@ -2,11 +2,7 @@ import { DecimalPipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import {
-  MenuController,
-  ModalController,
-  Platform,
-} from '@ionic/angular/standalone';
+import { ModalController, Platform } from '@ionic/angular/standalone';
 
 import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 
@@ -162,10 +158,6 @@ describe('BrewInformationComponent imported provenance', () => {
         {
           provide: UIGraphHelper,
           useValue: jasmine.createSpyObj('UIGraphHelper', ['detailBrewGraph']),
-        },
-        {
-          provide: MenuController,
-          useValue: jasmine.createSpyObj('MenuController', ['swipeGesture']),
         },
       ],
     }).compileComponents();

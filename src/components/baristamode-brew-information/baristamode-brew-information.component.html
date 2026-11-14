@@ -1,6 +1,6 @@
 <div style="margin-left:10px;margin-right:10px;" #brewInformationContainer>
   @if (brew.flow_profile) {
-    <swiper-container #swiper pager="true" [pagination]="{ draggable: true, clickable: true }">
+    <swiper-container pager="true" [pagination]="{ draggable: true, clickable: true }">
       <swiper-slide>
         <ng-container *ngTemplateOutlet="brewCardTemplate">
         </ng-container>

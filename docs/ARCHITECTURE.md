@@ -90,12 +90,18 @@ layer").
 - Tabs: `src/app/home/home.page.html`, child routes in `src/app/home/home.routes.ts`.
 - Top-level routes are lazy (`loadComponent`/`loadChildren`) except `/home`
   (`src/app/app.routes.ts`).
-- The profile tab (`src/app/profile/profile.page.*`) is a hub that links to the
-  sections that are not tabs of their own: preparation methods, grinders, water
-  (only when the water section is switched on), statistics and settings.
-- The side menu (`ion-menu` in `src/app/app.component.html`) still exists and
-  lists the optional sections; `AppComponent.setUIParams()` decides which of
-  them are visible from the settings.
+- There is no side menu. The profile tab (`src/app/profile/profile.page.*`) is
+  the hub for everything that is not a tab of its own, in three groups:
+  equipment (preparation methods, grinders, water, barista mode), sections
+  (statistics, brew and bean parameters, calculations, graphs, roasting) and
+  app (settings, info). Water, graphs and roasting are listed only while they
+  are switched on in the settings, the barista mode only while an active
+  Sanremo YOU preparation method exists. The legal pages (Impressum, privacy)
+  and the community links sit at the bottom of the hub.
+- Pages outside the tabs keep their top-level paths and have a back button
+  (`ion-back-button` with `defaultHref="/home/profile"`); tab pages have no
+  button on the left. The Android back key pops the page, and on a page without
+  history it leads to the profile (`AppComponent.__registerBack()`).
 - Most create, edit and detail screens are modals opened through helper services
   (for example `src/services/uiBrewHelper.ts`, `src/services/uiBeanHelper.ts`),
   not routes.
@@ -447,9 +453,8 @@ imported from Meticulous, Gaggiuino and Gaggimate (`src/app/brew/brew-modal-impo
 
 `/baristamode` (`src/app/baristamode/`) is a separate interface with barista,
 brews and statistics pages (`baristamode.routes.ts`) and its own collection
-`BARISTAMODE_BREWS`. It appears in the
-menu once an active Sanremo YOU preparation exists
-(`AppComponent.checkAndActivateTheBaristaModeIfNeeded()`).
+`BARISTAMODE_BREWS`. The profile hub lists it once an active Sanremo YOU
+preparation exists (`src/app/profile/profile.page.ts`).
 
 ### Limits in the browser
 

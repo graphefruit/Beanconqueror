@@ -3,30 +3,30 @@
     "light": [
       "aria-dialog-name | #bean-add,.modal-wrapper",
       "role-img-alt | .icon-16",
-      "tabindex | .big-icon-only.button-small[slot=\"end\"]"
+      "tabindex | .button-small"
     ],
     "dark": [
       "aria-dialog-name | #bean-add,.modal-wrapper",
       "role-img-alt | .icon-16",
-      "tabindex | .big-icon-only.button-small[slot=\"end\"]"
+      "tabindex | .button-small"
     ]
   },
   "beans": {
     "light": [
       "color-contrast | .segment-button-checked > ion-label > .value",
       "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | beans > ion-header[role=\"banner\"]",
-      "landmark-main-is-top-level | beans > ion-content[role=\"main\"]",
-      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
-      "landmark-unique | app-home > ion-content[role=\"main\"]",
+      "landmark-banner-is-top-level | beans > ion-header",
+      "landmark-main-is-top-level | beans > ion-content",
+      "landmark-no-duplicate-main | app-home > ion-content",
+      "landmark-unique | app-home > ion-content",
       "role-img-alt | ion-icon[name=\"beanconqueror-beans\"]"
     ],
     "dark": [
       "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | beans > ion-header[role=\"banner\"]",
-      "landmark-main-is-top-level | beans > ion-content[role=\"main\"]",
-      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
-      "landmark-unique | app-home > ion-content[role=\"main\"]",
+      "landmark-banner-is-top-level | beans > ion-header",
+      "landmark-main-is-top-level | beans > ion-content",
+      "landmark-no-duplicate-main | app-home > ion-content",
+      "landmark-unique | app-home > ion-content",
       "role-img-alt | ion-icon[name=\"beanconqueror-beans\"]"
     ]
   },
@@ -34,91 +34,91 @@
     "light": [
       "color-contrast | .segment-button-checked > ion-label > .value",
       "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | brew > ion-header[role=\"banner\"]",
-      "landmark-main-is-top-level | brew > ion-content[role=\"main\"]",
-      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
-      "landmark-unique | app-home > ion-content[role=\"main\"]",
+      "landmark-banner-is-top-level | brew > ion-header",
+      "landmark-main-is-top-level | brew > ion-content",
+      "landmark-no-duplicate-main | app-home > ion-content",
+      "landmark-unique | app-home > ion-content",
       "role-img-alt | div:nth-child(1) > .ion-color-inactive.icon-large[color=\"inactive\"]"
     ],
     "dark": [
       "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | brew > ion-header[role=\"banner\"]",
-      "landmark-main-is-top-level | brew > ion-content[role=\"main\"]",
-      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
-      "landmark-unique | app-home > ion-content[role=\"main\"]",
+      "landmark-banner-is-top-level | brew > ion-header",
+      "landmark-main-is-top-level | brew > ion-content",
+      "landmark-no-duplicate-main | app-home > ion-content",
+      "landmark-unique | app-home > ion-content",
       "role-img-alt | div:nth-child(1) > .ion-color-inactive.icon-large[color=\"inactive\"]"
     ]
   },
   "home": {
     "light": [
       "color-contrast | .text-color-inactive",
-      "landmark-banner-is-top-level | ion-header[role=\"banner\"]",
-      "landmark-main-is-top-level | dashboard > ion-content[role=\"main\"]",
-      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
-      "landmark-unique | app-home > ion-content[role=\"main\"]",
+      "landmark-banner-is-top-level | ion-header",
+      "landmark-main-is-top-level | dashboard > ion-content",
+      "landmark-no-duplicate-main | app-home > ion-content",
+      "landmark-unique | app-home > ion-content",
       "role-img-alt | .ion-color-inactive",
-      "role-img-alt | ion-icon[name=\"gift-outline\"]"
+      "role-img-alt | ion-icon[color=\"accent\"]"
     ],
     "dark": [
       "color-contrast | .text-color-inactive",
-      "landmark-banner-is-top-level | ion-header[role=\"banner\"]",
-      "landmark-main-is-top-level | dashboard > ion-content[role=\"main\"]",
-      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
-      "landmark-unique | app-home > ion-content[role=\"main\"]",
+      "landmark-banner-is-top-level | ion-header",
+      "landmark-main-is-top-level | dashboard > ion-content",
+      "landmark-no-duplicate-main | app-home > ion-content",
+      "landmark-unique | app-home > ion-content",
       "role-img-alt | .ion-color-inactive",
-      "role-img-alt | ion-icon[name=\"gift-outline\"]"
+      "role-img-alt | ion-icon[color=\"accent\"]"
     ]
   },
   "mills": {
     "light": [
-      "color-contrast | mill > ion-content[role=\"main\"] > .ion-padding.ion-text-center > .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | mill > ion-header[role=\"banner\"]",
-      "landmark-main-is-top-level | mill > ion-content[role=\"main\"]",
-      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
-      "landmark-unique | app-home > ion-content[role=\"main\"]"
+      "color-contrast | mill > ion-content > .ion-padding.ion-text-center > .text-color-inactive.ion-margin-top",
+      "landmark-banner-is-top-level | mill > ion-header",
+      "landmark-main-is-top-level | mill > ion-content",
+      "landmark-no-duplicate-main | app-home > ion-content",
+      "landmark-unique | app-home > ion-content"
     ],
     "dark": [
-      "color-contrast | mill > ion-content[role=\"main\"] > .ion-padding.ion-text-center > .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | mill > ion-header[role=\"banner\"]",
-      "landmark-main-is-top-level | mill > ion-content[role=\"main\"]",
-      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
-      "landmark-unique | app-home > ion-content[role=\"main\"]"
+      "color-contrast | mill > ion-content > .ion-padding.ion-text-center > .text-color-inactive.ion-margin-top",
+      "landmark-banner-is-top-level | mill > ion-header",
+      "landmark-main-is-top-level | mill > ion-content",
+      "landmark-no-duplicate-main | app-home > ion-content",
+      "landmark-unique | app-home > ion-content"
     ]
   },
   "preparations": {
     "light": [
       "color-contrast | .segment-button-checked > ion-label > .value",
       "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | preparation > ion-header[role=\"banner\"]",
-      "landmark-main-is-top-level | preparation > ion-content[role=\"main\"]",
-      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
-      "landmark-unique | app-home > ion-content[role=\"main\"]"
+      "landmark-banner-is-top-level | preparation > ion-header",
+      "landmark-main-is-top-level | preparation > ion-content",
+      "landmark-no-duplicate-main | app-home > ion-content",
+      "landmark-unique | app-home > ion-content"
     ],
     "dark": [
       "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | preparation > ion-header[role=\"banner\"]",
-      "landmark-main-is-top-level | preparation > ion-content[role=\"main\"]",
-      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
-      "landmark-unique | app-home > ion-content[role=\"main\"]"
+      "landmark-banner-is-top-level | preparation > ion-header",
+      "landmark-main-is-top-level | preparation > ion-content",
+      "landmark-no-duplicate-main | app-home > ion-content",
+      "landmark-unique | app-home > ion-content"
     ]
   },
   "profile": {
     "light": [
-      "landmark-banner-is-top-level | app-profile > ion-header[role=\"banner\"]",
-      "landmark-main-is-top-level | app-profile > ion-content[role=\"main\"]",
-      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
-      "landmark-unique | app-home > ion-content[role=\"main\"]"
+      "landmark-banner-is-top-level | app-profile > ion-header",
+      "landmark-main-is-top-level | app-profile > ion-content",
+      "landmark-no-duplicate-main | app-home > ion-content",
+      "landmark-unique | app-home > ion-content"
     ],
     "dark": [
-      "landmark-banner-is-top-level | app-profile > ion-header[role=\"banner\"]",
-      "landmark-main-is-top-level | app-profile > ion-content[role=\"main\"]",
-      "landmark-no-duplicate-main | app-home > ion-content[role=\"main\"]",
-      "landmark-unique | app-home > ion-content[role=\"main\"]"
+      "landmark-banner-is-top-level | app-profile > ion-header",
+      "landmark-main-is-top-level | app-profile > ion-content",
+      "landmark-no-duplicate-main | app-home > ion-content",
+      "landmark-unique | app-home > ion-content"
     ]
   },
   "settings": {
     "light": [
-      "nested-interactive | .item-multiple-inputs[button=\"\"][tappable=\"\"],button[type=\"button\"]",
+      "nested-interactive | .item-multiple-inputs,button[type=\"button\"]",
       "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(2) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
       "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(3) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
       "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(4) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
@@ -130,7 +130,7 @@
       "role-img-alt | .item-lines-none.item-label[lines=\"none\"]:nth-child(8) > ion-icon[name=\"information-outline\"][slot=\"end\"]"
     ],
     "dark": [
-      "nested-interactive | .item-multiple-inputs[button=\"\"][tappable=\"\"],button[type=\"button\"]",
+      "nested-interactive | .item-multiple-inputs,button[type=\"button\"]",
       "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(2) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
       "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(3) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
       "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(4) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",

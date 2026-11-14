@@ -237,8 +237,8 @@ export async function saveBean(page: Page): Promise<void> {
 
 /** The page behind the dialogs, where it or what it sits in is hidden from assistive technology. */
 const HIDDEN_PAGE =
-  'ion-router-outlet#menu-content:is([aria-hidden="true"], [inert]), ' +
-  ':is([aria-hidden="true"], [inert]) ion-router-outlet#menu-content';
+  'ion-app > ion-router-outlet:is([aria-hidden="true"], [inert]), ' +
+  'ion-app:is([aria-hidden="true"], [inert])';
 
 /**
  * Waits until no dialog, question or menu is open any more and the page behind them is back for

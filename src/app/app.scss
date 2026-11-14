@@ -239,38 +239,6 @@ ion-alert {
   }
 }
 
-ion-split-pane {
-  --border: none !important;
-
-  ion-menu {
-    --background: var(--bq-surface-card);
-
-    ion-toolbar {
-      --background: var(--bq-surface-card);
-    }
-
-    ion-content {
-      --background: var(--bq-surface-card);
-      ion-item {
-        text-align: center;
-      }
-      ion-list {
-        background: var(--bq-surface-card) !important;
-      }
-    }
-    ion-list {
-      background: var(--bq-surface-card) !important;
-    }
-
-    ion-footer {
-      ion-item {
-        text-align: center;
-        font-size: var(--bq-type-micro);
-      }
-    }
-  }
-}
-
 :root {
   hr {
     height: 0px;
@@ -1187,7 +1155,6 @@ $bq-focus-double-ring:
     --background-focused-opacity: 0;
   }
 
-  ion-menu-button.ion-focused,
   ion-back-button.ion-focused,
   ion-item.ion-focused,
   ion-checkbox:focus-visible,
@@ -1210,14 +1177,6 @@ $bq-focus-double-ring:
     // Above the next row: Ionic gives its form controls z-index 2, and with
     // anything lower the next row paints over the bottom of the ring.
     z-index: 3;
-  }
-
-  // Menu rows span the full menu width, which would cut the sides off, and
-  // the row's own background covers an inset outline on the host.
-  ion-menu ion-item.ion-focused {
-    outline: none;
-    --inner-box-shadow: inset 0 0 0 var(--bq-focus-ring-width)
-      var(--bq-focus-ring);
   }
 
   ion-tab-button.ion-focused,

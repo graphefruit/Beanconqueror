@@ -42,9 +42,6 @@ const FOCUS_GUARD = 'data-overlay-focus-guard';
 /** What Ionic hides behind an overlay that blocks the page. */
 const VIEW_CONTAINER = 'ion-router-outlet, #ion-view-container-root';
 
-/** On the content of an ion-menu from the start of opening until it is closed. */
-const BEHIND_SIDE_MENU = 'menu-content-open';
-
 const CONCEALING_ATTRIBUTES = ['aria-hidden', 'inert'] as const;
 type ConcealingAttribute = (typeof CONCEALING_ATTRIBUTES)[number];
 type SavedAttributes = Record<ConcealingAttribute, string | null>;
@@ -289,14 +286,10 @@ export class OverlayStackA11yService {
    * last blocking overlay starts to close, and counts one that is still
    * closing as open until its animation has ended. A question answered while
    * the menu that led to it still closes is therefore never the last one, and
-   * the container would stay hidden with nothing open. The side menu hides
-   * its content the same way, on purpose, and shows it again by itself.
+   * the container would stay hidden with nothing open.
    */
   private showViewContainer(root: Element): void {
-    const container = root.querySelector(VIEW_CONTAINER);
-    if (container && !container.classList.contains(BEHIND_SIDE_MENU)) {
-      container.removeAttribute('aria-hidden');
-    }
+    root.querySelector(VIEW_CONTAINER)?.removeAttribute('aria-hidden');
   }
 
   private createFocusGuard(): HTMLElement {

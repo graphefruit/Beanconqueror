@@ -5,39 +5,16 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 
 import {
   IonApp,
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonFooter,
-  IonHeader,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonMenu,
-  IonMenuToggle,
   IonRouterOutlet,
-  IonSplitPane,
-  IonTitle,
-  IonToolbar,
-  MenuController,
   ModalController,
   NavController,
   Platform,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import {
-  closeOutline,
-  codeSlashOutline,
-  ellipsisHorizontal,
-  logoDiscord,
-  logoFacebook,
-  logoInstagram,
-} from 'ionicons/icons';
 
 import { App } from '@capacitor/app';
 import { SystemBars } from '@capacitor/core';
@@ -45,7 +22,7 @@ import { Device } from '@capacitor/device';
 import { Keyboard } from '@capacitor/keyboard';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { Animation, StatusBar, Style } from '@capacitor/status-bar';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
 import moment from 'moment';
 import { filter } from 'rxjs/operators';
@@ -66,11 +43,9 @@ import { Preparation } from '../classes/preparation/preparation';
 import { Settings } from '../classes/settings/settings';
 import { Water } from '../classes/water/water';
 import CustomDimensionsTracking from '../data/tracking/customDimensions/customDimensionsTracking';
-import LINK_TRACKING from '../data/tracking/linkTracking';
 import SettingsTracking from '../data/tracking/settingsTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
 import TrackContentImpression from '../data/tracking/trackContentImpression/trackContentImpression';
-import { PREPARATION_TYPES } from '../enums/preparations/preparationTypes';
 import { STARTUP_VIEW_ENUM } from '../enums/settings/startupView';
 import { environment } from '../environments/environment';
 import { beanconquerorIcons } from '../generated/icon-registry';
@@ -121,26 +96,7 @@ register();
   selector: 'app-root',
   templateUrl: 'app.component.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [
-    RouterLink,
-    TranslatePipe,
-    IonApp,
-    IonSplitPane,
-    IonMenu,
-    IonHeader,
-    IonToolbar,
-    IonButtons,
-    IonButton,
-    IonIcon,
-    IonTitle,
-    IonContent,
-    IonList,
-    IonMenuToggle,
-    IonItem,
-    IonLabel,
-    IonFooter,
-    IonRouterOutlet,
-  ],
+  imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent implements AfterViewInit {
   private readonly router = inject(Router);
@@ -161,7 +117,6 @@ export class AppComponent implements AfterViewInit {
   private readonly tabletLayout = inject(TabletLayoutService);
   private readonly overlayStackA11y = inject(OverlayStackA11yService);
   private readonly uiAnalytics = inject(UIAnalytics);
-  private readonly menu = inject(MenuController);
   private readonly navCtrl = inject(NavController);
   private readonly uiUpdate = inject(UIUpdate);
   private readonly uiVersionStorage = inject(UiVersionStorage);
@@ -184,143 +139,8 @@ export class AppComponent implements AfterViewInit {
   private readonly iosPlatformService = inject(IosPlatformService);
   private readonly themeService = inject(ThemeService);
 
-  public toggleAbout: boolean = false;
   @ViewChild(IonRouterOutlet, { static: false })
   public routerOutlet: IonRouterOutlet;
-
-  public pages = {
-    home: { title: 'NAV_HOME', url: '/', icon: 'home-outline', active: true },
-    scale: {
-      title: 'SCALE',
-      url: '/scale-test',
-      icon: 'home-outline',
-      active: true,
-    },
-    roasting_section: {
-      title: 'NAV_ROASTING_SECTION',
-      url: '/roasting-section',
-      active: false,
-    },
-    water_section: {
-      title: 'NAV_WATER_SECTION',
-      url: '/water-section',
-      active: false,
-    },
-    graph_section: {
-      title: 'NAV_GRAPH_SECTION',
-      url: '/graph-section',
-      active: false,
-    },
-    baristamode: {
-      title: 'NAV_BARISTAMODE_SECTION',
-      url: '/baristamode',
-      active: false,
-      visible: false,
-    },
-    settings: {
-      title: 'NAV_SETTINGS',
-      url: '/settings',
-      icon: 'settings-outline',
-      active: false,
-    },
-
-    info: {
-      title: 'NAV_INFORMATION_TO_APP',
-      url: '/info',
-      icon: 'information-circle-outline',
-      active: false,
-    },
-    about: {
-      title: 'NAV_ABOUT_US',
-      url: '/info/about',
-      icon: 'information-circle-outline',
-      active: false,
-    },
-    contact: {
-      title: 'NAV_CONTACT',
-      url: '/info/contact',
-      icon: 'mail-outline',
-      active: false,
-    },
-    privacy: {
-      title: 'NAV_PRIVACY',
-      url: '/info/privacy',
-      icon: 'documents-outline',
-      active: false,
-    },
-    credits: {
-      title: 'NAV_CREDITS',
-      url: '/info/credits',
-      icon: 'documents-outline',
-      active: false,
-    },
-    terms: {
-      title: 'NAV_TERMS',
-      url: '/info/terms',
-      icon: 'documents-outline',
-      active: false,
-    },
-    thanks: {
-      title: 'NAV_THANKS',
-      url: '/info/thanks',
-      icon: 'happy-outline',
-      active: false,
-    },
-    licences: {
-      title: 'NAV_LICENCES',
-      url: '/info/licences',
-      icon: 'copy-outline',
-      active: false,
-    },
-
-    statistic: {
-      title: 'NAV_STATISTICS',
-      url: '/statistic',
-      icon: 'analytics-outline',
-      active: false,
-    },
-    logs: {
-      title: 'NAV_LOGS',
-      url: '/info/logs',
-      icon: 'logo-buffer',
-      active: false,
-    },
-
-    helper: {
-      title: 'NAV_HELPER',
-      url: '/helper',
-      icon: 'logo-buffer',
-      active: false,
-    },
-    helper_brew_ratio: {
-      title: 'PAGE_HELPER_BREW_RATIO',
-      url: '/helper/brew-ratio',
-      icon: 'construct-outline',
-      active: false,
-    },
-    helper_water_hardness: {
-      title: 'PAGE_HELPER_WATER_HARDNESS',
-      url: '/helper/water-hardness',
-      icon: 'construct-outline',
-      active: false,
-    },
-    brew_parameter: {
-      title: 'NAV_BREW_PARAMS',
-      url: '/brew-parameter',
-      icon: 'construct-outline',
-      active: false,
-    },
-    bean_parameter: {
-      title: 'NAV_BEAN_PARAMS',
-      url: '/bean-parameter',
-      icon: 'construct-outline',
-      active: false,
-    },
-  };
-
-  public uiGraphSectionVisible: boolean = false;
-  public uiWaterSectionVisible: boolean = false;
-  public uiRoastingSectionVisible: boolean = false;
 
   constructor() {
     this.documentLanguage.start();
@@ -340,17 +160,6 @@ export class AppComponent implements AfterViewInit {
       // Just support deeplinks on devices.
       this.intentHandlerService.attachOnHandleOpenUrl();
     }
-
-    // Add ionicons required by the app component
-    // We don't want to add all of them since the SVGs are inlined into the export
-    addIcons({
-      closeOutline,
-      ellipsisHorizontal,
-      logoInstagram,
-      logoFacebook,
-      codeSlashOutline,
-      logoDiscord,
-    });
 
     // We do want to add all the paths to the custom icons though
     this.addAllCustomIcons();
@@ -377,10 +186,6 @@ export class AppComponent implements AfterViewInit {
 
     Chart.register(...registerables);
     this.__appReady();
-  }
-
-  public dismiss() {
-    this.menu.close();
   }
 
   public isAndroid() {
@@ -776,20 +581,7 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  /**
-   * If settings are changed, we set the ui params, to not have callbacks all day long
-   * @private
-   */
-  private setUIParams() {
-    const settings = this.uiSettingsStorage.getSettings();
-    this.uiGraphSectionVisible = settings.show_graph_section;
-    this.uiWaterSectionVisible = settings.show_water_section;
-    this.uiRoastingSectionVisible = settings.show_roasting_section;
-  }
-
   private async __initApp() {
-    this.setUIParams();
-
     this.__registerBack();
 
     await this.__setDeviceLanguage();
@@ -851,7 +643,6 @@ export class AppComponent implements AfterViewInit {
     this.__attachOnDevicePause();
     this.__attachOnDeviceResume();
 
-    this.checkAndActivateTheBaristaModeIfNeeded();
     /**If Anything changes, we reset**/
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       BrewInstanceHelper.setEntryAmountBackToZero();
@@ -861,30 +652,12 @@ export class AppComponent implements AfterViewInit {
     });
     this.uiPreparationStorage.attachOnEvent().subscribe((_val) => {
       BrewInstanceHelper.setEntryAmountBackToZero();
-      this.checkAndActivateTheBaristaModeIfNeeded();
     });
     this.uiMillStorage.attachOnEvent().subscribe((_val) => {
       BrewInstanceHelper.setEntryAmountBackToZero();
     });
-    this.uiSettingsStorage.attachOnEvent().subscribe(() => {
-      this.setUIParams();
-    });
 
     await this.initialDataTrackings();
-  }
-
-  private checkAndActivateTheBaristaModeIfNeeded() {
-    if (this.pages.baristamode.visible === false) {
-      const settings = this.uiSettingsStorage.getSettings();
-      /** If we find a sanremo you preparation device, we enable the baristamode**/
-      if (
-        this.uiPreparationStorage
-          .getAllEntries()
-          .find((e) => !e.finished && e.type === PREPARATION_TYPES.SANREMO_YOU)
-      ) {
-        this.pages.baristamode.visible = true;
-      }
-    }
   }
 
   private async __checkBluetoothDevices() {
@@ -1219,50 +992,6 @@ export class AppComponent implements AfterViewInit {
       }
     });
   }
-
-  public openGithub() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.GITHUB,
-    );
-    this.uiHelper.openExternalWebpage(
-      'https://github.com/graphefruit/Beanconqueror',
-    );
-  }
-
-  public openDiscord() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.DISCORD,
-    );
-    this.uiHelper.openExternalWebpage('https://discord.gg/vDzA5dZjG8');
-  }
-
-  public openInstagram() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.INSTAGRAM,
-    );
-    this.uiHelper.openExternalWebpage(
-      'https://www.instagram.com/beanconqueror/',
-    );
-  }
-
-  public openFacebook() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.FACEBOOK,
-    );
-    this.uiHelper.openExternalWebpage(
-      'https://www.facebook.com/Beanconqueror/',
-    );
-  }
-
-  public openPaypal() {}
-
-  public openGithubSponsor() {}
-
-  public openDonatePage() {}
 
   public async initialDataTrackings() {
     const settings = this.uiSettingsStorage.getSettings();

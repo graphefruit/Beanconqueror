@@ -1,10 +1,10 @@
 {
   "src/app/app.component.ts": {
     "@typescript-eslint/no-empty-function": {
-      "count": 13
+      "count": 10
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 26
+      "count": 25
     },
     "@typescript-eslint/no-misused-promises": {
       "count": 4
@@ -2137,7 +2137,7 @@
   },
   "src/components/baristamode-brew-information/baristamode-brew-information.component.ts": {
     "@typescript-eslint/no-floating-promises": {
-      "count": 3
+      "count": 1
     },
     "no-empty": {
       "count": 3
@@ -2225,7 +2225,7 @@
   },
   "src/components/brew-information/brew-information.component.ts": {
     "@typescript-eslint/no-floating-promises": {
-      "count": 9
+      "count": 7
     },
     "no-empty": {
       "count": 1

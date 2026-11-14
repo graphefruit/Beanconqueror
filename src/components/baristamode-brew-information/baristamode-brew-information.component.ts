@@ -20,7 +20,6 @@ import {
   IonRow,
   IonText,
   IonTitle,
-  MenuController,
   ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -76,7 +75,6 @@ import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-c
 export class BaristamodeBrewInformationComponent implements OnInit {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly uiGraphHelper = inject(UIGraphHelper);
-  private readonly menu = inject(MenuController);
   private readonly modalCtrl = inject(ModalController);
   private readonly uiBaristamodeBrewStorage = inject(UIBaristamodeBrewStorage);
   private readonly visualizerService = inject(VisualizerService);
@@ -94,9 +92,6 @@ export class BaristamodeBrewInformationComponent implements OnInit {
   @ViewChild('brewInformationContainer', { read: ElementRef, static: false })
   public brewInformationContainer: ElementRef;
 
-  @ViewChild('swiper', { static: false })
-  public brewInformationSlider: ElementRef | undefined;
-
   public settings: Settings = null;
   public brewQuantityEnum = BREW_QUANTITY_TYPES_ENUM;
 
@@ -108,21 +103,6 @@ export class BaristamodeBrewInformationComponent implements OnInit {
       this.settings = this.uiSettingsStorage.getSettings();
 
       if (this.brew.flow_profile) {
-        setTimeout(() => {
-          this.brewInformationSlider?.nativeElement?.swiper?.on(
-            'touchStart',
-            () => {
-              this.menu.swipeGesture(false);
-            },
-          );
-          this.brewInformationSlider?.nativeElement?.swiper?.on(
-            'touchEnd',
-            () => {
-              this.menu.swipeGesture(true);
-            },
-          );
-        }, 25);
-
         setTimeout(() => {
           this.calculcationInformationContainer();
         }, 350);

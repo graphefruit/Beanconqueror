@@ -45,9 +45,6 @@ function behind(
 const OVERLAYS =
   'ion-modal, ion-popover, ion-alert, ion-action-sheet, ion-loading';
 
-/** What a control can sit in above the page: an overlay or the side menu. */
-const LAYERS = `${OVERLAYS}, ion-menu`;
-
 /** What `recordOpenOverlays` keeps in the page. */
 interface OpenOverlays {
   __bqOpenOverlays: WeakSet<EventTarget>;
@@ -96,13 +93,13 @@ interface OverlayState {
 }
 
 /**
- * The overlay, or the side menu, that holds `control`. Controls often sit in
+ * The overlay that holds `control`. Controls often sit in
  * shadow roots, so the way up leaves them through their host.
  */
 function overlayOf(control: Locator): Promise<OverlayState> {
-  return control.evaluate((element, layers) => {
+  return control.evaluate((element, overlays) => {
     let node: Node | null = element;
-    while (node && !(node instanceof Element && node.matches(layers))) {
+    while (node && !(node instanceof Element && node.matches(overlays))) {
       node = node instanceof ShadowRoot ? node.host : node.parentNode;
     }
     const open = (window as unknown as OpenOverlays).__bqOpenOverlays;
@@ -110,10 +107,10 @@ function overlayOf(control: Locator): Promise<OverlayState> {
       open: node !== null && open.has(node),
       focused: node?.contains(document.activeElement) ?? false,
     };
-  }, LAYERS);
+  }, OVERLAYS);
 }
 
-/** Whether keyboard focus is in the overlay or menu that holds `control`. */
+/** Whether keyboard focus is in the overlay that holds `control`. */
 async function focusIsInOverlayOf(control: Locator): Promise<boolean> {
   return (await overlayOf(control)).focused;
 }
@@ -285,53 +282,6 @@ test('a half-height sheet keeps the page and its tab bar out of reach', async ({
   await expect(scanQrCode).toHaveCount(0);
   await expect(importBeans).toBeFocused();
   await expect(page.getByRole('tab', { name: 'Beans' })).toBeVisible();
-});
-
-test('an open side menu is out of reach while a dialog is open above it', async ({
-  page,
-}) => {
-  await page.goto('/');
-  await completeFirstRun(page);
-  // No button opens the side menu any more; a swipe from the edge still can.
-  await page
-    .locator('ion-menu')
-    .evaluate((menu) =>
-      (menu as unknown as { open(): Promise<boolean> }).open(),
-    );
-  const menu = page.getByRole('navigation', { name: 'menu' });
-  const settings = menu.getByRole('link', { name: 'Settings' });
-  await expect(settings).toBeVisible();
-  // Ionic focuses the menu once it has opened.
-  await expect(menu).toBeFocused();
-
-  // Nothing in the menu opens a dialog, but the app opens some on its own:
-  // a link that opens the app, from a QR code for example, shows a
-  // please-wait dialog and then a message or the bean form. A message
-  // stands in for them.
-  await page.evaluate(() => {
-    const message = Object.assign(document.createElement('ion-alert'), {
-      header: 'Brew imported',
-      buttons: ['OK'],
-      isOpen: true,
-    });
-    document.querySelector('ion-app')?.append(message);
-  });
-  const message = page.getByRole('alertdialog', { name: 'Brew imported' });
-  await expect(message).toBeVisible();
-
-  // Ionic hides only the page from screen readers; the open menu would
-  // still be read out, and focus could move into it.
-  await expect(menu).toHaveCount(0);
-  expect(await accessibilityTree(page)).not.toContain('Settings');
-  // The message's only button is its first and its last control, so the
-  // dialog itself is the probe.
-  await expectFocusStaysOn(message, behind(page, 'link', 'Settings'));
-
-  await message.getByRole('button', { name: 'OK' }).focus();
-  await page.keyboard.press('Enter');
-  await expect(message).toHaveCount(0);
-  await expect(menu).toBeFocused();
-  await expect(settings).toBeVisible();
 });
 
 test('the aroma picker hides the tasting dialog until it closes', async ({
