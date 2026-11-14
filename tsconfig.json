@@ -21,12 +21,7 @@
     // Defaults that changed in TypeScript 6, set to the values of TypeScript 5.
     "strict": false,
     "noUncheckedSideEffectImports": false,
-    "types": ["*"],
-
-    // This is currently required because of a typing issue in Ionic 8.
-    // See https://github.com/ionic-team/ionic-framework/issues/30650#issuecomment-3254931600
-    // Remove this again once Ionic 9 is released, which should fix the root cause.
-    "skipLibCheck": true
+    "types": ["*"]
   },
   "angularCompilerOptions": {
     "strictTemplates": true,
