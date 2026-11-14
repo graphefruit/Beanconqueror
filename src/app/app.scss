@@ -251,8 +251,14 @@ ion-tab-button {
   left: 70px;
   background: rgba(255, 255, 255, 0.8);
 }
+// Choice dialogs draw their own radios and checkboxes; they follow ion-radio
+// and ion-checkbox: unchecked in the control border, checked in the accent.
 ion-alert {
-  .alert-wrapper {
+  .alert-radio-icon,
+  .alert-checkbox-icon {
+    border-color: var(--bq-control-border) !important;
+  }
+  [aria-checked='true'] {
     // Radios mark the choice with ring and dot only, so they use the text accent.
     .alert-radio-icon {
       border-color: var(--bq-text-accent) !important;
@@ -260,11 +266,6 @@ ion-alert {
     .alert-radio-inner {
       background-color: var(--bq-text-accent) !important;
     }
-  }
-}
-
-ion-alert {
-  [aria-checked='true'] {
     .alert-checkbox-icon {
       background-color: var(--ion-color-accent) !important;
       border-color: var(--ion-color-accent) !important;

@@ -203,4 +203,36 @@ for (const dark of [false, true]) {
       contrast(firstColour(selected.outline), selected.track),
     ).toBeGreaterThanOrEqual(3);
   });
+
+  test(`choice dialog radios show both states against the dialog (${theme})`, async ({
+    page,
+  }) => {
+    await openAddBean(page);
+    await setDark(page, dark);
+    await page.getByRole('button', { name: /^Roast type/ }).focus();
+    await page.keyboard.press('Enter');
+    const choices = page.getByRole('alertdialog', { name: 'Roast type' });
+    await expect(choices.getByRole('radio', { name: 'Unknown' })).toBeChecked();
+
+    const ring = async (name: string) =>
+      firstColour(
+        await choices
+          .getByRole('radio', { name })
+          .evaluate(
+            (radio) =>
+              getComputedStyle(radio.querySelector('.alert-radio-icon')!)
+                .borderTopColor,
+          ),
+      );
+    const surface = firstColour(
+      await choices.evaluate(
+        (dialog) => getComputedStyle(dialog).backgroundColor,
+      ),
+    );
+    const unchecked = await ring('Filter');
+    const checked = await ring('Unknown');
+    expect(contrast(unchecked, surface)).toBeGreaterThanOrEqual(3);
+    expect(contrast(checked, surface)).toBeGreaterThanOrEqual(3);
+    expect(checked).not.toEqual(unchecked);
+  });
 }
