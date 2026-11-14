@@ -31,6 +31,17 @@ Contents:
 | Change detection | zone.js (`provideZoneChangeDetection()`); existing components `ChangeDetectionStrategy.Eager` | `src/main.ts`, `src/polyfills.ts`                                                |
 | Tooling          | pnpm, ESLint (with a suppressions ratchet), Prettier, Karma, Playwright                       | `package.json`, `eslint.config.mjs`, `src/karma.conf.js`, `playwright.config.ts` |
 
+### Supported platforms
+
+The app runs in the system WebView, so Angular's browser support sets the minimum
+platform versions. Angular 22 supports the browsers that are "Baseline widely
+available" on 2026-05-07: Chrome, Edge and Firefox 119+, Safari and iOS 17+.
+
+| Platform | Minimum                                            | Where                                                                      |
+| -------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
+| Web      | Chrome, Edge, Firefox 119+, Safari 17+             | `.browserslistrc`                                                          |
+| iOS      | iOS 17.0 (WKWebView is Safari of the same version) | `IPHONEOS_DEPLOYMENT_TARGET` in `ios/App/App.xcodeproj`, `ios/App/Podfile` |
+
 ### Start sequence
 
 `src/main.ts` registers the providers (storage driver order, router, translations

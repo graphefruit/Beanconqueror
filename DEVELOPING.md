@@ -38,6 +38,9 @@ workarounds:
 - pnpm only installs versions that are at least seven days old (`minimumReleaseAge` in
   `pnpm-workspace.yaml`), so name versions that old explicitly.
 - Update the packages whose peer dependencies follow Angular's major version in the same call.
+- Each Angular major can raise its minimum browser versions; `ng build` then warns that browsers
+  in `.browserslistrc` "fall outside Angular's browser support". Raise `.browserslistrc` and the
+  native minimums with it (see "Supported platforms" in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)).
 
 ```shell
 NG_DISABLE_VERSION_CHECK=1 npm_config_force=true pnpm dlx @angular/cli@22.2.6 update \
