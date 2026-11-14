@@ -28,7 +28,7 @@ PODS:
     - IONGeolocationLib (= 3.0.0)
   - CapacitorHaptics (8.0.2):
     - Capacitor
-  - CapacitorKeyboard (8.0.6):
+  - CapacitorKeyboard (8.0.1):
     - Capacitor
   - CapacitorShare (8.0.3):
     - Capacitor
@@ -121,7 +121,7 @@ DEPENDENCIES:
   - "CapacitorFilesystem (from `../../node_modules/.pnpm/@capacitor+filesystem@8.1.5_@capacitor+core@8.6.0/node_modules/@capacitor/filesystem`)"
   - "CapacitorGeolocation (from `../../node_modules/.pnpm/@capacitor+geolocation@8.2.4_@capacitor+core@8.6.0/node_modules/@capacitor/geolocation`)"
   - "CapacitorHaptics (from `../../node_modules/.pnpm/@capacitor+haptics@8.0.2_@capacitor+core@8.6.0/node_modules/@capacitor/haptics`)"
-  - "CapacitorKeyboard (from `../../node_modules/.pnpm/@capacitor+keyboard@8.0.6_@capacitor+core@8.6.0/node_modules/@capacitor/keyboard`)"
+  - "CapacitorKeyboard (from `../../node_modules/.pnpm/@capacitor+keyboard@8.0.1_@capacitor+core@8.6.0/node_modules/@capacitor/keyboard`)"
   - "CapacitorShare (from `../../node_modules/.pnpm/@capacitor+share@8.0.3_@capacitor+core@8.6.0/node_modules/@capacitor/share`)"
   - "CapacitorSplashScreen (from `../../node_modules/.pnpm/@capacitor+splash-screen@8.0.2_@capacitor+core@8.6.0/node_modules/@capacitor/splash-screen`)"
   - "CapacitorStatusBar (from `../../node_modules/.pnpm/@capacitor+status-bar@8.0.4_@capacitor+core@8.6.0/node_modules/@capacitor/status-bar`)"
@@ -180,7 +180,7 @@ EXTERNAL SOURCES:
   CapacitorHaptics:
     :path: "../../node_modules/.pnpm/@capacitor+haptics@8.0.2_@capacitor+core@8.6.0/node_modules/@capacitor/haptics"
   CapacitorKeyboard:
-    :path: "../../node_modules/.pnpm/@capacitor+keyboard@8.0.6_@capacitor+core@8.6.0/node_modules/@capacitor/keyboard"
+    :path: "../../node_modules/.pnpm/@capacitor+keyboard@8.0.1_@capacitor+core@8.6.0/node_modules/@capacitor/keyboard"
   CapacitorShare:
     :path: "../../node_modules/.pnpm/@capacitor+share@8.0.3_@capacitor+core@8.6.0/node_modules/@capacitor/share"
   CapacitorSplashScreen:
@@ -212,7 +212,7 @@ SPEC CHECKSUMS:
   CapacitorFilesystem: e3bc7123acb1554df1b7b099fa5847064b9e1bd4
   CapacitorGeolocation: 9b8fbd3156fc5d4d24df150760e2b8e39a0bf214
   CapacitorHaptics: 296f771ecd89c7a1bd92a7b6826a7d268e2e70f5
-  CapacitorKeyboard: f9e85e685082e9f63404de15db4a4291448b0912
+  CapacitorKeyboard: 867eb4b3c901d9bb5c3d0c93b546185d52484e19
   CapacitorShare: 5b5e53347556bee89ae6163ed20b5b3c25fe75f1
   CapacitorSplashScreen: 7bf61c2001557ff9e195e601c6b87344480d3c65
   CapacitorStatusBar: ff844df1f126da6c4fbc4028272425fa3a91e7e3
@@ -240,6 +240,6 @@ SPEC CHECKSUMS:
   PantristCapacitorPluginMlKitTextRecognition: 22330573cd47ebbe1370bab03cfde514cedb9f4a
   PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
 
-PODFILE CHECKSUM: ce58b9f2dde3b813077abbb9bf36114f6e4d6760
+PODFILE CHECKSUM: ad51e20ce94b382b6211053d3ead744d2701af28
 
 COCOAPODS: 1.16.2
