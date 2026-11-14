@@ -4,6 +4,13 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@aparajita/capacitor-dark-mode>@capacitor/android': ^8.6.0
+  '@aparajita/capacitor-dark-mode>@capacitor/app': ^8.1.2
+  '@aparajita/capacitor-dark-mode>@capacitor/core': ^8.6.0
+  '@aparajita/capacitor-dark-mode>@capacitor/ios': ^8.6.0
+  '@aparajita/capacitor-dark-mode>@capacitor/status-bar': ^8.0.4
+
 importers:
 
   .:
@@ -33,11 +40,11 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       '@awesome-cordova-plugins/android-permissions':
-        specifier: ^9.1.4
-        version: 9.1.4(@awesome-cordova-plugins/core@9.1.4(rxjs@7.8.2))(rxjs@7.8.2)
+        specifier: ^9.7.0
+        version: 9.7.0(@awesome-cordova-plugins/core@9.7.0(rxjs@7.8.2))(rxjs@7.8.2)
       '@awesome-cordova-plugins/core':
-        specifier: ^9.1.4
-        version: 9.1.4(rxjs@7.8.2)
+        specifier: ^9.7.0
+        version: 9.7.0(rxjs@7.8.2)
       '@bufbuild/protobuf':
         specifier: ^2.17.0
         version: 2.17.0
@@ -45,65 +52,65 @@ importers:
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.6.0)
       '@capacitor/android':
-        specifier: 8.6.0
+        specifier: ^8.6.0
         version: 8.6.0(@capacitor/core@8.6.0)
       '@capacitor/app':
-        specifier: ^8.1.0
-        version: 8.1.0(@capacitor/core@8.6.0)
+        specifier: ^8.1.2
+        version: 8.1.2(@capacitor/core@8.6.0)
       '@capacitor/app-launcher':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.6.0)
       '@capacitor/barcode-scanner':
-        specifier: ^3.0.2
-        version: 3.0.2(@capacitor/core@8.6.0)
+        specifier: ^3.1.3
+        version: 3.1.3(@capacitor/core@8.6.0)
       '@capacitor/camera':
-        specifier: ^8.1.0
-        version: 8.1.0(@capacitor/core@8.6.0)
+        specifier: ^8.2.6
+        version: 8.2.6(@capacitor/core@8.6.0)
       '@capacitor/clipboard':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.6.0)
       '@capacitor/core':
-        specifier: 8.6.0
+        specifier: ^8.6.0
         version: 8.6.0
       '@capacitor/device':
-        specifier: ^8.0.2
-        version: 8.0.2(@capacitor/core@8.6.0)
+        specifier: ^8.0.3
+        version: 8.0.3(@capacitor/core@8.6.0)
       '@capacitor/filesystem':
-        specifier: 8.0.0
-        version: 8.0.0(@capacitor/core@8.6.0)
+        specifier: 8.1.5
+        version: 8.1.5(@capacitor/core@8.6.0)
       '@capacitor/geolocation':
-        specifier: 8.0.0
-        version: 8.0.0(@capacitor/core@8.6.0)
+        specifier: 8.2.4
+        version: 8.2.4(@capacitor/core@8.6.0)
       '@capacitor/haptics':
         specifier: ^8.0.2
         version: 8.0.2(@capacitor/core@8.6.0)
       '@capacitor/ios':
-        specifier: ^8.3.1
-        version: 8.3.1(@capacitor/core@8.6.0)
+        specifier: ^8.6.0
+        version: 8.6.0(@capacitor/core@8.6.0)
       '@capacitor/keyboard':
-        specifier: 8.0.1
-        version: 8.0.1(@capacitor/core@8.6.0)
+        specifier: 8.0.6
+        version: 8.0.6(@capacitor/core@8.6.0)
       '@capacitor/share':
-        specifier: ^8.0.1
-        version: 8.0.1(@capacitor/core@8.6.0)
+        specifier: ^8.0.3
+        version: 8.0.3(@capacitor/core@8.6.0)
       '@capacitor/splash-screen':
-        specifier: ^8.0.1
-        version: 8.0.1(@capacitor/core@8.6.0)
-      '@capacitor/status-bar':
         specifier: ^8.0.2
         version: 8.0.2(@capacitor/core@8.6.0)
+      '@capacitor/status-bar':
+        specifier: ^8.0.4
+        version: 8.0.4(@capacitor/core@8.6.0)
       '@capawesome/capacitor-android-edge-to-edge-support':
         specifier: ^8.0.8
         version: 8.0.8(@capacitor/core@8.6.0)
       '@capawesome/capacitor-file-picker':
-        specifier: ^8.0.2
-        version: 8.0.2(@capacitor/core@8.6.0)
+        specifier: ^8.1.1
+        version: 8.1.1(@capacitor/core@8.6.0)
       '@capgo/camera-preview':
-        specifier: ^8.3.1
-        version: 8.3.1(@capacitor/core@8.6.0)
+        specifier: ^8.14.4
+        version: 8.14.4(@capacitor/core@8.6.0)
       '@capgo/capacitor-llm':
-        specifier: ^8.0.11
-        version: 8.0.11(@capacitor/core@8.6.0)(@mediapipe/tasks-genai@0.10.30)
+        specifier: ^8.2.0
+        version: 8.2.0(@capacitor/core@8.6.0)(@mediapipe/tasks-genai@0.10.30)
       '@ionic/angular':
         specifier: ^8.8.19
         version: 8.8.19(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/forms@22.2.5(@angular/common@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.2.5(@angular/common@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3)))(rxjs@7.8.2))(@angular/router@22.2.5(@angular/common@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.2.5(@angular/common@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3)))(rxjs@7.8.2))(rxjs@7.8.2)(zone.js@0.16.3)
@@ -135,8 +142,8 @@ importers:
         specifier: ^17.0.0
         version: 17.0.0(@angular/common@22.2.5(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.5(@angular/compiler@22.2.5)(rxjs@7.8.2)(zone.js@0.16.3))
       '@pantrist/capacitor-plugin-ml-kit-text-recognition':
-        specifier: ^8.0.0
-        version: 8.0.0(@capacitor/core@8.6.0)
+        specifier: ^8.1.1
+        version: 8.1.1(@capacitor/core@8.6.0)
       '@zip.js/zip.js':
         specifier: ~2.15.0
         version: 2.15.0
@@ -150,8 +157,8 @@ importers:
         specifier: ~4.5.1
         version: 4.5.1
       community-cordova-plugin-nfc:
-        specifier: ^1.6.0
-        version: 1.6.0
+        specifier: ^1.9.0
+        version: 1.9.0
       currency-symbol-map:
         specifier: ^5.1.0
         version: 5.1.0
@@ -235,8 +242,8 @@ importers:
         specifier: ^3.0.5
         version: 3.0.5(@types/node@25.9.9)(typescript@6.0.3)
       '@capacitor/cli':
-        specifier: ^8.3.1
-        version: 8.3.1
+        specifier: ^8.6.0
+        version: 8.6.0
       '@eslint/js':
         specifier: ^9.39.5
         version: 9.39.5
@@ -553,14 +560,14 @@ packages:
     resolution: {integrity: sha512-/YwsSilGWnK6otokoMlraca8IydHKzqLAkUHzi3qPO5WjP2RDBqDbGeK/naVWw3iP0UKX4RnSshrUKxZThh6iw==}
     engines: {node: '>=20.0.0'}
 
-  '@awesome-cordova-plugins/android-permissions@9.1.4':
-    resolution: {integrity: sha512-TkBcR5R/0qrfWUzN5DEY+RxTUEnw8h0Ha1PYwAA5s3DNG+if2PpWVVfl8W7w6U3qXP30g7sOqlHDx4rNA48z5Q==}
+  '@awesome-cordova-plugins/android-permissions@9.7.0':
+    resolution: {integrity: sha512-/F1dP1sL0eAi9HRX+sjnFKowlMYYuZFhxZ6vNgGZIlcjRHkW0HXWBDCVpK6DEk1mBgaKuI6GO99ziG0jPC9tEQ==}
     peerDependencies:
-      '@awesome-cordova-plugins/core': ^9.1.4
+      '@awesome-cordova-plugins/core': ^9.7.0
       rxjs: ^5.5.0 || ^6.5.0 || ^7.3.0
 
-  '@awesome-cordova-plugins/core@9.1.4':
-    resolution: {integrity: sha512-aaqKMc9n+sk1bLOWRLFjo90ffV3nIUn1FeBTDA72t3DdUk76pDTE67Q481UyewoHPeTerCTRppMzeK71FVle7A==}
+  '@awesome-cordova-plugins/core@9.7.0':
+    resolution: {integrity: sha512-ap9Aat0NwcLhwwItP0ff7YqxJkhsGZZFRLGYo2mI1d3qN+eXE2iSQFUvnY+NHFvYttKtIrg0NI0oCtKTs7BRTg==}
     peerDependencies:
       rxjs: ^5.5.0 || ^6.5.0 || ^7.3.0
 
@@ -706,11 +713,6 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/android@7.6.2':
-    resolution: {integrity: sha512-zRIn10uTPbOQaFVRqkTGKwrrDypmn3L3I/x4XZSVLiCYt3zs8MUCPoqrMudNvOD+s6nQ5m0cX4GW8JRpMxKOkQ==}
-    peerDependencies:
-      '@capacitor/core': ^7.6.0
-
   '@capacitor/android@8.6.0':
     resolution: {integrity: sha512-6IJS0TCfV/F/8+324CCwYd3xL6r+TH0W7zzaxYzPz9IV3YWCNvsZDuCCPHUIBC5iASb9od827ddSJ6rz+9Pu1Q==}
     peerDependencies:
@@ -721,13 +723,8 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/app@7.1.2':
-    resolution: {integrity: sha512-d4I/oF/PRu4megL7/IGKYfe5j7yzSON1FRFgq6kH+m5kH6g7V+wyjHRLauCzGNjdRx4S+nWOumINds0qcRBtKg==}
-    peerDependencies:
-      '@capacitor/core': '>=7.0.0'
-
-  '@capacitor/app@8.1.0':
-    resolution: {integrity: sha512-MlmttTOWHDedr/G4SrhNRxsXMqY+R75S4MM4eIgzsgCzOYhb/MpCkA5Q3nuOCfL1oHm26xjUzqZ5aupbOwdfYg==}
+  '@capacitor/app@8.1.2':
+    resolution: {integrity: sha512-uKBlsrXH0IdvUn69e/KKYbZ32A06pcrUdG8LWuZ/6y33YMXZXLEEdNSwl+jKS/SrsTWqnePs8EqSWaiQM3mUGA==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -736,13 +733,13 @@ packages:
     engines: {node: '>=10.3.0'}
     hasBin: true
 
-  '@capacitor/barcode-scanner@3.0.2':
-    resolution: {integrity: sha512-eD8G0dj/vDTytzFY3qK/5EWZtv17NHMN97gx5KSHUuqFXOScf+5e4Rwwak8zDkX17VLXNym6y3eIn8AvCLY+Pg==}
+  '@capacitor/barcode-scanner@3.1.3':
+    resolution: {integrity: sha512-ZqM+Z6gMdIyjA2g+S5SgR3dyfIdKA6h6lnkV/rwKa+Q/iZ32rGnbuBATvqwb+HwQqvSGpvIZUlOU51Cw/MAIug==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/camera@8.1.0':
-    resolution: {integrity: sha512-ep12soG6c6HbfsEelLIM5Ip/YlWvd6H8pZsXg1gzjLNbTN6P/URUxO0Lv08bHyaDQVJkjLKthF7gaOG++TP4NQ==}
+  '@capacitor/camera@8.2.6':
+    resolution: {integrity: sha512-jzvrMrEKs5ACw1/HmcgN5XwSlXYF+/xRKzWtBUESQs5ePf3tTfnR8Nk/p+aSEgay8yZEI0aZQ+2/1xDwMCdV2w==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -751,8 +748,8 @@ packages:
     engines: {node: '>=16.0.0'}
     hasBin: true
 
-  '@capacitor/cli@8.3.1':
-    resolution: {integrity: sha512-1sPGW4THTDfR6YjXwZ0jM7oAfAtciPOHN00qs/3sNAQx1kKrrEYSfDPwCm1/xlAgi0OeL69SiRfw314Ans+1sw==}
+  '@capacitor/cli@8.6.0':
+    resolution: {integrity: sha512-TyLo1v6AqK39inlB5Edm7eFc+dyk4r+Du5bbyD+cRm/u/3b+LkNIeyp5wwYp3ToO3rWiLs4T/PabXGADO0Rlxg==}
     engines: {node: '>=22.0.0'}
     hasBin: true
 
@@ -761,24 +758,21 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/core@7.6.2':
-    resolution: {integrity: sha512-8HRKEUlYpCOeRec8bCHZwEA4o/E2q5dhHSd0v/Cr6+ume08fZY/gniF+ZCKF+6DO0T/nRaBeNRQn6Up+45J1mg==}
-
   '@capacitor/core@8.6.0':
     resolution: {integrity: sha512-9F2zzuGYTJu+wqmQSEmqnFBfGrhC/njjMCfmxbvg9mq8xJT4wNh5pxbMFZxvW/yDhYJWPEBFQxeqzfo1gKrvxg==}
 
-  '@capacitor/device@8.0.2':
-    resolution: {integrity: sha512-fIqSXnG0s6bz5A/0xFgSXDkbU+Xl65ti80LhucNvLI4kGhJzcNn6SwWVwpXN9SJTOFWXblXknHNppheP8X1frQ==}
+  '@capacitor/device@8.0.3':
+    resolution: {integrity: sha512-rliPCCZwxtjU6200jJNDAsQhioyozV3fGgiP+NgRqtDOI7i+Jdz+DYNwEup+3MGZZ4NEmkuFaBeWLM3T01vJRg==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/filesystem@8.0.0':
-    resolution: {integrity: sha512-RRGNLW9xEqvVVHGyGlfS4Oy0R3Na+bEefwZElKbex22S9eZr5cg8wc750BPPVwbcv5lf5fJymkY8x8y6UwKPyg==}
+  '@capacitor/filesystem@8.1.5':
+    resolution: {integrity: sha512-m1RkI8L83NJeppEKyRWioK3MDp2vjlA+QfUQcF8/xRlcXNC2HYxqoyYJ+K4M0EcVovy+g+4F24S05+bhK4Vgdg==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/geolocation@8.0.0':
-    resolution: {integrity: sha512-ci6gOWd5/uruC3bRTxI3xFd9g82WnnJbdQxOH3oZOATNuedlaAw5c5/zXEIMYfRB7t2x1v8/N9gXkND6/nOmVQ==}
+  '@capacitor/geolocation@8.2.4':
+    resolution: {integrity: sha512-FDcUiPQc2AXSTAV61QSDPXml11guKBx5HPEkdWvUqw7kMqrc2Ucp0bsWngeLyRs/01a5aWBI0hEuvetuF3PsrQ==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -787,38 +781,28 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/ios@7.6.2':
-    resolution: {integrity: sha512-TZOXn7ZSEMsetrIEb8EHT4X9Nwsed1itqMwe+z5QOCDvm9XZ7i2YsjnrinUC1ZOIgva9IE2l+azus7qOpQ0aCg==}
+  '@capacitor/ios@8.6.0':
+    resolution: {integrity: sha512-Y2PE4zoBqMrSTWoVMJmX2byBznjn6egmATzoEUJiGVbVubkNpAvkF/tl0SBKDyP67ngyedTx1tQq5IGYIhby1A==}
     peerDependencies:
-      '@capacitor/core': ^7.6.0
+      '@capacitor/core': ^8.6.0
 
-  '@capacitor/ios@8.3.1':
-    resolution: {integrity: sha512-BEhLyYYHWJLib4mpaPMaaylbC8meqgxbNYwQJH2svsSLW7yo/hFie+Zoo66a44XnqcMd2tvmAuzimWunXZi/xA==}
-    peerDependencies:
-      '@capacitor/core': ^8.3.0
-
-  '@capacitor/keyboard@8.0.1':
-    resolution: {integrity: sha512-HDf4qrvvhLRMsgBoqeqIld6hP8JMK/WPbCYMvz8ajhY6TaibYt6B+NQyky4oIPCOfHTz5OcVsuHkbb8fQvGDAg==}
+  '@capacitor/keyboard@8.0.6':
+    resolution: {integrity: sha512-Bbe+9V0qaT6dzEFJEK7BUWR01l2+vZE8FM5ITF/WgKtx+G6eGZ6d5+YiSMRJBAK0VGjdO59v8yiQ10Doa5KyvQ==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/share@8.0.1':
-    resolution: {integrity: sha512-3cSBKBCJVon54rKDROP2rqGyeGks4pBh9TbaEk9S375Kbek/ZHe72N50zIa0Vn9Eac/SuhwgehO/mmA4CsUOiw==}
+  '@capacitor/share@8.0.3':
+    resolution: {integrity: sha512-gnvZBV1NPu2B8vd1UKncR56G15ueHd0aZLqgDov++t3SmTBG9Q0VrAZ1VnHn5stxlmglVaTb4RwopMgbpLzroA==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/splash-screen@8.0.1':
-    resolution: {integrity: sha512-c/ew/Z3eA7z8l06WoRAtzVF16VwYYrExmHmfGq1Cg675pVzaC/yuucB8/1xG1vhEfnW4fZ1KhSf/kzR1RiVYgg==}
+  '@capacitor/splash-screen@8.0.2':
+    resolution: {integrity: sha512-0C6rYScr13WfAE9nPl4ScOQynmjFv9NT3Th+RZkD4ezYHmER6mcl1/lDYsv7jg3Rj3FOvLrlTlmNkUrr83kZzQ==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/status-bar@7.0.6':
-    resolution: {integrity: sha512-7AVqj46b26QikImQzWfsJmzG8NUJZBGkrVSuoeTo+SX/YH3hXH0MqwwFgMqMGHfa/BICDgSvTjM9miVFlq0+RQ==}
-    peerDependencies:
-      '@capacitor/core': '>=7.0.0'
-
-  '@capacitor/status-bar@8.0.2':
-    resolution: {integrity: sha512-WXs8YB8B9eEaPZz+bcdY6t2nForF1FLoj/JU0Dl9RRgQnddnS98FEEyDooQhaY7wivr000j4+SC1FyeJkrFO7A==}
+  '@capacitor/status-bar@8.0.4':
+    resolution: {integrity: sha512-ZMzBUyHBzwDUxcHadEhvOvmoPmMQGMZgaMRJu8ohELeI6IaxoVH9ZhdF/OHnY3/yykv3Glev8Tnbh4aZY/0B0w==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -830,21 +814,21 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capawesome/capacitor-file-picker@8.0.2':
-    resolution: {integrity: sha512-TQstOBrynvQP7t1s7egvf0RkiTR29EUbBMEhus8bb4uPFROfACOxR0s68uuOS6uTN3bSF2tpsz2NcVnVV/XvzA==}
+  '@capawesome/capacitor-file-picker@8.1.1':
+    resolution: {integrity: sha512-4zDRca+uQbhFkbASoRbMpvXRbuCVhmVATDYLL9MG5UvILer01uUcN7oQhuxpltVir2YnP+1O8LasnwYlqlLM5g==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capgo/camera-preview@8.3.1':
-    resolution: {integrity: sha512-+gZ0Pp0c6xUENPzDQWlFk13vgsFigiRjdGz5xMzcwlcH2P5sxis2IFGnUV03L5NEQk2kLzISQ9dvgwHlC0/oXQ==}
+  '@capgo/camera-preview@8.14.4':
+    resolution: {integrity: sha512-bkiqm8Z1Jx76TikrhXjA/RQqwwUf0eQCWsYsKKNOmOaLlQ7PCT5fVFaEPlLJurGcLD8FYBY/Dt68L7Uwzu5QUg==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capgo/capacitor-llm@8.0.11':
-    resolution: {integrity: sha512-5Yjf8HYnAt5GF+5eV9rfOSbt1n6h2Pwu7wqwaVtRWqkCnxovCHH9keEdf/gMh08Sasso2e9TBUwHAVFBK/hVew==}
+  '@capgo/capacitor-llm@8.2.0':
+    resolution: {integrity: sha512-A1pI/Y1jXnzeAgUiE7HgGMwMw6hQ7vWIbNgdtv+b1rA8bQ2Zs5VhqbwAJrgaEg2L7wNPewW2tUm54s1AZNtoUA==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
-      '@mediapipe/tasks-genai': ^0.10.27
+      '@mediapipe/tasks-genai': ^0.10.24
 
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -1743,8 +1727,8 @@ packages:
   '@oxc-project/types@0.156.0':
     resolution: {integrity: sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==}
 
-  '@pantrist/capacitor-plugin-ml-kit-text-recognition@8.0.0':
-    resolution: {integrity: sha512-Iq+iLH+WXiCb/mnVCEI+/Cx7o31FTKpPqCUvCKm6fjmCecxbiinQzEtD+ewYQLP8k0yTldLLX72Fa/NxlLgwUA==}
+  '@pantrist/capacitor-plugin-ml-kit-text-recognition@8.1.1':
+    resolution: {integrity: sha512-6Nkqj3YbGnR1KByf/PVo6IQFFJQCCaO2yVCGDA0Fs4ovYuMH6eClgbemeOJ6hdHsGPC19t9hOZxqZK+Ehr7dGg==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -2336,6 +2320,7 @@ packages:
   '@xmldom/xmldom@0.8.13':
     resolution: {integrity: sha512-KRYzxepc14G/CEpEGc3Yn+JKaAeT63smlDr+vjB8jRfgTBBI9wRj/nkQEO+ucV8p8I9bfKLWp37uHgFrbntPvw==}
     engines: {node: '>=10.0.0'}
+    deprecated: this version has critical issues, please update to the latest version
 
   '@zip.js/zip.js@2.15.0':
     resolution: {integrity: sha512-hYAuHAaWjt0axbofaDL5XUlmrQPsBDcK3f45ApZuh6N+8UGVk26GoGdtGDvcvzahsHytTQ6DtBVXwG9IcCMjjQ==}
@@ -2809,9 +2794,8 @@ packages:
     resolution: {integrity: sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==}
     engines: {node: ^12.20.0 || >=14}
 
-  community-cordova-plugin-nfc@1.6.0:
-    resolution: {integrity: sha512-KTFZsLbzGZDmUuSWr4h4jeWuu3rnMuJlfY0AEtmzCPcodwEtUHSOnR9znjddmf//bcxRnz2qx9/BQvCcS6GynQ==}
-    engines: {cordovaDependencies: {1.0.0: {cordova: '>100'}}}
+  community-cordova-plugin-nfc@1.9.0:
+    resolution: {integrity: sha512-eKToIiePNFhRZoVZ2H68UPjYtyuaiy1asvlVJbZDJMZHDTCPabw5OnuVk7KN0AsxnjpIum3paneWg4CV9GrQtA==}
 
   compare-func@2.0.0:
     resolution: {integrity: sha512-zHig5N+tPWARooBnb0Zx1MFcdfpyJrfTJ3Y5L+IFvUm8rM74hHz66z0gw0x4tijh5CorKkKUCnW82R2vmpeCRA==}
@@ -4741,10 +4725,6 @@ packages:
     resolution: {integrity: sha512-VYdnB5S7/0IeXzBacUtwNAaM6d7Y/PgYnNC7bJCI6meqA/OgnsQbZMtVW8Dt2D1PHgbHGtYmhSoEIgvt7xZ2ZA==}
     engines: {node: '>=0.6'}
 
-  qs@6.17.1:
-    resolution: {integrity: sha512-jd3COkaKVgGUW+ZHyEHCG9bH7RoaaiWuMgzsIBjUMVjLAaWGWpoUAVwljVvBHxRu/2qEHnadLGZrkutYUBPQJA==}
-    engines: {node: '>=0.6'}
-
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
@@ -5051,11 +5031,6 @@ packages:
 
   semver@6.3.2:
     resolution: {integrity: sha512-GYrCADwpu6yV5OAvchkQ27Z5wwMxWAEMg5NNWjyHh/5DboFFqbdbvYNIvZouQpxXyeMPoTOh0vdPYKlf0ZswdQ==}
-    hasBin: true
-
-  semver@7.7.4:
-    resolution: {integrity: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==}
-    engines: {node: '>=10'}
     hasBin: true
 
   semver@7.8.5:
@@ -5711,6 +5686,10 @@ packages:
     resolution: {integrity: sha512-kCz5k7J7XbJtjABOvkc5lJmkiDh8VhjVCGNiqdKCscmVpdVUpEAyXv1xmCLkQJ5dsHqx3IPO4XW+NTDhU/fatA==}
     engines: {node: '>=10.0.0'}
 
+  xcode@4.0.0:
+    resolution: {integrity: sha512-dDaoWzc9EP2fp9FS9PVZUkyvFxY4y1TOV9pcKaKLk++Ei/qb97XDFEVP7GnW7Osii/TzVABJ0jq2F+9/lq0TVA==}
+    engines: {node: '>=14.17.0'}
+
   xlsx@https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz:
     resolution: {integrity: sha512-oLDq3jw7AcLqKWH2AhCpVTZl8mf6X2YReP+Neh0SJUzV/BdZYjth94tG5toiMB1PPrYtxOCfaoUCkvtuH+3AJA==, tarball: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz}
     version: 0.20.3
@@ -6104,18 +6083,18 @@ snapshots:
 
   '@aparajita/capacitor-dark-mode@6.0.0':
     dependencies:
-      '@capacitor/android': 7.6.2(@capacitor/core@7.6.2)
-      '@capacitor/app': 7.1.2(@capacitor/core@7.6.2)
-      '@capacitor/core': 7.6.2
-      '@capacitor/ios': 7.6.2(@capacitor/core@7.6.2)
-      '@capacitor/status-bar': 7.0.6(@capacitor/core@7.6.2)
+      '@capacitor/android': 8.6.0(@capacitor/core@8.6.0)
+      '@capacitor/app': 8.1.2(@capacitor/core@8.6.0)
+      '@capacitor/core': 8.6.0
+      '@capacitor/ios': 8.6.0(@capacitor/core@8.6.0)
+      '@capacitor/status-bar': 8.0.4(@capacitor/core@8.6.0)
 
-  '@awesome-cordova-plugins/android-permissions@9.1.4(@awesome-cordova-plugins/core@9.1.4(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@awesome-cordova-plugins/android-permissions@9.7.0(@awesome-cordova-plugins/core@9.7.0(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@awesome-cordova-plugins/core': 9.1.4(rxjs@7.8.2)
+      '@awesome-cordova-plugins/core': 9.7.0(rxjs@7.8.2)
       rxjs: 7.8.2
 
-  '@awesome-cordova-plugins/core@9.1.4(rxjs@7.8.2)':
+  '@awesome-cordova-plugins/core@9.7.0(rxjs@7.8.2)':
     dependencies:
       '@types/cordova': 11.0.3
       rxjs: 7.8.2
@@ -6331,10 +6310,6 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capacitor/android@7.6.2(@capacitor/core@7.6.2)':
-    dependencies:
-      '@capacitor/core': 7.6.2
-
   '@capacitor/android@8.6.0(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
@@ -6343,11 +6318,7 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capacitor/app@7.1.2(@capacitor/core@7.6.2)':
-    dependencies:
-      '@capacitor/core': 7.6.2
-
-  '@capacitor/app@8.1.0(@capacitor/core@8.6.0)':
+  '@capacitor/app@8.1.2(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
 
@@ -6376,12 +6347,12 @@ snapshots:
       - supports-color
       - typescript
 
-  '@capacitor/barcode-scanner@3.0.2(@capacitor/core@8.6.0)':
+  '@capacitor/barcode-scanner@3.1.3(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
       html5-qrcode: 2.3.8
 
-  '@capacitor/camera@8.1.0(@capacitor/core@8.6.0)':
+  '@capacitor/camera@8.2.6(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
 
@@ -6407,7 +6378,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@capacitor/cli@8.3.1':
+  '@capacitor/cli@8.6.0':
     dependencies:
       '@ionic/cli-framework-output': 2.2.8
       '@ionic/utils-subprocess': 3.0.1
@@ -6422,9 +6393,10 @@ snapshots:
       plist: 3.1.0
       prompts: 2.4.2
       rimraf: 6.1.3
-      semver: 7.7.4
+      semver: 7.8.6
       tar: 7.5.13
       tslib: 2.9.1
+      xcode: 4.0.0
       xml2js: 0.6.2
     transitivePeerDependencies:
       - supports-color
@@ -6433,24 +6405,20 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capacitor/core@7.6.2':
-    dependencies:
-      tslib: 2.9.1
-
   '@capacitor/core@8.6.0':
     dependencies:
       tslib: 2.9.1
 
-  '@capacitor/device@8.0.2(@capacitor/core@8.6.0)':
+  '@capacitor/device@8.0.3(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capacitor/filesystem@8.0.0(@capacitor/core@8.6.0)':
+  '@capacitor/filesystem@8.1.5(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
       '@capacitor/synapse': 1.0.4
 
-  '@capacitor/geolocation@8.0.0(@capacitor/core@8.6.0)':
+  '@capacitor/geolocation@8.2.4(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
       '@capacitor/synapse': 1.0.4
@@ -6459,31 +6427,23 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capacitor/ios@7.6.2(@capacitor/core@7.6.2)':
-    dependencies:
-      '@capacitor/core': 7.6.2
-
-  '@capacitor/ios@8.3.1(@capacitor/core@8.6.0)':
+  '@capacitor/ios@8.6.0(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capacitor/keyboard@8.0.1(@capacitor/core@8.6.0)':
+  '@capacitor/keyboard@8.0.6(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capacitor/share@8.0.1(@capacitor/core@8.6.0)':
+  '@capacitor/share@8.0.3(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capacitor/splash-screen@8.0.1(@capacitor/core@8.6.0)':
+  '@capacitor/splash-screen@8.0.2(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capacitor/status-bar@7.0.6(@capacitor/core@7.6.2)':
-    dependencies:
-      '@capacitor/core': 7.6.2
-
-  '@capacitor/status-bar@8.0.2(@capacitor/core@8.6.0)':
+  '@capacitor/status-bar@8.0.4(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
 
@@ -6493,15 +6453,15 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capawesome/capacitor-file-picker@8.0.2(@capacitor/core@8.6.0)':
+  '@capawesome/capacitor-file-picker@8.1.1(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capgo/camera-preview@8.3.1(@capacitor/core@8.6.0)':
+  '@capgo/camera-preview@8.14.4(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
 
-  '@capgo/capacitor-llm@8.0.11(@capacitor/core@8.6.0)(@mediapipe/tasks-genai@0.10.30)':
+  '@capgo/capacitor-llm@8.2.0(@capacitor/core@8.6.0)(@mediapipe/tasks-genai@0.10.30)':
     dependencies:
       '@capacitor/core': 8.6.0
       '@mediapipe/tasks-genai': 0.10.30
@@ -7318,7 +7278,7 @@ snapshots:
 
   '@oxc-project/types@0.156.0': {}
 
-  '@pantrist/capacitor-plugin-ml-kit-text-recognition@8.0.0(@capacitor/core@8.6.0)':
+  '@pantrist/capacitor-plugin-ml-kit-text-recognition@8.1.1(@capacitor/core@8.6.0)':
     dependencies:
       '@capacitor/core': 8.6.0
 
@@ -8290,7 +8250,7 @@ snapshots:
 
   commander@9.5.0: {}
 
-  community-cordova-plugin-nfc@1.6.0: {}
+  community-cordova-plugin-nfc@1.9.0: {}
 
   compare-func@2.0.0:
     dependencies:
@@ -10327,11 +10287,6 @@ snapshots:
       es-define-property: 1.0.1
       side-channel: 1.1.1
 
-  qs@6.17.1:
-    dependencies:
-      es-define-property: 1.0.1
-      side-channel: 1.1.1
-
   queue-microtask@1.2.3: {}
 
   quick-lru@4.0.1: {}
@@ -10650,8 +10605,6 @@ snapshots:
 
   semver@6.3.2: {}
 
-  semver@7.7.4: {}
-
   semver@7.8.5: {}
 
   semver@7.8.6: {}
@@ -10951,7 +10904,7 @@ snapshots:
       formidable: 3.5.4
       methods: 1.1.2
       mime: 2.6.0
-      qs: 6.17.1
+      qs: 6.16.2
     transitivePeerDependencies:
       - supports-color
 
@@ -11317,6 +11270,10 @@ snapshots:
     dependencies:
       simple-plist: 1.3.1
       uuid: 7.0.3
+
+  xcode@4.0.0:
+    dependencies:
+      simple-plist: 1.3.1
 
   xlsx@https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz: {}
 
