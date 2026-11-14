@@ -112,7 +112,7 @@ test('water is listed in the profile once the section is switched on', async ({
   await completeFirstRun(page);
 
   await openProfile(page);
-  await expect(page.getByRole('link', { name: 'Water' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /^Water/ })).toHaveCount(0);
 
   await page.getByRole('link', { name: 'Settings' }).click();
   const water = page.getByRole('checkbox', { name: 'Activate water section' });
@@ -122,7 +122,7 @@ test('water is listed in the profile once the section is switched on', async ({
   await page.goBack();
 
   await expect(page).toHaveURL(/\/home\/profile$/);
-  await page.getByRole('link', { name: 'Water' }).click();
+  await page.getByRole('link', { name: /^Water/ }).click();
   await expect(page).toHaveURL(/\/water-section\/water$/);
   await expect(
     page.getByRole('button', { name: 'Add water recipe' }),

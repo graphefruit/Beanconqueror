@@ -4,9 +4,10 @@ import { expect, test } from './fixtures';
 import { completeFirstRun } from './support/first-run';
 
 /**
- * The profile tab is a hub: the sections that are not tabs of their own sit
- * in two groups, each entry with an icon, a title and a count or a short
- * description that screen readers hear as part of the link.
+ * The profile tab is a hub: everything that is not a tab of its own sits in
+ * three groups, each entry with an icon, a title and a count or a short
+ * description that screen readers hear as part of the link. Below them are the
+ * community links and the legal pages.
  */
 
 type Theme = 'light' | 'dark';
@@ -68,12 +69,23 @@ async function addWater(page: Page, name: string): Promise<void> {
   await expect(page).toHaveURL(/\/home\/profile$/);
 }
 
-/** The hub's entries, read from the content so the tab bar is left out. */
+/** The hub's entries, read from the groups so tab bar and footer are left out. */
 function entries(page: Page) {
-  return page.locator('app-profile ion-content').getByRole('link');
+  return page.locator('app-profile ion-list').getByRole('link');
 }
 
-test('the hub has a page heading, two groups and named entries', async ({
+const ENTRY_NAMES = [
+  'Preparation methods None added yet',
+  'Grinders None added yet',
+  'Statistics Your brews and beans in numbers',
+  'Brewing Parameters Which fields a brew records',
+  'Bean parameters Which fields a bean records',
+  'Calculations Brew ratio, water hardness',
+  'Settings Language, appearance, devices, backup',
+  'Info & support Impressum, privacy, contact, logs',
+];
+
+test('the hub has a page heading, three groups and named entries', async ({
   page,
 }) => {
   await page.goto('/');
@@ -84,17 +96,72 @@ test('the hub has a page heading, two groups and named entries', async ({
     page.getByRole('heading', { level: 1, name: 'Profile' }),
   ).toBeVisible();
   const groups = page.locator('app-profile').getByRole('heading', { level: 2 });
-  await expect(groups).toHaveText(['Equipment', 'App']);
+  await expect(groups).toHaveText(['Equipment', 'Sections', 'App']);
 
   // The description is part of each entry's name.
-  await expect(entries(page)).toHaveCount(4);
-  for (const [index, name] of [
-    'Preparation methods None added yet',
-    'Grinders None added yet',
-    'Statistics Your brews and beans in numbers',
-    'Settings Language, appearance, devices, backup',
-  ].entries()) {
+  await expect(entries(page)).toHaveCount(ENTRY_NAMES.length);
+  for (const [index, name] of ENTRY_NAMES.entries()) {
     await expect(entries(page).nth(index)).toHaveAccessibleName(name);
+  }
+});
+
+test('graphs and roasting join the sections once switched on', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await openProfile(page);
+
+  await page.getByRole('link', { name: /^Settings/ }).click();
+  for (const name of ['Activate graph section', 'Activate roasting section']) {
+    const toggle = page.getByRole('checkbox', { name });
+    await toggle.scrollIntoViewIfNeeded();
+    await toggle.click();
+    await expect(toggle).toBeChecked();
+  }
+  await page.goBack();
+  await expect(page).toHaveURL(/\/home\/profile$/);
+
+  await expect(entries(page)).toHaveCount(ENTRY_NAMES.length + 2);
+  await expect(entries(page).nth(6)).toHaveAccessibleName(
+    'Graphs Reference curves for brewing',
+  );
+  await expect(entries(page).nth(7)).toHaveAccessibleName(
+    'Bean Roasting Green beans, roasting machines',
+  );
+});
+
+test('the footer names the community links and opens the legal pages', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await openProfile(page);
+
+  const content = page.locator('app-profile ion-content');
+  for (const name of ['Instagram', 'Facebook', 'GitHub', 'Discord']) {
+    const button = content.getByRole('button', { name, exact: true });
+    await expect(button).toBeVisible();
+    const box = (await button.boundingBox())!;
+    expect(box.width, `${name} is wide enough to tap`).toBeGreaterThanOrEqual(
+      44,
+    );
+    expect(box.height, `${name} is high enough to tap`).toBeGreaterThanOrEqual(
+      44,
+    );
+  }
+
+  for (const { name, url } of [
+    { name: 'Impressum', url: /\/info\/impressum$/ },
+    { name: 'Privacy', url: /\/info\/privacy$/ },
+  ]) {
+    await content.getByRole('link', { name, exact: true }).click();
+    await expect(page).toHaveURL(url);
+    await expect(
+      page.getByRole('banner').getByText(name, { exact: true }),
+    ).toBeVisible();
+    await page.goBack();
+    await expect(page).toHaveURL(/\/home\/profile$/);
   }
 });
 
@@ -158,7 +225,7 @@ test('the water entry joins the equipment group once switched on', async ({
   await openProfile(page);
 
   await switchOnWater(page);
-  await expect(entries(page)).toHaveCount(5);
+  await expect(entries(page)).toHaveCount(ENTRY_NAMES.length + 1);
   await expect(entries(page).nth(2)).toHaveAccessibleName(
     'Water None added yet',
   );
@@ -172,7 +239,7 @@ test('every entry shows its icon', async ({ page }) => {
 
   // An icon that is not registered stays an empty element without an error.
   const icons = page.locator('app-profile ion-content .entry-icon ion-icon');
-  await expect(icons).toHaveCount(5);
+  await expect(icons).toHaveCount(ENTRY_NAMES.length + 1);
   for (const icon of await icons.all()) {
     await expect
       .poll(() =>
@@ -286,7 +353,7 @@ test('no entry is cut off at 200 % text size', async ({ page }) => {
     document.documentElement.style.fontSize = '200%';
   });
 
-  await expect(entries(page)).toHaveCount(5);
+  await expect(entries(page)).toHaveCount(ENTRY_NAMES.length + 1);
   const viewport = page.viewportSize()!;
   for (const link of await entries(page).all()) {
     await link.scrollIntoViewIfNeeded();

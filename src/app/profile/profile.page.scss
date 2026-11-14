@@ -39,8 +39,11 @@
     --border-radius: var(--bq-radius-card) var(--bq-radius-card) 0 0;
   }
 
+  // Optional entries come and go, so the last one drops its divider here
+  // rather than in the template.
   ion-item:last-child {
     --border-radius: 0 0 var(--bq-radius-card) var(--bq-radius-card);
+    --border-width: 0;
   }
 
   ion-item:only-child {
@@ -95,5 +98,38 @@
     border-radius: 50%;
     background: var(--ion-color-danger);
     vertical-align: middle;
+  }
+
+  // The legal pages and the community links in one line, as at the bottom of
+  // the former side menu. The privacy notice stays one tap away from the
+  // profile tab.
+  .hub-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--bq-space-1);
+    margin-top: var(--bq-space-6);
+
+    ion-button {
+      height: var(--bq-touch-target);
+      min-width: var(--bq-touch-target);
+      margin: 0;
+      font-size: var(--bq-type-caption);
+      text-transform: none;
+      --padding-start: var(--bq-space-2);
+      --padding-end: var(--bq-space-2);
+      --color: var(--bq-text-link);
+    }
+
+    // The icon follows the button colour instead of the faint global icon
+    // colour, so it keeps 3:1 against the page.
+    .social-link {
+      --color: var(--bq-text-secondary);
+
+      ion-icon {
+        color: inherit;
+      }
+    }
   }
 }

@@ -7,6 +7,10 @@ import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
 import { Water } from '../../../classes/water/water';
+import LINK_TRACKING from '../../../data/tracking/linkTracking';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIHelper } from '../../../services/uiHelper';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -27,6 +31,8 @@ describe('ProfilePage', () => {
   let preparations: Preparation[];
   let mills: Mill[];
   let waters: Water[];
+  let trackEvent: jasmine.Spy;
+  let openExternalWebpage: jasmine.Spy;
   let events: Record<
     'settings' | 'preparations' | 'mills' | 'waters',
     Subject<unknown>
@@ -37,6 +43,8 @@ describe('ProfilePage', () => {
     preparations = [];
     mills = [];
     waters = [];
+    trackEvent = jasmine.createSpy('trackEvent');
+    openExternalWebpage = jasmine.createSpy('openExternalWebpage');
     events = {
       settings: new Subject(),
       preparations: new Subject(),
@@ -49,6 +57,8 @@ describe('ProfilePage', () => {
     TestBed.overrideTemplate(ProfilePage, '');
     TestBed.configureTestingModule({
       providers: [
+        { provide: UIAnalytics, useValue: { trackEvent } },
+        { provide: UIHelper, useValue: { openExternalWebpage } },
         {
           provide: UISettingsStorage,
           useValue: {
@@ -157,6 +167,88 @@ describe('ProfilePage', () => {
     settings.show_water_section = false;
     events.settings.next(undefined);
     expect(page.waterSectionVisible).toBeFalse();
+  });
+
+  function sanremoYou(): Preparation {
+    const preparation = new Preparation();
+    preparation.type = PREPARATION_TYPES.SANREMO_YOU;
+    return preparation;
+  }
+
+  it('lists the barista mode while an active Sanremo YOU method exists', () => {
+    preparations = [new Preparation(), archived(sanremoYou())];
+    const page = open().componentInstance;
+    expect(page.baristaMode).toBeUndefined();
+
+    preparations.push(sanremoYou());
+    events.preparations.next(undefined);
+    expect(page.baristaMode?.link).toBe('/baristamode');
+
+    archived(preparations[2]);
+    events.preparations.next(undefined);
+    expect(page.baristaMode).toBeUndefined();
+  });
+
+  it('lists graphs and roasting only while they are switched on, after the fixed sections', () => {
+    const page = open().componentInstance;
+    const fixed = [
+      '/statistic',
+      '/brew-parameter',
+      '/bean-parameter',
+      '/helper',
+    ];
+    expect(page.sections.map((entry) => entry.link)).toEqual(fixed);
+
+    settings.show_graph_section = true;
+    settings.show_roasting_section = true;
+    events.settings.next(undefined);
+    expect(page.sections.map((entry) => entry.link)).toEqual([
+      ...fixed,
+      '/graph-section',
+      '/roasting-section',
+    ]);
+
+    settings.show_graph_section = false;
+    events.settings.next(undefined);
+    expect(page.sections.map((entry) => entry.link)).toEqual([
+      ...fixed,
+      '/roasting-section',
+    ]);
+  });
+
+  it('only uses entry texts that exist in English', () => {
+    preparations = [sanremoYou()];
+    settings.show_graph_section = true;
+    settings.show_roasting_section = true;
+    const page = open().componentInstance;
+
+    const texts: Record<string, unknown> = en;
+    for (const entry of [
+      page.baristaMode,
+      ...page.sections,
+      ...page.appEntries,
+    ]) {
+      for (const key of [entry.title, entry.description]) {
+        expect(typeof texts[key])
+          .withContext(key)
+          .toBe('string');
+      }
+    }
+  });
+
+  it('opens a community link in the browser and counts the click', () => {
+    const page = open().componentInstance;
+    const discord = page.socialLinks.find((link) => link.name === 'Discord');
+
+    page.openSocialLink(discord);
+
+    expect(trackEvent).toHaveBeenCalledWith(
+      LINK_TRACKING.TITLE,
+      LINK_TRACKING.ACTIONS.DISCORD,
+    );
+    expect(openExternalWebpage).toHaveBeenCalledWith(
+      'https://discord.gg/vDzA5dZjG8',
+    );
   });
 
   it('updates a count when its section changes', () => {
