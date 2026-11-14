@@ -341,6 +341,18 @@ describe('typed storage normalization', () => {
     });
   });
 
+  it('hands out the stored bean entries, not the beans built from them', async () => {
+    const stored = { name: 'Stored', config: { uuid: 'a' } };
+    mockUIStorage.getOrFail.and.resolveTo([stored]);
+    const storage = await read(
+      TestBed.runInInjectionContext(() => new UIBeanStorage()),
+    );
+
+    expect(storage.getAllEntries()[0]).toBeInstanceOf(Bean);
+    expect(storage.getRawEntries()).toEqual([stored]);
+    expect(storage.getRawEntries()[0]).not.toBeInstanceOf(Bean);
+  });
+
   it('normalizes bean numeric fields added through add or addAndConfirm', async () => {
     const storage = await read(
       TestBed.runInInjectionContext(() => new UIBeanStorage()),

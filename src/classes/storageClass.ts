@@ -259,6 +259,16 @@ export abstract class StorageClass {
   }
 
   /**
+   * The entries in their stored form and order, for the stores: not the
+   * class instances that typed storages build in `getAllEntries()`. It is the
+   * array this class keeps, not a copy, so neither it nor an entry may be
+   * changed through it. Empty while the collection is being read.
+   */
+  public getRawEntries(): readonly unknown[] {
+    return this.storedData;
+  }
+
+  /**
    * Replaces the stored entry with the same uuid.
    *
    * For change tracked collections the change info is set as well: by
