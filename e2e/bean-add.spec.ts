@@ -6,6 +6,7 @@ import {
   beanCardValue,
   beanField,
   beanSegment,
+  dialogsClosed,
   openAddBean,
   saveBean,
   searchBeans,
@@ -39,7 +40,7 @@ test('a bean cannot be saved without a name', async ({ page }) => {
   );
 
   await page.getByRole('button', { name: 'Cancel' }).click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await dialogsClosed(page);
   expect(await storedBeans(page)).toHaveLength(14);
 });
 

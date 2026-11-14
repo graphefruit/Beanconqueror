@@ -8,6 +8,7 @@ import {
   beanField,
   beanNames,
   beanSegment,
+  dialogsClosed,
   LIST_HEIGHT_ERROR,
   longPress,
   saveBean,
@@ -90,7 +91,7 @@ test('cancelling an edit keeps the stored bean without asking', async ({
   await beanField(page, /^Name/).fill('Verworfen');
   await page.getByRole('button', { name: 'Cancel' }).click();
 
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await dialogsClosed(page);
   await expect(page.getByRole('alertdialog')).toHaveCount(0);
   await expect(beanCard(page, BEANS.alpha)).toBeVisible();
   expect(await storedBeans(page)).toEqual(data.BEANS);
@@ -107,7 +108,7 @@ test.describe('with the safety question for unsaved changes switched on', () => 
 
     // Nothing changed: no question.
     await page.getByRole('button', { name: 'Cancel' }).click();
-    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await dialogsClosed(page);
 
     await beanAction(page, BEANS.alpha, 'Edit');
     await beanField(page, /^Name/).fill('Verworfen');
@@ -120,7 +121,7 @@ test.describe('with the safety question for unsaved changes switched on', () => 
 
     await page.getByRole('button', { name: 'Cancel' }).click();
     await question.getByRole('button', { name: 'Yes' }).click();
-    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await dialogsClosed(page);
     await expect(beanCard(page, BEANS.alpha)).toBeVisible();
     expect(await storedBeans(page)).toEqual(data.BEANS);
   });
@@ -140,7 +141,7 @@ test.describe('with the safety question for unsaved changes switched on', () => 
 
     await pressHardwareBack(page);
     await question.getByRole('button', { name: 'Yes' }).click();
-    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await dialogsClosed(page);
     expect(await storedBeans(page)).toEqual(data.BEANS);
   });
 });
@@ -150,24 +151,24 @@ test('ticking "Archive?" in the dialog archives the bean without a rating questi
 }) => {
   await startWithBeans(page);
 
-  await beanAction(page, BEANS.small, 'Edit');
+  await beanAction(page, BEANS.ethiopia, 'Edit');
   await page.getByRole('checkbox', { name: 'Archive?' }).click();
   await saveBean(page);
 
   await expect(toast(page, 'Bean has been edited')).toBeVisible();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await dialogsClosed(page);
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
     'Available ( 6 )',
   );
   await expect(beanSegment(page, 'Archive')).toHaveAccessibleName(
     'Archive ( 4 )',
   );
-  expect(await storedBean(page, BEANS.small)).toMatchObject({
+  expect(await storedBean(page, BEANS.ethiopia)).toMatchObject({
     finished: true,
     rating: 0,
   });
 
   await showBeanSegment(page, 'Archive');
-  await expect(beanCard(page, BEANS.small)).toBeVisible();
-  expect(await beanNames(page)).toContain(BEANS.small);
+  await expect(beanCard(page, BEANS.ethiopia)).toBeVisible();
+  expect(await beanNames(page)).toContain(BEANS.ethiopia);
 });

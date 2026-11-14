@@ -3,8 +3,8 @@ import { BEANS } from './support/bean-data';
 import {
   beanCard,
   beanField,
-  beanSegment,
-  searchBeans,
+  dialogsClosed,
+  findBean,
   showTab,
   startWithBeans,
   storedBean,
@@ -23,7 +23,7 @@ test('a tap on a card shows the details of the bean on three tabs', async ({
 }) => {
   await startWithBeans(page);
 
-  await beanCard(page, BEANS.blend).getByText(BEANS.blend).click();
+  await (await findBean(page, BEANS.blend)).getByText(BEANS.blend).click();
   await expect(page.getByRole('heading', { name: BEANS.blend })).toBeVisible();
 
   // Brews, usage, age and the favourite mark of the card are not shown here.
@@ -104,7 +104,7 @@ test('a tap on a card shows the details of the bean on three tabs', async ({
   await expect(page.getByRole('heading', { name: 'Country:' })).toHaveCount(3);
 
   await page.getByRole('button', { name: 'Cancel' }).click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await dialogsClosed(page);
 });
 
 test('the details of a frozen bean show when it was frozen', async ({
@@ -112,13 +112,7 @@ test('the details of a frozen bean show when it was frozen', async ({
 }) => {
   await startWithBeans(page);
 
-  // The list only renders the cards near the screen; the search brings the
-  // bean up.
-  await searchBeans(page, 'Theta');
-  await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 1 / 7 )',
-  );
-  await beanCard(page, BEANS.thawed).getByText(BEANS.thawed).click();
+  await (await findBean(page, BEANS.thawed)).getByText(BEANS.thawed).click();
   await expect(page.getByRole('heading', { name: BEANS.thawed })).toBeVisible();
   await showTab(page.getByRole('tab', { name: 'Frozen information' }));
 
@@ -144,7 +138,7 @@ test('a bean edited from its details is shown with the new values', async ({
   page,
 }) => {
   await startWithBeans(page);
-  await beanCard(page, BEANS.blend).getByText(BEANS.blend).click();
+  await (await findBean(page, 'Gamma')).getByText(BEANS.blend).click();
   await expect(page.getByRole('heading', { name: BEANS.blend })).toBeVisible();
 
   await page.getByRole('button', { name: 'Edit bean' }).click();
@@ -163,6 +157,6 @@ test('a bean edited from its details is shown with the new values', async ({
 
   await expect(page.getByRole('button', { name: 'Save' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Cancel' }).click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await dialogsClosed(page);
   await expect(beanCard(page, 'Gamma Neu')).toBeVisible();
 });

@@ -5,6 +5,7 @@ import {
   beanCard,
   beanCards,
   beanSegment,
+  dialogsClosed,
   LIST_HEIGHT_ERROR,
   NO_BEAN_FILTER,
   openBeansTab,
@@ -56,7 +57,7 @@ test('a bean is archived with a rating and a note and can be brought back', asyn
   await page.getByRole('button', { name: 'Archive', exact: true }).click();
 
   await expect(toast(page, 'Bean has been archived')).toBeVisible();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await dialogsClosed(page);
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
     'Available ( 6 )',
   );
@@ -119,7 +120,7 @@ test('opening the archive dialog resets the filters of all segments, even when i
   await beanAction(page, BEANS.alpha, 'Archive');
   await expect(page.getByText('Average Brew Rating')).toBeVisible();
   await page.getByRole('button', { name: 'Cancel' }).click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await dialogsClosed(page);
 
   expect((await storedBean(page, BEANS.alpha)).finished).toBe(false);
   // Known defect: the filters are reset although nothing was archived.
