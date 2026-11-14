@@ -95,6 +95,7 @@ import {
   expandLiveAxisRangeForSample,
   GraphHelperService,
 } from '../../../services/graphHelper/graph-helper.service';
+import { loadPlotly } from '../../../services/graphHelper/load-plotly';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
@@ -879,50 +880,53 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         }
       }
 
-      try {
-        if (this.canWePlot()) {
-          Plotly.newPlot(
-            this.profileDiv.nativeElement,
-            this.chartData,
-            this.lastChartLayout,
-            this.getChartConfig(),
-          );
-        }
+      // The traces are set up already, readings arriving meanwhile go there.
+      void loadPlotly().then(() => {
+        try {
+          if (this.canWePlot()) {
+            Plotly.newPlot(
+              this.profileDiv.nativeElement,
+              this.chartData,
+              this.lastChartLayout,
+              this.getChartConfig(),
+            );
+          }
 
-        setTimeout(() => {
-          /** On big tablets, the chart is not resized, so trigger the resize event**/
-          window.dispatchEvent(new Event('resize'));
-          //Do this after the plot.
-          if (
-            this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()
-          ) {
+          setTimeout(() => {
+            /** On big tablets, the chart is not resized, so trigger the resize event**/
+            window.dispatchEvent(new Event('resize'));
+            //Do this after the plot.
             if (
-              this.brewComponent?.brewBrewingPreparationDeviceEl?.hasTargetWeightActive()
+              this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()
             ) {
-              this.drawTargetWeight(
-                this.brewComponent?.brewBrewingPreparationDeviceEl?.getTargetWeight(),
-              );
+              if (
+                this.brewComponent?.brewBrewingPreparationDeviceEl?.hasTargetWeightActive()
+              ) {
+                this.drawTargetWeight(
+                  this.brewComponent?.brewBrewingPreparationDeviceEl?.getTargetWeight(),
+                );
+              }
             }
-          }
-        }, 50);
+          }, 50);
 
-        this.lastChartRenderingInstance = -1;
-        if (this.brewComponent.maximizeFlowGraphIsShown) {
-          //After we don't know how long all scale events take, dispatch the resize event, after the flow component will then grab on and stretch the canva.
-          window.dispatchEvent(new Event('resize'));
-        }
-        setTimeout(() => {
-          if (
-            this.flow_profile_raw.weight.length > 0 ||
-            this.flow_profile_raw.pressureFlow.length > 0 ||
-            this.flow_profile_raw.temperatureFlow.length > 0
-          ) {
-            this.updateChart(true);
+          this.lastChartRenderingInstance = -1;
+          if (this.brewComponent.maximizeFlowGraphIsShown) {
+            //After we don't know how long all scale events take, dispatch the resize event, after the flow component will then grab on and stretch the canva.
+            window.dispatchEvent(new Event('resize'));
           }
-        }, 250);
-      } catch (ex) {
-        //
-      }
+          setTimeout(() => {
+            if (
+              this.flow_profile_raw.weight.length > 0 ||
+              this.flow_profile_raw.pressureFlow.length > 0 ||
+              this.flow_profile_raw.temperatureFlow.length > 0
+            ) {
+              this.updateChart(true);
+            }
+          }, 250);
+        } catch (ex) {
+          //
+        }
+      });
     }, timeout);
   }
 

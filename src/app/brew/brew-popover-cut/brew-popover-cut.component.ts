@@ -41,6 +41,7 @@ import { HeaderDismissButtonComponent } from '../../../components/header/header-
 import { HeaderComponent } from '../../../components/header/header.component';
 import { ToFixedPipe } from '../../../pipes/toFixed';
 import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
+import { loadPlotly } from '../../../services/graphHelper/load-plotly';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 declare var Plotly: any;
@@ -104,7 +105,7 @@ export class BrewPopoverCutComponent implements OnInit {
 
   public ionViewDidEnter() {
     setTimeout(() => {
-      this.initializeChart();
+      void this.initializeChart();
     }, 100);
   }
 
@@ -112,7 +113,7 @@ export class BrewPopoverCutComponent implements OnInit {
   @HostListener('window:orientationchange')
   public onOrientationChange() {
     setTimeout(() => {
-      this.initializeChart();
+      void this.initializeChart();
     }, 100);
   }
 
@@ -228,7 +229,7 @@ export class BrewPopoverCutComponent implements OnInit {
     this.newFinalWeight = Math.max(0, Number(endWeight.toFixed(2)));
   }
 
-  public initializeChart() {
+  public async initializeChart() {
     try {
       const el = this.cutChartContent.nativeElement;
       const chartWidth = el.offsetWidth || 300;
@@ -287,6 +288,7 @@ export class BrewPopoverCutComponent implements OnInit {
         displayModeBar: false,
       };
 
+      await loadPlotly();
       Plotly.newPlot('cutChart', chartData, layout, config);
       this.updateChartLines();
     } catch (ex) {

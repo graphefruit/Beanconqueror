@@ -25,6 +25,7 @@ const NEW_CODE = [
   'src/services/deletionJournal/**',
   'src/services/deviceIdentity/**',
   'src/services/documentLanguage/**',
+  'src/services/graphHelper/load-plotly.ts',
   'src/services/preImportBackup/pre-import-backup.service.ts',
   'src/services/tabletLayout/**',
   'src/services/theme/theme-plugins.ts',

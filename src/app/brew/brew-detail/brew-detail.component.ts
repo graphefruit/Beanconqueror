@@ -79,6 +79,7 @@ import { BrewFunction } from '../../../pipes/brew/brewFunction';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { MillFunction } from '../../../pipes/mill/millFunction';
 import { ToFixedPipe } from '../../../pipes/toFixed';
+import { loadPlotly } from '../../../services/graphHelper/load-plotly';
 import { ShareService } from '../../../services/shareService/share-service.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -399,6 +400,7 @@ export class BrewDetailComponent {
   }
 
   public async shareFlowProfile() {
+    await loadPlotly();
     /* const fileShare: string = this.flowProfileChartEl.toBase64Image(
           'image/jpeg',
           1

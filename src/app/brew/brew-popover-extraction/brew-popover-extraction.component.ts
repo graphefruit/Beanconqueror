@@ -23,6 +23,7 @@ import { Preparation } from 'src/classes/preparation/preparation';
 import { PREPARATION_STYLE_TYPE } from 'src/enums/preparations/preparationStyleTypes';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { loadPlotly } from '../../../services/graphHelper/load-plotly';
 
 declare var Plotly;
 
@@ -57,7 +58,7 @@ export class BrewPopoverExtractionComponent implements OnInit {
   public ionViewDidEnter(): void {
     if (this.brew) {
       setTimeout(() => {
-        this.initializeExtractionChart(this.brew.getPreparation());
+        void this.initializeExtractionChart(this.brew.getPreparation());
       }, 50);
     }
   }
@@ -67,12 +68,14 @@ export class BrewPopoverExtractionComponent implements OnInit {
   public onOrientationChange() {
     setTimeout(() => {
       try {
-        this.initializeExtractionChart(this.brew.getPreparation());
+        void this.initializeExtractionChart(this.brew.getPreparation());
       } catch (ex) {}
     }, 50);
   }
 
-  public initializeExtractionChart(preparation: Preparation): void {
+  public async initializeExtractionChart(
+    preparation: Preparation,
+  ): Promise<void> {
     try {
       let extractionChartData = [
         {
@@ -166,6 +169,7 @@ export class BrewPopoverExtractionComponent implements OnInit {
         extractionChartLayout.yaxis.range = [4, 16];
       }
 
+      await loadPlotly();
       Plotly.newPlot(
         'extractionChart',
         extractionChartData,

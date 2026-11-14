@@ -20,6 +20,7 @@ import { MeticulousDevice } from '../../classes/preparationDevice/meticulous/met
 import { Settings } from '../../classes/settings/settings';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { GraphHelperService } from '../../services/graphHelper/graph-helper.service';
+import { loadPlotly } from '../../services/graphHelper/load-plotly';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIHelper } from '../../services/uiHelper';
 
@@ -212,14 +213,16 @@ export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
 
-      Plotly.newPlot(
-        this.profileDiv.nativeElement,
-        chartData,
-        layout,
-        this.getChartConfig(),
-      );
-      this.profileDiv.nativeElement.removeAllListeners();
-      this.profileDiv.nativeElement.removeAllListeners('plotly_click');
+      void loadPlotly().then(() => {
+        Plotly.newPlot(
+          this.profileDiv.nativeElement,
+          chartData,
+          layout,
+          this.getChartConfig(),
+        );
+        this.profileDiv.nativeElement.removeAllListeners();
+        this.profileDiv.nativeElement.removeAllListeners('plotly_click');
+      });
     }, 100);
   }
 
