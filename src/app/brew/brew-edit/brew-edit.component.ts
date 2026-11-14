@@ -46,6 +46,7 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -90,6 +91,7 @@ export class BrewEditComponent implements OnInit {
   private readonly uiAlert = inject(UIAlert);
   private readonly visualizerService = inject(VisualizerService);
   private readonly hapticService = inject(HapticService);
+  private readonly uiFileHelper = inject(UIFileHelper);
 
   public static readonly COMPONENT_ID: string = 'brew-edit';
   @ViewChild('brewBrewing', { read: BrewBrewingComponent, static: false })
@@ -234,7 +236,10 @@ export class BrewEditComponent implements OnInit {
       }
     }
 
-    await this.uiBrewStorage.update(this.data);
+    const stored = await this.uiBrewStorage.update(this.data);
+    if (stored) {
+      await this.deleteUnreferencedFlowProfile();
+    }
 
     void this.uiPreparationHelper.doMachineSpecificSyncs(this.data);
 
@@ -266,6 +271,23 @@ export class BrewEditComponent implements OnInit {
     );
     this.dismiss();
   }
+  /**
+   * Removes the graph file the brew had when editing started, once the
+   * stored brew no longer refers to it. Runs only after the brew was stored,
+   * so a failure leaves a file too many and not a brew without its file.
+   */
+  private async deleteUnreferencedFlowProfile(): Promise<void> {
+    const storedFlowProfile = this.brew?.flow_profile;
+    if (!storedFlowProfile || storedFlowProfile === this.data.flow_profile) {
+      return;
+    }
+    try {
+      await this.uiFileHelper.deleteInternalFile(storedFlowProfile);
+    } catch {
+      // The brew is stored; a file that is left over does no harm.
+    }
+  }
+
   public async popoverActionsBrew() {
     const popover = await this.modalController.create({
       component: SettingsPopoverBluetoothActionsComponent,

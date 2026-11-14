@@ -1670,7 +1670,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
 
       if (this.isEdit) {
-        await this.deleteFlowProfile();
+        // The file of the stored brew stays until the brew is saved, so
+        // that leaving the form without saving keeps its graph.
         this.data.flow_profile = '';
 
         //Check if we have an reference flow, and when reset, preset it again
@@ -3727,16 +3728,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       const jsonParsed =
         await this.uiFileHelper.readInternalJSONFile(flowProfilePath);
       this.flow_profile_raw = jsonParsed;
-    } catch (ex) {}
-  }
-
-  private async deleteFlowProfile() {
-    try {
-      if (this.data.flow_profile !== '') {
-        const flowProfilePath =
-          'brews/' + this.data.config.uuid + '_flow_profile.json';
-        await this.uiFileHelper.deleteInternalFile(flowProfilePath);
-      }
     } catch (ex) {}
   }
 
