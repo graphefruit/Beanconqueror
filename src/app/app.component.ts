@@ -643,19 +643,13 @@ export class AppComponent implements AfterViewInit {
     this.__attachOnDevicePause();
     this.__attachOnDeviceResume();
 
-    /**If Anything changes, we reset**/
-    this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
-      BrewInstanceHelper.setEntryAmountBackToZero();
-    });
-    this.uiBeanStorage.attachOnEvent().subscribe((_val) => {
-      BrewInstanceHelper.setEntryAmountBackToZero();
-    });
-    this.uiPreparationStorage.attachOnEvent().subscribe((_val) => {
-      BrewInstanceHelper.setEntryAmountBackToZero();
-    });
-    this.uiMillStorage.attachOnEvent().subscribe((_val) => {
-      BrewInstanceHelper.setEntryAmountBackToZero();
-    });
+    BrewInstanceHelper.forgetOnChange(this.uiBeanStorage, 'beans');
+    BrewInstanceHelper.forgetOnChange(this.uiMillStorage, 'mills');
+    BrewInstanceHelper.forgetOnChange(
+      this.uiPreparationStorage,
+      'preparations',
+    );
+    BrewInstanceHelper.forgetOnChange(this.uiWaterStorage, 'waters');
 
     await this.initialDataTrackings();
   }

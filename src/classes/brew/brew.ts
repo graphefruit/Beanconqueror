@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { Subscription } from 'rxjs';
 
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
@@ -25,11 +26,18 @@ import { Mill } from '../mill/mill';
 import { Config } from '../objectConfig/objectConfig';
 import { Preparation } from '../preparation/preparation';
 import { PreparationTool } from '../preparation/preparationTool';
+import type { StorageClass } from '../storageClass';
 import { Water } from '../water/water';
 import { CustomInformationBrew } from './customInformationBrew';
 import { PreparationDeviceBrew } from './preparationDeviceBrew';
 import { ReferenceGraph } from './referenceGraph';
 
+type BrewRelatedCache = 'preparations' | 'mills' | 'beans' | 'waters';
+
+/**
+ * The bean, mill, preparation and water objects of the brews, one per uuid
+ * and shared by all brews that use it.
+ */
 export class BrewInstanceHelper {
   constructor() {}
 
@@ -43,6 +51,24 @@ export class BrewInstanceHelper {
     this.mills = {};
     this.beans = {};
     this.waters = {};
+  }
+
+  /**
+   * Drops the cached objects a change of the storage concerns: the entry an
+   * event names, or the whole collection for events without one (delete,
+   * read again).
+   */
+  public static forgetOnChange(
+    _storage: StorageClass,
+    _cache: BrewRelatedCache,
+  ): Subscription {
+    return _storage.attachOnEvent().subscribe((_event) => {
+      if (_event?.uuid === undefined) {
+        this[_cache] = {};
+      } else {
+        delete this[_cache][_event.uuid];
+      }
+    });
   }
 }
 export class Brew implements IBrew {
@@ -227,7 +253,7 @@ export class Brew implements IBrew {
   }
 
   public getBean(): Bean {
-    const uniqueCachingID = this.config.uuid + '-' + this.bean;
+    const uniqueCachingID = this.bean;
     if (
       BrewInstanceHelper.beans[uniqueCachingID] === undefined ||
       BrewInstanceHelper.beans[uniqueCachingID].config.uuid !== this.bean
@@ -245,7 +271,7 @@ export class Brew implements IBrew {
   /**We do this, else we get called all day and have performance downtimes **/
 
   public getPreparation(): Preparation {
-    const uniqueCachingID = this.config.uuid + '-' + this.method_of_preparation;
+    const uniqueCachingID = this.method_of_preparation;
     if (
       BrewInstanceHelper.preparations[uniqueCachingID] === undefined ||
       BrewInstanceHelper.preparations[uniqueCachingID].config.uuid !==
@@ -265,7 +291,7 @@ export class Brew implements IBrew {
   }
 
   public getMill(): Mill {
-    const uniqueCachingID = this.config.uuid + '-' + this.mill;
+    const uniqueCachingID = this.mill;
     if (
       BrewInstanceHelper.mills[uniqueCachingID] === undefined ||
       BrewInstanceHelper.mills[uniqueCachingID].config.uuid !== this.mill
@@ -281,7 +307,7 @@ export class Brew implements IBrew {
   }
 
   public getWater(): Water {
-    const uniqueCachingID = this.config.uuid + '-' + this.water;
+    const uniqueCachingID = this.water;
     if (
       BrewInstanceHelper.waters[uniqueCachingID] === undefined ||
       BrewInstanceHelper.waters[uniqueCachingID].config.uuid !== this.water

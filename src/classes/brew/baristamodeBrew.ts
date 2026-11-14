@@ -263,7 +263,7 @@ class BaristamodeBrew implements IBaristamodeBrew {
   }
 
   public getPreparation(): Preparation {
-    const uniqueCachingID = this.config.uuid + '-' + this.method_of_preparation;
+    const uniqueCachingID = this.method_of_preparation;
     if (
       BrewInstanceHelper.preparations[uniqueCachingID] === undefined ||
       BrewInstanceHelper.preparations[uniqueCachingID].config.uuid !==
