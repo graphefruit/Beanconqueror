@@ -136,6 +136,10 @@ function createDeviceDatabase(
         data.delete(key);
         return Promise.resolve();
       },
+      clear: () => {
+        data.clear();
+        return Promise.resolve();
+      },
       get: (key: string) =>
         Promise.resolve(data.has(key) ? structuredClone(data.get(key)) : null),
       forEach: (cb: (value: unknown, key: string, i: number) => void) => {
@@ -1495,6 +1499,41 @@ describe('The collections counted by the check at start-up', () => {
     expect(reads.calls.allArgs()).toEqual([['BREWS'], ['BEANS']]);
   });
 
+  it('are read again once the database was cleared', async () => {
+    const { reads, uiStorage } = await startChecked(completeData('own'));
+
+    await uiStorage.clearStorage();
+
+    expect(await uiStorage.getOrFail('BREWS')).toBeNull();
+    expect(reads.calls.allArgs()).toEqual([['BREWS']]);
+  });
+
+  it('are read again while an import is writing', async () => {
+    const stored = completeData('own');
+    const { device, reads, uiStorage } = await startChecked(stored);
+    const set = device.database.set;
+    let writing: () => void;
+    const written = new Promise<void>((_resolve) => (writing = _resolve));
+    let release: () => void;
+    const released = new Promise<void>((_resolve) => (release = _resolve));
+    spyOn(device.database, 'set').and.callFake(async (_key, _value) => {
+      writing();
+      await released;
+      return set(_key, _value);
+    });
+
+    const importing = uiStorage.import({
+      SETTINGS: [{ language: 'en' }],
+      BREWS: entries('brew', 3),
+    });
+    await written;
+
+    expect(await uiStorage.getOrFail('BEANS')).toEqual(stored.BEANS);
+    expect(reads.calls.allArgs()).toEqual([['BEANS']]);
+    release();
+    await importing;
+  });
+
   it('are read again once the internal backup was restored', async () => {
     const backup = completeData('backup');
     backup.BREWS = imported(entries('backup-brew', 5));
@@ -1522,6 +1561,31 @@ describe('The collections counted by the check at start-up', () => {
       stored.BREWS,
     );
     expect(reads).toHaveBeenCalledTimes(1);
+  });
+
+  it('are not kept when reading the database fails after some of them', async () => {
+    const stored = completeData('own');
+    const device = await startDevice(stored, {
+      internalBackup: await backupFileOf(stored),
+    });
+    const forEach = device.database.forEach;
+    let failed = false;
+    spyOn(device.database, 'forEach').and.callFake((_callback) => {
+      if (failed) {
+        return forEach(_callback);
+      }
+      failed = true;
+      _callback(structuredClone(stored.BREWS), 'BREWS', 0);
+      _callback(structuredClone(stored.BEANS), 'BEANS', 1);
+      return Promise.reject(new Error('read failed'));
+    });
+    await device.helper.checkBackup();
+    const reads = spyOn(device.database, 'get').and.callThrough();
+    const uiStorage = TestBed.inject(UIStorage);
+
+    expect(await uiStorage.getOrFail('BREWS')).toEqual(stored.BREWS);
+    expect(await uiStorage.getOrFail('BEANS')).toEqual(stored.BEANS);
+    expect(reads.calls.allArgs()).toEqual([['BREWS'], ['BEANS']]);
   });
 });
 
