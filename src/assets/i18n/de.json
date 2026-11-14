@@ -1546,7 +1546,6 @@
     "PRE_IMPORT_BACKUP_HINT": "Deine aktuellen Daten werden vorher im App-Ordner „pre-import“ gesichert und lassen sich über „Suchen und Importieren einer automatischen Sicherungsdatei“ wieder importieren.",
     "PRE_IMPORT_BACKUP_HINT_BROWSER": "Im Browser wird vorher keine Sicherung deiner aktuellen Daten angelegt.",
     "PRE_IMPORT_BACKUP_FAILED": "Es wurde nichts importiert: Deine aktuellen Daten konnten vorher nicht gesichert werden. Bitte prüfe den freien Speicherplatz und versuche es erneut.",
-    "IMPORT_DATA_NOT_LOADED_RESTART_NEEDED": "Die Daten wurden importiert, konnten aber nicht geladen werden. Bitte beende die App vollständig und starte sie neu.",
     "DATABASE_NOT_READ_DESCRIPTION": "Deine Daten konnten nicht gelesen werden. Bitte beende die App vollständig und starte sie neu, das hilft meistens. Hilft das nicht, kannst du eine Sicherung zum Importieren auswählen. Die oberste, Beanconqueror.zip, enthält normalerweise den neuesten Stand. Die aktuellen Daten können nicht gelesen und deshalb nicht vorher gesichert werden.",
     "CHOOSE_BACKUP": "Sicherung auswählen",
     "STORAGE_NOT_READ_NOTHING_SAVED": "Deine Änderung wurde nicht gespeichert, weil deine Daten nicht geladen werden konnten. Bitte beende die App vollständig und starte sie neu.",

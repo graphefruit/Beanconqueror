@@ -29,18 +29,6 @@ export interface StorageWriteOptions {
   touch?: boolean;
 }
 
-/**
- * Collections that could not be read again after the stored data was
- * replaced, for example by an import. The stored data is the new one, but
- * these collections hold none of it and refuse every write.
- */
-export class StorageReloadError extends Error {
-  public constructor(public readonly collections: string[]) {
-    super(`Storage - could not be read again: ${collections.join(', ')}`);
-    this.name = 'StorageReloadError';
-  }
-}
-
 export abstract class StorageClass {
   protected uiStorage = inject(UIStorage);
   protected uiLog = inject(UILog);
@@ -53,20 +41,18 @@ export abstract class StorageClass {
   protected storedData: Array<any> = [];
 
   /**
-   * -1 = Nothing started
+   * -1 = Nothing started, or being read
    * 0 = Error occured
    * 1 = Initialized
+   *
+   * Only an initialized collection is written: `storedData` is empty
+   * otherwise, but the stored entries are not known to be, and every write
+   * stores the whole collection, so a write would replace them.
    */
   private isInitialized: number = -1;
 
-  /**
-   * Why the collection must not be written, if so: its stored entries were
-   * not read yet, are being read, or could not be read. `storedData` is
-   * empty then, but the stored entries are not known to be, and every write
-   * stores the whole collection, so a write would replace them.
-   */
-  private writeBlock: 'not-read' | 'reading' | 'read-failed' | undefined =
-    'not-read';
+  /** One message about refused writes is enough, the remedy is a restart. */
+  private static refusedWriteReported = false;
 
   protected constructor(protected dbPath: string) {
     this.DB_PATH = dbPath;
@@ -133,28 +119,26 @@ export abstract class StorageClass {
   }
 
   /**
-   * Refuses a write while the stored entries are not known (`writeBlock`):
-   * logs it, tells the user and resolves true. Nothing is changed then, in
-   * memory or stored, and no event is sent.
+   * Refuses a write while the collection is not initialized: logs it, tells
+   * the user once and resolves true. Nothing is changed then, in memory or
+   * stored, and no event is sent.
    */
   private async __refusesWrite(_action: string): Promise<boolean> {
-    if (this.writeBlock === undefined) {
+    if (this.isInitialized === 1) {
       return false;
     }
-    const reasons = {
-      'not-read': 'the stored entries were not read yet',
-      reading: 'the stored entries are still being read',
-      'read-failed': 'the stored entries could not be read',
-    };
     this.uiLog.error(
-      `Storage - ${_action} - Unsuccessfully - ${this.DB_PATH} - ${reasons[this.writeBlock]}, nothing was saved`,
+      `Storage - ${_action} - Unsuccessfully - ${this.DB_PATH} - not initialized (${this.isInitialized}), nothing was saved`,
     );
-    await this.showAlertSafely(
-      'STORAGE_NOT_READ_NOTHING_SAVED',
-      undefined,
-      undefined,
-      true,
-    );
+    if (!StorageClass.refusedWriteReported) {
+      StorageClass.refusedWriteReported = true;
+      await this.showAlertSafely(
+        'STORAGE_NOT_READ_NOTHING_SAVED',
+        undefined,
+        undefined,
+        true,
+      );
+    }
     return true;
   }
 
@@ -434,13 +418,12 @@ export abstract class StorageClass {
   /**
    * Reads the stored entries. A collection that could not be read is not an
    * empty one: this rejects, storageReady() rejects, and the collection
-   * refuses every write until it was read (see `writeBlock`), so the stored
+   * refuses every write until it was read (see `isInitialized`), so the stored
    * entries are never replaced by entries added to an empty list.
    */
   protected async __initializeStorage() {
     this.storedData = [];
     this.isInitialized = -1;
-    this.writeBlock = 'reading';
     const promise = new Promise((resolve, reject) => {
       this.uiLog.log(`Initialize Storage - ${this.DB_PATH}`);
       this.uiStorage.getOrFail(this.DB_PATH).then(
@@ -461,7 +444,6 @@ export abstract class StorageClass {
             this.storedData = _data;
             this.isInitialized = 1;
           }
-          this.writeBlock = undefined;
           this.__forgetExistingDeletions();
           resolve(undefined);
         },
@@ -473,7 +455,6 @@ export abstract class StorageClass {
           );
           this.storedData = [];
           this.isInitialized = 0;
-          this.writeBlock = 'read-failed';
           reject();
         },
       );

@@ -2,10 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
-import {
-  StorageClass,
-  StorageReloadError,
-} from '../../../classes/storageClass';
+import { StorageClass } from '../../../classes/storageClass';
 import { PreImportBackupError } from '../../../services/preImportBackup/pre-import-backup.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UILog } from '../../../services/uiLog';
@@ -201,27 +198,6 @@ describe('SettingsPage importing a backup file', () => {
       'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
     );
   });
-
-  it('does not say that no data was changed when the imported data could not be loaded', async () => {
-    const { page, uiAlert } = pageWith({
-      savesBackup: true,
-      choice: 'YES',
-      importBackup: jasmine
-        .createSpy('importBackup')
-        .and.resolveTo({ BACKUP: false }),
-      reinitializeStorage: (_path) =>
-        _path === 'BEANS'
-          ? Promise.reject(new Error('could not be read'))
-          : Promise.resolve(),
-    });
-
-    await page.__importJSON(parsedBackup(), '');
-
-    expect(uiAlert.hideLoadingSpinner).toHaveBeenCalled();
-    expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
-      'IMPORT_DATA_NOT_LOADED_RESTART_NEEDED',
-    );
-  });
 });
 
 describe('SettingsPage loading the collections again after an import', () => {
@@ -260,7 +236,6 @@ describe('SettingsPage loading the collections again after an import', () => {
       database[path] = [entry(`old-${path}`)];
     }
     const unreadable = new Set<string>();
-    const errors: string[] = [];
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
@@ -283,7 +258,7 @@ describe('SettingsPage loading the collections again after an import', () => {
             log: () => undefined,
             info: () => undefined,
             debug: () => undefined,
-            error: (_message: string) => errors.push(_message),
+            error: () => undefined,
           },
         },
       ],
@@ -319,7 +294,6 @@ describe('SettingsPage loading the collections again after an import', () => {
       importData,
       checkUpdate,
       allCollectionsRead,
-      errors,
     };
   }
 
@@ -376,23 +350,15 @@ describe('SettingsPage loading the collections again after an import', () => {
   });
 
   it('keeps the collection that cannot be read unwritten and names it', async () => {
-    const { page, database, unreadable, storages, importData, errors } =
+    const { page, database, unreadable, storages, importData } =
       await pageAfterStart();
     importData();
     unreadable.add('BEANS');
     unreadable.add('WATER');
 
-    const error = await page.__reinitializeStorages().then(
-      () => undefined,
-      (_error: unknown) => _error,
+    await expectAsync(page.__reinitializeStorages()).toBeRejectedWithError(
+      /BEANS, WATER/,
     );
-
-    expect(error).toBeInstanceOf(StorageReloadError);
-    expect((error as StorageReloadError).collections).toEqual([
-      'BEANS',
-      'WATER',
-    ]);
-    expect(errors.some((_line) => _line.includes('BEANS, WATER'))).toBeTrue();
     expect((await storages.BEANS.addAndConfirm({ config: {} })).saved).toBe(
       false,
     );

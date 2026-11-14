@@ -69,7 +69,6 @@ import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
 import { buildWebhookHeaders } from '../../classes/settings/brewByWeightWebhook';
 import { Settings } from '../../classes/settings/settings';
-import { StorageReloadError } from '../../classes/storageClass';
 import { Water } from '../../classes/water/water';
 import { CloudModelPickerComponent } from '../../components/cloud-model-picker/cloud-model-picker.component';
 import { HeaderComponent } from '../../components/header/header.component';
@@ -1779,10 +1778,7 @@ export class SettingsPage {
           this.translate.instant(
             error instanceof PreImportBackupError
               ? 'PRE_IMPORT_BACKUP_FAILED'
-              : error instanceof StorageReloadError
-                ? // The data is imported, but the app does not show it.
-                  'IMPORT_DATA_NOT_LOADED_RESTART_NEEDED'
-                : 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
+              : 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
           ),
         );
       }
@@ -1841,12 +1837,14 @@ export class SettingsPage {
   }
 
   /**
-   * Reads every collection again after the stored data was replaced. Rejects
-   * with a StorageReloadError when one could not be read; the others are
-   * read all the same.
+   * Reads every collection again after the stored data was replaced, also
+   * after one that could not be read: one left with the entries from before
+   * would store them over the new ones with its next write. Rejects when one
+   * could not be read.
    */
   private async __reinitializeStorages(): Promise<any> {
-    const storages = [
+    const notRead: string[] = [];
+    for (const storage of [
       this.uiBeanStorage,
       this.uiPreparationStorage,
       this.uiSettingsStorage,
@@ -1858,22 +1856,15 @@ export class SettingsPage {
       this.uiWaterStorage,
       this.uiGraphStorage,
       this.uiBaristamodeBrewStorage,
-    ];
-    // Not stopped by a collection that cannot be read: one left with the
-    // entries from before would store them over the new ones with its next
-    // write.
-    const notRead: string[] = [];
-    for (const storage of storages) {
-      try {
-        await storage.reinitializeStorage();
-      } catch {
-        notRead.push(storage.getDBPath());
-      }
+    ]) {
+      await storage
+        .reinitializeStorage()
+        .catch(() => notRead.push(storage.getDBPath()));
     }
     if (notRead.length > 0) {
-      const error = new StorageReloadError(notRead);
-      this.uiLog.error(error.message);
-      throw error;
+      throw new Error(
+        `Settings - Import - not read again: ${notRead.join(', ')}`,
+      );
     }
     this.uiExportImportHelper.allCollectionsRead();
 

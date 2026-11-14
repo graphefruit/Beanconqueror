@@ -30,7 +30,7 @@ class FakeStorage extends StorageClass {
     super(_dbPath);
     // Stands in for a collection whose entries were read: the tests set
     // them with setEntries(). One that was not read takes no write.
-    (this as any).writeBlock = undefined;
+    (this as any).isInitialized = 1;
   }
 
   public setEntries(_entries: any[]): void {

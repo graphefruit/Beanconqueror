@@ -451,6 +451,7 @@ describe('A collection that could not be read', () => {
       ],
     });
     spyOn(UIAlert, 'getInstance').and.returnValue({ showMessage } as any);
+    (StorageClass as any).refusedWriteReported = false;
     storage = TestBed.runInInjectionContext(() => new TestStorage());
   });
 
@@ -501,9 +502,9 @@ describe('A collection that could not be read', () => {
     );
   });
 
-  it('names each write it did not make and does not look for the entry', async () => {
+  it('names each write it did not make, tells the user once and does not look for the entry', async () => {
     await storage.initializeStorage().catch(() => undefined);
-    const reason = 'BEANS - the stored entries could not be read';
+    const reason = 'BEANS - not initialized (0)';
 
     await storage.update(stored()[0]);
     await storage.removeByUUID('stored-1');
@@ -518,7 +519,7 @@ describe('A collection that could not be read', () => {
     }
     expect(log.lines.some((_line) => _line.includes('not found'))).toBeFalse();
     expect(log.lines).not.toContain('Storage - Delete - Unsuccessfully');
-    expect(showMessage).toHaveBeenCalledTimes(3);
+    expect(showMessage).toHaveBeenCalledTimes(1);
   });
 
   it('does not replace the stored entries when it was never read', async () => {
@@ -533,7 +534,7 @@ describe('A collection that could not be read', () => {
     expect(uiStorage.set).not.toHaveBeenCalled();
     expect(database.BEANS).toEqual(stored());
     expect(log.lines).toContain(
-      'Storage - Add - Unsuccessfully - BEANS - the stored entries were not read yet, nothing was saved',
+      'Storage - Add - Unsuccessfully - BEANS - not initialized (-1), nothing was saved',
     );
   });
 
