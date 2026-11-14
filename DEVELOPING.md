@@ -246,6 +246,64 @@ Measure the same flows there:
    `brewChartsWork`. The 250 ms before the export download only exists in the web build, so
    compare the export with `work` in the `export` line.
 
+### Device tests
+
+`pnpm e2e:device` measures start, lists, saving a brew, export and import automatically on a
+phone connected over ADB (`e2e/device/`, `playwright.device.config.ts`). It is not part of
+`pnpm e2e`: the specs end in `.device.ts`. Use a phone without personal Beanconqueror data: the
+run deletes the app's data.
+
+1. Enable USB debugging, connect the phone (`adb devices`; with several devices set
+   `ANDROID_SERIAL`), unlock it and keep the screen on during the run. Behind the lock screen the
+   WebView draws nothing, so the run stops with a message when the app is behind it.
+2. Build the debug app with the production web bundle (needs JDK 21 as `JAVA_HOME` and the
+   Android SDK):
+
+   ```shell
+   pnpm e2e:device:build
+   ```
+
+3. Run the measurements (several minutes; `ANDROID_HOME` or `ADB` must point to `adb`), then
+   remove the app again:
+
+   ```shell
+   pnpm e2e:device | grep '^DEVICE'
+   DEVICE_TIERS=7000 DEVICE_RUNS=3 pnpm e2e:device   # one data set, three runs
+   adb uninstall com.beanconqueror.app
+   ```
+
+How it works:
+
+- The run installs `android/app/build/outputs/apk/debug/app-debug.apk` (`DEVICE_APK` for another
+  file) and touches only the package `com.beanconqueror.app`.
+- Playwright connects to the app's WebView with `chromium.connectOverCDP`: debug builds open the
+  DevTools socket `webview_devtools_remote_<pid>`, which `adb forward` makes the local port
+  `DEVICE_CDP_PORT` (default 9333). Playwright's experimental `_android` API is not used: it
+  installs driver apps of its own on the phone.
+- Per data set (`DEVICE_TIERS`, default 0, 7,000 and 15,000 synthetic brews, each with 1,000
+  beans) the app's data is deleted, the data set is written into the running app's IndexedDB as
+  in `e2e/support/seed.ts`, and the app is stopped. The generated backup ZIP is copied into the
+  app's external files directory for the import.
+- Each run (`DEVICE_RUNS`, default 5) starts the app cold twice (`am force-stop`, caches kept):
+  start, memory, brew list and saving a new brew; then start, bean list, export and import. The
+  import puts the data set back for the next run.
+- The app is already running when the test connects, so the recording of `e2e/perf/perf.ts` is
+  installed right after connecting, and times come from the page's clock as in `pnpm e2e:perf`.
+  The start counts from the WebView's navigation start (`visible`, like `startVisible` in the
+  budgets) and from `am start` (`fromLaunch`, device clock, including the native start and the
+  splash screen). `shownOnConnect: true` means the home screen was complete before the test
+  connected; that value is too late.
+- The test answers two native dialogs, so the flows run without a person: the share sheet after
+  the export (the export counts until the app opens it, like the download in the browser) and the
+  file picker of the import (it returns the copied ZIP). Storage, file system and the other
+  plugins are the real ones.
+- "Save brew" counts until the transaction that writes the brews has completed (`written`) and
+  until the form has closed (`closed`). Memory is `dumpsys meminfo` of the app process and of its
+  WebView renderer (a separate process) plus the JavaScript heap; storage is the size of the
+  WebView's IndexedDB directory and of all private app data (`run-as`).
+- Every value is printed as a `DEVICE {…}` line. No budget is checked: the budgets are set for the
+  throttled browser.
+
 ## Building and Running Beanconqueror
 
 You can perform most development work in a browser instead of running on Android or iOS.

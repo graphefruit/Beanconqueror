@@ -14,6 +14,7 @@
   "include": [
     "./**/*.ts",
     "../playwright.config.ts",
-    "../playwright.perf.config.ts"
+    "../playwright.perf.config.ts",
+    "../playwright.device.config.ts"
   ]
 }

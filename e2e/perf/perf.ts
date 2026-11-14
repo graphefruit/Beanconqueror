@@ -51,71 +51,77 @@ export interface PerfWindow {
  * before the app on every navigation.
  */
 export async function installPerfObserver(page: Page): Promise<void> {
-  await page.addInitScript(() => {
-    const requestFrame = window.requestAnimationFrame.bind(window);
-    const setTimer = window.setTimeout.bind(window);
-    const perf: PerfWindow['__perf'] = {
-      longTasks: [],
-      lastInput: 0,
-      downloads: [],
-      canvasDraws: new WeakMap(),
-      nextFrame: () => new Promise((resolve) => requestFrame(resolve)),
-      sleep: (ms) => new Promise((resolve) => setTimer(resolve, ms)),
-    };
-    (window as unknown as PerfWindow).__perf = perf;
-    new PerformanceObserver((list) => {
-      for (const entry of list.getEntries()) {
-        perf.longTasks.push({
-          start: entry.startTime,
-          end: entry.startTime + entry.duration,
-        });
-      }
-    }).observe({ type: 'longtask', buffered: true });
-    // Chart.js paints its charts with these calls, frame by frame while a chart animates.
-    const context = CanvasRenderingContext2D.prototype as unknown as Record<
-      string,
-      (this: CanvasRenderingContext2D, ...args: unknown[]) => unknown
-    >;
-    for (const name of [
-      'fill',
-      'stroke',
-      'fillRect',
-      'strokeRect',
-      'fillText',
-      'strokeText',
-      'drawImage',
-    ]) {
-      const paint = context[name];
-      context[name] = function (...args) {
-        const now = performance.now();
-        const draws = perf.canvasDraws.get(this.canvas);
-        if (draws) {
-          draws.last = now;
-        } else {
-          perf.canvasDraws.set(this.canvas, { first: now, last: now });
-        }
-        return paint.apply(this, args);
-      };
+  await page.addInitScript(observePerf);
+}
+
+/**
+ * The recording of `installPerfObserver`, runs in the page. On a device the app is already running
+ * when the test connects, so the device tests run it with `page.evaluate` instead.
+ */
+export function observePerf(): void {
+  const requestFrame = window.requestAnimationFrame.bind(window);
+  const setTimer = window.setTimeout.bind(window);
+  const perf: PerfWindow['__perf'] = {
+    longTasks: [],
+    lastInput: 0,
+    downloads: [],
+    canvasDraws: new WeakMap(),
+    nextFrame: () => new Promise((resolve) => requestFrame(resolve)),
+    sleep: (ms) => new Promise((resolve) => setTimer(resolve, ms)),
+  };
+  (window as unknown as PerfWindow).__perf = perf;
+  new PerformanceObserver((list) => {
+    for (const entry of list.getEntries()) {
+      perf.longTasks.push({
+        start: entry.startTime,
+        end: entry.startTime + entry.duration,
+      });
     }
-    const mark = () => {
-      perf.lastInput = performance.now();
+  }).observe({ type: 'longtask', buffered: true });
+  // Chart.js paints its charts with these calls, frame by frame while a chart animates.
+  const context = CanvasRenderingContext2D.prototype as unknown as Record<
+    string,
+    (this: CanvasRenderingContext2D, ...args: unknown[]) => unknown
+  >;
+  for (const name of [
+    'fill',
+    'stroke',
+    'fillRect',
+    'strokeRect',
+    'fillText',
+    'strokeText',
+    'drawImage',
+  ]) {
+    const paint = context[name];
+    context[name] = function (...args) {
+      const now = performance.now();
+      const draws = perf.canvasDraws.get(this.canvas);
+      if (draws) {
+        draws.last = now;
+      } else {
+        perf.canvasDraws.set(this.canvas, { first: now, last: now });
+      }
+      return paint.apply(this, args);
     };
-    document.addEventListener('pointerdown', mark, true);
-    document.addEventListener('input', mark, true);
-    // The web build downloads a file by clicking a temporary <a download> in the document.
-    document.addEventListener(
-      'click',
-      (event) => {
-        if (
-          event.target instanceof HTMLAnchorElement &&
-          event.target.hasAttribute('download')
-        ) {
-          perf.downloads.push(performance.now());
-        }
-      },
-      true,
-    );
-  });
+  }
+  const mark = () => {
+    perf.lastInput = performance.now();
+  };
+  document.addEventListener('pointerdown', mark, true);
+  document.addEventListener('input', mark, true);
+  // The web build downloads a file by clicking a temporary <a download> in the document.
+  document.addEventListener(
+    'click',
+    (event) => {
+      if (
+        event.target instanceof HTMLAnchorElement &&
+        event.target.hasAttribute('download')
+      ) {
+        perf.downloads.push(performance.now());
+      }
+    },
+    true,
+  );
 }
 
 export async function throttleCpu(page: Page): Promise<void> {
