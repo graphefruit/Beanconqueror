@@ -39,7 +39,6 @@ import {
 import { UIAlert } from './uiAlert';
 import { UIBrewStorage } from './uiBrewStorage';
 import { UIFileHelper } from './uiFileHelper';
-import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
 import { UISettingsStorage } from './uiSettingsStorage';
 import { UIStorage } from './uiStorage';
@@ -134,7 +133,6 @@ function holdsUnchangedImport(_stored: any, _now: number): boolean {
 export class UIExportImportHelper {
   private readonly uiSettings = inject(UISettingsStorage);
   uiStorage = inject(UIStorage);
-  private readonly uiHelper = inject(UIHelper);
   private readonly uiLog = inject(UILog);
   private readonly platform = inject(Platform);
   private readonly uiFileHelper = inject(UIFileHelper);
@@ -293,7 +291,9 @@ export class UIExportImportHelper {
   public async buildExportZIP(_stored?: any): Promise<Blob> {
     const _data = _stored ?? (await this.uiStorage.export());
 
-    const mainJsonData = this.uiHelper.cloneData(_data);
+    // A shallow copy is enough: keys are only removed from it and values
+    // only replaced, so the values read are never changed.
+    const mainJsonData = { ..._data };
     // Values that belong to this installation never leave it.
     for (const key of LOCAL_ONLY_STORAGE_KEYS) {
       delete mainJsonData?.[key];

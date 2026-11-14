@@ -4,6 +4,10 @@ import { ModalController, Platform } from '@ionic/angular/standalone';
 
 import { BlobReader, ZipReader } from '@zip.js/zip.js';
 
+import {
+  DELETION_JOURNAL_STORAGE_KEY,
+  DEVICE_STORAGE_KEY,
+} from '../../classes/changeTracking/localStorageKeys';
 import { UIAlert } from '../uiAlert';
 import { UIBrewStorage } from '../uiBrewStorage';
 import { UIExportImportHelper } from '../uiExportImportHelper';
@@ -89,5 +93,44 @@ describe('UIExportImportHelper backup round trip', () => {
 
     expect(restored).toEqual(storedData);
     expect(fileNames).toEqual(['Beanconqueror.json']);
+  });
+
+  it('leaves the values it was given as they are and copies none of them', async () => {
+    const settings = {
+      language: 'en',
+      visualizer_password: 'secret',
+      brew_by_weight_webhook: { bearerToken: 'token', url: 'https://x' },
+    };
+    const brews = entries('brew', 1203);
+    const given: Record<string, any> = {
+      BREWS: brews,
+      BEANS: entries('bean', 2),
+      SETTINGS: [settings],
+      [DEVICE_STORAGE_KEY]: { id: 'device' },
+      [DELETION_JOURNAL_STORAGE_KEY]: [{ uuid: 'gone' }],
+    };
+    const before = structuredClone(given);
+    const cloneData = spyOn(TestBed.inject(UIHelper), 'cloneData');
+
+    const zipBlob = await helper.buildExportZIP(given);
+
+    expect(given).toEqual(before);
+    expect(given.BREWS).toBe(brews);
+    expect(given.SETTINGS[0]).toBe(settings);
+    expect(cloneData).not.toHaveBeenCalled();
+    const restored = await helper.getJSONFromZIPArrayBufferContent(
+      await zipBlob.arrayBuffer(),
+    );
+    expect(restored).toEqual({
+      BREWS: before.BREWS,
+      BEANS: before.BEANS,
+      SETTINGS: [
+        {
+          language: 'en',
+          visualizer_password: '',
+          brew_by_weight_webhook: { bearerToken: '', url: 'https://x' },
+        },
+      ],
+    });
   });
 });
