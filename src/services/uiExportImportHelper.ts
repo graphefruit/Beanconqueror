@@ -41,7 +41,7 @@ import { UIBrewStorage } from './uiBrewStorage';
 import { UIFileHelper } from './uiFileHelper';
 import { UILog } from './uiLog';
 import { UISettingsStorage } from './uiSettingsStorage';
-import { UIStorage } from './uiStorage';
+import { StoredValues, UIStorage } from './uiStorage';
 
 const EXPORT_MAIN_FILE_NAME = 'Beanconqueror.json';
 const EXPORT_CHUNKING_CONFIG = [
@@ -218,16 +218,18 @@ export class UIExportImportHelper {
     _fileName?: string,
     _currentDataUnreadable = false,
   ): Promise<{ BACKUP: boolean }> {
-    const written = await this.__writeBackupBeforeImport(
+    const { written, current } = await this.__writeBackupBeforeImport(
       _currentDataUnreadable,
     );
     let completed = false;
     try {
+      // The values the file was written from are the copy to roll back to.
       const result: { BACKUP: boolean } = await this.uiStorage.import(
         _data,
         _source,
         _fileName,
         _currentDataUnreadable,
+        current,
       );
       completed = result?.BACKUP === false;
       return result;
@@ -243,38 +245,39 @@ export class UIExportImportHelper {
   }
 
   /**
-   * Resolves the path of the written file, nothing when none is needed.
-   * Whether there is data to save is decided on the values the file is
-   * written from, so data that cannot be read stops the import instead of
-   * being taken for none.
+   * Resolves the path of the written file, none when none is needed, and
+   * the values read for it. Whether there is data to save is decided on the
+   * values the file is written from, so data that cannot be read stops the
+   * import instead of being taken for none.
    */
   private async __writeBackupBeforeImport(
     _currentDataUnreadable: boolean,
-  ): Promise<string | undefined> {
+  ): Promise<{ written?: string; current?: StoredValues }> {
     if (!this.preImportBackup.isAvailable()) {
       this.uiLog.info(
         'Backup before import - skipped, there is no file system in the browser',
       );
-      return undefined;
+      return {};
     }
     if (_currentDataUnreadable) {
       this.uiLog.error(
         'Backup before import - skipped, the current data could not be read at start-up',
       );
-      return undefined;
+      return {};
     }
     try {
-      const stored = await this.uiStorage.export();
+      const current = await this.uiStorage.readValues();
+      const stored = current.values;
       if (!holdsDataToSave(stored)) {
         this.uiLog.info('Backup before import - skipped, no data stored');
-        return undefined;
+        return { current };
       }
       const written = await this.preImportBackup.write(
         await this.buildExportZIP(stored),
         { unchangedImport: holdsUnchangedImport(stored, Date.now()) },
       );
       this.uiLog.log(`Backup before import - written to ${written}`);
-      return written;
+      return { written, current };
     } catch (ex) {
       this.uiLog.error(
         'Backup before import - could not be written, nothing is imported',

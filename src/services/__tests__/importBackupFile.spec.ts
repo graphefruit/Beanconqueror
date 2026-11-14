@@ -1380,3 +1380,63 @@ describe('The automatic backups', () => {
     );
   });
 });
+
+describe('The copy an import rolls back to', () => {
+  it('is the data read for the backup file, without reading it again', async () => {
+    const before = storedData('own');
+    const device = await startDevice(before);
+    const readAll = spyOn(device.database, 'forEach').and.callThrough();
+    device.failingWrites.add('BREWS');
+
+    const result = await device.helper.importBackup(
+      { SETTINGS: [{ language: 'en' }], BREWS: entries('brew', 3) },
+      'import',
+    );
+
+    expect(result).toEqual({ BACKUP: true });
+    expect(readAll).toHaveBeenCalledTimes(1);
+    expect(Object.fromEntries(device.data)).toEqual(before);
+  });
+
+  it('is read again when something was stored after the backup file was read', async () => {
+    const before = storedData('own');
+    const device = await startDevice(before);
+    const uiStorage = TestBed.inject(UIStorage);
+    const changedBeans = imported(entries('changed-bean', 2));
+    const write = device.directory.files.write;
+    (write as jasmine.Spy).and.callFake(async (_path: string, _zip: Blob) => {
+      await uiStorage.set('BEANS', changedBeans);
+      device.directory.stored.set(_path, _zip);
+    });
+    const readAll = spyOn(device.database, 'forEach').and.callThrough();
+    device.failingWrites.add('BREWS');
+
+    const result = await device.helper.importBackup(
+      { SETTINGS: [{ language: 'en' }], BREWS: entries('brew', 3) },
+      'import',
+    );
+
+    expect(result).toEqual({ BACKUP: true });
+    expect(readAll).toHaveBeenCalledTimes(2);
+    expect(Object.fromEntries(device.data)).toEqual({
+      ...before,
+      BEANS: changedBeans,
+    });
+  });
+
+  it('is read when no backup file is written, as in the browser', async () => {
+    const before = storedData('own');
+    const device = await startDevice(before, { fileSystem: false });
+    const readAll = spyOn(device.database, 'forEach').and.callThrough();
+    device.failingWrites.add('BREWS');
+
+    const result = await device.helper.importBackup(
+      { SETTINGS: [{ language: 'en' }], BREWS: entries('brew', 3) },
+      'import',
+    );
+
+    expect(result).toEqual({ BACKUP: true });
+    expect(readAll).toHaveBeenCalledTimes(1);
+    expect(Object.fromEntries(device.data)).toEqual(before);
+  });
+});

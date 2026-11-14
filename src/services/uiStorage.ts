@@ -26,6 +26,12 @@ import {
 import { EventQueueService } from './queueService/queue-service.service';
 import { UILog } from './uiLog';
 
+/** Values read from the database, see UIStorage.readValues(). */
+export interface StoredValues {
+  values: any;
+  writeCount: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -35,6 +41,12 @@ export class UIStorage {
   private readonly uiLog = inject(UILog);
 
   private _storage: Storage | null = null;
+
+  /**
+   * Counted up before and after every write, so values read while it stayed
+   * the same are still the stored ones (see readValues).
+   */
+  private writeCount = 0;
 
   public async init() {
     // If using, define drivers here: await this.storage.defineDriver(/*...*/);
@@ -105,7 +117,12 @@ export class UIStorage {
     );
   }
   private async internalSet(_key: string, _val: any): Promise<boolean> {
-    await this._storage.set(_key, _val);
+    this.writeCount++;
+    try {
+      await this._storage.set(_key, _val);
+    } finally {
+      this.writeCount++;
+    }
     // Backups never contain local-only keys, so writing them needs no new one.
     if (isLocalOnlyStorageKey(_key)) {
       return true;
@@ -193,19 +210,33 @@ export class UIStorage {
   }
 
   public async export(): Promise<any> {
-    const exportObj = {};
+    return (await this.readValues()).values;
+  }
+
+  /**
+   * The values of export(), and the number of writes before they were read.
+   * import() can roll back to them while nothing was written since.
+   */
+  public async readValues(): Promise<StoredValues> {
+    const writeCount = this.writeCount;
+    const values = {};
 
     await this._storage.forEach((_value, _key, _index) => {
-      exportObj[_key] = _value;
+      values[_key] = _value;
     });
 
     // Contains credentials; files written for the user are stripped in
     // UIExportImportHelper.buildExportZIP (see settingsSecrets.ts).
-    return exportObj;
+    return { values, writeCount };
   }
 
   public async clearStorage() {
-    await this._storage.clear();
+    this.writeCount++;
+    try {
+      await this._storage.clear();
+    } finally {
+      this.writeCount++;
+    }
   }
 
   /**
@@ -309,24 +340,33 @@ export class UIStorage {
    * database could not be read at start-up. If the current data still
    * cannot be read, it is imported without a copy, and an import that fails
    * is reported as one that could not be rolled back.
+   *
+   * `_current` are values the caller read before (readValues()). They are
+   * kept as the copy to roll back to while nothing was written since;
+   * otherwise the current data is read again.
    */
   public async import(
     _data: any,
     _source: RESTORE_SOURCE = 'import',
     _fileName?: string,
     _currentDataUnreadable = false,
+    _current?: StoredValues,
   ): Promise<any> {
     // Before we import, we do a saftey backup
-    const _backup = await this.__safteyBackup().catch((ex: unknown) => {
-      if (!_currentDataUnreadable) {
-        throw ex;
-      }
-      this.uiLog.error(
-        'UIStorage - Import - the current data could not be read, imported without a copy to roll back to',
-        ex,
-      );
-      return undefined;
-    });
+    const _backup =
+      _current?.writeCount === this.writeCount
+        ? _current.values
+        : await this.__safteyBackup().catch((ex: unknown) => {
+            if (!_currentDataUnreadable) {
+              throw ex;
+            }
+            this.uiLog.error(
+              'UIStorage - Import - the current data could not be read, imported without a copy to roll back to',
+              ex,
+            );
+            return undefined;
+          });
+    this.writeCount++;
     const previousNote: unknown = _backup?.[LAST_RESTORE_STORAGE_KEY];
     try {
       const importData = this.__withImportedUserProfile(
@@ -360,6 +400,8 @@ export class UIStorage {
       }
       await this.__keepRestoreNote(previousNote);
       return { BACKUP: true };
+    } finally {
+      this.writeCount++;
     }
   }
 
