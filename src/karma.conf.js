@@ -30,6 +30,7 @@ const NEW_CODE = [
   'src/services/preImportBackup/pre-import-backup.service.ts',
   'src/services/tabletLayout/**',
   'src/services/theme/theme-plugins.ts',
+  'src/stores/**',
 ];
 const NEW_CODE_MIN_COVERAGE = 80;
 
