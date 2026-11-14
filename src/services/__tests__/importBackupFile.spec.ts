@@ -805,6 +805,51 @@ describe('Importing a backup', () => {
     expect(device.writes).toEqual([]);
     expect(Object.fromEntries(device.data)).toEqual(before);
   });
+
+  describe('chosen at start-up because the database could not be read', () => {
+    const next = () => ({ SETTINGS: [{}], BREWS: entries('brew', 1) });
+
+    it('imports without a backup of the current data while it cannot be read', async () => {
+      const device = await startDevice(storedData('own'));
+      // The backup file and the copy the import rolls back to.
+      device.failingReads.count = 2;
+
+      const result = await device.helper.importBackup(
+        next(),
+        'import',
+        'Beanconqueror.zip',
+        true,
+      );
+
+      expect(result).toEqual({ BACKUP: false });
+      expect(writtenBackups(device)).toEqual([]);
+      expect(device.data.get('BREWS')).toEqual(imported(entries('brew', 1)));
+      expect(device.uiLog.error).toHaveBeenCalledWith(
+        'Backup before import - skipped, the current data could not be read at start-up',
+        jasmine.anything(),
+      );
+    });
+
+    it('still saves the current data first when it can be read again', async () => {
+      const before = storedData('own');
+      const device = await startDevice(before);
+
+      await device.helper.importBackup(next(), 'import', 'x.zip', true);
+
+      const [file] = writtenBackups(device);
+      expect((await readBackupFile(device, file)).BREWS).toEqual(before.BREWS);
+    });
+
+    it('fails as an import that could not be rolled back when storing it fails', async () => {
+      const device = await startDevice(storedData('own'));
+      device.failingReads.count = 2;
+      device.failingWrites.add('BREWS');
+
+      await expectAsync(
+        device.helper.importBackup(next(), 'import', 'x.zip', true),
+      ).toBeRejectedWith({ BACKUP: true });
+    });
+  });
 });
 
 describe('The backup before an import of data that was just imported', () => {
@@ -1099,6 +1144,19 @@ describe('Restoring the internal backup at start-up', () => {
     await device.helper.checkBackup();
     expect(device.data.get('BREWS')).toEqual(before.BREWS);
 
+    await writeAutomaticBackups(device);
+
+    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
+  });
+
+  it('keeps the internal backup after it was not restored also once every collection was read', async () => {
+    const internalBackup = await internalBackupWithMoreBrews();
+    const device = await startDevice(completeData('own'), { internalBackup });
+    device.failingWrites.add('BREWS');
+    spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(true);
+    await device.helper.checkBackup();
+
+    device.helper.allCollectionsRead();
     await writeAutomaticBackups(device);
 
     expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();

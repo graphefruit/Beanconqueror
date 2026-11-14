@@ -1875,6 +1875,7 @@ export class SettingsPage {
       this.uiLog.error(error.message);
       throw error;
     }
+    this.uiExportImportHelper.allCollectionsRead();
 
     // Wait for every necessary service to be ready before starting the app
     // Settings and version, will create a new object on start, so we need to wait for this in the end.

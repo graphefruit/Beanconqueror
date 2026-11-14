@@ -272,3 +272,69 @@ describe('UIAlert loading spinner', () => {
     expect(uiAlert.isLoadingSpinnerShown()).toBeFalse();
   }));
 });
+
+describe('UIAlert database dialog', () => {
+  let alerts: { options: Record<string, any>; dismiss: () => void }[];
+  let uiAlert: UIAlert;
+
+  beforeEach(() => {
+    alerts = [];
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: LIVE_REGION, useValue: new FakeLiveRegion() },
+        { provide: TranslateService, useValue: createMockTranslateService() },
+        { provide: ModalController, useValue: {} },
+        {
+          provide: AlertController,
+          useValue: {
+            create: (options: Record<string, any>) => {
+              let dismiss: () => void;
+              const dismissed = new Promise<void>((_resolve) => {
+                dismiss = _resolve;
+              });
+              alerts.push({ options, dismiss: () => dismiss() });
+              return Promise.resolve({
+                present: () => Promise.resolve(),
+                onDidDismiss: () => dismissed,
+              });
+            },
+          },
+        },
+      ],
+    });
+    uiAlert = TestBed.inject(UIAlert);
+  });
+
+  it('only offers to reload the app and cannot be closed otherwise', fakeAsync(() => {
+    void uiAlert.showIOSIndexedDBIssues('MESSAGE', 'TITLE', true);
+    flushMicrotasks();
+
+    expect(alerts.length).toBe(1);
+    expect(alerts[0].options.backdropDismiss).toBeFalse();
+    expect(
+      alerts[0].options.buttons.map(
+        (_button: { text: string }) => _button.text,
+      ),
+    ).toEqual(['RELOAD_APP']);
+  }));
+
+  it('also offers to choose a backup and resolves once that is pressed', fakeAsync(() => {
+    let resolved = false;
+    void uiAlert
+      .showIOSIndexedDBIssues('MESSAGE', 'TITLE', true, 'CHOOSE_BACKUP')
+      .then(() => (resolved = true));
+    flushMicrotasks();
+
+    const [reload, chooseBackup] = alerts[0].options.buttons;
+    expect(reload.text).toBe('RELOAD_APP');
+    expect(chooseBackup.text).toBe('CHOOSE_BACKUP');
+    // The alert closes by itself for a button without a handler.
+    expect(chooseBackup.handler).toBeUndefined();
+    expect(resolved).toBeFalse();
+
+    alerts[0].dismiss();
+    flushMicrotasks();
+
+    expect(resolved).toBeTrue();
+  }));
+});

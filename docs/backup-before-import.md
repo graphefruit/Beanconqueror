@@ -30,7 +30,8 @@ No file is written when the device stores neither settings nor entries: there
 is nothing to save, and an empty file would push a real backup out of the
 ones kept. If the current data cannot be read or the file cannot be written,
 for example because the storage is full, nothing is imported and the app says
-so.
+so. The one exception is a backup chosen because the database could not be
+read at start-up (see below).
 
 The file is written under its name with `.part` at the end and only gets its
 name once it is written completely. A write that fails can leave an empty or
@@ -47,10 +48,22 @@ backups would otherwise replace it with the stored data within seconds of the
 next change, so the next start can offer the restore again. The automatic
 backup of the day is still written.
 
-The same holds when the database could not be read at start-up: it is not
-taken for an empty one, so the internal backup is neither imported nor
-offered, no file is written, and `Beanconqueror.zip` is kept as it is for the
-rest of the session. The next start checks again.
+When the database could not be read at start-up, it is not taken for an
+empty one: nothing is imported by itself and the start does not go on. The
+app asks to close it and start it again, which mostly helps, or to choose a
+backup (see "Going back"); `Beanconqueror.zip` comes first, as it normally
+holds the newest data. `Beanconqueror.zip` is kept as it is until every
+collection was read.
+
+This is the one import that goes on without a backup of the current data:
+that data cannot be read, so it cannot be saved, and the dialog says so. It
+is only made for the backup chosen in that dialog, only when the current
+data still cannot be read once the import starts, and it is logged
+(`Backup before import - skipped, the current data could not be read at
+start-up`). When the data can be read by then, the file is written as
+before. Without a copy in memory nothing can be rolled back either: when
+storing the import fails, the app says that the import was not successful
+and asks again.
 
 The file is the same ZIP an export writes. It holds no passwords, API keys or
 tokens (they stay on the device, and an import keeps them) and none of the
@@ -155,8 +168,9 @@ device stored neither settings nor entries.
 ## Going back
 
 - Settings › Find and import an automatic backup file lists these files
-  (`Beanconqueror_pre_import_…`) together with the automatic backups. Choose
-  one and import it, on iOS and Android.
+  (`Beanconqueror_pre_import_…`) together with the automatic backups, after
+  the internal `Beanconqueror.zip`, each with its date and size. Choose one
+  and import it, on iOS and Android.
 - On iOS the file can also be chosen in Settings › Import, in the Files app
   under On My iPhone › Beanconqueror › pre-import.
 

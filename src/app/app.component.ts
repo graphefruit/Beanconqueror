@@ -558,6 +558,7 @@ export class AppComponent implements AfterViewInit {
         ]).then(
           async () => {
             this.uiLog.log('App finished loading');
+            this.uiExportImportHelper.allCollectionsRead();
             await this.__checkUpdate();
             await this.__checkCleanup();
             await this.__initApp();

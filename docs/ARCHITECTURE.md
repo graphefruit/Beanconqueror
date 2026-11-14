@@ -197,8 +197,13 @@ UIStorage                            (src/services/uiStorage.ts)
     (`IMPORT_DATA_NOT_LOADED_RESTART_NEEDED`).
   - `UIStorage.getDataState()` tells whether the database holds data of a
     used installation: `'data'`, `'empty'` or `'unknown'` when it could not
-    be read. The callers (`checkBackup`, `saveAutomaticBackups`,
-    `UIUpdate.checkUpdate`) leave everything as it is for `'unknown'`.
+    be read. It reads with the attempts of `get` (reconnecting after 11),
+    but shows no dialog itself. The callers (`checkBackup`,
+    `saveAutomaticBackups`, `UIUpdate.checkUpdate`) leave everything as it
+    is for `'unknown'`.
+  - A refused write tells the user that the change was not saved and to
+    start the app again (`STORAGE_NOT_READ_NOTHING_SAVED`); the details are
+    only logged.
 - `UIStorage.requestPersistentStorage()` asks the browser once at start-up
   not to clear the database under storage pressure
   (`navigator.storage.persist()`), where that exists. The start does not wait
@@ -362,10 +367,18 @@ flowchart LR
   directly; otherwise the data corruption dialog offers the file when it holds
   more beans, brews, preparations or grinders than the database. When the
   database could not be read (`getDataState()` is `'unknown'`), nothing is
-  imported or offered and the internal `Beanconqueror.zip` is not replaced
-  for the rest of the session: the stored entries can be newer than the file,
-  and the file is the only copy known to be readable. `saveAutomaticBackups()`
-  writes no file while the database cannot be read.
+  imported by itself and the start does not go on: the database dialog
+  (`IOS_DATABASE_ISSUE_TITLE`, `DATABASE_NOT_READ_DESCRIPTION`) asks to close
+  the app and start it again, or to choose a backup in the list of
+  Settings › Find and import an automatic backup file, where
+  `Beanconqueror.zip` comes first. The chosen file is imported (see
+  docs/backup-before-import.md) and the start goes on; otherwise the dialog
+  is shown again. The internal `Beanconqueror.zip` is not replaced until
+  every collection was read (`UIExportImportHelper.allCollectionsRead()`,
+  called at start-up and after an import): the stored entries can be newer
+  than the file, and the file is the only copy known to be readable.
+  `saveAutomaticBackups()` writes no file while the database cannot be
+  read.
 - Photos and flow profiles are not part of the ZIP. On Android, the manual
   export in settings copies them next to it (`exportToPath` in
   `src/app/settings/settings.page.ts`); on iOS the data directory is visible to

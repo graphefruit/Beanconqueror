@@ -146,8 +146,14 @@ export class UIStorage {
     return result.value;
   }
 
+  /**
+   * Reads again while it fails, connecting to the database anew after 11
+   * attempts. After 20 attempts the database dialog is shown, unless
+   * `_showIssue` is false and the caller decides what to show.
+   */
   private async __getWithRetries(
     _key: string,
+    _showIssue = true,
   ): Promise<{ read: boolean; value: any }> {
     let whileCounter = 0;
     while (true) {
@@ -182,7 +188,9 @@ export class UIStorage {
               _key +
               ' we stop to try getting data now 20 attempts are enough - show error',
           );
-          await this.displayIOSIndexedDBIssue();
+          if (_showIssue) {
+            await this.displayIOSIndexedDBIssue();
+          }
           return { read: false, value: null };
         }
       }
@@ -209,32 +217,20 @@ export class UIStorage {
    * Whether the database holds data of a used installation: a VERSION entry
    * with at least one finished data update.
    *
-   * A database that could not be read is 'unknown' and never taken for an
-   * empty one: the entries can still be stored. Every caller has to decide
-   * what it leaves alone then.
+   * Read with the attempts of get(). A database that still could not be
+   * read is 'unknown' and never taken for an empty one: the entries can
+   * still be stored. Every caller has to decide what it leaves alone and
+   * what it shows then.
    */
   public async getDataState(): Promise<StoredDataState> {
-    let hasData: boolean = false;
-
-    try {
-      await this._storage.forEach((_value, _key, _index) => {
-        if (_key === 'VERSION') {
-          try {
-            if (
-              _value?.length > 0 &&
-              _value[0]['updatedDataVersions'].length > 0
-            ) {
-              hasData = true;
-              return true;
-            }
-          } catch (ex) {}
-        }
-      });
-      return hasData ? 'data' : 'empty';
-    } catch (ex) {
-      this.uiLog.error('UIStorage - Data state - could not be read', ex);
+    const version = await this.__getWithRetries('VERSION', false);
+    if (!version.read) {
+      this.uiLog.error('UIStorage - Data state - could not be read');
       return 'unknown';
     }
+    return version.value?.[0]?.updatedDataVersions?.length > 0
+      ? 'data'
+      : 'empty';
   }
 
   /**
@@ -323,14 +319,29 @@ export class UIStorage {
    * the current data into a backup file. The copy kept here for the rollback
    * only lives in memory. `_fileName` is the name of the backup file, when
    * it is known; it goes into the note about the import.
+   *
+   * `_currentDataUnreadable`: the user chose the backup because the
+   * database could not be read at start-up. If the current data still
+   * cannot be read, it is imported without a copy, and an import that fails
+   * is reported as one that could not be rolled back.
    */
   public async import(
     _data: any,
     _source: RESTORE_SOURCE = 'import',
     _fileName?: string,
+    _currentDataUnreadable = false,
   ): Promise<any> {
     // Before we import, we do a saftey backup
-    const _backup = await this.__safteyBackup();
+    const _backup = await this.__safteyBackup().catch((ex: unknown) => {
+      if (!_currentDataUnreadable) {
+        throw ex;
+      }
+      this.uiLog.error(
+        'UIStorage - Import - the current data could not be read, imported without a copy to roll back to',
+        ex,
+      );
+      return undefined;
+    });
     const previousNote: unknown = _backup?.[LAST_RESTORE_STORAGE_KEY];
     try {
       const importData = this.__withImportedUserProfile(
@@ -355,6 +366,9 @@ export class UIStorage {
       return { BACKUP: false };
     } catch (ex) {
       try {
+        if (_backup === undefined) {
+          throw new Error('UIStorage - Import - nothing to roll back to');
+        }
         await this.__importBackup(_backup);
       } catch (ex) {
         throw { BACKUP: true };

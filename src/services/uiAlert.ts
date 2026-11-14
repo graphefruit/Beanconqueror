@@ -185,12 +185,14 @@ export class UIAlert {
    * the page when its button is pressed.
    *
    * Will never resolve as the page will be reloaded when pressing the button
-   * in the modal.
+   * in the modal, unless `_chooseBackup` names a second button: the modal
+   * closes and this resolves when that one is pressed.
    */
   public async showIOSIndexedDBIssues(
     _message: string,
     _title?: string,
     _translate?: boolean,
+    _chooseBackup?: string,
   ): Promise<void> {
     if (_translate === true) {
       _message = this.translate.instant(_message);
@@ -213,10 +215,14 @@ export class UIAlert {
             return false;
           },
         },
+        ...(_chooseBackup
+          ? [{ text: this.translate.instant(_chooseBackup) }]
+          : []),
       ],
     });
     await alert.present();
-    // This should never resolve, as the app reloads when clicking the button
+    // Only resolves for the button to choose a backup, as the app reloads
+    // when clicking the other one
     await alert.onDidDismiss();
   }
 

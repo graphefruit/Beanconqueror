@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { StorageClass } from '../../classes/storageClass';
 import { Version } from '../../classes/version/iVersion';
+import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 import { createLegacyData } from '../../test-utils/legacy-data-fixture';
 import { ChangeTrackingMigrationService } from '../changeTracking/change-tracking-migration.service';
 import { DuplicateEntriesMigrationService } from '../changeTracking/duplicate-entries-migration.service';
@@ -60,6 +61,32 @@ function createDeviceDatabase(
   };
 }
 
+/**
+ * UIStorage waits 100 ms before it reads again, up to 20 times; the tests
+ * do not wait.
+ */
+function withoutRetryDelay() {
+  const original = window.setTimeout;
+  spyOn(window, 'setTimeout').and.callFake(((
+    _handler: () => void,
+    _ms?: number,
+  ) => {
+    if (_ms === 100) {
+      _handler();
+      return 0;
+    }
+    return original.call(window, _handler, _ms) as number;
+  }) as typeof window.setTimeout);
+}
+
+/** Waits until `_condition` holds, as the start runs on by itself. */
+async function waitUntil(_condition: () => boolean): Promise<void> {
+  for (let i = 0; i < 100 && !_condition(); i++) {
+    await new Promise((_resolve) => setTimeout(_resolve, 5));
+  }
+  expect(_condition()).withContext('condition reached').toBeTrue();
+}
+
 function createLog() {
   const lines: string[] = [];
   const add = (_message: string) => lines.push(_message);
@@ -67,22 +94,49 @@ function createLog() {
 }
 
 describe('Checking the internal backup at start-up with a database that cannot be read', () => {
+  const INTERNAL_BACKUP_URI = 'file:///data/Beanconqueror.zip';
+
+  beforeEach(() => withoutRetryDelay());
+
   /**
    * The app on a device storing `_stored`, with `_backupFile` as its
-   * internal backup file.
+   * internal backup file. `_chosenFiles` are the files the user chooses,
+   * one each time the database dialog is answered with "Choose backup" (''
+   * closes the list without one). Once none is left, the user closes and
+   * starts the app again, so the dialog stays open.
    */
   async function startApp(
     _stored: Record<string, unknown>,
     _state: { readable: boolean },
     _backupFile?: Uint8Array,
+    _chosenFiles: string[] = [],
   ) {
     const log = createLog();
+    const chosenFiles = [..._chosenFiles];
     const writeInternalFileFromBlob = jasmine
       .createSpy('writeInternalFileFromBlob')
       .and.resolveTo(undefined);
     const writeFileFromBlob = jasmine
       .createSpy('writeFileFromBlob')
       .and.resolveTo(undefined);
+    const readFileAsUint8Array = jasmine
+      .createSpy('readFileAsUint8Array')
+      .and.callFake(() => Promise.resolve(_backupFile));
+    const showIOSIndexedDBIssues = jasmine
+      .createSpy('showIOSIndexedDBIssues')
+      .and.callFake(() =>
+        chosenFiles.length > 0
+          ? Promise.resolve()
+          : new Promise<void>(() => undefined),
+      );
+    const showMessage = jasmine.createSpy('showMessage').and.resolveTo();
+    const createModal = jasmine.createSpy('create').and.callFake(() =>
+      Promise.resolve({
+        present: () => Promise.resolve(),
+        onWillDismiss: () =>
+          Promise.resolve({ data: { choosenURI: chosenFiles.shift() } }),
+      }),
+    );
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
@@ -110,6 +164,7 @@ describe('Checking the internal backup at start-up with a database that cannot b
           provide: UIFileHelper,
           useValue: {
             readInternalFileAsUint8Array: () => Promise.resolve(_backupFile),
+            readFileAsUint8Array,
             writeInternalFileFromBlob,
             writeFileFromBlob,
           },
@@ -128,14 +183,15 @@ describe('Checking the internal backup at start-up with a database that cannot b
           useValue: {
             showLoadingSpinner: () => Promise.resolve(),
             hideLoadingSpinner: () => Promise.resolve(),
-            showMessage: () => Promise.resolve(),
+            showMessage,
+            showIOSIndexedDBIssues,
           },
         },
         {
           provide: UIBrewStorage,
           useValue: { getAllEntries: () => [{}] },
         },
-        { provide: ModalController, useValue: {} },
+        { provide: ModalController, useValue: { create: createModal } },
       ],
     });
     await TestBed.inject(UIStorage).init();
@@ -153,6 +209,10 @@ describe('Checking the internal backup at start-up with a database that cannot b
       log,
       writeInternalFileFromBlob,
       writeFileFromBlob,
+      readFileAsUint8Array,
+      showIOSIndexedDBIssues,
+      showMessage,
+      createModal,
     };
   }
 
@@ -164,28 +224,45 @@ describe('Checking the internal backup at start-up with a database that cannot b
     return new Uint8Array(await (await helper.buildExportZIP()).arrayBuffer());
   }
 
-  it('does not import the internal backup', async () => {
+  /** Writes the automatic backups as the app does after a change. */
+  async function saveAutomaticBackups(
+    _helper: UIExportImportHelper,
+  ): Promise<void> {
+    await _helper.saveAutomaticBackups();
+    await new Promise((_resolve) => setTimeout(_resolve, 200));
+  }
+
+  it('does not go on with the start, but asks to start the app again or to choose a backup', async () => {
     const data = createLegacyData({ brews: 20, beans: 4 });
     const backupFile = await writeBackupFile(data);
-    const { helper, importBackup, popover } = await startApp(
-      data,
-      { readable: false },
-      backupFile,
+    const { helper, importBackup, popover, showIOSIndexedDBIssues } =
+      await startApp(data, { readable: false }, backupFile);
+
+    let started = false;
+    void helper.checkBackup().then(() => (started = true));
+    await waitUntil(() => showIOSIndexedDBIssues.calls.count() > 0);
+    await new Promise((_resolve) => setTimeout(_resolve, 20));
+
+    expect(showIOSIndexedDBIssues).toHaveBeenCalledOnceWith(
+      'DATABASE_NOT_READ_DESCRIPTION',
+      'IOS_DATABASE_ISSUE_TITLE',
+      true,
+      'CHOOSE_BACKUP',
     );
-
-    await helper.checkBackup();
-
+    expect(started).toBeFalse();
+    // Nothing is imported by itself.
     expect(importBackup).not.toHaveBeenCalled();
     expect(popover).not.toHaveBeenCalled();
   });
 
-  it('logs that the import was skipped', async () => {
+  it('logs that the internal backup was not imported by itself', async () => {
     const data = createLegacyData({ brews: 20, beans: 4 });
     const backupFile = await writeBackupFile(data);
     const { helper, log } = await startApp(
       data,
       { readable: false },
       backupFile,
+      [INTERNAL_BACKUP_URI],
     );
 
     await helper.checkBackup();
@@ -197,38 +274,127 @@ describe('Checking the internal backup at start-up with a database that cannot b
     ).toBeTrue();
   });
 
-  it('keeps the internal backup file for the rest of the session', async () => {
+  it('imports the backup chosen in the list of backups, without a backup of the data that cannot be read', async () => {
+    const data = createLegacyData({ brews: 20, beans: 4 });
+    const backupFile = await writeBackupFile(data);
+    const { helper, importBackup, readFileAsUint8Array, createModal } =
+      await startApp(data, { readable: false }, backupFile, [
+        INTERNAL_BACKUP_URI,
+      ]);
+
+    await helper.checkBackup();
+
+    expect(createModal).toHaveBeenCalledOnceWith(
+      jasmine.objectContaining({
+        component: SettingsChooseAutomaticBackupToImportComponent,
+      }),
+    );
+    expect(readFileAsUint8Array).toHaveBeenCalledOnceWith(INTERNAL_BACKUP_URI);
+    expect(importBackup).toHaveBeenCalledTimes(1);
+    const [imported, source, fileName, currentDataUnreadable] =
+      importBackup.calls.mostRecent().args;
+    expect((imported as any).BREWS).toEqual(data.BREWS);
+    expect(source).toBe('import');
+    expect(fileName).toBe('Beanconqueror.zip');
+    expect(currentDataUnreadable).toBeTrue();
+  });
+
+  it('asks again when the list of backups was closed without one', async () => {
+    const data = createLegacyData({ brews: 20, beans: 4 });
+    const backupFile = await writeBackupFile(data);
+    const { helper, importBackup, showIOSIndexedDBIssues } = await startApp(
+      data,
+      { readable: false },
+      backupFile,
+      ['', INTERNAL_BACKUP_URI],
+    );
+
+    await helper.checkBackup();
+
+    expect(showIOSIndexedDBIssues).toHaveBeenCalledTimes(2);
+    expect(importBackup).toHaveBeenCalledTimes(1);
+  });
+
+  for (const [failure, message] of [
+    ['was rolled back', 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'],
+    ['failed and could not be rolled back', 'IMPORT_UNSUCCESSFULLY'],
+  ]) {
+    it(`says so and asks again when the import ${failure}`, async () => {
+      const data = createLegacyData({ brews: 20, beans: 4 });
+      const backupFile = await writeBackupFile(data);
+      const { helper, importBackup, showIOSIndexedDBIssues, showMessage } =
+        await startApp(data, { readable: false }, backupFile, [
+          INTERNAL_BACKUP_URI,
+          INTERNAL_BACKUP_URI,
+        ]);
+      const failed =
+        message === 'IMPORT_UNSUCCESSFULLY'
+          ? Promise.reject(new Error('could not be rolled back'))
+          : Promise.resolve({ BACKUP: true });
+      failed.catch(() => undefined);
+      importBackup.and.returnValues(failed, Promise.resolve({ BACKUP: false }));
+
+      await helper.checkBackup();
+
+      expect(showMessage).toHaveBeenCalledOnceWith(
+        message,
+        undefined,
+        undefined,
+        true,
+      );
+      expect(showIOSIndexedDBIssues).toHaveBeenCalledTimes(2);
+      expect(importBackup).toHaveBeenCalledTimes(2);
+    });
+  }
+
+  it('keeps the internal backup file until every collection was read', async () => {
     const data = createLegacyData({ brews: 20, beans: 4 });
     const backupFile = await writeBackupFile(data);
     const state = { readable: false };
     const { helper, writeInternalFileFromBlob, writeFileFromBlob } =
-      await startApp(data, state, backupFile);
+      await startApp(data, state, backupFile, [INTERNAL_BACKUP_URI]);
     await helper.checkBackup();
 
     // The database can be read again, and a change triggers the backups.
     state.readable = true;
-    await helper.saveAutomaticBackups();
-    await new Promise((_resolve) => setTimeout(_resolve, 200));
+    await saveAutomaticBackups(helper);
 
     expect(writeInternalFileFromBlob).not.toHaveBeenCalled();
     // The backup of the day is still written.
     expect(writeFileFromBlob).toHaveBeenCalledTimes(1);
+
+    helper.allCollectionsRead();
+    await saveAutomaticBackups(helper);
+
+    expect(writeInternalFileFromBlob).toHaveBeenCalledTimes(1);
   });
 
   it('still imports the internal backup without asking when the database is empty', async () => {
     const data = createLegacyData({ brews: 20, beans: 4 });
     const backupFile = await writeBackupFile(data);
-    const { helper, importBackup, popover } = await startApp(
-      {},
-      { readable: true },
-      backupFile,
-    );
+    const { helper, importBackup, popover, showIOSIndexedDBIssues } =
+      await startApp({}, { readable: true }, backupFile);
 
     await helper.checkBackup();
 
     expect(importBackup).toHaveBeenCalledTimes(1);
     expect(importBackup.calls.mostRecent().args[1]).toBe('internal_backup');
+    expect(importBackup.calls.mostRecent().args[3]).toBeUndefined();
     expect(popover).not.toHaveBeenCalled();
+    expect(showIOSIndexedDBIssues).not.toHaveBeenCalled();
+  });
+
+  it('still starts with the stored data without asking when it can be read', async () => {
+    const data = createLegacyData({ brews: 20, beans: 4 });
+    const backupFile = await writeBackupFile(data);
+    const { helper, importBackup, popover, showIOSIndexedDBIssues } =
+      await startApp(data, { readable: true }, backupFile);
+
+    await helper.checkBackup();
+
+    expect(importBackup).not.toHaveBeenCalled();
+    expect(popover).not.toHaveBeenCalled();
+    expect(showIOSIndexedDBIssues).not.toHaveBeenCalled();
   });
 
   it('writes no automatic backup while the database cannot be read', async () => {
@@ -239,8 +405,7 @@ describe('Checking the internal backup at start-up with a database that cannot b
     spyOn(helper, 'buildExportZIP').and.resolveTo(new Blob(['zip']));
     state.readable = false;
 
-    await helper.saveAutomaticBackups();
-    await new Promise((_resolve) => setTimeout(_resolve, 200));
+    await saveAutomaticBackups(helper);
 
     expect(writeInternalFileFromBlob).not.toHaveBeenCalled();
     expect(writeFileFromBlob).not.toHaveBeenCalled();
@@ -251,6 +416,8 @@ describe('Checking the internal backup at start-up with a database that cannot b
 });
 
 describe('The start-up update check with a database that cannot be read', () => {
+  beforeEach(() => withoutRetryDelay());
+
   it('runs no data update and marks none as done', async () => {
     const version = new Version();
     for (let i = 1; i <= 15; i++) {
@@ -408,7 +575,13 @@ describe('A collection that could not be read', () => {
         _line.includes('Storage - Add - Unsuccessfully - BEANS'),
       ),
     ).toBeTrue();
-    expect(showMessage).toHaveBeenCalledTimes(1);
+    // In words of the user, translated; the details are only logged.
+    expect(showMessage).toHaveBeenCalledOnceWith(
+      'STORAGE_NOT_READ_NOTHING_SAVED',
+      undefined,
+      undefined,
+      true,
+    );
   });
 
   it('names each write it did not make and does not look for the entry', async () => {
@@ -573,6 +746,8 @@ describe('Settings and version that could not be read', () => {
 });
 
 describe('UIStorage', () => {
+  beforeEach(() => withoutRetryDelay());
+
   async function createStorage(
     _stored: Record<string, unknown>,
     _state = { readable: true },
@@ -629,9 +804,34 @@ describe('UIStorage', () => {
         { VERSION: [{ updatedDataVersions: ['UPDATE_1'] }] },
         { readable: false },
       );
+      const showIOSIndexedDBIssues = jasmine.createSpy(
+        'showIOSIndexedDBIssues',
+      );
+      spyOn(UIAlert, 'getInstance').and.returnValue({
+        showIOSIndexedDBIssues,
+      } as any);
 
       expect(await uiStorage.getDataState()).toBe('unknown');
       expect(log.lines).toContain('UIStorage - Data state - could not be read');
+      // The caller decides what to show.
+      expect(showIOSIndexedDBIssues).not.toHaveBeenCalled();
+    });
+
+    it('reads again and reconnects to the database before it is "unknown"', async () => {
+      const state = { readable: false };
+      const { uiStorage } = await createStorage(
+        { VERSION: [{ updatedDataVersions: ['UPDATE_1'] }] },
+        state,
+      );
+      const storage = TestBed.inject(Storage);
+      const connect: () => Promise<Storage> = storage.create.bind(storage);
+      const create = spyOn(storage, 'create').and.callFake(() => {
+        state.readable = true;
+        return connect();
+      });
+
+      expect(await uiStorage.getDataState()).toBe('data');
+      expect(create).toHaveBeenCalledTimes(1);
     });
   });
 

@@ -731,6 +731,20 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
+  /** The file in the app data directory, nothing when there is none. */
+  public async statInternalFile(
+    fileName: string,
+  ): Promise<FileInfo | undefined> {
+    try {
+      return await Filesystem.stat({
+        path: this.normalizeFileName(fileName),
+        directory: this.getDataDirectory(),
+      });
+    } catch {
+      return undefined;
+    }
+  }
+
   public async fileExists(options: StatOptions): Promise<boolean> {
     try {
       await Filesystem.stat(options);

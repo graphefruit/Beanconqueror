@@ -292,8 +292,10 @@ describe('SettingsPage loading the collections again after an import', () => {
       showMessage: () => Promise.resolve(),
     } as any);
     const checkUpdate = jasmine.createSpy('checkUpdate').and.resolveTo();
+    const allCollectionsRead = jasmine.createSpy('allCollectionsRead');
     const page = Object.create(SettingsPage.prototype);
     page.uiUpdate = { checkUpdate };
+    page.uiExportImportHelper = { allCollectionsRead };
     page.uiLog = TestBed.inject(UILog);
     const storages: Record<string, TestStorage> = {};
     for (const [field, path] of Object.entries(FIELDS)) {
@@ -316,6 +318,7 @@ describe('SettingsPage loading the collections again after an import', () => {
       storages,
       importData,
       checkUpdate,
+      allCollectionsRead,
       errors,
     };
   }
@@ -326,7 +329,8 @@ describe('SettingsPage loading the collections again after an import', () => {
     );
 
   it('reads every collection and runs the update check', async () => {
-    const { page, storages, importData, checkUpdate } = await pageAfterStart();
+    const { page, storages, importData, checkUpdate, allCollectionsRead } =
+      await pageAfterStart();
     importData();
 
     await page.__reinitializeStorages();
@@ -335,15 +339,25 @@ describe('SettingsPage loading the collections again after an import', () => {
       expect(uuids(storage.getAllEntries())).toEqual([`imported-${path}`]);
     }
     expect(checkUpdate).toHaveBeenCalledTimes(1);
+    // The internal backup may be written again.
+    expect(allCollectionsRead).toHaveBeenCalledTimes(1);
   });
 
   it('reads the other collections also when one cannot be read', async () => {
-    const { page, database, unreadable, storages, importData, checkUpdate } =
-      await pageAfterStart();
+    const {
+      page,
+      database,
+      unreadable,
+      storages,
+      importData,
+      checkUpdate,
+      allCollectionsRead,
+    } = await pageAfterStart();
     importData();
     unreadable.add('BEANS');
 
     await expectAsync(page.__reinitializeStorages()).toBeRejected();
+    expect(allCollectionsRead).not.toHaveBeenCalled();
 
     for (const [path, storage] of Object.entries(storages)) {
       expect(uuids(storage.getAllEntries()))

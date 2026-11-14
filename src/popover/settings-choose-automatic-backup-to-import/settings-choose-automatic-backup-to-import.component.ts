@@ -70,17 +70,18 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
   }
 
   public async ngOnInit() {
+    // Replaced after every change, so normally the newest data comes first.
+    const internalBackup =
+      await this.uiFileHelper.statInternalFile('Beanconqueror.zip');
     const files = [
       ...(await this.uiFileHelper.listAutomaticBackupFiles()),
       // Saved before each import. They are in the app data directory, which
       // the file picker of the import cannot open on Android.
       ...(await this.preImportBackup.list()),
-    ];
-    if (files.length > 0) {
-      this.foundBackupFiles = files.sort((a: FileInfo, b: FileInfo) => {
-        return b.size - a.size;
-      });
-    }
+    ].sort((a: FileInfo, b: FileInfo) => {
+      return b.size - a.size;
+    });
+    this.foundBackupFiles = internalBackup ? [internalBackup, ...files] : files;
   }
 
   public async saveSettings() {}

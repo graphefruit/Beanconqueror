@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 
 import { DeletionJournalService } from '../services/deletionJournal/deletion-journal.service';
 import { DeviceIdentityService } from '../services/deviceIdentity/device-identity.service';
+import type { UIAlert as UIAlertService } from '../services/uiAlert';
 import { UILog } from '../services/uiLog';
 import { UIStorage } from '../services/uiStorage';
 import {
@@ -92,24 +93,22 @@ export abstract class StorageClass {
   // Dynamic import to avoid circular dependency:
   // StorageClass → UIAlert → ... → UISettingsStorage → extends StorageClass
   private async showAlert(
-    message: string,
-    title: string | undefined,
     onRejected: (reason: unknown) => void,
+    ...message: Parameters<UIAlertService['showMessage']>
   ): Promise<void> {
     const { UIAlert } = await import('../services/uiAlert');
-    const alertPromise = UIAlert.getInstance()?.showMessage(message, title);
+    const alertPromise = UIAlert.getInstance()?.showMessage(...message);
     void alertPromise?.catch(onRejected);
   }
 
   private async showAlertSafely(
-    message: string,
-    title?: string,
+    ...message: Parameters<UIAlertService['showMessage']>
   ): Promise<void> {
     const logAlertError = (ex: unknown) => {
       this.uiLog.error('Storage - Alert - Unsuccessfully', ex);
     };
     try {
-      await this.showAlert(message, title, logAlertError);
+      await this.showAlert(logAlertError, ...message);
     } catch (ex) {
       logAlertError(ex);
     }
@@ -147,9 +146,15 @@ export abstract class StorageClass {
       reading: 'the stored entries are still being read',
       'read-failed': 'the stored entries could not be read',
     };
-    const message = `Storage - ${_action} - Unsuccessfully - ${this.DB_PATH} - ${reasons[this.writeBlock]}, nothing was saved`;
-    this.uiLog.error(message);
-    await this.showAlertSafely(message, 'CRITICAL ERROR');
+    this.uiLog.error(
+      `Storage - ${_action} - Unsuccessfully - ${this.DB_PATH} - ${reasons[this.writeBlock]}, nothing was saved`,
+    );
+    await this.showAlertSafely(
+      'STORAGE_NOT_READ_NOTHING_SAVED',
+      undefined,
+      undefined,
+      true,
+    );
     return true;
   }
 

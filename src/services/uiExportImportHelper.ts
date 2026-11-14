@@ -30,6 +30,7 @@ import {
   RESTORE_SOURCE,
 } from '../interfaces/changeTracking/iRestoreNote';
 import { DataCorruptionFoundComponent } from '../popover/data-corruption-found/data-corruption-found.component';
+import { SettingsChooseAutomaticBackupToImportComponent } from '../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 import {
   canBeImportedAgain,
   PreImportBackupError,
@@ -151,13 +152,28 @@ export class UIExportImportHelper {
   /**
    * Set when the internal backup was to be restored at start-up, but was
    * not: the current data could not be saved first, or the import failed.
-   * Also set when the database could not be read at start-up, so nothing
-   * was compared with the internal backup.
    * Beanconqueror.zip still holds the data to restore, so the automatic
    * backups leave it alone for the rest of this session, and the next start
    * can offer the restore again.
    */
   private internalBackupNotRestored = false;
+
+  /**
+   * Set when the database could not be read at start-up. Beanconqueror.zip
+   * is then the only copy known to be readable, so the automatic backups
+   * leave it alone until every collection was read (allCollectionsRead).
+   */
+  private databaseNotRead = false;
+
+  /** Called once every collection was read, at start-up or after an import. */
+  public allCollectionsRead(): void {
+    if (this.databaseNotRead) {
+      this.uiLog.info(
+        'Every collection was read, the internal backup is written again',
+      );
+      this.databaseNotRead = false;
+    }
+  }
 
   /** Whether importBackup() writes the current data into a file first. */
   public savesBackupBeforeImport(): boolean {
@@ -198,19 +214,27 @@ export class UIExportImportHelper {
    * it is known. Only while that file can still be imported again does the
    * backup before the next import count as one of an unchanged import
    * (holdsUnchangedImport).
+   *
+   * `_currentDataUnreadable` is only set for a backup chosen at start-up
+   * because the database could not be read: the current data that still
+   * cannot be read is then not saved first, instead of stopping the import.
    */
   public async importBackup(
     _data: unknown,
     _source: RESTORE_SOURCE,
     _fileName?: string,
+    _currentDataUnreadable = false,
   ): Promise<{ BACKUP: boolean }> {
-    const written = await this.__writeBackupBeforeImport();
+    const written = await this.__writeBackupBeforeImport(
+      _currentDataUnreadable,
+    );
     let completed = false;
     try {
       const result: { BACKUP: boolean } = await this.uiStorage.import(
         _data,
         _source,
         _fileName,
+        _currentDataUnreadable,
       );
       completed = result?.BACKUP === false;
       return result;
@@ -231,7 +255,9 @@ export class UIExportImportHelper {
    * written from, so data that cannot be read stops the import instead of
    * being taken for none.
    */
-  private async __writeBackupBeforeImport(): Promise<string | undefined> {
+  private async __writeBackupBeforeImport(
+    _currentDataUnreadable: boolean,
+  ): Promise<string | undefined> {
     if (!this.preImportBackup.isAvailable()) {
       this.uiLog.info(
         'Backup before import - skipped, there is no file system in the browser',
@@ -239,7 +265,19 @@ export class UIExportImportHelper {
       return undefined;
     }
     try {
-      const stored = await this.uiStorage.export();
+      let stored: any;
+      try {
+        stored = await this.uiStorage.export();
+      } catch (ex) {
+        if (!_currentDataUnreadable) {
+          throw ex;
+        }
+        this.uiLog.error(
+          'Backup before import - skipped, the current data could not be read at start-up',
+          ex,
+        );
+        return undefined;
+      }
       if (!holdsDataToSave(stored)) {
         this.uiLog.info('Backup before import - skipped, no data stored');
         return undefined;
@@ -405,13 +443,12 @@ export class UIExportImportHelper {
       const dataState = await this.uiStorage.getDataState();
       if (dataState === 'unknown') {
         // Not an empty database: the entries can still be stored and be
-        // newer than the internal backup, so nothing is imported. The file
-        // is the only copy known to be readable, so the automatic backups
-        // leave it alone for the rest of this session.
-        this.internalBackupNotRestored = true;
+        // newer than the internal backup, so nothing is imported by itself.
+        this.databaseNotRead = true;
         this.uiLog.error(
-          'checkBackupAndSeeIfDataAreCorrupted - The database could not be read, the internal backup is not imported and kept as it is',
+          'checkBackupAndSeeIfDataAreCorrupted - The database could not be read, the internal backup is not imported by itself and kept as it is',
         );
+        await this.__importChosenBackupOfUnreadableDatabase();
         return;
       }
       const hasData = dataState === 'data';
@@ -550,6 +587,56 @@ export class UIExportImportHelper {
     }
   }
 
+  /**
+   * The start does not go on with a database that could not be read. The
+   * database dialog asks to close the app and start it again, which mostly
+   * helps, or to choose a backup from the list of the settings, the
+   * internal backup first. Nothing is chosen for the user. Resolves once
+   * the chosen backup was imported; asks again otherwise.
+   */
+  private async __importChosenBackupOfUnreadableDatabase(): Promise<void> {
+    while (true) {
+      await this.uiAlert.showIOSIndexedDBIssues(
+        'DATABASE_NOT_READ_DESCRIPTION',
+        'IOS_DATABASE_ISSUE_TITLE',
+        true,
+        'CHOOSE_BACKUP',
+      );
+      const modal = await this.modalController.create({
+        component: SettingsChooseAutomaticBackupToImportComponent,
+        id: SettingsChooseAutomaticBackupToImportComponent.POPOVER_ID,
+      });
+      await modal.present();
+      const uri: string = (await modal.onWillDismiss())?.data?.choosenURI;
+      if (!uri) {
+        continue;
+      }
+      try {
+        await this.uiAlert.showLoadingSpinner();
+        const parsedJSON = await this.getJSONFromZIPArrayBufferContent(
+          await this.uiFileHelper.readFileAsUint8Array(uri),
+        );
+        const result = await this.importBackup(
+          parsedJSON,
+          'import',
+          uri.substring(uri.lastIndexOf('/') + 1),
+          true,
+        );
+        if (result?.BACKUP === false) {
+          this.uiLog.log('Imported the backup chosen at start-up');
+          await this.uiAlert.hideLoadingSpinner();
+          return;
+        }
+        await this.__sayBackupNotRestored(
+          'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
+        );
+      } catch (ex) {
+        this.uiLog.error('Could not import the backup chosen at start-up', ex);
+        await this.__sayBackupNotRestored('IMPORT_UNSUCCESSFULLY');
+      }
+    }
+  }
+
   private importBackupJSON(_parsedJSON: unknown) {
     const promise = new Promise(async (resolve, reject) => {
       await this.uiAlert.showLoadingSpinner();
@@ -567,7 +654,7 @@ export class UIExportImportHelper {
           // Rolled back, the app starts with the stored data.
           this.internalBackupNotRestored = true;
           this.uiLog.error('Could not import  Backup, it was rolled back');
-          await this.__sayInternalBackupNotRestored(
+          await this.__sayBackupNotRestored(
             'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
           );
           resolve(null);
@@ -575,7 +662,7 @@ export class UIExportImportHelper {
         async (_error: unknown) => {
           this.internalBackupNotRestored = true;
           this.uiLog.error('Could not import  Backup');
-          await this.__sayInternalBackupNotRestored(
+          await this.__sayBackupNotRestored(
             _error instanceof PreImportBackupError
               ? // Nothing was imported, the app starts with the stored data.
                 'PRE_IMPORT_BACKUP_FAILED'
@@ -590,13 +677,11 @@ export class UIExportImportHelper {
   }
 
   /**
-   * Says that restoring the internal backup at start-up did not happen.
+   * Says that restoring a backup at start-up did not happen.
    * Otherwise the user would only see the restore offered again at the next
    * start. Never rejects.
    */
-  private async __sayInternalBackupNotRestored(
-    _message: string,
-  ): Promise<void> {
+  private async __sayBackupNotRestored(_message: string): Promise<void> {
     try {
       await this.uiAlert.hideLoadingSpinner();
       await this.uiAlert.showMessage(_message, undefined, undefined, true);
@@ -666,9 +751,9 @@ export class UIExportImportHelper {
           }
           if (hasData && !actualUIStorageDataObj.CORRUPTED) {
             this.uiLog.debug('Start writing automatic backups');
-            if (this.internalBackupNotRestored) {
+            if (this.internalBackupNotRestored || this.databaseNotRead) {
               this.uiLog.info(
-                'Internal backup kept, it was not restored at start-up',
+                'Internal backup kept, it was not restored at start-up or not everything was read',
               );
             } else {
               this.__saveInternalBeanconquerorDump(_blob);
