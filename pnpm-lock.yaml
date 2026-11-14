@@ -147,8 +147,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       chart.js:
-        specifier: ^4.6.1
-        version: 4.6.1
+        specifier: ~4.5.1
+        version: 4.5.1
       community-cordova-plugin-nfc:
         specifier: ^1.6.0
         version: 1.6.0
@@ -2605,8 +2605,8 @@ packages:
   chardet@2.2.0:
     resolution: {integrity: sha512-rddelWYNPRrXq6PtNEN2S3f6t9ILzvqaN5pVgi4kqt9jHQaXIial9PznB5iSPVlQSLNaaH22ItWz3EJtQ10+OA==}
 
-  chart.js@4.6.1:
-    resolution: {integrity: sha512-hJyniucsFmq//EvXYvJ6c6mahPoI3kaxdjVH8awTaJ/fDNWeSqqqArixMJWkWNN6fcYvPU3HneSANFNYtRi61g==}
+  chart.js@4.5.1:
+    resolution: {integrity: sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==}
     engines: {pnpm: '>=8'}
 
   chevrotain@7.1.1:
@@ -8137,7 +8137,7 @@ snapshots:
 
   chardet@2.2.0: {}
 
-  chart.js@4.6.1:
+  chart.js@4.5.1:
     dependencies:
       '@kurkle/color': 0.3.4
 
