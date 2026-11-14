@@ -59,17 +59,7 @@ export class UIUpdate {
 
   public async checkUpdate() {
     this.uiLog.info('Check updates');
-    const dataState = await this.uiStorage.getDataState();
-    if (dataState === 'unknown') {
-      // The collections may not hold what is stored. A data update run now
-      // could be marked as done without having changed the stored entries,
-      // so all of them are left for the next start.
-      this.uiLog.error(
-        'Check updates - the database could not be read, no data update is run',
-      );
-      return;
-    }
-    const hasData: boolean = dataState === 'data';
+    const hasData: boolean = (await this.uiStorage.getDataState()) === 'data';
 
     try {
       const updateVersions: Array<string> = [

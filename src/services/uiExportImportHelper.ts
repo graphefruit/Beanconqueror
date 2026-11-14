@@ -734,16 +734,8 @@ export class UIExportImportHelper {
     this.buildExportZIP().then(
       async (_blob) => {
         try {
-          const dataState = await this.uiStorage.getDataState();
-          if (dataState === 'unknown') {
-            // The ZIP was built from a database that cannot be read now, so
-            // it is not trusted to replace a backup.
-            this.uiLog.error(
-              'The database could not be read, no automatic backup is written',
-            );
-            return;
-          }
-          const hasData = dataState === 'data';
+          // Also false for a database that cannot be read: nothing is written.
+          const hasData = (await this.uiStorage.getDataState()) === 'data';
 
           let actualUIStorageDataObj;
           if (hasData) {

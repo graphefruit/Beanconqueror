@@ -400,9 +400,6 @@ export class AppComponent implements AfterViewInit {
       } catch (ex) {}
 
       await this.uiStorage.init();
-      // Not awaited: the answer can take as long as the user needs for a
-      // question of the browser. It never rejects.
-      void this.uiStorage.requestPersistentStorage();
       try {
         // Before any entry can be written, so changes know their device.
         await this.deviceIdentity.initialize();

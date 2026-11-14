@@ -3,27 +3,18 @@ import { TestBed } from '@angular/core/testing';
 import { ModalController, Platform } from '@ionic/angular/standalone';
 import { Storage } from '@ionic/storage';
 
-import { TranslateService } from '@ngx-translate/core';
-
 import { StorageClass } from '../../classes/storageClass';
-import { Version } from '../../classes/version/iVersion';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
 import { createLegacyData } from '../../test-utils/legacy-data-fixture';
-import { ChangeTrackingMigrationService } from '../changeTracking/change-tracking-migration.service';
-import { DuplicateEntriesMigrationService } from '../changeTracking/duplicate-entries-migration.service';
 import { EventQueueService } from '../queueService/queue-service.service';
 import { UIAlert } from '../uiAlert';
-import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
 import { UIExportImportHelper } from '../uiExportImportHelper';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
-import { UIMillStorage } from '../uiMillStorage';
-import { UIPreparationStorage } from '../uiPreparationStorage';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIStorage } from '../uiStorage';
-import { UIUpdate } from '../uiUpdate';
 import { UiVersionStorage } from '../uiVersionStorage';
 
 /**
@@ -400,7 +391,7 @@ describe('Checking the internal backup at start-up with a database that cannot b
   it('writes no automatic backup while the database cannot be read', async () => {
     const data = createLegacyData({ brews: 20, beans: 4 });
     const state = { readable: true };
-    const { helper, log, writeInternalFileFromBlob, writeFileFromBlob } =
+    const { helper, writeInternalFileFromBlob, writeFileFromBlob } =
       await startApp(data, state);
     spyOn(helper, 'buildExportZIP').and.resolveTo(new Blob(['zip']));
     state.readable = false;
@@ -409,80 +400,6 @@ describe('Checking the internal backup at start-up with a database that cannot b
 
     expect(writeInternalFileFromBlob).not.toHaveBeenCalled();
     expect(writeFileFromBlob).not.toHaveBeenCalled();
-    expect(log.lines).toContain(
-      'The database could not be read, no automatic backup is written',
-    );
-  });
-});
-
-describe('The start-up update check with a database that cannot be read', () => {
-  beforeEach(() => withoutRetryDelay());
-
-  it('runs no data update and marks none as done', async () => {
-    const version = new Version();
-    for (let i = 1; i <= 15; i++) {
-      version.pushUpdatedDataVersion(`UPDATE_${i}`);
-    }
-    const saveVersion = jasmine.createSpy('saveVersion').and.resolveTo();
-    const run = jasmine.createSpy('run').and.resolveTo(true);
-    const showLoadingSpinner = jasmine
-      .createSpy('showLoadingSpinner')
-      .and.resolveTo();
-    const log = createLog();
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      providers: [
-        UIUpdate,
-        UIStorage,
-        {
-          provide: Storage,
-          useValue: {
-            create: () =>
-              Promise.resolve(createDeviceDatabase({}, { readable: false })),
-          },
-        },
-        { provide: EventQueueService, useValue: { dispatch: () => undefined } },
-        { provide: ChangeTrackingMigrationService, useValue: { run } },
-        { provide: DuplicateEntriesMigrationService, useValue: { run } },
-        {
-          provide: UiVersionStorage,
-          useValue: { getVersion: () => version, saveVersion },
-        },
-        { provide: UILog, useValue: log },
-        { provide: UIBrewStorage, useValue: {} },
-        { provide: UIBeanStorage, useValue: {} },
-        { provide: UIPreparationStorage, useValue: {} },
-        { provide: UIMillStorage, useValue: {} },
-        { provide: UISettingsStorage, useValue: {} },
-        { provide: Platform, useValue: { is: () => true } },
-        { provide: ModalController, useValue: {} },
-        { provide: UIFileHelper, useValue: {} },
-        {
-          provide: UIAlert,
-          useValue: {
-            showLoadingSpinner,
-            hideLoadingSpinner: () => Promise.resolve(),
-            isLoadingSpinnerShown: () => false,
-          },
-        },
-        { provide: TranslateService, useValue: {} },
-        { provide: UIHelper, useValue: {} },
-      ],
-    });
-    await TestBed.inject(UIStorage).init();
-
-    await TestBed.inject(UIUpdate).checkUpdate();
-
-    expect(run).not.toHaveBeenCalled();
-    expect(saveVersion).not.toHaveBeenCalled();
-    expect(showLoadingSpinner).not.toHaveBeenCalled();
-    expect(version.checkIfDataVersionWasUpdated('UPDATE_16')).toBeFalse();
-    expect(version.checkIfDataVersionWasUpdated('UPDATE_17')).toBeFalse();
-    expect(
-      log.lines.some((_line) =>
-        _line.includes('could not be read, no data update is run'),
-      ),
-    ).toBeTrue();
   });
 });
 
@@ -832,62 +749,6 @@ describe('UIStorage', () => {
 
       expect(await uiStorage.getDataState()).toBe('data');
       expect(create).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('requestPersistentStorage', () => {
-    async function request(_storageManager: unknown): Promise<string[]> {
-      const { uiStorage, log } = await createStorage({});
-      spyOnProperty(navigator, 'storage', 'get').and.returnValue(
-        _storageManager as StorageManager,
-      );
-
-      await expectAsync(uiStorage.requestPersistentStorage()).toBeResolved();
-
-      return log.lines;
-    }
-
-    it('asks the browser to keep the database and logs that it does', async () => {
-      const persist = jasmine.createSpy('persist').and.resolveTo(true);
-
-      const lines = await request({ persist });
-
-      expect(persist).toHaveBeenCalledTimes(1);
-      expect(lines).toContain('UIStorage - Persistent storage - granted');
-    });
-
-    it('logs that the browser does not keep the database', async () => {
-      const lines = await request({ persist: () => Promise.resolve(false) });
-
-      expect(lines).toContain('UIStorage - Persistent storage - not granted');
-    });
-
-    it('does nothing where the browser has no persist()', async () => {
-      expect(await request({})).toContain(
-        'UIStorage - Persistent storage - not available',
-      );
-    });
-
-    it('does nothing where the browser has no storage manager', async () => {
-      expect(await request(undefined)).toContain(
-        'UIStorage - Persistent storage - not available',
-      );
-    });
-
-    it('does not fail when the browser rejects the request', async () => {
-      expect(
-        await request({ persist: () => Promise.reject(new Error('no')) }),
-      ).toContain('UIStorage - Persistent storage - request failed');
-    });
-
-    it('does not fail when asking throws', async () => {
-      expect(
-        await request({
-          persist: () => {
-            throw new Error('no');
-          },
-        }),
-      ).toContain('UIStorage - Persistent storage - request failed');
     });
   });
 });
