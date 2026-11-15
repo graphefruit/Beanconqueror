@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { StorageClass } from '../../classes/storageClass';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIExportImportHelper } from '../../services/uiExportImportHelper';
 import { UIGreenBeanStorage } from '../../services/uiGreenBeanStorage';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
@@ -38,6 +39,8 @@ describe('DeleteCommands', () => {
   let database: MemoryDatabase;
   let storages: Record<string, StorageClass>;
   let commands: DeleteCommands;
+  /** What the start checks tell about restoring the internal backup. */
+  let restoreAtStartFailed: boolean;
 
   const inMemory = (key: string) => uuidsOf(storages[key].getRawEntries());
   const noted = () => database.journal().map((_note) => _note.uuid);
@@ -59,7 +62,16 @@ describe('DeleteCommands', () => {
 
   beforeEach(() => {
     database = new MemoryDatabase();
-    TestBed.configureTestingModule({ providers: database.providers() });
+    restoreAtStartFailed = false;
+    TestBed.configureTestingModule({
+      providers: [
+        ...database.providers(),
+        {
+          provide: UIExportImportHelper,
+          useValue: { restoreAtStartFailed: () => restoreAtStartFailed },
+        },
+      ],
+    });
   });
 
   const WITH_BREWS = [
@@ -616,7 +628,7 @@ describe('DeleteCommands', () => {
           // An import from before the deletion does not matter.
           database.values.set('LAST_RESTORE', restoredAt(STARTED - 1));
 
-          await commands.finishInterrupted(false);
+          await commands.finishInterrupted();
 
           expect(database.written()).toEqual([key, 'DELETION_JOURNAL']);
           expect(database.uuids(key)).toEqual(['kept']);
@@ -638,7 +650,7 @@ describe('DeleteCommands', () => {
             dependent('left', 'doomed'),
           ]);
 
-          await commands.finishInterrupted(false);
+          await commands.finishInterrupted();
 
           nothingDeleted(2);
           expect(database.values.has(NOTE)).toBeFalse();
@@ -646,7 +658,7 @@ describe('DeleteCommands', () => {
           // Not at a later start either, once nothing depends on it.
           await storages[dependentKey].removeManyByUUID(['left']);
           database.set.calls.reset();
-          await commands.finishInterrupted(false);
+          await commands.finishInterrupted();
 
           expect(database.set).not.toHaveBeenCalled();
           expect(database.uuids(key)).toEqual(['kept', 'doomed']);
@@ -655,7 +667,7 @@ describe('DeleteCommands', () => {
         it('does nothing when the entry is gone already', async () => {
           await startWith([], { ...pending(key), uuid: 'gone' });
 
-          await commands.finishInterrupted(false);
+          await commands.finishInterrupted();
 
           nothingDeleted(0);
           expect(database.values.has(NOTE)).toBeFalse();
@@ -671,7 +683,7 @@ describe('DeleteCommands', () => {
             await startWith([]);
             database.values.set('LAST_RESTORE', restoredAt(at));
 
-            await commands.finishInterrupted(false);
+            await commands.finishInterrupted();
 
             nothingDeleted(0);
             expect(database.values.has(NOTE)).toBeFalse();
@@ -680,13 +692,15 @@ describe('DeleteCommands', () => {
 
         it('deletes nothing when restoring a backup failed at this start, nor at the next one', async () => {
           await startWith([]);
+          restoreAtStartFailed = true;
 
-          await commands.finishInterrupted(true);
+          await commands.finishInterrupted();
 
           nothingDeleted(0);
           expect(database.values.has(NOTE)).toBeFalse();
 
-          await commands.finishInterrupted(false);
+          restoreAtStartFailed = false;
+          await commands.finishInterrupted();
 
           nothingDeleted(0);
         });
@@ -695,7 +709,7 @@ describe('DeleteCommands', () => {
           await startWith([]);
           database.failingWrites.add(NOTE);
 
-          await expectAsync(commands.finishInterrupted(false)).toBeResolved();
+          await expectAsync(commands.finishInterrupted()).toBeResolved();
 
           nothingDeleted(0);
         });
@@ -703,7 +717,7 @@ describe('DeleteCommands', () => {
         it('deletes nothing when the note was written after now', async () => {
           await startWith([], pending(key, Date.now() + 60_000));
 
-          await commands.finishInterrupted(false);
+          await commands.finishInterrupted();
 
           nothingDeleted(0);
           expect(database.values.has(NOTE)).toBeFalse();
@@ -714,7 +728,7 @@ describe('DeleteCommands', () => {
             await startWith([]);
             database.unreadable.add(unreadable);
 
-            await expectAsync(commands.finishInterrupted(false)).toBeResolved();
+            await expectAsync(commands.finishInterrupted()).toBeResolved();
 
             nothingDeleted(0);
           });
@@ -724,7 +738,7 @@ describe('DeleteCommands', () => {
           database.unreadable.add(key);
           await startWith([]);
 
-          await commands.finishInterrupted(false);
+          await commands.finishInterrupted();
 
           expect(database.set).not.toHaveBeenCalled();
           expect(database.uuids(key)).toEqual(['kept', 'doomed']);
@@ -751,7 +765,7 @@ describe('DeleteCommands', () => {
         database.values.set(NOTE, note);
         await start({ BEANS: [stored('doomed'), stored('7')], BREWS: [] });
 
-        await commands.finishInterrupted(false);
+        await commands.finishInterrupted();
 
         expect(database.set).not.toHaveBeenCalled();
         expect(database.uuids('BEANS')).toEqual(['doomed', '7']);
@@ -762,7 +776,7 @@ describe('DeleteCommands', () => {
     it('writes and removes nothing without a note', async () => {
       await start({ BEANS: [stored('doomed')], BREWS: [] });
 
-      await commands.finishInterrupted(false);
+      await commands.finishInterrupted();
 
       expect(database.set).not.toHaveBeenCalled();
       expect(database.remove).not.toHaveBeenCalled();

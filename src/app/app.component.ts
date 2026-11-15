@@ -372,9 +372,7 @@ export class AppComponent implements AfterViewInit {
             this.uiExportImportHelper.allCollectionsRead();
             await this.__checkUpdate();
             // After the data updates, which can still change uuids.
-            await this.deleteCommands.finishInterrupted(
-              this.uiExportImportHelper.restoreAtStartFailed(),
-            );
+            await this.deleteCommands.finishInterrupted();
             await this.__checkCleanup();
             await this.__initApp();
             this.uiHelper.setAppReady(1);

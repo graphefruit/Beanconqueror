@@ -8,6 +8,7 @@ import { StorageClass } from '../classes/storageClass';
 import { IRestoreNote } from '../interfaces/changeTracking/iRestoreNote';
 import { UIBeanStorage } from '../services/uiBeanStorage';
 import { UIBrewStorage } from '../services/uiBrewStorage';
+import { UIExportImportHelper } from '../services/uiExportImportHelper';
 import { UIGreenBeanStorage } from '../services/uiGreenBeanStorage';
 import { UILog } from '../services/uiLog';
 import { UIMillStorage } from '../services/uiMillStorage';
@@ -43,6 +44,7 @@ export class DeleteCommands {
   private readonly uiMillStorage = inject(UIMillStorage);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiStorage = inject(UIStorage);
+  private readonly uiExportImportHelper = inject(UIExportImportHelper);
   private readonly uiLog = inject(UILog);
 
   /** What goes along with an entry of each collection. */
@@ -99,14 +101,14 @@ export class DeleteCommands {
    * is removed first, so it is acted on at most once, and nothing is done
    *
    * - when a backup was imported since, or restoring one was begun at this
-   *   start and not completed (`_restoreFailed`),
+   *   start and not completed,
    * - when the note lies in the future, as the clock was set back since,
    * - when the note, or the one about the last import, cannot be read or
    *   the note cannot be removed.
    *
    * Never rejects and shows nothing.
    */
-  public async finishInterrupted(_restoreFailed: boolean): Promise<void> {
+  public async finishInterrupted(): Promise<void> {
     try {
       const note: unknown = await this.uiStorage.getOrFail(
         PENDING_DELETION_STORAGE_KEY,
@@ -136,7 +138,7 @@ export class DeleteCommands {
         restore !== undefined &&
         !(restore.last_restore_at < started_at);
       const finish =
-        !_restoreFailed &&
+        !this.uiExportImportHelper.restoreAtStartFailed() &&
         !restored &&
         started_at <= Date.now() &&
         storage.getByUUID(uuid) !== undefined &&
