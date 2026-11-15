@@ -6,9 +6,11 @@ import { FileInfo } from '@capacitor/filesystem';
 
 import { PreImportBackupService } from '../../../services/preImportBackup/pre-import-backup.service';
 import { UIFileHelper } from '../../../services/uiFileHelper';
-import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { SettingsChooseAutomaticBackupToImportComponent } from '../settings-choose-automatic-backup-to-import.component';
+import {
+  fileSize,
+  SettingsChooseAutomaticBackupToImportComponent,
+} from '../settings-choose-automatic-backup-to-import.component';
 
 function file(_name: string, _size: number): FileInfo {
   return {
@@ -44,7 +46,6 @@ describe('Choosing an automatic backup file to import', () => {
           },
         },
         { provide: UISettingsStorage, useValue: { getSettings: () => ({}) } },
-        { provide: UIHelper, useValue: {} },
         {
           provide: PreImportBackupService,
           useValue: { list: () => Promise.resolve(beforeImport) },
@@ -77,5 +78,11 @@ describe('Choosing an automatic backup file to import', () => {
       automatic[0],
       beforeImport[1],
     ]);
+  });
+
+  it('shows a small backup in kB instead of 0 Mb', () => {
+    expect(fileSize(4410)).toBe('5kB');
+    expect(fileSize(24718)).toBe('0.02Mb');
+    expect(fileSize(1021246)).toBe('0.97Mb');
   });
 });

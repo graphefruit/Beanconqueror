@@ -30,8 +30,15 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { FormatDatePipe } from '../../pipes/formatDate';
 import { PreImportBackupService } from '../../services/preImportBackup/pre-import-backup.service';
 import { UIFileHelper } from '../../services/uiFileHelper';
-import { UIHelper } from '../../services/uiHelper';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+
+/** Below 0.01 MB in kB, as a small backup would otherwise read "0Mb". */
+export function fileSize(bytes: number): string {
+  const megabytes = bytes / 1024 / 1024;
+  return megabytes < 0.01
+    ? `${Math.ceil(bytes / 1024)}kB`
+    : `${+megabytes.toFixed(2)}Mb`;
+}
 
 @Component({
   selector: 'app-settings-choose-automatic-backup-to-import',
@@ -62,7 +69,6 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly preImportBackup = inject(PreImportBackupService);
-  protected readonly uiHelper = inject(UIHelper);
 
   public static POPOVER_ID: string =
     'choose-automatic-backup-to-import-popover';
@@ -89,6 +95,8 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
     });
     this.foundBackupFiles = internalBackup ? [internalBackup, ...files] : files;
   }
+
+  protected readonly fileSize = fileSize;
 
   public async saveSettings() {}
 
