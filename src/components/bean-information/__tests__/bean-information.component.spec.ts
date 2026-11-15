@@ -14,6 +14,7 @@ import { Subject } from 'rxjs';
 import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { BEAN_ACTION } from '../../../enums/beans/beanAction';
 import { BeanGroup } from '../../../interfaces/bean/beanGroup';
 import { IBean } from '../../../interfaces/bean/iBean';
@@ -31,6 +32,7 @@ import { UIHelper } from '../../../services/uiHelper';
 import { UIImage } from '../../../services/uiImage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
+import { BeanCommands } from '../../../stores/beans/bean-commands';
 import { BeanStore } from '../../../stores/beans/bean.store';
 import { FakeStoreSource } from '../../../stores/core/__tests__/fake-store-source';
 import {
@@ -92,9 +94,6 @@ class FakeBeanStorage extends FakeStoreSource {
       );
       return true;
     });
-  public removeByObject = jasmine
-    .createSpy('removeByObject')
-    .and.resolveTo(true);
 }
 
 class FakeBrewStorage extends FakeStoreSource {
@@ -105,7 +104,6 @@ class FakeBrewStorage extends FakeStoreSource {
       return brew;
     }),
   );
-  public removeByUUID = jasmine.createSpy('removeByUUID').and.resolveTo(true);
 }
 
 /** Spies by name, to be handed in as a service. */
@@ -118,6 +116,9 @@ function spies(names: string[]): Record<string, jasmine.Spy> {
 describe('BeanInformationComponent', () => {
   let beans: FakeBeanStorage;
   let brews: FakeBrewStorage;
+  let commands: Record<string, jasmine.Spy>;
+  let analytics: Record<string, jasmine.Spy>;
+  let settingsStorage: jasmine.SpyObj<UISettingsStorage>;
   let settings: Settings;
   let helper: Record<string, jasmine.Spy>;
   let alert: Record<string, jasmine.Spy>;
@@ -158,7 +159,7 @@ describe('BeanInformationComponent', () => {
     }
     settings.freeze_coffee_beans = true;
     settings.best_brew = true;
-    const settingsStorage = jasmine.createSpyObj('UISettingsStorage', [
+    settingsStorage = jasmine.createSpyObj('UISettingsStorage', [
       'getSettings',
       'saveSettings',
     ]);
@@ -187,6 +188,9 @@ describe('BeanInformationComponent', () => {
       async <T>(work: () => T | Promise<T>) => work(),
     );
     toast = spies(['showInfoToast']);
+    commands = spies(['deleteWithBrews']);
+    commands.deleteWithBrews.and.resolveTo(true);
+    analytics = spies(['trackEvent']);
     brewHelper = spies(['showAssociatedBrews', 'repeatBrew']);
     modal = spies(['create']);
     actionSheet = spies(['create']);
@@ -215,10 +219,8 @@ describe('BeanInformationComponent', () => {
         { provide: ShareService, useValue: share },
         { provide: UIImage, useValue: image },
         { provide: UIHelper, useValue: uiHelper },
-        {
-          provide: UIAnalytics,
-          useValue: jasmine.createSpyObj('UIAnalytics', ['trackEvent']),
-        },
+        { provide: UIAnalytics, useValue: analytics },
+        { provide: BeanCommands, useValue: commands },
         {
           provide: CurrencyService,
           useValue: { getActualCurrencySymbol: () => '€' },
@@ -494,7 +496,7 @@ describe('BeanInformationComponent', () => {
         alert.showConfirm,
         uiHelper.copyToClipboard,
         beans.update,
-        beans.removeByObject,
+        commands.deleteWithBrews,
       ]) {
         expect(spy).not.toHaveBeenCalled();
       }
@@ -708,22 +710,125 @@ describe('BeanInformationComponent', () => {
       expect(helper.unfreezeBean).not.toHaveBeenCalled();
     });
 
-    it('delete the bean and its brews after asking', async () => {
-      alert.showConfirm.and.resolveTo('NO');
-      choose(BEAN_ACTION.DELETE);
-      await card.showBeanActions(event());
+    describe('delete the bean and its brews', () => {
+      /** What happened, in order. */
+      let steps: string[];
 
-      expect(beans.removeByObject).not.toHaveBeenCalled();
-      expect(emitted.map(([action]) => action)).toEqual([BEAN_ACTION.DELETE]);
+      beforeEach(() => {
+        steps = [];
+        const step = (name: string, spy: jasmine.Spy, result?: unknown) =>
+          spy.and.callFake(() => {
+            steps.push(name);
+            return result;
+          });
+        // Like the real one: the spinner is hidden when the work has ended,
+        // also by an error.
+        alert.withLoadingSpinner.and.callFake(
+          async <T>(work: () => T | Promise<T>) => {
+            steps.push('spinner shown');
+            try {
+              return await work();
+            } finally {
+              steps.push('spinner hidden');
+            }
+          },
+        );
+        analytics.trackEvent.and.callFake((_title: string, action: string) => {
+          if (action === BEAN_TRACKING.ACTIONS.DELETE) {
+            steps.push('tracked');
+          }
+        });
+        step('toast', toast.showInfoToast);
+        step('message', alert.showMessage, Promise.resolve());
+        settingsStorage.saveSettings.and.callFake(() => {
+          steps.push('filters reset');
+          return Promise.resolve() as never;
+        });
+        alert.showConfirm.and.resolveTo('YES');
+        choose(BEAN_ACTION.DELETE);
+      });
 
-      alert.showConfirm.and.resolveTo('YES');
-      await card.showBeanActions(event());
+      function command(result: Promise<boolean>) {
+        commands.deleteWithBrews.and.callFake(() => {
+          steps.push('command');
+          return result;
+        });
+      }
 
-      expect(brews.removeByUUID).toHaveBeenCalledTimes(2);
-      expect(handed(beans.removeByObject).config.uuid).toBe('alpha');
-      expect(toast.showInfoToast).toHaveBeenCalledWith(
-        'TOAST_BEAN_DELETED_SUCCESSFULLY',
-      );
+      it('not without a yes to the question', async () => {
+        alert.showConfirm.and.resolveTo('NO');
+        await card.showBeanActions(event());
+
+        expect(alert.showConfirm).toHaveBeenCalledOnceWith(
+          'DELETE_BEAN_QUESTION',
+          'SURE_QUESTION',
+          true,
+        );
+        expect(commands.deleteWithBrews).not.toHaveBeenCalled();
+        expect(steps).toEqual([]);
+        expect(emitted.map(([action]) => action)).toEqual([BEAN_ACTION.DELETE]);
+      });
+
+      it('with a toast and all filters reset once it is done', async () => {
+        settings.bean_filter.OPEN.favourite = true;
+        command(Promise.resolve(true));
+        await card.showBeanActions(event());
+
+        expect(commands.deleteWithBrews).toHaveBeenCalledOnceWith('alpha');
+        expect(steps).toEqual([
+          'spinner shown',
+          'tracked',
+          'command',
+          'toast',
+          'filters reset',
+          'spinner hidden',
+        ]);
+        // The spinner keeps its own text.
+        expect(alert.withLoadingSpinner.calls.mostRecent().args).toHaveSize(1);
+        expect(toast.showInfoToast).toHaveBeenCalledOnceWith(
+          'TOAST_BEAN_DELETED_SUCCESSFULLY',
+        );
+        expect(settings.bean_filter.OPEN.favourite).toBeFalse();
+        expect(alert.showMessage).not.toHaveBeenCalled();
+        expect(emitted.map(([action]) => action)).toEqual([BEAN_ACTION.DELETE]);
+      });
+
+      it('with one message and nothing else when it failed', async () => {
+        settings.bean_filter.OPEN.favourite = true;
+        command(Promise.resolve(false));
+        await card.showBeanActions(event());
+
+        expect(steps).toEqual([
+          'spinner shown',
+          'tracked',
+          'command',
+          'spinner hidden',
+          'message',
+        ]);
+        expect(alert.showMessage).toHaveBeenCalledOnceWith(
+          'ERROR_OCCURED',
+          'CARE',
+          undefined,
+          true,
+        );
+        expect(toast.showInfoToast).not.toHaveBeenCalled();
+        expect(settings.bean_filter.OPEN.favourite).toBeTrue();
+        expect(emitted.map(([action]) => action)).toEqual([BEAN_ACTION.DELETE]);
+      });
+
+      it('hides the spinner when deleting throws', async () => {
+        command(Promise.reject(new Error('unexpected')));
+
+        await expectAsync(card.showBeanActions(event())).toBeRejected();
+
+        expect(steps).toEqual([
+          'spinner shown',
+          'tracked',
+          'command',
+          'spinner hidden',
+        ]);
+        expect(toast.showInfoToast).not.toHaveBeenCalled();
+      });
     });
 
     describe('repeat the last or the best brew', () => {

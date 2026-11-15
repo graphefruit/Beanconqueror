@@ -6,6 +6,7 @@ import {
   beanSegment,
   dialogsClosed,
   NO_BEAN_FILTER,
+  openBeansTab,
   seededBean,
   startWithBeans,
   storedBeanFilters,
@@ -15,9 +16,8 @@ import { readStoredValue } from './support/stored-values';
 import { toast } from './support/toast';
 
 /**
- * Characterization of deleting a bean as it works today: after a question
- * the bean and all of its brews are removed, and each removed entry leaves a
- * local note.
+ * Deleting a bean: after a question the bean and all of its brews are
+ * removed, and each removed entry leaves a local note.
  */
 
 interface StoredBrew {
@@ -83,12 +83,13 @@ test('deleting a bean removes it and its brews after a question', async ({
     device_id: device?.device_id,
     rev: 0,
   });
+  const notes = [
+    ...brews.map((brew) => note('BREWS', brew.config.uuid)),
+    note('BEANS', bean.config.uuid),
+  ];
   await expect
     .poll(() => readStoredValue(page, 'DELETION_JOURNAL'))
-    .toEqual([
-      ...brews.map((brew) => note('BREWS', brew.config.uuid)),
-      note('BEANS', bean.config.uuid),
-    ]);
+    .toEqual(notes);
 
   // Deleting resets the filters of all segments as well.
   await expect
@@ -103,4 +104,17 @@ test('deleting a bean removes it and its brews after a question', async ({
   await expect(
     page.getByRole('tab', { name: /^Current/ }),
   ).toHaveAccessibleName('Current ( 2 )');
+
+  // Bean, brews and notes are the same after a restart.
+  await page.goto('/');
+  await openBeansTab(page);
+  await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
+    'Available ( 6 )',
+  );
+  await expect(beanCard(page, BEANS.overused)).toHaveCount(0);
+  expect(await storedBeans(page)).toHaveLength(13);
+  expect(await readStoredValue<StoredBrew[]>(page, 'BREWS')).toHaveLength(
+    data.BREWS.length - brews.length,
+  );
+  expect(await readStoredValue(page, 'DELETION_JOURNAL')).toEqual(notes);
 });

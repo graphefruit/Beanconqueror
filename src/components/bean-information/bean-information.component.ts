@@ -71,7 +71,6 @@ import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIHelper } from '../../services/uiHelper';
 import { UIImage } from '../../services/uiImage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
@@ -80,6 +79,7 @@ import {
   beanActions,
   pickRepeatBrew,
 } from '../../stores/beans/bean-action-rules';
+import { BeanCommands } from '../../stores/beans/bean-commands';
 import {
   beanAgeInDays,
   hasFrozenInformation,
@@ -135,7 +135,6 @@ export class BeanInformationComponent {
   readonly uiBeanHelper = inject(UIBeanHelper);
   private readonly modalController = inject(ModalController);
   private readonly uiAnalytics = inject(UIAnalytics);
-  private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiAlert = inject(UIAlert);
   private readonly uiToast = inject(UIToast);
   private readonly uiBeanStorage = inject(UIBeanStorage);
@@ -151,6 +150,7 @@ export class BeanInformationComponent {
   private actionSheetCtrl = inject(ActionSheetController);
   private readonly currencyService = inject(CurrencyService);
   private readonly beanStore = inject(BeanStore);
+  private readonly beanCommands = inject(BeanCommands);
   private readonly beanUsageStore = inject(BeanUsageStore);
 
   /**
@@ -629,15 +629,23 @@ export class BeanInformationComponent {
       return;
     }
 
-    await this.uiAlert.withLoadingSpinner(async () => {
+    const deleted = await this.uiAlert.withLoadingSpinner(async () => {
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.DELETE,
       );
-      await this.__deleteBean();
-      this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
-      await this.resetSettings();
+      const done = await this.beanCommands.deleteWithBrews(
+        this.actionBean.config.uuid,
+      );
+      if (done) {
+        this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
+        await this.resetSettings();
+      }
+      return done;
     });
+    if (!deleted) {
+      await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
+    }
   }
 
   private async resetSettings() {
@@ -652,23 +660,5 @@ export class BeanInformationComponent {
       BEAN_TRACKING.ACTIONS.REPEAT,
     );
     await this.uiBeanHelper.repeatBean(this.actionBean);
-  }
-
-  private async __deleteBean() {
-    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-
-    const deletingBrewIndex: Array<number> = [];
-    for (let i = 0; i < brews.length; i++) {
-      if (brews[i].bean === this.actionBean.config.uuid) {
-        deletingBrewIndex.push(i);
-      }
-    }
-    for (let i = deletingBrewIndex.length; i--;) {
-      await this.uiBrewStorage.removeByUUID(
-        brews[deletingBrewIndex[i]].config.uuid,
-      );
-    }
-
-    await this.uiBeanStorage.removeByObject(this.actionBean);
   }
 }
