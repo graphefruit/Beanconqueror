@@ -1,4 +1,4 @@
-export type PerfTier = 7_000 | 15_000;
+export type PerfTier = 7_000 | 15_000 | 30_000;
 
 /**
  * Upper limits in milliseconds at 4x CPU throttling (see DEVELOPING.md, "Performance budgets").
@@ -8,7 +8,7 @@ export type PerfTier = 7_000 | 15_000;
  * perf.ts), five to thirteen values per budget; the comments give their median / maximum. Each
  * budget is that maximum plus 30 %, but at least plus 50 ms, rounded up to 10 ms (100 ms from one
  * second, 1,000 ms from ten seconds), so the spread between runs passes and a clear slowdown
- * fails. A 15,000-brew budget is never below the 7,000-brew one: the work grows with the brews.
+ * fails. A budget is never below the one for fewer brews: the work grows with the brews.
  * Lower a budget when the app gets faster; raise one only with a reason.
  *
  * The values are from before entries carried change info and before the brew charts were
@@ -16,6 +16,9 @@ export type PerfTier = 7_000 | 15_000;
  * after both changes (2026-11-13) stayed within every budget although the machine was 39 to
  * 99 % busy, so no budget was changed; the brew charts used up to 90 % of theirs. Derive the
  * budgets again when the machine is idle.
+ *
+ * The 30,000-brew budgets are from six runs on the same machine (2026-11-15), three to six
+ * values per budget by the same rule.
  */
 export interface Budget {
   /** Navigation start until the home screen shows the brew count. */
@@ -88,5 +91,18 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     statisticsBrewCharts: 450, // 320 / 340
     export: 1_900, // 1,364 / 1,395
     import: 3_600, // 1,892 / 2,716 (once; otherwise at most 2,028)
+  },
+  30_000: {
+    startVisible: 3_900, // 1,998 / 2,007
+    startInteractive: 4_000, // 2,116 / 2,129
+    brewListOpen: 810, // 272 / 306
+    brewListScroll: 126_000, // 87,800 / 96,607
+    brewListScrollLongestFrame: 300, // 168 / 210
+    search: 200, // 111 / 116
+    beanListOpen: 680, // 459 / 519
+    statisticsOpen: 210, // 112 / 154
+    statisticsBrewCharts: 710, // 531 / 541
+    export: 2_300, // 1,588 / 1,760
+    import: 5_300, // 3,420 / 4,009
   },
 };

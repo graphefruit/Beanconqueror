@@ -193,8 +193,10 @@ later in the 23 line), such as the Node 24 from `.nvmrc`; older versions cannot 
 
 ### Performance budgets
 
-`pnpm e2e:perf` measures the app with 7,000 and 15,000 brews (`e2e/perf/large-data.perf.ts`)
-and fails when a value exceeds its budget in `e2e/perf/budgets.ts`. A run takes several minutes,
+`pnpm e2e:perf` measures the app with 7,000, 15,000 and 30,000 brews
+(`e2e/perf/large-data.perf.ts`) and fails when a value exceeds its budget in
+`e2e/perf/budgets.ts`; `PERF_TIERS=50000 pnpm e2e:perf` measures other numbers of brews without
+budgets. A run takes several minutes,
 so it is not part of `pnpm e2e` or CI; run it before and after changes to storage, lists,
 statistics, start-up or backups.
 

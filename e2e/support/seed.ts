@@ -2,6 +2,8 @@ import type { Page } from '@playwright/test';
 
 const SEED_PAGE = '/__seed__/page';
 const SEED_DATA = '/__seed__/data.json';
+/** Characters of the data per response. */
+const PART_LENGTH = 16 * 1024 * 1024;
 
 /**
  * Writes the data set into the app's database before the app starts, as an existing installation
@@ -20,34 +22,48 @@ export async function seedDatabase(
       body: '<!doctype html><title>seed</title>',
     }),
   );
-  await page.route(`**${SEED_DATA}`, (route) =>
-    route.fulfill({ contentType: 'application/json', body: json }),
-  );
+  // In parts: a browser closes when one response is larger than about 100 MB, and 50,000 brews
+  // are 78 MB before the protocol encodes them.
+  const parts = Math.ceil(json.length / PART_LENGTH);
+  await page.route(`**${SEED_DATA}?part=*`, (route) => {
+    const part = Number(
+      new URL(route.request().url()).searchParams.get('part'),
+    );
+    return route.fulfill({
+      contentType: 'text/plain',
+      body: json.slice(part * PART_LENGTH, (part + 1) * PART_LENGTH),
+    });
+  });
   await page.goto(SEED_PAGE);
-  await page.evaluate(async (url) => {
-    const entries = (await (await fetch(url)).json()) as Record<
-      string,
-      unknown
-    >;
-    const db = await new Promise<IDBDatabase>((resolve, reject) => {
-      const request = indexedDB.open('__baristaDB');
-      request.onupgradeneeded = () =>
-        request.result.createObjectStore('_ionickv');
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error ?? new Error('open failed'));
-    });
-    await new Promise<void>((resolve, reject) => {
-      const transaction = db.transaction('_ionickv', 'readwrite');
-      const store = transaction.objectStore('_ionickv');
-      for (const [key, value] of Object.entries(entries)) {
-        store.put(value, key);
+  await page.evaluate(
+    async ({ url, parts }) => {
+      let text = '';
+      for (let part = 0; part < parts; part++) {
+        text += await (await fetch(`${url}?part=${part}`)).text();
       }
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () =>
-        reject(transaction.error ?? new Error('write failed'));
-    });
-    db.close();
-  }, SEED_DATA);
+      const entries = JSON.parse(text) as Record<string, unknown>;
+      const db = await new Promise<IDBDatabase>((resolve, reject) => {
+        const request = indexedDB.open('__baristaDB');
+        request.onupgradeneeded = () =>
+          request.result.createObjectStore('_ionickv');
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () =>
+          reject(request.error ?? new Error('open failed'));
+      });
+      await new Promise<void>((resolve, reject) => {
+        const transaction = db.transaction('_ionickv', 'readwrite');
+        const store = transaction.objectStore('_ionickv');
+        for (const [key, value] of Object.entries(entries)) {
+          store.put(value, key);
+        }
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () =>
+          reject(transaction.error ?? new Error('write failed'));
+      });
+      db.close();
+    },
+    { url: SEED_DATA, parts },
+  );
   await page.unroute(`**${SEED_PAGE}`);
-  await page.unroute(`**${SEED_DATA}`);
+  await page.unroute(`**${SEED_DATA}?part=*`);
 }

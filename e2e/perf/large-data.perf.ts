@@ -29,11 +29,13 @@ import {
 
 /**
  * How the app copes with the data of long-time users: start, lists, search, statistics, export
- * and import with 7,000 and 15,000 brews under CPU throttling. Every value is checked against
- * the budgets in `budgets.ts`; a test fails only after all of its values are reported.
+ * and import with 7,000, 15,000 and 30,000 brews under CPU throttling. Every value is checked
+ * against the budgets in `budgets.ts`; a test fails only after all of its values are reported.
+ * `PERF_TIERS=50000` measures other numbers of brews, without budgets.
  */
 
-const TIERS: PerfTier[] = [7_000, 15_000];
+const TIERS = (process.env.PERF_TIERS?.split(',').map(Number) ??
+  Object.keys(BUDGETS).map(Number)) as PerfTier[];
 
 // The data ends at the start of today (UTC), so the newest brews are from yesterday and "time
 // since the last brew" and the analytics reminder behave like for an active user. Within one day
@@ -101,20 +103,23 @@ function checkBudget(
 }
 
 // No browser needed: checks the budgets themselves.
-plainTest('no 15,000-brew budget is below the 7,000-brew one', () => {
+plainTest('no budget is below the one for fewer brews', () => {
   // The work grows with the number of brews.
-  for (const name of Object.keys(BUDGETS[7_000]) as (keyof Budget)[]) {
-    expect(BUDGETS[15_000][name], name).toBeGreaterThanOrEqual(
-      BUDGETS[7_000][name],
-    );
+  const budgets = Object.values(BUDGETS);
+  for (let i = 1; i < budgets.length; i++) {
+    for (const name of Object.keys(budgets[i]) as (keyof Budget)[]) {
+      expect(budgets[i][name], name).toBeGreaterThanOrEqual(
+        budgets[i - 1][name],
+      );
+    }
   }
 });
 
 for (const tier of TIERS) {
   test.describe(`${tier} brews`, () => {
-    const budget = BUDGETS[tier];
+    const budget: Budget | undefined = BUDGETS[tier];
     // The budgets are set for 4x throttling; other values only produce measurements.
-    const checkBudgets = CPU_THROTTLING === 4;
+    const checkBudgets = CPU_THROTTLING === 4 && budget !== undefined;
 
     test('start until the home screen is interactive', async ({
       page,
