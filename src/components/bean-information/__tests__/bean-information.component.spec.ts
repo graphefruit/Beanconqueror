@@ -552,6 +552,100 @@ describe('BeanInformationComponent', () => {
       });
     }
 
+    /** The menu as handed to the popover, without what it hides. */
+    async function menu(): Promise<string[][]> {
+      choose(undefined);
+      await card.showBeanActions(event());
+
+      const items = (
+        modal.create.calls.mostRecent().args[0] as unknown as {
+          componentProps: {
+            items: {
+              role: string;
+              translationKey: string;
+              icon: string;
+              visible?: boolean;
+            }[];
+          };
+        }
+      ).componentProps.items;
+      return items
+        .filter((item) => item.visible !== false)
+        .map((item) => [item.role, item.translationKey, item.icon]);
+    }
+
+    it('list the actions of a bean in stock in a fixed order', async () => {
+      helper.getAllBrewsForThisBean.and.returnValue([activeBrew(1)]);
+
+      expect(await menu()).toEqual([
+        [A.DETAIL, 'DETAIL', 'beanconqueror-detail'],
+        [A.REPEAT, 'REPEAT', 'beanconqueror-repeat'],
+        [A.EDIT, 'EDIT', 'beanconqueror-edit'],
+        [
+          A.REPEAT_LAST_OR_BEST_BREW,
+          'POPOVER_BEANS_OPTION_REPEAT',
+          'beanconqueror-repeat',
+        ],
+        [A.SHOW_BREWS, 'POPOVER_SHOW_BREWS', 'beanconqueror-brew'],
+        [A.CUPPING, 'POPOVER_BREWS_OPTION_CUPPING', 'beanconqueror-cupping'],
+        [A.FREEZE, 'POPOVER_FREEZE_COFFEE_BEAN', 'snow-outline'],
+        [A.COPY_FROZEN_ID, 'POPOVER_COPY_FROZEN_ID', 'copy-outline'],
+        [
+          A.REFRESH_DATA_FROM_QR_CODE,
+          'POPOVER_QR_CODE_REFRESH',
+          'beanconqueror-refresh-barcode',
+        ],
+        [
+          A.TOGGLE_FAVOURITE,
+          'POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE',
+          'heart-outline',
+        ],
+        [A.SHARE, 'SHARE_BEAN_URL', 'share-social-outline'],
+        [A.BEANS_CONSUMED, 'BEANS_CONSUMED', 'beanconqueror-finished'],
+        [
+          A.PHOTO_GALLERY,
+          'POPOVER_BREWS_OPTION_PHOTO_GALLERY',
+          'beanconqueror-photo-gallery',
+        ],
+        [
+          A.GENERATE_INTERNAL_SHARE_CODE,
+          'POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE',
+          'qr-code-outline',
+        ],
+        [A.DELETE, 'DELETE', 'beanconqueror-delete'],
+      ]);
+    });
+
+    it('list the actions of a frozen, archived favourite in a fixed order', async () => {
+      beans.change([
+        storedBean('alpha', {
+          ...alpha,
+          finished: true,
+          favourite: true,
+          frozenDate: new Date(NOW - DAY).toISOString(),
+        }),
+      ]);
+      helper.getAllBrewsForThisBean.and.returnValue([activeBrew(1)]);
+
+      expect((await menu()).map(([role, , icon]) => [role, icon])).toEqual([
+        [A.DETAIL, 'beanconqueror-detail'],
+        [A.REPEAT, 'beanconqueror-repeat'],
+        [A.EDIT, 'beanconqueror-edit'],
+        [A.REPEAT_LAST_OR_BEST_BREW, 'beanconqueror-repeat'],
+        [A.SHOW_BREWS, 'beanconqueror-brew'],
+        [A.CUPPING, 'beanconqueror-cupping'],
+        [A.UNFREEZE, 'thermometer-outline'],
+        [A.COPY_FROZEN_ID, 'copy-outline'],
+        [A.REFRESH_DATA_FROM_QR_CODE, 'beanconqueror-refresh-barcode'],
+        [A.TOGGLE_FAVOURITE, 'heart'],
+        [A.SHARE, 'share-social-outline'],
+        [A.UNARCHIVE, 'beanconqueror-unfinish'],
+        [A.PHOTO_GALLERY, 'beanconqueror-photo-gallery'],
+        [A.GENERATE_INTERNAL_SHARE_CODE, 'qr-code-outline'],
+        [A.DELETE, 'beanconqueror-delete'],
+      ]);
+    });
+
     const repeatable: [string, BrewPart | undefined, boolean][] = [
       ['a brew with nothing archived', undefined, true],
       ['a brew with an archived bean', 'getBean', false],
@@ -570,12 +664,10 @@ describe('BeanInformationComponent', () => {
       });
     }
 
-    it('treat a failing brew lookup as no brews', async () => {
+    it('hide the repeat of a brew when the brew lookup fails', async () => {
       helper.getAllBrewsForThisBean.and.throwError('broken');
-      choose(undefined);
 
-      await card.showBeanActions(event());
-
+      expect(await offered()).not.toContain(A.REPEAT_LAST_OR_BEST_BREW);
       expect(modal.create).toHaveBeenCalled();
     });
 
@@ -656,6 +748,7 @@ describe('BeanInformationComponent', () => {
       await card.showBeanActions(event());
 
       expect(beans.removeByObject).not.toHaveBeenCalled();
+      expect(emitted.map(([action]) => action)).toEqual([BEAN_ACTION.DELETE]);
 
       alert.showConfirm.and.resolveTo('YES');
       await card.showBeanActions(event());
@@ -673,8 +766,8 @@ describe('BeanInformationComponent', () => {
 
       beforeEach(() => choose(BEAN_ACTION.REPEAT_LAST_OR_BEST_BREW));
 
-      it('ask which one when there is a best brew', async () => {
-        helper.getAllBrewsForThisBean.and.returnValue([best, last]);
+      /** Opens the sheet and takes the last, then the best brew. */
+      async function chooseBothInTurn(): Promise<void> {
         let buttons: { handler: () => Promise<void> }[] = [];
         actionSheet.create.and.callFake(async (options) => {
           buttons = options.buttons as never;
@@ -684,6 +777,12 @@ describe('BeanInformationComponent', () => {
         await card.showBeanActions(event());
         await buttons[0].handler();
         await buttons[1].handler();
+      }
+
+      it('ask which one when there is a best brew', async () => {
+        helper.getAllBrewsForThisBean.and.returnValue([best, last]);
+
+        await chooseBothInTurn();
 
         expect(brewHelper.repeatBrew.calls.allArgs()).toEqual([[last], [best]]);
       });
@@ -700,6 +799,60 @@ describe('BeanInformationComponent', () => {
         await card.showBeanActions(event());
 
         expect(brewHelper.repeatBrew).not.toHaveBeenCalled();
+      });
+
+      it('repeat the last one when best brews are switched off', async () => {
+        settings.best_brew = false;
+        helper.getAllBrewsForThisBean.and.returnValue([best, last]);
+
+        await card.showBeanActions(event());
+
+        expect(actionSheet.create).not.toHaveBeenCalled();
+        expect(brewHelper.repeatBrew).toHaveBeenCalledOnceWith(last);
+      });
+
+      it('take the latest of several best brews, even as the last brew', async () => {
+        const latestBest = activeBrew(400, true);
+        helper.getAllBrewsForThisBean.and.returnValue([best, latestBest, last]);
+
+        await chooseBothInTurn();
+
+        expect(brewHelper.repeatBrew.calls.allArgs()).toEqual([
+          [latestBest],
+          [latestBest],
+        ]);
+      });
+
+      it('leave out a best brew with an archived part', async () => {
+        helper.getAllBrewsForThisBean.and.returnValue([
+          activeBrew(500, true, 'getMill'),
+          last,
+        ]);
+
+        await card.showBeanActions(event());
+
+        expect(actionSheet.create).not.toHaveBeenCalled();
+        expect(brewHelper.repeatBrew).toHaveBeenCalledOnceWith(last);
+      });
+
+      it('do nothing when every brew has an archived part', async () => {
+        helper.getAllBrewsForThisBean.and.returnValue([
+          activeBrew(500, true, 'getPreparation'),
+        ]);
+
+        await card.showBeanActions(event());
+
+        expect(actionSheet.create).not.toHaveBeenCalled();
+        expect(brewHelper.repeatBrew).not.toHaveBeenCalled();
+      });
+
+      it('pass on the error of a failing brew lookup', async () => {
+        helper.getAllBrewsForThisBean.and.throwError('broken');
+
+        await expectAsync(card.showBeanActions(event())).toBeRejectedWithError(
+          'broken',
+        );
+        expect(emitted).toEqual([]);
       });
     });
 
@@ -772,6 +925,27 @@ describe('BeanInformationComponent', () => {
       await card.longPressEditBean(event());
 
       expect(helper.editBean).toHaveBeenCalledTimes(1);
+    });
+
+    it('pass on the action of a card inside its group', async () => {
+      const group: BeanGroup = {
+        frozenGroupId: 'g',
+        beans: [legacyBean(alpha), legacyBean(beans.entries[1] as IBean)],
+        expanded: true,
+      };
+      const parent = await render(group.beans[0], { beanGroup: group });
+      const fromParent: unknown[][] = [];
+      parent.componentInstance.beanAction.subscribe((value: unknown[]) =>
+        fromParent.push(value),
+      );
+      const child = parent.debugElement.query(
+        (node) => node.name === 'bean-information',
+      ).componentInstance as BeanInformationComponent;
+
+      await child.longPressEditBean(event());
+
+      expect(fromParent).toEqual([[BEAN_ACTION.EDIT, handed(helper.editBean)]]);
+      expect(handed(helper.editBean).config.uuid).toBe('beta');
     });
 
     it('share an image of the card', async () => {
