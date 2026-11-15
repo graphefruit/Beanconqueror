@@ -959,6 +959,9 @@ describe('StorageClass deletion journal', () => {
       ]);
       // Asked for in another order than stored.
       const list = uuids(doomed).reverse();
+      // Looked up before, so the entries by uuid are already collected.
+      expect(storage.getByUUID('brew-7')).toEqual(rawEntry('brew-7', 2));
+      expect(storage.getByUUID('middle')).toEqual(rawEntry('middle'));
 
       expect(await storage.removeManyByUUID(list)).toBeTrue();
 
@@ -1047,6 +1050,19 @@ describe('StorageClass deletion journal', () => {
       expect(removed).toEqual([]);
     });
 
+    it('keeps an entry without a uuid when the list holds an empty one', async () => {
+      const entries = () => [{ config: { uuid: '' } }, rawEntry('brew-1')];
+      const { storage, events, removed } = await collection(entries());
+
+      expect(await storage.removeManyByUUID([''])).toBeTrue();
+
+      expect(storage.getAllEntries()).toEqual(entries());
+      expect(database.get('BREWS')).toEqual(entries());
+      expect(fakeUIStorage.set).not.toHaveBeenCalled();
+      expect(events).toEqual([]);
+      expect(removed).toEqual([]);
+    });
+
     it('writes no note for collections without change tracking', async () => {
       const { storage } = await collection([rawEntry('entry-1')], 'TEST_DB');
 
@@ -1092,6 +1108,24 @@ describe('StorageClass deletion journal', () => {
         expect(database.has('DELETION_JOURNAL')).toBeFalse();
       });
     }
+
+    it('finds the first entry of a shared uuid again after a lookup during the failing save', async () => {
+      const { storage } = await collection([
+        { ...rawEntry('twin'), name: 'first' },
+        rawEntry('other'),
+        { ...rawEntry('twin'), name: 'second' },
+      ]);
+      const first = storage.getAllEntries()[0];
+      fakeUIStorage.set.and.callFake(async () => {
+        // Collects the entries by uuid while the first one is taken out.
+        expect(storage.getByUUID('twin').name).toBe('second');
+        return false;
+      });
+
+      expect(await storage.removeManyByUUID(['twin'])).toBeFalse();
+
+      expect(storage.getByUUID('twin')).toBe(first);
+    });
 
     it('puts nothing back into entries that were read anew during the failing save', async () => {
       const { storage, removed } = await collection([
@@ -1141,6 +1175,37 @@ describe('StorageClass deletion journal', () => {
       expect(stored('BREWS')).toEqual(['b', 'added']);
       await storage.update(storage.getByUUID('b'));
       expect(stored('BREWS')).toEqual(['a', 'b', 'c', 'added']);
+    });
+
+    it('known gap: entries read anew during the save are reported as removed although they are back', async () => {
+      const { storage, events, removed } = await collection([
+        rawEntry('a'),
+        rawEntry('b'),
+        rawEntry('c'),
+      ]);
+      let rereading = true;
+      fakeUIStorage.set.and.callFake(async (key: string, value: unknown) => {
+        if (key === 'BREWS' && rereading) {
+          rereading = false;
+          // Reads the entries as they were stored before this save.
+          await storage.reinitializeStorage();
+        }
+        database.set(key, structuredClone(value));
+        return true;
+      });
+
+      // As deleting a single entry does.
+      expect(await storage.removeManyByUUID(['a', 'c'])).toBeTrue();
+
+      expect(removed).toEqual(['a', 'c']);
+      expect(events).toEqual([{ type: 'REINITIALIZE' }, { type: 'DELETE' }]);
+      // No note claims that an entry in memory was deleted ...
+      expect(uuids(storage.getAllEntries())).toEqual(['a', 'b', 'c']);
+      expect(database.has('DELETION_JOURNAL')).toBeFalse();
+      // ... but they are stored only with the next save of the collection.
+      expect(stored('BREWS')).toEqual(['b']);
+      await storage.update(storage.getByUUID('b'));
+      expect(stored('BREWS')).toEqual(['a', 'b', 'c']);
     });
   });
 });

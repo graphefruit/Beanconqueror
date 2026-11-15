@@ -145,6 +145,12 @@ describe('BeanCommands', () => {
     expect(notes[300]).toEqual(
       jasmine.objectContaining({ collection: 'BEANS', uuid: 'doomed', rev: 4 }),
     );
+
+    // The bean is unknown from then on.
+    expect(beans.getByUUID('doomed')).toBeUndefined();
+    set.calls.reset();
+    expect(await commands.deleteWithBrews('doomed')).toBeFalse();
+    expect(set).not.toHaveBeenCalled();
   });
 
   it('saves only the beans for a bean without brews', async () => {
