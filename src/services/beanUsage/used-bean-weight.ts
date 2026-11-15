@@ -1,7 +1,9 @@
 import { Brew } from '../../classes/brew/brew';
 
 // A brew uses its dose; without a dose it counts the ground weight.
-function usedBeanWeight(brew: Brew): number {
+export function usedBeanWeight(
+  brew: Pick<Brew, 'bean_weight_in' | 'grind_weight'>,
+): number {
   return brew.bean_weight_in > 0 ? brew.bean_weight_in : brew.grind_weight;
 }
 
