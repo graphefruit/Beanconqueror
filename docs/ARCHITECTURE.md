@@ -275,7 +275,16 @@ writes:
     the notes of that save are missing.
   - A write of the same collection that succeeds while such a save fails
     stores the collection without the removed entries; they are stored again
-    with its next write.
+    with its next write. When the app stops before, they are gone without a
+    note.
+  - A collection that is read anew while the save runs, for example by an
+    import, is not compared after a successful save, as when a single entry
+    is deleted: the entries are reported as removed although the entries
+    read may hold them. No note is written for those, and the next write of
+    the collection stores them again.
+  - The collection reports a refused write and a failed save with messages
+    of its own, so the message of the bean card can be the second or third
+    one on the screen.
 
 Entries from before change tracking have `updated_at` 0, `rev` 0 and
 `updated_by` `''` ("unknown") and a `created_at` estimated from
