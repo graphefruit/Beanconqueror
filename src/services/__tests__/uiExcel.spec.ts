@@ -932,6 +932,18 @@ describe('UIExcel', () => {
       ]);
     });
 
+    it('stores the green beans after one that could not be stored', async () => {
+      greenBeanStorage.failFor = ['First'];
+
+      const beans = await importGreenBeans([
+        { Name: 'First' },
+        { Name: 'Second' },
+        { Name: 'Third' },
+      ]);
+
+      expect(beans.map((bean) => bean.name)).toEqual(['Second', 'Third']);
+    });
+
     it('reports a wrong file when no green bean could be stored', async () => {
       greenBeanStorage.failFor = ['Only'];
 
