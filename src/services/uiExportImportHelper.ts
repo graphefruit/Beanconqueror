@@ -161,6 +161,14 @@ export class UIExportImportHelper {
    */
   private databaseNotRead = false;
 
+  /**
+   * Whether restoring the internal backup was started at this start-up but
+   * not completed. Only reads the flag.
+   */
+  public restoreAtStartFailed(): boolean {
+    return this.internalBackupNotRestored;
+  }
+
   /** Called once every collection was read, at start-up or after an import. */
   public allCollectionsRead(): void {
     this.databaseNotRead = false;

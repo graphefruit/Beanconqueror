@@ -88,6 +88,7 @@ import { UIStorage } from '../services/uiStorage';
 import { UIUpdate } from '../services/uiUpdate';
 import { UiVersionStorage } from '../services/uiVersionStorage';
 import { UIWaterStorage } from '../services/uiWaterStorage';
+import { DeleteCommands } from '../stores/delete-commands';
 
 declare var window;
 
@@ -140,6 +141,7 @@ export class AppComponent implements AfterViewInit {
   private readonly androidPlatformService = inject(AndroidPlatformService);
   private readonly iosPlatformService = inject(IosPlatformService);
   private readonly themeService = inject(ThemeService);
+  private readonly deleteCommands = inject(DeleteCommands);
 
   @ViewChild(IonRouterOutlet, { static: false })
   public routerOutlet: IonRouterOutlet;
@@ -369,6 +371,10 @@ export class AppComponent implements AfterViewInit {
             this.uiLog.log('App finished loading');
             this.uiExportImportHelper.allCollectionsRead();
             await this.__checkUpdate();
+            // After the data updates, which can still change uuids.
+            await this.deleteCommands.finishInterrupted(
+              this.uiExportImportHelper.restoreAtStartFailed(),
+            );
             await this.__checkCleanup();
             await this.__initApp();
             this.uiHelper.setAppReady(1);

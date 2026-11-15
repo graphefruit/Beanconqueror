@@ -1184,6 +1184,51 @@ describe('Restoring the internal backup at start-up', () => {
     expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
   });
 
+  const OUTCOMES: {
+    outcome: string;
+    choose: boolean;
+    prepare?: (_device: Device) => void;
+    failed: boolean;
+  }[] = [
+    { outcome: 'it was restored', choose: true, failed: false },
+    { outcome: 'restoring it was declined', choose: false, failed: false },
+    {
+      outcome: 'the current data could not be saved first',
+      choose: true,
+      prepare: (_device) => (_device.directory.failing.write = true),
+      failed: true,
+    },
+    {
+      outcome: 'importing it was rolled back',
+      choose: true,
+      prepare: (_device) => _device.failingWrites.add('BREWS'),
+      failed: true,
+    },
+    {
+      outcome: 'importing it could not be rolled back',
+      choose: true,
+      prepare: (_device) => _device.brokenWrites.add('BREWS'),
+      failed: true,
+    },
+  ];
+  for (const { outcome, choose, prepare, failed } of OUTCOMES) {
+    it(`tells ${failed ? 'that' : 'no'} restore failed at this start when ${outcome}`, async () => {
+      const internalBackup = await internalBackupWithMoreBrews();
+      const device = await startDevice(completeData('own'), {
+        internalBackup,
+      });
+      prepare?.(device);
+      spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(choose);
+      expect(device.helper.restoreAtStartFailed()).toBeFalse();
+
+      await device.helper.checkBackup();
+
+      expect(device.helper.restoreAtStartFailed()).toBe(failed);
+      device.helper.allCollectionsRead();
+      expect(device.helper.restoreAtStartFailed()).toBe(failed);
+    });
+  }
+
   const FAILURES = [
     {
       failure: 'was rolled back',

@@ -475,4 +475,220 @@ describe('DeleteCommands', () => {
       });
     }
   });
+
+  describe('a deletion the app did not return from, at the next start', () => {
+    const KINDS = [
+      { key: 'BEANS', dependentKey: 'BREWS', field: 'bean' },
+      { key: 'MILL', dependentKey: 'BREWS', field: 'mill' },
+      {
+        key: 'PREPARATION',
+        dependentKey: 'BREWS',
+        field: 'method_of_preparation',
+      },
+      { key: 'GREEN_BEANS', dependentKey: 'BEANS', field: undefined },
+    ] as const;
+    const STARTED = Date.now() - 60_000;
+    const pending = (collection: string, started_at = STARTED) => ({
+      collection,
+      uuid: 'doomed',
+      started_at,
+    });
+    const restoredAt = (last_restore_at: unknown) => ({
+      last_restore_at,
+      source: 'import',
+      record_count: 2,
+    });
+
+    for (const { key, dependentKey, field } of KINDS) {
+      const dependent = (uuid: string, of: string) =>
+        stored(
+          uuid,
+          field
+            ? { [field]: of }
+            : { bean_roast_information: { bean_uuid: of } },
+          1,
+        );
+      /** The entry the note names, another one and what depends on them. */
+      const startWith = (
+        dependents: Stored[],
+        note: unknown = pending(key),
+      ) => {
+        database.values.set(NOTE, note);
+        return start({
+          BEANS: [],
+          MILL: [],
+          PREPARATION: [],
+          GREEN_BEANS: [],
+          BREWS: [],
+          [key]: [stored('kept'), stored('doomed', {}, 4)],
+          [dependentKey]: dependents,
+        });
+      };
+      const nothingDeleted = (dependents: number) => {
+        expect(database.set).not.toHaveBeenCalled();
+        expect(database.uuids(key)).toEqual(['kept', 'doomed']);
+        expect(inMemory(key)).toEqual(['kept', 'doomed']);
+        expect(database.uuids(dependentKey).length).toBe(dependents);
+        expect(inMemory(dependentKey).length).toBe(dependents);
+        expect(database.values.has('DELETION_JOURNAL')).toBeFalse();
+      };
+
+      describe(`of an entry of ${key}`, () => {
+        it('deletes the entry nothing depends on any more and notes it once', async () => {
+          await startWith([dependent('other', 'kept')]);
+          // An import from before the deletion does not matter.
+          database.values.set('LAST_RESTORE', restoredAt(STARTED - 1));
+
+          await commands.finishInterrupted(false);
+
+          expect(database.written()).toEqual([key, 'DELETION_JOURNAL']);
+          expect(database.uuids(key)).toEqual(['kept']);
+          expect(inMemory(key)).toEqual(['kept']);
+          expect(database.uuids(dependentKey)).toEqual(['other']);
+          expect(database.journal()).toEqual([
+            jasmine.objectContaining({
+              collection: key,
+              uuid: 'doomed',
+              rev: 4,
+            }),
+          ]);
+          expect(database.values.has(NOTE)).toBeFalse();
+        });
+
+        it('deletes nothing while something still depends on the entry, and forgets the note', async () => {
+          await startWith([
+            dependent('other', 'kept'),
+            dependent('left', 'doomed'),
+          ]);
+
+          await commands.finishInterrupted(false);
+
+          nothingDeleted(2);
+          expect(database.values.has(NOTE)).toBeFalse();
+
+          // Not at a later start either, once nothing depends on it.
+          await storages[dependentKey].removeManyByUUID(['left']);
+          database.set.calls.reset();
+          await commands.finishInterrupted(false);
+
+          expect(database.set).not.toHaveBeenCalled();
+          expect(database.uuids(key)).toEqual(['kept', 'doomed']);
+        });
+
+        it('does nothing when the entry is gone already', async () => {
+          await startWith([], { ...pending(key), uuid: 'gone' });
+
+          await commands.finishInterrupted(false);
+
+          nothingDeleted(0);
+          expect(database.values.has(NOTE)).toBeFalse();
+        });
+
+        const IMPORTS: [when: string, at: unknown][] = [
+          ['at the same moment', STARTED],
+          ['later', STARTED + 1],
+          ['at an unknown time', 'unknown'],
+        ];
+        for (const [when, at] of IMPORTS) {
+          it(`deletes nothing after an import ${when}`, async () => {
+            await startWith([]);
+            database.values.set('LAST_RESTORE', restoredAt(at));
+
+            await commands.finishInterrupted(false);
+
+            nothingDeleted(0);
+            expect(database.values.has(NOTE)).toBeFalse();
+          });
+        }
+
+        it('deletes nothing when restoring a backup failed at this start, nor at the next one', async () => {
+          await startWith([]);
+
+          await commands.finishInterrupted(true);
+
+          nothingDeleted(0);
+          expect(database.values.has(NOTE)).toBeFalse();
+
+          await commands.finishInterrupted(false);
+
+          nothingDeleted(0);
+        });
+
+        it('deletes nothing when the note cannot be removed', async () => {
+          await startWith([]);
+          database.failingWrites.add(NOTE);
+
+          await expectAsync(commands.finishInterrupted(false)).toBeResolved();
+
+          nothingDeleted(0);
+        });
+
+        it('deletes nothing when the note was written after now', async () => {
+          await startWith([], pending(key, Date.now() + 60_000));
+
+          await commands.finishInterrupted(false);
+
+          nothingDeleted(0);
+          expect(database.values.has(NOTE)).toBeFalse();
+        });
+
+        for (const unreadable of [NOTE, 'LAST_RESTORE']) {
+          it(`deletes nothing when ${unreadable} cannot be read`, async () => {
+            await startWith([]);
+            database.unreadable.add(unreadable);
+
+            await expectAsync(commands.finishInterrupted(false)).toBeResolved();
+
+            nothingDeleted(0);
+          });
+        }
+
+        it('deletes nothing while the collection does not take writes', async () => {
+          database.unreadable.add(key);
+          await startWith([]);
+
+          await commands.finishInterrupted(false);
+
+          expect(database.set).not.toHaveBeenCalled();
+          expect(database.uuids(key)).toEqual(['kept', 'doomed']);
+          expect(database.values.has(NOTE)).toBeFalse();
+        });
+      });
+    }
+
+    const INVALID: unknown[] = [
+      'doomed',
+      7,
+      [],
+      {},
+      { ...pending('BREWS') },
+      { ...pending('UNKNOWN') },
+      { ...pending('BEANS'), uuid: 7 },
+      { ...pending('BEANS'), uuid: undefined },
+      { ...pending('BEANS'), started_at: String(STARTED) },
+      { ...pending('BEANS'), started_at: NaN },
+      { ...pending('BEANS'), started_at: undefined },
+    ];
+    for (const note of INVALID) {
+      it(`drops the invalid note ${JSON.stringify(note)}`, async () => {
+        database.values.set(NOTE, note);
+        await start({ BEANS: [stored('doomed'), stored('7')], BREWS: [] });
+
+        await commands.finishInterrupted(false);
+
+        expect(database.set).not.toHaveBeenCalled();
+        expect(database.uuids('BEANS')).toEqual(['doomed', '7']);
+        expect(database.values.has(NOTE)).toBeFalse();
+      });
+    }
+
+    it('writes and removes nothing without a note', async () => {
+      await start({ BEANS: [stored('doomed')], BREWS: [] });
+
+      await commands.finishInterrupted(false);
+
+      expect(database.set).not.toHaveBeenCalled();
+      expect(database.remove).not.toHaveBeenCalled();
+    });
+  });
 });

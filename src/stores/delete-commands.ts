@@ -1,7 +1,11 @@
 import { inject, Service } from '@angular/core';
 
-import { PENDING_DELETION_STORAGE_KEY } from '../classes/changeTracking/localStorageKeys';
+import {
+  LAST_RESTORE_STORAGE_KEY,
+  PENDING_DELETION_STORAGE_KEY,
+} from '../classes/changeTracking/localStorageKeys';
 import { StorageClass } from '../classes/storageClass';
+import { IRestoreNote } from '../interfaces/changeTracking/iRestoreNote';
 import { UIBeanStorage } from '../services/uiBeanStorage';
 import { UIBrewStorage } from '../services/uiBrewStorage';
 import { UIGreenBeanStorage } from '../services/uiGreenBeanStorage';
@@ -46,11 +50,11 @@ export class DeleteCommands {
     StorageClass,
     (_uuid: string) => Removal[]
   >([
-    [this.uiBeanStorage, (_uuid) => [this.brewsWith('bean', _uuid)]],
-    [this.uiMillStorage, (_uuid) => [this.brewsWith('mill', _uuid)]],
+    [this.uiBeanStorage, (_uuid) => [this.brewsWith('bean', [_uuid])]],
+    [this.uiMillStorage, (_uuid) => [this.brewsWith('mill', [_uuid])]],
     [
       this.uiPreparationStorage,
-      (_uuid) => [this.brewsWith('method_of_preparation', _uuid)],
+      (_uuid) => [this.brewsWith('method_of_preparation', [_uuid])],
     ],
     [
       this.uiGreenBeanStorage,
@@ -63,7 +67,7 @@ export class DeleteCommands {
                 { bean_uuid?: unknown } | undefined
             )?.bean_uuid === _uuid,
         );
-        return [this.brewsWith('bean', ...beans), [this.uiBeanStorage, beans]];
+        return [this.brewsWith('bean', beans), [this.uiBeanStorage, beans]];
       },
     ],
   ]);
@@ -88,8 +92,68 @@ export class DeleteCommands {
     return this.delete(this.uiGreenBeanStorage, _uuid);
   }
 
-  private brewsWith(_field: string, ..._uuids: string[]): Removal {
-    const owners = new Set<unknown>(_uuids);
+  /**
+   * Called once when the app starts: finishes a deletion that the app did
+   * not return from. It only ever goes forward: the entry is deleted when
+   * nothing depends on it any more, and never what depends on it. The note
+   * is removed first, so it is acted on at most once, and nothing is done
+   *
+   * - when a backup was imported since, or restoring one was begun at this
+   *   start and not completed (`_restoreFailed`),
+   * - when the note lies in the future, as the clock was set back since,
+   * - when the note, or the one about the last import, cannot be read or
+   *   the note cannot be removed.
+   *
+   * Never rejects and shows nothing.
+   */
+  public async finishInterrupted(_restoreFailed: boolean): Promise<void> {
+    try {
+      const note: unknown = await this.uiStorage.getOrFail(
+        PENDING_DELETION_STORAGE_KEY,
+      );
+      if (note === null || note === undefined) {
+        return;
+      }
+      await this.uiStorage.remove(PENDING_DELETION_STORAGE_KEY);
+      const { collection, uuid, started_at } = note as Partial<PendingDeletion>;
+      const storage = [...this.dependents.keys()].find(
+        (_storage) => _storage.DB_PATH === collection,
+      );
+      if (
+        !storage ||
+        typeof uuid !== 'string' ||
+        typeof started_at !== 'number' ||
+        !Number.isFinite(started_at)
+      ) {
+        this.uiLog.error('DeleteCommands - Interrupted - invalid note dropped');
+        return;
+      }
+      const restore = (await this.uiStorage.getOrFail(
+        LAST_RESTORE_STORAGE_KEY,
+      )) as Partial<IRestoreNote> | null;
+      const restored =
+        restore !== null &&
+        restore !== undefined &&
+        !(restore.last_restore_at < started_at);
+      const finish =
+        !_restoreFailed &&
+        !restored &&
+        started_at <= Date.now() &&
+        storage.getByUUID(uuid) !== undefined &&
+        this.dependents
+          .get(storage)(uuid)
+          .every(([, uuids]) => uuids.length === 0) &&
+        (await storage.removeManyByUUID([uuid]));
+      this.uiLog.log(
+        `DeleteCommands - Interrupted - ${storage.DB_PATH} - ${finish ? 'entry deleted' : 'nothing deleted'}`,
+      );
+    } catch (ex) {
+      this.uiLog.error('DeleteCommands - Interrupted - Unsuccessfully', ex);
+    }
+  }
+
+  private brewsWith(_field: string, _owners: readonly string[]): Removal {
+    const owners = new Set<unknown>(_owners);
     return [
       this.uiBrewStorage,
       DeleteCommands.uuidsWhere(this.uiBrewStorage, (_brew) =>
