@@ -19,6 +19,9 @@ export type PerfTier = 7_000 | 15_000 | 30_000;
  *
  * The 30,000-brew budgets are from six runs on the same machine (2026-11-15), three to six
  * values per budget by the same rule.
+ *
+ * `beanDeleteWithBrews` is from only three runs (2026-11-15, machine 8 to 22 % busy), by the
+ * same rule. Deleting the 200 brews one by one took 51 s with 15,000 brews before.
  */
 export interface Budget {
   /** Navigation start until the home screen shows the brew count. */
@@ -33,6 +36,11 @@ export interface Budget {
   /** Search in the brew list until the list shows the matches, after the field's debounce. */
   search: number;
   beanListOpen: number;
+  /**
+   * Deleting a bean with 200 brews, from the answer to the question until the list has lost the
+   * bean and the main thread is quiet.
+   */
+  beanDeleteWithBrews: number;
   /** Profile > Statistics until the general numbers are shown and the main thread is quiet. */
   statisticsOpen: number;
   /**
@@ -74,6 +82,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     brewListScrollLongestFrame: 200, // 112 / 145
     search: 170, // 90 / 112
     beanListOpen: 640, // 414 / 488
+    beanDeleteWithBrews: 600, // 438 / 458
     statisticsOpen: 140, // 74 / 81
     statisticsBrewCharts: 330, // 228 / 250
     export: 1_000, // 748 / 763
@@ -87,6 +96,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     brewListScrollLongestFrame: 300, // 179 / 224
     search: 200, // 118 / 146
     beanListOpen: 640, // 414 / 432
+    beanDeleteWithBrews: 740, // 562 / 565
     statisticsOpen: 160, // 85 / 101
     statisticsBrewCharts: 450, // 320 / 340
     export: 1_900, // 1,364 / 1,395
@@ -100,6 +110,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     brewListScrollLongestFrame: 300, // 168 / 210
     search: 200, // 111 / 116
     beanListOpen: 680, // 459 / 519
+    beanDeleteWithBrews: 1_300, // 853 / 954
     statisticsOpen: 210, // 112 / 154
     statisticsBrewCharts: 710, // 531 / 541
     export: 2_300, // 1,588 / 1,760

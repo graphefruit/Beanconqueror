@@ -209,7 +209,7 @@ statistics, start-up or backups.
   that already have their change info as well. The import test goes through Settings > Import with the generated ZIP.
 - Measured: start until the home screen is interactive, opening the brew list and scrolling it to
   the end (duration, slow frames, longest frame), search in the brew list, opening the bean list,
-  statistics with the brew charts, export (from the tap until the app hands the ZIP to the
+  deleting a bean with 200 brews, statistics with the brew charts, export (from the tap until the app hands the ZIP to the
   browser) and import (from the moment the app gets the file until the success message).
 - The brew charts count as drawn when every chart canvas of the segment has been painted on and
   nothing has painted on them for one second: the empty canvases are in the document long before

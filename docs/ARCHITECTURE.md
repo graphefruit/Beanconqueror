@@ -258,6 +258,24 @@ writes:
   (`src/services/deletionJournal/deletion-journal.service.ts`). Notes of
   entries that exist again, for example after an import, are dropped when the
   collection loads.
+- `removeManyByUUID(uuids)` removes several entries with one save, one
+  `DELETE` event and one journal write. `BeanCommands.deleteWithBrews`
+  (`src/stores/beans/bean-commands.ts`) deletes a bean with it: after checking
+  that the bean exists and both collections take writes, the brews with one
+  save, then the bean with one. It resolves false when nothing or not all was
+  deleted, and the bean card then shows a message instead of the toast.
+  - A refused write changes nothing. A save that fails for good ends in the
+    iOS database dialog of `UIStorage.set`, which only reloads the app: the
+    save does not return, the stored entries are the ones from before. Only
+    if that dialog cannot be shown the save returns false; the removed
+    entries are then put back in memory and nothing is reported as removed.
+  - The two saves are not one transaction. When the app stops between them,
+    or the beans cannot be saved after the brews, the bean is left without
+    brews and can be deleted again; when it stops before the journal write,
+    the notes of that save are missing.
+  - A write of the same collection that succeeds while such a save fails
+    stores the collection without the removed entries; they are stored again
+    with its next write.
 
 Entries from before change tracking have `updated_at` 0, `rev` 0 and
 `updated_by` `''` ("unknown") and a `created_at` estimated from

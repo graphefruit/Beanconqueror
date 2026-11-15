@@ -308,6 +308,9 @@ for (const tier of TIERS) {
       await expect(card).toHaveCount(0);
       await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'bean delete', { ...deleted });
+      if (checkBudgets) {
+        checkBudget('beanDeleteWithBrews', deleted.settled, budget, testInfo);
+      }
 
       // Bean and brews are gone after a restart as well.
       await page.goto('/');
