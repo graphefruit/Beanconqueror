@@ -59,9 +59,51 @@ function tabBar(page: Page) {
   });
 }
 
+/** Brews of the bean that the deletion test removes. */
+const BREWS_OF_DELETED_BEAN = 200;
+const DELETED_BEAN_NAME = 'Bean with many brews';
+
+/**
+ * The data set of `tier` in which one available bean has `BREWS_OF_DELETED_BEAN` brews: the
+ * newest brews of other beans are moved to it, as the generated beans have far fewer. Built per
+ * call, so the data of the other tests stays as it is.
+ */
+function dataSetWithBusyBean(tier: PerfTier) {
+  const base = dataSet(tier).data;
+  const bean = base.BEANS.find((b) => !b.finished);
+  if (!bean) {
+    throw new Error('the data set has no available bean');
+  }
+  const uuid = bean.config.uuid;
+  let missing =
+    BREWS_OF_DELETED_BEAN - base.BREWS.filter((b) => b.bean === uuid).length;
+  const brews = [...base.BREWS];
+  for (let i = brews.length - 1; i >= 0 && missing > 0; i--) {
+    if (brews[i].bean !== uuid) {
+      brews[i] = { ...brews[i], bean: uuid };
+      missing--;
+    }
+  }
+  expect(brews.filter((b) => b.bean === uuid)).toHaveLength(
+    BREWS_OF_DELETED_BEAN,
+  );
+  const data: SyntheticDataSet = {
+    ...base,
+    BEANS: base.BEANS.map((b) =>
+      b === bean ? { ...b, name: DELETED_BEAN_NAME } : b,
+    ),
+    BREWS: brews,
+  };
+  return { data, json: JSON.stringify(data) };
+}
+
 /** Seeds the database, throttles the CPU and starts the app until the home screen is interactive. */
-async function startWithData(page: Page, tier: PerfTier, testInfo: TestInfo) {
-  const { data, json } = dataSet(tier);
+async function startWithData(
+  page: Page,
+  tier: PerfTier,
+  testInfo: TestInfo,
+  { data, json } = dataSet(tier),
+) {
   await measureMachineLoad(testInfo, 'before');
   await installPerfObserver(page);
   await seedDatabase(page, data, json);
@@ -233,6 +275,47 @@ for (const tier of TIERS) {
       if (checkBudgets) {
         checkBudget('beanListOpen', beans.settled, budget, testInfo);
       }
+    });
+
+    test('deleting a bean with 200 brews', async ({ page }, testInfo) => {
+      const { data } = await startWithData(
+        page,
+        tier,
+        testInfo,
+        dataSetWithBusyBean(tier),
+      );
+      const available = data.BEANS.filter((b) => !b.finished).length;
+
+      await tabBar(page).getByRole('tab', { name: 'Beans' }).click();
+      // The list only renders the cards near the screen; the search brings the bean to the top.
+      const searchField = page.getByRole('searchbox').filter({ visible: true });
+      await searchField.fill(DELETED_BEAN_NAME);
+      await searchField.blur();
+      const card = page.locator('bean-information').filter({ visible: true });
+      await expect(card).toHaveCount(1);
+      await card.getByRole('button', { name: 'Bean options' }).click();
+      await page.getByRole('button', { name: 'Delete', exact: true }).click();
+      await page
+        .getByRole('alertdialog')
+        .getByRole('button', { name: 'Yes' })
+        .click();
+      // From the answer until the list has lost the bean and the main thread is quiet.
+      const deleted = await waitUntilSettled(
+        page,
+        { selector: 'ion-segment-button', text: `0 / ${available - 1}` },
+        'input',
+      );
+      await expect(card).toHaveCount(0);
+      await measureMachineLoad(testInfo, 'after');
+      report(testInfo, tier, 'bean delete', { ...deleted });
+
+      // Bean and brews are gone after a restart as well.
+      await page.goto('/');
+      await expect(
+        page.locator('ion-card-title', {
+          hasText: String(tier - BREWS_OF_DELETED_BEAN),
+        }),
+      ).toBeVisible({ timeout: 120_000 });
     });
 
     test('statistics open and draw the brew charts', async ({
