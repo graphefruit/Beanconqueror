@@ -445,6 +445,83 @@ describe('DeleteCommands', () => {
       expect(state(inMemory)).toEqual(untouched());
     });
 
+    it('deletes nothing while its collection does not take writes although it is known', async () => {
+      await start(seed());
+      const remove = spyOn(
+        storages.GREEN_BEANS,
+        'removeManyByUUID',
+      ).and.resolveTo(false);
+
+      expect(await commands.deleteGreenBean('doomed')).toBeFalse();
+
+      expect(remove).toHaveBeenCalledOnceWith([]);
+      expect(database.set).not.toHaveBeenCalled();
+      expect(state(inMemory)).toEqual(untouched());
+    });
+
+    it('keeps a note of it while it is deleted, from before the first save', async () => {
+      await start(seed());
+      const before = Date.now();
+      const during: unknown[] = [];
+      for (const key of KEYS) {
+        const storage = storages[key];
+        const remove: (uuids: readonly string[]) => Promise<boolean> =
+          storage.removeManyByUUID.bind(storage);
+        spyOn(storage, 'removeManyByUUID').and.callFake((uuids) => {
+          if (uuids.length > 0) {
+            during.push(database.values.get(NOTE));
+          }
+          return remove(uuids);
+        });
+      }
+
+      expect(await commands.deleteGreenBean('doomed')).toBeTrue();
+
+      const note = {
+        collection: 'GREEN_BEANS',
+        uuid: 'doomed',
+        started_at: jasmine.any(Number),
+      };
+      expect(during).toEqual([note, note, note]);
+      const { started_at } = during[0] as { started_at: number };
+      expect(started_at).toBeGreaterThanOrEqual(before);
+      expect(started_at).toBeLessThanOrEqual(Date.now());
+      expect(database.remove).toHaveBeenCalledOnceWith(NOTE);
+      expect(database.values.has(NOTE)).toBeFalse();
+    });
+
+    it('deletes nothing when the note cannot be stored', async () => {
+      await start(seed());
+      database.failingWrites.add(NOTE);
+
+      expect(await commands.deleteGreenBean('doomed')).toBeFalse();
+
+      expect(database.written()).toEqual([NOTE]);
+      expect(state((key) => database.uuids(key))).toEqual(untouched());
+      expect(state(inMemory)).toEqual(untouched());
+      expect(database.values.has('DELETION_JOURNAL')).toBeFalse();
+    });
+
+    it('is done although the note cannot be removed', async () => {
+      await start(seed());
+      database.remove.and.rejectWith(new Error('remove failed'));
+
+      expect(await commands.deleteGreenBean('doomed')).toBeTrue();
+
+      expect(state((key) => database.uuids(key))).toEqual(gone);
+    });
+
+    it('resolves false instead of rejecting', async () => {
+      await start(seed());
+      spyOn(storages.BEANS, 'getRawEntries').and.throwError('unexpected');
+
+      await expectAsync(commands.deleteGreenBean('doomed')).toBeResolvedTo(
+        false,
+      );
+
+      expect(database.set).not.toHaveBeenCalled();
+    });
+
     const stopped: [failing: string, left: Record<string, string[]>][] = [
       ['BEANS', { ...untouched(), BREWS: gone.BREWS }],
       ['GREEN_BEANS', { ...gone, GREEN_BEANS: ['kept', 'doomed'] }],
