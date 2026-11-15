@@ -266,6 +266,19 @@ describe('UIFileHelper', () => {
       ).toBeRejected();
     });
 
+    // On a device the plugin answers with base64 unless it is asked for text;
+    // the web implementation gives back what was written either way.
+    it('asks the plugin for UTF-8 text', async () => {
+      const read = spyOn(FilesystemWeb.prototype, 'readFile').and.callThrough();
+      await fileHelper.writeInternalFileFromText('text', 'note.txt');
+
+      await fileHelper.readInternalFileAsText('note.txt');
+      await fileHelper.readInternalFileAsBase64('note.txt');
+
+      expect(read.calls.argsFor(0)[0].encoding).toBe(Encoding.UTF8);
+      expect(read.calls.argsFor(1)[0].encoding).toBeUndefined();
+    });
+
     it('rejects when the plugin gives a Blob instead of text', async () => {
       await Filesystem.writeFile({
         path: 'blob.bin',
