@@ -823,6 +823,16 @@ describe('UIBrewHelper brew data', () => {
       expect(sorted).toBe(list);
     });
 
+    it('leaves a list alone that has the newest first already', () => {
+      const list = [brewAt('new', 30), brewAt('middle', 20), brewAt('old', 10)];
+
+      expect(uuids(UIBrewHelper.sortBrews(list))).toEqual([
+        'new',
+        'middle',
+        'old',
+      ]);
+    });
+
     it('puts the oldest first and keeps brews of the same time in their order', () => {
       const list = [
         brewAt('new', 30),
@@ -835,6 +845,16 @@ describe('UIBrewHelper brew data', () => {
 
       expect(uuids(sorted)).toEqual(['old', 'same-a', 'same-b', 'new']);
       expect(sorted).toBe(list);
+    });
+
+    it('leaves a list alone that has the oldest first already', () => {
+      const list = [brewAt('old', 10), brewAt('middle', 20), brewAt('new', 30)];
+
+      expect(uuids(UIBrewHelper.sortBrewsASC(list))).toEqual([
+        'old',
+        'middle',
+        'new',
+      ]);
     });
   });
 
