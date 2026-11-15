@@ -4,6 +4,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 import { Platform } from '@ionic/angular';
 
+import { Capacitor } from '@capacitor/core';
 import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
 // The plugin object is a proxy that cannot be spied on; the web
 // implementation behind it can.
@@ -1222,6 +1223,20 @@ describe('UIFileHelper', () => {
       );
       expect(urlOf(await fileHelper.getInternalFileSrc('photo.png'))).toBe(
         '/DATA/photo.png',
+      );
+    });
+
+    // In the browser the URI is its own source; on a device only the
+    // converted one can be loaded by the web view.
+    it('gives the source the web view can load, not the file URI', async () => {
+      setupAndroid();
+      spyOn(Capacitor, 'convertFileSrc').and.callFake(
+        (uri: string) => `https://localhost/_capacitor_file_${uri}`,
+      );
+      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'photo.png');
+
+      expect(urlOf(await fileHelper.getInternalFileSrc('photo.png'))).toBe(
+        'https://localhost/_capacitor_file_/DATA/photo.png',
       );
     });
 
