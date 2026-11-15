@@ -348,6 +348,26 @@ describe('UIFileHelper', () => {
       expect(Array.from(bytes)).toEqual([0, 1, 2, 255]);
     });
 
+    // The web implementation removes a leading slash itself, a device does
+    // not, so what the plugin is asked for is checked.
+    it('asks the plugin for the name without its leading slash', async () => {
+      const read = spyOn(FilesystemWeb.prototype, 'readFile').and.callThrough();
+      const stat = spyOn(FilesystemWeb.prototype, 'stat').and.callThrough();
+      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'photo.png');
+
+      await fileHelper.readInternalFileAsBase64('/photo.png');
+      await fileHelper.readInternalFileAsUint8Array('/photo.png');
+      await fileHelper.statInternalFile('/photo.png');
+
+      expect(read.calls.allArgs().map(([options]) => options.path)).toEqual([
+        'photo.png',
+        'photo.png',
+      ]);
+      expect(stat.calls.allArgs().map(([options]) => options.path)).toEqual([
+        'photo.png',
+      ]);
+    });
+
     it('rejects reading a file that does not exist', async () => {
       await expectAsync(
         fileHelper.readInternalFileAsBase64('missing.png'),
