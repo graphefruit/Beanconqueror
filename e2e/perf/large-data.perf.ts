@@ -321,6 +321,49 @@ for (const tier of TIERS) {
       ).toBeVisible({ timeout: 120_000 });
     });
 
+    test('deleting the grinder with the most brews', async ({
+      page,
+    }, testInfo) => {
+      const { data } = await startWithData(page, tier, testInfo);
+      const brewsOf = (uuid: string) =>
+        data.BREWS.filter((b) => b.mill === uuid).length;
+      const mill = data.MILL.filter((m) => !m.finished).reduce((most, m) =>
+        brewsOf(m.config.uuid) > brewsOf(most.config.uuid) ? m : most,
+      );
+      const brews = brewsOf(mill.config.uuid);
+
+      await tabBar(page).getByRole('tab', { name: 'Profile' }).click();
+      await page.getByRole('link', { name: /^Grinders/ }).click();
+      const card = page
+        .locator('mill-information-card')
+        .filter({ hasText: mill.name });
+      await card.getByRole('button', { name: 'Grinder options' }).click();
+      await page.getByRole('button', { name: 'Delete', exact: true }).click();
+      await page
+        .getByRole('alertdialog')
+        .getByRole('button', { name: 'Yes' })
+        .click();
+      // From the answer until the toast says that the grinder is deleted and the main thread is
+      // quiet.
+      const deleted = await waitUntilSettled(
+        page,
+        { selector: 'ion-toast' },
+        'input',
+      );
+      await expect(card).toHaveCount(0);
+      await measureMachineLoad(testInfo, 'after');
+      report(testInfo, tier, 'grinder delete', {
+        deletedBrews: brews,
+        ...deleted,
+      });
+
+      // Grinder and brews are gone after a restart as well.
+      await page.goto('/');
+      await expect(
+        page.locator('ion-card-title', { hasText: String(tier - brews) }),
+      ).toBeVisible({ timeout: 120_000 });
+    });
+
     test('statistics open and draw the brew charts', async ({
       page,
     }, testInfo) => {
