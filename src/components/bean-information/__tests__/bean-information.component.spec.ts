@@ -783,8 +783,9 @@ describe('BeanInformationComponent', () => {
           'filters reset',
           'spinner hidden',
         ]);
-        // The spinner keeps its own text.
-        expect(alert.withLoadingSpinner.calls.mostRecent().args).toHaveSize(1);
+        expect(alert.withLoadingSpinner.calls.mostRecent().args[1]).toBe(
+          'PLEASE_WAIT_DO_NOT_CLOSE_APP',
+        );
         expect(toast.showInfoToast).toHaveBeenCalledOnceWith(
           'TOAST_BEAN_DELETED_SUCCESSFULLY',
         );

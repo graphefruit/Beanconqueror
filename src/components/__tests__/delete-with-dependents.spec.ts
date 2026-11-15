@@ -283,8 +283,9 @@ for (const card of CARDS) {
         card.tracking.TITLE,
         card.tracking.ACTIONS.DELETE,
       );
-      // The spinner keeps its own text.
-      expect(withLoadingSpinner.calls.mostRecent().args).toHaveSize(1);
+      expect(withLoadingSpinner.calls.mostRecent().args[1]).toBe(
+        'PLEASE_WAIT_DO_NOT_CLOSE_APP',
+      );
       expect(showInfoToast).toHaveBeenCalledOnceWith(card.toast);
       expect(settings.bean_filter.OPEN.favourite).toBeFalse();
       expect(showMessage).not.toHaveBeenCalled();

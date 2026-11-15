@@ -261,7 +261,7 @@ export class MillInformationCardComponent implements OnInit {
         await this.resetSettings();
       }
       return done;
-    });
+    }, 'PLEASE_WAIT_DO_NOT_CLOSE_APP');
     if (!deleted) {
       await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
     }
