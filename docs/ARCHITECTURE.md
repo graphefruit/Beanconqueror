@@ -76,6 +76,7 @@ sequenceDiagram
     App->>Storage: initializeStorage() for all 11 collections
     App->>Storage: Promise.all(storageReady())
     App->>Update: __checkUpdate() → UIUpdate.checkUpdate() (migrations)
+    App->>Storage: DeleteCommands.finishInterrupted()
     App->>App: __checkCleanup() → CleanupService.cleanupOldBrewData()
     App->>App: __initApp(): language, analytics, ThemeService.initialize(),<br/>welcome/update screens, Bluetooth reconnect (after 3 s), startup view
     App->>Helper: setAppReady(1)
@@ -289,6 +290,40 @@ writes:
   - The collection reports a refused write and a failed save with messages
     of its own, so the message of the card can be the second or third one on
     the screen.
+- While a command deletes, the local-only key `PENDING_DELETION` holds the
+  collection and uuid of the entry and the time it started, nothing about
+  the dependent entries. It is written after the checks and before the first
+  save; if it cannot be written, nothing is deleted and the command resolves
+  false. It is removed as soon as the command returns, whatever the result.
+  It is only left when the app ends in between or stays in the database
+  dialog. The next start then calls `DeleteCommands.finishInterrupted()`
+  once, after the data updates:
+  - The note is removed first, so it is acted on at most once. If it cannot
+    be removed, nothing else happens.
+  - It only goes forward. The entry is deleted, with its journal note, when
+    it still exists and no stored entry depends on it. Dependent entries are
+    never deleted at start: while one is left, nothing happens and the entry
+    stays as it is, to be deleted again by the user. No missing journal
+    notes are added.
+  - Nothing is deleted when a backup was imported since the note was
+    written (`LAST_RESTORE`), when restoring the internal backup was begun
+    at this start and not completed
+    (`UIExportImportHelper.restoreAtStartFailed()`), when the note is
+    invalid or lies in the future, or when one of the two notes cannot be
+    read. Every `UIStorage.import()` removes the note before anything else,
+    also an import that fails.
+  - It runs silently and only logs. What it does not do:
+    - On a device the check of the internal backup runs before it. After
+      an interrupted deletion that check usually finds more entries in
+      `Beanconqueror.zip` than in the database and shows its dialog first.
+      Restoring puts everything back and nothing is finished; only when the
+      restore is declined, or in the browser, the entry is deleted.
+    - It does not bring back the dependent entries already deleted, and it
+      does not delete the remaining ones.
+    - Of two stored entries sharing the uuid, the second one is deleted when
+      the app ended after the first one was saved as deleted.
+    - A note that could not be removed stays, without an expiry, until the
+      next start, the next of these deletions or the next import removes it.
 
 Entries from before change tracking have `updated_at` 0, `rev` 0 and
 `updated_by` `''` ("unknown") and a `created_at` estimated from
@@ -303,7 +338,7 @@ the comment in that file).
 
 ### Local-only keys
 
-Three more storage keys belong to exactly one installation
+More storage keys belong to exactly one installation
 (`LOCAL_ONLY_STORAGE_KEYS` in `src/classes/changeTracking/localStorageKeys.ts`):
 
 | Storage key           | Service                                                          | Content                                           |
@@ -311,10 +346,13 @@ Three more storage keys belong to exactly one installation
 | `DEVICE`              | `src/services/deviceIdentity/device-identity.service.ts`         | Device id of this installation                    |
 | `DELETION_JOURNAL`    | `src/services/deletionJournal/deletion-journal.service.ts`       | Notes about entries deleted here                  |
 | `ATTACHMENT_MANIFEST` | `src/services/attachmentManifest/attachment-manifest.service.ts` | Photo and flow profile files the entries refer to |
+| `LAST_RESTORE`        | `src/services/uiStorage.ts`                                      | Note about the last import                        |
+| `PENDING_DELETION`    | `src/stores/delete-commands.ts`                                  | Entry being deleted with its dependents           |
 
 They are not collections of entries and do not extend `StorageClass`. They
-never go into a backup or export file, an import never overwrites them, and
-writing them does not dispatch `STORAGE_CHANGED`, so it triggers no automatic
+never go into a backup or export file, an import never overwrites them with
+values of a file (it writes its own `LAST_RESTORE` and removes
+`PENDING_DELETION`), and writing them does not dispatch `STORAGE_CHANGED`, so it triggers no automatic
 backup (`UIStorage.internalSet`, `UIStorage.__importBackup`,
 `UIExportImportHelper.buildExportZIP`).
 
