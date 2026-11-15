@@ -26,7 +26,13 @@ export type PerfTier = 7_000 | 15_000 | 30_000;
  * `millDeleteWithBrews` is from three runs (2026-11-15) while the machine was 41 to 95 % busy
  * with other test runs, so none of them counts by the rule above: derive it again when the
  * machine is idle. The grinder has 2,483 / 5,311 / 10,639 brews. Deleting the 2,483 brews one by
- * one took 223 s with 7,000 brews before.
+ * one took 223 s with 7,000 brews before. Four more runs the same day (machine 22 to 50 % busy)
+ * gave 537 to 552 / 1,138 to 1,175 / 3,170 to 3,323 ms; only three of these values were measured
+ * at most 30 % busy, so the budgets are unchanged and still to be derived on an idle machine.
+ * A CPU profile with 30,000 brews shows where the time goes: 2.4 of 2.9 s of work are the cards
+ * of the grinders that are left counting their beans (`MillInformationCardComponent
+ * .getBeansCount()`) when the list is built again, not the deletion. The toast shows before or
+ * after that, so `visible` in the `PERF` line is not the time of the deletion alone either.
  */
 export interface Budget {
   /** Navigation start until the home screen shows the brew count. */
