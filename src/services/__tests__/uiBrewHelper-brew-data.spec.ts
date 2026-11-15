@@ -1017,7 +1017,10 @@ describe('UIBrewHelper brew data', () => {
       return link(brew);
     }
 
-    function archivedPart(brew: Brew, part: 'getBean' | 'getMill'): Brew {
+    function archivedPart(
+      brew: Brew,
+      part: 'getBean' | 'getMill' | 'getPreparation',
+    ): Brew {
       (brew[part] as jasmine.Spy).and.returnValue({ finished: true });
       return brew;
     }
@@ -1059,6 +1062,23 @@ describe('UIBrewHelper brew data', () => {
           componentProps: { bean_preset: bean },
         }),
       ]);
+    });
+
+    it('does not repeat a brew whose preparation is archived', async () => {
+      const repeatable = brewAt('repeatable', 10);
+      brewsOfBean = [
+        repeatable,
+        archivedPart(
+          brewAt('newest-archived-preparation', 30),
+          'getPreparation',
+        ),
+      ];
+
+      await helper.repeatLastBrewForBeanByInternalShareCode('BEAN01');
+
+      expect(modalController.opened[0].componentProps).toEqual({
+        brew_template: repeatable,
+      });
     });
 
     it('opens an empty brew form for a bean without brews', async () => {
