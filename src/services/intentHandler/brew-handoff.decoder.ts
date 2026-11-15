@@ -228,7 +228,7 @@ async function gunzipWithZipJs(
   cap = MAX_INFLATED_BYTES,
 ): Promise<Uint8Array> {
   const member = gzipMember(bytes);
-  // GZIP ISIZE is attacker-controlled, but zip.js stops as soon as the output grows past the size declared in the ZIP header, so a footer within the cap bounds the inflation.
+  // GZIP ISIZE is attacker-controlled, but zip.js rejects the entry once an inflated chunk takes the output past the size declared in the ZIP header, so a footer within the cap bounds the inflation to the cap plus one chunk.
   if (member.inflatedSize > cap) {
     throw new Error(`Inflated payload exceeds ${cap} bytes`);
   }
