@@ -375,6 +375,18 @@ describe('bean action rules', () => {
       expect(choice.best).toBeUndefined();
     });
 
+    it('names no best brew when no brew says it is one', () => {
+      const [latest, old] = [brew(300), brew(100)];
+      // As a brew stored before there were best brews has it.
+      latest.best_brew = undefined;
+      old.best_brew = null;
+
+      const choice = pickRepeatBrew([latest, old], true);
+
+      expect(choice.latest).toBe(latest);
+      expect(choice.best).toBeUndefined();
+    });
+
     it('orders brews without a timestamp as the lists of brews do', () => {
       const [a, b, c, d] = [
         brew(100),
