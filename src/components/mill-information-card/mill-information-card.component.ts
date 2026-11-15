@@ -35,13 +35,13 @@ import { MillFunction } from '../../pipes/mill/millFunction';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIHelper } from '../../services/uiHelper';
 import { UIImage } from '../../services/uiImage';
 import { UIMillHelper } from '../../services/uiMillHelper';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
+import { DeleteCommands } from '../../stores/delete-commands';
 import {
   ActionsPopoverComponent,
   popoverAction,
@@ -78,7 +78,7 @@ export class MillInformationCardComponent implements OnInit {
   private readonly uiToast = inject(UIToast);
   private readonly uiAlert = inject(UIAlert);
   private readonly uiMillStorage = inject(UIMillStorage);
-  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly deleteCommands = inject(DeleteCommands);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiImage = inject(UIImage);
   private readonly uiBrewHelper = inject(UIBrewHelper);
@@ -250,31 +250,21 @@ export class MillInformationCardComponent implements OnInit {
       return;
     }
 
-    await this.uiAlert.withLoadingSpinner(async () => {
+    const deleted = await this.uiAlert.withLoadingSpinner(async () => {
       this.uiAnalytics.trackEvent(
         MILL_TRACKING.TITLE,
         MILL_TRACKING.ACTIONS.DELETE,
       );
-      await this.__deleteMill();
-      this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
-      await this.resetSettings();
-    });
-  }
-  private async __deleteMill() {
-    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-    const deletingBrewIndex: Array<number> = [];
-    for (let i = 0; i < brews.length; i++) {
-      if (brews[i].mill === this.mill.config.uuid) {
-        deletingBrewIndex.push(i);
+      const done = await this.deleteCommands.deleteMill(this.mill.config.uuid);
+      if (done) {
+        this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
+        await this.resetSettings();
       }
+      return done;
+    });
+    if (!deleted) {
+      await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
     }
-    for (let i = deletingBrewIndex.length; i--;) {
-      await this.uiBrewStorage.removeByUUID(
-        brews[deletingBrewIndex[i]].config.uuid,
-      );
-    }
-
-    await this.uiMillStorage.removeByObject(this.mill);
   }
 
   public async archive() {

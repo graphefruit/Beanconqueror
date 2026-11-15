@@ -3,7 +3,6 @@ import { TestBed } from '@angular/core/testing';
 
 import { ModalController } from '@ionic/angular';
 
-import { Bean } from '../../classes/bean/bean';
 import { Settings } from '../../classes/settings/settings';
 import { StorageClass } from '../../classes/storageClass';
 import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
@@ -25,6 +24,7 @@ import { UIPreparationHelper } from '../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
+import { DeleteCommands } from '../../stores/delete-commands';
 import { MemoryDatabase, uuidsOf } from '../../test-utils/memory-database';
 import { GreenBeanInformationComponent } from '../green-bean-information/green-bean-information.component';
 import { MillInformationCardComponent } from '../mill-information-card/mill-information-card.component';
@@ -45,6 +45,7 @@ interface Card {
   key: string;
   input: string;
   delete: string;
+  command: 'deleteMill' | 'deletePreparation' | 'deleteGreenBean';
   question: string;
   toast: string;
   tracking: { TITLE: string; ACTIONS: { DELETE: string } };
@@ -52,8 +53,6 @@ interface Card {
   seed: Seed;
   /** The collections in the order they are saved, and what they lose. */
   removed: [key: string, uuids: string[]][];
-  /** The deletion notes of the dependent entries, in the order written. */
-  noted: string[];
 }
 
 const brewsBy = (field: string): Entry[] => [
@@ -72,6 +71,7 @@ const CARDS: Card[] = [
     key: 'MILL',
     input: 'mill',
     delete: 'delete',
+    command: 'deleteMill',
     question: 'DELETE_MILL_QUESTION',
     toast: 'TOAST_MILL_DELETED_SUCCESSFULLY',
     tracking: MILL_TRACKING,
@@ -80,7 +80,6 @@ const CARDS: Card[] = [
       BREWS: brewsBy('mill'),
     },
     removed: [['BREWS', ['brew-1', 'brew-2', 'brew-3']]],
-    noted: ['brew-3', 'brew-2', 'brew-1'],
   },
   {
     name: 'preparation',
@@ -88,6 +87,7 @@ const CARDS: Card[] = [
     key: 'PREPARATION',
     input: 'preparation',
     delete: 'deletePreparation',
+    command: 'deletePreparation',
     question: 'DELETE_PREPARATION_METHOD_QUESTION',
     toast: 'TOAST_PREPARATION_DELETED_SUCCESSFULLY',
     tracking: PREPARATION_TRACKING,
@@ -96,7 +96,6 @@ const CARDS: Card[] = [
       BREWS: brewsBy('method_of_preparation'),
     },
     removed: [['BREWS', ['brew-1', 'brew-2', 'brew-3']]],
-    noted: ['brew-3', 'brew-2', 'brew-1'],
   },
   {
     name: 'green bean',
@@ -104,6 +103,7 @@ const CARDS: Card[] = [
     key: 'GREEN_BEANS',
     input: 'greenBean',
     delete: 'deleteBean',
+    command: 'deleteGreenBean',
     question: 'DELETE_GREEN_BEAN_QUESTION',
     toast: 'TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY',
     tracking: GREEN_BEAN_TRACKING,
@@ -128,7 +128,6 @@ const CARDS: Card[] = [
       ['BREWS', ['brew-1', 'brew-2', 'brew-3']],
       ['BEANS', ['roast-1', 'roast-2']],
     ],
-    noted: ['brew-2', 'brew-1', 'brew-3', 'roast-1', 'roast-2'],
   },
 ];
 
@@ -209,17 +208,9 @@ for (const card of CARDS) {
               saveSettings: step('filters reset', Promise.resolve()),
             },
           },
-          {
-            provide: UIBeanHelper,
-            useValue: {
-              getAllRoastedBeansForThisGreenBean: (uuid: string) =>
-                (storages.BEANS.getAllEntries() as Bean[]).filter(
-                  (bean) => bean.bean_roast_information?.bean_uuid === uuid,
-                ),
-            },
-          },
           ...[
             ModalController,
+            UIBeanHelper,
             UIMillHelper,
             UIPreparationHelper,
             UIGreenBeanHelper,
@@ -284,6 +275,10 @@ for (const card of CARDS) {
         'filters reset',
         'spinner hidden',
       ]);
+      expect(database.written().slice(-2)).toEqual([
+        card.key,
+        'DELETION_JOURNAL',
+      ]);
       expect(trackEvent).toHaveBeenCalledOnceWith(
         card.tracking.TITLE,
         card.tracking.ACTIONS.DELETE,
@@ -301,29 +296,58 @@ for (const card of CARDS) {
           .withContext(key)
           .toEqual(kept(key));
       }
-      // The dependent entries first, each with a save of its own.
-      const saves = [
-        ...card.removed.flatMap(([key, uuids]) => uuids.map(() => key)),
-        card.key,
-      ];
+      // The dependent entries first, with one save per collection.
+      const saves = [...card.removed.map(([key]) => key), card.key];
       expect(database.written().filter((key) => key in card.seed)).toEqual(
         saves,
       );
       expect(events).toEqual(saves.map((key) => `${key} DELETE`));
-      expect(removed).toEqual([...card.noted, 'doomed']);
+      const notes = [
+        ...card.removed.flatMap(([collection, uuids]) =>
+          uuids.map((uuid) => ({ collection, uuid, rev: 2 })),
+        ),
+        { collection: card.key, uuid: 'doomed', rev: 2 },
+      ];
+      expect(removed).toEqual(notes.map((note) => note.uuid));
       expect(
         database.journal().map(({ collection, uuid, rev }) => ({
           collection,
           uuid,
           rev,
         })),
-      ).toEqual(
-        [...card.noted, 'doomed'].map((uuid, i) => ({
-          collection: saves[i],
-          uuid,
-          rev: 2,
-        })),
+      ).toEqual(notes);
+    });
+
+    it('shows one message and nothing else when not all of it could be deleted', async () => {
+      database.failingWrites.add(card.key);
+
+      await deleteEntry();
+
+      expect(steps).toEqual([
+        'spinner shown',
+        'tracked',
+        'spinner hidden',
+        'message',
+      ]);
+      expect(showMessage).toHaveBeenCalledOnceWith(
+        'ERROR_OCCURED',
+        'CARE',
+        undefined,
+        true,
       );
+      expect(showInfoToast).not.toHaveBeenCalled();
+      expect(settings.bean_filter.OPEN.favourite).toBeTrue();
+      expect(database.uuids(card.key)).toContain('doomed');
+    });
+
+    it('hides the spinner and shows no toast when deleting throws', async () => {
+      spyOn(TestBed.inject(DeleteCommands), card.command).and.rejectWith(
+        new Error('unexpected'),
+      );
+
+      await expectAsync(deleteEntry()).toBeRejected();
+
+      expect(steps).toEqual(['spinner shown', 'tracked', 'spinner hidden']);
     });
   });
 }

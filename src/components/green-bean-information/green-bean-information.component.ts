@@ -29,7 +29,6 @@ import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { BeansAddComponent } from '../../app/beans/beans-add/beans-add.component';
 import { GreenBeanAddComponent } from '../../app/roasting-section/green-beans/green-bean-add/green-bean-add.component';
 import { Bean } from '../../classes/bean/bean';
-import { Brew } from '../../classes/brew/brew';
 import { GreenBean } from '../../classes/green-bean/green-bean';
 import { Settings } from '../../classes/settings/settings';
 import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
@@ -39,13 +38,12 @@ import { FormatDatePipe } from '../../pipes/formatDate';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIGreenBeanHelper } from '../../services/uiGreenBeanHelper';
 import { UIGreenBeanStorage } from '../../services/uiGreenBeanStorage';
 import { UIImage } from '../../services/uiImage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
+import { DeleteCommands } from '../../stores/delete-commands';
 import {
   ActionsPopoverComponent,
   popoverAction,
@@ -79,14 +77,13 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
 export class GreenBeanInformationComponent implements OnInit {
   private readonly uiBeanHelper = inject(UIBeanHelper);
   private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
-  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly deleteCommands = inject(DeleteCommands);
   private readonly modalController = inject(ModalController);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly uiAlert = inject(UIAlert);
   private readonly uiToast = inject(UIToast);
   private readonly uiImage = inject(UIImage);
-  private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiGreenBeanHelper = inject(UIGreenBeanHelper);
 
   @Input() public greenBean: GreenBean;
@@ -308,15 +305,23 @@ export class GreenBeanInformationComponent implements OnInit {
       return;
     }
 
-    await this.uiAlert.withLoadingSpinner(async () => {
+    const deleted = await this.uiAlert.withLoadingSpinner(async () => {
       this.uiAnalytics.trackEvent(
         GREEN_BEAN_TRACKING.TITLE,
         GREEN_BEAN_TRACKING.ACTIONS.DELETE,
       );
-      await this.__deleteBean();
-      this.uiToast.showInfoToast('TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY');
-      await this.resetSettings();
+      const done = await this.deleteCommands.deleteGreenBean(
+        this.greenBean.config.uuid,
+      );
+      if (done) {
+        this.uiToast.showInfoToast('TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY');
+        await this.resetSettings();
+      }
+      return done;
     });
+    if (!deleted) {
+      await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
+    }
   }
 
   public async repeatBean() {
@@ -326,28 +331,6 @@ export class GreenBeanInformationComponent implements OnInit {
     );
 
     await this.uiGreenBeanHelper.repeatGreenBean(this.greenBean);
-  }
-  private async __deleteBean() {
-    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-    const relatedRoastingBeans: Array<Bean> =
-      this.uiBeanHelper.getAllRoastedBeansForThisGreenBean(
-        this.greenBean.config.uuid,
-      );
-    let deletingBrews: Array<Brew> = [];
-    for (const roastedBean of relatedRoastingBeans) {
-      const filteredBrews: Array<Brew> = brews.filter(
-        (e) => e.bean === roastedBean.config.uuid,
-      );
-      deletingBrews = [...deletingBrews, ...filteredBrews];
-    }
-
-    for (const brew of deletingBrews) {
-      await this.uiBrewStorage.removeByUUID(brew.config.uuid);
-    }
-    for (const bean of relatedRoastingBeans) {
-      await this.uiBeanStorage.removeByUUID(bean.config.uuid);
-    }
-    await this.uiGreenBeanStorage.removeByObject(this.greenBean);
   }
 
   public hasPhotos(): boolean {

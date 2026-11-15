@@ -259,20 +259,24 @@ writes:
   entries that exist again, for example after an import, are dropped when the
   collection loads.
 - `removeManyByUUID(uuids)` removes several entries with one save, one
-  `DELETE` event and one journal write. `BeanCommands.deleteWithBrews`
-  (`src/stores/beans/bean-commands.ts`) deletes a bean with it: after checking
-  that the bean exists and both collections take writes, the brews with one
-  save, then the bean with one. It resolves false when nothing or not all was
-  deleted, and the bean card then shows a message instead of the toast.
+  `DELETE` event and one journal write. `DeleteCommands`
+  (`src/stores/delete-commands.ts`) deletes with it what takes other entries
+  along: a bean, a mill or a preparation with its brews, and a green bean with
+  the beans roasted from it and their brews. After checking that the entry
+  exists and all collections take writes, each collection is saved once, the
+  brews first and the entry last. A command resolves false when nothing or
+  not all was deleted, and the card then shows a message instead of the
+  toast. A water and a roasting machine take nothing along: the entries
+  naming them are updated one by one, as before.
   - A refused write changes nothing. A save that fails for good ends in the
     iOS database dialog of `UIStorage.set`, which only reloads the app: the
     save does not return, the stored entries are the ones from before. Only
     if that dialog cannot be shown the save returns false; the removed
     entries are then put back in memory and nothing is reported as removed.
-  - The two saves are not one transaction. When the app stops between them,
-    or the beans cannot be saved after the brews, the bean is left without
-    brews and can be deleted again; when it stops before the journal write,
-    the notes of that save are missing.
+  - The saves are not one transaction. When the app stops between them, or
+    a collection cannot be saved after the one before, the entry is left
+    without the entries deleted until then and can be deleted again; when it
+    stops before the journal write, the notes of that save are missing.
   - A write of the same collection that succeeds while such a save fails
     stores the collection without the removed entries; they are stored again
     with its next write. When the app stops before, they are gone without a
@@ -283,8 +287,8 @@ writes:
     read may hold them. No note is written for those, and the next write of
     the collection stores them again.
   - The collection reports a refused write and a failed save with messages
-    of its own, so the message of the bean card can be the second or third
-    one on the screen.
+    of its own, so the message of the card can be the second or third one on
+    the screen.
 
 Entries from before change tracking have `updated_at` 0, `rev` 0 and
 `updated_by` `''` ("unknown") and a `created_at` estimated from

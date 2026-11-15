@@ -32,9 +32,9 @@ import { UIHelper } from '../../../services/uiHelper';
 import { UIImage } from '../../../services/uiImage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
-import { BeanCommands } from '../../../stores/beans/bean-commands';
 import { BeanStore } from '../../../stores/beans/bean.store';
 import { FakeStoreSource } from '../../../stores/core/__tests__/fake-store-source';
+import { DeleteCommands } from '../../../stores/delete-commands';
 import {
   BeanActionEvent,
   BeanInformationComponent,
@@ -188,8 +188,8 @@ describe('BeanInformationComponent', () => {
       async <T>(work: () => T | Promise<T>) => work(),
     );
     toast = spies(['showInfoToast']);
-    commands = spies(['deleteWithBrews']);
-    commands.deleteWithBrews.and.resolveTo(true);
+    commands = spies(['deleteBean']);
+    commands.deleteBean.and.resolveTo(true);
     analytics = spies(['trackEvent']);
     brewHelper = spies(['showAssociatedBrews', 'repeatBrew']);
     modal = spies(['create']);
@@ -220,7 +220,7 @@ describe('BeanInformationComponent', () => {
         { provide: UIImage, useValue: image },
         { provide: UIHelper, useValue: uiHelper },
         { provide: UIAnalytics, useValue: analytics },
-        { provide: BeanCommands, useValue: commands },
+        { provide: DeleteCommands, useValue: commands },
         {
           provide: CurrencyService,
           useValue: { getActualCurrencySymbol: () => '€' },
@@ -496,7 +496,7 @@ describe('BeanInformationComponent', () => {
         alert.showConfirm,
         uiHelper.copyToClipboard,
         beans.update,
-        commands.deleteWithBrews,
+        commands.deleteBean,
       ]) {
         expect(spy).not.toHaveBeenCalled();
       }
@@ -749,7 +749,7 @@ describe('BeanInformationComponent', () => {
       });
 
       function command(result: Promise<boolean>) {
-        commands.deleteWithBrews.and.callFake(() => {
+        commands.deleteBean.and.callFake(() => {
           steps.push('command');
           return result;
         });
@@ -764,7 +764,7 @@ describe('BeanInformationComponent', () => {
           'SURE_QUESTION',
           true,
         );
-        expect(commands.deleteWithBrews).not.toHaveBeenCalled();
+        expect(commands.deleteBean).not.toHaveBeenCalled();
         expect(steps).toEqual([]);
         expect(emitted.map(([action]) => action)).toEqual([BEAN_ACTION.DELETE]);
       });
@@ -774,7 +774,7 @@ describe('BeanInformationComponent', () => {
         command(Promise.resolve(true));
         await card.showBeanActions(event());
 
-        expect(commands.deleteWithBrews).toHaveBeenCalledOnceWith('alpha');
+        expect(commands.deleteBean).toHaveBeenCalledOnceWith('alpha');
         expect(steps).toEqual([
           'spinner shown',
           'tracked',

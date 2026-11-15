@@ -45,13 +45,13 @@ import { PreparationFunction } from '../../pipes/preparation/preparationFunction
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIHelper } from '../../services/uiHelper';
 import { UIImage } from '../../services/uiImage';
 import { UIPreparationHelper } from '../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
+import { DeleteCommands } from '../../stores/delete-commands';
 import {
   ActionsPopoverComponent,
   popoverAction,
@@ -90,7 +90,7 @@ export class PreparationInformationCardComponent implements OnInit {
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiToast = inject(UIToast);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
-  private readonly uiBrewStorage = inject(UIBrewStorage);
+  private readonly deleteCommands = inject(DeleteCommands);
   private readonly uiImage = inject(UIImage);
   private readonly uiBrewHelper = inject(UIBrewHelper);
   private readonly uiHelper = inject(UIHelper);
@@ -481,15 +481,23 @@ export class PreparationInformationCardComponent implements OnInit {
       return;
     }
 
-    await this.uiAlert.withLoadingSpinner(async () => {
+    const deleted = await this.uiAlert.withLoadingSpinner(async () => {
       this.uiAnalytics.trackEvent(
         PREPARATION_TRACKING.TITLE,
         PREPARATION_TRACKING.ACTIONS.DELETE,
       );
-      await this.__deletePreparation();
-      this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
-      await this.resetSettings();
+      const done = await this.deleteCommands.deletePreparation(
+        this.preparation.config.uuid,
+      );
+      if (done) {
+        this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
+        await this.resetSettings();
+      }
+      return done;
     });
+    if (!deleted) {
+      await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
+    }
   }
 
   public async archive() {
@@ -503,22 +511,6 @@ export class PreparationInformationCardComponent implements OnInit {
     await this.resetSettings();
   }
 
-  private async __deletePreparation() {
-    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-    const deletingBrewIndex: Array<number> = [];
-    for (let i = 0; i < brews.length; i++) {
-      if (brews[i].method_of_preparation === this.preparation.config.uuid) {
-        deletingBrewIndex.push(i);
-      }
-    }
-    for (let i = deletingBrewIndex.length; i--;) {
-      await this.uiBrewStorage.removeByUUID(
-        brews[deletingBrewIndex[i]].config.uuid,
-      );
-    }
-
-    await this.uiPreparationStorage.removeByObject(this.preparation);
-  }
   public preparationHasDeviceConnection() {
     return (
       this.preparation?.connectedPreparationDevice.type !==

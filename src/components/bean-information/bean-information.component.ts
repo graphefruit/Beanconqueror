@@ -79,7 +79,6 @@ import {
   beanActions,
   pickRepeatBrew,
 } from '../../stores/beans/bean-action-rules';
-import { BeanCommands } from '../../stores/beans/bean-commands';
 import {
   beanAgeInDays,
   hasFrozenInformation,
@@ -92,6 +91,7 @@ import {
 import { BeanUsageStore, NO_USAGE } from '../../stores/beans/bean-usage.store';
 import { BeanStore, toLegacyBean } from '../../stores/beans/bean.store';
 import { DeepReadonly } from '../../stores/core/read-only';
+import { DeleteCommands } from '../../stores/delete-commands';
 import {
   ActionsPopoverComponent,
   popoverAction,
@@ -150,7 +150,7 @@ export class BeanInformationComponent {
   private actionSheetCtrl = inject(ActionSheetController);
   private readonly currencyService = inject(CurrencyService);
   private readonly beanStore = inject(BeanStore);
-  private readonly beanCommands = inject(BeanCommands);
+  private readonly deleteCommands = inject(DeleteCommands);
   private readonly beanUsageStore = inject(BeanUsageStore);
 
   /**
@@ -634,7 +634,7 @@ export class BeanInformationComponent {
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.DELETE,
       );
-      const done = await this.beanCommands.deleteWithBrews(
+      const done = await this.deleteCommands.deleteBean(
         this.actionBean.config.uuid,
       );
       if (done) {
