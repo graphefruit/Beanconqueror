@@ -6,6 +6,11 @@ export const DELETION_JOURNAL_STORAGE_KEY = 'DELETION_JOURNAL';
 export const ATTACHMENT_MANIFEST_STORAGE_KEY = 'ATTACHMENT_MANIFEST';
 /** Note about the last import on this installation (IRestoreNote). */
 export const LAST_RESTORE_STORAGE_KEY = 'LAST_RESTORE';
+/**
+ * The entry that is being deleted together with the entries depending on
+ * it, only stored while that runs (DeleteCommands).
+ */
+export const PENDING_DELETION_STORAGE_KEY = 'PENDING_DELETION';
 
 /**
  * Storage keys whose values belong to exactly this installation.
@@ -20,6 +25,7 @@ export const LOCAL_ONLY_STORAGE_KEYS: readonly string[] = [
   DELETION_JOURNAL_STORAGE_KEY,
   ATTACHMENT_MANIFEST_STORAGE_KEY,
   LAST_RESTORE_STORAGE_KEY,
+  PENDING_DELETION_STORAGE_KEY,
 ];
 
 export function isLocalOnlyStorageKey(_key: string): boolean {

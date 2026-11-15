@@ -140,6 +140,19 @@ export class UIStorage {
     return true;
   }
 
+  /**
+   * Removes a value with a single attempt and without the database dialog;
+   * rejects when it could not be removed.
+   */
+  public async remove(_key: string): Promise<void> {
+    this.writeCount++;
+    try {
+      await this._storage.remove(_key);
+    } finally {
+      this.writeCount++;
+    }
+  }
+
   private async internalGet(_key: string): Promise<any> {
     // We didn't wait here, maybe this will fix some issues :O?
     const data = await this._storage.get(_key);

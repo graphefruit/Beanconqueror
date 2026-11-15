@@ -25,7 +25,7 @@ export interface DeletionNote {
  */
 export class MemoryDatabase {
   public readonly values = new Map<string, unknown>();
-  /** Keys whose writes fail. */
+  /** Keys that can neither be written nor removed. */
   public readonly failingWrites = new Set<string>();
   /** Keys that cannot be read. */
   public readonly unreadable = new Set<string>();
@@ -37,6 +37,16 @@ export class MemoryDatabase {
       }
       this.values.set(key, structuredClone(value));
       return Promise.resolve(true);
+    });
+
+  public readonly remove = jasmine
+    .createSpy('remove')
+    .and.callFake((key: string) => {
+      if (this.failingWrites.has(key)) {
+        return Promise.reject(new Error('remove failed'));
+      }
+      this.values.delete(key);
+      return Promise.resolve();
     });
 
   /** What the storages need; call it inside `beforeEach`. */
@@ -55,6 +65,7 @@ export class MemoryDatabase {
           get: jasmine.createSpy('get').and.callFake(read),
           getOrFail: jasmine.createSpy('getOrFail').and.callFake(read),
           set: this.set,
+          remove: this.remove,
         },
       },
       {

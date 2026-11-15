@@ -22,6 +22,8 @@ const STORAGES: Record<string, Type<StorageClass>> = {
   GREEN_BEANS: UIGreenBeanStorage,
 };
 
+const NOTE = 'PENDING_DELETION';
+
 const stored = (
   uuid: string,
   fields: Record<string, unknown> = {},
@@ -116,11 +118,13 @@ describe('DeleteCommands', () => {
 
         // Deleting the brews one by one saved the brews 300 times.
         expect(database.written()).toEqual([
+          NOTE,
           'BREWS',
           'DELETION_JOURNAL',
           key,
           'DELETION_JOURNAL',
         ]);
+        expect(database.values.has(NOTE)).toBeFalse();
         const others = ['other-1', 'other-2', 'other-3'];
         expect(database.uuids('BREWS')).toEqual(others);
         expect(inMemory('BREWS')).toEqual(others);
@@ -149,7 +153,7 @@ describe('DeleteCommands', () => {
 
         expect(await run('doomed')).toBeTrue();
 
-        expect(database.written()).toEqual([key, 'DELETION_JOURNAL']);
+        expect(database.written()).toEqual([NOTE, key, 'DELETION_JOURNAL']);
         expect(database.uuids(key)).toEqual([]);
         expect(database.uuids('BREWS')).toEqual(['other']);
         expect(noted()).toEqual(['doomed']);
@@ -198,6 +202,7 @@ describe('DeleteCommands', () => {
         expect(await run('doomed')).toBeFalse();
 
         expect(database.writes(key)).toBe(0);
+        expect(database.values.has(NOTE)).toBeFalse();
         expect(inMemory(key)).toEqual(['doomed']);
         expect(database.uuids(key)).toEqual(['doomed']);
         expect(inMemory('BREWS')).toEqual(uuidsOf(brewsOf('doomed', 3)));
@@ -216,13 +221,68 @@ describe('DeleteCommands', () => {
         expect(storages[key].getByUUID('doomed')).toBeDefined();
         expect(database.uuids(key)).toEqual(['doomed']);
         expect(database.journal().length).toBe(3);
+        expect(database.values.has(NOTE)).toBeFalse();
 
         database.failingWrites.clear();
         database.set.calls.reset();
         expect(await run('doomed')).toBeTrue();
 
-        expect(database.written()).toEqual([key, 'DELETION_JOURNAL']);
+        expect(database.written()).toEqual([NOTE, key, 'DELETION_JOURNAL']);
         expect(database.uuids(key)).toEqual([]);
+      });
+
+      it('keeps a note of it while it is deleted, from before the first save', async () => {
+        await startWith([stored('doomed')], brewsOf('doomed', 2));
+        const before = Date.now();
+        const during: unknown[] = [];
+        for (const storage of [storages.BREWS, storages[key]]) {
+          const remove: (uuids: readonly string[]) => Promise<boolean> =
+            storage.removeManyByUUID.bind(storage);
+          spyOn(storage, 'removeManyByUUID').and.callFake((uuids) => {
+            if (uuids.length > 0) {
+              during.push(database.values.get(NOTE));
+            }
+            return remove(uuids);
+          });
+        }
+
+        expect(await run('doomed')).toBeTrue();
+
+        const note = {
+          collection: key,
+          uuid: 'doomed',
+          started_at: jasmine.any(Number),
+        };
+        expect(during).toEqual([note, note]);
+        const { started_at } = during[0] as { started_at: number };
+        expect(started_at).toBeGreaterThanOrEqual(before);
+        expect(started_at).toBeLessThanOrEqual(Date.now());
+        expect(database.remove).toHaveBeenCalledOnceWith(NOTE);
+        expect(database.values.has(NOTE)).toBeFalse();
+      });
+
+      it('deletes nothing when the note cannot be stored', async () => {
+        await startWith([stored('doomed')], brewsOf('doomed', 2));
+        database.failingWrites.add(NOTE);
+
+        expect(await run('doomed')).toBeFalse();
+
+        expect(database.written()).toEqual([NOTE]);
+        expect(database.uuids(key)).toEqual(['doomed']);
+        expect(inMemory(key)).toEqual(['doomed']);
+        expect(database.uuids('BREWS').length).toBe(2);
+        expect(inMemory('BREWS').length).toBe(2);
+        expect(database.values.has('DELETION_JOURNAL')).toBeFalse();
+      });
+
+      it('is done although the note cannot be removed', async () => {
+        await startWith([stored('doomed')], brewsOf('doomed', 2));
+        database.remove.and.rejectWith(new Error('remove failed'));
+
+        expect(await run('doomed')).toBeTrue();
+
+        expect(database.uuids(key)).toEqual([]);
+        expect(database.uuids('BREWS')).toEqual([]);
       });
 
       it('removes both of its brews that share a uuid', async () => {
@@ -322,9 +382,11 @@ describe('DeleteCommands', () => {
 
       expect(await commands.deleteGreenBean('doomed')).toBeTrue();
 
-      expect(database.written()).toEqual(
-        KEYS.flatMap((key) => [key, 'DELETION_JOURNAL']),
-      );
+      expect(database.written()).toEqual([
+        NOTE,
+        ...KEYS.flatMap((key) => [key, 'DELETION_JOURNAL']),
+      ]);
+      expect(database.values.has(NOTE)).toBeFalse();
       expect(state((key) => database.uuids(key))).toEqual(gone);
       expect(state(inMemory)).toEqual(gone);
       const all = [...brews, 'roast-1', 'roast-2', 'doomed'];
@@ -342,7 +404,11 @@ describe('DeleteCommands', () => {
 
       expect(await commands.deleteGreenBean('lonely')).toBeTrue();
 
-      expect(database.written()).toEqual(['GREEN_BEANS', 'DELETION_JOURNAL']);
+      expect(database.written()).toEqual([
+        NOTE,
+        'GREEN_BEANS',
+        'DELETION_JOURNAL',
+      ]);
       expect(database.uuids('GREEN_BEANS')).toEqual([]);
     });
 
@@ -373,7 +439,8 @@ describe('DeleteCommands', () => {
 
       expect(await commands.deleteGreenBean('doomed')).toBeFalse();
 
-      expect(database.written()).toEqual(['BREWS']);
+      expect(database.written()).toEqual([NOTE, 'BREWS']);
+      expect(database.values.has(NOTE)).toBeFalse();
       expect(state((key) => database.uuids(key))).toEqual(untouched());
       expect(state(inMemory)).toEqual(untouched());
     });
@@ -391,17 +458,19 @@ describe('DeleteCommands', () => {
 
         expect(state((key) => database.uuids(key))).toEqual(left);
         expect(state(inMemory)).toEqual(left);
+        expect(database.values.has(NOTE)).toBeFalse();
 
         database.failingWrites.clear();
         database.set.calls.reset();
         expect(await commands.deleteGreenBean('doomed')).toBeTrue();
 
-        expect(database.written()).toEqual(
-          KEYS.slice(KEYS.indexOf(failing)).flatMap((key) => [
+        expect(database.written()).toEqual([
+          NOTE,
+          ...KEYS.slice(KEYS.indexOf(failing)).flatMap((key) => [
             key,
             'DELETION_JOURNAL',
           ]),
-        );
+        ]);
         expect(state((key) => database.uuids(key))).toEqual(gone);
       });
     }

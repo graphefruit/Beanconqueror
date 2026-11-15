@@ -9,6 +9,7 @@ import {
   DELETION_JOURNAL_STORAGE_KEY,
   DEVICE_STORAGE_KEY,
   LAST_RESTORE_STORAGE_KEY,
+  PENDING_DELETION_STORAGE_KEY,
 } from '../../classes/changeTracking/localStorageKeys';
 import { Settings } from '../../classes/settings/settings';
 import { AppEventType } from '../../enums/appEvent/appEvent';
@@ -59,6 +60,11 @@ function localValues(prefix: string) {
       last_restore_at: 4,
       source: `${prefix}-import`,
       record_count: 5,
+    },
+    [PENDING_DELETION_STORAGE_KEY]: {
+      collection: 'BEANS',
+      uuid: `${prefix}-pending-bean`,
+      started_at: 6,
     },
   };
 }
@@ -202,6 +208,7 @@ describe('Values local to one installation', () => {
       'a-deleted-brew',
       'a-photo.jpg',
       'a-import',
+      'a-pending-bean',
     ]) {
       expect(content).withContext(value).not.toContain(value);
     }
@@ -399,6 +406,28 @@ describe('UIStorage reading a value', () => {
     expect(viaGetOrFail).toBe('rejected');
     expect(database.get).toHaveBeenCalledTimes(40);
   }));
+
+  it('removes a value with one attempt and without triggering a backup', async () => {
+    const device = createDeviceDatabase({ ...localValues('a'), BREWS: [] });
+    const dispatch = jasmine.createSpy('dispatch');
+    configure(device.database, dispatch);
+    const uiStorage = TestBed.inject(UIStorage);
+    await uiStorage.init();
+
+    await uiStorage.remove(PENDING_DELETION_STORAGE_KEY);
+
+    expect(device.data.has(PENDING_DELETION_STORAGE_KEY)).toBeFalse();
+    expect(device.data.size).toBe(LOCAL_KEYS.length);
+    expect(dispatch).not.toHaveBeenCalled();
+
+    const remove = spyOn(device.database, 'remove').and.rejectWith(
+      new Error('database broken'),
+    );
+    await expectAsync(
+      uiStorage.remove(DEVICE_STORAGE_KEY),
+    ).toBeRejectedWithError('database broken');
+    expect(remove).toHaveBeenCalledTimes(1);
+  });
 
   it('resolves getOrFail() with null when the value is missing', async () => {
     const device = createDeviceDatabase({});
