@@ -649,7 +649,9 @@ describe('UIBrewHelper brew data', () => {
     it('only counts the brews of this bean', () => {
       brews.entries = [brewOf('bean-1', 18), brewOf('bean-2', 200)];
 
-      expect(consumed(250)).toBeFalse();
+      // 200 g of the other bean would leave less than five grams of these.
+      expect(consumed(220)).toBeFalse();
+      expect(consumed(23.01)).toBeFalse();
       expect(consumed(23)).toBeTrue();
     });
 
