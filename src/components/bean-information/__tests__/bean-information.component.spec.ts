@@ -433,6 +433,20 @@ describe('BeanInformationComponent', () => {
       expect(Object.isFrozen(bean)).toBeFalse();
       expect(bean).not.toBe(beans.entries[0] as never);
       expect(emitted).toEqual([[BEAN_ACTION.DETAIL, bean]]);
+      expect(emitted[0][1]).toBe(bean);
+    });
+
+    it('send the bean as legacy code left it, once the action is done', async () => {
+      helper.editBean.and.callFake(async (bean: Bean) => {
+        expect(emitted).toEqual([]);
+        bean.name = 'Edited';
+      });
+      choose(BEAN_ACTION.EDIT);
+      await card.showBeanActions(event());
+
+      expect(emitted.length).toBe(1);
+      expect(emitted[0][1]).toBe(handed(helper.editBean));
+      expect(emitted[0][1].name).toBe('Edited');
     });
 
     it('give legacy code a copy that shares nothing with the store', async () => {
@@ -461,6 +475,29 @@ describe('BeanInformationComponent', () => {
       await card.showBeanActions(event());
 
       expect(emitted).toEqual([]);
+    });
+
+    it('send the role of a menu closed by a tap beside it, without an action', async () => {
+      choose('backdrop' as BEAN_ACTION);
+      await card.showBeanActions(event());
+
+      expect(emitted.map(([action]) => action)).toEqual([
+        'backdrop' as BEAN_ACTION,
+      ]);
+      const { getAllBrewsForThisBean, ...actions } = helper;
+      expect(getAllBrewsForThisBean).toHaveBeenCalled();
+      for (const spy of [
+        ...Object.values(actions),
+        ...Object.values(brewHelper),
+        ...Object.values(share),
+        ...Object.values(image),
+        alert.showConfirm,
+        uiHelper.copyToClipboard,
+        beans.update,
+        beans.removeByObject,
+      ]) {
+        expect(spy).not.toHaveBeenCalled();
+      }
     });
 
     const A = BEAN_ACTION;
@@ -529,6 +566,9 @@ describe('BeanInformationComponent', () => {
         ],
         [A.DELETE, 'DELETE', 'beanconqueror-delete'],
       ]);
+      expect(helper.getAllBrewsForThisBean.calls.allArgs()).toEqual([
+        ['alpha'],
+      ]);
     });
 
     it('list the actions of a frozen, archived favourite in a fixed order', async () => {
@@ -561,14 +601,16 @@ describe('BeanInformationComponent', () => {
       ]);
     });
 
-    it('offer no freezing when it is switched off', async () => {
-      settings.freeze_coffee_beans = false;
+    for (const stored of [false, undefined]) {
+      it(`offer no freezing when the setting is ${stored}`, async () => {
+        settings.freeze_coffee_beans = stored;
 
-      const visible = await offered();
+        const visible = await offered();
 
-      expect(visible).not.toContain(A.FREEZE);
-      expect(visible).not.toContain(A.UNFREEZE);
-    });
+        expect(visible).not.toContain(A.FREEZE);
+        expect(visible).not.toContain(A.UNFREEZE);
+      });
+    }
 
     const repeatable: [string, BrewPart | undefined, boolean][] = [
       ['a brew with nothing archived', undefined, true],
@@ -690,24 +732,38 @@ describe('BeanInformationComponent', () => {
 
       beforeEach(() => choose(BEAN_ACTION.REPEAT_LAST_OR_BEST_BREW));
 
-      /** Opens the sheet and takes the last, then the best brew. */
-      async function chooseBothInTurn(): Promise<void> {
-        let buttons: { handler: () => Promise<void> }[] = [];
-        actionSheet.create.and.callFake(async (options) => {
-          buttons = options.buttons as never;
-          return { present: () => Promise.resolve() } as never;
+      interface Sheet {
+        header: string;
+        buttons: { text: string; handler: () => Promise<void> }[];
+      }
+      let present: jasmine.Spy;
+
+      /** Opens the sheet and takes its first, then its second button. */
+      async function chooseBothInTurn(): Promise<Sheet> {
+        let sheet: Sheet;
+        present = jasmine.createSpy('present').and.resolveTo();
+        actionSheet.create.and.callFake(async (options: Sheet) => {
+          sheet = options;
+          return { present } as never;
         });
 
         await card.showBeanActions(event());
-        await buttons[0].handler();
-        await buttons[1].handler();
+        await sheet.buttons[0].handler();
+        await sheet.buttons[1].handler();
+        return sheet;
       }
 
       it('ask which one when there is a best brew', async () => {
         helper.getAllBrewsForThisBean.and.returnValue([best, last]);
 
-        await chooseBothInTurn();
+        const sheet = await chooseBothInTurn();
 
+        expect(present).toHaveBeenCalledTimes(1);
+        expect(sheet.header).toBe('CHOOSE');
+        expect(sheet.buttons.map((button) => button.text)).toEqual([
+          'REPEAT_LAST_BREW',
+          'REPEAT_BEST_BREW',
+        ]);
         expect(brewHelper.repeatBrew.calls.allArgs()).toEqual([[last], [best]]);
       });
 
@@ -717,6 +773,11 @@ describe('BeanInformationComponent', () => {
         await card.showBeanActions(event());
 
         expect(brewHelper.repeatBrew).toHaveBeenCalledOnceWith(last);
+        // Once for the menu, once for the repeat.
+        expect(helper.getAllBrewsForThisBean.calls.allArgs()).toEqual([
+          ['alpha'],
+          ['alpha'],
+        ]);
       });
 
       it('do nothing without brews', async () => {
@@ -789,6 +850,9 @@ describe('BeanInformationComponent', () => {
         await card.showBeanActions(event());
 
         expect(server.getBeanInformation).not.toHaveBeenCalled();
+        expect(emitted.map(([action]) => action)).toEqual([
+          BEAN_ACTION.REFRESH_DATA_FROM_QR_CODE,
+        ]);
       });
 
       it('keeps the uuid of the bean', async () => {
@@ -840,6 +904,10 @@ describe('BeanInformationComponent', () => {
     });
 
     it('edit on a long press, unless the card is disabled', async () => {
+      helper.editBean.and.callFake(async () => {
+        expect(emitted).toEqual([]);
+      });
+
       await card.longPressEditBean(event());
 
       expect(handed(helper.editBean).config.uuid).toBe('alpha');
