@@ -76,8 +76,13 @@ function localValues(prefix: string) {
  */
 const LOCAL_KEYS = Object.keys(localValues('any'));
 
+/** Every import removes the note about an entry that is being deleted. */
+const KEPT_BY_FAILED_IMPORT = LOCAL_KEYS.filter(
+  (_key) => _key !== PENDING_DELETION_STORAGE_KEY,
+);
+
 /** A completed import replaces the note about the last import with its own. */
-const KEPT_BY_IMPORT = LOCAL_KEYS.filter(
+const KEPT_BY_IMPORT = KEPT_BY_FAILED_IMPORT.filter(
   (_key) => _key !== LAST_RESTORE_STORAGE_KEY,
 );
 
@@ -242,6 +247,7 @@ describe('Values local to one installation', () => {
       expect(deviceB.data.get(key)).toEqual(localValues('b')[key]);
     }
     expect(deviceB.data.get(LAST_RESTORE_STORAGE_KEY)).toEqual(restoreNote(3));
+    expect(deviceB.data.has(PENDING_DELETION_STORAGE_KEY)).toBeFalse();
     expect(deviceB.data.get('BREWS')).toEqual(imported(entries('brew', 3)));
     expect((deviceB.data.get('SETTINGS') as any[])[0].user).toEqual(
       userProfile(),
@@ -265,6 +271,8 @@ describe('Values local to one installation', () => {
     }
     // The note is the import's own, not the one in the file.
     expect(deviceB.data.get(LAST_RESTORE_STORAGE_KEY)).toEqual(restoreNote(2));
+    // Neither the one of the device nor the one in the file is left.
+    expect(deviceB.data.has(PENDING_DELETION_STORAGE_KEY)).toBeFalse();
     expect(deviceB.data.get('BREWS')).toEqual(imported(entries('brew', 2)));
     expect((deviceB.data.get('SETTINGS') as any[])[0].language).toBe('de');
   });
@@ -285,11 +293,42 @@ describe('Values local to one installation', () => {
     expect(result).toEqual({ BACKUP: true });
     expect(deviceB.data.get('BREWS')).toEqual(entries('own-brew', 2));
     expect((deviceB.data.get('SETTINGS') as any[])[0].language).toBe('en');
-    for (const key of LOCAL_KEYS) {
+    for (const key of KEPT_BY_FAILED_IMPORT) {
       expect(deviceB.data.get(key))
         .withContext(key)
         .toEqual(localValues('b')[key]);
     }
+    expect(deviceB.data.has(PENDING_DELETION_STORAGE_KEY)).toBeFalse();
+  });
+
+  it('are imported over although the note about an entry that is being deleted cannot be removed', async () => {
+    const deviceB = await startDevice({
+      ...localValues('b'),
+      SETTINGS: [{ language: 'en' }],
+    });
+    const remove = deviceB.database.remove;
+    spyOn(deviceB.database, 'remove').and.callFake((key: string) =>
+      key === PENDING_DELETION_STORAGE_KEY
+        ? Promise.reject(new Error('remove failed'))
+        : remove(key),
+    );
+
+    const result = await deviceB.uiStorage.import({
+      SETTINGS: [{ language: 'de' }],
+      BREWS: entries('brew', 2),
+    });
+
+    expect(result).toEqual({ BACKUP: false });
+    for (const key of [...KEPT_BY_IMPORT, PENDING_DELETION_STORAGE_KEY]) {
+      expect(deviceB.data.get(key))
+        .withContext(key)
+        .toEqual(localValues('b')[key]);
+    }
+    expect(deviceB.data.get(LAST_RESTORE_STORAGE_KEY)).toEqual(restoreNote(2));
+    expect(deviceB.data.get('BREWS')).toEqual(imported(entries('brew', 2)));
+    expect([...deviceB.data.keys()].sort()).toEqual(
+      [...LOCAL_KEYS, 'SETTINGS', 'BREWS'].sort(),
+    );
   });
 
   it('keep the deletion journal out of the backup and unchanged by an import', async () => {

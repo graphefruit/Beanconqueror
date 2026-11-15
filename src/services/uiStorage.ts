@@ -15,6 +15,7 @@ import {
 import {
   isLocalOnlyStorageKey,
   LAST_RESTORE_STORAGE_KEY,
+  PENDING_DELETION_STORAGE_KEY,
 } from '../classes/changeTracking/localStorageKeys';
 import { withImportedUserProfile } from '../classes/settings/importedUserProfile';
 import { withDeviceSettingsSecrets } from '../classes/settings/settingsSecrets';
@@ -403,6 +404,13 @@ export class UIStorage {
     _currentDataUnreadable = false,
     _current?: StoredValues,
   ): Promise<any> {
+    try {
+      // A deletion that was interrupted is never finished on other data
+      // than it was started on, also when this import fails.
+      await this._storage.remove(PENDING_DELETION_STORAGE_KEY);
+    } catch (ex) {
+      this.uiLog.error('UIStorage - Import - Pending deletion not removed', ex);
+    }
     // Before we import, we do a saftey backup
     const _backup =
       _current?.writeCount === this.writeCount

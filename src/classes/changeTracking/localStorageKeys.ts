@@ -18,7 +18,8 @@ export const PENDING_DELETION_STORAGE_KEY = 'PENDING_DELETION';
  * They are never written into backup or export files, and importing a backup
  * never overwrites them, even if a file contains them. Writing them does not
  * trigger the automatic backups either, as those files would not contain them.
- * The import writes its own note under LAST_RESTORE_STORAGE_KEY.
+ * The import writes its own note under LAST_RESTORE_STORAGE_KEY and removes
+ * the value under PENDING_DELETION_STORAGE_KEY.
  */
 export const LOCAL_ONLY_STORAGE_KEYS: readonly string[] = [
   DEVICE_STORAGE_KEY,
