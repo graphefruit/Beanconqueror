@@ -51,9 +51,16 @@ describe('buildBeanUsage', () => {
     // A dose stored as text.
     { bean: 'd', bean_weight_in: '18', config: { unix_timestamp: 1 } },
     { bean: 'd', bean_weight_in: '17', config: { unix_timestamp: 2 } },
+    // A field that is stored as null is not a missing one: the brew belongs
+    // to no bean, and a weight of null adds nothing.
+    { bean: null, grind_weight: 4, config: { unix_timestamp: 900 } },
+    { bean: 'e', bean_weight_in: null, grind_weight: 6, config: {} },
+    { bean: 'e', bean_weight_in: 0, grind_weight: null, config: {} },
+    // The only brew of a bean has no time: it counts with time 0.
+    { bean: 'f', grind_weight: 5 },
   ];
 
-  for (const bean of ['a', 'b', 'c', 'd', '']) {
+  for (const bean of ['a', 'b', 'c', 'd', 'e', 'f', '']) {
     it(`matches legacy code for bean "${bean}"`, () => {
       const usage = buildBeanUsage(stored).get(bean);
 
@@ -79,10 +86,11 @@ describe('buildBeanUsage', () => {
       grams: 0,
       lastBrewAt: 200,
     });
-    expect(
-      buildBeanUsage([{ bean: 'a', config: { uuid: '1' } }]).get('a')
-        ?.lastBrewAt,
-    ).toBeUndefined();
+    for (const config of [{ uuid: '1' }, null]) {
+      expect(
+        buildBeanUsage([{ bean: 'a', config }]).get('a')?.lastBrewAt,
+      ).toBeUndefined();
+    }
   });
 
   it('reads 15,000 brews without building brew instances or serializing them', () => {
@@ -144,6 +152,10 @@ describe('BeanUsageStore', () => {
 
   it('shows no usage when the brews cannot be read', async () => {
     const store = TestBed.inject(BeanUsageStore);
+    // Reading the brews again empties them before the read fails.
+    source.entries = [storedBrew({ bean: 'a', grind_weight: 10 }, 1)];
+    expect(store.usage().size).toBe(1);
+    source.entries = [];
 
     await source.fail();
 

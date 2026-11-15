@@ -59,15 +59,19 @@ function storedBrew(bean: string, grams: number, daysAgo: number): object {
   return JSON.parse(JSON.stringify(brew)) as object;
 }
 
-/** A brew as `getAllBrewsForThisBean` returns it, for the repeat action. */
-function activeBrew(at: number, best = false): Brew {
+type BrewPart = 'getBean' | 'getMill' | 'getPreparation';
+
+/**
+ * A brew as `getAllBrewsForThisBean` returns it, for the repeat action;
+ * `archived` names a part of it that is archived.
+ */
+function activeBrew(at: number, best = false, archived?: BrewPart): Brew {
   const brew = new Brew();
   brew.config.unix_timestamp = at;
   brew.best_brew = best;
-  const active = { finished: false };
-  brew.getBean = () => active as never;
-  brew.getMill = () => active as never;
-  brew.getPreparation = () => active as never;
+  for (const part of ['getBean', 'getMill', 'getPreparation'] as const) {
+    brew[part] = () => ({ finished: part === archived }) as never;
+  }
   return brew;
 }
 
@@ -274,6 +278,7 @@ describe('BeanInformationComponent', () => {
     expect(value(fixture, 'BREW_DATA_FLAVOR')).toBe('Honey,CUPPING_1');
     expect(value(fixture, 'BEAN_DATA_COST')).toBe('12.5 (50 €/kg)');
     expect(value(fixture, 'BEAN_DATA_ROAST_NAME_TYPE')).toBe('-');
+    expect(text(fixture)).not.toContain('BEAN_ROASTING_TYPE_');
   });
 
   it('shows a bean that is not stored as it was handed in', async () => {
@@ -281,6 +286,7 @@ describe('BeanInformationComponent', () => {
       name: 'Preview',
       roast: 'CUSTOM_ROAST' as never,
       roast_custom: 'House',
+      bean_roasting_type: 'FILTER' as never,
       frozenDate: new Date(NOW - DAY).toISOString(),
       unfrozenDate: new Date(NOW).toISOString(),
       bean_roast_information: { bean_uuid: 'green' } as never,
@@ -290,6 +296,7 @@ describe('BeanInformationComponent', () => {
     const fixture = await render(preview);
 
     expect(text(fixture)).toContain('Preview');
+    expect(text(fixture)).toContain('(BEAN_ROASTING_TYPE_FILTER)');
     expect(value(fixture, 'PAGE_HOME_TOTAL_BREWS')).toBe('0');
     expect(value(fixture, 'ROASTED_BEFORE')).toBe('1 DAY_OLD');
     expect(value(fixture, 'BEAN_DATA_ROAST_NAME_TYPE')).toBe('House');
@@ -453,8 +460,8 @@ describe('BeanInformationComponent', () => {
       expect(emitted).toEqual([]);
     });
 
-    it('offer what fits the bean', async () => {
-      helper.getAllBrewsForThisBean.and.returnValue([activeBrew(1)]);
+    /** The actions the menu offers for the stored bean. */
+    async function offered(): Promise<string[]> {
       choose(undefined);
       await card.showBeanActions(event());
 
@@ -463,15 +470,105 @@ describe('BeanInformationComponent', () => {
           componentProps: { items: { role: string; visible?: boolean }[] };
         }
       ).componentProps.items;
-      const visible = items
+      return items
         .filter((item) => item.visible !== false)
         .map((item) => item.role);
-      expect(visible).toContain(BEAN_ACTION.REPEAT_LAST_OR_BEST_BREW);
-      expect(visible).toContain(BEAN_ACTION.FREEZE);
-      expect(visible).toContain(BEAN_ACTION.COPY_FROZEN_ID);
-      expect(visible).toContain(BEAN_ACTION.PHOTO_GALLERY);
-      expect(visible).not.toContain(BEAN_ACTION.UNARCHIVE);
-    });
+    }
+
+    const A = BEAN_ACTION;
+    const offers: {
+      name: string;
+      bean?: Partial<IBean>;
+      freezing?: boolean;
+      shown: BEAN_ACTION[];
+      hidden: BEAN_ACTION[];
+    }[] = [
+      {
+        name: 'a bean in stock with a photo, a code and a frozen id',
+        shown: [
+          A.FREEZE,
+          A.BEANS_CONSUMED,
+          A.PHOTO_GALLERY,
+          A.REFRESH_DATA_FROM_QR_CODE,
+          A.COPY_FROZEN_ID,
+        ],
+        hidden: [A.UNFREEZE, A.UNARCHIVE, A.REPEAT_LAST_OR_BEST_BREW],
+      },
+      {
+        name: 'an archived bean',
+        bean: { finished: true },
+        shown: [A.UNARCHIVE],
+        hidden: [A.BEANS_CONSUMED],
+      },
+      {
+        name: 'a frozen bean',
+        bean: { frozenDate: new Date(NOW - DAY).toISOString() },
+        shown: [A.UNFREEZE],
+        hidden: [A.FREEZE],
+      },
+      {
+        name: 'a frozen bean when freezing is switched off',
+        bean: { frozenDate: new Date(NOW - DAY).toISOString() },
+        freezing: false,
+        shown: [],
+        hidden: [A.FREEZE, A.UNFREEZE],
+      },
+      {
+        name: 'a bean in stock when freezing is switched off',
+        freezing: false,
+        shown: [],
+        hidden: [A.FREEZE, A.UNFREEZE],
+      },
+      {
+        name: 'a bean without a photo',
+        bean: { attachments: [] },
+        shown: [],
+        hidden: [A.PHOTO_GALLERY],
+      },
+      {
+        name: 'a bean without a code',
+        bean: { qr_code: '' },
+        shown: [],
+        hidden: [A.REFRESH_DATA_FROM_QR_CODE],
+      },
+      {
+        name: 'a bean without a frozen id',
+        bean: { frozenId: '' },
+        shown: [],
+        hidden: [A.COPY_FROZEN_ID],
+      },
+    ];
+    for (const { name, bean, freezing, shown, hidden } of offers) {
+      it(`offer what fits ${name}`, async () => {
+        beans.change([storedBean('alpha', { ...alpha, ...bean })]);
+        settings.freeze_coffee_beans = freezing ?? true;
+
+        const visible = await offered();
+
+        expect(visible).toEqual(jasmine.arrayContaining(shown));
+        for (const action of hidden) {
+          expect(visible).not.toContain(action);
+        }
+      });
+    }
+
+    const repeatable: [string, BrewPart | undefined, boolean][] = [
+      ['a brew with nothing archived', undefined, true],
+      ['a brew with an archived bean', 'getBean', false],
+      ['a brew with an archived grinder', 'getMill', false],
+      ['a brew with an archived preparation', 'getPreparation', false],
+    ];
+    for (const [name, archived, expected] of repeatable) {
+      it(`offer to repeat a brew: ${name}`, async () => {
+        helper.getAllBrewsForThisBean.and.returnValue([
+          activeBrew(1, false, archived),
+        ]);
+
+        expect((await offered()).includes(A.REPEAT_LAST_OR_BEST_BREW)).toBe(
+          expected,
+        );
+      });
+    }
 
     it('treat a failing brew lookup as no brews', async () => {
       helper.getAllBrewsForThisBean.and.throwError('broken');
@@ -535,10 +632,12 @@ describe('BeanInformationComponent', () => {
     });
 
     it('take an archived bean back', async () => {
+      beans.change([storedBean('alpha', { ...alpha, finished: true })]);
       choose(BEAN_ACTION.UNARCHIVE);
       await card.showBeanActions(event());
 
       expect(handed(beans.update).finished).toBeFalse();
+      expect((beans.entries[0] as IBean).finished).toBeFalse();
       expect(settings.bean_filter).toBeDefined();
     });
 
@@ -651,11 +750,15 @@ describe('BeanInformationComponent', () => {
       });
     });
 
-    it('open the detail on a tap and the photos on the photo', async () => {
+    it('open the detail on a tap', async () => {
       await card.showBean();
-      await card.showPhoto(event());
 
       expect(handed(helper.detailBean).config.uuid).toBe('alpha');
+    });
+
+    it('open the photos on the photo', async () => {
+      await card.showPhoto(event());
+
       expect(handed(image.viewPhotos).config.uuid).toBe('alpha');
     });
 

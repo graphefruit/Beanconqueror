@@ -119,6 +119,12 @@ describe('bean rules', () => {
         expected: 0,
       },
       {
+        name: 'with a roasting date of null',
+        now: '2026-03-01T08:00:00.000Z',
+        bean: { roastingDate: null },
+        expected: 0,
+      },
+      {
         name: 'roasted ten days ago',
         now: '2026-03-01T08:00:00.000Z',
         bean: { roastingDate: '2026-02-19T08:00:00.000Z' },
