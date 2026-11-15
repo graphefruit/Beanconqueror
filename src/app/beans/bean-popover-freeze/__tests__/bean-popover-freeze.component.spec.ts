@@ -6,6 +6,8 @@ import { ModalController, Platform } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { Bean } from '../../../../classes/bean/bean';
+import { Brew } from '../../../../classes/brew/brew';
+import { Config } from '../../../../classes/objectConfig/objectConfig';
 import { Settings } from '../../../../classes/settings/settings';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../../enums/beans/beanFreezingStorage';
 import { UIAlert } from '../../../../services/uiAlert';
@@ -15,7 +17,23 @@ import { UIFileHelper } from '../../../../services/uiFileHelper';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 import { UIToast } from '../../../../services/uiToast';
+import { BeanPopoverFrozenListComponent } from '../../bean-popover-frozen-list/bean-popover-frozen-list.component';
 import { BeanPopoverFreezeComponent } from '../bean-popover-freeze.component';
+
+const ORIGINAL_UUID = 'original-bean';
+const UUID_PATTERN = /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
+// A 1x1 PNG, the smallest picture the browser can decode.
+const DECODABLE_PNG =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+const UNDECODABLE = 'AAAA';
+
+function clone<T>(value: T): T {
+  return structuredClone(value);
+}
+
+function brewUsing(dose: number, ground = 0): Brew {
+  return { bean_weight_in: dose, grind_weight: ground } as Brew;
+}
 
 describe('BeanPopoverFreezeComponent', () => {
   let component: BeanPopoverFreezeComponent;
@@ -38,6 +56,7 @@ describe('BeanPopoverFreezeComponent', () => {
       'create',
     ]);
     uiBeanStorageSpy = jasmine.createSpyObj('UIBeanStorage', [
+      'add',
       'update',
       'removeByUUID',
     ]);
@@ -70,7 +89,10 @@ describe('BeanPopoverFreezeComponent', () => {
     settingsStorageSpy.getSettings.and.returnValue(new Settings());
     uiBeanHelperSpy.generateFrozenId.and.returnValue('frozen-id-123');
     uiBeanHelperSpy.getAllBrewsForThisBean.and.returnValue([]);
-    uiHelperSpy.toFixedIfNecessary.and.callFake((val: number) => val);
+    // The rounding is part of what is characterized here.
+    uiHelperSpy.toFixedIfNecessary.and.callFake((value, digits) =>
+      UIHelper.prototype.toFixedIfNecessary(value, digits),
+    );
     uiHelperSpy.cloneData.and.callFake((data: any) =>
       JSON.parse(JSON.stringify(data)),
     );
@@ -91,6 +113,10 @@ describe('BeanPopoverFreezeComponent', () => {
         ChangeDetectorRef,
       ],
     });
+
+    // These tests are about what is stored, not about the template: the
+    // native date picker asks for a render when it answers.
+    TestBed.overrideTemplate(BeanPopoverFreezeComponent, '');
 
     fixture = TestBed.createComponent(BeanPopoverFreezeComponent);
     component = fixture.componentInstance;
@@ -189,6 +215,1018 @@ describe('BeanPopoverFreezeComponent', () => {
       expect(component.addedBags.length).toBe(1);
       expect(component.addedBags[0].type).toBe(BEAN_FREEZING_STORAGE_ENUM.TUBE);
       expect(component.addedBags[0].weight).toBe(50);
+    });
+  });
+
+  describe('saveWholePackage, further cases', () => {
+    beforeEach(() => {
+      bean.cost = 20;
+      uiBeanHelperSpy.getAllBrewsForThisBean.and.returnValue([brewUsing(50)]);
+      component.ngOnInit();
+      component.frozenDate = '2026-10-17T10:00:00.000Z';
+    });
+
+    it('leaves weight and cost of the bag as they are', async () => {
+      await component.saveWholePackage();
+
+      expect(bean.weight).toBe(250);
+      expect(bean.cost).toBe(20);
+      expect(uiBeanStorageSpy.update.calls.allArgs()).toEqual([[bean]]);
+    });
+
+    it('known gap: a failing update leaves the dialog open without a message', async () => {
+      uiBeanStorageSpy.update.and.rejectWith(new Error('disk full'));
+
+      await expectAsync(component.saveWholePackage()).toBeRejectedWithError(
+        'disk full',
+      );
+
+      expect(uiToastSpy.showInfoToast.calls.count()).toBe(0);
+      expect(modalCtrlSpy.dismiss.calls.count()).toBe(0);
+    });
+
+    it('known gap: an update that was not written is reported as frozen', async () => {
+      // What the storage answers when the database refuses the write.
+      uiBeanStorageSpy.update.and.resolveTo(false);
+
+      await component.saveWholePackage();
+
+      expect(uiToastSpy.showInfoToast.calls.allArgs()).toEqual([
+        ['BEAN_HAS_BEEN_FROZEN', true],
+      ]);
+      expect(modalCtrlSpy.dismiss.calls.count()).toBe(1);
+    });
+  });
+
+  describe('save', () => {
+    /** What the bean storage holds, by uuid. */
+    let stored: Map<string, Bean>;
+    /** Storage writes and dialog steps in the order they happened. */
+    let steps: string[];
+    /** The entries as they were handed to the storage for adding. */
+    let handedToAdd: Bean[];
+    let writtenFiles: Map<string, string>;
+    let frozenListModal: {
+      present: jasmine.Spy;
+      onWillDismiss: jasmine.Spy;
+    };
+
+    function storeEntry(entry: Bean): Bean {
+      const copy = clone(entry);
+      copy.config.uuid = `copy-${handedToAdd.length}`;
+      stored.set(copy.config.uuid, copy);
+      return clone(copy);
+    }
+
+    /** Opens the dialog for the bean as it is set up, with these brews. */
+    function open(brews: Brew[] = []): void {
+      stored.set(ORIGINAL_UUID, clone(bean));
+      uiBeanHelperSpy.getAllBrewsForThisBean.and.returnValue(brews);
+      component.ngOnInit();
+    }
+
+    function addBags(...weights: number[]): void {
+      for (const weight of weights) {
+        component.freezePartialBagGrams = weight;
+        component.addOnePartialBag();
+      }
+    }
+
+    function storedOriginal(): Bean {
+      return stored.get(ORIGINAL_UUID);
+    }
+
+    function storedCopies(): Bean[] {
+      return [...stored.values()].filter(
+        (entry) => entry.config.uuid !== ORIGINAL_UUID,
+      );
+    }
+
+    function storedWeight(): number {
+      let weight = 0;
+      for (const entry of stored.values()) {
+        weight += entry.weight;
+      }
+      return weight;
+    }
+
+    beforeEach(() => {
+      stored = new Map();
+      steps = [];
+      handedToAdd = [];
+      writtenFiles = new Map();
+
+      uiBeanStorageSpy.add.and.callFake((entry: Bean) => {
+        handedToAdd.push(clone(entry));
+        steps.push('add');
+        return Promise.resolve(storeEntry(entry));
+      });
+      uiBeanStorageSpy.update.and.callFake((entry: Bean) => {
+        steps.push('update');
+        stored.set(entry.config.uuid, clone(entry));
+        return Promise.resolve(true);
+      });
+      uiBeanStorageSpy.removeByUUID.and.callFake((uuid: string) => {
+        steps.push('remove');
+        return Promise.resolve(stored.delete(uuid));
+      });
+
+      uiAlertSpy.showLoadingSpinner.and.callFake(() => {
+        steps.push('spinner shown');
+        return Promise.resolve();
+      });
+      uiAlertSpy.hideLoadingSpinner.and.callFake(() => {
+        steps.push('spinner hidden');
+        return Promise.resolve();
+      });
+      uiAlertSpy.showConfirm.and.callFake(() => {
+        steps.push('confirm');
+        return Promise.resolve('YES');
+      });
+      uiAlertSpy.showMessage.and.callFake(() => {
+        steps.push('message');
+        return Promise.resolve();
+      });
+      uiBeanHelperSpy.archiveBeanWithRatingQuestion.and.callFake(() => {
+        steps.push('archive');
+        return Promise.resolve();
+      });
+
+      let frozenIds = 0;
+      uiBeanHelperSpy.generateFrozenId.and.callFake(() => `F${++frozenIds}`);
+
+      let files = 0;
+      uiFileHelperSpy.generateInternalPath.and.callFake(
+        (prefix: string, ending: string) =>
+          Promise.resolve(`${prefix}-${++files}${ending}`),
+      );
+      uiFileHelperSpy.writeInternalFileFromBase64.and.callFake(
+        (base64: string, path: string) => {
+          writtenFiles.set(path, base64);
+          return Promise.resolve({ path, fullpath: `/data/${path}` });
+        },
+      );
+      uiFileHelperSpy.readInternalFileAsBase64.and.resolveTo(UNDECODABLE);
+
+      frozenListModal = {
+        present: jasmine.createSpy('present').and.callFake(() => {
+          steps.push('list shown');
+          return Promise.resolve();
+        }),
+        onWillDismiss: jasmine.createSpy('onWillDismiss').and.resolveTo({}),
+      };
+      modalCtrlSpy.create.and.resolveTo(
+        frozenListModal as unknown as HTMLIonModalElement,
+      );
+      modalCtrlSpy.dismiss.and.callFake(() => {
+        steps.push('dismiss');
+        return Promise.resolve(true);
+      });
+
+      bean.name = 'Alpha';
+      bean.config.uuid = ORIGINAL_UUID;
+      bean.config.unix_timestamp = 1700000000;
+      bean.weight = 250;
+      bean.cost = 20;
+      component.frozenDate = '2026-03-01T10:00:00.000Z';
+    });
+
+    describe('freezing a part of the bag', () => {
+      it('stores a new bean for the bag and takes its weight off the original', async () => {
+        open();
+        addBags(100);
+
+        await component.save();
+
+        expect(storedCopies().length).toBe(1);
+        expect(storedCopies()[0].weight).toBe(100);
+        expect(storedOriginal().weight).toBe(150);
+        expect(storedOriginal().frozenGroupId).toMatch(UUID_PATTERN);
+        expect(storedCopies()[0].frozenGroupId).toBe(
+          storedOriginal().frozenGroupId,
+        );
+        expect(steps.filter((step) => step === 'update').length).toBe(1);
+        expect(uiBeanStorageSpy.removeByUUID.calls.count()).toBe(0);
+        expect(uiAlertSpy.showConfirm.calls.count()).toBe(0);
+      });
+
+      it('splits the cost by weight', async () => {
+        open();
+        addBags(100);
+
+        await component.save();
+
+        expect(storedCopies()[0].cost).toBe(8);
+        expect(storedOriginal().cost).toBe(12);
+      });
+
+      it('rounds the shares of the cost to two digits', async () => {
+        bean.cost = 10;
+        bean.weight = 300;
+        open();
+        addBags(100);
+
+        await component.save();
+
+        expect(storedCopies()[0].cost).toBe(3.33);
+        expect(storedOriginal().cost).toBe(6.67);
+      });
+
+      it('keeps a bean without cost free of cost', async () => {
+        bean.cost = 0;
+        open();
+        addBags(100);
+
+        await component.save();
+
+        expect(storedCopies()[0].cost).toBe(0);
+        expect(storedOriginal().cost).toBe(0);
+      });
+
+      it('makes the new bean an entry of its own, frozen and not shared', async () => {
+        bean.config.created_at = 5;
+        bean.config.rev = 3;
+        bean.frozenId = 'OLD';
+        bean.unfrozenDate = '2026-02-01T10:00:00.000Z';
+        bean.attachments = ['photo.jpg'];
+        bean.internal_share_code = 'share-code';
+        bean.shared = true;
+        bean.qr_code = 'qr';
+        bean.roaster = 'Roastery';
+        open();
+        addBags(100);
+
+        await component.save();
+
+        // Nothing of the identity or the change info of the original is kept.
+        expect(handedToAdd[0].config).toEqual({ ...new Config() });
+        const copy = storedCopies()[0];
+        expect(copy.config.uuid).not.toBe(ORIGINAL_UUID);
+        expect(copy.frozenId).toBe('F1');
+        expect(copy.frozenDate).toBe('2026-03-01T10:00:00.000Z');
+        expect(copy.unfrozenDate).toBe('');
+        expect(copy.attachments).toEqual([]);
+        expect(copy.internal_share_code).toBe('');
+        expect(copy.shared).toBe(false);
+        expect(copy.qr_code).toBe('');
+        expect(copy.name).toBe('Alpha');
+        expect(copy.roaster).toBe('Roastery');
+      });
+
+      it('leaves everything but weight, cost and group of the original alone', async () => {
+        bean.frozenId = 'OLD';
+        bean.unfrozenDate = '2026-02-01T10:00:00.000Z';
+        bean.attachments = ['photo.jpg'];
+        bean.internal_share_code = 'share-code';
+        bean.shared = true;
+        bean.qr_code = 'qr';
+        const before = clone(bean);
+        open();
+        addBags(100);
+
+        await component.save();
+
+        expect(storedOriginal()).toEqual(
+          Object.assign(before, {
+            weight: 150,
+            cost: 12,
+            frozenGroupId: storedOriginal().frozenGroupId,
+          }),
+        );
+      });
+
+      it('gives every bag its own storage type and the note', async () => {
+        open();
+        component.frozenNote = 'Top drawer';
+        component.frozenStorage = BEAN_FREEZING_STORAGE_ENUM.TUBE;
+        addBags(50);
+        component.frozenStorage = BEAN_FREEZING_STORAGE_ENUM.ZIP_LOCK;
+        addBags(50);
+
+        await component.save();
+
+        expect(storedCopies().map((copy) => copy.frozenStorageType)).toEqual([
+          BEAN_FREEZING_STORAGE_ENUM.TUBE,
+          BEAN_FREEZING_STORAGE_ENUM.ZIP_LOCK,
+        ]);
+        expect(storedCopies().map((copy) => copy.frozenNote)).toEqual([
+          'Top drawer',
+          'Top drawer',
+        ]);
+        // The note and type of the original are not touched.
+        expect(storedOriginal().frozenNote).toBe('');
+        expect(storedOriginal().frozenStorageType).toBe(
+          BEAN_FREEZING_STORAGE_ENUM.UNKNOWN,
+        );
+      });
+
+      it('stores one bean per bag and lists them in the order of the bags', async () => {
+        open();
+        addBags(100, 60, 40);
+
+        await component.save();
+
+        expect(storedCopies().map((copy) => copy.weight)).toEqual([
+          100, 60, 40,
+        ]);
+        expect(storedCopies().map((copy) => copy.frozenId)).toEqual([
+          'F1',
+          'F2',
+          'F3',
+        ]);
+        expect(component.allNewCreatedBeans.map((b) => b.weight)).toEqual([
+          100, 60, 40,
+        ]);
+        expect(component.allNewCreatedBeans.map((b) => b.config.uuid)).toEqual(
+          storedCopies().map((copy) => copy.config.uuid),
+        );
+        expect(
+          component.allNewCreatedBeans.every((b) => b instanceof Bean),
+        ).toBeTrue();
+        expect(storedOriginal().weight).toBe(50);
+        expect(storedOriginal().cost).toBe(4);
+      });
+
+      it('uses the group of a bean that was partly frozen before', async () => {
+        bean.frozenGroupId = 'group-of-last-time';
+        open();
+        addBags(100, 50);
+
+        await component.save();
+
+        expect(storedOriginal().frozenGroupId).toBe('group-of-last-time');
+        expect(storedCopies().map((copy) => copy.frozenGroupId)).toEqual([
+          'group-of-last-time',
+          'group-of-last-time',
+        ]);
+      });
+
+      it('splits the green bean weight of a roasted bean by weight', async () => {
+        bean.bean_roast_information.green_bean_weight = 300;
+        open();
+        addBags(100);
+
+        await component.save();
+
+        expect(storedCopies()[0].bean_roast_information.green_bean_weight).toBe(
+          120,
+        );
+        expect(storedOriginal().bean_roast_information.green_bean_weight).toBe(
+          180,
+        );
+      });
+
+      it('rounds weights to one digit and loses nothing of the bag', async () => {
+        bean.weight = 100;
+        bean.cost = 10;
+        open();
+        addBags(33.3, 33.3, 33.3);
+
+        await component.save();
+
+        expect(storedCopies().map((copy) => copy.weight)).toEqual([
+          33.3, 33.3, 33.3,
+        ]);
+        expect(storedOriginal().weight).toBe(0.1);
+        expect(storedWeight()).toBeCloseTo(100, 6);
+        expect(storedCopies().map((copy) => copy.cost)).toEqual([
+          3.33, 3.33, 3.33,
+        ]);
+        expect(storedOriginal().cost).toBe(0.01);
+      });
+
+      it('leaves the brewed part with the original', async () => {
+        bean.cost = 12.5;
+        open([brewUsing(16.5), brewUsing(0, 20)]);
+        expect(component.leftOverBeanBagWeight).toBe(213.5);
+        addBags(100);
+
+        await component.save();
+
+        expect(storedCopies()[0].weight).toBe(100);
+        expect(storedCopies()[0].cost).toBe(5);
+        expect(storedOriginal().weight).toBe(150);
+        expect(storedOriginal().cost).toBe(7.5);
+        expect(
+          uiBeanHelperSpy.archiveBeanWithRatingQuestion.calls.count(),
+        ).toBe(0);
+      });
+    });
+
+    describe('freezing all that is left', () => {
+      it('deletes a bean without brews when the user agrees', async () => {
+        open();
+        addBags(125, 125);
+
+        await component.save();
+
+        expect(uiAlertSpy.showConfirm.calls.allArgs()).toEqual([
+          ['BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE', 'CARE', true],
+        ]);
+        expect(uiBeanStorageSpy.removeByUUID.calls.allArgs()).toEqual([
+          [ORIGINAL_UUID],
+        ]);
+        expect(uiBeanStorageSpy.update.calls.count()).toBe(0);
+        expect(stored.has(ORIGINAL_UUID)).toBeFalse();
+        expect(storedWeight()).toBe(250);
+        expect(storedCopies().map((copy) => copy.cost)).toEqual([10, 10]);
+      });
+
+      it('empties a bean without brews when the user wants to keep it', async () => {
+        bean.bean_roast_information.green_bean_weight = 300;
+        open();
+        addBags(125, 125);
+        uiAlertSpy.showConfirm.and.resolveTo('NO');
+
+        await component.save();
+
+        expect(uiBeanStorageSpy.removeByUUID.calls.count()).toBe(0);
+        expect(storedOriginal().weight).toBe(0);
+        expect(storedOriginal().bean_roast_information.green_bean_weight).toBe(
+          0,
+        );
+        expect(storedWeight()).toBe(250);
+        expect(
+          storedCopies().map(
+            (copy) => copy.bean_roast_information.green_bean_weight,
+          ),
+        ).toEqual([150, 150]);
+      });
+
+      it('known gap: the emptied bean keeps its whole cost and gets no group', async () => {
+        open();
+        addBags(125, 125);
+        uiAlertSpy.showConfirm.and.resolveTo('NO');
+
+        await component.save();
+
+        // 20 was paid; the two bags and the empty original add up to 40.
+        expect(storedOriginal().cost).toBe(20);
+        expect(storedCopies().map((copy) => copy.cost)).toEqual([10, 10]);
+        expect(storedOriginal().frozenGroupId).toBe('');
+        expect(storedCopies()[0].frozenGroupId).toMatch(UUID_PATTERN);
+      });
+
+      it('keeps a bean with brews, reduced to what was brewed, and archives it', async () => {
+        bean.bean_roast_information.green_bean_weight = 300;
+        open([brewUsing(30), brewUsing(0, 20)]);
+        addBags(100, 100);
+
+        await component.save();
+
+        expect(uiBeanStorageSpy.removeByUUID.calls.count()).toBe(0);
+        expect(uiAlertSpy.showConfirm.calls.count()).toBe(0);
+        expect(storedOriginal().weight).toBe(50);
+        expect(storedOriginal().cost).toBe(4);
+        expect(storedOriginal().bean_roast_information.green_bean_weight).toBe(
+          60,
+        );
+        expect(storedOriginal().frozenGroupId).toMatch(UUID_PATTERN);
+        expect(storedCopies().map((copy) => copy.frozenGroupId)).toEqual([
+          storedOriginal().frozenGroupId,
+          storedOriginal().frozenGroupId,
+        ]);
+        expect(storedWeight()).toBe(250);
+        expect(uiAlertSpy.showMessage.calls.allArgs()).toEqual([
+          [
+            'BEAN_POPOVER_FROZEN_BEAN_WILL_BE_ARCHIVED_NOW_MESSAGE',
+            'INFORMATION',
+            'OK',
+            true,
+          ],
+        ]);
+        expect(
+          uiBeanHelperSpy.archiveBeanWithRatingQuestion.calls.allArgs(),
+        ).toEqual([[bean]]);
+        expect(steps).toEqual([
+          'spinner shown',
+          'add',
+          'add',
+          'spinner hidden',
+          'update',
+          'message',
+          'archive',
+          'spinner hidden',
+          'dismiss',
+          'list shown',
+        ]);
+      });
+
+      it('stores the bags before it asks about and deletes the original', async () => {
+        open();
+        addBags(125, 125);
+
+        await component.save();
+
+        expect(steps).toEqual([
+          'spinner shown',
+          'add',
+          'add',
+          'spinner hidden',
+          'confirm',
+          'remove',
+          'spinner hidden',
+          'dismiss',
+          'list shown',
+        ]);
+      });
+    });
+
+    describe('when the storage fails', () => {
+      it('known gap: a rejected bag leaves the earlier bags stored next to the full original', async () => {
+        open();
+        addBags(100, 100);
+        uiBeanStorageSpy.add.and.callFake((entry: Bean) => {
+          handedToAdd.push(clone(entry));
+          if (handedToAdd.length === 2) {
+            return Promise.reject(new Error('disk full'));
+          }
+          return Promise.resolve(storeEntry(entry));
+        });
+
+        await expectAsync(component.save()).toBeRejectedWithError('disk full');
+
+        // 250 g were bought, 350 g are stored now.
+        expect(storedOriginal().weight).toBe(250);
+        expect(storedOriginal().cost).toBe(20);
+        expect(storedOriginal().frozenGroupId).toBe('');
+        expect(storedCopies().map((copy) => copy.weight)).toEqual([100]);
+        expect(bean.weight).toBe(250);
+        expect(uiBeanStorageSpy.update.calls.count()).toBe(0);
+        expect(uiAlertSpy.hideLoadingSpinner.calls.count()).toBe(0);
+        expect(modalCtrlSpy.dismiss.calls.count()).toBe(0);
+        expect(modalCtrlSpy.create.calls.count()).toBe(0);
+      });
+
+      it('known gap: the photos of a rejected bag stay behind', async () => {
+        bean.attachments = ['photo.jpg'];
+        open();
+        component.copyAttachments = true;
+        addBags(100);
+        uiBeanStorageSpy.add.and.rejectWith(new Error('disk full'));
+
+        await expectAsync(component.save()).toBeRejected();
+
+        expect(storedCopies()).toEqual([]);
+        expect([...writtenFiles.keys()]).toEqual(['photo-1.jpg']);
+      });
+
+      // The storage does not reject when it cannot write: `add` resolves an
+      // entry that is not stored, `update` and `removeByUUID` resolve false.
+      it('known gap: bags that were not stored are still taken off the original', async () => {
+        open();
+        addBags(100, 100);
+        uiBeanStorageSpy.add.and.callFake((entry: Bean) => {
+          const unsaved = clone(entry);
+          unsaved.config.uuid = 'not-stored';
+          return Promise.resolve(unsaved);
+        });
+
+        await component.save();
+
+        // 200 of the 250 g are gone, and the list shows them as frozen.
+        expect(storedCopies()).toEqual([]);
+        expect(storedOriginal().weight).toBe(50);
+        expect(storedOriginal().cost).toBe(4);
+        expect(storedWeight()).toBe(50);
+        expect(component.allNewCreatedBeans.map((b) => b.weight)).toEqual([
+          100, 100,
+        ]);
+        expect(frozenListModal.present.calls.count()).toBe(1);
+      });
+
+      it('known gap: the original is deleted although no bag was stored', async () => {
+        open();
+        addBags(250);
+        uiBeanStorageSpy.add.and.callFake((entry: Bean) => {
+          const unsaved = clone(entry);
+          unsaved.config.uuid = 'not-stored';
+          return Promise.resolve(unsaved);
+        });
+
+        await component.save();
+
+        expect(stored.size).toBe(0);
+      });
+
+      it('known gap: a rejected update leaves the bags stored next to the full original', async () => {
+        open();
+        addBags(100);
+        uiBeanStorageSpy.update.and.rejectWith(new Error('disk full'));
+
+        await expectAsync(component.save()).toBeRejectedWithError('disk full');
+
+        expect(storedOriginal().weight).toBe(250);
+        expect(storedCopies().map((copy) => copy.weight)).toEqual([100]);
+        expect(storedWeight()).toBe(350);
+        // The bean of the open dialog is already reduced.
+        expect(bean.weight).toBe(150);
+        expect(bean.cost).toBe(12);
+        expect(uiAlertSpy.hideLoadingSpinner.calls.count()).toBe(0);
+        expect(modalCtrlSpy.dismiss.calls.count()).toBe(0);
+      });
+
+      it('known gap: an update that was not written ends like a success', async () => {
+        open();
+        addBags(100);
+        uiBeanStorageSpy.update.and.resolveTo(false);
+
+        await component.save();
+
+        expect(storedWeight()).toBe(350);
+        expect(uiAlertSpy.hideLoadingSpinner.calls.count()).toBe(1);
+        expect(modalCtrlSpy.dismiss.calls.count()).toBe(1);
+        expect(frozenListModal.present.calls.count()).toBe(1);
+      });
+
+      it('known gap: a delete that was not done ends like a success', async () => {
+        open();
+        addBags(250);
+        uiBeanStorageSpy.removeByUUID.and.resolveTo(false);
+
+        await component.save();
+
+        expect(storedWeight()).toBe(500);
+        expect(modalCtrlSpy.dismiss.calls.count()).toBe(1);
+        expect(frozenListModal.present.calls.count()).toBe(1);
+      });
+    });
+
+    // The dialog offers no bag for such a bean; only save() itself is open.
+    describe('a bean without weight', () => {
+      beforeEach(() => {
+        bean.weight = 0;
+        uiAlertSpy.showConfirm.and.resolveTo('NO');
+      });
+
+      it('gives an empty bag no cost instead of failing on the division', async () => {
+        open();
+        component.addedBags = [
+          { weight: 0, type: BEAN_FREEZING_STORAGE_ENUM.UNKNOWN },
+        ];
+
+        await component.save();
+
+        expect(storedCopies()[0].cost).toBe(0);
+        expect(storedCopies()[0].weight).toBe(0);
+        expect(storedOriginal().cost).toBe(20);
+      });
+
+      it('known gap: a bag with weight gets an infinite cost and the original a negative weight', async () => {
+        open();
+        component.addedBags = [
+          { weight: 10, type: BEAN_FREEZING_STORAGE_ENUM.UNKNOWN },
+        ];
+
+        await component.save();
+
+        expect(storedCopies()[0].cost).toBe(Infinity);
+        expect(storedOriginal().weight).toBe(-10);
+        expect(storedOriginal().cost).toBe(-Infinity);
+      });
+    });
+
+    describe('photos', () => {
+      it('does not read or copy them unless asked to', async () => {
+        bean.attachments = ['photo.jpg'];
+        open();
+        addBags(100);
+
+        await component.save();
+
+        expect(uiFileHelperSpy.readInternalFileAsBase64.calls.count()).toBe(0);
+        expect(writtenFiles.size).toBe(0);
+        expect(storedCopies()[0].attachments).toEqual([]);
+        expect(storedOriginal().attachments).toEqual(['photo.jpg']);
+      });
+
+      it('copies a picture that cannot be decoded as it is', async () => {
+        bean.attachments = ['first.png', 'second.jpg'];
+        open();
+        component.copyAttachments = true;
+        addBags(100);
+
+        await component.save();
+
+        expect(
+          uiFileHelperSpy.readInternalFileAsBase64.calls.allArgs(),
+        ).toEqual([['first.png'], ['second.jpg']]);
+        expect(storedCopies()[0].attachments).toEqual([
+          'photo-1.png',
+          'photo-2.jpg',
+        ]);
+        expect(writtenFiles.get('photo-1.png')).toBe(
+          `data:image/png;base64,${UNDECODABLE}`,
+        );
+        expect(writtenFiles.get('photo-2.jpg')).toBe(
+          `data:image/jpeg;base64,${UNDECODABLE}`,
+        );
+        expect(storedOriginal().attachments).toEqual([
+          'first.png',
+          'second.jpg',
+        ]);
+      });
+
+      it('stores a picture that can be decoded as a JPEG', async () => {
+        bean.attachments = ['first.png'];
+        uiFileHelperSpy.readInternalFileAsBase64.and.resolveTo(DECODABLE_PNG);
+        open();
+        component.copyAttachments = true;
+        addBags(100);
+
+        await component.save();
+
+        expect(storedCopies()[0].attachments).toEqual(['photo-1.jpg']);
+        expect(writtenFiles.get('photo-1.jpg')).toMatch(
+          /^data:image\/jpeg;base64,.+/,
+        );
+      });
+
+      it('skips a photo that cannot be read and freezes anyway', async () => {
+        bean.attachments = ['', 'lost.jpg', 'kept.png'];
+        uiFileHelperSpy.readInternalFileAsBase64.and.callFake((path: string) =>
+          path === 'lost.jpg'
+            ? Promise.reject(new Error('File does not exist'))
+            : Promise.resolve(UNDECODABLE),
+        );
+        open();
+        component.copyAttachments = true;
+        addBags(100);
+
+        await component.save();
+
+        expect(
+          uiFileHelperSpy.readInternalFileAsBase64.calls.allArgs(),
+        ).toEqual([['lost.jpg'], ['kept.png']]);
+        expect(storedCopies()[0].attachments).toEqual(['photo-1.png']);
+        expect(storedOriginal().weight).toBe(150);
+        expect(steps).toContain('list shown');
+      });
+
+      it('gives every bag files of its own', async () => {
+        bean.attachments = ['first.png', 'second.jpg'];
+        open();
+        component.copyAttachments = true;
+        addBags(100, 50);
+
+        await component.save();
+
+        expect(storedCopies().map((copy) => copy.attachments)).toEqual([
+          ['photo-1.png', 'photo-2.jpg'],
+          ['photo-3.png', 'photo-4.jpg'],
+        ]);
+        expect([...writtenFiles.keys()]).toEqual([
+          'photo-1.png',
+          'photo-2.jpg',
+          'photo-3.png',
+          'photo-4.jpg',
+        ]);
+        // The source files are read once, not once per bag.
+        expect(uiFileHelperSpy.readInternalFileAsBase64.calls.count()).toBe(2);
+      });
+    });
+
+    it('closes the spinner and the dialog and lists the new beans', async () => {
+      open();
+      addBags(100, 50);
+
+      await component.save();
+
+      expect(steps).toEqual([
+        'spinner shown',
+        'add',
+        'add',
+        'update',
+        'spinner hidden',
+        'dismiss',
+        'list shown',
+      ]);
+      expect(modalCtrlSpy.dismiss.calls.allArgs()).toEqual([
+        [undefined, undefined, BeanPopoverFreezeComponent.COMPONENT_ID],
+      ]);
+      expect(modalCtrlSpy.create.calls.allArgs()).toEqual([
+        [
+          {
+            component: BeanPopoverFrozenListComponent,
+            id: BeanPopoverFrozenListComponent.COMPONENT_ID,
+            componentProps: { frozenBeansList: component.allNewCreatedBeans },
+          },
+        ],
+      ]);
+      expect(component.allNewCreatedBeans.length).toBe(2);
+    });
+  });
+
+  describe('bags', () => {
+    beforeEach(() => {
+      component.ngOnInit();
+    });
+
+    it('offers what is left after the brews', () => {
+      uiBeanHelperSpy.getAllBrewsForThisBean.and.returnValue([
+        brewUsing(16.5),
+        brewUsing(0, 20),
+      ]);
+
+      component.ngOnInit();
+
+      expect(component.getUsedWeightCount()).toBe(36.5);
+      expect(component.leftOverBeanBagWeight).toBe(213.5);
+    });
+
+    it('adds up the weight of the bags', () => {
+      expect(component.getActualFreezingQuantity()).toBe(0);
+
+      component.addedBags = [
+        { weight: 100, type: BEAN_FREEZING_STORAGE_ENUM.UNKNOWN },
+        { weight: 50.5, type: BEAN_FREEZING_STORAGE_ENUM.TUBE },
+      ];
+
+      expect(component.getActualFreezingQuantity()).toBe(150.5);
+    });
+
+    it('allows a bag only with a weight that is still in the bag', () => {
+      const disabledFor = (grams: number) => {
+        component.freezePartialBagGrams = grams;
+        return component.isAddingBagDisabled();
+      };
+      component.addedBags = [
+        { weight: 100, type: BEAN_FREEZING_STORAGE_ENUM.UNKNOWN },
+      ];
+
+      expect(disabledFor(0)).toBeTrue();
+      expect(disabledFor(-5)).toBeTrue();
+      expect(disabledFor(150.1)).toBeTrue();
+      expect(disabledFor(150)).toBeFalse();
+      expect(disabledFor(0.1)).toBeFalse();
+    });
+
+    it('allows the bag that fills the rest despite the inexact sum', () => {
+      bean.weight = 0.3;
+      component.ngOnInit();
+      component.addedBags = [
+        { weight: 0.1, type: BEAN_FREEZING_STORAGE_ENUM.UNKNOWN },
+      ];
+      component.freezePartialBagGrams = 0.2;
+
+      expect(component.isAddingBagDisabled()).toBeFalse();
+    });
+
+    it('cuts the proposed weight down to the rest after a bag', () => {
+      component.freezePartialBagGrams = 100;
+
+      component.addOnePartialBag();
+      expect(component.freezePartialBagGrams).toBe(100);
+
+      component.addOnePartialBag();
+      expect(component.freezePartialBagGrams).toBe(50);
+      expect(component.addedBags.map((bag) => bag.weight)).toEqual([100, 100]);
+    });
+
+    it('takes the weight of a bag as a number when the input delivers text', () => {
+      component.freezePartialBagGrams = '62.5' as unknown as number;
+
+      component.addOnePartialBag();
+
+      expect(component.addedBags[0].weight).toBe(62.5);
+    });
+
+    it('fills the bag with as many bags as fit and proposes the rest', () => {
+      component.freezePartialBagGrams = 100;
+      component.frozenStorage = BEAN_FREEZING_STORAGE_ENUM.VACUUM_SEALED;
+
+      component.addMaxPartialBags();
+
+      expect(component.addedBags).toEqual([
+        { weight: 100, type: BEAN_FREEZING_STORAGE_ENUM.VACUUM_SEALED },
+        { weight: 100, type: BEAN_FREEZING_STORAGE_ENUM.VACUUM_SEALED },
+      ]);
+      expect(component.freezePartialBagGrams).toBe(50);
+      expect(component.isAddingBagDisabled()).toBeFalse();
+    });
+
+    it('proposes nothing more when the bags use up the bean', () => {
+      component.freezePartialBagGrams = 125;
+
+      component.addMaxPartialBags();
+
+      expect(component.addedBags.map((bag) => bag.weight)).toEqual([125, 125]);
+      expect(component.freezePartialBagGrams).toBe(0);
+      expect(component.isAddingBagDisabled()).toBeTrue();
+    });
+
+    it('fills what earlier bags left over', () => {
+      component.addedBags = [
+        { weight: 130, type: BEAN_FREEZING_STORAGE_ENUM.UNKNOWN },
+      ];
+      component.freezePartialBagGrams = 33.3;
+
+      component.addMaxPartialBags();
+
+      expect(component.addedBags.map((bag) => bag.weight)).toEqual([
+        130, 33.3, 33.3, 33.3,
+      ]);
+      expect(component.freezePartialBagGrams).toBe(20.1);
+    });
+
+    it('removes a bag and keeps a proposal that still fits', () => {
+      component.freezePartialBagGrams = 100;
+      component.addMaxPartialBags();
+
+      component.deleteBag(0);
+
+      expect(component.addedBags.map((bag) => bag.weight)).toEqual([100]);
+      expect(component.freezePartialBagGrams).toBe(50);
+    });
+
+    it('cuts a proposal above the rest down when a bag is removed', () => {
+      component.addedBags = [
+        { weight: 100, type: BEAN_FREEZING_STORAGE_ENUM.UNKNOWN },
+        { weight: 50, type: BEAN_FREEZING_STORAGE_ENUM.UNKNOWN },
+      ];
+      component.freezePartialBagGrams = 300;
+
+      component.deleteBag(1);
+
+      expect(component.addedBags.map((bag) => bag.weight)).toEqual([100]);
+      expect(component.freezePartialBagGrams).toBe(150);
+    });
+  });
+
+  describe('pinFormatter', () => {
+    it('shows 0 for a value that is no number', () => {
+      expect(component.pinFormatter('abc')).toBe('0');
+      expect(component.pinFormatter(undefined)).toBe('0');
+    });
+
+    it('shows at most two digits without trailing zeros', () => {
+      expect(component.pinFormatter(0.30000000000000004)).toBe('0.3');
+      expect(component.pinFormatter('1.50')).toBe('1.5');
+      expect(component.pinFormatter(2.346)).toBe('2.35');
+      expect(component.pinFormatter(4)).toBe('4');
+    });
+  });
+
+  describe('chooseDate', () => {
+    let event: jasmine.SpyObj<Event> & {
+      target: { blur: jasmine.Spy };
+      cancelBubble: boolean;
+    };
+
+    beforeEach(() => {
+      event = Object.assign(
+        jasmine.createSpyObj<Event>('Event', [
+          'preventDefault',
+          'stopImmediatePropagation',
+          'stopPropagation',
+        ]),
+        { target: { blur: jasmine.createSpy('blur') }, cancelBubble: false },
+      );
+      jasmine.clock().install();
+      jasmine.clock().mockDate(new Date('2026-03-01T10:00:00.000Z'));
+    });
+
+    afterEach(() => {
+      jasmine.clock().uninstall();
+      delete (window as unknown as { cordova?: unknown }).cordova;
+    });
+
+    it('sets the date to now in the browser and keeps the click to itself', () => {
+      component.chooseDate(event);
+
+      expect(component.frozenDate).toBe('2026-03-01T10:00:00.000Z');
+      expect(event.target.blur.calls.count()).toBe(1);
+      expect(event.preventDefault.calls.count()).toBe(1);
+      expect(event.stopPropagation.calls.count()).toBe(1);
+      expect(event.stopImmediatePropagation.calls.count()).toBe(1);
+      expect(event.cancelBubble).toBeTrue();
+    });
+
+    it('takes the date from the native picker on a device', () => {
+      const show = jasmine.createSpy('show');
+      (window as unknown as { cordova: unknown }).cordova = {
+        plugins: { DateTimePicker: { show } },
+      };
+      platformSpy.is.and.callFake((name) => name === 'capacitor');
+      component.ngOnInit();
+
+      component.chooseDate(event);
+
+      // Nothing is set until the picker answers.
+      expect(component.frozenDate).toBe('');
+      const options = show.calls.mostRecent().args[0];
+      expect(options.mode).toBe('date');
+      expect(options.date).toEqual(new Date('2026-03-01T10:00:00.000Z'));
+
+      options.success(new Date('2026-02-14T08:30:00.000Z'));
+      expect(component.frozenDate).toBe('2026-02-14T08:30:00.000Z');
+
+      // Clearing the date in the picker.
+      options.success(undefined);
+      expect(component.frozenDate).toBe('');
+
+      options.error();
+      expect(component.frozenDate).toBe('');
     });
   });
 });
