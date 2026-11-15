@@ -460,118 +460,30 @@ describe('BeanInformationComponent', () => {
       expect(emitted).toEqual([]);
     });
 
-    /** The actions the menu offers for the stored bean. */
-    async function offered(): Promise<string[]> {
-      choose(undefined);
-      await card.showBeanActions(event());
-
-      const items = (
-        modal.create.calls.mostRecent().args[0] as unknown as {
-          componentProps: { items: { role: string; visible?: boolean }[] };
-        }
-      ).componentProps.items;
-      return items
-        .filter((item) => item.visible !== false)
-        .map((item) => item.role);
-    }
-
     const A = BEAN_ACTION;
-    const offers: {
-      name: string;
-      bean?: Partial<IBean>;
-      freezing?: boolean;
-      shown: BEAN_ACTION[];
-      hidden: BEAN_ACTION[];
-    }[] = [
-      {
-        name: 'a bean in stock with a photo, a code and a frozen id',
-        shown: [
-          A.FREEZE,
-          A.BEANS_CONSUMED,
-          A.PHOTO_GALLERY,
-          A.REFRESH_DATA_FROM_QR_CODE,
-          A.COPY_FROZEN_ID,
-        ],
-        hidden: [A.UNFREEZE, A.UNARCHIVE, A.REPEAT_LAST_OR_BEST_BREW],
-      },
-      {
-        name: 'an archived bean',
-        bean: { finished: true },
-        shown: [A.UNARCHIVE],
-        hidden: [A.BEANS_CONSUMED],
-      },
-      {
-        name: 'a frozen bean',
-        bean: { frozenDate: new Date(NOW - DAY).toISOString() },
-        shown: [A.UNFREEZE],
-        hidden: [A.FREEZE],
-      },
-      {
-        name: 'a frozen bean when freezing is switched off',
-        bean: { frozenDate: new Date(NOW - DAY).toISOString() },
-        freezing: false,
-        shown: [],
-        hidden: [A.FREEZE, A.UNFREEZE],
-      },
-      {
-        name: 'a bean in stock when freezing is switched off',
-        freezing: false,
-        shown: [],
-        hidden: [A.FREEZE, A.UNFREEZE],
-      },
-      {
-        name: 'a bean without a photo',
-        bean: { attachments: [] },
-        shown: [],
-        hidden: [A.PHOTO_GALLERY],
-      },
-      {
-        name: 'a bean without a code',
-        bean: { qr_code: '' },
-        shown: [],
-        hidden: [A.REFRESH_DATA_FROM_QR_CODE],
-      },
-      {
-        name: 'a bean without a frozen id',
-        bean: { frozenId: '' },
-        shown: [],
-        hidden: [A.COPY_FROZEN_ID],
-      },
-    ];
-    for (const { name, bean, freezing, shown, hidden } of offers) {
-      it(`offer what fits ${name}`, async () => {
-        beans.change([storedBean('alpha', { ...alpha, ...bean })]);
-        settings.freeze_coffee_beans = freezing ?? true;
 
-        const visible = await offered();
-
-        expect(visible).toEqual(jasmine.arrayContaining(shown));
-        for (const action of hidden) {
-          expect(visible).not.toContain(action);
-        }
-      });
-    }
-
-    /** The menu as handed to the popover, without what it hides. */
+    /** The menu exactly as it is handed to the popover. */
     async function menu(): Promise<string[][]> {
       choose(undefined);
       await card.showBeanActions(event());
 
       const items = (
         modal.create.calls.mostRecent().args[0] as unknown as {
-          componentProps: {
-            items: {
-              role: string;
-              translationKey: string;
-              icon: string;
-              visible?: boolean;
-            }[];
-          };
+          componentProps: { items: Record<string, unknown>[] };
         }
       ).componentProps.items;
-      return items
-        .filter((item) => item.visible !== false)
-        .map((item) => [item.role, item.translationKey, item.icon]);
+      // The popover shows every entry without a flag that hides it.
+      expect(items.every((item) => !('visible' in item))).toBeTrue();
+      expect(items.every((item) => item.itemType === 'action')).toBeTrue();
+      return items.map((item) => [
+        item.role as string,
+        item.translationKey as string,
+        item.icon as string,
+      ]);
+    }
+
+    async function offered(): Promise<string[]> {
+      return (await menu()).map(([role]) => role);
     }
 
     it('list the actions of a bean in stock in a fixed order', async () => {
@@ -644,6 +556,15 @@ describe('BeanInformationComponent', () => {
         [A.GENERATE_INTERNAL_SHARE_CODE, 'qr-code-outline'],
         [A.DELETE, 'beanconqueror-delete'],
       ]);
+    });
+
+    it('offer no freezing when it is switched off', async () => {
+      settings.freeze_coffee_beans = false;
+
+      const visible = await offered();
+
+      expect(visible).not.toContain(A.FREEZE);
+      expect(visible).not.toContain(A.UNFREEZE);
     });
 
     const repeatable: [string, BrewPart | undefined, boolean][] = [

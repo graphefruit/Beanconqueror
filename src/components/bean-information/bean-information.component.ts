@@ -76,6 +76,7 @@ import { UIHelper } from '../../services/uiHelper';
 import { UIImage } from '../../services/uiImage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
+import { beanActions } from '../../stores/beans/bean-action-rules';
 import {
   beanAgeInDays,
   hasFrozenInformation,
@@ -91,7 +92,6 @@ import { DeepReadonly } from '../../stores/core/read-only';
 import {
   ActionsPopoverComponent,
   popoverAction,
-  PopoverAction,
 } from '../actions-popover/actions-popover.component';
 import { AsyncImageComponent } from '../async-image/async-image.component';
 
@@ -276,7 +276,10 @@ export class BeanInformationComponent {
     );
     const popover = await ActionsPopoverComponent.create(this.modalController, {
       id: 'bean-popover-actions',
-      items: this.buildBeanActions(),
+      items: beanActions(this.actionBean, {
+        freezeEnabled: this.settings.freeze_coffee_beans === true,
+        hasActiveBrews: this.hasActiveBrews(),
+      }).map((entry) => popoverAction(entry)),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });
@@ -286,114 +289,6 @@ export class BeanInformationComponent {
       await this.internalBeanAction(data.role as BEAN_ACTION);
       this.beanAction.emit([data.role as BEAN_ACTION, this.actionBean]);
     }
-  }
-
-  private buildBeanActions(): PopoverAction[] {
-    const freezeEnabled = this.settings.freeze_coffee_beans === true;
-    const isFrozen = this.actionBean.isFrozen();
-
-    return [
-      popoverAction({
-        role: BEAN_ACTION.DETAIL,
-        translationKey: 'DETAIL',
-        icon: 'beanconqueror-detail',
-      }),
-      popoverAction({
-        role: BEAN_ACTION.REPEAT,
-        translationKey: 'REPEAT',
-        icon: 'beanconqueror-repeat',
-      }),
-      popoverAction({
-        role: BEAN_ACTION.EDIT,
-        translationKey: 'EDIT',
-        icon: 'beanconqueror-edit',
-      }),
-      popoverAction({
-        role: BEAN_ACTION.REPEAT_LAST_OR_BEST_BREW,
-        translationKey: 'POPOVER_BEANS_OPTION_REPEAT',
-        icon: 'beanconqueror-repeat',
-        visible: this.hasActiveBrews(),
-      }),
-      popoverAction({
-        role: BEAN_ACTION.SHOW_BREWS,
-        translationKey: 'POPOVER_SHOW_BREWS',
-        icon: 'beanconqueror-brew',
-      }),
-      popoverAction({
-        role: BEAN_ACTION.CUPPING,
-        translationKey: 'POPOVER_BREWS_OPTION_CUPPING',
-        icon: 'beanconqueror-cupping',
-      }),
-      popoverAction({
-        role: BEAN_ACTION.FREEZE,
-        translationKey: 'POPOVER_FREEZE_COFFEE_BEAN',
-        icon: 'snow-outline',
-        visible: freezeEnabled && !isFrozen,
-      }),
-      popoverAction({
-        role: BEAN_ACTION.UNFREEZE,
-        translationKey: 'POPOVER_UNFREEZE_COFFEE_BEAN',
-        icon: 'thermometer-outline',
-        visible: freezeEnabled && isFrozen,
-      }),
-      popoverAction({
-        role: BEAN_ACTION.COPY_FROZEN_ID,
-        translationKey: 'POPOVER_COPY_FROZEN_ID',
-        icon: 'copy-outline',
-        visible: !!this.actionBean.frozenId,
-      }),
-      popoverAction({
-        role: BEAN_ACTION.REFRESH_DATA_FROM_QR_CODE,
-        translationKey: 'POPOVER_QR_CODE_REFRESH',
-        icon: 'beanconqueror-refresh-barcode',
-        visible: !!this.actionBean.qr_code,
-      }),
-      popoverAction({
-        role: BEAN_ACTION.TOGGLE_FAVOURITE,
-        translationKey: 'POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE',
-        icon: this.actionBean.favourite ? 'heart' : 'heart-outline',
-      }),
-      popoverAction({
-        role: BEAN_ACTION.SHARE,
-        translationKey: 'SHARE_BEAN_URL',
-        icon: 'share-social-outline',
-      }),
-      /* Disabled because it's not easy to render shadow DOM components to an image
-      popoverAction({
-        role: BEAN_ACTION.SHARE_IMAGE,
-        translationKey: 'SHARE_BEAN_IMAGE',
-        icon: 'beanconqueror-share-image',
-      }),
-      */
-      popoverAction({
-        role: BEAN_ACTION.BEANS_CONSUMED,
-        translationKey: 'BEANS_CONSUMED',
-        icon: 'beanconqueror-finished',
-        visible: this.actionBean.finished === false,
-      }),
-      popoverAction({
-        role: BEAN_ACTION.UNARCHIVE,
-        translationKey: 'BEANS_UNARCHIVE',
-        icon: 'beanconqueror-unfinish',
-        visible: this.actionBean.finished === true,
-      }),
-      popoverAction({
-        role: BEAN_ACTION.PHOTO_GALLERY,
-        translationKey: 'POPOVER_BREWS_OPTION_PHOTO_GALLERY',
-        icon: 'beanconqueror-photo-gallery',
-        visible: this.actionBean.attachments.length > 0,
-      }),
-      popoverAction({
-        role: BEAN_ACTION.GENERATE_INTERNAL_SHARE_CODE,
-        translationKey: 'POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE',
-        icon: 'qr-code-outline',
-      }),
-      popoverAction({
-        role: BEAN_ACTION.DELETE,
-        translationKey: 'DELETE',
-        icon: 'beanconqueror-delete',
-      }),
-    ];
   }
 
   private hasActiveBrews(): boolean {
