@@ -459,6 +459,21 @@ describe('UIExcel', () => {
         expect(saveSettings).not.toHaveBeenCalled();
       });
 
+      it('counts a variety that has only a percentage or only a purchasing price', async () => {
+        const beans = await importBeans([
+          { Name: 'Percentage', '1. Percentage': 60 },
+          { Name: 'Price', '1. Purchasing Price': 12 },
+        ]);
+
+        expect(beans[0].bean_information).toEqual([
+          { percentage: 60 } as never,
+        ]);
+        expect(beans[1].bean_information).toEqual([
+          { purchasing_price: 12 } as never,
+        ]);
+        expect(settings.bean_manage_parameters.bean_information).toBeTrue();
+      });
+
       it('ignores a fifth variety', async () => {
         const [bean] = await importBeans([
           { Name: 'Five', '1. Country': 'Kenya', '5. Country': 'Peru' },
