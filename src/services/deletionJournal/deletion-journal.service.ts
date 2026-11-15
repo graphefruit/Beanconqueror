@@ -52,23 +52,35 @@ export class DeletionJournalService {
 
   /** Adds a note and stores the journal. Never rejects. */
   public record(_entry: IDeletionJournalEntry): Promise<void> {
+    return this.recordMany([_entry]);
+  }
+
+  /**
+   * Adds the notes and stores the journal once for all of them. Never
+   * rejects.
+   */
+  public recordMany(_entries: readonly IDeletionJournalEntry[]): Promise<void> {
     return this.__enqueue(async () => {
-      // Only a read that failed before this note tries again, so a single
-      // note never waits for two failing reads.
+      if (_entries.length === 0) {
+        return;
+      }
+      // Only a read that failed before these notes tries again, so they
+      // never wait for two failing reads.
       const retryRead = this.loadFailed;
       await this.initialize();
       if (!this.loaded && retryRead) {
         await this.__load();
       }
-      const entry = { ..._entry };
+      const target = this.loaded ? this.entries : this.pending;
+      for (const entry of _entries) {
+        target.push({ ...entry });
+      }
       if (!this.loaded) {
-        this.pending.push(entry);
         this.uiLog.info(
-          `DeletionJournalService - journal could not be read, note for ${entry.collection} kept in memory`,
+          `DeletionJournalService - journal could not be read, ${_entries.length} notes for ${_entries[0].collection} kept in memory`,
         );
         return;
       }
-      this.entries.push(entry);
       await this.__write();
     }, undefined);
   }

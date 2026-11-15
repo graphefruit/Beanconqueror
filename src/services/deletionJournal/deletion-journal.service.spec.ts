@@ -64,8 +64,7 @@ function note(uuid: string, collection = 'BREWS'): IDeletionJournalEntry {
 
 function stored(storage: ReturnType<typeof createStorage>) {
   return storage.data.get(DELETION_JOURNAL_STORAGE_KEY) as
-    | IDeletionJournalEntry[]
-    | undefined;
+    IDeletionJournalEntry[] | undefined;
 }
 
 describe('DeletionJournalService', () => {
@@ -229,6 +228,133 @@ describe('DeletionJournalService', () => {
     entry.uuid = 'changed';
 
     expect(service.getEntries()[0].uuid).toBe('a');
+  });
+
+  describe('recordMany', () => {
+    const notes = (count: number) =>
+      Array.from({ length: count }, (_, i) => note(`brew-${i}`));
+
+    it('stores all notes with one write', async () => {
+      const storage = createStorage({
+        [DELETION_JOURNAL_STORAGE_KEY]: [note('old')],
+      });
+      const { service } = createService(storage);
+
+      await service.recordMany(notes(300));
+
+      expect(storage.set).toHaveBeenCalledTimes(1);
+      expect(stored(storage)).toEqual([note('old'), ...notes(300)]);
+      expect(service.getEntries()).toEqual([note('old'), ...notes(300)]);
+    });
+
+    it('writes once per note when they are recorded one by one', async () => {
+      const storage = createStorage();
+      const { service } = createService(storage);
+
+      for (const entry of notes(3)) {
+        await service.record(entry);
+      }
+
+      expect(storage.set).toHaveBeenCalledTimes(3);
+      expect(stored(storage)).toEqual(notes(3));
+    });
+
+    it('neither reads nor writes for an empty list', async () => {
+      const storage = createStorage();
+      const { service } = createService(storage);
+
+      await expectAsync(service.recordMany([])).toBeResolved();
+
+      expect(storage.getOrFail).not.toHaveBeenCalled();
+      expect(storage.set).not.toHaveBeenCalled();
+    });
+
+    it('keeps all notes in memory while the journal cannot be read and adds them once it can', async () => {
+      const storage = createStorage({
+        [DELETION_JOURNAL_STORAGE_KEY]: [note('old')],
+      });
+      storage.failReads = true;
+      const { service, uiLog } = createService(storage);
+
+      await service.recordMany(notes(3));
+
+      expect(storage.set).not.toHaveBeenCalled();
+      expect(stored(storage)).toEqual([note('old')]);
+      expect(service.getEntries()).toEqual(notes(3));
+      expect(uiLog.info).toHaveBeenCalledWith(
+        jasmine.stringMatching(/3 notes for BREWS kept in memory/),
+      );
+
+      storage.failReads = false;
+      await service.recordMany([note('later')]);
+      expect(storage.set).toHaveBeenCalledTimes(2);
+      expect(stored(storage)).toEqual([
+        note('old'),
+        ...notes(3),
+        note('later'),
+      ]);
+    });
+
+    it('reads at most once per call when the first read fails', async () => {
+      const storage = createStorage();
+      storage.failReads = true;
+      const { service } = createService(storage);
+
+      await service.recordMany(notes(2));
+      expect(storage.getOrFail).toHaveBeenCalledTimes(1);
+
+      await service.recordMany(notes(2));
+      expect(storage.getOrFail).toHaveBeenCalledTimes(2);
+    });
+
+    it('keeps notes that could not be stored and writes them with the next ones', async () => {
+      const storage = createStorage();
+      storage.failWrites = true;
+      const { service } = createService(storage);
+
+      await expectAsync(service.recordMany(notes(3))).toBeResolved();
+      expect(storage.data.has(DELETION_JOURNAL_STORAGE_KEY)).toBeFalse();
+      expect(service.getEntries()).toEqual(notes(3));
+
+      storage.failWrites = false;
+      await service.record(note('later'));
+      expect(stored(storage)).toEqual([...notes(3), note('later')]);
+    });
+
+    it('copies the notes so later changes of the caller do not reach them', async () => {
+      const storage = createStorage();
+      const { service } = createService(storage);
+      const entries = notes(2);
+
+      await service.recordMany(entries);
+      entries[0].uuid = 'changed';
+      entries.pop();
+
+      expect(service.getEntries().map((_note) => _note.uuid)).toEqual([
+        'brew-0',
+        'brew-1',
+      ]);
+    });
+
+    it('runs in the order of the calls, also between forgetting notes', async () => {
+      const storage = createStorage();
+      const { service } = createService(storage);
+
+      const first = service.recordMany(notes(3));
+      const forgotten = service.forgetExistingEntries(
+        'BREWS',
+        new Set(['brew-1']),
+      );
+      const second = service.recordMany([note('brew-1')]);
+      await Promise.all([first, forgotten, second]);
+
+      expect(await forgotten).toBe(1);
+      expect(stored(storage)).toEqual([
+        note('brew-0'),
+        note('brew-2'),
+        note('brew-1'),
+      ]);
+    });
   });
 
   describe('forgetExistingEntries', () => {
