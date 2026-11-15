@@ -114,3 +114,46 @@ test('the next start deletes nothing while entries still depend on the entry', a
   // either, whatever depends on it then.
   expect(await readStoredValue(page, 'PENDING_DELETION')).toBeNull();
 });
+
+test('the next start finishes the deletion only after the data updates', async ({
+  page,
+}) => {
+  const { kept, doomed, data } = dataWithDoomedGrinder(undefined);
+  // As an older version left it: a differing copy shares the uuid of the
+  // entry, and the update that makes it an entry of its own is not done.
+  const copy = { ...doomed, name: 'Copied grinder' };
+  const [version] = data.VERSION;
+
+  await startWith(page, {
+    ...data,
+    MILL: [kept, doomed, copy],
+    VERSION: [
+      {
+        ...version,
+        updatedDataVersions: version.updatedDataVersions.filter(
+          (update) => update !== 'UPDATE_17',
+        ),
+      },
+    ],
+  });
+
+  // Finished before the update, the copy would keep the uuid of the entry
+  // that was deleted.
+  await expect(
+    page.locator('mill-information-card').filter({ hasText: copy.name }),
+  ).toBeVisible();
+  await expect(
+    page.locator('mill-information-card').filter({ hasText: DOOMED }),
+  ).toHaveCount(0);
+  const mills = (await readStoredValue<(typeof copy)[]>(page, 'MILL')) ?? [];
+  expect(mills.map((mill) => mill.name)).toEqual([kept.name, copy.name]);
+  expect(mills[1].config.uuid).not.toBe(DOOMED_UUID);
+  await expect
+    .poll(async () =>
+      (
+        (await readStoredValue<{ uuid: string }[]>(page, 'DELETION_JOURNAL')) ??
+        []
+      ).map((note) => note.uuid),
+    )
+    .toEqual([DOOMED_UUID]);
+});
