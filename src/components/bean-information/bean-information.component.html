@@ -1,28 +1,30 @@
+@let bean = shown();
+@let customRatingRange = settings.bean_rating !== 5 || settings.bean_rating_steps !== 1;
 <ion-card class="long-card" tappable (click)="showBean()" (long-press)="longPressEditBean($event)"
-  [class.group-card]="beanGroup" [class.group-child-card]="isGroupChild">
+  [class.group-card]="beanGroup()" [class.group-child-card]="isGroupChild()">
   <ion-card-content #card class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom no-padding-top">
       <ion-row>
         <ion-col class="expand-fill-space" style="margin: auto 0;">
           <div class="ion-no-padding font-size-20 ion-title no-overflow-ellipsis center-icons-to-text add-child-margin">
-            @if(beanGroup) {
+            @if(beanGroup()) {
             <ion-icon name="file-tray-full-outline" />
             }
             @if ((bean.decaffeinated)) {
             <ion-icon name="moon" />
             }
-            @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)) {
+            @if (frozen()) {
             <ion-icon name="snow-outline" />
             }
-            @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN) === false && bean.frozenId) {
+            @if (frozen() === false && bean.frozenId) {
             <div style="display: flex;">
               (<ion-icon name="snow-outline" />)
             </div>
             }
-            @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_SELF_ROASTED) ) {
+            @if (selfRoasted()) {
             <ion-icon name="flame-outline" />
             }
-            @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_SCANNED_BEAN) ) {
+            @if (scanned()) {
             <ion-icon name="qr-code-outline" />
             }
             @if (bean.shared) {
@@ -34,7 +36,7 @@
             <div class="ion-justify-content-start center-icons-to-text expand-fill-space">
               <div class="expand-fill-space no-overflow-ellipsis" style="margin-right:-5px;">
                 {{bean.name}}&nbsp;
-                @if (!isBeanRoastUnknown() && (settings | beanFieldVisiblePipe:
+                @if (!roastingTypeUnknown() && (settings | beanFieldVisiblePipe:
                 [settings.bean_visible_list_view_parameters.bean_roasting_type])) {
                 <span>
                   ({{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}})
@@ -59,18 +61,18 @@
             class="bean-display ion-float-right" />
           }
           @if (bean?.rating !== 0 && (settings | beanFieldVisiblePipe:
-          [settings.bean_visible_list_view_parameters.rating]) && hasCustomRatingRange() === false) {
+          [settings.bean_visible_list_view_parameters.rating]) && customRatingRange === false) {
           <ngx-stars #beanRating [color]="'#BFB9B0'" [initialStars]="bean.rating" [maxStars]="5" [readonly]="true"
             [wholeStars]="true" class="ion-float-right brew-stars" />
           }
           @if (bean?.rating > 0 && (settings | beanFieldVisiblePipe:
-          [settings.bean_visible_list_view_parameters.rating]) && hasCustomRatingRange() === true) {
+          [settings.bean_visible_list_view_parameters.rating]) && customRatingRange === true) {
           <div class="ion-text-right">
             <ion-badge>{{bean.rating| toFixed: 2}}</ion-badge>
           </div>
           }
         </ion-col>
-        @if (showActions) {
+        @if (showActions()) {
         <ion-col size="1">
           <ion-button (click)="showBeanActions($event)" aria-label="Bean options" class="button-top-absolute" color="accent" fill="clear">
             <ion-icon aria-hidden="true" name="beanconqueror-dots" slot="icon-only" />
@@ -78,10 +80,10 @@
         </ion-col>
         }
       </ion-row>
-      @if (collapsed) {
+      @if (collapsed()) {
       <div style='height:10px;'></div>
       }
-      @if (!collapsed) {
+      @if (!collapsed()) {
       <ion-row>
         <ion-col>
           <hr />
@@ -90,14 +92,14 @@
       }
     </ion-grid>
 
-    @if (!collapsed) {
+    @if (!collapsed()) {
     <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
       <ion-row class="ion-padding-bottom-half">
         <ion-col
-          [size]="((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS)  && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.attachments]))?9:12"
+          [size]="(photos() && (settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.attachments]))?9:12"
           class="ion-no-padding-right">
           <ion-grid class="ion-no-padding">
-            @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_FROZEN_INFORMATION)) {
+            @if (frozenInformation()) {
             <ion-row>
               @if (bean.frozenDate) {
               <ion-col size="6">
@@ -192,18 +194,16 @@
               <ion-col size="6">
                 <ion-label class="card-headline">{{"BEAN_DATA_ROAST_NAME_TYPE" | translate}}</ion-label>
                 <br />
-                @if (bean.roast === getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !==
-                getRoastEnum(roast_enum.UNKNOWN)) {
+                @if (roast() === 'custom') {
                 <ion-text>
                   {{bean.roast_custom}}</ion-text>
                 }
-                @if (bean.roast !== getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !==
-                getRoastEnum(roast_enum.UNKNOWN)) {
+                @if (roast() === 'named') {
                 <ion-text>
                   {{roast_enum[bean.roast]}}
                 </ion-text>
                 }
-                @if ( bean.roast === getRoastEnum(roast_enum.UNKNOWN)) {
+                @if (roast() === 'unknown') {
                 <ion-text>
                   -
                 </ion-text>
@@ -213,18 +213,18 @@
               <ion-col size="6">
                 <ion-label class="card-headline">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-label>
                 <br />
-                <ion-text>{{uiBrewsCount}}</ion-text>
+                <ion-text>{{usage().brews}}</ion-text>
               </ion-col>
               @if ((settings | beanFieldVisiblePipe: [settings.bean_visible_list_view_parameters.roastingDate])) {
               <ion-col size="6">
                 <ion-label class="card-headline">{{"ROASTED_BEFORE" | translate}}</ion-label>
                 <br />
-                @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1) {
-                <ion-text>{{(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS)}}&nbsp;{{"DAY_OLD" |
+                @if (ageInDays() === 1) {
+                <ion-text>{{ageInDays()}}&nbsp;{{"DAY_OLD" |
                   translate}}</ion-text>
                 }
-                @if (!((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS) === 1)) {
-                <ion-text>{{(bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS)}}&nbsp;{{"DAYS_OLD" |
+                @if (!(ageInDays() === 1)) {
+                <ion-text>{{ageInDays()}}&nbsp;{{"DAYS_OLD" |
                   translate}}</ion-text>
                 }
               </ion-col>
@@ -234,15 +234,13 @@
                 <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label>
                 <br />
                 <ion-text class='break-whitespaces'
-                  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: uiUsedWeightCount | number : '.0-2', gramTotal: $safeNavigationMigration(bean?.weight),leftOver: $safeNavigationMigration(bean?.weight) - uiUsedWeightCount | number : '.0-2'}">{{bean
-                  | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.BEAN_AGE_IN_DAYS}}</ion-text>
+                  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: usage().grams | number : '.0-2', gramTotal: $safeNavigationMigration(bean?.weight),leftOver: $safeNavigationMigration(bean?.weight) - usage().grams | number : '.0-2'}"></ion-text>
               </ion-col>
               }
-              @if (((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_CUSTOM_FLAVORS) || (bean | beanFunctionPipe:
-              BEAN_FUNCTION_PIPE_ENUM.HAS_PREDEFINED_FLAVORS))) {
+              @if (flavors().length > 0) {
               <ion-col size="12">
                 <ion-label class="card-headline">{{'BREW_DATA_FLAVOR' | translate}}</ion-label><br />
-                <ion-text class="ion-text-wrap">{{uiCuppedBrewFlavors}}</ion-text>
+                <ion-text class="ion-text-wrap">{{flavors()}}</ion-text>
               </ion-col>
               }
               @if (bean?.buyDate !== '' &&(settings | beanFieldVisiblePipe:
@@ -262,8 +260,8 @@
               [settings.bean_visible_list_view_parameters.cost])) {
               <ion-col size="6">
                 <ion-label class="card-headline">{{'BEAN_DATA_COST' | translate}}</ion-label><br />
-                <ion-text>{{bean?.cost}}@if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.SHOW_COST_PER_KG)) {
-                  <span>&nbsp;({{uiCalculatedCostPerKG}}&nbsp;{{uiCurrencySymbol}}/kg)</span>
+                <ion-text>{{bean?.cost}}@if (costPerKg() !== undefined) {
+                  <span>&nbsp;({{costPerKg()}}&nbsp;{{currencySymbol}}/kg)</span>
                   }</ion-text>
               </ion-col>
               }
@@ -412,7 +410,7 @@
             </ion-row>
           </ion-grid>
         </ion-col>
-        @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.HAS_PHOTOS) && (settings | beanFieldVisiblePipe:
+        @if (photos() && (settings | beanFieldVisiblePipe:
         [settings.bean_visible_list_view_parameters.attachments])) {
         <ion-col (click)="showPhoto($event)" class="ion-no-padding" size="3">
           <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
@@ -423,17 +421,17 @@
       </ion-row>
     </ion-grid>
     }
-    @if (beanGroup) {
+    @if (beanGroup()) {
     <div class="ion-text-center">
-      <ion-button fill="clear" size="small" [attr.aria-label]="beanGroup.expanded ? 'Collapse bean group' : 'Expand bean group'" (click)="toggleGroupExpansion($event)">
-        <ion-icon aria-hidden="true" [name]="beanGroup.expanded ? 'chevron-up-outline' : 'chevron-down-outline'" />
+      <ion-button fill="clear" size="small" [attr.aria-label]="beanGroup().expanded ? 'Collapse bean group' : 'Expand bean group'" (click)="toggleGroupExpansion($event)">
+        <ion-icon aria-hidden="true" [name]="beanGroup().expanded ? 'chevron-up-outline' : 'chevron-down-outline'" />
       </ion-button>
     </div>
-    @if (beanGroup.expanded) {
+    @if (beanGroup().expanded) {
     <div class="group-children">
-      @for (childBean of beanGroup.beans; track childBean; let i = $index) {
+      @for (childBean of beanGroup().beans; track childBean; let i = $index) {
       @if (i > 0) {
-      <bean-information [bean]="childBean" [collapsed]="collapsed" [isGroupChild]="true"
+      <bean-information [bean]="childBean" [collapsed]="collapsed()" [isGroupChild]="true"
         (beanAction)="beanAction.emit($event)" />
       }
       }

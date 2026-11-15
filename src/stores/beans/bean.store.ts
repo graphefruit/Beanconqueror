@@ -1,10 +1,10 @@
-import { inject, Service } from '@angular/core';
+import { computed, inject, Service } from '@angular/core';
 
 import { Bean } from '../../classes/bean/bean';
 import { IBean } from '../../interfaces/bean/iBean';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { CollectionStore } from '../core/collection-store';
-import { toPlainData } from '../core/read-only';
+import { DeepReadonly, toPlainData } from '../core/read-only';
 
 /**
  * The stored beans for new code, as read-only plain data. Created with its
@@ -12,6 +12,17 @@ import { toPlainData } from '../core/read-only';
  */
 @Service()
 export class BeanStore extends CollectionStore<IBean> {
+  /** The entries by uuid; of several with one uuid, the first stored. */
+  public readonly byUuid = computed(() => {
+    const byUuid = new Map<string, DeepReadonly<IBean>>();
+    for (const bean of this.entries()) {
+      if (!byUuid.has(bean.config.uuid)) {
+        byUuid.set(bean.config.uuid, bean);
+      }
+    }
+    return byUuid;
+  });
+
   public constructor() {
     super(inject(UIBeanStorage), ingestBean);
   }
@@ -26,4 +37,14 @@ export function ingestBean(json: string): IBean {
   const bean = new Bean();
   bean.initializeByObject(JSON.parse(json) as IBean);
   return toPlainData<IBean>(bean);
+}
+
+/**
+ * A deep copy of a store entry as a `Bean`, for legacy code that changes and
+ * saves it.
+ */
+export function toLegacyBean(entry: DeepReadonly<IBean>): Bean {
+  const bean = new Bean();
+  bean.initializeByObject(JSON.parse(JSON.stringify(entry)) as IBean);
+  return bean;
 }

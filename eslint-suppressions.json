@@ -2498,25 +2498,16 @@
     }
   },
   "src/components/bean-information/bean-information.component.ts": {
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
     "@typescript-eslint/consistent-generic-constructors": {
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
       "count": 9
     },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 1
-    },
     "@typescript-eslint/prefer-find": {
       "count": 1
     },
     "eqeqeq": {
-      "count": 1
-    },
-    "no-prototype-builtins": {
       "count": 1
     }
   },

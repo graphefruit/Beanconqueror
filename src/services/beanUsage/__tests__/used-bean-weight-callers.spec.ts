@@ -2,7 +2,7 @@ import { BeanModalSelectComponent } from '../../../app/beans/bean-modal-select/b
 import { BeanPopoverFreezeComponent } from '../../../app/beans/bean-popover-freeze/bean-popover-freeze.component';
 import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
-import { BeanInformationComponent } from '../../../components/bean-information/bean-information.component';
+import { buildBeanUsage } from '../../../stores/beans/bean-usage.store';
 import { UIBrewHelper } from '../../uiBrewHelper';
 
 function bean(uuid: string, weight: number): Bean {
@@ -44,13 +44,8 @@ describe('used bean weight of a single bag', () => {
       brews.filter((entry) => entry.bean === uuid),
   };
 
-  it('is shown in the bean information', () => {
-    const component = withFields(BeanInformationComponent, {
-      bean: bean('open', 250),
-      uiBeanHelper,
-    });
-
-    expect(component.getUsedWeightCount()).toBe(53.5);
+  it('is shown on the bean card', () => {
+    expect(buildBeanUsage(brews).get('open')?.grams).toBe(53.5);
   });
 
   it('is used to freeze the rest of the bag', () => {

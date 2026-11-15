@@ -2,13 +2,15 @@ import { DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
+  effect,
   ElementRef,
   EventEmitter,
   inject,
-  Input,
-  OnInit,
+  input,
   Output,
   ViewChild,
+  viewChild,
 } from '@angular/core';
 
 import {
@@ -53,17 +55,14 @@ import QR_TRACKING from '../../data/tracking/qrTracking';
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { BEAN_ACTION } from '../../enums/beans/beanAction';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
-import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
-import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
 import { ROASTS_ENUM } from '../../enums/beans/roasts';
 import { BeanGroup } from '../../interfaces/bean/beanGroup';
+import { IBean } from '../../interfaces/bean/iBean';
 import { BeanMapper } from '../../mapper/bean/beanMapper';
 import { ServerBean } from '../../models/bean/serverBean';
 import { BeanFieldVisiblePipe } from '../../pipes/bean/beanFieldVisible';
-import { BeanFunction } from '../../pipes/bean/beanFunction';
 import { FormatDatePipe } from '../../pipes/formatDate';
 import { ToFixedPipe } from '../../pipes/toFixed';
-import { sumUsedBeanWeight } from '../../services/beanUsage/used-bean-weight';
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import { ServerCommunicationService } from '../../services/serverCommunication/server-communication.service';
 import { ShareService } from '../../services/shareService/share-service.service';
@@ -78,6 +77,18 @@ import { UIImage } from '../../services/uiImage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
 import {
+  beanAgeInDays,
+  hasFrozenInformation,
+  hasPhotos,
+  isFrozen,
+  isScannedBean,
+  isSelfRoasted,
+  showsCostPerKg,
+} from '../../stores/beans/bean-rules';
+import { BeanUsageStore, NO_USAGE } from '../../stores/beans/bean-usage.store';
+import { BeanStore, toLegacyBean } from '../../stores/beans/bean.store';
+import { DeepReadonly } from '../../stores/core/read-only';
+import {
   ActionsPopoverComponent,
   popoverAction,
   PopoverAction,
@@ -91,7 +102,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
     './bean-information.component.scss',
     '../../theme/variables.scss',
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     LongPressDirective,
     NgxStarsModule,
@@ -101,7 +112,6 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
     FormatDatePipe,
     ToFixedPipe,
     BeanFieldVisiblePipe,
-    BeanFunction,
     IonCard,
     IonCardContent,
     IonGrid,
@@ -114,7 +124,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
     IonText,
   ],
 })
-export class BeanInformationComponent implements OnInit {
+export class BeanInformationComponent {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   readonly uiBeanHelper = inject(UIBeanHelper);
   private readonly modalController = inject(ModalController);
@@ -134,32 +144,89 @@ export class BeanInformationComponent implements OnInit {
   private readonly uiBrewHelper = inject(UIBrewHelper);
   private actionSheetCtrl = inject(ActionSheetController);
   private readonly currencyService = inject(CurrencyService);
+  private readonly beanStore = inject(BeanStore);
+  private readonly beanUsageStore = inject(BeanUsageStore);
 
-  @Input() public bean: Bean;
-  @Input() public beanGroup: BeanGroup;
-  @Input() public showActions: boolean = true;
-  @Input() public disabled: boolean = false;
-  @Input() public collapsed: boolean = false;
-  @Input() public isGroupChild: boolean = false;
+  /**
+   * The bean to show; legacy hosts hand in a `Bean`. Shown is the stored
+   * state of the bean with this uuid, or this bean if it is not stored.
+   */
+  public readonly bean = input.required<DeepReadonly<IBean>>();
+  public readonly beanGroup = input<BeanGroup>();
+  public readonly showActions = input(true);
+  public readonly disabled = input(false);
+  public readonly collapsed = input(false);
+  public readonly isGroupChild = input(false);
   @ViewChild('card', { read: ElementRef })
   public cardEl: ElementRef;
-  @ViewChild('beanStars', { read: NgxStarsComponent, static: false })
-  public beanStars: NgxStarsComponent;
-  @ViewChild('beanRating', { read: NgxStarsComponent, static: false })
-  public beanRating: NgxStarsComponent;
+  private readonly beanStars = viewChild('beanStars', {
+    read: NgxStarsComponent,
+  });
+  private readonly beanRating = viewChild('beanRating', {
+    read: NgxStarsComponent,
+  });
 
   @Output() public beanAction: EventEmitter<any> = new EventEmitter();
 
-  public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
   public beanFreezingStorageTypeEnum = BEAN_FREEZING_STORAGE_ENUM;
   public roast_enum = ROASTS_ENUM;
   public settings: Settings = null;
+  protected readonly currencySymbol: string =
+    this.currencyService.getActualCurrencySymbol();
 
-  public uiBrewsCount: number = undefined;
-  public uiUsedWeightCount: number = undefined;
-  public uiCuppedBrewFlavors: Array<string> = [];
-  public uiCalculatedCostPerKG: number = undefined;
-  public uiCurrencySymbol: string = '';
+  protected readonly shown = computed(
+    () => this.beanStore.byUuid().get(this.bean().config.uuid) ?? this.bean(),
+  );
+  protected readonly usage = computed(
+    () => this.beanUsageStore.usage().get(this.shown().config.uuid) ?? NO_USAGE,
+  );
+  protected readonly frozen = computed(() => isFrozen(this.shown()));
+  protected readonly frozenInformation = computed(() =>
+    hasFrozenInformation(this.shown()),
+  );
+  protected readonly selfRoasted = computed(() => isSelfRoasted(this.shown()));
+  protected readonly scanned = computed(() => isScannedBean(this.shown()));
+  protected readonly photos = computed(() => hasPhotos(this.shown()));
+  protected readonly ageInDays = computed(() =>
+    beanAgeInDays(this.shown(), Date.now(), this.usage().lastBrewAt),
+  );
+  protected readonly roastingTypeUnknown = computed(
+    () => (this.shown().bean_roasting_type as string) === 'UNKNOWN',
+  );
+  /** Which of the three ways the roast is shown in. */
+  protected readonly roast = computed(() => {
+    const roast = this.shown().roast as string;
+    if (roast === 'UNKNOWN') {
+      return 'unknown';
+    }
+    return roast === 'CUSTOM_ROAST' ? 'custom' : 'named';
+  });
+  protected readonly flavors = computed((): string[] => {
+    const flavor = this.shown().cupped_flavor;
+    return [
+      ...flavor.custom_flavors,
+      ...Object.keys(flavor.predefined_flavors).map(
+        (key) => this.translate.instant('CUPPING_' + key) as string,
+      ),
+    ];
+  });
+  /** Undefined when the card shows no price per kilogram. */
+  protected readonly costPerKg = computed(() => {
+    const bean = this.shown();
+    if (!showsCostPerKg(bean)) {
+      return undefined;
+    }
+    return this.uiHelper.toFixedIfNecessary(
+      (bean.cost / bean.weight) * 1000,
+      2,
+    );
+  });
+
+  /**
+   * The bean the actions work on: a copy of the shown bean that the legacy
+   * dialogs and the bean storage may change, taken when an action starts.
+   */
+  private actionBean: Bean;
 
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -175,87 +242,34 @@ export class BeanInformationComponent implements OnInit {
       chevronUpOutline,
       chevronDownOutline,
     });
+    // The stars take their input only when they are created.
+    effect(() => {
+      const bean = this.shown();
+      this.beanStars()?.setRating(bean.roast_range);
+      this.beanRating()?.setRating(bean.rating);
+    });
   }
 
-  public ngOnInit() {
-    this.setUiData();
-  }
-
-  private setUiData() {
-    this.uiBrewsCount = this.getBrewCounts();
-    this.uiUsedWeightCount = this.getUsedWeightCount();
-    this.uiCuppedBrewFlavors = this.getCuppedBrewFlavors();
-    this.uiCalculatedCostPerKG = this.getCalculateCostPerKG();
-    this.uiCurrencySymbol = this.getCurrencySymbol();
-  }
-  public ngAfterViewInit() {
-    this.resetRenderingRating();
-  }
-  public ngOnChanges() {
-    this.resetRenderingRating();
-  }
-
-  private resetRenderingRating() {
-    setTimeout(() => {
-      // Timeout needed because of ngif not rendering
-      if (this.beanStars && this.bean.roast_range !== 0) {
-        this.beanStars.setRating(this.bean.roast_range);
-      }
-      if (this.beanRating && this.bean.rating !== 0) {
-        this.beanRating.setRating(this.bean.rating);
-      }
-    }, 250);
-  }
-
-  public getBrewCounts(): number {
-    const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      this.bean.config.uuid,
-    );
-    return relatedBrews.length;
-  }
-
-  public getCuppedBrewFlavors(): Array<string> {
-    const flavors: Array<string> = [...this.bean.cupped_flavor.custom_flavors];
-    for (const key in this.bean.cupped_flavor.predefined_flavors) {
-      if (this.bean.cupped_flavor.predefined_flavors.hasOwnProperty(key)) {
-        flavors.push(this.translate.instant('CUPPING_' + key));
-      }
-    }
-    return flavors;
-  }
-
-  public daysOld(): number {
-    return this.bean.beanAgeInDays();
-  }
-
-  public getUsedWeightCount(): number {
-    return sumUsedBeanWeight(
-      this.uiBeanHelper.getAllBrewsForThisBean(this.bean.config.uuid),
-    );
-  }
-
-  public getRoastEnum(_key: ROASTS_ENUM) {
-    for (const key in ROASTS_ENUM) {
-      if (ROASTS_ENUM[key] === _key) {
-        return key as ROASTS_ENUM;
-      }
-    }
-    return '';
+  private startAction(): void {
+    this.actionBean = toLegacyBean(this.shown());
   }
 
   public async showBean() {
+    this.startAction();
     await this.detailBean();
   }
 
   public async showPhoto(event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    this.startAction();
     await this.viewPhotos();
   }
 
   public async showBeanActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    this.startAction();
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS,
@@ -270,13 +284,13 @@ export class BeanInformationComponent implements OnInit {
     const data = await popover.onWillDismiss();
     if (data.role !== undefined) {
       await this.internalBeanAction(data.role as BEAN_ACTION);
-      this.beanAction.emit([data.role as BEAN_ACTION, this.bean]);
+      this.beanAction.emit([data.role as BEAN_ACTION, this.actionBean]);
     }
   }
 
   private buildBeanActions(): PopoverAction[] {
     const freezeEnabled = this.settings.freeze_coffee_beans === true;
-    const isFrozen = this.bean.isFrozen();
+    const isFrozen = this.actionBean.isFrozen();
 
     return [
       popoverAction({
@@ -326,18 +340,18 @@ export class BeanInformationComponent implements OnInit {
         role: BEAN_ACTION.COPY_FROZEN_ID,
         translationKey: 'POPOVER_COPY_FROZEN_ID',
         icon: 'copy-outline',
-        visible: !!this.bean.frozenId,
+        visible: !!this.actionBean.frozenId,
       }),
       popoverAction({
         role: BEAN_ACTION.REFRESH_DATA_FROM_QR_CODE,
         translationKey: 'POPOVER_QR_CODE_REFRESH',
         icon: 'beanconqueror-refresh-barcode',
-        visible: !!this.bean.qr_code,
+        visible: !!this.actionBean.qr_code,
       }),
       popoverAction({
         role: BEAN_ACTION.TOGGLE_FAVOURITE,
         translationKey: 'POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE',
-        icon: this.bean.favourite ? 'heart' : 'heart-outline',
+        icon: this.actionBean.favourite ? 'heart' : 'heart-outline',
       }),
       popoverAction({
         role: BEAN_ACTION.SHARE,
@@ -355,19 +369,19 @@ export class BeanInformationComponent implements OnInit {
         role: BEAN_ACTION.BEANS_CONSUMED,
         translationKey: 'BEANS_CONSUMED',
         icon: 'beanconqueror-finished',
-        visible: this.bean.finished === false,
+        visible: this.actionBean.finished === false,
       }),
       popoverAction({
         role: BEAN_ACTION.UNARCHIVE,
         translationKey: 'BEANS_UNARCHIVE',
         icon: 'beanconqueror-unfinish',
-        visible: this.bean.finished === true,
+        visible: this.actionBean.finished === true,
       }),
       popoverAction({
         role: BEAN_ACTION.PHOTO_GALLERY,
         translationKey: 'POPOVER_BREWS_OPTION_PHOTO_GALLERY',
         icon: 'beanconqueror-photo-gallery',
-        visible: this.bean.attachments.length > 0,
+        visible: this.actionBean.attachments.length > 0,
       }),
       popoverAction({
         role: BEAN_ACTION.GENERATE_INTERNAL_SHARE_CODE,
@@ -385,7 +399,7 @@ export class BeanInformationComponent implements OnInit {
   private hasActiveBrews(): boolean {
     try {
       const brews = this.uiBeanHelper
-        .getAllBrewsForThisBean(this.bean.config.uuid)
+        .getAllBrewsForThisBean(this.actionBean.config.uuid)
         .filter(
           (b) =>
             b.getBean().finished === false &&
@@ -401,8 +415,9 @@ export class BeanInformationComponent implements OnInit {
   public toggleGroupExpansion(event: Event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    if (this.beanGroup) {
-      this.beanGroup.expanded = !this.beanGroup.expanded;
+    const group = this.beanGroup();
+    if (group) {
+      group.expanded = !group.expanded;
     }
   }
 
@@ -416,7 +431,6 @@ export class BeanInformationComponent implements OnInit {
         break;
       case BEAN_ACTION.EDIT:
         await this.editBean();
-        this.setUiData();
         break;
       case BEAN_ACTION.DELETE:
         await this.deleteBean();
@@ -441,7 +455,6 @@ export class BeanInformationComponent implements OnInit {
         break;
       case BEAN_ACTION.REFRESH_DATA_FROM_QR_CODE:
         await this.refreshDataFromQRCode();
-        this.setUiData();
         break;
       case BEAN_ACTION.SHOW_BREWS:
         await this.showBrews();
@@ -470,25 +483,25 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async detailBean() {
-    await this.uiBeanHelper.detailBean(this.bean);
+    await this.uiBeanHelper.detailBean(this.actionBean);
   }
   public async cupBean() {
-    await this.uiBeanHelper.cupBean(this.bean);
+    await this.uiBeanHelper.cupBean(this.actionBean);
   }
   private async viewPhotos() {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.PHOTO_VIEW,
     );
-    await this.uiImage.viewPhotos(this.bean);
+    await this.uiImage.viewPhotos(this.actionBean);
   }
   public async beansConsumed() {
-    await this.uiBeanHelper.archiveBeanWithRatingQuestion(this.bean);
+    await this.uiBeanHelper.archiveBeanWithRatingQuestion(this.actionBean);
     await this.resetSettings();
 
     /* this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
-        this.bean.finished = true;
-        await this.uiBeanStorage.update(this.bean);
+        this.actionBean.finished = true;
+        await this.uiBeanStorage.update(this.actionBean);
         this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
         */
   }
@@ -498,72 +511,69 @@ export class BeanInformationComponent implements OnInit {
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.UNARCHIVE,
     );
-    this.bean.finished = false;
-    await this.uiBeanStorage.update(this.bean);
+    this.actionBean.finished = false;
+    await this.uiBeanStorage.update(this.actionBean);
     this.uiToast.showInfoToast('TOAST_BEAN_UNARCHIVED_SUCCESSFULLY');
     await this.resetSettings();
   }
 
   public async copyFrozenId() {
-    this.uiHelper.copyToClipboard(this.bean.frozenId);
+    this.uiHelper.copyToClipboard(this.actionBean.frozenId);
   }
   public async generateQrCode() {
-    await this.uiBeanHelper.generateQRCode(this.bean);
+    await this.uiBeanHelper.generateQRCode(this.actionBean);
   }
   public async freezeBean() {
-    await this.uiBeanHelper.freezeBean(this.bean);
+    await this.uiBeanHelper.freezeBean(this.actionBean);
   }
 
   public async unfreezeBean() {
-    if (this.bean.weight == 0) {
+    if (this.actionBean.weight == 0) {
       //If a bean has been frozen from the tab menu, it could be frozen with zero weight, if this takes place, we just unfreeze the whole bean.
-      this.bean.unfrozenDate = moment(new Date()).toISOString();
-      await this.uiBeanStorage.update(this.bean);
+      this.actionBean.unfrozenDate = moment(new Date()).toISOString();
+      await this.uiBeanStorage.update(this.actionBean);
       await this.resetSettings();
     } else {
-      await this.uiBeanHelper.unfreezeBean(this.bean);
+      await this.uiBeanHelper.unfreezeBean(this.actionBean);
     }
   }
 
   public async toggleFavourite() {
-    if (!this.bean.favourite) {
+    if (!this.actionBean.favourite) {
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.ADD_FAVOURITE,
       );
       this.uiToast.showInfoToast('TOAST_BEAN_FAVOURITE_ADDED');
-      this.bean.favourite = true;
+      this.actionBean.favourite = true;
     } else {
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.REMOVE_FAVOURITE,
       );
-      this.bean.favourite = false;
+      this.actionBean.favourite = false;
       this.uiToast.showInfoToast('TOAST_BEAN_FAVOURITE_REMOVED');
     }
-    await this.uiBeanStorage.update(this.bean);
-  }
-
-  public async add() {
-    await this.uiBeanHelper.addBean();
+    await this.uiBeanStorage.update(this.actionBean);
   }
 
   public async longPressEditBean(event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    if (this.disabled) {
+    if (this.disabled()) {
       //Don#t edit
       return;
     }
+    this.startAction();
     await this.editBean();
-    this.beanAction.emit([BEAN_ACTION.EDIT, this.bean]);
+    this.beanAction.emit([BEAN_ACTION.EDIT, this.actionBean]);
   }
   public async editBean() {
-    await this.uiBeanHelper.editBean(this.bean);
+    await this.uiBeanHelper.editBean(this.actionBean);
   }
 
   public async shareBean() {
-    await this.shareService.shareBean(this.bean);
+    await this.shareService.shareBean(this.actionBean);
   }
   public async shareBeanImage() {
     this.uiAnalytics.trackEvent(
@@ -617,12 +627,15 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async showBrews() {
-    await this.uiBrewHelper.showAssociatedBrews(this.bean.config.uuid, 'bean');
+    await this.uiBrewHelper.showAssociatedBrews(
+      this.actionBean.config.uuid,
+      'bean',
+    );
   }
 
   public async repeatLastOrBestBrew() {
     let associatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      this.bean.config.uuid,
+      this.actionBean.config.uuid,
     );
     associatedBrews = associatedBrews.filter(
       (e) =>
@@ -682,7 +695,7 @@ export class BeanInformationComponent implements OnInit {
     try {
       const _scannedQRBean: ServerBean =
         await this.serverCommunicationService.getBeanInformation(
-          this.bean.qr_code,
+          this.actionBean.qr_code,
         );
       if (_scannedQRBean.error === null) {
         this.uiAnalytics.trackEvent(
@@ -695,10 +708,10 @@ export class BeanInformationComponent implements OnInit {
         const newMapper = new BeanMapper();
         const newBean: Bean =
           await newMapper.mapServerToClientBean(_scannedQRBean);
-        const savedUUID = this.bean.config.uuid;
-        this.bean = newBean;
-        this.bean.config.uuid = savedUUID;
-        await this.uiBeanStorage.update(this.bean);
+        const savedUUID = this.actionBean.config.uuid;
+        this.actionBean = newBean;
+        this.actionBean.config.uuid = savedUUID;
+        await this.uiBeanStorage.update(this.actionBean);
       } else {
         errorOccured = true;
       }
@@ -748,7 +761,7 @@ export class BeanInformationComponent implements OnInit {
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.REPEAT,
     );
-    await this.uiBeanHelper.repeatBean(this.bean);
+    await this.uiBeanHelper.repeatBean(this.actionBean);
   }
 
   private async __deleteBean() {
@@ -756,7 +769,7 @@ export class BeanInformationComponent implements OnInit {
 
     const deletingBrewIndex: Array<number> = [];
     for (let i = 0; i < brews.length; i++) {
-      if (brews[i].bean === this.bean.config.uuid) {
+      if (brews[i].bean === this.actionBean.config.uuid) {
         deletingBrewIndex.push(i);
       }
     }
@@ -766,52 +779,6 @@ export class BeanInformationComponent implements OnInit {
       );
     }
 
-    await this.uiBeanStorage.removeByObject(this.bean);
+    await this.uiBeanStorage.removeByObject(this.actionBean);
   }
-  public isBeanRoastUnknown() {
-    return (
-      this.bean.bean_roasting_type === ('UNKNOWN' as BEAN_ROASTING_TYPE_ENUM)
-    );
-  }
-  public hasCustomRatingRange(): boolean {
-    if (this.settings) {
-      if (this.settings.bean_rating !== 5) {
-        return true;
-      } else if (this.settings.bean_rating_steps !== 1) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /*
-      Deprecated right now, used by pipe
-     */
-  public showCostPerKG(): boolean {
-    if (
-      this.bean.weight &&
-      this.bean.weight > 0 &&
-      this.bean.weight !== 1000 &&
-      this.bean.cost &&
-      this.bean.cost > 0
-    ) {
-      return true;
-    }
-    return false;
-  }
-  public getCurrencySymbol(): string {
-    return this.currencyService.getActualCurrencySymbol();
-  }
-
-  public getCalculateCostPerKG() {
-    const beanWeight = this.bean.weight;
-    const beanCost = this.bean.cost;
-
-    const costPerGramm = beanCost / beanWeight;
-
-    const kgCost = costPerGramm * 1000;
-    return this.uiHelper.toFixedIfNecessary(kgCost, 2);
-  }
-
-  protected readonly BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
 }

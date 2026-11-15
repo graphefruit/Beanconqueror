@@ -17,6 +17,7 @@ const NEW_CODE = [
   'src/app/profile/**',
   'src/brew-session/**',
   'src/classes/changeTracking/**',
+  'src/components/bean-information/bean-information.component.ts',
   'src/classes/settings/importedUserProfile.ts',
   'src/classes/settings/settingsSecrets.ts',
   'src/services/a11y/**',

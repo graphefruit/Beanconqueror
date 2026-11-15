@@ -4,7 +4,7 @@ import { Bean } from '../../../classes/bean/bean';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { FakeStoreSource } from '../../core/__tests__/fake-store-source';
-import { BeanStore, ingestBean } from '../bean.store';
+import { BeanStore, ingestBean, toLegacyBean } from '../bean.store';
 
 function storedBean(fields: Partial<IBean>): IBean {
   const bean = new Bean();
@@ -42,6 +42,25 @@ describe('ingestBean', () => {
   });
 });
 
+describe('toLegacyBean', () => {
+  it('hands legacy code a bean it can change without changing the entry', () => {
+    const entry = Object.freeze(
+      ingestBean(
+        JSON.stringify(storedBean({ name: 'Entry', attachments: ['a.jpg'] })),
+      ),
+    );
+
+    const bean = toLegacyBean(entry);
+    bean.attachments.push('b.jpg');
+    bean.name = 'Changed';
+
+    expect(bean).toBeInstanceOf(Bean);
+    expect(bean.isFrozen()).toBeFalse();
+    expect(entry.name).toBe('Entry');
+    expect(entry.attachments).toEqual(['a.jpg']);
+  });
+});
+
 describe('BeanStore', () => {
   let source: FakeStoreSource;
 
@@ -61,5 +80,18 @@ describe('BeanStore', () => {
     source.change([storedBean({ name: 'One' }), storedBean({ name: 'Two' })]);
 
     expect(store.entries().map((bean) => bean.name)).toEqual(['One', 'Two']);
+  });
+
+  it('finds the entries by uuid, of several with one uuid the first', async () => {
+    const store = TestBed.inject(BeanStore);
+    const one = storedBean({ name: 'One', config: { uuid: 'a' } as never });
+    const copy = storedBean({ name: 'Copy', config: { uuid: 'a' } as never });
+    const two = storedBean({ name: 'Two', config: { uuid: 'b' } as never });
+    await source.load([one, copy, two]);
+
+    expect(store.byUuid().get('a')?.name).toBe('One');
+    expect(store.byUuid().get('b')?.name).toBe('Two');
+    expect(store.byUuid().get('c')).toBeUndefined();
+    expect(store.byUuid().get('b')).toBe(store.entries()[2]);
   });
 });
