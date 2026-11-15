@@ -204,9 +204,7 @@ export class DeleteCommands {
         started_at: Date.now(),
       };
       // Rejects when the note cannot be stored: nothing is deleted then.
-      if (!(await this.uiStorage.set(PENDING_DELETION_STORAGE_KEY, note))) {
-        return false;
-      }
+      await this.uiStorage.set(PENDING_DELETION_STORAGE_KEY, note);
       try {
         for (const [storage, uuids] of removals) {
           if (!(await storage.removeManyByUUID(uuids))) {
