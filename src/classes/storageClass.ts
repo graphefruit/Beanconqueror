@@ -39,6 +39,10 @@ export interface StorageWriteOptions {
   touch?: boolean;
 }
 
+interface StoredEntry {
+  config: { uuid: string };
+}
+
 export abstract class StorageClass {
   protected uiStorage = inject(UIStorage);
   protected uiLog = inject(UILog);
@@ -449,6 +453,76 @@ export abstract class StorageClass {
     }
   }
 
+  /**
+   * Removes the entries with these uuids and saves the collection once. A
+   * uuid removes one entry each time it is in the list, the first stored one,
+   * as deleting them one by one does.
+   *
+   * Resolves whether the collection is saved without them; true as well when
+   * there was nothing to remove. When it could not be saved, the entries are
+   * back where they were and nothing is reported as removed.
+   */
+  public async removeManyByUUID(_uuids: readonly string[]): Promise<boolean> {
+    if (await this.__refusesWrite('Delete')) {
+      return false;
+    }
+    const wanted = new Map<string, number>();
+    for (const uuid of _uuids) {
+      if (uuid) {
+        wanted.set(uuid, (wanted.get(uuid) ?? 0) + 1);
+      }
+    }
+    if (wanted.size === 0) {
+      return true;
+    }
+    const data = this.storedData;
+    const removed: Array<{ index: number; entry: StoredEntry }> = [];
+    for (let i = 0; i < data.length; i++) {
+      const uuid = data[i]?.config?.uuid;
+      const left = wanted.get(uuid) ?? 0;
+      if (left > 0) {
+        wanted.set(uuid, left - 1);
+        removed.push({ index: i, entry: data[i] });
+      } else {
+        data[i - removed.length] = data[i];
+      }
+    }
+    if (removed.length === 0) {
+      return true;
+    }
+    data.length -= removed.length;
+    this.forgetUuidIndex();
+
+    if (!(await this.__save())) {
+      this.uiLog.error(
+        `Storage - Delete - Unsuccessfully - ${this.DB_PATH} - ${removed.length} entries - save failed`,
+      );
+      // Entries read anew meanwhile are the stored ones; the removed entries
+      // do not belong into them.
+      if (this.storedData === data) {
+        for (const { index, entry } of removed) {
+          data.splice(Math.min(index, data.length), 0, entry);
+        }
+        this.forgetUuidIndex();
+        // Lets the typed storages drop their cached objects.
+        this.__sendEvent('UPDATE');
+      }
+      return false;
+    }
+
+    this.uiLog.log(
+      `Storage - Delete - Successfully - ${this.DB_PATH} - ${removed.length} entries`,
+    );
+    for (const { entry } of removed) {
+      this.__sendRemoveMessage(entry.config.uuid);
+    }
+    this.__sendEvent('DELETE');
+    // The notes are written only after the collection was saved, as for a
+    // single deletion.
+    await this.__noteDeletions(removed.map((_removed) => _removed.entry));
+    return true;
+  }
+
   public attachOnRemove(): Observable<any> {
     return this.removeObjSubject.asObservable();
   }
@@ -592,6 +666,37 @@ export abstract class StorageClass {
     } catch {
       this.uiLog.log(`Storage - Delete - ${_uuid} - deletion note failed`);
     }
+  }
+
+  /**
+   * One journal write for all entries; while a copy sharing the uuid is
+   * left, the entry still exists and gets no note.
+   */
+  private async __noteDeletions(_removed: StoredEntry[]): Promise<void> {
+    if (!this.tracksChanges()) {
+      return;
+    }
+    const left = new Set<string>();
+    for (const entry of this.storedData) {
+      left.add(entry?.config?.uuid);
+    }
+    const revisions = new Map<string, number>();
+    for (const entry of _removed) {
+      if (!left.has(entry.config.uuid)) {
+        revisions.set(entry.config.uuid, StorageClass.revisionOf(entry));
+      }
+    }
+    const deletedAt = Date.now();
+    const deviceId = this.deviceIdentity.getDeviceId();
+    await this.deletionJournal.recordMany(
+      Array.from(revisions, ([uuid, rev]) => ({
+        collection: this.DB_PATH,
+        uuid,
+        deleted_at: deletedAt,
+        device_id: deviceId,
+        rev,
+      })),
+    );
   }
 
   /**
