@@ -854,6 +854,48 @@ describe('UIExcel', () => {
       expect(beans.map((bean) => bean.name)).toEqual(['First', 'Third']);
     });
 
+    it('counts a variety that has only a percentage or only a purchasing price', async () => {
+      const beans = await importGreenBeans([
+        { Name: 'Percentage', '1. Percentage': 60 },
+        { Name: 'Price', '1. Purchasing Price': 12 },
+      ]);
+
+      expect(beans[0].bean_information).toEqual([{ percentage: 60 } as never]);
+      expect(beans[1].bean_information).toEqual([
+        { purchasing_price: 12 } as never,
+      ]);
+      expect(settings.bean_manage_parameters.bean_information).toBeTrue();
+    });
+
+    it('ignores a negative percentage', async () => {
+      const [bean] = await importGreenBeans([
+        { Name: 'Negative', '1. Country': 'Kenya', '1. Percentage': -5 },
+      ]);
+
+      expect(bean.bean_information).toEqual([{ country: 'Kenya' } as never]);
+    });
+
+    it('reads four varieties and ignores a fifth', async () => {
+      const [bean] = await importGreenBeans([
+        {
+          Name: 'Five',
+          '1. Country': 'Kenya',
+          '2. Country': 'Peru',
+          '3. Country': 'Brazil',
+          '4. Country': 'Panama',
+          '5. Country': 'Ethiopia',
+        },
+      ]);
+
+      // Known gap as for roasted beans: all four carry the last values.
+      expect(bean.bean_information.map((entry) => entry.country)).toEqual([
+        'Panama',
+        'Panama',
+        'Panama',
+        'Panama',
+      ]);
+    });
+
     it('known gap: every variety is stored with the values of the last one', async () => {
       const [bean] = await importGreenBeans([
         {
