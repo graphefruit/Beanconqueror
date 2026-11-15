@@ -327,8 +327,9 @@ New code reads a collection through a store in `src/stores/`, not through the
 `ui*Storage` services. `StorageClass` stays the source of truth: a store keeps
 nothing on disk and only reads; writes still go through the `ui*Storage`
 services and come back to the store as events. `BeanStore`
-(`src/stores/beans/bean.store.ts`) is the first store, the bean list
-(`src/app/beans/beans.page.ts`) its first reader.
+(`src/stores/beans/bean.store.ts`) is the first store; the bean list
+(`src/app/beans/beans.page.ts`) and the bean card
+(`src/components/bean-information/`) read it.
 
 ```
 legacy code ──▶ UIBeanStorage (StorageClass) ──▶ UIStorage
@@ -355,6 +356,16 @@ new code ◀─signal── CollectionStore      entries
 - Until the collection has been read, `entries()` is empty.
 - `changes` repeats the events of the collection for legacy code that has to
   act before a view shows a change (the bean list saves its scroll position).
+- Brews have no store with copies: `BeanUsageStore`
+  (`src/stores/beans/bean-usage.store.ts`) reads the stored brews once after
+  each change and gives brew count, grams used and last brew per bean, by the
+  rule of `src/services/beanUsage/used-bean-weight.ts`.
+- Rules on store data are pure functions with the time as a parameter
+  (`src/stores/beans/bean-rules.ts`); each gives the result of the method of
+  the same name on `Bean`.
+- The bean card shows the stored bean with the uuid of its input, so it also
+  follows changes its host has not passed on. Its actions hand the legacy
+  dialogs a changeable copy (`toLegacyBean`), taken when the action starts.
 
 ### Files on the file system
 
