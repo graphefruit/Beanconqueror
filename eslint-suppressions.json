@@ -2498,9 +2498,6 @@
     }
   },
   "src/components/bean-information/bean-information.component.ts": {
-    "@typescript-eslint/consistent-generic-constructors": {
-      "count": 1
-    },
     "@typescript-eslint/no-floating-promises": {
       "count": 9
     },

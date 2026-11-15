@@ -38,7 +38,10 @@ import {
   PopoverAction,
 } from '../../components/actions-popover/actions-popover.component';
 import { AiImportPhotoGalleryComponent } from '../../components/ai-import-photo-gallery/ai-import-photo-gallery.component';
-import { BeanInformationComponent } from '../../components/bean-information/bean-information.component';
+import {
+  BeanActionEvent,
+  BeanInformationComponent,
+} from '../../components/bean-information/bean-information.component';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
@@ -405,7 +408,7 @@ export class BeansPage {
     this.retriggerScroll();
   }
 
-  public async beanAction(event?: any): Promise<void> {
+  public async beanAction(event?: BeanActionEvent): Promise<void> {
     if (event && event.length > 1) {
       const bean = event[1];
       if (bean && bean.config && bean.config.uuid) {

@@ -33,7 +33,10 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
 import { BeanStore } from '../../../stores/beans/bean.store';
 import { FakeStoreSource } from '../../../stores/core/__tests__/fake-store-source';
-import { BeanInformationComponent } from '../bean-information.component';
+import {
+  BeanActionEvent,
+  BeanInformationComponent,
+} from '../bean-information.component';
 
 const NOW = Date.parse('2026-03-01T08:00:00.000Z');
 const DAY = 86_400_000;
@@ -398,14 +401,14 @@ describe('BeanInformationComponent', () => {
   describe('actions', () => {
     let fixture: ComponentFixture<BeanInformationComponent>;
     let card: BeanInformationComponent;
-    let emitted: unknown[][];
+    let emitted: BeanActionEvent[];
     const event = () => new Event('click');
 
     beforeEach(async () => {
       fixture = await render(legacyBean(alpha));
       card = fixture.componentInstance;
       emitted = [];
-      card.beanAction.subscribe((value: unknown[]) => emitted.push(value));
+      card.beanAction.subscribe((value) => emitted.push(value));
     });
 
     function choose(role: BEAN_ACTION | undefined) {
@@ -855,8 +858,8 @@ describe('BeanInformationComponent', () => {
         expanded: true,
       };
       const parent = await render(group.beans[0], { beanGroup: group });
-      const fromParent: unknown[][] = [];
-      parent.componentInstance.beanAction.subscribe((value: unknown[]) =>
+      const fromParent: BeanActionEvent[] = [];
+      parent.componentInstance.beanAction.subscribe((value) =>
         fromParent.push(value),
       );
       const child = parent.debugElement.query(
@@ -867,6 +870,16 @@ describe('BeanInformationComponent', () => {
 
       expect(fromParent).toEqual([[BEAN_ACTION.EDIT, handed(helper.editBean)]]);
       expect(handed(helper.editBean).config.uuid).toBe('beta');
+    });
+
+    it('send the action without a warning after the card is gone', async () => {
+      // Saving rebuilds the list, so a card can be gone before its dialog ends.
+      helper.editBean.and.callFake(async () => fixture.destroy());
+      const warn = spyOn(console, 'warn');
+
+      await card.longPressEditBean(event());
+
+      expect(warn).not.toHaveBeenCalled();
     });
 
     it('share an image of the card', async () => {

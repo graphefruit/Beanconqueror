@@ -98,6 +98,9 @@ import {
 } from '../actions-popover/actions-popover.component';
 import { AsyncImageComponent } from '../async-image/async-image.component';
 
+/** What a bean card sends after an action, with the bean it worked on. */
+export type BeanActionEvent = [BEAN_ACTION, Bean];
+
 @Component({
   selector: 'bean-information',
   templateUrl: './bean-information.component.html',
@@ -169,7 +172,7 @@ export class BeanInformationComponent {
     read: NgxStarsComponent,
   });
 
-  @Output() public beanAction: EventEmitter<any> = new EventEmitter();
+  @Output() public beanAction = new EventEmitter<BeanActionEvent>();
 
   public beanFreezingStorageTypeEnum = BEAN_FREEZING_STORAGE_ENUM;
   public roast_enum = ROASTS_ENUM;
