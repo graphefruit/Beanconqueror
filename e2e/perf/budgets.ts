@@ -22,6 +22,11 @@ export type PerfTier = 7_000 | 15_000 | 30_000;
  *
  * `beanDeleteWithBrews` is from only three runs (2026-11-15, machine 8 to 22 % busy), by the
  * same rule. Deleting the 200 brews one by one took 51 s with 15,000 brews before.
+ *
+ * `millDeleteWithBrews` is from three runs (2026-11-15) while the machine was 41 to 95 % busy
+ * with other test runs, so none of them counts by the rule above: derive it again when the
+ * machine is idle. The grinder has 2,483 / 5,311 / 10,639 brews. Deleting the 2,483 brews one by
+ * one took 223 s with 7,000 brews before.
  */
 export interface Budget {
   /** Navigation start until the home screen shows the brew count. */
@@ -41,6 +46,12 @@ export interface Budget {
    * bean and the main thread is quiet.
    */
   beanDeleteWithBrews: number;
+  /**
+   * Deleting the grinder with the most brews, about a third of all, from the answer to the
+   * question until the toast says so and the main thread is quiet. The list of the grinders that
+   * are left is built again within that time.
+   */
+  millDeleteWithBrews: number;
   /** Profile > Statistics until the general numbers are shown and the main thread is quiet. */
   statisticsOpen: number;
   /**
@@ -83,6 +94,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     search: 170, // 90 / 112
     beanListOpen: 640, // 414 / 488
     beanDeleteWithBrews: 600, // 438 / 458
+    millDeleteWithBrews: 750, // 537 / 573
     statisticsOpen: 140, // 74 / 81
     statisticsBrewCharts: 330, // 228 / 250
     export: 1_000, // 748 / 763
@@ -97,6 +109,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     search: 200, // 118 / 146
     beanListOpen: 640, // 414 / 432
     beanDeleteWithBrews: 740, // 562 / 565
+    millDeleteWithBrews: 1_500, // 1,137 / 1,149
     statisticsOpen: 160, // 85 / 101
     statisticsBrewCharts: 450, // 320 / 340
     export: 1_900, // 1,364 / 1,395
@@ -111,6 +124,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     search: 200, // 111 / 116
     beanListOpen: 680, // 459 / 519
     beanDeleteWithBrews: 1_300, // 853 / 954
+    millDeleteWithBrews: 4_400, // 3,274 / 3,326
     statisticsOpen: 210, // 112 / 154
     statisticsBrewCharts: 710, // 531 / 541
     export: 2_300, // 1,588 / 1,760

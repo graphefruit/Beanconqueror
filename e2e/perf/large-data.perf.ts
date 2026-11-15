@@ -356,6 +356,9 @@ for (const tier of TIERS) {
         deletedBrews: brews,
         ...deleted,
       });
+      if (checkBudgets) {
+        checkBudget('millDeleteWithBrews', deleted.settled, budget, testInfo);
+      }
 
       // Grinder and brews are gone after a restart as well.
       await page.goto('/');
