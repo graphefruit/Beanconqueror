@@ -76,7 +76,10 @@ import { UIHelper } from '../../services/uiHelper';
 import { UIImage } from '../../services/uiImage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
-import { beanActions } from '../../stores/beans/bean-action-rules';
+import {
+  beanActions,
+  pickRepeatBrew,
+} from '../../stores/beans/bean-action-rules';
 import {
   beanAgeInDays,
   hasFrozenInformation,
@@ -291,17 +294,24 @@ export class BeanInformationComponent {
     }
   }
 
+  /**
+   * The brews of the bean that can be repeated. Throws on a brew whose bean,
+   * grinder or preparation is gone.
+   */
+  private activeBrews(): Brew[] {
+    return this.uiBeanHelper
+      .getAllBrewsForThisBean(this.actionBean.config.uuid)
+      .filter(
+        (b) =>
+          b.getBean().finished === false &&
+          b.getMill().finished === false &&
+          b.getPreparation().finished === false,
+      );
+  }
+
   private hasActiveBrews(): boolean {
     try {
-      const brews = this.uiBeanHelper
-        .getAllBrewsForThisBean(this.actionBean.config.uuid)
-        .filter(
-          (b) =>
-            b.getBean().finished === false &&
-            b.getMill().finished === false &&
-            b.getPreparation().finished === false,
-        );
-      return brews.length > 0;
+      return this.activeBrews().length > 0;
     } catch {
       return false;
     }
@@ -529,50 +539,32 @@ export class BeanInformationComponent {
   }
 
   public async repeatLastOrBestBrew() {
-    let associatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      this.actionBean.config.uuid,
-    );
-    associatedBrews = associatedBrews.filter(
-      (e) =>
-        e.getBean().finished === false &&
-        e.getMill().finished === false &&
-        e.getPreparation().finished === false,
-    );
-    let hasBestBrews: boolean = false;
-    if (associatedBrews.length > 0) {
-      associatedBrews = UIBrewHelper.sortBrews(associatedBrews);
-
-      if (this.settings.best_brew) {
-        hasBestBrews =
-          associatedBrews.filter((b) => b.best_brew === true).length > 0;
-      }
-
-      if (hasBestBrews) {
-        const actionSheet = await this.actionSheetCtrl.create({
-          header: this.translate.instant('CHOOSE'),
-          buttons: [
-            {
-              text: this.translate.instant('REPEAT_LAST_BREW'),
-              handler: async () => {
-                await this.uiBrewHelper.repeatBrew(associatedBrews[0]);
-              },
+    const choice = pickRepeatBrew(this.activeBrews(), this.settings.best_brew);
+    if (!choice) {
+      return;
+    }
+    if (choice.best) {
+      const actionSheet = await this.actionSheetCtrl.create({
+        header: this.translate.instant('CHOOSE'),
+        buttons: [
+          {
+            text: this.translate.instant('REPEAT_LAST_BREW'),
+            handler: async () => {
+              await this.uiBrewHelper.repeatBrew(choice.latest);
             },
-            {
-              text: this.translate.instant('REPEAT_BEST_BREW'),
-              handler: async () => {
-                const bestBrew = associatedBrews.filter(
-                  (b) => b.best_brew === true,
-                )[0];
-                await this.uiBrewHelper.repeatBrew(bestBrew);
-              },
+          },
+          {
+            text: this.translate.instant('REPEAT_BEST_BREW'),
+            handler: async () => {
+              await this.uiBrewHelper.repeatBrew(choice.best);
             },
-          ],
-        });
+          },
+        ],
+      });
 
-        const waitingSheet = await actionSheet.present();
-      } else {
-        await this.uiBrewHelper.repeatBrew(associatedBrews[0]);
-      }
+      await actionSheet.present();
+    } else {
+      await this.uiBrewHelper.repeatBrew(choice.latest);
     }
   }
   public async refreshDataFromQRCode() {

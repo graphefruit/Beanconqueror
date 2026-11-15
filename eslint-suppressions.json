@@ -2504,9 +2504,6 @@
     "@typescript-eslint/no-floating-promises": {
       "count": 9
     },
-    "@typescript-eslint/prefer-find": {
-      "count": 1
-    },
     "eqeqeq": {
       "count": 1
     }

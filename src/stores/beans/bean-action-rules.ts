@@ -103,3 +103,40 @@ export function beanActions(
     .filter(([, , , visible]) => visible !== false)
     .map(([role, translationKey, icon]) => ({ role, translationKey, icon }));
 }
+
+interface RepeatableBrew {
+  best_brew: boolean;
+  config: { unix_timestamp: number };
+}
+
+/**
+ * Which brew "repeat a brew" takes from the brews of a bean that can be
+ * repeated: the latest one and, when best brews are switched on and there is
+ * one, the latest best one. Undefined without brews.
+ */
+export function pickRepeatBrew<T extends RepeatableBrew>(
+  activeBrews: readonly T[],
+  bestBrewEnabled: boolean,
+): { latest: T; best: T | undefined } | undefined {
+  if (activeBrews.length === 0) {
+    return undefined;
+  }
+  // The comparison of UIBrewHelper.sortBrews, so that brews without a
+  // timestamp end up where they do in the lists of brews.
+  const sorted = [...activeBrews].sort((obj1, obj2) => {
+    if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
+      return 1;
+    }
+    if (obj1.config.unix_timestamp > obj2.config.unix_timestamp) {
+      return -1;
+    }
+
+    return 0;
+  });
+  return {
+    latest: sorted[0],
+    best: bestBrewEnabled
+      ? sorted.find((brew) => brew.best_brew === true)
+      : undefined,
+  };
+}

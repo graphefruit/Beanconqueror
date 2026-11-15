@@ -1,7 +1,9 @@
 import { Bean } from '../../../classes/bean/bean';
+import { Brew } from '../../../classes/brew/brew';
 import { BEAN_ACTION } from '../../../enums/beans/beanAction';
 import { IBean } from '../../../interfaces/bean/iBean';
-import { beanActions } from '../bean-action-rules';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { beanActions, pickRepeatBrew } from '../bean-action-rules';
 
 const A = BEAN_ACTION;
 const FROZEN_AT = '2026-01-10T10:00:00.000Z';
@@ -309,6 +311,93 @@ describe('bean action rules', () => {
       expect(icon(true)).toBe('heart');
       expect(icon(false)).toBe('heart-outline');
       expect(icon(undefined)).toBe('heart-outline');
+    });
+  });
+
+  describe('pickRepeatBrew', () => {
+    function brew(at: number | undefined, best = false): Brew {
+      const result = new Brew();
+      result.config.unix_timestamp = at;
+      result.best_brew = best;
+      return result;
+    }
+
+    it('picks nothing without brews', () => {
+      expect(pickRepeatBrew([], true)).toBeUndefined();
+      expect(pickRepeatBrew([], false)).toBeUndefined();
+    });
+
+    it('takes the latest brew and leaves the list as it was', () => {
+      const [old, latest, middle] = [brew(100), brew(300), brew(200)];
+      const brews = [old, latest, middle];
+
+      const choice = pickRepeatBrew(brews, true);
+
+      expect(choice.latest).toBe(latest);
+      expect(choice.best).toBeUndefined();
+      expect(brews).toEqual([old, latest, middle]);
+    });
+
+    it('takes the first stored of two brews of the same time', () => {
+      const [first, second] = [brew(100), brew(100)];
+
+      expect(pickRepeatBrew([first, second], true).latest).toBe(first);
+    });
+
+    it('takes the latest of the best brews', () => {
+      const [oldBest, latestBest, latest] = [
+        brew(100, true),
+        brew(200, true),
+        brew(300),
+      ];
+
+      const choice = pickRepeatBrew([oldBest, latest, latestBest], true);
+
+      expect(choice.latest).toBe(latest);
+      expect(choice.best).toBe(latestBest);
+    });
+
+    it('names the latest brew as the best one when it is', () => {
+      const [old, latestBest] = [brew(100), brew(300, true)];
+
+      const choice = pickRepeatBrew([old, latestBest], true);
+
+      expect(choice.latest).toBe(latestBest);
+      expect(choice.best).toBe(latestBest);
+    });
+
+    it('names no best brew when best brews are switched off', () => {
+      const [best, latest] = [brew(100, true), brew(300)];
+
+      const choice = pickRepeatBrew([best, latest], false);
+
+      expect(choice.latest).toBe(latest);
+      expect(choice.best).toBeUndefined();
+    });
+
+    it('orders brews without a timestamp as the lists of brews do', () => {
+      const [a, b, c, d] = [
+        brew(100),
+        brew(undefined, true),
+        brew(300, true),
+        brew(200),
+      ];
+      const orders = [
+        [a, b, c, d],
+        [b, a, d, c],
+        [c, d, b, a],
+        [d, c, a, b],
+        [b, c],
+        [c, b],
+      ];
+      for (const brews of orders) {
+        const sorted = UIBrewHelper.sortBrews([...brews]);
+
+        const choice = pickRepeatBrew(brews, true);
+
+        expect(choice.latest).toBe(sorted[0]);
+        expect(choice.best).toBe(sorted.find((entry) => entry.best_brew));
+      }
     });
   });
 });
