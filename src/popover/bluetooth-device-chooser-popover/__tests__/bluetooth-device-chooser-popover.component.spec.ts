@@ -23,6 +23,7 @@ import { BluetoothDeviceChooserPopoverComponent } from '../bluetooth-device-choo
 describe('BluetoothDeviceChooserPopoverComponent', () => {
   const SCAN_TIMEOUT = 60_000;
   let stopScan: jasmine.Spy;
+  let bleManager: CoffeeBluetoothDevicesService;
 
   beforeEach(() => {
     stopScan = jasmine.createSpy('stopScan').and.resolveTo();
@@ -48,7 +49,7 @@ describe('BluetoothDeviceChooserPopoverComponent', () => {
         },
       ],
     });
-    const bleManager = TestBed.inject(CoffeeBluetoothDevicesService);
+    bleManager = TestBed.inject(CoffeeBluetoothDevicesService);
     spyOn(bleManager, 'hasLocationPermission').and.resolveTo(true);
     spyOn(bleManager, 'hasBluetoothPermission').and.resolveTo(true);
     spyOn(bleManager, 'isBleEnabled').and.resolveTo(true);
@@ -97,5 +98,19 @@ describe('BluetoothDeviceChooserPopoverComponent', () => {
     tick(SCAN_TIMEOUT);
 
     expect(stopScan.calls.count()).toBe(stopsAfterClose);
+  }));
+
+  it('lets the start scan finish when the chooser closes during it', fakeAsync(() => {
+    const chooser = openChooser();
+    let found: boolean | undefined;
+    void bleManager
+      .findDeviceWithDirectIds(['aa'], 8000)
+      .then((result) => (found = result));
+    tick(1000);
+
+    chooser.ngOnDestroy();
+    tick(SCAN_TIMEOUT + 10_000);
+
+    expect(found).toBeFalse();
   }));
 });

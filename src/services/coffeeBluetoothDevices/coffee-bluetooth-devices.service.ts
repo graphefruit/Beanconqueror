@@ -229,17 +229,17 @@ export class CoffeeBluetoothDevicesService {
     });
   }
 
-  public clearScanAllBluetoothDevicesAndPassBackTimeout() {
+  private clearScanAllBluetoothDevicesAndPassBackTimeout() {
     if (this.scanBluetoothTimeout !== null) {
       clearTimeout(this.scanBluetoothTimeout);
       this.scanBluetoothTimeout = null;
     }
   }
-  public async scanAllBluetoothDevicesAndPassBack(
+  public scanAllBluetoothDevicesAndPassBack(
     _foundDeviceFunction = (foundDevice: any) => {},
     _finishedFunction = (finsishedDevices: any) => {},
     _timeout: number = 60000,
-  ) {
+  ): ReturnType<typeof setTimeout> {
     const devicesFound: Array<any> = [];
     const stopScanningAndFinish = async () => {
       this.logger.log(
@@ -277,16 +277,18 @@ export class CoffeeBluetoothDevicesService {
         stopScanningAndFinish();
       },
     );
-    this.scanBluetoothTimeout = setTimeout(async () => {
+    const scanTimeout = setTimeout(async () => {
       this.logger.log('scanAllBluetoothDevicesAndPassBack timeout triggered');
       stopScanningAndFinish();
     }, _timeout);
+    this.scanBluetoothTimeout = scanTimeout;
+    return scanTimeout;
   }
 
   public scanForDevicesAndReport(_searchingType: BluetoothTypes) {
     const observable: Observable<any> = new Observable((subscriber) => {
       const foundDevices = [];
-      this.scanAllBluetoothDevicesAndPassBack(
+      const scanTimeout = this.scanAllBluetoothDevicesAndPassBack(
         (scanDevice) => {
           let type;
           if (_searchingType === BluetoothTypes.SCALE) {
@@ -321,6 +323,8 @@ export class CoffeeBluetoothDevicesService {
           subscriber.complete();
         },
       );
+      // Clears only this search's timer, so a closed chooser neither stops a later search nor the start scan.
+      return () => clearTimeout(scanTimeout);
     });
     return observable;
   }

@@ -197,8 +197,6 @@ export class BluetoothDeviceChooserPopoverComponent
   }
 
   public ngOnDestroy() {
-    // Otherwise the 60 s search timer outlives the dialog and stops the search of the next one.
-    this.bleManager.clearScanAllBluetoothDevicesAndPassBackTimeout();
     this.destroySearchSubscription();
   }
 
