@@ -54,6 +54,8 @@ describe('bean rules', () => {
         { bean_roast_information: { bean_uuid: '' } as never },
       ],
       ['a scanned bean', { qr_code: 'abc' }],
+      ['a bean with an empty code', { qr_code: '' }],
+      ['a bean with a code of null', { qr_code: null }],
       ['a bean with a photo', { attachments: ['photo.jpg'] }],
       ['a bean with an empty photo list', { attachments: [] }],
       ['a bean without a photo list', { attachments: null }],
@@ -70,6 +72,17 @@ describe('bean rules', () => {
         expect(hasPhotos(stored)).toBe(!!bean.hasPhotos());
       });
     }
+
+    // Only an empty string counts as not scanned, for Bean and the rule. A
+    // stored bean never has an undefined code: reading it fills in ''.
+    it('for a code that is not a string, without the way through the store', () => {
+      for (const qr_code of [undefined, null, '', 'abc']) {
+        const bean = legacyBean({ qr_code });
+
+        expect(isScannedBean({ qr_code })).toBe(bean.isScannedBean());
+        expect(isScannedBean({ qr_code })).toBe(qr_code !== '');
+      }
+    });
   });
 
   it('shows the price per kilogram only for a bag that is not one kilogram', () => {
@@ -165,6 +178,44 @@ describe('bean rules', () => {
           unfrozenDate: '2026-02-24T08:00:00.000Z',
         },
         expected: 26,
+      },
+      {
+        name: 'frozen: 89 days in the freezer do not count yet',
+        now: '2026-02-12T08:00:00.000Z',
+        bean: {
+          roastingDate: '2025-11-05T08:00:00.000Z',
+          frozenDate: '2025-11-15T08:00:00.000Z',
+        },
+        expected: 10,
+      },
+      {
+        name: 'frozen: 90 days in the freezer count as one',
+        now: '2026-02-13T08:00:00.000Z',
+        bean: {
+          roastingDate: '2025-11-05T08:00:00.000Z',
+          frozenDate: '2025-11-15T08:00:00.000Z',
+        },
+        expected: 11,
+      },
+      {
+        name: 'thawed: 10 days, 89 frozen, 3 thawed',
+        now: '2026-02-15T08:00:00.000Z',
+        bean: {
+          roastingDate: '2025-11-05T08:00:00.000Z',
+          frozenDate: '2025-11-15T08:00:00.000Z',
+          unfrozenDate: '2026-02-12T08:00:00.000Z',
+        },
+        expected: 13,
+      },
+      {
+        name: 'thawed: 10 days, 90 frozen, 3 thawed',
+        now: '2026-02-16T08:00:00.000Z',
+        bean: {
+          roastingDate: '2025-11-05T08:00:00.000Z',
+          frozenDate: '2025-11-15T08:00:00.000Z',
+          unfrozenDate: '2026-02-13T08:00:00.000Z',
+        },
+        expected: 14,
       },
       {
         name: 'frozen and thawed over a change of summer time',

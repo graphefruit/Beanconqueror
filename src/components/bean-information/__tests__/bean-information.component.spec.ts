@@ -7,7 +7,7 @@ import {
   Platform,
 } from '@ionic/angular';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxStarsComponent } from 'ngx-stars';
 import { Subject } from 'rxjs';
 
@@ -31,6 +31,7 @@ import { UIHelper } from '../../../services/uiHelper';
 import { UIImage } from '../../../services/uiImage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
+import { BeanStore } from '../../../stores/beans/bean.store';
 import { FakeStoreSource } from '../../../stores/core/__tests__/fake-store-source';
 import { BeanInformationComponent } from '../bean-information.component';
 
@@ -313,6 +314,29 @@ describe('BeanInformationComponent', () => {
     expect(value(fixture, 'BEAN_DATA_ROAST_NAME_TYPE')).toBe('City roast');
   });
 
+  it('shows the grams used and what is left of the bag', async () => {
+    const translate = TestBed.inject(TranslateService);
+    translate.setTranslation('en', {
+      BEAN_WEIGHT_ALREADY_USED:
+        '{{gramUsed}} used of {{gramTotal}}, {{leftOver}} left',
+    });
+    translate.use('en');
+
+    const fixture = await render(legacyBean(alpha));
+
+    expect(value(fixture, 'BEANS_AMOUNT_USED')).toBe(
+      '36.5 used of 250, 213.5 left',
+    );
+  });
+
+  it('stops the age of an archived bean on the day of its last brew', async () => {
+    beans.change([storedBean('alpha', { ...alpha, finished: true })]);
+
+    const fixture = await render(legacyBean(alpha));
+
+    expect(value(fixture, 'ROASTED_BEFORE')).toBe('9 DAYS_OLD');
+  });
+
   it('moves the stars when the stored rating changes', async () => {
     const fixture = await render(legacyBean(alpha));
     const [roastStars, ratingStars] = fixture.debugElement
@@ -399,6 +423,27 @@ describe('BeanInformationComponent', () => {
       expect(Object.isFrozen(bean)).toBeFalse();
       expect(bean).not.toBe(beans.entries[0] as never);
       expect(emitted).toEqual([[BEAN_ACTION.DETAIL, bean]]);
+    });
+
+    it('give legacy code a copy that shares nothing with the store', async () => {
+      const stored = TestBed.inject(BeanStore).byUuid().get('alpha');
+      choose(BEAN_ACTION.DETAIL);
+      await card.showBeanActions(event());
+
+      const bean = handed(helper.detailBean);
+      expect(bean).not.toBe(stored as never);
+      expect(bean.config).not.toBe(stored.config);
+      expect(bean.attachments).not.toBe(stored.attachments as never);
+      expect(bean.cupped_flavor.custom_flavors).not.toBe(
+        stored.cupped_flavor.custom_flavors as never,
+      );
+      // Legacy dialogs write into the copy at every depth.
+      bean.config.uuid = 'changed';
+      bean.attachments.push('second.jpg');
+      bean.cupped_flavor.custom_flavors.push('Plum');
+      expect(stored.config.uuid).toBe('alpha');
+      expect(stored.attachments).toEqual(['photo.jpg']);
+      expect(stored.cupped_flavor.custom_flavors).toEqual(['Honey']);
     });
 
     it('do nothing when the menu is closed', async () => {
