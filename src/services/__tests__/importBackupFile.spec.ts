@@ -1281,29 +1281,35 @@ describe('Restoring the internal backup at start-up', () => {
         device.uiAlert.showMessage,
       );
     });
-
-    it(`keeps three backups when the restore offered at every start ${failure}`, async () => {
-      const internalBackup = await internalBackupWithMoreBrews();
-      const device = await startDevice(completeData('own'), {
-        internalBackup,
-        files: OLDER_BACKUPS,
-      });
-      const offered = spyOn(
-        device.helper,
-        'showDataCorruptionPopover',
-      ).and.resolveTo(true);
-
-      for (let start = 0; start < 5; start++) {
-        breakImport(device);
-        await device.helper.checkBackup();
-        // A new millisecond, so the next backup gets a name of its own.
-        await new Promise((_resolve) => setTimeout(_resolve, 2));
-      }
-
-      expect(offered).toHaveBeenCalledTimes(5);
-      expect(writtenBackups(device).length).toBe(3);
-    });
   }
+
+  it('keeps the backup of the data from before when the restore offered at every start cannot be rolled back', async () => {
+    const internalBackup = await internalBackupWithMoreBrews();
+    const before = completeData('own');
+    const device = await startDevice(before, {
+      internalBackup,
+      files: OLDER_BACKUPS,
+    });
+    const offered = spyOn(
+      device.helper,
+      'showDataCorruptionPopover',
+    ).and.resolveTo(true);
+
+    for (let start = 0; start < 5; start++) {
+      device.brokenWrites.add('BREWS');
+      await device.helper.checkBackup();
+      // A new millisecond, so the next backup gets a name of its own.
+      await new Promise((_resolve) => setTimeout(_resolve, 2));
+    }
+
+    expect(offered).toHaveBeenCalledTimes(5);
+    // Those of the later starts hold the mix the first one left.
+    const kept = writtenBackups(device).sort();
+    expect(kept.length).toBe(OLDER_BACKUPS.length + 5);
+    expect(kept.slice(0, OLDER_BACKUPS.length)).toEqual(OLDER_BACKUPS);
+    const first = kept[OLDER_BACKUPS.length];
+    expect((await readBackupFile(device, first)).BREWS).toEqual(before.BREWS);
+  });
 
   it('removes the backup just written and no older one when the restore was rolled back', async () => {
     const internalBackup = await internalBackupWithMoreBrews();
@@ -1342,7 +1348,7 @@ describe('Restoring the internal backup at start-up', () => {
 
     const kept = writtenBackups(device);
     const [file] = kept.filter((_path) => !OLDER_BACKUPS.includes(_path));
-    expect(kept.length).toBe(3);
+    expect(kept.length).toBe(OLDER_BACKUPS.length + 1);
     expect((await readBackupFile(device, file)).BREWS).toEqual(before.BREWS);
   });
 
@@ -1367,7 +1373,7 @@ describe('Restoring the internal backup at start-up', () => {
     expect(device.data.has('WATER')).toBeTrue();
     const kept = writtenBackups(device);
     const [file] = kept.filter((_path) => !OLDER_BACKUPS.includes(_path));
-    expect(kept.length).toBe(3);
+    expect(kept.length).toBe(OLDER_BACKUPS.length + 1);
     expect((await readBackupFile(device, file)).BREWS).toEqual(before.BREWS);
   });
 
@@ -1385,7 +1391,7 @@ describe('Restoring the internal backup at start-up', () => {
     expect(result).toEqual({ BACKUP: true });
     const kept = writtenBackups(device);
     const [file] = kept.filter((_path) => !OLDER_BACKUPS.includes(_path));
-    expect(kept.length).toBe(3);
+    expect(kept.length).toBe(OLDER_BACKUPS.length + 1);
     expect((await readBackupFile(device, file)).BREWS).toEqual(before.BREWS);
   });
 

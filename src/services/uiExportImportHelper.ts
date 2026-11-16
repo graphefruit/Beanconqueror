@@ -221,16 +221,15 @@ export class UIExportImportHelper {
    *
    * After a completed import, older backups are removed, those of data
    * that had not just been imported from a file last
-   * (PreImportBackupService.removeOldBackups). A failed import of a file
-   * chosen in the settings removes none, so the file it was started from
-   * stays available, as it can be one of them. A failed restore of the
-   * internal backup that could not be rolled back removes them as well: that
-   * file is not one of them, and the next start offers the restore again,
-   * with a new backup before it. When that restore was rolled back, the
-   * backup just written is removed instead and the older ones stay: the
-   * stored data is the same as before, and the backup written at every such
-   * start would push the older ones out. It is kept as after a restore that
-   * could not be rolled back when the database cannot be read afterwards.
+   * (PreImportBackupService.removeOldBackups). A failed import removes
+   * none: the file it was started from can be one of them, and after a
+   * restore of the internal backup that could not be rolled back the first
+   * backup written is the only one of the data from before; those of the
+   * next starts, which offer the restore again, hold the mix that was left
+   * and would push it out. When that restore was rolled back, the backup
+   * just written is removed again: the stored data is the same as before,
+   * and one would be added at every such start. It stays when the database
+   * cannot be read afterwards.
    *
    * Rejects with ImportNotRolledBackError when the import failed and could
    * not be rolled back; the backup written before is never removed then.
@@ -281,10 +280,7 @@ export class UIExportImportHelper {
         (await this.uiStorage.getDataState()) !== 'unknown'
       ) {
         await this.preImportBackup.remove(written);
-      } else if (
-        written !== undefined &&
-        (completed || _source === 'internal_backup')
-      ) {
+      } else if (written !== undefined && completed) {
         await this.preImportBackup.removeOldBackups(written);
       }
     }

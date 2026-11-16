@@ -139,8 +139,8 @@ it and the data of that file are both kept.
 Older files are deleted once an import has completed. A failed import of a
 file chosen in the settings deletes none, so the file it was started from is
 still there if it fails. A restore of the internal backup at start-up that
-fails adds no file over the starts either, as the next start offers the
-restore again and writes a file before it:
+fails deletes no older file either. The next start offers the restore again
+and writes a file before it:
 
 - It was rolled back: the file just written is deleted again and the older
   ones stay. The stored data is the same as before the restore, and a file
@@ -148,9 +148,10 @@ restore again and writes a file before it:
   starts. When the file cannot be deleted, it stays until the next completed
   import deletes older files.
 - It could not be rolled back, or the database cannot be read after it was
-  rolled back: the file just written is never deleted, and
-  older ones are deleted as after a completed import (`Beanconqueror.zip` is
-  not one of these files).
+  rolled back: no file is deleted, so one is added at every such start until
+  an import completes. The first of them is the only file with the data from
+  before; those of the next starts hold the mix that was left and must not
+  push it out.
 
 ## When an import fails or is stopped
 
@@ -172,9 +173,8 @@ The current data is never left changed without a file that holds it:
   is closed during the import: the stored data can be a mix of old and
   imported values. The file written before the import is complete by then,
   as nothing is replaced before it has its name, and it stays. After an
-  import of a file chosen in the settings no file is deleted at all; after a
-  failed restore of the internal backup the file just written is always
-  among the three kept. The note about the import before is removed by then
+  import no file is deleted at all, also not after a failed restore of the
+  internal backup. The note about the import before is removed by then
   (see below), so the file written before the next import does not end in
   `_imported.zip`. The app does not say that the data was not changed then,
   in the settings and at start-up alike: it says that the data can be
