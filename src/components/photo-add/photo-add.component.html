@@ -6,14 +6,14 @@
     <swiper-container class='swiper'  [pagination]="{ clickable: true, dragable:true }"  #photoSlides pager="true">
       @for (attachment of data.attachments; track attachment; let i = $index) {
         <swiper-slide>
-          <ion-button [disabled]='i===0' (click)="sortLeft(i)" class="position-absolute-button-sort-left" tappable color="accent" fill="clear">
-            <ion-icon slot="icon-only" name="arrow-back-outline" />
+          <ion-button [disabled]='i===0' (click)="sortLeft(i)" [attr.aria-label]="'A11Y.MOVE_PHOTO_LEFT' | translate" class="position-absolute-button-sort-left" tappable color="accent" fill="clear">
+            <ion-icon aria-hidden="true" slot="icon-only" name="arrow-back-outline" />
           </ion-button>
-          <ion-button [disabled]='i===data.attachments.length-1'  (click)="sortRight(i)" class="position-absolute-button-sort-right" tappable color="accent" fill="clear">
-            <ion-icon slot="icon-only" name="arrow-forward-outline" />
+          <ion-button [disabled]='i===data.attachments.length-1'  (click)="sortRight(i)" [attr.aria-label]="'A11Y.MOVE_PHOTO_RIGHT' | translate" class="position-absolute-button-sort-right" tappable color="accent" fill="clear">
+            <ion-icon aria-hidden="true" slot="icon-only" name="arrow-forward-outline" />
           </ion-button>
-          <ion-button (click)="deleteImage(i)" class="position-absolute-button" tappable color="accent" fill="clear">
-            <ion-icon slot="icon-only" name="trash" />
+          <ion-button (click)="deleteImage(i)" [attr.aria-label]="'A11Y.DELETE_PHOTO' | translate" class="position-absolute-button" tappable color="accent" fill="clear">
+            <ion-icon aria-hidden="true" slot="icon-only" name="trash" />
           </ion-button>
           <async-image class="brew-image" filePath="{{attachment}}" />
         </swiper-slide>

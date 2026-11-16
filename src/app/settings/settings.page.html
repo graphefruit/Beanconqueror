@@ -602,9 +602,9 @@
             autocapitalize="sentences" name="visualizer_url" placeholder="{{'VISUALIZER.URL' | translate}}"
             spellcheck="false" type="text" />
 
-          <ion-button (click)="checkVisualizerConnection()" class="big-icon-only" fill="clear" slot="end"
+          <ion-button (click)="checkVisualizerConnection()" [attr.aria-label]="'A11Y.CHECK_CONNECTION' | translate" class="big-icon-only" fill="clear" slot="end"
             style="margin-left:0px;" tabIndex="2" tappable>
-            <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only" />
+            <ion-icon aria-hidden="true" class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only" />
           </ion-button>
         </ion-item>
 
@@ -900,8 +900,8 @@
           (ngModelChange)="saveSettings();" [(ngModel)]="settings.cloud_ai_model"
           name="cloud_ai_model" [placeholder]="getModelPlaceholder()" spellcheck="false"
           type="text" />
-        <ion-button slot="end" fill="clear" (click)="openModelPicker()">
-          <ion-icon name="list-outline" />
+        <ion-button slot="end" fill="clear" [attr.aria-label]="'CLOUD_AI_SELECT_MODEL' | translate" (click)="openModelPicker()">
+          <ion-icon aria-hidden="true" name="list-outline" />
         </ion-button>
       </ion-item>
       <ion-item>
@@ -1399,8 +1399,9 @@
         <ion-accordion value="weight">
           <ion-item slot="header" color="light">
             <ion-label>{{ "BREW_FLOW_WEIGHT" | translate }}</ion-label>
-            <ion-button fill="clear" slot="end" (click)="resetGraphColor('weight'); $event.stopPropagation()">
-              <ion-icon slot="icon-only" name="refresh-outline" />
+            <ion-button fill="clear" slot="end"
+              [attr.aria-label]="'A11Y.RESET_GRAPH_COLORS' | translate: { graph: 'BREW_FLOW_WEIGHT' | translate }" (click)="resetGraphColor('weight'); $event.stopPropagation()">
+              <ion-icon aria-hidden="true" slot="icon-only" name="refresh-outline" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
@@ -1431,8 +1432,9 @@
         <ion-accordion value="flowPerSecond">
           <ion-item slot="header" color="light">
             <ion-label>{{ "BREW_FLOW_WEIGHT_PER_SECOND" | translate }}</ion-label>
-            <ion-button fill="clear" slot="end" (click)="resetGraphColor('flowPerSecond'); $event.stopPropagation()">
-              <ion-icon slot="icon-only" name="refresh-outline" />
+            <ion-button fill="clear" slot="end"
+              [attr.aria-label]="'A11Y.RESET_GRAPH_COLORS' | translate: { graph: 'BREW_FLOW_WEIGHT_PER_SECOND' | translate }" (click)="resetGraphColor('flowPerSecond'); $event.stopPropagation()">
+              <ion-icon aria-hidden="true" slot="icon-only" name="refresh-outline" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
@@ -1464,8 +1466,9 @@
         <ion-accordion value="realtimeFlow">
           <ion-item slot="header" color="light">
             <ion-label>{{ "BREW_FLOW_WEIGHT_REALTIME" | translate }}</ion-label>
-            <ion-button fill="clear" slot="end" (click)="resetGraphColor('realtimeFlow'); $event.stopPropagation()">
-              <ion-icon slot="icon-only" name="refresh-outline" />
+            <ion-button fill="clear" slot="end"
+              [attr.aria-label]="'A11Y.RESET_GRAPH_COLORS' | translate: { graph: 'BREW_FLOW_WEIGHT_REALTIME' | translate }" (click)="resetGraphColor('realtimeFlow'); $event.stopPropagation()">
+              <ion-icon aria-hidden="true" slot="icon-only" name="refresh-outline" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
@@ -1496,8 +1499,9 @@
         <ion-accordion value="pressure">
           <ion-item slot="header" color="light">
             <ion-label>{{ "BREW_PRESSURE_FLOW" | translate }}</ion-label>
-            <ion-button fill="clear" slot="end" (click)="resetGraphColor('pressure'); $event.stopPropagation()">
-              <ion-icon slot="icon-only" name="refresh-outline" />
+            <ion-button fill="clear" slot="end"
+              [attr.aria-label]="'A11Y.RESET_GRAPH_COLORS' | translate: { graph: 'BREW_PRESSURE_FLOW' | translate }" (click)="resetGraphColor('pressure'); $event.stopPropagation()">
+              <ion-icon aria-hidden="true" slot="icon-only" name="refresh-outline" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
@@ -1528,8 +1532,9 @@
         <ion-accordion value="temperature">
           <ion-item slot="header" color="light">
             <ion-label>{{ "BREW_TEMPERATURE_REALTIME" | translate }}</ion-label>
-            <ion-button fill="clear" slot="end" (click)="resetGraphColor('temperature'); $event.stopPropagation()">
-              <ion-icon slot="icon-only" name="refresh-outline" />
+            <ion-button fill="clear" slot="end"
+              [attr.aria-label]="'A11Y.RESET_GRAPH_COLORS' | translate: { graph: 'BREW_TEMPERATURE_REALTIME' | translate }" (click)="resetGraphColor('temperature'); $event.stopPropagation()">
+              <ion-icon aria-hidden="true" slot="icon-only" name="refresh-outline" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
@@ -1561,8 +1566,9 @@
           <ion-item slot="header" color="light">
             <ion-label>{{"BREW_FLOW_WATER_DISPENSED_VOLUME" | translate}}</ion-label>
             <ion-button fill="clear" slot="end"
+              [attr.aria-label]="'A11Y.RESET_GRAPH_COLORS' | translate: { graph: 'BREW_FLOW_WATER_DISPENSED_VOLUME' | translate }"
               (click)="resetGraphColor('waterDispensed'); $event.stopPropagation(); $event.preventDefault()">
-              <ion-icon name="refresh-outline" slot="icon-only" />
+              <ion-icon aria-hidden="true" name="refresh-outline" slot="icon-only" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">
@@ -1598,8 +1604,9 @@
           <ion-item slot="header" color="light">
             <ion-label>{{"BREW_FLOW_WATER_DISPENSED_REALTIME" | translate}}</ion-label>
             <ion-button fill="clear" slot="end"
+              [attr.aria-label]="'A11Y.RESET_GRAPH_COLORS' | translate: { graph: 'BREW_FLOW_WATER_DISPENSED_REALTIME' | translate }"
               (click)="resetGraphColor('waterDispensedFlowSecond'); $event.stopPropagation(); $event.preventDefault()">
-              <ion-icon name="refresh-outline" slot="icon-only" />
+              <ion-icon aria-hidden="true" name="refresh-outline" slot="icon-only" />
             </ion-button>
           </ion-item>
           <div class="ion-padding" slot="content">

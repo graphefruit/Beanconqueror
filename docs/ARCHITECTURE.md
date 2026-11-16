@@ -866,6 +866,11 @@ file maps them onto Ionic's variables at the end.
   level-1 heading (`src/components/header/header.component.ts`); sections below
   it use real heading elements (e.g. `h2` in `src/app/profile/profile.page.html`).
 - Tabs are reachable by keyboard (`src/app/home/home.page.html`).
+- Names: a control that shows only an icon gets its name from a translated
+  `aria-label` (keys under `A11Y` in `src/assets/i18n/`, or an existing key
+  with the same text) and its icon is `aria-hidden`. A toggle keeps one name
+  and tells its state with `aria-pressed`
+  (`e2e/brew-list-toolbar.spec.ts`).
 - Overlays: `OverlayStackA11yService`
   (`src/services/a11y/overlay-stack-a11y.service.ts`, started in
   `AppComponent`) keeps only the overlay on top in the accessibility tree; the

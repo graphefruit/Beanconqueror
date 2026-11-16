@@ -8,6 +8,7 @@ import {
 
 import { ModalController, Platform } from '@ionic/angular';
 
+import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
 
 import { Settings } from '../../../classes/settings/settings';
@@ -34,7 +35,7 @@ describe('TimerComponent', () => {
     mockUISettingsStorage.getSettings.and.returnValue(settings);
 
     TestBed.configureTestingModule({
-      imports: [TimerComponent],
+      imports: [TimerComponent, TranslateModule.forRoot()],
       providers: [
         { provide: UISettingsStorage, useValue: mockUISettingsStorage },
         {
@@ -103,6 +104,16 @@ describe('TimerComponent', () => {
     expect(component.getMilliseconds()).toBe(0);
     expect(shownTime()).toBe('00:00.000');
     expect(emitted).toEqual([]);
+  });
+
+  it('names its icon buttons', () => {
+    createTimer({ seconds: 30, milliseconds: 0 });
+
+    // Without loaded texts the pipe returns the keys.
+    const names = [
+      ...(fixture.nativeElement as HTMLElement).querySelectorAll('ion-button'),
+    ].map((button) => button.getAttribute('aria-label'));
+    expect(names).toEqual(['A11Y.RESET_TIMER', 'A11Y.START_TIMER']);
   });
 
   it('has its start value from the first rendering on, without running', () => {

@@ -6,7 +6,7 @@
   <ion-item class="ion-margin-horizontal">
     <ion-input id="customFlavorInput" (keyup.enter)="addCustomFlavor()" [(ngModel)]="customFlavor" name="customFlavor" placeholder='{{"CUSTOM_FLAVORS_AROMAS_PLACEHOLDER" | translate}}' type="text" />
 
-    <ion-icon tappable (click)="addCustomFlavor()" class="ion-margin-end" slot="end" name="add-circle-outline" />
+    <ion-icon tappable (click)="addCustomFlavor()" [attr.aria-label]="'A11Y.ADD_AROMA' | translate" class="ion-margin-end" slot="end" name="add-circle-outline" />
   </ion-item>
   <div class="ion-margin-horizontal">
     @for (flavor of customFlavors; track flavor; let i = $index) {

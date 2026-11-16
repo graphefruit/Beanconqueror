@@ -32,8 +32,10 @@ export async function completeFirstRunWithBrew(page: Page): Promise<void> {
   await page.getByRole('textbox', { name: /^Name/ }).fill('Comandante C40');
   await page.getByRole('button', { name: 'Save' }).click();
 
-  // See first-run.ts: the last welcome button has no accessible name yet.
-  await page.getByRole('group', { name: '5 / 5' }).getByRole('button').click();
+  await page
+    .getByRole('group', { name: '5 / 5' })
+    .getByRole('button', { name: 'Next' })
+    .click();
   await page.getByRole('button', { name: 'Understood' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
 

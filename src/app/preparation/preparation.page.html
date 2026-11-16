@@ -100,7 +100,7 @@
   <ion-searchbar (ionChange)="research()" (ionInput)='research()' [(ngModel)]="uiSearchText"
     class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
     search-icon="beanconqueror-detail" showCancelButton="never" />
-  <ion-button (click)="showSort()" [attr.aria-label]="uiIsSortActive ? 'Sort preparations (active)' : 'Sort preparations'" fill="clear" size="small" tappable>
+  <ion-button (click)="showSort()" [attr.aria-label]="(uiIsSortActive ? 'A11Y.SORT_PREPARATIONS_ACTIVE' : 'A11Y.SORT_PREPARATIONS') | translate" fill="clear" size="small" tappable>
     @if (uiIsSortActive) {
     <ion-icon aria-hidden="true" name="beanconqueror-sort-active" slot="icon-only" />
     } @else {

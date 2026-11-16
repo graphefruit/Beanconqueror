@@ -101,7 +101,7 @@
   <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="uiSearchText"
                  class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
                  search-icon="beanconqueror-detail" showCancelButton="never" />
-  <ion-button (click)="showFilter()" [attr.aria-label]="uiIsFilterActive ? 'Filter brews (active)' : 'Filter brews'" fill="clear" size="small" tappable>
+  <ion-button (click)="showFilter()" [attr.aria-label]="(uiIsFilterActive ? 'A11Y.FILTER_BREWS_ACTIVE' : 'A11Y.FILTER_BREWS') | translate" fill="clear" size="small" tappable>
     @if (uiIsFilterActive) {
       <ion-icon aria-hidden="true" name="beanconqueror-filter-active"
                 slot="icon-only" />
@@ -110,7 +110,7 @@
                 slot="icon-only" />
     }
   </ion-button>
-  <ion-button (click)="showSort()" [attr.aria-label]="uiIsSortActive ? 'Sort brews (active)' : 'Sort brews'" fill="clear" size="small" tappable>
+  <ion-button (click)="showSort()" [attr.aria-label]="(uiIsSortActive ? 'A11Y.SORT_BREWS_ACTIVE' : 'A11Y.SORT_BREWS') | translate" fill="clear" size="small" tappable>
     @if (uiIsSortActive) {
       <ion-icon aria-hidden="true" name="beanconqueror-sort-active"
                 slot="icon-only" />
@@ -119,7 +119,7 @@
                 slot="icon-only" />
     }
   </ion-button>
-  <ion-button (click)="toggleCollapseBrews()" [attr.aria-label]="uiIsCollapseActive ? 'Expand brew list items' : 'Collapse brew list items'" fill="clear" size="small" tappable>
+  <ion-button (click)="toggleCollapseBrews()" [attr.aria-label]="'A11Y.COLLAPSE_BREWS' | translate" [attr.aria-pressed]="uiIsCollapseActive" fill="clear" size="small" tappable>
     @if (uiIsCollapseActive) {
       <ion-icon aria-hidden="true" name="beanconqueror-expand-active" slot="icon-only" />
     } @else {

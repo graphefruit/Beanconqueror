@@ -42,11 +42,11 @@
               <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText"
                              class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
                              search-icon="beanconqueror-detail" showCancelButton="never" />
-              <ion-button class="margin-right-5" (click)="showFilter('brews-open')" fill="clear" size="small" tappable>
+              <ion-button class="margin-right-5" (click)="showFilter('brews-open')" [attr.aria-label]="(isFilterActive('brews-open') ? 'A11Y.FILTER_BREWS_ACTIVE' : 'A11Y.FILTER_BREWS') | translate" fill="clear" size="small" tappable>
                 @if (isFilterActive('brews-open')) {
-                  <ion-icon name="beanconqueror-filter-active" slot="icon-only" />
+                  <ion-icon aria-hidden="true" name="beanconqueror-filter-active" slot="icon-only" />
                 } @else {
-                  <ion-icon name="beanconqueror-filter-inactive" slot="icon-only" />
+                  <ion-icon aria-hidden="true" name="beanconqueror-filter-inactive" slot="icon-only" />
                 }
               </ion-button>
             </div>
@@ -81,12 +81,12 @@
               <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText"
                              class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
                              search-icon="beanconqueror-detail" showCancelButton="never" />
-              <ion-button class="margin-right-5" (click)="showFilter('brews-archive')" fill="clear" size="small"
+              <ion-button class="margin-right-5" (click)="showFilter('brews-archive')" [attr.aria-label]="(isFilterActive('brews-archive') ? 'A11Y.FILTER_BREWS_ACTIVE' : 'A11Y.FILTER_BREWS') | translate" fill="clear" size="small"
                           tappable>
                 @if (isFilterActive('brews-archive')) {
-                  <ion-icon name="beanconqueror-filter-active" slot="icon-only" />
+                  <ion-icon aria-hidden="true" name="beanconqueror-filter-active" slot="icon-only" />
                 } @else {
-                  <ion-icon name="beanconqueror-filter-inactive" slot="icon-only" />
+                  <ion-icon aria-hidden="true" name="beanconqueror-filter-inactive" slot="icon-only" />
                 }
               </ion-button>
             </div>

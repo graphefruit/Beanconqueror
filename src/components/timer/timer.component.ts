@@ -19,6 +19,7 @@ import {
 } from '@ionic/angular';
 
 import { Device } from '@capacitor/device';
+import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
 
 import { Settings } from '../../classes/settings/settings';
@@ -33,7 +34,14 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [TransformDateDirective, IonItem, IonInput, IonButton, IonIcon],
+  imports: [
+    TransformDateDirective,
+    TranslatePipe,
+    IonItem,
+    IonInput,
+    IonButton,
+    IonIcon,
+  ],
 })
 export class TimerComponent implements OnInit, OnDestroy {
   private readonly modalCtrl = inject(ModalController);

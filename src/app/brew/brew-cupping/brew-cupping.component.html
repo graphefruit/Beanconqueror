@@ -26,7 +26,7 @@
         @for (customFlavor of this.data?.cupped_flavor.custom_flavors; track customFlavor; let i = $index; let last = $last) {
           <ion-item lines="{{last?'none':'inset'}}">
             <ion-label>{{customFlavor}}</ion-label>
-            <ion-icon (click)="deleteCustomFlavor(i)" tappable slot="end" name="trash-outline" />
+            <ion-icon (click)="deleteCustomFlavor(i)" [attr.aria-label]="'A11Y.REMOVE_AROMA' | translate: { aroma: customFlavor }" tappable slot="end" name="trash-outline" />
           </ion-item>
         }
       </ion-card>
@@ -37,7 +37,7 @@
         @for (item of $safeNavigationMigration(this.data?.cupped_flavor.predefined_flavors) | keyvalue; track item.key; let last = $last) {
           <ion-item lines="{{last?'none':'inset'}}">
             <ion-label>{{'CUPPING_' + item.key | translate}}</ion-label>
-            <ion-icon (click)="deletePredefinedFlavor(item.key)" tappable slot="end" name="trash-outline" />
+            <ion-icon (click)="deletePredefinedFlavor(item.key)" [attr.aria-label]="'A11Y.REMOVE_AROMA' | translate: { aroma: 'CUPPING_' + item.key | translate }" tappable slot="end" name="trash-outline" />
           </ion-item>
         }
       </ion-card>

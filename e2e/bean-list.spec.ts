@@ -25,8 +25,9 @@ import { readStoredValue } from './support/stored-values';
 
 test.use({ allowedConsoleErrors: [LIST_HEIGHT_ERROR] });
 
-const collapse = { name: 'Collapse bean list items' };
-const expand = { name: 'Expand bean list items' };
+// One toggle button: pressed while the cards are collapsed.
+const collapse = { name: 'Collapse bean list items', pressed: false };
+const expand = { name: 'Collapse bean list items', pressed: true };
 
 test('the segments count the available, frozen and archived beans', async ({
   page,

@@ -23,7 +23,7 @@ import {
   Platform,
 } from '@ionic/angular';
 
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { Graph } from '../../classes/graph/graph';
@@ -56,6 +56,7 @@ declare var Plotly;
   imports: [
     LongPressDirective,
     GraphDisplayCardComponent,
+    TranslatePipe,
     IonCard,
     IonCardContent,
     IonGrid,

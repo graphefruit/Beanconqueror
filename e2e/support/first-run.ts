@@ -15,9 +15,10 @@ export async function completeFirstRun(page: Page): Promise<void> {
       .click();
   }
 
-  // The final welcome button is icon-only without an accessible name (known a11y gap);
-  // it is the only button in the last step. Replace with a named locator once it is labelled.
-  await page.getByRole('group', { name: '5 / 5' }).getByRole('button').click();
+  await page
+    .getByRole('group', { name: '5 / 5' })
+    .getByRole('button', { name: 'Next' })
+    .click();
 
   await page.getByRole('button', { name: 'Understood' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);

@@ -48,8 +48,8 @@
         </div>
       </ion-col>
       <ion-col class="ion-text-right" size="1">
-        <ion-button (click)="dismiss()" fill="clear" style="margin-top: -1px;margin-left:-15px;">
-          <ion-icon name="close-outline" slot="icon-only" />
+        <ion-button (click)="dismiss()" [attr.aria-label]="'CLOSE' | translate" fill="clear" style="margin-top: -1px;margin-left:-15px;">
+          <ion-icon aria-hidden="true" name="close-outline" slot="icon-only" />
         </ion-button>
       </ion-col>
     </ion-row>
