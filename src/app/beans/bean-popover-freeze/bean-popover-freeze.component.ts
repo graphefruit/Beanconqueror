@@ -201,8 +201,8 @@ export class BeanPopoverFreezeComponent implements OnInit {
     if (result !== 'FROZEN') {
       await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
       if (result === 'INCOMPLETE') {
-        // The bags are stored and the bean of this dialog is already
-        // reduced: saving again from here would freeze them a second time.
+        // The bags can be stored and the bean of this dialog reduced by
+        // now: saving again from here would freeze them a second time.
         await this.dismiss();
       }
       return;
@@ -229,13 +229,29 @@ export class BeanPopoverFreezeComponent implements OnInit {
    * twice, and the dialog can save the same bags again.
    */
   private async __undoCreatedBeans(_copiedFiles: Array<string>): Promise<void> {
-    // Also the bag that was not saved: the storage still holds it and would
-    // write it with the next bean.
+    // Every write stores all beans: a bag whose removal was not written is
+    // off the disk with the next removal that was. What is left then comes
+    // back with a restart unless the beans are written before, and needs its
+    // photos.
+    let stillOnDisk: Array<Bean> = [];
     for (const created of this.allNewCreatedBeans) {
-      await this.uiBeanStorage.removeByUUID(created.config.uuid);
+      if (await this.uiBeanStorage.removeByUUID(created.config.uuid)) {
+        stillOnDisk = [];
+      } else {
+        stillOnDisk.push(created);
+      }
     }
     this.allNewCreatedBeans = [];
+    if (stillOnDisk.length > 0) {
+      this.uiLog.error(
+        `Freeze bean - ${stillOnDisk.length} bags not taken off the disk`,
+      );
+    }
+    const keptFiles = stillOnDisk.flatMap((kept) => kept.attachments);
     for (const file of _copiedFiles) {
+      if (keptFiles.includes(file)) {
+        continue;
+      }
       try {
         await this.uiFileHelper.deleteInternalFile(file);
       } catch (ex) {
@@ -401,11 +417,20 @@ export class BeanPopoverFreezeComponent implements OnInit {
         await this.uiBeanHelper.archiveBeanWithRatingQuestion(this.bean);
       } else {
         await this.uiAlert.hideLoadingSpinner();
-        const choice = await this.uiAlert.showConfirm(
-          'BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE',
-          'CARE',
-          true,
-        );
+        let choice: string;
+        try {
+          choice = await this.uiAlert.showConfirm(
+            'BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE',
+            'CARE',
+            true,
+          );
+        } catch (ex) {
+          // The bean is untouched: without the answer the bags would stay
+          // next to it and count twice.
+          this.uiLog.error('Freeze bean - Question not shown', ex);
+          await this.__undoCreatedBeans(copiedFiles);
+          return false;
+        }
         if (choice === 'YES') {
           //The bag doesn't have any brews, so just delete it.
           if (!(await this.uiBeanStorage.removeByUUID(this.bean.config.uuid))) {
@@ -532,10 +557,13 @@ export class BeanPopoverFreezeComponent implements OnInit {
     const added = await this.uiBeanStorage.addAndConfirm(clonedBean);
     const newBean: Bean = new Bean();
     newBean.initializeByObject(added.entry);
-    this.allNewCreatedBeans.push(newBean);
     if (!added.saved) {
+      // The storage still holds the bag and would write it with the next
+      // bean, also with the removal of a bag stored before.
+      await this.uiBeanStorage.removeByUUID(newBean.config.uuid);
       throw new Error('The frozen bean was not saved');
     }
+    this.allNewCreatedBeans.push(newBean);
   }
 
   public chooseDate(_event) {

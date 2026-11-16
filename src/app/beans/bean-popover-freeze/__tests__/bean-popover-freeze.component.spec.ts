@@ -803,10 +803,11 @@ describe('BeanPopoverFreezeComponent', () => {
         await component.save();
 
         expect(handedToAdd.length).toBe(2);
-        // The bag that was not saved is taken out of the storage as well.
+        // The bag that was not saved is taken out of the storage first:
+        // removing another bag would write it.
         expect(uiBeanStorageSpy.removeByUUID.calls.allArgs()).toEqual([
-          ['copy-1'],
           ['copy-2'],
+          ['copy-1'],
         ]);
         expectNothingChanged();
         expectErrorInOpenDialog();
@@ -873,6 +874,62 @@ describe('BeanPopoverFreezeComponent', () => {
         expect(writtenFiles.size).toBe(0);
         expectNothingChanged();
         expectErrorInOpenDialog();
+      });
+
+      it('keeps the photos of a bag that could not be taken back', async () => {
+        bean.attachments = ['photo.jpg'];
+        open();
+        component.copyAttachments = true;
+        addBags(100, 100);
+        failToSaveBag(2);
+        uiBeanStorageSpy.removeByUUID.and.callFake((uuid: string) =>
+          Promise.resolve(uuid !== 'copy-1' && stored.delete(uuid)),
+        );
+
+        await component.save();
+
+        expect(storedCopies().map((copy) => copy.attachments)).toEqual([
+          ['photo-1.jpg'],
+        ]);
+        expect([...writtenFiles.keys()]).toEqual(['photo-1.jpg']);
+        expect(component.allNewCreatedBeans).toEqual([]);
+        expectErrorInOpenDialog();
+      });
+
+      it('deletes the photos of a bag that went with the write of a later one', async () => {
+        bean.attachments = ['photo.jpg'];
+        open();
+        component.copyAttachments = true;
+        addBags(50, 50, 50);
+        failToSaveBag(3);
+        // Every write stores all beans: the one for the second bag also
+        // takes the first one off the disk.
+        uiBeanStorageSpy.removeByUUID.and.callFake((uuid: string) => {
+          stored.delete(uuid);
+          return Promise.resolve(uuid !== 'copy-1');
+        });
+
+        await component.save();
+
+        expect(writtenFiles.size).toBe(0);
+        expectNothingChanged();
+        expectErrorInOpenDialog();
+      });
+
+      it('takes the bags back when the question about the original cannot be asked', async () => {
+        open();
+        addBags(250);
+        uiAlertSpy.showConfirm.and.rejectWith(new Error('no alert'));
+
+        await component.save();
+
+        expect(storedCopies()).toEqual([]);
+        expect(storedWeight()).toBe(250);
+        expect(bean.weight).toBe(250);
+        expect(component.allNewCreatedBeans).toEqual([]);
+        expect(uiAlertSpy.showMessage.calls.allArgs()).toEqual([ERROR_MESSAGE]);
+        expect(modalCtrlSpy.dismiss.calls.count()).toBe(0);
+        expect(modalCtrlSpy.create.calls.count()).toBe(0);
       });
 
       it('takes the stored bags back when a photo cannot be copied', async () => {
@@ -1524,6 +1581,18 @@ describe('BeanPopoverFreezeComponent on the real bean storage', () => {
     await beanStorage.update(component.bean);
 
     expect(onDisk()).toEqual([250]);
+  });
+
+  it('does not write the bag that was not saved while it takes the others back', async () => {
+    await openFor(100, 60);
+    failBeanWrites((write) => write === 2 || write >= 4);
+
+    await component.save();
+
+    // The first bag stays on the disk until the beans are written again.
+    expect(onDisk()).toEqual([250, 100]);
+    expect(weightsOf(beanStorage.getRawEntries())).toEqual([250]);
+    expect(modalCtrlSpy.dismiss.calls.count()).toBe(0);
   });
 
   it('writes nothing when the beans could not be read', async () => {
