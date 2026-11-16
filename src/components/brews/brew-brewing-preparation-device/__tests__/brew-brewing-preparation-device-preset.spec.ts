@@ -16,6 +16,7 @@ import { UIPreparationHelper } from '../../../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 import { UIToast } from '../../../../services/uiToast';
+import { BrewBrewingComponent } from '../../brew-brewing/brew-brewing.component';
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device.component';
 
 function brew(
@@ -34,8 +35,16 @@ function brew(
 
 /** The private methods that preset the form when a machine is connected. */
 interface Presetting {
-  instanceMeticulousPreparationDevice(device: unknown): Promise<void>;
-  instanceSanremoYOUPreparationDevice(device: unknown): Promise<void>;
+  instanceXeniaPreparationDevice(device: unknown, brew?: Brew): Promise<void>;
+  instanceMove2PreparationDevice(device: unknown, brew?: Brew): Promise<void>;
+  instanceMeticulousPreparationDevice(
+    device: unknown,
+    brew?: Brew,
+  ): Promise<void>;
+  instanceSanremoYOUPreparationDevice(
+    device: unknown,
+    brew?: Brew,
+  ): Promise<void>;
 }
 
 describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with the machine', () => {
@@ -48,6 +57,16 @@ describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with
   };
   const sanremo = {
     deviceConnected: () => Promise.reject(new Error('not reachable')),
+  };
+  const move2 = {
+    connect: (_connected: () => void, failed: () => void) => failed(),
+    destroy: () => undefined,
+  };
+  const xenia = {
+    deviceConnected: () => Promise.resolve(),
+    getScripts: () => Promise.resolve([]),
+    mapScriptsAndSaveTemp: () => undefined,
+    scriptList: [],
   };
 
   beforeEach(() => {
@@ -69,6 +88,7 @@ describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with
           provide: UIAlert,
           useValue: {
             showLoadingSpinner: () => Promise.resolve(),
+            setLoadingSpinnerMessage: () => Promise.resolve(),
             hideLoadingSpinner: () => Promise.resolve(),
             showMessage: () => Promise.resolve(),
           },
@@ -88,6 +108,9 @@ describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with
       () => new BrewBrewingPreparationDeviceComponent(),
     );
     component.data = new Brew();
+    component.brewComponent = {
+      timer: { isTimerRunning: () => false },
+    } as BrewBrewingComponent;
   });
 
   it('takes the settings of the newest brew that used the machine', async () => {
@@ -175,5 +198,75 @@ describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with
       [order[2].preparationDeviceBrew],
     ]);
     expect(brews).toEqual(order);
+  });
+
+  const machines: {
+    name: string;
+    type: PreparationDeviceType;
+    preset: (template: Brew) => Promise<void>;
+  }[] = [
+    {
+      name: 'Xenia',
+      type: PreparationDeviceType.XENIA,
+      preset: (template) =>
+        (component as unknown as Presetting).instanceXeniaPreparationDevice(
+          xenia,
+          template,
+        ),
+    },
+    {
+      name: 'Move 2',
+      type: PreparationDeviceType.MOVE2,
+      preset: (template) =>
+        (component as unknown as Presetting).instanceMove2PreparationDevice(
+          move2,
+          template,
+        ),
+    },
+    {
+      name: 'Meticulous',
+      type: PreparationDeviceType.METICULOUS,
+      preset: (template) =>
+        (
+          component as unknown as Presetting
+        ).instanceMeticulousPreparationDevice(meticulous, template),
+    },
+    {
+      name: 'Sanremo YOU',
+      type: PreparationDeviceType.SANREMO_YOU,
+      preset: (template) =>
+        (
+          component as unknown as Presetting
+        ).instanceSanremoYOUPreparationDevice(sanremo, template),
+    },
+  ];
+
+  for (const machine of machines) {
+    it(`leaves the brew it was handed alone when a setting changes in the form (${machine.name})`, async () => {
+      const template = brew('9', machine.type, 'template', 500);
+
+      await machine.preset(template);
+
+      expect(component.data.preparationDeviceBrew.type).toBe(machine.type);
+      expect(component.data.preparationDeviceBrew.params).toEqual({
+        chosenProfileId: 'template',
+      });
+      component.data.preparationDeviceBrew.params.chosenProfileId = 'changed';
+      expect(template.preparationDeviceBrew.params).toEqual({
+        chosenProfileId: 'template',
+      });
+    });
+  }
+
+  it('keeps the settings of the brew itself while it is edited', async () => {
+    component.isEdit = true;
+    component.data = brew('9', PreparationDeviceType.METICULOUS, 'own', 500);
+    const params: unknown = component.data.preparationDeviceBrew.params;
+
+    await (
+      component as unknown as Presetting
+    ).instanceMeticulousPreparationDevice(meticulous, component.data);
+
+    expect(component.data.preparationDeviceBrew.params).toBe(params);
   });
 });

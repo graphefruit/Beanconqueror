@@ -577,8 +577,10 @@ export class BrewBrewingPreparationDeviceComponent
           _brew?.preparationDeviceBrew?.type === PreparationDeviceType.MOVE2 &&
           _brew?.preparationDeviceBrew.params
         ) {
-          this.data.preparationDeviceBrew.params =
-            _brew?.preparationDeviceBrew.params;
+          // A copy: the form changes them, and the brew belongs to the storage
+          this.data.preparationDeviceBrew.params = this.uiHelper.cloneData(
+            _brew.preparationDeviceBrew.params,
+          );
         } else {
           // Is add
           const lastDeviceBrew = this.lastDeviceBrew(
@@ -708,8 +710,10 @@ export class BrewBrewingPreparationDeviceComponent
             PreparationDeviceType.METICULOUS &&
           _brew?.preparationDeviceBrew.params
         ) {
-          this.data.preparationDeviceBrew.params =
-            _brew?.preparationDeviceBrew.params;
+          // A copy: the form changes them, and the brew belongs to the storage
+          this.data.preparationDeviceBrew.params = this.uiHelper.cloneData(
+            _brew.preparationDeviceBrew.params,
+          );
         } else {
           /** Just if we don't have a chosenProfile find one :)**/
           // Is add
@@ -805,8 +809,10 @@ export class BrewBrewingPreparationDeviceComponent
             PreparationDeviceType.SANREMO_YOU &&
           _brew?.preparationDeviceBrew.params
         ) {
-          this.data.preparationDeviceBrew.params =
-            _brew?.preparationDeviceBrew.params;
+          // A copy: the form changes them, and the brew belongs to the storage
+          this.data.preparationDeviceBrew.params = this.uiHelper.cloneData(
+            _brew.preparationDeviceBrew.params,
+          );
         } else {
           // Is add
           const lastDeviceBrew = this.lastDeviceBrew(
