@@ -342,10 +342,7 @@ export class Bean implements IBean {
     return false;
   }
   public isScannedBean(): boolean {
-    if (this.qr_code !== '') {
-      return true;
-    }
-    return false;
+    return !!this.qr_code;
   }
 
   private getRoastingMachineStorage(): UIRoastingMachineStorage {

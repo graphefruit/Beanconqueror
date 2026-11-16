@@ -1,7 +1,7 @@
 import { BEAN_ACTION } from '../../enums/beans/beanAction';
 import { IBean } from '../../interfaces/bean/iBean';
 import { DeepReadonly } from '../core/read-only';
-import { isFrozen } from './bean-rules';
+import { isFrozen, isScannedBean } from './bean-rules';
 
 /** An entry of the menu of a bean card. */
 export interface BeanActionEntry {
@@ -66,7 +66,7 @@ export function beanActions(
       A.REFRESH_DATA_FROM_QR_CODE,
       'POPOVER_QR_CODE_REFRESH',
       'beanconqueror-refresh-barcode',
-      !!bean.qr_code,
+      isScannedBean(bean),
     ],
     [
       A.TOGGLE_FAVOURITE,

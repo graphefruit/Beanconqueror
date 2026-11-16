@@ -73,14 +73,13 @@ describe('bean rules', () => {
       });
     }
 
-    // Only an empty string counts as not scanned, for Bean and the rule. A
-    // stored bean never has an undefined code: reading it fills in ''.
+    // Only a bean with a code was scanned, for Bean and the rule.
     it('for a code that is not a string, without the way through the store', () => {
       for (const qr_code of [undefined, null, '', 'abc']) {
         const bean = legacyBean({ qr_code });
 
         expect(isScannedBean({ qr_code })).toBe(bean.isScannedBean());
-        expect(isScannedBean({ qr_code })).toBe(qr_code !== '');
+        expect(isScannedBean({ qr_code })).toBe(qr_code === 'abc');
       }
     });
   });

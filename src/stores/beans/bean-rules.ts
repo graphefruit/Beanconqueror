@@ -29,8 +29,9 @@ export function isSelfRoasted(
   return !!bean.bean_roast_information?.bean_uuid;
 }
 
+/** A bean without a code, also one of null, was not scanned. */
 export function isScannedBean(bean: BeanFields<'qr_code'>): boolean {
-  return bean.qr_code !== '';
+  return !!bean.qr_code;
 }
 
 export function hasPhotos(bean: BeanFields<'attachments'>): boolean {

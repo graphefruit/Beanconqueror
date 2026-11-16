@@ -310,6 +310,20 @@ describe('BeanInformationComponent', () => {
     ).not.toBeNull();
   });
 
+  it('shows the QR symbol only for a bean with a code', async () => {
+    const symbol = (fixture: ComponentFixture<BeanInformationComponent>) =>
+      (fixture.nativeElement as HTMLElement).querySelector(
+        'ion-icon[name="qr-code-outline"]',
+      );
+
+    expect(symbol(await render(legacyBean(alpha)))).not.toBeNull();
+    for (const qr_code of [null, undefined, '']) {
+      const unscanned = storedBean('unscanned', { qr_code });
+
+      expect(symbol(await render(unscanned))).toBeNull();
+    }
+  });
+
   it('follows a brew saved elsewhere and a change of the bean', async () => {
     const fixture = await render(legacyBean(alpha));
 
