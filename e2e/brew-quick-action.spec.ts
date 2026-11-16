@@ -80,3 +80,32 @@ test('the Brew quick action opens the brew form again after one was cancelled', 
   await expect(brewField(page, 'Creation Date')).toBeVisible();
   await expect(page.getByRole('dialog')).toHaveCount(1);
 });
+
+for (const type of ['Bean', 'Preparation', 'Mill']) {
+  test(`the ${type} quick action during a brew does nothing but tell that a brew is open`, async ({
+    page,
+  }) => {
+    await openBeansTab(page);
+    await beanAction(page, 'Ethiopia Yirgacheffe Natural', 'Repeat last brew');
+    await fillBrewField(page, 'Ground Coffee (gr)', '17');
+
+    await runQuickAction(page, type);
+
+    await expect(toast(page, 'A brew is already open')).toBeVisible();
+    await expect(page.getByRole('dialog')).toHaveCount(1);
+    await expect(brewField(page, 'Ground Coffee (gr)')).toHaveValue('17');
+
+    await page.getByRole('button', { name: 'Cancel' }).click();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(page).toHaveURL(/\/home\/beans$/);
+  });
+}
+
+test('the Bean quick action opens the bean form when no brew is open', async ({
+  page,
+}) => {
+  await runQuickAction(page, 'Bean');
+
+  await expect(page.getByRole('dialog')).toHaveCount(1);
+  await expect(toast(page, 'A brew is already open')).toHaveCount(0);
+});

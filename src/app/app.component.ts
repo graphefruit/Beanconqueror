@@ -304,6 +304,8 @@ export class AppComponent implements AfterViewInit {
             } catch (ex) {}
             if (payloadType === 'Brew') {
               await this.__trackNewBrew();
+            } else if (!this.uiBrewHelper.canOpenBrewFormIfNotShowMessage()) {
+              // A new form and the change of tab would cover the open brew.
             } else if (payloadType === 'Bean') {
               await this.__trackNewBean();
             } else if (payloadType === 'Preparation') {

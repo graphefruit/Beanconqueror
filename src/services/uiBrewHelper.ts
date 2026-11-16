@@ -611,7 +611,7 @@ export class UIBrewHelper {
    * is still open. Both forms would save on BREW_AUTOMATIC_SAVE and close on
    * CLOSE_BREW_SCREEN, so the open one is kept and no second one is opened.
    */
-  private canOpenBrewFormIfNotShowMessage(): boolean {
+  public canOpenBrewFormIfNotShowMessage(): boolean {
     if (this.brewFormOpen) {
       void this.uiToast.showInfoToast('TOAST_BREW_ALREADY_OPEN');
       return false;
