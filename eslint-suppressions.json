@@ -3435,12 +3435,6 @@
   "src/services/androidPlatform/android-platform.service.ts": {
     "@typescript-eslint/no-empty-function": {
       "count": 3
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 1
-    },
-    "no-empty": {
-      "count": 1
     }
   },
   "src/services/annotationGraphHelper/annotation-graph-helper.service.ts": {
@@ -3582,12 +3576,6 @@
   "src/services/iosPlatform/ios-platform.service.ts": {
     "@typescript-eslint/no-empty-function": {
       "count": 4
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 1
-    },
-    "no-empty": {
-      "count": 1
     }
   },
   "src/services/nfcService/nfc-service.service.ts": {
@@ -3679,7 +3667,7 @@
   },
   "src/services/uiExportImportHelper.ts": {
     "@typescript-eslint/no-floating-promises": {
-      "count": 8
+      "count": 6
     },
     "@typescript-eslint/no-misused-promises": {
       "count": 2
