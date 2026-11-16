@@ -566,43 +566,39 @@ describe('UIBrewHelper brew data', () => {
       );
     });
 
-    it('known gap: throws when the bean of the brew was deleted', () => {
+    it('does not copy a brew whose bean was deleted', () => {
       beans.entries = [];
 
-      expect(() => helper.copyBrewToRepeat(link(recordedBrew()))).toThrowError(
-        TypeError,
-      );
+      expect(helper.copyBrewToRepeat(link(recordedBrew()))).toBeUndefined();
     });
 
-    it('known gap: throws when the preparation of the brew was deleted', () => {
+    it('does not copy a brew whose preparation was deleted', () => {
       preparations.entries = [];
 
-      expect(() => helper.copyBrewToRepeat(link(recordedBrew()))).toThrowError(
-        TypeError,
-      );
+      expect(helper.copyBrewToRepeat(link(recordedBrew()))).toBeUndefined();
     });
 
-    it('known gap: throws when the mill of the brew was deleted', () => {
+    it('does not copy a brew whose mill was deleted', () => {
       mills.entries = [];
 
-      expect(() => helper.copyBrewToRepeat(link(recordedBrew()))).toThrowError(
-        TypeError,
-      );
+      expect(helper.copyBrewToRepeat(link(recordedBrew()))).toBeUndefined();
     });
 
-    it('known gap: throws when a tool of the brew was removed from the preparation', () => {
+    it('leaves out a tool that was removed from the preparation', () => {
       const source = link(recordedBrew());
-      source.method_of_preparation_tools = ['tool-removed'];
+      source.method_of_preparation_tools = ['tool-removed', 'tool-active'];
 
-      expect(() => helper.copyBrewToRepeat(source)).toThrowError(TypeError);
+      const repeat = helper.copyBrewToRepeat(source);
+
+      expect(repeat.method_of_preparation_tools).toEqual(['tool-active']);
     });
 
-    it('known gap: drops a tool that was stored without the archived flag', () => {
+    it('takes over a tool that was stored without the archived flag', () => {
       delete preparation.tools[0].archived;
 
       const repeat = helper.copyBrewToRepeat(link(recordedBrew()));
 
-      expect(repeat.method_of_preparation_tools).toEqual([]);
+      expect(repeat.method_of_preparation_tools).toEqual(['tool-active']);
     });
   });
 

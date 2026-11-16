@@ -340,6 +340,7 @@
     "PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING": "Du hast noch keine Brühmethode archiviert.",
     "TOAST_BREW_ADDED_SUCCESSFULLY": "Brühung hinzugefügt",
     "TOAST_BREW_REPEATED_SUCCESSFULLY": "Brühung wiederholt",
+    "BREW_REPEAT_MISSING_DATA": "Diese Brühung kann nicht wiederholt werden, weil ihre Bohne, Mühle oder Zubereitungsmethode nicht mehr existiert.",
     "TOAST_BREW_ALREADY_OPEN": "Es ist bereits eine Brühung geöffnet",
     "TOAST_BEAN_ADDED_SUCCESSFULLY": "Bohne hinzugefügt",
     "TOAST_MILL_ADDED_SUCCESSFULLY": "Mühle hinzugefügt",

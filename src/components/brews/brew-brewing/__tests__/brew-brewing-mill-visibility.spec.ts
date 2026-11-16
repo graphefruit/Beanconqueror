@@ -28,6 +28,7 @@ import { EMPTY } from 'rxjs';
 import { Brew } from '../../../../classes/brew/brew';
 import { Mill } from '../../../../classes/mill/mill';
 import { Preparation } from '../../../../classes/preparation/preparation';
+import { PreparationTool } from '../../../../classes/preparation/preparationTool';
 import { Settings } from '../../../../classes/settings/settings';
 import { BrewFunction } from '../../../../pipes/brew/brewFunction';
 import { KeysPipe } from '../../../../pipes/keys';
@@ -354,6 +355,58 @@ describe('BrewBrewingComponent mill visibility', () => {
 
       // Assert
       expect(millTimerFieldPresent()).toBeFalse();
+    });
+  });
+
+  describe('taking over a brew whose entries are gone', () => {
+    beforeEach(() => {
+      const gone = () => undefined;
+      (TestBed.inject(UIBeanStorage) as any).getByUUID = gone;
+      (TestBed.inject(UIMillStorage) as any).getByUUID = gone;
+      (TestBed.inject(UIPreparationStorage) as any).getByUUID = gone;
+      setupComponent(undefined);
+      // The inert child elements would stand in for the timers and the machine.
+      for (const child of [
+        'timer',
+        'brewMillTimer',
+        'brewTemperatureTime',
+        'brewFirstDripTime',
+        'brewCoffeeBloomingTime',
+        'brewBrewingPreparationDeviceEl',
+      ]) {
+        (component as any)[child] = undefined;
+      }
+    });
+
+    function template(): Brew {
+      const brew = new Brew();
+      brew.bean = 'bean-gone';
+      brew.mill = 'mill-gone';
+      brew.method_of_preparation = 'preparation-gone';
+      brew.grind_size = '12';
+      return brew;
+    }
+
+    it('opens the repeat without the deleted bean, mill and preparation', async () => {
+      await (component as any).__loadBrew(template(), true);
+
+      expect(component.data.bean).toBe('');
+      expect(component.data.mill).toBe('');
+      expect(component.data.method_of_preparation).toBe('');
+      expect(component.data.grind_size).toBe('12');
+    });
+
+    it('takes over a tool without the archived flag and skips a removed one', async () => {
+      const kept = new PreparationTool();
+      kept.config.uuid = 'tool-kept';
+      delete kept.archived;
+      component.data.getPreparation().tools = [kept];
+      const brew = template();
+      brew.method_of_preparation_tools = ['tool-removed', 'tool-kept'];
+
+      await (component as any).__loadBrew(brew, true);
+
+      expect(component.data.method_of_preparation_tools).toEqual(['tool-kept']);
     });
   });
 });

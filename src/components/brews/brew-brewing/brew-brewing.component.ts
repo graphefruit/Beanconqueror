@@ -1603,7 +1603,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       const brewPreparation: IPreparation = this.uiPreparationStorage.getByUUID(
         brew.method_of_preparation,
       );
-      if (!brewPreparation.finished) {
+      if (brewPreparation && !brewPreparation.finished) {
         this.data.method_of_preparation = brewPreparation.config.uuid;
         /**We need to set the choosen preparation here, else we get the wrong reference,
          *  after we've changed the getPreparation to temporary store
@@ -1636,7 +1636,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     ) {
       if (brew.bean) {
         const brewBean: IBean = this.uiBeanStorage.getByUUID(brew.bean);
-        if (!brewBean.finished) {
+        if (brewBean && !brewBean.finished) {
           this.data.bean = brewBean.config.uuid;
         }
       }
@@ -1663,7 +1663,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     ) {
       if (brew.mill) {
         const brewMill: IMill = this.uiMillStorage.getByUUID(brew.mill);
-        if (!brewMill.finished) {
+        if (brewMill && !brewMill.finished) {
           this.data.mill = brewMill.config.uuid;
         }
       }
@@ -1858,7 +1858,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         const tool = this.data
           .getPreparation()
           .tools.find((e) => e.config.uuid === id);
-        if (tool?.archived === false) {
+        // Tools stored before the archive existed carry no flag
+        if (tool && !tool.archived) {
           this.data.method_of_preparation_tools.push(tool.config.uuid);
         }
       }

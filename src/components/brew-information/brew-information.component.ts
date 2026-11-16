@@ -472,7 +472,20 @@ export class BrewInformationComponent implements OnInit, OnChanges {
         BREW_TRACKING.ACTIONS.FAST_REPEAT,
       );
       const repeatBrew = this.uiBrewHelper.copyBrewToRepeat(this.brew);
-      await this.uiBrewStorage.add(repeatBrew);
+      if (!repeatBrew) {
+        await this.uiAlert.showMessage(
+          'BREW_REPEAT_MISSING_DATA',
+          undefined,
+          undefined,
+          true,
+        );
+        return;
+      }
+      const added = await this.uiBrewStorage.addAndConfirm(repeatBrew);
+      if (!added.saved) {
+        // The storage has already told the user that nothing was saved
+        return;
+      }
 
       this.brewTracking.trackBrew(repeatBrew);
       if (

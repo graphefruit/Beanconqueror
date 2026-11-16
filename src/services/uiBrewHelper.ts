@@ -239,9 +239,21 @@ export class UIBrewHelper {
     }
   }
 
-  public copyBrewToRepeat(_brewToCopy: Brew): Brew {
-    const repeatBrew: Brew = new Brew();
+  /**
+   * Returns nothing when the bean, the preparation or the mill of the brew
+   * was deleted: a copy without them could not be shown or repeated again.
+   */
+  public copyBrewToRepeat(_brewToCopy: Brew): Brew | undefined {
     const brewBean: IBean = this.uiBeanStorage.getByUUID(_brewToCopy.bean);
+    const brewPreparation: IPreparation = this.uiPreparationStorage.getByUUID(
+      _brewToCopy.method_of_preparation,
+    );
+    const brewMill: IMill = this.uiMillStorage.getByUUID(_brewToCopy.mill);
+    if (!brewBean || !brewPreparation || !brewMill) {
+      return undefined;
+    }
+
+    const repeatBrew: Brew = new Brew();
     if (!brewBean.finished) {
       repeatBrew.bean = brewBean.config.uuid;
     }
@@ -249,14 +261,10 @@ export class UIBrewHelper {
 
     repeatBrew.grind_weight = _brewToCopy.grind_weight;
 
-    const brewPreparation: IPreparation = this.uiPreparationStorage.getByUUID(
-      _brewToCopy.method_of_preparation,
-    );
     if (!brewPreparation.finished) {
       repeatBrew.method_of_preparation = brewPreparation.config.uuid;
     }
 
-    const brewMill: IMill = this.uiMillStorage.getByUUID(_brewToCopy.mill);
     if (!brewMill.finished) {
       repeatBrew.mill = brewMill.config.uuid;
     }
@@ -290,7 +298,8 @@ export class UIBrewHelper {
       const tool = _brewToCopy
         .getPreparation()
         .tools.find((e) => e.config.uuid === id);
-      if (tool.archived === false) {
+      // Tools stored before the archive existed carry no flag
+      if (tool && !tool.archived) {
         repeatBrew.method_of_preparation_tools.push(tool.config.uuid);
       }
     }

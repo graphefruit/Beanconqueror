@@ -88,11 +88,16 @@ describe('BrewInformationComponent imported provenance', () => {
             'repeatBrew',
             'canBrewIfNotShowMessage',
             'cupBrew',
+            'copyBrewToRepeat',
+            'checkIfBeanPackageIsConsumedTriggerMessageAndArchive',
           ]),
         },
         {
           provide: UIBrewStorage,
-          useValue: jasmine.createSpyObj('UIBrewStorage', ['update']),
+          useValue: jasmine.createSpyObj('UIBrewStorage', [
+            'update',
+            'addAndConfirm',
+          ]),
         },
         {
           provide: UIToast,
@@ -108,6 +113,7 @@ describe('BrewInformationComponent imported provenance', () => {
             'showLoadingSpinner',
             'hideLoadingSpinner',
             'showConfirm',
+            'showMessage',
           ]),
         },
         {
@@ -444,5 +450,67 @@ describe('BrewInformationComponent imported provenance', () => {
     expect(card).not.toBeNull();
     expect(card.classList.contains('best-brew')).toBeTrue();
     expect(card.classList.contains('favourite-brew')).toBeTrue();
+  });
+
+  describe('fast repeat', () => {
+    type Spies = Record<string, jasmine.Spy>;
+    let brewHelper: Spies;
+    let brewStorage: Spies;
+    let alert: Spies;
+    let toast: Spies;
+    let tracking: Spies;
+
+    beforeEach(() => {
+      brewHelper = TestBed.inject(UIBrewHelper) as unknown as Spies;
+      brewStorage = TestBed.inject(UIBrewStorage) as unknown as Spies;
+      alert = TestBed.inject(UIAlert) as unknown as Spies;
+      toast = TestBed.inject(UIToast) as unknown as Spies;
+      tracking = TestBed.inject(BrewTrackingService) as unknown as Spies;
+      brewHelper.canBrewIfNotShowMessage.and.returnValue(true);
+    });
+
+    it('stores the copy and reports the repeat', async () => {
+      const copy = makeBrew();
+      render(makeBrew());
+      brewHelper.copyBrewToRepeat.and.returnValue(copy);
+      brewStorage.addAndConfirm.and.resolveTo({ entry: copy, saved: true });
+
+      await fixture.componentInstance.fastRepeatBrew();
+
+      expect(brewStorage.addAndConfirm).toHaveBeenCalledOnceWith(copy);
+      expect(tracking.trackBrew).toHaveBeenCalledOnceWith(copy);
+      expect(toast.showInfoToast).toHaveBeenCalledOnceWith(
+        'TOAST_BREW_REPEATED_SUCCESSFULLY',
+      );
+      expect(alert.showMessage).not.toHaveBeenCalled();
+    });
+
+    it('tells the user when bean, mill or preparation of the brew are gone and stores nothing', async () => {
+      render(makeBrew());
+      brewHelper.copyBrewToRepeat.and.returnValue(undefined);
+
+      await fixture.componentInstance.fastRepeatBrew();
+
+      expect(alert.showMessage).toHaveBeenCalledOnceWith(
+        'BREW_REPEAT_MISSING_DATA',
+        undefined,
+        undefined,
+        true,
+      );
+      expect(brewStorage.addAndConfirm).not.toHaveBeenCalled();
+      expect(toast.showInfoToast).not.toHaveBeenCalled();
+    });
+
+    it('does not report a repeat that was not saved', async () => {
+      const copy = makeBrew();
+      render(makeBrew());
+      brewHelper.copyBrewToRepeat.and.returnValue(copy);
+      brewStorage.addAndConfirm.and.resolveTo({ entry: copy, saved: false });
+
+      await fixture.componentInstance.fastRepeatBrew();
+
+      expect(tracking.trackBrew).not.toHaveBeenCalled();
+      expect(toast.showInfoToast).not.toHaveBeenCalled();
+    });
   });
 });
