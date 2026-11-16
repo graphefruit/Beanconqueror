@@ -206,9 +206,10 @@ export class DashboardPage implements OnInit {
   }
 
   public async addBrew() {
-    await this.uiBrewHelper.addBrew();
-    this.loadBrews();
-    this.router.navigate(['/home/brews']);
+    if (await this.uiBrewHelper.addBrew()) {
+      this.loadBrews();
+      this.router.navigate(['/home/brews']);
+    }
   }
 
   public async longPressAdd(event: Event) {

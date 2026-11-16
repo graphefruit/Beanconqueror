@@ -150,3 +150,53 @@ describe('DashboardPage - Unwrapped visibility', () => {
     expect(unwrappedService.getUnwrappedData).not.toHaveBeenCalled();
   });
 });
+
+describe('DashboardPage - adding a brew', () => {
+  let component: DashboardPage;
+  let addBrew: jasmine.Spy;
+  let navigate: jasmine.Spy;
+  let loadBrews: jasmine.Spy;
+
+  beforeEach(() => {
+    addBrew = jasmine.createSpy('addBrew');
+    navigate = jasmine.createSpy('navigate');
+    TestBed.configureTestingModule({
+      providers: [
+        DashboardPage,
+        { provide: UIBrewHelper, useValue: { addBrew } },
+        { provide: Router, useValue: { navigate } },
+        ...[
+          UnwrappedService,
+          UIStatistic,
+          UIBrewStorage,
+          ChangeDetectorRef,
+          UIBeanStorage,
+          UIBeanHelper,
+          UISettingsStorage,
+          UIPreparationStorage,
+          UIMillStorage,
+          ModalController,
+        ].map((provide) => ({ provide, useValue: {} })),
+      ],
+    });
+    component = TestBed.inject(DashboardPage);
+    loadBrews = spyOn(component, 'loadBrews');
+  });
+
+  it('shows the brews once the brew form is closed', async () => {
+    addBrew.and.resolveTo(true);
+
+    await component.addBrew();
+
+    expect(loadBrews).toHaveBeenCalledTimes(1);
+    expect(navigate).toHaveBeenCalledOnceWith(['/home/brews']);
+  });
+
+  it('stays on the dashboard when the brew form was not opened', async () => {
+    addBrew.and.resolveTo(false);
+
+    await component.addBrew();
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+});
