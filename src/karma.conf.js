@@ -22,6 +22,7 @@ const NEW_CODE = [
   'src/classes/settings/settingsSecrets.ts',
   'src/services/a11y/**',
   'src/services/attachmentManifest/**',
+  'src/services/automaticBackup/**',
   'src/services/beanUsage/**',
   'src/services/changeTracking/**',
   'src/services/deletionJournal/**',
