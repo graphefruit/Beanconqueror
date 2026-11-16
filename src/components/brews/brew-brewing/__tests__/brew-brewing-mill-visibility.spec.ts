@@ -408,5 +408,22 @@ describe('BrewBrewingComponent mill visibility', () => {
 
       expect(component.data.method_of_preparation_tools).toEqual(['tool-kept']);
     });
+
+    it('skips an archived tool', async () => {
+      const archived = new PreparationTool();
+      archived.config.uuid = 'tool-archived';
+      archived.archived = true;
+      const active = new PreparationTool();
+      active.config.uuid = 'tool-active';
+      component.data.getPreparation().tools = [archived, active];
+      const brew = template();
+      brew.method_of_preparation_tools = ['tool-archived', 'tool-active'];
+
+      await (component as any).__loadBrew(brew, true);
+
+      expect(component.data.method_of_preparation_tools).toEqual([
+        'tool-active',
+      ]);
+    });
   });
 });
