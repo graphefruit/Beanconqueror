@@ -195,6 +195,10 @@ describe('PreparationEditToolComponent deleting a tool', () => {
   beforeEach(() => {
     now = T0;
     spyOn(Date, 'now').and.callFake(() => now);
+    // The collections report a failed save through the alert of the
+    // running app. None runs here, whatever a spec before this one has
+    // left behind.
+    spyOn(UIAlert, 'getInstance').and.returnValue(undefined);
     device = createDevice({
       PREPARATION: [storedPreparation()],
       BREWS: [
