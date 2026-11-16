@@ -202,7 +202,9 @@ export class BeanPopoverFreezeComponent implements OnInit {
     }
     if (!frozen) {
       // Nothing was stored and the bean of this dialog is as it was: the
-      // dialog stays open for another try.
+      // dialog stays open for another try. Shown also when the collection
+      // has reported the failed save: its message does not tell that no bag
+      // was stored and the bean is unchanged.
       await this.uiAlert.showMessage(
         'BEAN_FREEZE_NOTHING_FROZEN',
         'CARE',
