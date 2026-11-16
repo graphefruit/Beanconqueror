@@ -8,10 +8,10 @@ import { UIAlert } from '../uiAlert';
 import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { AIImportStep, createAIBeanImportError } from './ai-bean-import-error';
-import { AIReadinessResult } from './apple-intelligence-ai-bean-import.service';
 import { CameraOcrService, MultiPassOcrResult } from './camera-ocr.service';
 import { CloudFieldExtractionService } from './cloud-field-extraction.service';
 import { OcrMetadataService } from './ocr-metadata.service';
+import { AIReadinessResult } from './on-device-ai-bean-import.service';
 
 @Injectable({
   providedIn: 'root',
@@ -34,6 +34,12 @@ export class CloudAIBeanImportService {
       return {
         ready: false,
         message: this.translate.instant('APPLE_INTELLIGENCE_USE_ON_DEVICE'),
+      };
+    }
+    if (settings.ai_provider === AI_PROVIDER_ENUM.GEMINI_NANO) {
+      return {
+        ready: false,
+        message: this.translate.instant('GEMINI_NANO_USE_ON_DEVICE'),
       };
     }
     if (settings.ai_provider === AI_PROVIDER_ENUM.NO_PROVIDER) {

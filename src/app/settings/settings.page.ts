@@ -587,6 +587,10 @@ export class SettingsPage {
     return this.platform.is('ios') && this.platform.is('capacitor');
   }
 
+  public isGeminiNanoAvailable(): boolean {
+    return this.isAndroid;
+  }
+
   public onAiProviderChanged(): void {
     this.settings.cloud_ai_api_key = '';
     this.settings.cloud_ai_model = '';
