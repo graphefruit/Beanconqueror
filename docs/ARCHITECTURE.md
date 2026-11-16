@@ -294,10 +294,13 @@ writes:
   collection and uuid of the entry and the time it started, nothing about
   the dependent entries. It is written after the checks and before the first
   save; if it cannot be written, nothing is deleted and the command resolves
-  false. It is removed as soon as the command returns, whatever the result.
-  It is only left when the app ends in between or stays in the database
-  dialog. The next start then calls `DeleteCommands.finishInterrupted()`
-  once, after the data updates:
+  false. The dependent entries are looked up again after it was written, so
+  no other write lies between looking them up and the first save. It is
+  removed as soon as the command returns, whatever the result, with up to
+  three attempts in a row. It is only left when the app ends in between,
+  stays in the database dialog or all three attempts fail. The next start
+  then calls `DeleteCommands.finishInterrupted()` once, after all
+  collections were read and after the data updates:
   - The note is removed first, so it is acted on at most once. If it cannot
     be removed, nothing else happens.
   - It only goes forward. The entry is deleted, with its journal note, when
@@ -309,10 +312,13 @@ writes:
     written (`LAST_RESTORE`), when restoring the internal backup was begun
     at this start and not completed
     (`UIExportImportHelper.restoreAtStartFailed()`), when the note is
-    invalid or lies in the future, or when one of the two notes cannot be
-    read. Every `UIStorage.import()` removes the note before anything else,
+    invalid, lies in the future or is older than 24 hours
+    (`PENDING_DELETION_MAX_AGE_MS`: an interruption is noticed at the next
+    start, an older note is one that was left behind), or when one of the
+    two notes cannot be read. Every `UIStorage.import()` removes the note before anything else,
     also an import that fails.
-  - It runs silently and only logs. What it does not do:
+  - It shows nothing itself and only logs; only reading the two notes can
+    end in the database dialog of `UIStorage`. What it does not do:
     - On a device the check of the internal backup runs before it. After
       an interrupted deletion that check usually finds more entries in
       `Beanconqueror.zip` than in the database and shows its dialog first.
@@ -322,8 +328,9 @@ writes:
       does not delete the remaining ones.
     - Of two stored entries sharing the uuid, the second one is deleted when
       the app ended after the first one was saved as deleted.
-    - A note that could not be removed stays, without an expiry, until the
-      next start, the next of these deletions or the next import removes it.
+    - A note that could not be removed stays until the next start, the next
+      of these deletions or the next import removes it. After 24 hours it is
+      only removed and nothing is deleted for it.
 
 Entries from before change tracking have `updated_at` 0, `rev` 0 and
 `updated_by` `''` ("unknown") and a `created_at` estimated from

@@ -26,6 +26,12 @@ interface PendingDeletion {
 }
 
 /**
+ * An interruption is noticed at the next start. An older note is one that
+ * was left behind, and nothing is deleted that long after the user asked.
+ */
+const PENDING_DELETION_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+
+/**
  * Deletes an entry together with the entries that depend on it, with one
  * save per collection: the dependent entries first, so an entry never
  * disappears while others still point to it, then the entry.
@@ -95,18 +101,22 @@ export class DeleteCommands {
   }
 
   /**
-   * Called once when the app starts: finishes a deletion that the app did
-   * not return from. It only ever goes forward: the entry is deleted when
-   * nothing depends on it any more, and never what depends on it. The note
-   * is removed first, so it is acted on at most once, and nothing is done
+   * Called once when the app starts, and only after every collection was
+   * read completely, as it decides by the entries in memory: finishes a
+   * deletion that the app did not return from. It only ever goes forward:
+   * the entry is deleted when nothing depends on it any more, and never
+   * what depends on it. The note is removed first, so it is acted on at
+   * most once, and nothing is done
    *
    * - when a backup was imported since, or restoring one was begun at this
    *   start and not completed,
    * - when the note lies in the future, as the clock was set back since,
+   *   or is older than PENDING_DELETION_MAX_AGE_MS,
    * - when the note, or the one about the last import, cannot be read or
    *   the note cannot be removed.
    *
-   * Never rejects and shows nothing.
+   * Never rejects. It shows nothing itself, but reading the notes ends in
+   * the database dialog of UIStorage when the database cannot be read.
    */
   public async finishInterrupted(): Promise<void> {
     try {
@@ -137,10 +147,12 @@ export class DeleteCommands {
         restore !== null &&
         restore !== undefined &&
         !(restore.last_restore_at < started_at);
+      const age = Date.now() - started_at;
       const finish =
         !this.uiExportImportHelper.restoreAtStartFailed() &&
         !restored &&
-        started_at <= Date.now() &&
+        age >= 0 &&
+        age <= PENDING_DELETION_MAX_AGE_MS &&
         storage.getByUUID(uuid) !== undefined &&
         this.dependents
           .get(storage)(uuid)
@@ -189,13 +201,13 @@ export class DeleteCommands {
       if (!_storage.getByUUID(_uuid)) {
         return false;
       }
-      const removals: Removal[] = [
+      const removals = (): Removal[] => [
         ...this.dependents.get(_storage)(_uuid),
         [_storage, [_uuid]],
       ];
       // An empty list removes nothing but tells whether the collection
       // takes writes.
-      for (const [storage] of removals) {
+      for (const [storage] of removals()) {
         if (!(await storage.removeManyByUUID([]))) {
           return false;
         }
@@ -208,7 +220,9 @@ export class DeleteCommands {
       // Rejects when the note cannot be stored: nothing is deleted then.
       await this.uiStorage.set(PENDING_DELETION_STORAGE_KEY, note);
       try {
-        for (const [storage, uuids] of removals) {
+        // Looked up anew: what came to depend on the entry while the note
+        // was written goes along.
+        for (const [storage, uuids] of removals()) {
           if (!(await storage.removeManyByUUID(uuids))) {
             return false;
           }
@@ -216,11 +230,15 @@ export class DeleteCommands {
         return true;
       } finally {
         // Whatever the result: the user sees it and decides what is next.
-        await this.uiStorage
-          .remove(PENDING_DELETION_STORAGE_KEY)
-          .catch((ex: unknown) =>
-            this.uiLog.error('DeleteCommands - note not removed', ex),
-          );
+        // Tried again, so a single failure does not leave the note behind.
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          try {
+            await this.uiStorage.remove(PENDING_DELETION_STORAGE_KEY);
+            break;
+          } catch (ex) {
+            this.uiLog.error('DeleteCommands - note not removed', ex);
+          }
+        }
       }
     } catch (ex) {
       this.uiLog.error(

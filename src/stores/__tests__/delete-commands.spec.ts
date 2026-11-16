@@ -60,6 +60,29 @@ describe('DeleteCommands', () => {
     commands = TestBed.inject(DeleteCommands);
   }
 
+  /** Removing a value fails this often before it works. */
+  function failRemoving(times: number) {
+    let left = times;
+    database.remove.and.callFake((_key: string) => {
+      if (left-- > 0) {
+        return Promise.reject(new Error('remove failed'));
+      }
+      database.values.delete(_key);
+      return Promise.resolve();
+    });
+  }
+
+  /** Stores this entry in memory while the note of a deletion is written. */
+  function addWhileNoting(key: string, entry: Stored) {
+    database.set.and.callFake((_key: string, value: unknown) => {
+      if (_key === NOTE) {
+        (storages[key].getRawEntries() as Stored[]).push(entry);
+      }
+      database.values.set(_key, structuredClone(value));
+      return Promise.resolve(true);
+    });
+  }
+
   beforeEach(() => {
     database = new MemoryDatabase();
     restoreAtStartFailed = false;
@@ -287,14 +310,52 @@ describe('DeleteCommands', () => {
         expect(database.values.has('DELETION_JOURNAL')).toBeFalse();
       });
 
-      it('is done although the note cannot be removed', async () => {
+      for (const failures of [1, 2]) {
+        it(`removes the note although removing it failed ${failures} times`, async () => {
+          await startWith([stored('doomed')], brewsOf('doomed', 2));
+          failRemoving(failures);
+
+          expect(await run('doomed')).toBeTrue();
+
+          expect(database.remove.calls.allArgs()).toEqual(
+            Array(failures + 1).fill([NOTE]),
+          );
+          expect(database.values.has(NOTE)).toBeFalse();
+          expect(database.uuids(key)).toEqual([]);
+          expect(database.uuids('BREWS')).toEqual([]);
+        });
+      }
+
+      it('is done although the note cannot be removed with three attempts', async () => {
         await startWith([stored('doomed')], brewsOf('doomed', 2));
-        database.remove.and.rejectWith(new Error('remove failed'));
+        failRemoving(3);
 
         expect(await run('doomed')).toBeTrue();
 
+        expect(database.remove.calls.allArgs()).toEqual([
+          [NOTE],
+          [NOTE],
+          [NOTE],
+        ]);
+        expect(database.values.has(NOTE)).toBeTrue();
         expect(database.uuids(key)).toEqual([]);
         expect(database.uuids('BREWS')).toEqual([]);
+      });
+
+      it('deletes a brew of it that was added while the note was written', async () => {
+        await startWith([stored('doomed')], brewsOf('doomed', 2));
+        addWhileNoting('BREWS', brew('late', 'doomed'));
+
+        expect(await run('doomed')).toBeTrue();
+
+        expect(database.uuids('BREWS')).toEqual([]);
+        expect(inMemory('BREWS')).toEqual([]);
+        expect(database.uuids(key)).toEqual([]);
+        expect(noted()).toEqual([
+          ...uuidsOf(brewsOf('doomed', 2)),
+          'late',
+          'doomed',
+        ]);
       });
 
       it('removes both of its brews that share a uuid', async () => {
@@ -514,13 +575,40 @@ describe('DeleteCommands', () => {
       expect(database.values.has('DELETION_JOURNAL')).toBeFalse();
     });
 
-    it('is done although the note cannot be removed', async () => {
+    for (const failures of [1, 2]) {
+      it(`removes the note although removing it failed ${failures} times`, async () => {
+        await start(seed());
+        failRemoving(failures);
+
+        expect(await commands.deleteGreenBean('doomed')).toBeTrue();
+
+        expect(database.remove.calls.allArgs()).toEqual(
+          Array(failures + 1).fill([NOTE]),
+        );
+        expect(database.values.has(NOTE)).toBeFalse();
+        expect(state((key) => database.uuids(key))).toEqual(gone);
+      });
+    }
+
+    it('is done although the note cannot be removed with three attempts', async () => {
       await start(seed());
-      database.remove.and.rejectWith(new Error('remove failed'));
+      failRemoving(3);
+
+      expect(await commands.deleteGreenBean('doomed')).toBeTrue();
+
+      expect(database.remove.calls.allArgs()).toEqual([[NOTE], [NOTE], [NOTE]]);
+      expect(database.values.has(NOTE)).toBeTrue();
+      expect(state((key) => database.uuids(key))).toEqual(gone);
+    });
+
+    it('deletes a bean roasted from it that was added while the note was written', async () => {
+      await start(seed());
+      addWhileNoting('BEANS', roast('late', 'doomed'));
 
       expect(await commands.deleteGreenBean('doomed')).toBeTrue();
 
       expect(state((key) => database.uuids(key))).toEqual(gone);
+      expect(state(inMemory)).toEqual(gone);
     });
 
     it('resolves false instead of rejecting', async () => {
@@ -577,6 +665,12 @@ describe('DeleteCommands', () => {
       { key: 'GREEN_BEANS', dependentKey: 'BEANS', field: undefined },
     ] as const;
     const STARTED = Date.now() - 60_000;
+    const DAY = 24 * 60 * 60 * 1000;
+    const AGES: [age: string, ms: number, deleted: boolean][] = [
+      ['just under 24 hours', DAY - 1, true],
+      ['exactly 24 hours', DAY, true],
+      ['just over 24 hours', DAY + 1, false],
+    ];
     const pending = (collection: string, started_at = STARTED) => ({
       collection,
       uuid: 'doomed',
@@ -722,6 +816,23 @@ describe('DeleteCommands', () => {
           nothingDeleted(0);
           expect(database.values.has(NOTE)).toBeFalse();
         });
+
+        for (const [age, ms, deleted] of AGES) {
+          it(`deletes ${deleted ? 'the entry' : 'nothing'} when the note is ${age} old`, async () => {
+            await startWith([]);
+            spyOn(Date, 'now').and.returnValue(STARTED + ms);
+
+            await commands.finishInterrupted();
+
+            if (deleted) {
+              expect(database.uuids(key)).toEqual(['kept']);
+              expect(noted()).toEqual(['doomed']);
+            } else {
+              nothingDeleted(0);
+            }
+            expect(database.values.has(NOTE)).toBeFalse();
+          });
+        }
 
         for (const unreadable of [NOTE, 'LAST_RESTORE']) {
           it(`deletes nothing when ${unreadable} cannot be read`, async () => {
