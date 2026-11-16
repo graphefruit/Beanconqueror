@@ -94,7 +94,7 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
       fileName,
     );
     this.addedPaths.add(fileUri.path);
-    this.data.attachments.push(fileUri.path);
+    this.attachmentsToChange().push(fileUri.path);
   }
   public addImage(): void {
     this.uiImage.showOptionChooser().then((_option) => {
@@ -103,9 +103,10 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
         this.uiImage.choosePhoto().then(
           (_paths) => {
             if (_paths.length > 0) {
+              const attachments = this.attachmentsToChange();
               for (const path of _paths) {
                 this.addedPaths.add(path.toString());
-                this.data.attachments.push(path.toString());
+                attachments.push(path.toString());
               }
 
               this.emitChanges();
@@ -125,7 +126,7 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
         this.uiImage.takePhoto().then(
           (_path) => {
             this.addedPaths.add(_path);
-            this.data.attachments.push(_path);
+            this.attachmentsToChange().push(_path);
             this.emitChanges();
           },
           (_error) => {
@@ -137,6 +138,18 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
         );
       }
     });
+  }
+
+  /**
+   * The list to add to, remove from or reorder. The form of a stored entry
+   * shares the array with that entry, which keeps its photos as they are
+   * until the form is saved: such a form gets a list of its own.
+   */
+  private attachmentsToChange(): string[] {
+    if (this.data.config.uuid) {
+      this.data.attachments = [...this.data.attachments];
+    }
+    return this.data.attachments;
   }
 
   private async emitChanges() {
@@ -154,14 +167,9 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
   }
 
   public async deleteImage(_index: number) {
-    const splicedPaths: Array<string> = this.data.attachments.slice(
+    const splicedPaths: Array<string> = this.attachmentsToChange().splice(
       _index,
-      _index + 1,
-    );
-    // A list of its own: the form shares the array with the stored entry,
-    // which keeps its photos until the form is saved.
-    this.data.attachments = this.data.attachments.filter(
-      (_path, index) => index !== _index,
+      1,
     );
     for (const path of splicedPaths) {
       try {
@@ -192,9 +200,10 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
     // Check if the indices are within the valid range
 
     // Perform the swap using a temporary variable
-    const temp = this.data.attachments[index1];
-    this.data.attachments[index1] = this.data.attachments[index2];
-    this.data.attachments[index2] = temp;
+    const attachments = this.attachmentsToChange();
+    const temp = attachments[index1];
+    attachments[index1] = attachments[index2];
+    attachments[index2] = temp;
     this.emitChanges();
 
     this.photoSlides.nativeElement.swiper.slideTo(index1, 200, false);

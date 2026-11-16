@@ -279,21 +279,66 @@ describe('PhotoAddComponent', () => {
       expect(component.data.attachments).toEqual(['b.jpg']);
     }));
 
-    it('deletes the file of a photo that was added in the form', fakeAsync(() => {
-      uiImage.takePhoto.and.resolveTo('taken.jpg');
-      open(['a.jpg'], 'bean-1');
-      settle();
-      choose('TAKE');
+    for (const option of ['TAKE', 'CHOOSE', 'CLIPBOARD']) {
+      it(`deletes the file of a photo that was added in the form (${option})`, fakeAsync(() => {
+        uiImage.takePhoto.and.resolveTo('added.jpg');
+        uiImage.choosePhoto.and.resolveTo(['added.jpg']);
+        spyOn(navigator.clipboard, 'read').and.rejectWith(new Error('no item'));
+        spyOn(navigator.clipboard, 'readText').and.resolveTo(
+          'data:image/jpeg;base64,AAAA',
+        );
+        uiFileHelper.generateInternalPath.and.resolveTo('added.jpg');
+        uiFileHelper.writeInternalFileFromBase64.and.resolveTo({
+          path: 'added.jpg',
+        });
+        const stored = ['a.jpg'];
+        open(stored, 'bean-1');
+        settle();
+        choose(option);
 
-      tapDelete(1);
-      fileDeleted();
+        expect(component.data.attachments).toEqual(['a.jpg', 'added.jpg']);
+        tapDelete(1);
+        fileDeleted();
+        tick(SLIDER_REFRESH_DELAY);
+
+        expect(component.data.attachments).toEqual(['a.jpg']);
+        expect(uiFileHelper.deleteInternalFile).toHaveBeenCalledOnceWith(
+          'added.jpg',
+        );
+        expect(uiImage.removePhotoOnSave).not.toHaveBeenCalled();
+        // A cancelled form must not leave the deleted file on the stored entry.
+        expect(stored).toEqual(['a.jpg']);
+      }));
+    }
+
+    it('leaves the order of the photos of the stored entry as it is', fakeAsync(() => {
+      const stored = ['a.jpg', 'b.jpg'];
+      open(stored, 'bean-1');
+      settle();
+
+      slideButtons(0)[1].click();
+      render();
       tick(SLIDER_REFRESH_DELAY);
 
-      expect(component.data.attachments).toEqual(['a.jpg']);
-      expect(uiFileHelper.deleteInternalFile).toHaveBeenCalledOnceWith(
-        'taken.jpg',
-      );
-      expect(uiImage.removePhotoOnSave).not.toHaveBeenCalled();
+      expect(component.data.attachments).toEqual(['b.jpg', 'a.jpg']);
+      expect(stored).toEqual(['a.jpg', 'b.jpg']);
+    }));
+  });
+
+  describe('changing the photos of an entry that is not stored yet', () => {
+    it('keeps the list of the caller, who cleans up after a cancelled form', fakeAsync(() => {
+      uiImage.takePhoto.and.resolveTo('taken.jpg');
+      const shared = ['a.jpg', 'b.jpg'];
+      open(shared);
+      settle();
+
+      tapDelete(0);
+      fileDeleted();
+      choose('TAKE');
+      tick(SLIDER_REFRESH_DELAY);
+
+      expect(shared).toEqual(['b.jpg', 'taken.jpg']);
+      expect(component.data.attachments).toBe(shared);
     }));
   });
 
