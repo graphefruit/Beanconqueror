@@ -27,10 +27,17 @@ function storedData(_brews: number): Record<string, unknown> {
   };
 }
 
-function createDeviceDatabase(_stored: Record<string, unknown>) {
+function createDeviceDatabase(
+  _stored: Record<string, unknown>,
+  _readable: boolean,
+) {
   const data = new Map<string, unknown>(
     Object.entries(structuredClone(_stored)),
   );
+  if (!_readable) {
+    const unreadable = () => Promise.reject(new Error('database not readable'));
+    return { set: unreadable, get: unreadable, forEach: unreadable };
+  }
   return {
     set: (key: string, value: unknown) => {
       data.set(key, structuredClone(value));
@@ -51,14 +58,18 @@ function createDeviceDatabase(_stored: Record<string, unknown>) {
 describe('A complete internal backup that did not get its name', () => {
   /**
    * The app on a device storing `_stored`, with `_files` in its data
-   * directory.
+   * directory. Without `_readable` the database cannot be read, and the
+   * list of backups offered then stays open.
    */
   async function startApp(
     _stored: Record<string, unknown>,
     _files: Record<string, Uint8Array> = {},
+    _readable = true,
   ) {
     const files = new Map(Object.entries(_files));
     const errors: unknown[] = [];
+    /** The files in the data directory each time the list was opened. */
+    const filesWhenBackupsOffered: string[][] = [];
     const renameInternalFile = jasmine
       .createSpy('renameInternalFile')
       .and.callFake((_from: string, _to: string) => {
@@ -74,7 +85,8 @@ describe('A complete internal backup that did not get its name', () => {
         {
           provide: Storage,
           useValue: {
-            create: () => Promise.resolve(createDeviceDatabase(_stored)),
+            create: () =>
+              Promise.resolve(createDeviceDatabase(_stored, _readable)),
           },
         },
         { provide: EventQueueService, useValue: { dispatch: () => undefined } },
@@ -116,10 +128,19 @@ describe('A complete internal backup that did not get its name', () => {
           useValue: {
             showLoadingSpinner: () => Promise.resolve(),
             hideLoadingSpinner: () => Promise.resolve(),
+            showIOSIndexedDBIssues: () => Promise.resolve(),
           },
         },
         { provide: UIBrewStorage, useValue: {} },
-        { provide: ModalController, useValue: {} },
+        {
+          provide: ModalController,
+          useValue: {
+            create: () => {
+              filesWhenBackupsOffered.push([...files.keys()]);
+              return new Promise(() => undefined);
+            },
+          },
+        },
       ],
     });
     await TestBed.inject(UIStorage).init();
@@ -135,7 +156,15 @@ describe('A complete internal backup that did not get its name', () => {
       await helper.checkDatabaseReadable();
       await helper.checkBackup();
     };
-    return { start, files, errors, renameInternalFile, popover, importBackup };
+    return {
+      start,
+      files,
+      errors,
+      renameInternalFile,
+      popover,
+      importBackup,
+      filesWhenBackupsOffered,
+    };
   }
 
   /** The backup file a device storing `_data` writes. */
@@ -177,6 +206,52 @@ describe('A complete internal backup that did not get its name', () => {
 
     expect(popover).toHaveBeenCalledTimes(1);
     expect(popover.calls.mostRecent().args[1].BREWS).toEqual(data.BREWS);
+  });
+
+  it('is not offered when it holds fewer brews than the database', async () => {
+    const complete = await writeBackupFile(storedData(10));
+    const { start, files, errors, popover, importBackup } = await startApp(
+      storedData(20),
+      { [UNFINISHED]: complete },
+    );
+
+    await start();
+
+    expect([...files.keys()]).toEqual([BACKUP]);
+    expect(popover).not.toHaveBeenCalled();
+    expect(importBackup).not.toHaveBeenCalled();
+    expect(errors).toEqual([]);
+  });
+
+  it('has its name before the backups are offered for a database that cannot be read', async () => {
+    // UIStorage waits 100 ms before it reads again; the test does not wait.
+    const setTimeoutOriginal = window.setTimeout.bind(window) as (
+      _handler: () => void,
+      _ms?: number,
+    ) => number;
+    spyOn(window, 'setTimeout').and.callFake(((
+      _handler: () => void,
+      _ms?: number,
+    ) =>
+      setTimeoutOriginal(
+        _handler,
+        _ms === 100 ? 0 : _ms,
+      )) as typeof window.setTimeout);
+    const complete = await writeBackupFile(storedData(20));
+    const { start, filesWhenBackupsOffered, importBackup } = await startApp(
+      storedData(20),
+      { [UNFINISHED]: complete },
+      false,
+    );
+
+    // Stays at the list of backups, which reads only Beanconqueror.zip.
+    void start();
+    for (let i = 0; i < 100 && filesWhenBackupsOffered.length === 0; i++) {
+      await new Promise((_resolve) => setTimeout(_resolve, 5));
+    }
+
+    expect(filesWhenBackupsOffered).toEqual([[BACKUP]]);
+    expect(importBackup).not.toHaveBeenCalled();
   });
 
   it('is left alone beside an internal backup, which is the one read', async () => {
