@@ -136,7 +136,7 @@ describe('AutomaticBackupService', () => {
     jasmine.clock().tick(5 * 60 * 1000 - 3001);
     await settle();
     expect(runs.length).toBe(1);
-    expect(uiLog.error).not.toHaveBeenCalled();
+    expect(uiLog.error.calls.count()).toBe(0);
 
     jasmine.clock().tick(1);
     await settle();

@@ -21,7 +21,7 @@ describe('IosPlatformService', () => {
 
   /** What the service hands to the automatic backups to write them. */
   function save(): Promise<unknown> {
-    return start.calls.mostRecent().args[1]();
+    return (start.calls.mostRecent().args[1] as () => Promise<unknown>)();
   }
 
   /** Lets what is waiting for an answer go on. */
