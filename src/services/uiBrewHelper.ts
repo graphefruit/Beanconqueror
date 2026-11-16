@@ -611,6 +611,7 @@ export class UIBrewHelper {
    * Quick actions, NFC tags and links can ask for a new brew while a brew form
    * is still open. Both forms would save on BREW_AUTOMATIC_SAVE and close on
    * CLOSE_BREW_SCREEN, so the open one is kept and no second one is opened.
+   * The preparation chooser counts as an open form, as the form follows it.
    */
   public canOpenBrewFormIfNotShowMessage(): boolean {
     if (this.brewFormOpen) {
