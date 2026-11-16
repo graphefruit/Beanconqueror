@@ -139,7 +139,7 @@ describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with
     });
   });
 
-  it('takes the later brew in the array of two with the same time, wherever they stand', async () => {
+  it('takes the later brew in the array of two with the same time', async () => {
     brews = [
       brew('3', PreparationDeviceType.METICULOUS, 'last', 300),
       brew('5', PreparationDeviceType.METICULOUS, 'saved last', 300),
@@ -152,6 +152,57 @@ describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with
 
     expect(component.data.preparationDeviceBrew.params).toEqual({
       chosenProfileId: 'saved last',
+    });
+  });
+
+  const oddTimes: { name: string; times: unknown[] }[] = [
+    {
+      name: 'a brew without a time stands first',
+      times: [undefined, 100, 300],
+    },
+    {
+      name: 'a brew with a time that is no number stands first',
+      times: [NaN, 300],
+    },
+    {
+      name: 'an older brew has its time in milliseconds',
+      times: [1_600_000_000_000, 1_700_000_000],
+    },
+    { name: 'the times are stored as text', times: ['999', '1000'] },
+  ];
+
+  for (const odd of oddTimes) {
+    it(`takes the newest brew when ${odd.name}`, async () => {
+      brews = odd.times.map((time, index) =>
+        brew(
+          `${index}`,
+          PreparationDeviceType.METICULOUS,
+          index === odd.times.length - 1 ? 'last' : 'older',
+          time as number,
+        ),
+      );
+
+      await (
+        component as unknown as Presetting
+      ).instanceMeticulousPreparationDevice(meticulous);
+
+      expect(component.data.preparationDeviceBrew.params).toEqual({
+        chosenProfileId: 'last',
+      });
+    });
+  }
+
+  it('skips a brew that has no machine settings at all', async () => {
+    const without = brew('0', PreparationDeviceType.NONE, 'none', 50);
+    without.preparationDeviceBrew = undefined;
+    brews.unshift(without);
+
+    await (
+      component as unknown as Presetting
+    ).instanceMeticulousPreparationDevice(meticulous);
+
+    expect(component.data.preparationDeviceBrew.params).toEqual({
+      chosenProfileId: 'last',
     });
   });
 

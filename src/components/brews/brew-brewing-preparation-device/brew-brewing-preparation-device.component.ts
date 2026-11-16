@@ -48,6 +48,7 @@ import {
   IBrewWeightFlow,
 } from '../../../classes/brew/brewFlow';
 import { PreparationDeviceBrew } from '../../../classes/brew/preparationDeviceBrew';
+import { estimateCreatedAt } from '../../../classes/changeTracking/changeTracking';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { BluetoothPreparationDevice } from '../../../classes/preparationDevice/bluetoothPreparationDevice';
@@ -539,19 +540,23 @@ export class BrewBrewingPreparationDeviceComponent
    * The machine settings of the newest brew that used this kind of machine.
    * Found by the time of the brew, because other pages sort the storage's
    * array in place; of two brews with the same time the later one in the
-   * array wins, which is the one saved last. A copy: the form changes them,
-   * and the brews of the storage are the live data.
+   * array wins. Old data holds times in milliseconds, as text or not at all,
+   * so the times are brought to one scale first. A copy: the form changes
+   * them, and the brews of the storage are the live data.
    */
   private lastDeviceBrew(
     type: PreparationDeviceType,
   ): PreparationDeviceBrew | undefined {
     let newest: Brew | undefined;
+    let newestTime = 0;
     for (const brew of this.uiBrewStorage.getAllEntries()) {
-      if (
-        brew.preparationDeviceBrew.type === type &&
-        (!newest || brew.config.unix_timestamp >= newest.config.unix_timestamp)
-      ) {
+      if (brew.preparationDeviceBrew?.type !== type) {
+        continue;
+      }
+      const time = estimateCreatedAt(brew.config.unix_timestamp);
+      if (!newest || time >= newestTime) {
         newest = brew;
+        newestTime = time;
       }
     }
     return newest
