@@ -131,6 +131,7 @@ async function startApp(_device: Device) {
   ]);
   uiSettingsStorage.getSettings.and.returnValue(new Settings());
   uiSettingsStorage.saveSettings.and.resolveTo(true);
+  const dismiss = jasmine.createSpy('dismiss');
 
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
@@ -153,7 +154,7 @@ async function startApp(_device: Device) {
       },
       {
         provide: ModalController,
-        useValue: jasmine.createSpyObj('ModalController', ['dismiss']),
+        useValue: { dismiss },
       },
       { provide: UIAlert, useValue: uiAlert },
       {
@@ -183,9 +184,7 @@ async function startApp(_device: Device) {
     preparationStorage,
     uiAlert,
     uiSettingsStorage,
-    modalController: TestBed.inject(
-      ModalController,
-    ) as jasmine.SpyObj<ModalController>,
+    dismiss,
   };
 }
 
@@ -305,7 +304,7 @@ describe('PreparationEditToolComponent deleting a tool', () => {
     expect(device.writes).toEqual(['BREWS', 'PREPARATION']);
     expect(app.uiAlert.showMessage).not.toHaveBeenCalled();
     expect(app.uiSettingsStorage.saveSettings).toHaveBeenCalledTimes(1);
-    expect(app.modalController.dismiss).toHaveBeenCalledTimes(1);
+    expect(app.dismiss).toHaveBeenCalledTimes(1);
   });
 
   it('keeps the tool in brews and preparation when the brews cannot be saved', async () => {
@@ -336,7 +335,7 @@ describe('PreparationEditToolComponent deleting a tool', () => {
       ['ERROR_OCCURED', 'CARE', undefined, true],
     ]);
     // The dialog stays open and the filters stay as they are.
-    expect(app.modalController.dismiss).not.toHaveBeenCalled();
+    expect(app.dismiss).not.toHaveBeenCalled();
     expect(app.uiSettingsStorage.saveSettings).not.toHaveBeenCalled();
   });
 
@@ -351,7 +350,7 @@ describe('PreparationEditToolComponent deleting a tool', () => {
       app.preparationStorage.getByUUID(PREPARATION_UUID).tools.length,
     ).toBe(3);
     expect(app.uiAlert.showMessage).toHaveBeenCalledTimes(1);
-    expect(app.modalController.dismiss).not.toHaveBeenCalled();
+    expect(app.dismiss).not.toHaveBeenCalled();
   });
 
   it('writes nothing when the preparations could not be read', async () => {
@@ -373,7 +372,7 @@ describe('PreparationEditToolComponent deleting a tool', () => {
 
     expect(device.writes).toEqual([]);
     expect(app.uiAlert.showMessage).toHaveBeenCalledTimes(1);
-    expect(app.modalController.dismiss).not.toHaveBeenCalled();
+    expect(app.dismiss).not.toHaveBeenCalled();
   });
 
   it('changes nothing when the deletion is not confirmed', async () => {
