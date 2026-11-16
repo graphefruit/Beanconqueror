@@ -916,27 +916,30 @@ export abstract class StorageClass {
             return true;
           } else {
             this.uiLog.error('Storage - Save Set - Unsuccessfully', _saved);
-            await this.showAlertSafely(
-              'Storage - Save Set - Unsuccessfully  - ' +
-                JSON.stringify(_saved),
-              'CRITICAL ERROR',
-            );
+            await this.__reportSaveFailed();
             return false;
           }
         },
         async (e) => {
           this.uiLog.error('Storage - Save Set Exception - Unsuccessfully', e);
-          await this.showAlertSafely(
-            JSON.stringify(e),
-            'CRITICAL ERROR - SAVE SET',
-          );
+          await this.__reportSaveFailed();
           return false;
         },
       );
     } catch (ex) {
       this.uiLog.error('Storage - Save - Unsuccessfully', ex);
-      await this.showAlertSafely(ex.message, 'CRITICAL ERROR');
+      await this.__reportSaveFailed();
       return false;
     }
+  }
+
+  /** The reason is in the log only, the user cannot act on it. */
+  private async __reportSaveFailed(): Promise<void> {
+    await this.showAlertSafely(
+      'STORAGE_SAVE_FAILED',
+      undefined,
+      undefined,
+      true,
+    );
   }
 }

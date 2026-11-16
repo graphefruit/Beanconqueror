@@ -136,8 +136,10 @@ describe('StorageClass', () => {
     expect(removeResult).toBeFalse();
     expect(mockUIAlert.showMessage).toHaveBeenCalledTimes(3);
     expect(mockUIAlert.showMessage).toHaveBeenCalledWith(
-      'Storage - Save Set - Unsuccessfully  - "not-saved"',
-      'CRITICAL ERROR',
+      'STORAGE_SAVE_FAILED',
+      undefined,
+      undefined,
+      true,
     );
     expect(mockUILog.errors).toContain(
       'Storage - Update  - Unsucessfully - update-uuid - save failed',
@@ -158,12 +160,29 @@ describe('StorageClass', () => {
     expect(removeResult).toBeFalse();
     expect(mockUIAlert.showMessage).toHaveBeenCalledTimes(3);
     expect(mockUIAlert.showMessage).toHaveBeenCalledWith(
-      '{}',
-      'CRITICAL ERROR - SAVE SET',
+      'STORAGE_SAVE_FAILED',
+      undefined,
+      undefined,
+      true,
     );
     expect(mockUILog.errors).toContain(
       'Storage - Update  - Unsucessfully - update-uuid - save failed',
     );
+    // The user gets a text to act on, the reason is only logged.
+    expect(mockUIAlert.showMessage.calls.allArgs().flat()).not.toContain('{}');
+    expect(mockUILog.error).toHaveBeenCalledWith(
+      'Storage - Save Set Exception - Unsuccessfully',
+      new Error('set failed'),
+    );
+  });
+
+  it('counts the message of a failed save as shown by the collection', async () => {
+    mockUIStorage.set.and.resolveTo(false);
+    const shown = StorageClass.getMessagesShown();
+
+    await storage.addAndConfirm(entry());
+
+    expect(StorageClass.getMessagesShown()).toBe(shown + 1);
   });
 
   it('reports failed saves when uiStorage.set throws synchronously', async () => {
@@ -182,8 +201,10 @@ describe('StorageClass', () => {
     expect(removeResult).toBeFalse();
     expect(mockUIAlert.showMessage).toHaveBeenCalledTimes(3);
     expect(mockUIAlert.showMessage).toHaveBeenCalledWith(
-      'set threw',
-      'CRITICAL ERROR',
+      'STORAGE_SAVE_FAILED',
+      undefined,
+      undefined,
+      true,
     );
     expect(mockUILog.errors).toContain(
       'Storage - Update  - Unsucessfully - update-uuid - save failed',
@@ -201,8 +222,10 @@ describe('StorageClass', () => {
     expect(result.saved).toBeFalse();
     expect(result.entry.config.uuid).toEqual(jasmine.any(String));
     expect(mockUIAlert.showMessage).toHaveBeenCalledWith(
-      'Storage - Save Set - Unsuccessfully  - false',
-      'CRITICAL ERROR',
+      'STORAGE_SAVE_FAILED',
+      undefined,
+      undefined,
+      true,
     );
     expect(mockUILog.error).toHaveBeenCalledWith(
       'Storage - Alert - Unsuccessfully',
@@ -248,8 +271,10 @@ describe('StorageClass', () => {
     expect(result.config.uuid).toEqual(jasmine.any(String));
     expect(storage.getAllEntries()[0].config.uuid).toBe(result.config.uuid);
     expect(mockUIAlert.showMessage).toHaveBeenCalledWith(
-      'Storage - Save Set - Unsuccessfully  - false',
-      'CRITICAL ERROR',
+      'STORAGE_SAVE_FAILED',
+      undefined,
+      undefined,
+      true,
     );
   });
 

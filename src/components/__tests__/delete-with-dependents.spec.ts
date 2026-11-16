@@ -344,7 +344,7 @@ for (const card of CARDS) {
       {
         name: 'its collection could not be saved, which the collection tells',
         arrange: () => database.failingWrites.add(card.key),
-        message: [jasmine.any(String), 'CRITICAL ERROR - SAVE SET'],
+        message: ['STORAGE_SAVE_FAILED', undefined, undefined, true],
       },
       {
         name: 'the brews were not read, which the collection tells',
