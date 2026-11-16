@@ -597,10 +597,12 @@ flowchart LR
   `.part` file is an older or cut off write and is left alone. A file that
   cannot be read, or that cannot be renamed, is left as it is and logged;
   the start goes on without an internal backup and the next write deletes
-  the file. No automatic backup can write at the same time: a run is only
-  started by `STORAGE_CHANGED`, which only a write to the database sends,
-  and nothing writes before this point right after `UIStorage.init()`. The
-  `.part` file of the dated copy is not taken over.
+  the file. No automatic backup is expected to write at the same time: a run
+  is only started 3 s after `STORAGE_CHANGED`, which only a write to the
+  database sends, and the start itself (`__appReady`) writes nothing before
+  this point right after `UIStorage.init()`. No test holds this, and writes
+  from elsewhere are not ruled out. The `.part` file of the dated copy is not
+  taken over.
 - At start (native only), `checkBackup()` reads a single file: the internal
   `Beanconqueror.zip` in the data directory, or the legacy `Beanconqueror.json`
   when there is no ZIP (`readBackupZIPFile`). Despite its name,
