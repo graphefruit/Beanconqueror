@@ -269,8 +269,13 @@ export class AttachmentManifestService {
     _event: any,
   ): void {
     const type = _event?.type;
-    if ((type === 'ADD' || type === 'UPDATE') && _event.uuid) {
-      this.__scheduleOwnerCheck(_storage, _collection, _event.uuid);
+    if (type === 'ADD' || type === 'UPDATE') {
+      // Several entries saved together are named in one event.
+      for (const uuid of _event.uuids ?? [_event.uuid]) {
+        if (uuid) {
+          this.__scheduleOwnerCheck(_storage, _collection, uuid);
+        }
+      }
     } else if (type === 'REINITIALIZE') {
       this.__scheduleRebuild();
     }

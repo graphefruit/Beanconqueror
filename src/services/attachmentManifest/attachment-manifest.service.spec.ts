@@ -468,6 +468,28 @@ describe('AttachmentManifestService', () => {
     flush();
   }));
 
+  it('adds the files of entries that were stored together', fakeAsync(() => {
+    const setup = createSetup();
+    const { service } = createService(setup);
+    void service.start();
+    flush();
+    setup.files.set('DATA:first.jpg', 1);
+    setup.files.set('DATA:second.jpg', 2);
+
+    void setup.storages.BEANS.addMany([
+      { config: {}, attachments: ['first.jpg'] },
+      { config: {}, attachments: ['second.jpg'] },
+    ]);
+    tick(AttachmentManifestService.OWNER_CHECK_DELAY_MS);
+
+    expect(service.getManifest().entries.map((_entry) => _entry.path)).toEqual([
+      'first.jpg',
+      'second.jpg',
+    ]);
+    service.stop();
+    flush();
+  }));
+
   it('waits for a flow profile written after the brew was updated', fakeAsync(() => {
     const setup = createSetup();
     setup.storages.BREWS.setEntries([

@@ -259,6 +259,31 @@ writes:
   (`src/services/deletionJournal/deletion-journal.service.ts`). Notes of
   entries that exist again, for example after an import, are dropped when the
   collection loads.
+- `applyChanges({ update, remove, add })` is the one way to write several
+  entries of a collection with a single save: it replaces, removes and adds,
+  in this order, and stores all of it or nothing. `updateMany(entries)`,
+  `addMany(entries)` and `removeManyByUUID(uuids)` are this call with one
+  kind of change. Each entry is stamped by the code that stamps a single
+  `update` or `add`, so its change info is the same as on the single way.
+  - Nothing is changed and `saved` is false while the collection takes no
+    writes, when an entry to update is not stored or cannot be prepared, and
+    when the save fails. After a failed save every change is taken back by
+    itself (replaced entries are the objects from before, added ones are
+    gone, removed ones are back at their places), so an entry another write
+    added meanwhile stays. Objects the caller changed before the call stay
+    changed; callers hand over changed copies or assign new values instead of
+    changing nested values of a typed entry, which it shares with the stored
+    one.
+  - Events and deletion notes follow the save. The call sends one event:
+    `DELETE` when it only removed, otherwise `ADD` (only added) or `UPDATE`
+    with `uuids`, the replaced and added entries. The attachment manifest
+    checks the files of each of them; caches keyed by one `uuid` are dropped
+    as a whole. Removed entries are still announced one by one through
+    `attachOnRemove()` and get their notes with one journal write.
+  - The collection shows at most one message of its own for the call (a
+    refused write once per session, a failed save once).
+    `StorageClass.getMessagesShown()` tells a caller whether it did, so the
+    caller shows its own message only when the collection stayed silent.
 - `removeManyByUUID(uuids)` removes several entries with one save, one
   `DELETE` event and one journal write. `DeleteCommands`
   (`src/stores/delete-commands.ts`) deletes with it what takes other entries

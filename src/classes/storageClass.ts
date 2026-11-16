@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { Observable, Subject } from 'rxjs';
 
+import { IConfig } from '../interfaces/objectConfig/iObjectConfig';
 import { DeletionJournalService } from '../services/deletionJournal/deletion-journal.service';
 import { DeviceIdentityService } from '../services/deviceIdentity/device-identity.service';
 import type { UIAlert as UIAlertService } from '../services/uiAlert';
@@ -39,8 +40,24 @@ export interface StorageWriteOptions {
   touch?: boolean;
 }
 
+/** Changes to one collection that are saved together, see applyChanges(). */
+export interface StorageChanges<T = unknown> {
+  /** New entries; uuid, time and change info are set as add() sets them. */
+  add?: readonly T[];
+  /** Entries that replace the stored ones with their uuid, as update() does. */
+  update?: readonly unknown[];
+  /** Uuids of the entries to remove, see removeManyByUUID(). */
+  remove?: readonly string[];
+}
+
+export interface StorageChangesResult<T = unknown> {
+  saved: boolean;
+  /** Copies of the added entries as they are stored; none when not saved. */
+  added: T[];
+}
+
 interface StoredEntry {
-  config: { uuid: string };
+  config: IConfig;
 }
 
 export abstract class StorageClass {
@@ -249,17 +266,7 @@ export abstract class StorageClass {
       return { entry: this.createFailedAddEntry(_entry), saved };
     }
     try {
-      newEntry = StorageClass.cloneData(this.prepareEntryForStorage(_entry));
-      newEntry.config.uuid = _options.uuid ?? crypto.randomUUID();
-      newEntry.config.unix_timestamp =
-        _options.unix_timestamp ?? StorageClass.getUnixTimestamp();
-      if (this.tracksChanges()) {
-        stampAdded(
-          newEntry.config,
-          Date.now(),
-          this.deviceIdentity.getDeviceId(),
-        );
-      }
+      newEntry = this.createEntry(_entry, _options);
       this.storedData.push(newEntry);
       this.forgetUuidIndex();
       saved = await this.__save();
@@ -270,6 +277,59 @@ export abstract class StorageClass {
       await this.showAlertSafely(ex.message, 'ADD CRITICAL ERROR');
     }
     return { entry: StorageClass.cloneData(newEntry), saved };
+  }
+
+  /** The entry as add() stores it: a copy with its uuid, time and change info. */
+  private createEntry(
+    _entry: unknown,
+    _options: StorageAddOptions = {},
+  ): StoredEntry {
+    const newEntry: StoredEntry = StorageClass.cloneData(
+      this.prepareEntryForStorage(_entry),
+    );
+    newEntry.config.uuid = _options.uuid ?? crypto.randomUUID();
+    newEntry.config.unix_timestamp =
+      _options.unix_timestamp ?? StorageClass.getUnixTimestamp();
+    if (this.tracksChanges()) {
+      stampAdded(
+        newEntry.config,
+        Date.now(),
+        this.deviceIdentity.getDeviceId(),
+      );
+    }
+    return newEntry;
+  }
+
+  /**
+   * The entry that replaces `_stored`: `_updatedObj`, the caller's `_obj`
+   * prepared for storage, with its change info in tracked collections.
+   */
+  private stampReplacement(
+    _obj: unknown,
+    _updatedObj: StoredEntry,
+    _stored: StoredEntry,
+    _touch: boolean,
+  ): StoredEntry {
+    if (!this.tracksChanges()) {
+      return _updatedObj;
+    }
+    // Taken before anything is replaced: the caller's object can be the
+    // stored entry itself or share its config with it.
+    const previous = copyChangeInfo(_stored.config);
+    if (_updatedObj === _obj) {
+      // Keep the stored entry apart from the caller's object, so later
+      // unsaved changes to it cannot reach the disk unstamped with the next
+      // write of another entry.
+      _updatedObj = StorageClass.cloneData(_updatedObj);
+    }
+    stampUpdated(
+      previous,
+      _updatedObj.config,
+      Date.now(),
+      this.deviceIdentity.getDeviceId(),
+      _touch,
+    );
+    return _updatedObj;
   }
 
   public getAllEntries(): Array<any> {
@@ -310,24 +370,12 @@ export abstract class StorageClass {
           this.uiLog.log(
             `Storage - Update  - Successfully - ${updatedObj.config.uuid}`,
           );
-          if (this.tracksChanges()) {
-            // Taken before anything is replaced: the caller's object can be
-            // the stored entry itself or share its config with it.
-            const previous = copyChangeInfo(this.storedData[i].config);
-            if (updatedObj === _obj) {
-              // Keep the stored entry apart from the caller's object, so
-              // later unsaved changes to it cannot reach the disk unstamped
-              // with the next write of another entry.
-              updatedObj = StorageClass.cloneData(updatedObj);
-            }
-            stampUpdated(
-              previous,
-              updatedObj.config,
-              Date.now(),
-              this.deviceIdentity.getDeviceId(),
-              _options.touch !== false,
-            );
-          }
+          updatedObj = this.stampReplacement(
+            _obj,
+            updatedObj,
+            this.storedData[i],
+            _options.touch !== false,
+          );
           this.storedData[i] = updatedObj;
           this.forgetUuidIndex();
           const saved = await this.__save();
@@ -477,64 +525,176 @@ export abstract class StorageClass {
    * back where they were and nothing is reported as removed.
    */
   public async removeManyByUUID(_uuids: readonly string[]): Promise<boolean> {
-    if (await this.__refusesWrite('Delete')) {
-      return false;
+    return (await this.applyChanges({ remove: _uuids })).saved;
+  }
+
+  /**
+   * Replaces the stored entries with the uuids of these and saves the
+   * collection once. Each entry gets the change info update() gives it.
+   * Resolves whether all of them are saved; otherwise none is changed.
+   */
+  public async updateMany(_entries: readonly unknown[]): Promise<boolean> {
+    return (await this.applyChanges({ update: _entries })).saved;
+  }
+
+  /**
+   * Adds these entries and saves the collection once. Each entry gets the
+   * uuid, time and change info add() gives it. When the collection could not
+   * be saved, none of them is left in it.
+   */
+  public addMany<T>(_entries: readonly T[]): Promise<StorageChangesResult<T>> {
+    return this.applyChanges({ add: _entries });
+  }
+
+  /**
+   * Replaces, removes and adds entries, in this order, and saves the
+   * collection once: all of it is stored or nothing. An entry that is in
+   * `update` several times is replaced each time, as updating one by one
+   * does.
+   *
+   * Resolves `saved` true as well when there was nothing to change. Nothing
+   * is changed and `saved` is false while the collection takes no writes,
+   * when an entry to update is not stored or cannot be prepared, and when
+   * the collection could not be saved: the entries in memory are then the
+   * ones from before. Objects the caller changed beforehand stay changed.
+   *
+   * Events are sent and deletion notes written only after the save: one
+   * event for the call, naming the replaced and added entries in `uuids`.
+   */
+  public async applyChanges<T>(
+    _changes: StorageChanges<T>,
+  ): Promise<StorageChangesResult<T>> {
+    const unsaved: StorageChangesResult<T> = { saved: false, added: [] };
+    if (await this.__refusesWrite('Write')) {
+      return unsaved;
+    }
+    const data: StoredEntry[] = this.storedData;
+    const replacements = new Map<number, StoredEntry>();
+    let added: StoredEntry[];
+    try {
+      const updates = _changes.update ?? [];
+      const firstIndex = new Map<string, number>();
+      if (updates.length > 0) {
+        for (let i = data.length - 1; i >= 0; i--) {
+          firstIndex.set(data[i]?.config?.uuid, i);
+        }
+      }
+      for (const update of updates) {
+        const prepared: StoredEntry = this.prepareEntryForStorage(update);
+        const index = firstIndex.get(prepared.config.uuid);
+        if (index === undefined) {
+          this.uiLog.error(
+            `Storage - Write - Unsuccessfully - ${this.DB_PATH} - ${prepared.config.uuid} - not found, nothing was saved`,
+          );
+          return unsaved;
+        }
+        replacements.set(
+          index,
+          this.stampReplacement(
+            update,
+            prepared,
+            replacements.get(index) ?? data[index],
+            true,
+          ),
+        );
+      }
+      added = (_changes.add ?? []).map((_entry) => this.createEntry(_entry));
+    } catch (ex) {
+      this.uiLog.error(
+        `Storage - Write - Unsuccessfully - ${this.DB_PATH} - nothing was saved`,
+        ex,
+      );
+      return unsaved;
+    }
+
+    // Nothing above changed the entries; from here on nothing throws until
+    // the save.
+    const replaced: { previous: StoredEntry; entry: StoredEntry }[] = [];
+    for (const [index, entry] of replacements) {
+      replaced.push({ previous: data[index], entry });
+      data[index] = entry;
     }
     const wanted = new Map<string, number>();
-    for (const uuid of _uuids) {
+    for (const uuid of _changes.remove ?? []) {
       if (uuid) {
         wanted.set(uuid, (wanted.get(uuid) ?? 0) + 1);
       }
     }
-    if (wanted.size === 0) {
-      return true;
-    }
-    const data = this.storedData;
-    const removed: Array<{ index: number; entry: StoredEntry }> = [];
-    for (let i = 0; i < data.length; i++) {
-      const uuid = data[i]?.config?.uuid;
-      const left = wanted.get(uuid) ?? 0;
-      if (left > 0) {
-        wanted.set(uuid, left - 1);
-        removed.push({ index: i, entry: data[i] });
-      } else {
-        data[i - removed.length] = data[i];
+    const removed: { index: number; entry: StoredEntry }[] = [];
+    if (wanted.size > 0) {
+      for (let i = 0; i < data.length; i++) {
+        const uuid = data[i]?.config?.uuid;
+        const left = wanted.get(uuid) ?? 0;
+        if (left > 0) {
+          wanted.set(uuid, left - 1);
+          removed.push({ index: i, entry: data[i] });
+        } else {
+          data[i - removed.length] = data[i];
+        }
       }
+      data.length -= removed.length;
     }
-    if (removed.length === 0) {
-      return true;
+    for (const entry of added) {
+      data.push(entry);
     }
-    data.length -= removed.length;
+    const changed = replaced.length + removed.length + added.length;
+    if (changed === 0) {
+      return { saved: true, added: [] };
+    }
     this.forgetUuidIndex();
 
     if (!(await this.__save())) {
       this.uiLog.error(
-        `Storage - Delete - Unsuccessfully - ${this.DB_PATH} - ${removed.length} entries - save failed`,
+        `Storage - Write - Unsuccessfully - ${this.DB_PATH} - ${changed} entries - save failed`,
       );
-      // Entries read anew meanwhile are the stored ones; the removed entries
-      // do not belong into them.
+      // Entries read anew meanwhile are the stored ones; nothing of this
+      // call belongs into them. Otherwise each change is taken back by
+      // itself, so entries written meanwhile by others stay.
       if (this.storedData === data) {
         for (const { index, entry } of removed) {
           data.splice(Math.min(index, data.length), 0, entry);
         }
+        const previousOf = new Map(
+          replaced.map(({ previous, entry }) => [entry, previous]),
+        );
+        const dropped = new Set(added);
+        let kept = 0;
+        for (const entry of data) {
+          if (!dropped.has(entry)) {
+            data[kept++] = previousOf.get(entry) ?? entry;
+          }
+        }
+        data.length = kept;
         this.forgetUuidIndex();
         // Lets the typed storages drop their cached objects.
         this.__sendEvent('UPDATE');
       }
-      return false;
+      return unsaved;
     }
 
     this.uiLog.log(
-      `Storage - Delete - Successfully - ${this.DB_PATH} - ${removed.length} entries`,
+      `Storage - Write - Successfully - ${this.DB_PATH} - ${replaced.length} replaced, ${removed.length} removed, ${added.length} added`,
     );
     for (const { entry } of removed) {
       this.__sendRemoveMessage(entry.config.uuid);
     }
-    this.__sendEvent('DELETE');
-    // The notes are written only after the collection was saved, as for a
-    // single deletion.
-    await this.__noteDeletions(removed.map((_removed) => _removed.entry));
-    return true;
+    const uuids = [...replaced.map(({ entry }) => entry), ...added].map(
+      (_entry) => _entry.config.uuid,
+    );
+    if (uuids.length === 0) {
+      this.__sendEvent('DELETE');
+    } else {
+      this.eventSubject.next({
+        type: replaced.length + removed.length > 0 ? 'UPDATE' : 'ADD',
+        uuids,
+      });
+    }
+    if (removed.length > 0) {
+      // The notes are written only after the collection was saved, as for a
+      // single deletion.
+      await this.__noteDeletions(removed.map((_removed) => _removed.entry));
+    }
+    return { saved: true, added: StorageClass.cloneData(added) as T[] };
   }
 
   public attachOnRemove(): Observable<any> {
@@ -551,7 +711,8 @@ export abstract class StorageClass {
 
   /**
    * `_uuid` names the entry that was added or updated. Events about the
-   * whole collection (DELETE, REINITIALIZE, backfills) carry none.
+   * whole collection (DELETE, REINITIALIZE, backfills) carry none; the one
+   * event of applyChanges() names its entries in `uuids` instead.
    */
   private __sendEvent(_type: string, _uuid?: string) {
     if (_uuid === undefined) {
