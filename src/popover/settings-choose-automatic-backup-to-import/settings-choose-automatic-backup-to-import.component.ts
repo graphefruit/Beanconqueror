@@ -32,12 +32,12 @@ import { PreImportBackupService } from '../../services/preImportBackup/pre-impor
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
-/** Below 0.01 MB in kB, as a small backup would otherwise read "0Mb". */
+/** Below 0.01 MB in kB, as a small backup would otherwise read "0MB". */
 export function fileSize(bytes: number): string {
   const megabytes = bytes / 1024 / 1024;
   return megabytes < 0.01
     ? `${Math.ceil(bytes / 1024)}kB`
-    : `${+megabytes.toFixed(2)}Mb`;
+    : `${+megabytes.toFixed(2)}MB`;
 }
 
 @Component({
@@ -91,7 +91,7 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
       // the file picker of the import cannot open on Android.
       ...(await this.preImportBackup.list()),
     ].sort((a: FileInfo, b: FileInfo) => {
-      return b.size - a.size;
+      return b.mtime - a.mtime;
     });
     this.foundBackupFiles = internalBackup ? [internalBackup, ...files] : files;
   }
