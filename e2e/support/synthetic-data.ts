@@ -280,6 +280,8 @@ export interface SyntheticSettings {
   matomo_analytics_last_question: number;
   /** `BREW_VIEW_ENUM.SINGLE_PAGE`. */
   brew_view: '0';
+  /** Shows the waters in the profile; the app leaves them out by default. */
+  show_water_section?: boolean;
   /** The profile the change info migration stores for an existing installation. */
   user: {
     experience_mode: 'advanced';

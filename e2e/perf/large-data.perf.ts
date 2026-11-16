@@ -6,6 +6,7 @@ import { BlobReader, configure, TextWriter, ZipReader } from '@zip.js/zip.js';
 import { expect, test } from '../fixtures';
 import { buildBackupZip } from '../support/backup-zip';
 import { completeFirstRun } from '../support/first-run';
+import { readStoredValue } from '../support/stored-values';
 import {
   generateDataSet,
   isOpenBrew,
@@ -365,6 +366,71 @@ for (const tier of TIERS) {
       await expect(
         page.locator('ion-card-title', { hasText: String(tier - brews) }),
       ).toBeVisible({ timeout: 120_000 });
+    });
+
+    test('deleting the water with the most brews', async ({
+      page,
+    }, testInfo) => {
+      const base = dataSet(tier).data;
+      // The profile lists the waters only when they are switched on.
+      const withWaters: SyntheticDataSet = {
+        ...base,
+        SETTINGS: [{ ...base.SETTINGS[0], show_water_section: true }],
+      };
+      const { data } = await startWithData(page, tier, testInfo, {
+        data: withWaters,
+        json: JSON.stringify(withWaters),
+      });
+      const brewsOf = (uuid: string) =>
+        data.BREWS.filter((b) => b.water === uuid).length;
+      const water = data.WATER.filter((w) => !w.finished).reduce((most, w) =>
+        brewsOf(w.config.uuid) > brewsOf(most.config.uuid) ? w : most,
+      );
+      const brews = brewsOf(water.config.uuid);
+      expect(brews).toBeGreaterThan(tier / 10);
+
+      await tabBar(page).getByRole('tab', { name: 'Profile' }).click();
+      await page.getByRole('link', { name: /^Water/ }).click();
+      const card = page
+        .locator('water-information-card')
+        .filter({ hasText: water.name });
+      // The options button of the card has no name of its own.
+      await card.locator('ion-button').click();
+      await page.getByRole('button', { name: 'Delete', exact: true }).click();
+      await page
+        .getByRole('alertdialog')
+        .getByRole('button', { name: 'Yes' })
+        .click();
+      // From the answer until the toast says that the water is deleted and the main thread is
+      // quiet.
+      const deleted = await waitUntilSettled(
+        page,
+        { selector: 'ion-toast' },
+        'input',
+      );
+      await expect(card).toHaveCount(0);
+      await measureMachineLoad(testInfo, 'after');
+      report(testInfo, tier, 'water delete', {
+        changedBrews: brews,
+        ...deleted,
+      });
+      if (checkBudgets) {
+        checkBudget('waterDeleteWithBrews', deleted.settled, budget, testInfo);
+      }
+
+      // After a restart all brews are still there and the water is gone.
+      await page.goto('/');
+      await expect(
+        page.locator('ion-card-title', { hasText: String(tier) }),
+      ).toBeVisible({ timeout: 120_000 });
+      const waters = await readStoredValue<{ config: { uuid: string } }[]>(
+        page,
+        'WATER',
+      );
+      expect(waters?.map((w) => w.config.uuid)).not.toContain(
+        water.config.uuid,
+      );
+      expect(waters).toHaveLength(data.WATER.length - 1);
     });
 
     test('statistics open and draw the brew charts', async ({

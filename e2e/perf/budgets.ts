@@ -33,6 +33,11 @@ export type PerfTier = 7_000 | 15_000 | 30_000;
  * of the grinders that are left counting their beans (`MillInformationCardComponent
  * .getBeansCount()`) when the list is built again, not the deletion. The toast shows before or
  * after that, so `visible` in the `PERF` line is not the time of the deletion alone either.
+ *
+ * `waterDeleteWithBrews` is from three runs (2026-11-16) while the machine was 19 to 51 % busy
+ * with other test runs; four of the nine values were measured above 30 %, so derive it again
+ * when the machine is idle. The water has 1,801 / 3,875 / 7,814 brews, which are saved once
+ * without it.
  */
 export interface Budget {
   /** Navigation start until the home screen shows the brew count. */
@@ -58,6 +63,12 @@ export interface Budget {
    * are left is built again within that time.
    */
   millDeleteWithBrews: number;
+  /**
+   * Deleting the water with the most brews, about a quarter of all, from the answer to the
+   * question until the toast says so and the main thread is quiet. The brews stay and are saved
+   * once without the water.
+   */
+  waterDeleteWithBrews: number;
   /** Profile > Statistics until the general numbers are shown and the main thread is quiet. */
   statisticsOpen: number;
   /**
@@ -101,6 +112,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     beanListOpen: 640, // 414 / 488
     beanDeleteWithBrews: 600, // 438 / 458
     millDeleteWithBrews: 750, // 537 / 573
+    waterDeleteWithBrews: 780, // 575 / 599
     statisticsOpen: 140, // 74 / 81
     statisticsBrewCharts: 330, // 228 / 250
     export: 1_000, // 748 / 763
@@ -116,6 +128,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     beanListOpen: 640, // 414 / 432
     beanDeleteWithBrews: 740, // 562 / 565
     millDeleteWithBrews: 1_500, // 1,137 / 1,149
+    waterDeleteWithBrews: 1_200, // 860 / 921
     statisticsOpen: 160, // 85 / 101
     statisticsBrewCharts: 450, // 320 / 340
     export: 1_900, // 1,364 / 1,395
@@ -131,6 +144,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     beanListOpen: 680, // 459 / 519
     beanDeleteWithBrews: 1_300, // 853 / 954
     millDeleteWithBrews: 4_400, // 3,274 / 3,326
+    waterDeleteWithBrews: 2_000, // 1,463 / 1,494
     statisticsOpen: 210, // 112 / 154
     statisticsBrewCharts: 710, // 531 / 541
     export: 2_300, // 1,588 / 1,760
