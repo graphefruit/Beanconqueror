@@ -1431,6 +1431,8 @@
     "IMPORT_ROASTED_BEANS_EXCEL": "Import roasted beans via Excel table",
     "IMPORT_GREEN_BEANS_EXCEL": "Import green beans via Excel table",
     "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": "It looks like that the chosen excel file is corrupted, has wrong data, is wrong structured, or was wrongly chosen. Because of this no beans could be imported.",
+    "BEANS_IMPORTED_PARTLY_DESCRIPTION": "Imported beans: {{imported}}. Not imported, because they could not be saved: {{failed}}.",
+    "BEANS_IMPORTED_UNSUCCESSFULLY_NOT_SAVED": "No beans were imported because they could not be saved. Please check the free storage and try again.",
     "OK": "Ok",
     "BEAN_SORT_BEAN_AGE": "Bean age",
     "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "All found entries in the excel list, have been transformed into new green beans, have great roasts!",

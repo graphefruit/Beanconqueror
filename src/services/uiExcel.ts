@@ -864,14 +864,121 @@ export class UIExcel {
     }
   }
 
+  /**
+   * Stores the beans read from the file one by one. A bean the storage could
+   * not write is taken out of it again: it would be written with a later save
+   * although it was reported as not imported.
+   */
+  private async storeImportedBeans<T extends Bean | GreenBean>(
+    _storage: UIBeanStorage | UIGreenBeanStorage,
+    _beans: Array<T>,
+  ): Promise<Array<T>> {
+    const stored: Array<T> = [];
+    const notSaved: Array<string> = [];
+    for (const bean of _beans) {
+      try {
+        const added = await _storage.addAndConfirm(bean);
+        if (added.saved) {
+          stored.push(added.entry);
+        } else {
+          notSaved.push(added.entry?.config?.uuid);
+        }
+      } catch (ex) {
+        this.uiLog.error(`Excel import - Bean not stored: ${ex?.message}`);
+      }
+    }
+    if (notSaved.length > 0) {
+      try {
+        // All at once: every save that fails raises an alert of its own.
+        await _storage.removeManyByUUID(notSaved);
+      } catch (ex) {
+        this.uiLog.error(`Excel import - Cleanup failed: ${ex?.message}`);
+      }
+    }
+    return stored;
+  }
+
+  /**
+   * Switches on the fields the stored beans have values for. Runs after the
+   * beans are stored, so a failure here must not report the import as failed.
+   */
+  private async showFieldsOfImportedBeans(
+    _beans: Array<Bean | GreenBean>,
+  ): Promise<void> {
+    try {
+      if (
+        _beans.some(
+          (bean) =>
+            'frozenDate' in bean && (bean.frozenDate || bean.unfrozenDate),
+        ) &&
+        this.settings.freeze_coffee_beans === false
+      ) {
+        this.settings.freeze_coffee_beans = true;
+        await this.uiSettingsStorage.saveSettings(this.settings);
+      }
+      if (
+        // A bean without variety data carries one empty entry.
+        _beans.some((bean) =>
+          bean.bean_information.some((info) => Object.keys(info).length > 0),
+        ) &&
+        this.settings.bean_manage_parameters.bean_information === false
+      ) {
+        this.settings.bean_manage_parameters.bean_information = true;
+        await this.uiSettingsStorage.saveSettings(this.settings);
+      }
+    } catch (ex) {
+      this.uiLog.error(`Excel import - Settings not saved: ${ex?.message}`);
+    }
+  }
+
+  /** Tells the user how many of the beans read from the file were stored. */
+  private async reportImport(
+    _read: number,
+    _stored: number,
+    _successMessage: string,
+  ): Promise<void> {
+    try {
+      if (_read === 0) {
+        this.uiAlert.showMessage(
+          'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
+          'IMPORT_UNSUCCESSFULLY',
+          'OK',
+          false,
+        );
+      } else if (_stored === 0) {
+        await this.uiAlert.showMessage(
+          'BEANS_IMPORTED_UNSUCCESSFULLY_NOT_SAVED',
+          'IMPORT_UNSUCCESSFULLY',
+          undefined,
+          true,
+        );
+      } else if (_stored < _read) {
+        await this.uiAlert.showMessage(
+          this.translate.instant('BEANS_IMPORTED_PARTLY_DESCRIPTION', {
+            imported: _stored,
+            failed: _read - _stored,
+          }),
+          this.translate.instant('CARE'),
+        );
+      } else {
+        await this.uiAlert.showMessage(
+          _successMessage,
+          'IMPORT_SUCCESSFULLY',
+          undefined,
+          true,
+        );
+      }
+    } catch (ex) {
+      this.uiLog.error(`Excel import - Message not shown: ${ex?.message}`);
+    }
+  }
+
   public async importGreenBeansByExcel(_arrayBuffer) {
     try {
       /* data is an ArrayBuffer */
       const wb = XLSX.read(_arrayBuffer);
       const data = XLSX.utils.sheet_to_json(wb.Sheets['Green Beans']);
 
-      let varietyInformationWhereAdded: boolean = false;
-      const addedBeans: Array<GreenBean> = [];
       const toAddBeans: Array<GreenBean> = [];
       for (const entry of data) {
         /**
@@ -1050,7 +1157,6 @@ export class UIExcel {
           }
 
           if (hasOneBeanInformation) {
-            varietyInformationWhereAdded = true;
             bean.bean_information.push(beanInformation);
           }
         }
@@ -1063,40 +1169,16 @@ export class UIExcel {
         toAddBeans.push(bean);
       }
 
-      if (varietyInformationWhereAdded) {
-        if (this.settings.bean_manage_parameters.bean_information === false) {
-          this.settings.bean_manage_parameters.bean_information = true;
-          await this.uiSettingsStorage.saveSettings(this.settings);
-        }
-      }
-
-      /**
-       * Add all beans afterwards to not have some added and then going into an exception
-       */
-      for await (const addBean of toAddBeans) {
-        try {
-          const newBean: GreenBean = await this.uiGreenBeanStorage.add(addBean);
-          addedBeans.push(newBean);
-        } catch (ex) {}
-      }
-
-      if (addedBeans.length > 0) {
-        try {
-          await this.uiAlert.showMessage(
-            'GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
-            'IMPORT_SUCCESSFULLY',
-            undefined,
-            true,
-          );
-        } catch (ex) {}
-      } else {
-        this.uiAlert.showMessage(
-          'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
-          'IMPORT_UNSUCCESSFULLY',
-          'OK',
-          false,
-        );
-      }
+      const addedBeans: Array<GreenBean> = await this.storeImportedBeans(
+        this.uiGreenBeanStorage,
+        toAddBeans,
+      );
+      await this.showFieldsOfImportedBeans(addedBeans);
+      await this.reportImport(
+        toAddBeans.length,
+        addedBeans.length,
+        'GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
+      );
     } catch (ex) {
       this.uiAlert.showMessage(
         ex.message,
@@ -1113,9 +1195,6 @@ export class UIExcel {
       const wb = XLSX.read(_arrayBuffer);
       const data = XLSX.utils.sheet_to_json(wb.Sheets['Beans']);
 
-      let isOneEntryFrozen: boolean = false;
-      let varietyInformationWhereAdded: boolean = false;
-      const addedBeans: Array<Bean> = [];
       const toAddBeans: Array<Bean> = [];
       for (const entry of data) {
         /**
@@ -1333,7 +1412,6 @@ export class UIExcel {
             hasOneBeanInformation = true;
           }
           if (hasOneBeanInformation) {
-            varietyInformationWhereAdded = true;
             bean.bean_information.push(beanInformation);
           }
         }
@@ -1355,14 +1433,12 @@ export class UIExcel {
 
         const frozenDateEntry = entry['Frozen Date'];
         if (frozenDateEntry && Number(frozenDateEntry) > 0) {
-          isOneEntryFrozen = true;
           bean.frozenDate = this.getJsDateFromExcel(Number(frozenDateEntry));
           bean.frozenId = this.uiBeanHelper.generateFrozenId();
         }
 
         const unfrozenDateEntry = entry['Unfrozen Date'];
         if (unfrozenDateEntry && Number(unfrozenDateEntry) > 0) {
-          isOneEntryFrozen = true;
           bean.unfrozenDate = this.getJsDateFromExcel(
             Number(unfrozenDateEntry),
           );
@@ -1370,47 +1446,18 @@ export class UIExcel {
         toAddBeans.push(bean);
       }
 
-      if (isOneEntryFrozen) {
-        // Activate the frozen feature if not active
-        if (this.settings.freeze_coffee_beans === false) {
-          this.settings.freeze_coffee_beans = true;
-          await this.uiSettingsStorage.saveSettings(this.settings);
-        }
-      }
-      if (varietyInformationWhereAdded) {
-        if (this.settings.bean_manage_parameters.bean_information === false) {
-          this.settings.bean_manage_parameters.bean_information = true;
-          await this.uiSettingsStorage.saveSettings(this.settings);
-        }
-      }
-
-      /**
-       * Add all beans afterwards to not have some added and then going into an exception
-       */
-      for await (const addBean of toAddBeans) {
-        try {
-          const newBean: Bean = await this.uiBeanStorage.add(addBean);
-          addedBeans.push(newBean);
-        } catch (ex) {}
-      }
-
+      const addedBeans: Array<Bean> = await this.storeImportedBeans(
+        this.uiBeanStorage,
+        toAddBeans,
+      );
+      await this.showFieldsOfImportedBeans(addedBeans);
+      await this.reportImport(
+        toAddBeans.length,
+        addedBeans.length,
+        'BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
+      );
       if (addedBeans.length > 0) {
-        try {
-          await this.uiAlert.showMessage(
-            'BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
-            'IMPORT_SUCCESSFULLY',
-            undefined,
-            true,
-          );
-        } catch (ex) {}
         this.uiBeanHelper.showBeans(addedBeans);
-      } else {
-        this.uiAlert.showMessage(
-          'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
-          'IMPORT_UNSUCCESSFULLY',
-          'OK',
-          false,
-        );
       }
     } catch (ex) {
       this.uiAlert.showMessage(
