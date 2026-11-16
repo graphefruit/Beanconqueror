@@ -263,7 +263,11 @@ export class Brew implements IBrew {
         this.bean,
       ) as IBean;
       const bean: Bean = new Bean();
-      bean.initializeByObject(iBean);
+      // The bean can be gone, as after an import of data that was damaged:
+      // the brew is still shown then, like one whose mill is gone.
+      if (iBean) {
+        bean.initializeByObject(iBean);
+      }
       BrewInstanceHelper.beans[uniqueCachingID] = bean;
     }
     return BrewInstanceHelper.beans[uniqueCachingID];
@@ -283,7 +287,9 @@ export class Brew implements IBrew {
           this.method_of_preparation,
         ) as IPreparation;
       const preparation: Preparation = new Preparation();
-      preparation.initializeByObject(iPreparation);
+      if (iPreparation) {
+        preparation.initializeByObject(iPreparation);
+      }
 
       BrewInstanceHelper.preparations[uniqueCachingID] = preparation;
     }
