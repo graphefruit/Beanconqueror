@@ -88,6 +88,27 @@ function childOfRootHolding(root: Element, element: Element): Element | null {
 }
 
 /**
+ * Names the dialog of a modal after the title in its header, so a screen
+ * reader says which dialog opened. The dialog role sits on a wrapper inside
+ * the modal's shadow root, out of reach of `aria-labelledby` from the title,
+ * and Ionic reads `aria-label` of the host only before the content exists.
+ * A name given at creation (`htmlAttributes`) is kept.
+ */
+function nameDialogAfterTitle(modal: HTMLElement): void {
+  const dialog = modal.shadowRoot?.querySelector('[role="dialog"]');
+  if (!dialog || dialog.hasAttribute('aria-label')) {
+    return;
+  }
+  const title = modal
+    .querySelector('ion-title')
+    ?.textContent?.replace(/\s+/g, ' ')
+    .trim();
+  if (title) {
+    dialog.setAttribute('aria-label', title);
+  }
+}
+
+/**
  * Keeps assistive technology on the overlay on top.
  *
  * Ionic hides the page behind an open overlay (aria-hidden on the router
@@ -189,7 +210,15 @@ export class OverlayStackA11yService {
     if (!prefix || !event.type.startsWith(prefix)) {
       return;
     }
-    switch (event.type.slice(prefix.length)) {
+    const phase = event.type.slice(prefix.length);
+    // Again once it is open: the title may be rendered only by then.
+    if (
+      overlay.localName === 'ion-modal' &&
+      (phase === 'WillPresent' || phase === 'DidPresent')
+    ) {
+      nameDialogAfterTitle(overlay);
+    }
+    switch (phase) {
       case 'WillPresent':
         this.presented.add(overlay);
         this.leaving.delete(overlay);

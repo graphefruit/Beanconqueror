@@ -882,7 +882,8 @@ file maps them onto Ionic's variables at the end.
   page and every dialog below it are `inert` and `aria-hidden` until it starts
   to close, and Tab goes round inside it. It also shows the router outlet
   again when Ionic has left it `aria-hidden` with no blocking overlay open.
-  Covered by `e2e/overlay-stack-a11y.spec.ts`.
+  Covered by `e2e/overlay-stack-a11y.spec.ts`. The same service names the
+  dialog of a modal after the `ion-title` in its header.
 - Status messages: toasts and loading messages are spoken through `Announcer`
   (`src/services/a11y/announcer.service.ts`) from the one visually hidden live
   region of the Angular CDK (`LIVE_REGION` in `src/services/a11y/live-region.ts`),

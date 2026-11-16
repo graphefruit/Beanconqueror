@@ -154,6 +154,63 @@ describe('OverlayStackA11yService', () => {
     expect(state(page)).toEqual(UNTOUCHED);
   });
 
+  describe('with the dialog Ionic renders inside a modal', () => {
+    /** As Ionic renders it: the dialog role on a wrapper in the shadow root. */
+    function createModal(title?: string): {
+      modal: FakeOverlay;
+      dialog: Element;
+    } {
+      const modal = create();
+      const dialog = doc.createElement('div');
+      dialog.setAttribute('role', 'dialog');
+      modal.shadowRoot.append(dialog);
+      if (title !== undefined) {
+        const titleElement = doc.createElement('ion-title');
+        titleElement.textContent = title;
+        modal.append(titleElement);
+      }
+      return { modal, dialog };
+    }
+
+    it('names the dialog after the title in its header', () => {
+      const { modal, dialog } = createModal('\n  Add bean\n  ');
+
+      startPresenting(modal);
+
+      expect(dialog.getAttribute('aria-label')).toBe('Add bean');
+    });
+
+    it('takes a title that is rendered while the dialog opens', () => {
+      const { modal, dialog } = createModal('');
+      startPresenting(modal);
+      expect(dialog.hasAttribute('aria-label')).toBeFalse();
+
+      modal.querySelector('ion-title').textContent = 'Edit bean';
+      finishPresenting(modal);
+
+      expect(dialog.getAttribute('aria-label')).toBe('Edit bean');
+    });
+
+    it('keeps a name the dialog was created with', () => {
+      const { modal, dialog } = createModal('Add bean');
+      dialog.setAttribute('aria-label', 'Given name');
+
+      startPresenting(modal);
+      finishPresenting(modal);
+
+      expect(dialog.getAttribute('aria-label')).toBe('Given name');
+    });
+
+    it('leaves a dialog without a title unnamed', () => {
+      const { modal, dialog } = createModal();
+
+      startPresenting(modal);
+      finishPresenting(modal);
+
+      expect(dialog.hasAttribute('aria-label')).toBeFalse();
+    });
+  });
+
   it('hides a dialog while another one is open above it', async () => {
     const cupping = await present();
     const picker = await present();

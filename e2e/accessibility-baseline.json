@@ -1,11 +1,9 @@
 {
   "add-bean": {
     "light": [
-      "aria-dialog-name | #bean-add,.modal-wrapper",
       "tabindex | .button-small"
     ],
     "dark": [
-      "aria-dialog-name | #bean-add,.modal-wrapper",
       "tabindex | .button-small"
     ]
   },

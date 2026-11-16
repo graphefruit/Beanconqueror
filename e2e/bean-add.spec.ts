@@ -27,6 +27,8 @@ import { toast } from './support/toast';
 test('a bean cannot be saved without a name', async ({ page }) => {
   await startWithBeans(page);
   await openAddBean(page);
+  // The dialog is named after its title.
+  await expect(page.getByRole('dialog', { name: 'Add bean' })).toBeVisible();
 
   // Known defect: without a name "Save" does nothing and says nothing; the
   // name is not marked as missing either.
