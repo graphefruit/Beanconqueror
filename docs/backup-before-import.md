@@ -187,6 +187,13 @@ The current data is never left changed without a file that holds it:
 This does not hold where no file is written: in the browser, and when the
 device stored neither settings nor entries.
 
+A known limit of rolling back: the keys to remove are told by the values read
+before the import. A key that something else stores for the first time while
+the import is running, and that the imported file holds as well, is removed
+with them. Nothing in the app is known to do so: the restore at start-up runs
+before the storages are set up, and the import in the settings blocks the
+screen until it is done.
+
 ## Going back
 
 - Settings › Find and import an automatic backup file lists these files
