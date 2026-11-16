@@ -58,7 +58,6 @@ import { OverlayStackA11yService } from '../services/a11y/overlay-stack-a11y.ser
 import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { AttachmentManifestService } from '../services/attachmentManifest/attachment-manifest.service';
 import { BrewReferencesService } from '../services/brewReferences/brew-references.service';
-import { CleanupService } from '../services/cleanupService/cleanup.service';
 import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { DeletionJournalService } from '../services/deletionJournal/deletion-journal.service';
 import { DeviceIdentityService } from '../services/deviceIdentity/device-identity.service';
@@ -133,7 +132,6 @@ export class AppComponent implements AfterViewInit {
   private readonly uiMillHelper = inject(UIMillHelper);
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly bleManager = inject(CoffeeBluetoothDevicesService);
-  private readonly cleanupService = inject(CleanupService);
   private readonly uiExportImportHelper = inject(UIExportImportHelper);
   private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly uiStorage = inject(UIStorage);
@@ -378,7 +376,6 @@ export class AppComponent implements AfterViewInit {
             this.brewReferences.logMissingReferences();
             // After the data updates, which can still change uuids.
             await this.deleteCommands.finishInterrupted();
-            await this.__checkCleanup();
             await this.__initApp();
             this.uiHelper.setAppReady(1);
             try {
@@ -432,12 +429,6 @@ export class AppComponent implements AfterViewInit {
   private async __checkUpdate() {
     try {
       await this.uiUpdate.checkUpdate();
-    } catch (ex) {}
-  }
-
-  private async __checkCleanup() {
-    try {
-      await this.cleanupService.cleanupOldBrewData();
     } catch (ex) {}
   }
 

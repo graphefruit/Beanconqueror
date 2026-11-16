@@ -77,7 +77,6 @@ sequenceDiagram
     App->>Storage: Promise.all(storageReady())
     App->>Update: __checkUpdate() → UIUpdate.checkUpdate() (migrations)
     App->>Storage: DeleteCommands.finishInterrupted()
-    App->>App: __checkCleanup() → CleanupService.cleanupOldBrewData()
     App->>App: __initApp(): language, analytics, ThemeService.initialize(),<br/>welcome/update screens, Bluetooth reconnect (after 3 s), startup view
     App->>Helper: setAppReady(1)
     App->>App: AttachmentManifestService.start() (background, native only)
