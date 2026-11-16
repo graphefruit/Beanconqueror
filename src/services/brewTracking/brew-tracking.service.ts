@@ -24,7 +24,7 @@ export class BrewTrackingService {
       /**
        * We just send data for the matched QR-Code, all other brews combined with beans are offline brews
        */
-      if (clonedBrew.getBean().qr_code !== '') {
+      if (clonedBrew.getBean().isScannedBean()) {
         try {
           const serverBrew: ServerBrew = this.mapBrewToServer(clonedBrew);
           this.serverCommunication
