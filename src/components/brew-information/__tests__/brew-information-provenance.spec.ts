@@ -97,6 +97,7 @@ describe('BrewInformationComponent imported provenance', () => {
           provide: UIBrewStorage,
           useValue: jasmine.createSpyObj('UIBrewStorage', [
             'update',
+            'updateMany',
             'addAndConfirm',
           ]),
         },
@@ -451,6 +452,96 @@ describe('BrewInformationComponent imported provenance', () => {
     expect(card).not.toBeNull();
     expect(card.classList.contains('best-brew')).toBeTrue();
     expect(card.classList.contains('favourite-brew')).toBeTrue();
+  });
+
+  describe('best brew', () => {
+    type Spies = Record<string, jasmine.Spy>;
+    let brewStorage: Spies;
+    let alert: Spies;
+    let brew: Brew;
+    let formerBest: Brew;
+    let ordinary: Brew;
+    /** The brews as they were handed to the storage. */
+    let handedOver: { uuid: string; best_brew: boolean }[];
+
+    function sibling(uuid: string, best: boolean): Brew {
+      const other = makeBrew();
+      other.config.uuid = uuid;
+      other.best_brew = best;
+      return other;
+    }
+
+    beforeEach(() => {
+      brewStorage = TestBed.inject(UIBrewStorage) as unknown as Spies;
+      alert = TestBed.inject(UIAlert) as unknown as Spies;
+      brew = makeBrew();
+      formerBest = sibling('former-best', true);
+      ordinary = sibling('ordinary', false);
+      (
+        TestBed.inject(UIBeanHelper) as unknown as Spies
+      ).getAllBrewsForThisBean.and.returnValue([formerBest, brew, ordinary]);
+      handedOver = [];
+      brewStorage.updateMany.and.callFake((brews: Brew[]) => {
+        handedOver = brews.map((_brew) => ({
+          uuid: _brew.config.uuid,
+          best_brew: _brew.best_brew,
+        }));
+        // What is on the screen is not changed before it is saved.
+        expect(brews).not.toContain(brew);
+        expect(brews).not.toContain(formerBest);
+        return Promise.resolve(true);
+      });
+      render(brew);
+    });
+
+    it('marks the brew and takes the mark off the former best one with one save', async () => {
+      await fixture.componentInstance.toggleBestBrew();
+
+      expect(brewStorage.updateMany).toHaveBeenCalledTimes(1);
+      expect(brewStorage.update).not.toHaveBeenCalled();
+      expect(handedOver).toEqual([
+        { uuid: 'brew-1', best_brew: true },
+        { uuid: 'former-best', best_brew: false },
+      ]);
+      expect(brew.best_brew).toBeTrue();
+      expect(formerBest.best_brew).toBeFalse();
+      expect(alert.showMessage).not.toHaveBeenCalled();
+    });
+
+    it('takes the mark off again without touching other brews', async () => {
+      brew.best_brew = true;
+      formerBest.best_brew = false;
+
+      await fixture.componentInstance.toggleBestBrew();
+
+      expect(handedOver).toEqual([{ uuid: 'brew-1', best_brew: false }]);
+      expect(brew.best_brew).toBeFalse();
+    });
+
+    it('leaves the marks as they are and tells the user when nothing was saved', async () => {
+      brewStorage.updateMany.and.resolveTo(false);
+
+      await fixture.componentInstance.toggleBestBrew();
+
+      expect(brew.best_brew).toBeFalse();
+      expect(formerBest.best_brew).toBeTrue();
+      expect(alert.showMessage).toHaveBeenCalledOnceWith(
+        'ERROR_OCCURED',
+        'CARE',
+        undefined,
+        true,
+      );
+    });
+
+    it('adds no message of its own when the storage has told the user', async () => {
+      brewStorage.updateMany.and.resolveTo(false);
+      spyOn(StorageClass, 'getMessagesShown').and.returnValues(3, 4);
+
+      await fixture.componentInstance.toggleBestBrew();
+
+      expect(brew.best_brew).toBeFalse();
+      expect(alert.showMessage).not.toHaveBeenCalled();
+    });
   });
 
   describe('fast repeat', () => {

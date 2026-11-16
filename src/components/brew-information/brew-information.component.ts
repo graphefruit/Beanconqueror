@@ -557,18 +557,14 @@ export class BrewInformationComponent implements OnInit, OnChanges {
     await this.uiBrewStorage.update(this.brew);
   }
 
+  /**
+   * Saves the brew and the brews that lose the mark together: all of them
+   * are stored, or none is changed.
+   */
   public async toggleBestBrew() {
-    let doOtherBestBrewsNeedsToBeDetoggled = false;
-    if (this.brew.best_brew) {
-      // Its the same brew we toggle back again :)
-      this.brew.best_brew = false;
-    } else {
-      this.brew.best_brew = true;
-      //Do we need to search for other brews which should be detoggled?
-      doOtherBestBrewsNeedsToBeDetoggled = true;
-    }
-
-    if (doOtherBestBrewsNeedsToBeDetoggled) {
+    const toggled = new Map<Brew, boolean>([[this.brew, !this.brew.best_brew]]);
+    if (!this.brew.best_brew) {
+      // A bean has one best brew: the others lose the mark.
       const brewsForBeans = this.uiBeanHelper.getAllBrewsForThisBean(
         this.brew.getBean().config.uuid,
       );
@@ -577,13 +573,29 @@ export class BrewInformationComponent implements OnInit, OnChanges {
           iterateBrew.best_brew === true &&
           iterateBrew.config.uuid !== this.brew.config.uuid
         ) {
-          iterateBrew.best_brew = false;
-          await this.uiBrewStorage.update(iterateBrew);
+          toggled.set(iterateBrew, false);
         }
       }
     }
 
-    await this.uiBrewStorage.update(this.brew);
+    const shown = StorageClass.getMessagesShown();
+    // Copies: the brews on the screen change only once they are saved.
+    const saved = await this.uiBrewStorage.updateMany(
+      Array.from(toggled, ([brew, bestBrew]) => {
+        const changed = new Brew();
+        changed.initializeByObject(brew);
+        changed.best_brew = bestBrew;
+        return changed;
+      }),
+    );
+    if (saved) {
+      for (const [brew, bestBrew] of toggled) {
+        brew.best_brew = bestBrew;
+      }
+    } else if (StorageClass.getMessagesShown() === shown) {
+      // The storage does not report every write it turns down
+      await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
+    }
   }
 
   public async detailBrew() {
