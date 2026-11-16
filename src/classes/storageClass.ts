@@ -266,6 +266,8 @@ export abstract class StorageClass {
 
   /**
    * Adds an entry and reports whether the changed collection reached disk.
+   * When it did not, the entry is not in the collection: the one resolved is
+   * only what would have been stored.
    *
    * `add()` cannot carry that itself: it resolves the cloned entry, and its
    * callers read `.config.uuid` off it, so there is nowhere to put the answer
@@ -283,10 +285,20 @@ export abstract class StorageClass {
     }
     try {
       newEntry = this.createEntry(_entry, _options);
-      this.storedData.push(newEntry);
+      const data = this.storedData;
+      data.push(newEntry);
       this.forgetUuidIndex();
       saved = await this.__save();
-      this.__sendEvent('ADD', newEntry.config.uuid);
+      if (saved) {
+        this.__sendEvent('ADD', newEntry.config.uuid);
+      } else {
+        this.__takeBack(data, () => {
+          const at = data.lastIndexOf(newEntry);
+          if (at >= 0) {
+            data.splice(at, 1);
+          }
+        });
+      }
     } catch (ex) {
       newEntry = this.createFailedAddEntry(newEntry ?? _entry);
       this.uiLog.error('Storage - Add - Unsuccessfully', ex);
@@ -370,6 +382,9 @@ export abstract class StorageClass {
    * updated_by are set). `{ touch: false }` is the system write path for
    * migrations, backfills and similar maintenance; it keeps the change info
    * of the stored entry and counts nothing up.
+   *
+   * When the collection could not be saved, the stored entry is the one from
+   * before again, see applyChanges().
    */
   public async update(
     _obj,
@@ -386,21 +401,30 @@ export abstract class StorageClass {
           this.uiLog.log(
             `Storage - Update  - Successfully - ${updatedObj.config.uuid}`,
           );
+          const data = this.storedData;
+          const previous = data[i];
           updatedObj = this.stampReplacement(
             _obj,
             updatedObj,
-            this.storedData[i],
+            previous,
             _options.touch !== false,
           );
-          this.storedData[i] = updatedObj;
+          data[i] = updatedObj;
           this.forgetUuidIndex();
           const saved = await this.__save();
-          this.__sendEvent('UPDATE', updatedObj.config.uuid);
           didUpdate = true;
-          if (saved === false) {
+          if (saved) {
+            this.__sendEvent('UPDATE', updatedObj.config.uuid);
+          } else {
             this.uiLog.error(
               `Storage - Update  - Unsucessfully - ${updatedObj.config.uuid} - save failed`,
             );
+            this.__takeBack(data, () => {
+              const at = data.indexOf(updatedObj);
+              if (at >= 0) {
+                data[at] = previous;
+              }
+            });
           }
           return saved;
         }
@@ -673,10 +697,7 @@ export abstract class StorageClass {
       this.uiLog.error(
         `Storage - Write - Unsuccessfully - ${this.DB_PATH} - ${changed} entries - save failed`,
       );
-      // Entries read anew meanwhile are the stored ones; nothing of this
-      // call belongs into them. Otherwise each change is taken back by
-      // itself, so entries written meanwhile by others stay.
-      if (this.storedData === data) {
+      this.__takeBack(data, () => {
         for (const { index, entry } of removed) {
           data.splice(Math.min(index, data.length), 0, entry);
         }
@@ -691,10 +712,7 @@ export abstract class StorageClass {
           }
         }
         data.length = kept;
-        this.forgetUuidIndex();
-        // Lets the typed storages drop their cached objects.
-        this.__sendEvent('UPDATE');
-      }
+      });
       return unsaved;
     }
 
@@ -721,6 +739,22 @@ export abstract class StorageClass {
       await this.__noteDeletions(removed.map((_removed) => _removed.entry));
     }
     return { saved: true, added: StorageClass.cloneData(added) as T[] };
+  }
+
+  /**
+   * After a failed save of `_data`: `_undo` takes each change of the write
+   * back by itself, so entries written meanwhile by others stay. Entries read
+   * anew meanwhile are the stored ones; nothing of the write belongs into
+   * them.
+   */
+  private __takeBack(_data: StoredEntry[], _undo: () => void): void {
+    if (this.storedData !== _data) {
+      return;
+    }
+    _undo();
+    this.forgetUuidIndex();
+    // Lets the typed storages drop their cached objects.
+    this.__sendEvent('UPDATE');
   }
 
   public attachOnRemove(): Observable<any> {
@@ -809,21 +843,28 @@ export abstract class StorageClass {
         for (let i = 0; i < this.storedData.length; i++) {
           if (this.storedData[i].config.uuid === deleteUUID) {
             this.uiLog.log(`Storage - Delete - Successfully -${deleteUUID}`);
-            const rev = StorageClass.revisionOf(this.storedData[i]);
-            this.storedData.splice(i, 1);
+            const data = this.storedData;
+            const entry = data[i];
+            data.splice(i, 1);
             this.forgetUuidIndex();
             const saved = await this.__save();
-            this.__sendRemoveMessage(deleteUUID);
-            this.__sendEvent('DELETE');
             if (saved === false) {
               this.uiLog.error(
                 `Storage - Delete - Unsuccessfully - ${deleteUUID} - save failed`,
               );
+              this.__takeBack(data, () => {
+                data.splice(Math.min(i, data.length), 0, entry);
+              });
             } else {
+              this.__sendRemoveMessage(deleteUUID);
+              this.__sendEvent('DELETE');
               // The note is written only after the collection was saved: if
               // the app stops in between, at most a note is missing, but no
               // note ever claims that a stored entry was deleted.
-              await this.__noteDeletion(deleteUUID, rev);
+              await this.__noteDeletion(
+                deleteUUID,
+                StorageClass.revisionOf(entry),
+              );
             }
             return saved;
           }

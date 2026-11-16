@@ -136,14 +136,21 @@ class MemoryBrewStorage {
   public failUpdate = false;
   public failRemove = false;
 
-  public add = jasmine
-    .createSpy('add')
-    .and.callFake((brew: Brew): Promise<Brew> => {
+  public failAdd = false;
+
+  public addAndConfirm = jasmine
+    .createSpy('addAndConfirm')
+    .and.callFake((brew: Brew): Promise<{ entry: Brew; saved: boolean }> => {
       const stored = cloneBrew(brew);
       stored.config.uuid = 'saved-brew';
       stored.config.unix_timestamp = 1;
-      this.entries.push(stored);
-      return Promise.resolve(cloneBrew(stored));
+      if (!this.failAdd) {
+        this.entries.push(stored);
+      }
+      return Promise.resolve({
+        entry: cloneBrew(stored),
+        saved: !this.failAdd,
+      });
     });
 
   public update = jasmine
@@ -711,13 +718,12 @@ describe('BrewImportService', () => {
     expect(created.roastingDate).toBe('');
   });
 
-  it('removes a handoff bean whose save did not persist before later name matching can see it', async () => {
+  it('does not clean up after a handoff bean whose save did not persist before later name matching can see it', async () => {
     beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
     uiAlert.showConfirm.and.resolveTo('YES');
     beanStorage.addAndConfirm.and.callFake(
       (bean: Bean): Promise<{ entry: Bean; saved: boolean }> => {
         bean.config.uuid = 'bean-created';
-        beans.push(bean);
         return Promise.resolve({ entry: bean, saved: false });
       },
     );
@@ -734,16 +740,14 @@ describe('BrewImportService', () => {
     const result = service.build(handoff);
 
     expect(beanStorage.addAndConfirm.calls.count()).toBe(1);
-    expect(beanStorage.removeByUUID.calls.allArgs()).toEqual([
-      ['bean-created'],
-    ]);
+    expect(beanStorage.removeByUUID.calls.count()).toBe(0);
     expect(beans.map((bean) => bean.config.uuid)).toEqual(['bean-fallback']);
     expect(result.brew.bean).toBe('bean-fallback');
     expect(result.brew.note).toBe(
       'A completed brew\n\nBean not linked: "Pod coffee" (no match). Using "Fallback coffee".',
     );
     expect(beanStorage.add.calls.count()).toBe(0);
-    expect(brewStorage.add.calls.count()).toBe(0);
+    expect(brewStorage.addAndConfirm.calls.count()).toBe(0);
     expect(brewStorage.update.calls.count()).toBe(0);
   });
 
@@ -754,7 +758,6 @@ describe('BrewImportService', () => {
     beanStorage.addAndConfirm.and.callFake(
       (bean: Bean): Promise<{ entry: Bean; saved: boolean }> => {
         bean.config.uuid = 'bean-created';
-        beans.push(bean);
         return Promise.resolve({ entry: bean, saved: false });
       },
     );
@@ -773,34 +776,6 @@ describe('BrewImportService', () => {
     }
 
     expect(returnedUuid).toBeUndefined();
-  });
-
-  it('logs a failed handoff bean creation cleanup without replacing the save failure', async () => {
-    beans = [entry(new Bean(), 'Fallback coffee', 'bean-fallback')];
-    uiAlert.showConfirm.and.resolveTo('YES');
-    beanStorage.addAndConfirm.and.callFake(
-      (bean: Bean): Promise<{ entry: Bean; saved: boolean }> => {
-        bean.config.uuid = 'bean-created';
-        beans.push(bean);
-        return Promise.resolve({ entry: bean, saved: false });
-      },
-    );
-    beanStorage.removeByUUID.and.rejectWith(new Error('delete failed'));
-
-    await expectAsync(
-      service.ensureBeanFromHandoff(
-        envelope({
-          bean: {
-            name: 'Pod coffee',
-            origin: 'Ethiopia',
-          },
-        }),
-      ),
-    ).toBeRejectedWithError('Handoff bean creation failed: bean-created');
-
-    expect(uiLog.error.calls.allArgs()).toContain([
-      'Handoff bean creation cleanup failed: bean-created (delete failed)',
-    ]);
   });
 
   it('does not prompt when pod metadata names an existing bean', async () => {
@@ -1537,7 +1512,7 @@ describe('BrewImportService', () => {
     expect(result.brew.method_of_preparation).toBe('preparation-fallback');
   });
 
-  it('removes a handoff preparation whose save did not persist before later type matching can see it', async () => {
+  it('does not clean up after a handoff preparation whose save did not persist before later type matching can see it', async () => {
     preparations = [
       entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
     ];
@@ -1547,7 +1522,6 @@ describe('BrewImportService', () => {
         preparation: Preparation,
       ): Promise<{ entry: Preparation; saved: boolean }> => {
         preparation.config.uuid = 'preparation-created';
-        preparations.push(preparation);
         return Promise.resolve({ entry: preparation, saved: false });
       },
     );
@@ -1567,18 +1541,16 @@ describe('BrewImportService', () => {
     const result = service.build(handoff);
 
     expect(preparationStorage.addAndConfirm.calls.count()).toBe(1);
-    expect(preparationStorage.removeByUUID.calls.allArgs()).toEqual([
-      ['preparation-created'],
+    expect(preparationStorage.removeByUUID.calls.count()).toBe(0);
+    expect(preparations.map((preparation) => preparation.config.uuid)).toEqual([
+      'preparation-fallback',
     ]);
-    expect(
-      preparations.map((preparation) => preparation.config.uuid),
-    ).toEqual(['preparation-fallback']);
     expect(result.brew.method_of_preparation).toBe('preparation-fallback');
     expect(result.brew.note).toBe(
       'A completed brew\n\nPreparation not linked: "xBloom Studio" (no match). Using "Fallback brewer".',
     );
     expect(preparationStorage.add.calls.count()).toBe(0);
-    expect(brewStorage.add.calls.count()).toBe(0);
+    expect(brewStorage.addAndConfirm.calls.count()).toBe(0);
     expect(brewStorage.update.calls.count()).toBe(0);
   });
 
@@ -1593,7 +1565,6 @@ describe('BrewImportService', () => {
         preparation: Preparation,
       ): Promise<{ entry: Preparation; saved: boolean }> => {
         preparation.config.uuid = 'preparation-created';
-        preparations.push(preparation);
         return Promise.resolve({ entry: preparation, saved: false });
       },
     );
@@ -1615,41 +1586,6 @@ describe('BrewImportService', () => {
     }
 
     expect(returnedUuid).toBeUndefined();
-  });
-
-  it('logs a failed handoff preparation creation cleanup without replacing the save failure', async () => {
-    preparations = [
-      entry(new Preparation(), 'Fallback brewer', 'preparation-fallback'),
-    ];
-    uiAlert.showConfirm.and.resolveTo('YES');
-    preparationStorage.addAndConfirm.and.callFake(
-      (
-        preparation: Preparation,
-      ): Promise<{ entry: Preparation; saved: boolean }> => {
-        preparation.config.uuid = 'preparation-created';
-        preparations.push(preparation);
-        return Promise.resolve({ entry: preparation, saved: false });
-      },
-    );
-    preparationStorage.removeByUUID.and.rejectWith(new Error('delete failed'));
-
-    await expectAsync(
-      service.ensurePreparationFromHandoff(
-        envelope({
-          brew: {
-            ...envelope().brew,
-            preparationMethod: 'xBloom Studio',
-            preparationType: PREPARATION_TYPES.XBLOOM,
-          },
-        }),
-      ),
-    ).toBeRejectedWithError(
-      'Handoff preparation creation failed: preparation-created',
-    );
-
-    expect(uiLog.error.calls.allArgs()).toContain([
-      'Handoff preparation creation cleanup failed: preparation-created (delete failed)',
-    ]);
   });
 
   it('does not persist an unmatched imported brew with empty bean or preparation UUIDs', () => {
@@ -1763,6 +1699,27 @@ describe('BrewImportService', () => {
     expect(loaded.customInformation.imported).toEqual(envelope().imported);
   });
 
+  it('rejects with a clean rollback outcome and touches nothing else when the brew could not be added', async () => {
+    brewStorage.failAdd = true;
+
+    let rejection: unknown;
+    try {
+      await service.import(envelope());
+      fail('Expected import to reject');
+    } catch (ex) {
+      rejection = ex;
+    }
+
+    expect(rejection).toEqual(jasmine.any(BrewImportRollbackError));
+    const error = rejection as BrewImportRollbackError;
+    expect(error.brewUuid).toBe('saved-brew');
+    expect(error.beanUuid).toBe('bean-1');
+    expect(error.rolledBack).toBeTrue();
+    expect(fileHelper.writeInternalFileFromText.calls.count()).toBe(0);
+    expect(brewStorage.update).not.toHaveBeenCalled();
+    expect(brewStorage.removeByObject).not.toHaveBeenCalled();
+  });
+
   it('rejects with a clean rollback outcome when the post-add update fails and removing the imported brew succeeds', async () => {
     brewStorage.failUpdate = true;
 
@@ -1862,7 +1819,7 @@ describe('BrewImportService', () => {
       'Bean not linked: no available Bean.',
     );
 
-    expect(brewStorage.add.calls.count()).toBe(0);
+    expect(brewStorage.addAndConfirm.calls.count()).toBe(0);
     expect(brewStorage.update.calls.count()).toBe(0);
     expect(fileHelper.writeInternalFileFromText.calls.count()).toBe(0);
   });

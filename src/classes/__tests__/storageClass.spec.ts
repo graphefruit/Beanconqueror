@@ -269,7 +269,7 @@ describe('StorageClass', () => {
 
     expect(result).not.toBe(newEntry);
     expect(result.config.uuid).toEqual(jasmine.any(String));
-    expect(storage.getAllEntries()[0].config.uuid).toBe(result.config.uuid);
+    expect(storage.getAllEntries()).toEqual([]);
     expect(mockUIAlert.showMessage).toHaveBeenCalledWith(
       'STORAGE_SAVE_FAILED',
       undefined,

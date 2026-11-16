@@ -219,7 +219,6 @@ export class BrewImportService {
     const { entry: created, saved }: { entry: Bean; saved: boolean } =
       await this.beanStorage.addAndConfirm(this.buildBean(bean));
     if (!saved) {
-      await this.removeFailedHandoffBean(created.config.uuid);
       throw new Error(`Handoff bean creation failed: ${created.config.uuid}`);
     }
     return created.config.uuid;
@@ -274,7 +273,6 @@ export class BrewImportService {
         this.buildPreparation(envelope),
       );
     if (!saved) {
-      await this.removeFailedHandoffPreparation(created.config.uuid);
       throw new Error(
         `Handoff preparation creation failed: ${created.config.uuid}`,
       );
@@ -322,7 +320,6 @@ export class BrewImportService {
     const { entry: created, saved }: { entry: Mill; saved: boolean } =
       await this.millStorage.addAndConfirm(this.buildMill(envelope));
     if (!saved) {
-      await this.removeFailedHandoffMill(created.config.uuid);
       throw new Error(`Handoff mill creation failed: ${created.config.uuid}`);
     }
     return created.config.uuid;
@@ -330,7 +327,18 @@ export class BrewImportService {
 
   public async import(envelope: IHandoffEnvelope): Promise<IBrewImportResult> {
     const result = this.build(envelope);
-    const addedBrew: Brew = await this.brewStorage.add(result.brew);
+    const { entry: addedBrew, saved }: { entry: Brew; saved: boolean } =
+      await this.brewStorage.addAndConfirm(result.brew);
+    if (!saved) {
+      // Nothing of the brew is stored, so there is nothing to roll back.
+      throw new BrewImportRollbackError(
+        addedBrew.config.uuid,
+        true,
+        result.brew.bean,
+        result.brew.method_of_preparation,
+        result.brew.mill,
+      );
+    }
 
     addedBrew.config.unix_timestamp = result.brew.config.unix_timestamp;
     addedBrew.customInformation.imported =
@@ -405,60 +413,6 @@ export class BrewImportService {
     if (Math.abs(total) > MAX_ABSOLUTE_GRAMS) {
       throw new Error(
         `Envelope ${field} cumulative total must be at most ${MAX_ABSOLUTE_GRAMS}`,
-      );
-    }
-  }
-
-  private async removeFailedHandoffBean(uuid: string): Promise<void> {
-    try {
-      const didRemove = await this.beanStorage.removeByUUID(uuid);
-      if (didRemove) {
-        return;
-      }
-      this.uiLog.error('Handoff bean creation cleanup failed: ' + uuid);
-    } catch (ex) {
-      this.uiLog.error(
-        'Handoff bean creation cleanup failed: ' +
-          uuid +
-          ' (' +
-          ex.message +
-          ')',
-      );
-    }
-  }
-
-  private async removeFailedHandoffPreparation(uuid: string): Promise<void> {
-    try {
-      const didRemove = await this.preparationStorage.removeByUUID(uuid);
-      if (didRemove) {
-        return;
-      }
-      this.uiLog.error('Handoff preparation creation cleanup failed: ' + uuid);
-    } catch (ex) {
-      this.uiLog.error(
-        'Handoff preparation creation cleanup failed: ' +
-          uuid +
-          ' (' +
-          ex.message +
-          ')',
-      );
-    }
-  }
-
-  private async removeFailedHandoffMill(uuid: string): Promise<void> {
-    try {
-      const didRemove = await this.millStorage.removeByUUID(uuid);
-      if (didRemove) {
-        return;
-      }
-      this.uiLog.error('Handoff mill creation cleanup failed: ' + uuid);
-    } catch (ex) {
-      this.uiLog.error(
-        'Handoff mill creation cleanup failed: ' +
-          uuid +
-          ' (' +
-          ex.message +
-          ')',
       );
     }
   }

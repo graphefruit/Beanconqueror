@@ -258,6 +258,15 @@ writes:
   (`src/services/deletionJournal/deletion-journal.service.ts`). Notes of
   entries that exist again, for example after an import, are dropped when the
   collection loads.
+- A single write whose save fails is taken back like one of `applyChanges`
+  below: an added entry is gone (`addAndConfirm` resolves `saved: false` and
+  what would have been stored, `add` only the latter), an updated entry is
+  the object from before, a deleted one is back at its place. The entry event
+  (`ADD`, `UPDATE` with `uuid`), `DELETE`, `attachOnRemove()` and the deletion
+  note follow only a successful save; after a failed one a bare `UPDATE` lets
+  the caches drop their objects. So nothing a failed write left in memory
+  reaches the disk with the next save of the collection. The known gap of
+  `applyChanges` about a write saved meanwhile holds here as well.
 - `applyChanges({ update, remove, add })` is the one way to write several
   entries of a collection with a single save: it replaces, removes and adds,
   in this order, and stores all of it or nothing. `updateMany(entries)`,
@@ -529,9 +538,8 @@ Android, `src/services/uiFileHelper.ts`). The database only stores the path.
   (`src/components/photo-add/`) changes a list of its own, so a cancelled
   form leaves the photos of the entry as they were. A photo removed there
   keeps its file until the entry was stored without it
-  (`UIImage.deleteRemovedPhotos()`); when the save fails the file stays, but
-  the entry in memory already has the photos of the form
-  (`StorageClass.update()`).
+  (`UIImage.deleteRemovedPhotos()`); when the save fails the file stays and
+  the entry in memory is the one from before.
 - Flow profiles (scale, pressure and temperature readings of a brew):
   `brews/<uuid>_flow_profile.json`, written by
   `src/components/brews/brew-brewing/brew-brewing.component.ts`; imported
