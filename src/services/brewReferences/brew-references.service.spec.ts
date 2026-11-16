@@ -283,6 +283,52 @@ describe('BrewReferencesService', () => {
       expect(restored).toEqual(data.BREWS[1]);
     });
 
+    it('leaves an old brew with missing fields and numbers kept as text as it is stored', async () => {
+      const data = createData();
+      const old = data.BREWS[1];
+      for (const field of [
+        'vessel_name',
+        'customInformation',
+        'preparationDeviceBrew',
+        'reference_flow_profile',
+        'best_brew',
+      ]) {
+        delete old[field];
+      }
+      old.grind_weight = '18.5';
+      old.brew_temperature = '';
+      old.brew_quantity = '12,5';
+      old.brew_time = null;
+      const device = createDeviceDatabase(data);
+      const { service } = await startApp(device);
+
+      expect(await service.removeForeignTools()).toBeTrue();
+
+      const cleaned = storedBrews(device)['brew-foreign'];
+      expect(cleaned.method_of_preparation_tools).toEqual(['basket']);
+      expect(cleaned.config.rev).toBe(4);
+      const restored: StoredEntry = {
+        ...cleaned,
+        method_of_preparation_tools: ['paper', 'basket'],
+        config: old.config,
+      };
+      expect(restored).toEqual(old);
+    });
+
+    it('takes all tools out of the brews of a preparation stored without a tool list', async () => {
+      const data = createData();
+      delete data.PREPARATION[0].tools;
+      const device = createDeviceDatabase(data);
+      const { service } = await startApp(device);
+
+      expect(await service.removeForeignTools()).toBeTrue();
+
+      const tools = toolsOf(device);
+      expect(tools['brew-own']).toEqual([]);
+      expect(tools['brew-foreign']).toEqual([]);
+      expect(tools['brew-lost']).toEqual(['basket', 'deleted-tool']);
+    });
+
     it('stores all changed brews with one write and nothing else', async () => {
       const device = createDeviceDatabase(createData());
       const { service, set } = await startApp(device);
@@ -333,8 +379,11 @@ describe('BrewReferencesService', () => {
 
     it('keeps the brews as they were when they cannot be saved, and cleans them at the next run', async () => {
       const data = createData();
+      data.SETTINGS[0].brew_filter.OPEN.method_of_preparation_tools = [
+        'deleted-tool',
+      ];
       const device = createDeviceDatabase(data);
-      const { service, brewStorage, failWritesOf, writesReachDevice } =
+      const { service, brewStorage, set, failWritesOf, writesReachDevice } =
         await startApp(device);
       failWritesOf('BREWS');
 
@@ -342,6 +391,8 @@ describe('BrewReferencesService', () => {
 
       expect(device.data.get('BREWS')).toEqual(data.BREWS);
       expect(brewStorage.getRawEntries()).toEqual(data.BREWS);
+      // The filters wait for the brews: nothing else was tried.
+      expect(writtenKeys(set)).toEqual(['BREWS']);
 
       writesReachDevice();
       expect(await service.removeForeignTools()).toBeTrue();

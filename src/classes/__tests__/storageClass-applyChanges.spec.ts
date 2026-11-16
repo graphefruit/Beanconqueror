@@ -426,6 +426,53 @@ describe('StorageClass writing several entries with one save', () => {
   });
 
   describe('applyChanges', () => {
+    it('stores an entry given in its stored form without preparing it', async () => {
+      const brews = create(() => new UIBrewStorage());
+      await brews.initializeStorage();
+      const added = await brews.add(new Brew());
+      const before = structuredClone(brews.getRawEntries()[0]) as Brew;
+      const change = {
+        ...before,
+        // Text as old data can hold it; preparing a brew makes a number of it.
+        grind_weight: '18,5' as unknown as number,
+        note: 'changed',
+      };
+      delete change.vessel_name;
+      now = T0 + 1000;
+
+      const result = await brews.applyChanges({ updateStored: [change] });
+
+      expect(result.saved).toBeTrue();
+      const storedBrew = (db.values.get('BREWS') as Brew[])[0];
+      expect(storedBrew).toEqual(brews.getRawEntries()[0] as Brew);
+      expect(storedBrew.grind_weight as unknown).toBe('18,5');
+      expect('vessel_name' in storedBrew).toBeFalse();
+      expect(storedBrew.note).toBe('changed');
+      expect(storedBrew.config).toEqual({
+        ...before.config,
+        rev: 2,
+        updated_at: T0 + 1000,
+      });
+      expect(storedBrew.config.uuid).toBe(added.config.uuid);
+      // The stored entry is apart from the caller's object.
+      expect(brews.getRawEntries()[0]).not.toBe(change);
+      expect(change.config).toEqual(before.config);
+    });
+
+    it('puts the entries given in their stored form back when the save fails', async () => {
+      const { storage } = await collection([entry('a', 1), entry('b', 1)]);
+      const before = structuredClone(stored());
+      failWrites();
+
+      const result = await storage.applyChanges({
+        updateStored: [{ ...entry('b', 1), name: 'changed' }],
+      });
+
+      expect(result.saved).toBeFalse();
+      expect(stored()).toEqual(before);
+      expect(storage.getAllEntries()).toEqual(before);
+    });
+
     it('replaces, removes and adds with one save', async () => {
       const { storage, events, removed } = await collection([
         entry('original', 4),

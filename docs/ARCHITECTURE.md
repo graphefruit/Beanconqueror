@@ -265,6 +265,18 @@ writes:
   `addMany(entries)` and `removeManyByUUID(uuids)` are this call with one
   kind of change. Each entry is stamped by the code that stamps a single
   `update` or `add`, so its change info is the same as on the single way.
+  - `updateStored` takes entries in their stored form (`getRawEntries()`).
+    They replace the stored ones like `update`, but are not prepared for
+    storage (`prepareEntryForStorage`, for a brew `fixDataTypes()`), so
+    nothing of them changes but the change info. It is for maintenance that
+    must not normalise old entries on the way.
+  - Known gap: writes of one collection are not queued. When another write
+    of the collection is saved while the save of this call fails
+    (`UIStorage.set` retries for about two seconds), that write has stored
+    the changes of this call with it. They are taken back in memory only and
+    stay on the device until the next save of the collection; an app start
+    in between reads them. For freezing this can leave bags stored whose
+    copied photos were already deleted.
   - Nothing is changed and `saved` is false while the collection takes no
     writes, when an entry to update is not stored or cannot be prepared, and
     when the save fails. After a failed save every change is taken back by
@@ -625,25 +637,34 @@ the same way.
 one preparation: a brew keeps only the tools in the tool list of its own
 preparation, archived ones included. A brew whose preparation is not stored
 stays as it is, and so do brews that share a uuid, because a brew is replaced
-by its uuid. The brew filters of the settings (`brew_filter.OPEN` and
-`.ARCHIVED`) lose the tools that no preparation has; the filter of the graph
-reference chooser is not stored. Barista mode brews carry no tools.
+by its uuid; they are counted in the log and the update is recorded as done
+all the same, otherwise it would run at every start. A preparation stored
+without a tool list has no tools, so its brews lose all of theirs. The brew
+filters of the settings (`brew_filter.OPEN` and `.ARCHIVED`) lose the tools
+that no preparation has; the filter of the graph reference chooser is not
+stored. Barista mode brews carry no tools.
 
-- It reads the stored entries (`getRawEntries()`) and builds `Brew` objects
-  only for the brews it changes. These are stored with one `updateMany`, so
-  unlike the migrations before they count as changed by this device
-  (`rev`, `updated_at`, `updated_by`) and a sync passes them on. Brews that
-  stay as they are are not touched.
+- It reads the stored entries (`getRawEntries()`) and builds no `Brew`
+  objects. A changed brew is the stored entry with another tool list, written
+  with `applyChanges({ updateStored })`: missing fields are not filled in
+  and numbers kept as text are not converted, as a normal save of a brew
+  would do. All of them are stored with one save, and unlike the migrations
+  before they count as changed by this device (`rev`, `updated_at`,
+  `updated_by`) so a sync passes them on. Brews that stay as they are are
+  not touched.
 - It runs only when `BREWS` and `PREPARATION` are read
   (`StorageClass.isRead()`); with a collection that is not read every tool
   would look foreign. Then, and when the brews or the settings could not be
   saved, nothing is recorded and the next start runs it again. After a
   failed save the brews and the filters are the ones from before.
-- It runs on every imported backup as well: after an import
-  `SettingsPage.__reinitializeStorages` calls `checkUpdate(true)`, which
-  stores `UPDATE_18` as not run before the migrations run, also when the
-  `VERSION` entry of the backup lists it. A run that fails after an import
-  is therefore repeated at the next start.
+- It runs on every backup imported in the settings as well: after such an
+  import `SettingsPage.__reinitializeStorages` calls `checkUpdate(true)`,
+  which stores `UPDATE_18` as not run before the migrations run, also when
+  the `VERSION` entry of the backup lists it. A run that fails after an
+  import is therefore repeated at the next start. A backup restored at the
+  start (`checkBackup()`, the backup chosen for a database that could not be
+  read) is imported before `checkUpdate()` and goes by its `VERSION` entry
+  alone.
 - Its log line carries numbers only (brews, changed, without preparation,
   left because they share a uuid, tools removed from the filters).
 

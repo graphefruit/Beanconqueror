@@ -1,7 +1,5 @@
 import { inject, Service } from '@angular/core';
 
-import { Brew } from '../../classes/brew/brew';
-import { IBrew } from '../../interfaces/brew/iBrew';
 import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
 import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
@@ -27,7 +25,7 @@ interface StoredPreparation extends StoredEntry {
 
 /**
  * Looks after the entries a brew refers to. It reads the entries as they
- * are stored, so no objects are built for the brews that stay as they are.
+ * are stored and builds no objects for them.
  */
 @Service()
 export class BrewReferencesService {
@@ -41,12 +39,14 @@ export class BrewReferencesService {
   /**
    * A preparation tool belongs to one preparation. Takes every tool out of
    * a brew that is not in the tool list of the preparation of this brew;
-   * archived tools are in that list. A brew whose preparation is not stored
-   * stays as it is. The brew filters of the settings lose the tools that no
-   * preparation has.
+   * archived tools are in that list; a preparation stored without a list
+   * has no tools. A brew whose preparation is not stored stays as it is.
+   * The brew filters of the settings lose the tools that no preparation
+   * has.
    *
    * All changed brews are stored with one save and count as changed by
-   * this device, so a later sync sees them; the others are not touched.
+   * this device, so a later sync sees them; nothing else of them changes.
+   * The others are not touched.
    *
    * Resolves true when everything is stored or nothing had to be. False
    * when the brews or the preparations are not read (every tool would look
@@ -85,21 +85,21 @@ export class BrewReferencesService {
       // A brew is replaced by its uuid. Copies that share one cannot be
       // told apart that way, so they stay as they are.
       const shared = candidates.length > 0 ? sharedUuids(brews) : new Set();
-      const changed: Brew[] = [];
+      const changed: StoredBrew[] = [];
       for (const { entry, tools } of candidates) {
         const uuid = entry.config?.uuid;
         if (typeof uuid !== 'string' || uuid === '' || shared.has(uuid)) {
           continue;
         }
-        // A new object with a list of its own: the stored brew stays as it
-        // is when the save fails.
-        const brew = new Brew();
-        brew.initializeByObject(entry as IBrew);
-        brew.method_of_preparation_tools = tools as string[];
-        changed.push(brew);
+        // The brew as it is stored with another tool list. No Brew object:
+        // building and storing one fills in missing fields and converts
+        // numbers kept as text, and only the tools are to change.
+        changed.push({ ...entry, method_of_preparation_tools: tools });
       }
 
-      const brewsSaved = await this.uiBrewStorage.updateMany(changed);
+      const brewsSaved = (
+        await this.uiBrewStorage.applyChanges({ updateStored: changed })
+      ).saved;
       const filter = brewsSaved
         ? await this.cleanBrewFilters(toolsOf)
         : { removed: 0, saved: false };

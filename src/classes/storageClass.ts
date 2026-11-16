@@ -46,6 +46,12 @@ export interface StorageChanges<T = unknown> {
   add?: readonly T[];
   /** Entries that replace the stored ones with their uuid, as update() does. */
   update?: readonly unknown[];
+  /**
+   * Entries in their stored form that replace the stored ones with their
+   * uuid. Unlike `update` they are not prepared for storage, so nothing of
+   * them changes but the change info.
+   */
+  updateStored?: readonly unknown[];
   /** Uuids of the entries to remove, see removeManyByUUID(). */
   remove?: readonly string[];
 }
@@ -555,16 +561,22 @@ export abstract class StorageClass {
   }
 
   /**
-   * Replaces, removes and adds entries, in this order, and saves the
-   * collection once: all of it is stored or nothing. An entry that is in
-   * `update` several times is replaced each time, as updating one by one
-   * does.
+   * Replaces (`update`, then `updateStored`), removes and adds entries, in
+   * this order, and saves the collection once: all of it is stored or
+   * nothing. An entry that is in `update` several times is replaced each
+   * time, as updating one by one does.
    *
    * Resolves `saved` true as well when there was nothing to change. Nothing
    * is changed and `saved` is false while the collection takes no writes,
    * when an entry to update is not stored or cannot be prepared, and when
    * the collection could not be saved: the entries in memory are then the
    * ones from before. Objects the caller changed beforehand stay changed.
+   *
+   * Known gap: writes of one collection are not queued. When another write
+   * of this collection is saved while the save of this call fails, that
+   * write has stored the changes of this call with it; they are taken back
+   * in memory only and stay on the device until the next save of the
+   * collection.
    *
    * Events are sent and deletion notes written only after the save: one
    * event for the call, naming the replaced and added entries in `uuids`.
@@ -580,15 +592,19 @@ export abstract class StorageClass {
     const replacements = new Map<number, StoredEntry>();
     let added: StoredEntry[];
     try {
-      const updates = _changes.update ?? [];
+      const toPrepare = _changes.update ?? [];
+      const updates = [...toPrepare, ...(_changes.updateStored ?? [])];
       const firstIndex = new Map<string, number>();
       if (updates.length > 0) {
         for (let i = data.length - 1; i >= 0; i--) {
           firstIndex.set(data[i]?.config?.uuid, i);
         }
       }
-      for (const update of updates) {
-        const prepared: StoredEntry = this.prepareEntryForStorage(update);
+      for (const [position, update] of updates.entries()) {
+        const prepared: StoredEntry =
+          position < toPrepare.length
+            ? this.prepareEntryForStorage(update)
+            : (update as StoredEntry);
         const index = firstIndex.get(prepared.config.uuid);
         if (index === undefined) {
           this.uiLog.error(

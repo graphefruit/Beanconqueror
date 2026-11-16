@@ -58,9 +58,10 @@ export class UIUpdate {
   private readonly brewReferences = inject(BrewReferencesService);
 
   /**
-   * `_afterImport`: the stored data was just replaced by a backup. Its
-   * VERSION entry tells which updates the installation it comes from had
-   * run, but UPDATE_18 has to run on every imported backup.
+   * `_afterImport`: the stored data was just replaced by a backup chosen
+   * in the settings. Its VERSION entry tells which updates the installation
+   * it comes from had run, but UPDATE_18 runs on each of these backups. A
+   * backup restored at the start goes by its VERSION entry alone.
    */
   public async checkUpdate(_afterImport: boolean = false) {
     this.uiLog.info('Check updates');
