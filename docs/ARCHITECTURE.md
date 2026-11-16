@@ -500,6 +500,8 @@ new code ◀─signal── CollectionStore      entries
   legacy objects are never shared: the bean list hands its cards copies made
   by the sort helper.
 - Until the collection has been read, `entries()` is empty.
+- A stored entry that is no object (a broken record) is left out and stays in
+  the storage unchanged; the store logs how many it skipped, not the entries.
 - `changes` repeats the events of the collection for legacy code that has to
   act before a view shows a change (the bean list saves its scroll position).
 - Brews have no store with copies: `BeanUsageStore`

@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Bean } from '../../../classes/bean/bean';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UILog } from '../../../services/uiLog';
 import { FakeStoreSource } from '../../core/__tests__/fake-store-source';
 import { BeanStore, ingestBean, toLegacyBean } from '../bean.store';
 
@@ -80,6 +81,19 @@ describe('BeanStore', () => {
     source.change([storedBean({ name: 'One' }), storedBean({ name: 'Two' })]);
 
     expect(store.entries().map((bean) => bean.name)).toEqual(['One', 'Two']);
+  });
+
+  it('shows the other beans when a stored entry is no object', async () => {
+    const logError = spyOn(TestBed.inject(UILog), 'error');
+    const store = TestBed.inject(BeanStore);
+    const one = storedBean({ name: 'One', config: { uuid: 'a' } as never });
+    const two = storedBean({ name: 'Two', config: { uuid: 'b' } as never });
+    await source.load([one, null, 'broken', two]);
+
+    expect(store.entries().map((bean) => bean.name)).toEqual(['One', 'Two']);
+    expect(store.byUuid().size).toBe(2);
+    expect(source.entries).toEqual([one, null, 'broken', two]);
+    expect(logError).toHaveBeenCalledTimes(1);
   });
 
   it('finds the entries by uuid, of several with one uuid the first', async () => {

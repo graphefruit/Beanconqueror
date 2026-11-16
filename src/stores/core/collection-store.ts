@@ -2,6 +2,7 @@ import { computed, linkedSignal, signal, Signal } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
+import type { UILog } from '../../services/uiLog';
 import { DeepReadonly, freezeInDev } from './read-only';
 
 /** What a store reads from a legacy collection; every `StorageClass` has it. */
@@ -22,7 +23,7 @@ interface Snapshot<T> {
 
 /**
  * The entries of one collection for new code: read-only plain data behind a
- * signal. The storage stays the source of truth; the store only reads, and
+ * signal. Stored entries that are no objects are left out. The storage stays the source of truth; the store only reads, and
  * legacy code keeps writing through the `ui*Storage` services.
  *
  * Every change of the collection, whoever made it, makes the next read
@@ -37,10 +38,11 @@ export class CollectionStore<T> {
     computation: (_version, previous) =>
       reconcile(
         previous?.value ?? { entries: [], prints: [] },
-        this.source.getRawEntries(),
+        this.storedObjects(),
         this.ingest,
       ),
   });
+  private skipped = 0;
 
   /** In stored order. Empty until the collection has been read. */
   public readonly entries: Signal<readonly DeepReadonly<T>[]> = computed(
@@ -61,6 +63,7 @@ export class CollectionStore<T> {
   public constructor(
     private readonly source: StoreSource,
     private readonly ingest: (json: string) => T,
+    private readonly uiLog: Pick<UILog, 'error'>,
   ) {
     const markStale = () => this.version.update((version) => version + 1);
     this.changes = source.attachOnEvent();
@@ -68,6 +71,30 @@ export class CollectionStore<T> {
     this.changes.subscribe(markStale);
     // The first read of the collection sends no event.
     source.storageReady().then(markStale, markStale);
+  }
+
+  /**
+   * The stored entries without those that are no objects. A broken entry
+   * stays in the storage as it is; here it would make every read throw and
+   * hide the whole collection.
+   */
+  private storedObjects(): readonly unknown[] {
+    const raw = this.source.getRawEntries();
+    const objects = raw.filter(
+      (entry) => entry !== null && typeof entry === 'object',
+    );
+    const skipped = raw.length - objects.length;
+    // Only when the number changes, not with every read. The entries
+    // themselves are user data and stay out of the log.
+    if (skipped !== this.skipped) {
+      this.skipped = skipped;
+      if (skipped > 0) {
+        this.uiLog.error(
+          `Store skipped ${skipped} stored entries that are no objects`,
+        );
+      }
+    }
+    return objects;
   }
 }
 

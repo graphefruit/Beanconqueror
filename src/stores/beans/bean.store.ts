@@ -3,6 +3,7 @@ import { computed, inject, Service } from '@angular/core';
 import { Bean } from '../../classes/bean/bean';
 import { IBean } from '../../interfaces/bean/iBean';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UILog } from '../../services/uiLog';
 import { CollectionStore } from '../core/collection-store';
 import { DeepReadonly, toPlainData } from '../core/read-only';
 
@@ -24,7 +25,7 @@ export class BeanStore extends CollectionStore<IBean> {
   });
 
   public constructor() {
-    super(inject(UIBeanStorage), ingestBean);
+    super(inject(UIBeanStorage), ingestBean, inject(UILog));
   }
 }
 

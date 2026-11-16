@@ -15,14 +15,20 @@ describe('CollectionStore', () => {
   let source: FakeStoreSource;
   let ingested: string[];
   let store: CollectionStore<Entry>;
+  let logError: jasmine.Spy;
 
   beforeEach(() => {
     source = new FakeStoreSource();
     ingested = [];
-    store = new CollectionStore<Entry>(source, (json) => {
-      ingested.push(json);
-      return JSON.parse(json) as Entry;
-    });
+    logError = jasmine.createSpy('error');
+    store = new CollectionStore<Entry>(
+      source,
+      (json) => {
+        ingested.push(json);
+        return JSON.parse(json) as Entry;
+      },
+      { error: logError },
+    );
   });
 
   it('is empty until the collection has been read', async () => {
@@ -120,6 +126,49 @@ describe('CollectionStore', () => {
 
     expect(store.entries().map((e) => e.name)).toEqual(['three', 'b']);
     expect(ingested).toEqual([JSON.stringify(entry('a', 'three'))]);
+  });
+
+  it('skips stored entries that are no objects and leaves them in the storage', async () => {
+    const stored = [null, entry('a'), 'broken', undefined, 7, entry('b')];
+    await source.load(stored);
+
+    expect(store.entries()).toEqual([entry('a'), entry('b')]);
+    expect(ingested).toEqual([
+      JSON.stringify(entry('a')),
+      JSON.stringify(entry('b')),
+    ]);
+    expect(source.entries).toBe(stored);
+    expect(stored).toEqual([
+      null,
+      entry('a'),
+      'broken',
+      undefined,
+      7,
+      entry('b'),
+    ]);
+  });
+
+  it('logs how many entries it skipped, once and without their content', async () => {
+    await source.load([null, entry('a'), 'broken']);
+    store.entries();
+    source.change([null, entry('a', 'renamed'), 'broken']);
+    store.entries();
+
+    expect(logError).toHaveBeenCalledTimes(1);
+    expect(logError.calls.argsFor(0).join(' ')).toContain('2');
+    expect(logError.calls.argsFor(0).join(' ')).not.toContain('broken');
+
+    source.change([null, entry('a')]);
+    store.entries();
+
+    expect(logError).toHaveBeenCalledTimes(2);
+  });
+
+  it('logs nothing while every stored entry is an object', async () => {
+    await source.load([entry('a')]);
+    store.entries();
+
+    expect(logError).not.toHaveBeenCalled();
   });
 
   it('announces each change', () => {
