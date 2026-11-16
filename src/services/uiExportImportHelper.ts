@@ -127,6 +127,24 @@ function holdsUnchangedImport(_stored: any, _now: number): boolean {
   return !changed && !deleted;
 }
 
+/**
+ * An import failed and the values from before could not be written back
+ * completely, so the stored data can be a mix of old and imported values.
+ * `messageKey` is the text to show: it only names the backup written before
+ * the import when there is one.
+ */
+export class ImportNotRolledBackError extends Error {
+  public readonly messageKey: string;
+
+  constructor(_backupWritten: boolean) {
+    super('The import failed and could not be rolled back');
+    this.name = 'ImportNotRolledBackError';
+    this.messageKey = _backupWritten
+      ? 'IMPORT_NOT_ROLLED_BACK'
+      : 'IMPORT_NOT_ROLLED_BACK_NO_BACKUP';
+  }
+}
+
 @Service()
 export class UIExportImportHelper {
   private readonly uiSettings = inject(UISettingsStorage);
@@ -209,6 +227,9 @@ export class UIExportImportHelper {
    * internal backup removes them as well: that file is not one of them, and
    * the next start offers the restore again, with a new backup before it.
    *
+   * Rejects with ImportNotRolledBackError when the import failed and could
+   * not be rolled back; the backup written before is never removed then.
+   *
    * `_fileName` is the name of the backup file chosen in the settings, when
    * it is known. Only while that file can still be imported again does the
    * backup before the next import count as one of an unchanged import
@@ -239,6 +260,10 @@ export class UIExportImportHelper {
       );
       completed = result?.BACKUP === false;
       return result;
+    } catch (ex) {
+      throw (ex as { BACKUP?: boolean })?.BACKUP === true
+        ? new ImportNotRolledBackError(written !== undefined)
+        : ex;
     } finally {
       if (
         written !== undefined &&
@@ -651,7 +676,11 @@ export class UIExportImportHelper {
         );
       } catch (ex) {
         this.uiLog.error('Could not import the backup chosen at start-up', ex);
-        await this.__sayBackupNotRestored('IMPORT_UNSUCCESSFULLY');
+        await this.__sayBackupNotRestored(
+          ex instanceof ImportNotRolledBackError
+            ? ex.messageKey
+            : 'IMPORT_UNSUCCESSFULLY',
+        );
       }
     }
   }
@@ -681,13 +710,14 @@ export class UIExportImportHelper {
         async (_error: unknown) => {
           this.internalBackupNotRestored = true;
           this.uiLog.error('Could not import  Backup');
-          await this.__sayBackupNotRestored(
-            _error instanceof PreImportBackupError
-              ? // Nothing was imported, the app starts with the stored data.
-                'PRE_IMPORT_BACKUP_FAILED'
-              : // The rollback failed as well.
-                'IMPORT_UNSUCCESSFULLY',
-          );
+          let message = 'IMPORT_UNSUCCESSFULLY';
+          if (_error instanceof PreImportBackupError) {
+            // Nothing was imported, the app starts with the stored data.
+            message = 'PRE_IMPORT_BACKUP_FAILED';
+          } else if (_error instanceof ImportNotRolledBackError) {
+            message = _error.messageKey;
+          }
+          await this.__sayBackupNotRestored(message);
           resolve(null);
         },
       );

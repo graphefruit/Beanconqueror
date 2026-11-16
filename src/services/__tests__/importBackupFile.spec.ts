@@ -32,7 +32,10 @@ import {
 import { EventQueueService } from '../queueService/queue-service.service';
 import { UIAlert } from '../uiAlert';
 import { UIBrewStorage } from '../uiBrewStorage';
-import { UIExportImportHelper } from '../uiExportImportHelper';
+import {
+  ImportNotRolledBackError,
+  UIExportImportHelper,
+} from '../uiExportImportHelper';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
@@ -628,9 +631,14 @@ describe('Importing a backup', () => {
     device.failingWrites.add('SETTINGS');
     device.brokenWrites.add('VERSION');
 
-    await expectAsync(
-      device.helper.importBackup(next, 'import', 'Beanconqueror 3.zip'),
-    ).toBeRejectedWith({ BACKUP: true });
+    const failed = await device.helper
+      .importBackup(next, 'import', 'Beanconqueror 3.zip')
+      .then(fail, (_error: unknown) => _error);
+    expect(failed).toBeInstanceOf(ImportNotRolledBackError);
+    // The file below is the one the message names.
+    expect((failed as ImportNotRolledBackError).messageKey).toBe(
+      'IMPORT_NOT_ROLLED_BACK',
+    );
 
     // The brews of the import are stored, its settings are not.
     expect(device.data.get('BREWS')).toEqual(imported(entries('brew', 2)));
@@ -852,9 +860,16 @@ describe('Importing a backup', () => {
       device.failingReads.count = 1;
       device.failingWrites.add('BREWS');
 
-      await expectAsync(
-        device.helper.importBackup(next(), 'import', 'x.zip', true),
-      ).toBeRejectedWith({ BACKUP: true });
+      const failed = await device.helper
+        .importBackup(next(), 'import', 'x.zip', true)
+        .then(fail, (_error: unknown) => _error);
+
+      // No file was written, so the message must not name one.
+      expect(failed).toBeInstanceOf(ImportNotRolledBackError);
+      expect((failed as ImportNotRolledBackError).messageKey).toBe(
+        'IMPORT_NOT_ROLLED_BACK_NO_BACKUP',
+      );
+      expect(writtenBackups(device)).toEqual([]);
     });
   });
 });
@@ -1238,7 +1253,7 @@ describe('Restoring the internal backup at start-up', () => {
     {
       failure: 'could not be rolled back',
       breakImport: (_device: Device) => _device.brokenWrites.add('BREWS'),
-      message: 'IMPORT_UNSUCCESSFULLY',
+      message: 'IMPORT_NOT_ROLLED_BACK',
     },
   ];
 
@@ -1286,6 +1301,49 @@ describe('Restoring the internal backup at start-up', () => {
       expect(writtenBackups(device).length).toBe(3);
     });
   }
+
+  it('keeps the backup just written when the restore could not be rolled back', async () => {
+    const internalBackup = await internalBackupWithMoreBrews();
+    const before = completeData('own');
+    const device = await startDevice(before, {
+      internalBackup,
+      files: OLDER_BACKUPS,
+    });
+    device.brokenWrites.add('BREWS');
+    spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(true);
+
+    await device.helper.checkBackup();
+
+    const kept = writtenBackups(device);
+    const [file] = kept.filter((_path) => !OLDER_BACKUPS.includes(_path));
+    expect(kept.length).toBe(3);
+    expect((await readBackupFile(device, file)).BREWS).toEqual(before.BREWS);
+  });
+
+  it('keeps the backup just written when a key the internal backup brought along cannot be removed again', async () => {
+    const before = storedData('own');
+    const device = await startDevice(before, { files: OLDER_BACKUPS });
+    device.failingWrites.add('BREWS');
+    spyOn(device.database, 'remove').and.rejectWith(new Error('remove failed'));
+
+    const failed = await device.helper
+      .importBackup(
+        {
+          SETTINGS: [{ language: 'en' }],
+          WATER: entries('water', 1),
+          BREWS: entries('brew', 3),
+        },
+        'internal_backup',
+      )
+      .then(fail, (_error: unknown) => _error);
+
+    expect(failed).toBeInstanceOf(ImportNotRolledBackError);
+    expect(device.data.has('WATER')).toBeTrue();
+    const kept = writtenBackups(device);
+    const [file] = kept.filter((_path) => !OLDER_BACKUPS.includes(_path));
+    expect(kept.length).toBe(3);
+    expect((await readBackupFile(device, file)).BREWS).toEqual(before.BREWS);
+  });
 
   it('writes the internal backup again once it was restored', async () => {
     const internalBackup = await backupFileOf(completeData('backup'));
@@ -1445,6 +1503,61 @@ describe('The copy an import rolls back to', () => {
     expect(result).toEqual({ BACKUP: true });
     expect(readAll).toHaveBeenCalledTimes(1);
     expect(Object.fromEntries(device.data)).toEqual(before);
+  });
+
+  it('removes the keys only the backup file brought along again', async () => {
+    const before = storedData('own');
+    const device = await startDevice(before);
+    device.failingWrites.add('BREWS');
+
+    const result = await device.helper.importBackup(
+      {
+        SETTINGS: [{ language: 'en' }],
+        WATER: entries('water', 1),
+        GRAPH: [],
+        BREWS: entries('brew', 3),
+        // Never written, as the brews before it fail.
+        MILL: entries('mill', 1),
+      },
+      'import',
+    );
+
+    expect(result).toEqual({ BACKUP: true });
+    expect(device.writes).toContain('database WATER');
+    expect(Object.fromEntries(device.data)).toEqual(before);
+  });
+
+  it('is not rolled back to when a key the backup file brought along cannot be removed', async () => {
+    const before = storedData('own');
+    const device = await startDevice(before, { fileSystem: false });
+    device.failingWrites.add('BREWS');
+    const remove = device.database.remove;
+    spyOn(device.database, 'remove').and.callFake((_key: string) =>
+      _key === 'WATER'
+        ? Promise.reject(new Error('remove failed'))
+        : remove(_key),
+    );
+
+    const failed = await device.helper
+      .importBackup(
+        {
+          SETTINGS: [{ language: 'en' }],
+          WATER: entries('water', 1),
+          BREWS: entries('brew', 3),
+        },
+        'import',
+      )
+      .then(fail, (_error: unknown) => _error);
+
+    expect(failed).toBeInstanceOf(ImportNotRolledBackError);
+    // In the browser no file was written, so the message names none.
+    expect((failed as ImportNotRolledBackError).messageKey).toBe(
+      'IMPORT_NOT_ROLLED_BACK_NO_BACKUP',
+    );
+    expect(Object.fromEntries(device.data)).toEqual({
+      ...before,
+      WATER: imported(entries('water', 1)),
+    });
   });
 
   it('is read again when something was stored after the backup file was read', async () => {

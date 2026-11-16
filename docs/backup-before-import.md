@@ -63,8 +63,8 @@ before the import, and it is logged (`Backup before import - skipped, the
 current data could not be read at start-up`). When the data can be read by
 then, the import is one like any other: the file is written first, and
 nothing is imported when that fails. Without a copy in memory nothing can be rolled back either: when
-storing the import fails, the app says that the import was not successful
-and asks again.
+storing the import fails, the app says that the data can be incomplete and
+that no backup of it was saved, and asks again.
 
 The file is the same ZIP an export writes. It holds no passwords, API keys or
 tokens (they stay on the device, and an import keeps them) and none of the
@@ -152,17 +152,27 @@ The current data is never left changed without a file that holds it:
 - The question "Replace all data with the import?" is answered with "No":
   nothing is written and nothing is imported.
 - Storing the imported data fails: the import writes the values from before
-  back from its copy in memory and says that the data was not changed. Keys
-  the device did not store before, but the backup file brought along, are
-  not removed again by that. The file written before the import stays.
-- Writing the values back fails as well, or the app is closed during the
-  import: the stored data can be a mix of old and imported values. The file
-  written before the import is complete by then, as nothing is replaced
-  before it has its name, and it stays. After an import of a file chosen in
-  the settings no file is deleted at all; after a failed restore of the
-  internal backup the file just written is always among the three kept.
-  The note about the import before is removed by then (see below), so the
-  file written before the next import does not end in `_imported.zip`.
+  back from its copy in memory, removes the keys the device did not store
+  before but the backup file brought along, and says that the data was not
+  changed. The stored keys and values are those from before again; values
+  that belong to this installation (`LOCAL_ONLY_STORAGE_KEYS`) are neither
+  written back nor removed. The file written before the import stays.
+- Writing the values back or removing such a key fails as well, or the app
+  is closed during the import: the stored data can be a mix of old and
+  imported values. The file written before the import is complete by then,
+  as nothing is replaced before it has its name, and it stays. After an
+  import of a file chosen in the settings no file is deleted at all; after a
+  failed restore of the internal backup the file just written is always
+  among the three kept. The note about the import before is removed by then
+  (see below), so the file written before the next import does not end in
+  `_imported.zip`. The app does not say that the data was not changed then,
+  in the settings and at start-up alike: it says that the data can be
+  incomplete, and that the backup from before the import is in the app
+  folder "pre-import" and can be imported in the settings via "Find and
+  import an automatic backup file" (`IMPORT_NOT_ROLLED_BACK`). Where no file
+  was written (see below, and the backup chosen because the database could
+  not be read), it says that no backup was saved instead
+  (`IMPORT_NOT_ROLLED_BACK_NO_BACKUP`).
 
 This does not hold where no file is written: in the browser, and when the
 device stored neither settings nor entries.

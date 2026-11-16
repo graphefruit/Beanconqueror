@@ -9,7 +9,10 @@ import { createLegacyData } from '../../test-utils/legacy-data-fixture';
 import { EventQueueService } from '../queueService/queue-service.service';
 import { UIAlert } from '../uiAlert';
 import { UIBrewStorage } from '../uiBrewStorage';
-import { UIExportImportHelper } from '../uiExportImportHelper';
+import {
+  ImportNotRolledBackError,
+  UIExportImportHelper,
+} from '../uiExportImportHelper';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
@@ -378,7 +381,8 @@ describe('Checking the internal backup at start-up with a database that cannot b
 
   for (const [failure, message] of [
     ['was rolled back', 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'],
-    ['failed and could not be rolled back', 'IMPORT_UNSUCCESSFULLY'],
+    ['failed for another reason', 'IMPORT_UNSUCCESSFULLY'],
+    ['failed and could not be rolled back', 'IMPORT_NOT_ROLLED_BACK_NO_BACKUP'],
   ]) {
     it(`says so and asks again when the import ${failure}`, async () => {
       const data = createLegacyData({ brews: 20, beans: 4 });
@@ -390,8 +394,10 @@ describe('Checking the internal backup at start-up with a database that cannot b
         ]);
       const failed =
         message === 'IMPORT_UNSUCCESSFULLY'
-          ? Promise.reject(new Error('could not be rolled back'))
-          : Promise.resolve({ BACKUP: true });
+          ? Promise.reject(new Error('file not readable'))
+          : message === 'IMPORT_NOT_ROLLED_BACK_NO_BACKUP'
+            ? Promise.reject(new ImportNotRolledBackError(false))
+            : Promise.resolve({ BACKUP: true });
       failed.catch(() => undefined);
       importBackup.and.returnValues(failed, Promise.resolve({ BACKUP: false }));
 

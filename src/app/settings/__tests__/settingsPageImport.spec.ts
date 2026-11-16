@@ -1,10 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
+import de from '../../../assets/i18n/de.json';
+import en from '../../../assets/i18n/en.json';
 import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
 import { StorageClass } from '../../../classes/storageClass';
 import { PreImportBackupError } from '../../../services/preImportBackup/pre-import-backup.service';
 import { UIAlert } from '../../../services/uiAlert';
+import { ImportNotRolledBackError } from '../../../services/uiExportImportHelper';
 import { UILog } from '../../../services/uiLog';
 import { UIStorage } from '../../../services/uiStorage';
 import { SettingsPage } from '../settings.page';
@@ -183,13 +186,49 @@ describe('SettingsPage importing a backup file', () => {
     );
   });
 
+  for (const [backup, written, message] of [
+    ['names the backup from before', true, 'IMPORT_NOT_ROLLED_BACK'],
+    [
+      'names no backup when none was written',
+      false,
+      'IMPORT_NOT_ROLLED_BACK_NO_BACKUP',
+    ],
+  ] as const) {
+    it(`says that the data can be incomplete and ${backup} when the import could not be rolled back`, async () => {
+      const { page, uiAlert } = pageWith({
+        savesBackup: written,
+        choice: 'YES',
+        importBackup: jasmine
+          .createSpy('importBackup')
+          .and.rejectWith(new ImportNotRolledBackError(written)),
+      });
+
+      await page.__importJSON(parsedBackup(), '');
+
+      expect(uiAlert.hideLoadingSpinner).toHaveBeenCalled();
+      expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(message);
+    });
+  }
+
+  it('says in English and German where the backup from before the import is found', () => {
+    for (const texts of [en, de]) {
+      expect(texts.IMPORT_NOT_ROLLED_BACK).toContain('pre-import');
+      expect(texts.IMPORT_NOT_ROLLED_BACK).toContain(
+        texts.FIND_AUTOMATIC_BACKUP_FILES,
+      );
+      expect(texts.IMPORT_NOT_ROLLED_BACK_NO_BACKUP).not.toContain(
+        'pre-import',
+      );
+    }
+  });
+
   it('keeps the message for other failures of the import', async () => {
     const { page, uiAlert } = pageWith({
       savesBackup: true,
       choice: 'YES',
       importBackup: jasmine
         .createSpy('importBackup')
-        .and.rejectWith({ BACKUP: true }),
+        .and.rejectWith(new Error('current data not readable')),
     });
 
     await page.__importJSON(parsedBackup(), '');

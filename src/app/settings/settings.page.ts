@@ -118,7 +118,10 @@ import { UIBaristamodeBrewStorage } from '../../services/uiBaristamodeBrewStorag
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIExcel } from '../../services/uiExcel';
-import { UIExportImportHelper } from '../../services/uiExportImportHelper';
+import {
+  ImportNotRolledBackError,
+  UIExportImportHelper,
+} from '../../services/uiExportImportHelper';
 import {
   CreateTempCacheDirectoryResult,
   UIFileHelper,
@@ -1775,13 +1778,13 @@ export class SettingsPage {
       } catch (error) {
         this.uiLog.error('Error during import', error);
         await this.uiAlert.hideLoadingSpinner();
-        await this.uiAlert.showMessage(
-          this.translate.instant(
-            error instanceof PreImportBackupError
-              ? 'PRE_IMPORT_BACKUP_FAILED'
-              : 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
-          ),
-        );
+        let message = 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED';
+        if (error instanceof PreImportBackupError) {
+          message = 'PRE_IMPORT_BACKUP_FAILED';
+        } else if (error instanceof ImportNotRolledBackError) {
+          message = error.messageKey;
+        }
+        await this.uiAlert.showMessage(this.translate.instant(message));
       }
     } catch (ex) {
       await this.uiAlert.showMessage(
