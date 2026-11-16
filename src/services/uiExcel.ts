@@ -13,6 +13,7 @@ import { BrewFlow, IBrewWaterFlow } from '../classes/brew/brewFlow';
 import { sleep } from '../classes/devices';
 import { GreenBean } from '../classes/green-bean/green-bean';
 import { Settings } from '../classes/settings/settings';
+import { StorageClass } from '../classes/storageClass';
 import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../enums/beans/mix';
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
@@ -866,39 +867,23 @@ export class UIExcel {
   }
 
   /**
-   * Stores the beans read from the file one by one. A bean the storage could
-   * not write is taken out of it again: it would be written with a later save
-   * although it was reported as not imported.
+   * Stores the beans read from the file with one save: all of them, or none
+   * and nothing of them is left in the storage. Resolves the stored beans.
    */
   private async storeImportedBeans<T extends Bean | GreenBean>(
     _storage: UIBeanStorage | UIGreenBeanStorage,
     _beans: Array<T>,
   ): Promise<Array<T>> {
-    const stored: Array<T> = [];
-    const notSaved: Array<string> = [];
-    for (const bean of _beans) {
-      try {
-        const added = await _storage.addAndConfirm(bean);
-        if (added.saved) {
-          stored.push(added.entry);
-        } else {
-          notSaved.push(added.entry?.config?.uuid);
-        }
-      } catch (ex) {
-        this.uiLog.error(`Excel import - Bean not stored: ${ex?.message}`);
+    try {
+      // Nothing to store is the wrong file, whatever the storage would say.
+      if (_beans.length === 0) {
+        return [];
       }
+      return (await _storage.addMany(_beans)).added;
+    } catch (ex) {
+      this.uiLog.error(`Excel import - Beans not stored: ${ex?.message}`);
+      return [];
     }
-    if (notSaved.length > 0) {
-      try {
-        // All at once: every save that fails raises an alert of its own.
-        if (!(await _storage.removeManyByUUID(notSaved))) {
-          this.uiLog.error('Excel import - Cleanup failed: beans not removed');
-        }
-      } catch (ex) {
-        this.uiLog.error(`Excel import - Cleanup failed: ${ex?.message}`);
-      }
-    }
-    return stored;
   }
 
   /**
@@ -934,11 +919,16 @@ export class UIExcel {
     }
   }
 
-  /** Tells the user how many of the beans read from the file were stored. */
+  /**
+   * Tells the user whether the beans read from the file were stored. After
+   * `_storageReported` the storage has told that they were not, and no
+   * second message is put on top.
+   */
   private async reportImport(
     _read: number,
     _stored: number,
     _successMessage: string,
+    _storageReported: boolean,
   ): Promise<void> {
     try {
       if (_read === 0) {
@@ -949,20 +939,14 @@ export class UIExcel {
           false,
         );
       } else if (_stored === 0) {
-        await this.uiAlert.showMessage(
-          'BEANS_IMPORTED_UNSUCCESSFULLY_NOT_SAVED',
-          'IMPORT_UNSUCCESSFULLY',
-          undefined,
-          true,
-        );
-      } else if (_stored < _read) {
-        await this.uiAlert.showMessage(
-          this.translate.instant('BEANS_IMPORTED_PARTLY_DESCRIPTION', {
-            imported: _stored,
-            failed: _read - _stored,
-          }),
-          this.translate.instant('CARE'),
-        );
+        if (!_storageReported) {
+          await this.uiAlert.showMessage(
+            'BEANS_IMPORTED_UNSUCCESSFULLY_NOT_SAVED',
+            'IMPORT_UNSUCCESSFULLY',
+            undefined,
+            true,
+          );
+        }
       } else {
         await this.uiAlert.showMessage(
           _successMessage,
@@ -1172,15 +1156,18 @@ export class UIExcel {
         toAddBeans.push(bean);
       }
 
+      const shown = StorageClass.getMessagesShown();
       const addedBeans: Array<GreenBean> = await this.storeImportedBeans(
         this.uiGreenBeanStorage,
         toAddBeans,
       );
+      const storageReported = StorageClass.getMessagesShown() !== shown;
       await this.showFieldsOfImportedBeans(addedBeans);
       await this.reportImport(
         toAddBeans.length,
         addedBeans.length,
         'GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
+        storageReported,
       );
     } catch (ex) {
       this.uiAlert.showMessage(
@@ -1449,15 +1436,18 @@ export class UIExcel {
         toAddBeans.push(bean);
       }
 
+      const shown = StorageClass.getMessagesShown();
       const addedBeans: Array<Bean> = await this.storeImportedBeans(
         this.uiBeanStorage,
         toAddBeans,
       );
+      const storageReported = StorageClass.getMessagesShown() !== shown;
       await this.showFieldsOfImportedBeans(addedBeans);
       await this.reportImport(
         toAddBeans.length,
         addedBeans.length,
         'BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
+        storageReported,
       );
       if (addedBeans.length > 0) {
         this.uiBeanHelper.showBeans(addedBeans);

@@ -294,7 +294,10 @@ writes:
   open for another try. That message is shown also when the collection has
   reported the failed save itself. Marking a best brew
   (`brew-information`) saves the brew and the one that loses the mark with
-  one `updateMany`.
+  one `updateMany`. The Excel import (`uiExcel.ts`) stores the beans of a
+  file with one `addMany`: all of them or none, so no import is partly
+  stored, and it shows its own message only when the collection stayed
+  silent.
 - `removeManyByUUID(uuids)` removes several entries with one save, one
   `DELETE` event and one journal write. `DeleteCommands`
   (`src/stores/delete-commands.ts`) deletes with it what takes other entries

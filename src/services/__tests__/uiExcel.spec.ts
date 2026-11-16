@@ -13,10 +13,12 @@ import { GreenBean } from '../../classes/green-bean/green-bean';
 import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
+import { StorageClass } from '../../classes/storageClass';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { ROASTS_ENUM } from '../../enums/beans/roasts';
 import { createBean } from '../../test-utils/bean-test-helpers';
+import { MemoryDatabase } from '../../test-utils/memory-database';
 import {
   createMockTranslateService,
   createMockUILog,
@@ -87,34 +89,29 @@ function xlsxFile(sheets: Record<string, Row[]>): ArrayBuffer {
 }
 
 /**
- * Stands in for a bean storage: keeps what addAndConfirm() was given the way
- * the database would keep it, as a copy without shared references.
+ * Stands in for a bean storage: keeps what addMany() was given the way the
+ * database would keep it, as a copy without shared references.
  */
 class FakeStorage<T extends object> {
   public entries: T[] = [];
   public readonly stored: T[] = [];
-  /** Names the storage rejects, like a failing write to the database. */
-  public failFor: string[] = [];
-  /** Names the storage takes but cannot write, as it reports a full disk. */
-  public unsavedFor: string[] = [];
-  public readonly addAndConfirm = jasmine
-    .createSpy('addAndConfirm')
-    .and.callFake((entry: T): Promise<{ entry: T; saved: boolean }> => {
-      const name = (entry as { name?: string }).name;
-      if (this.failFor.includes(name)) {
+  /**
+   * `unsaved`: the save fails, as the storage reports a full disk.
+   * `rejects`: the storage itself fails.
+   */
+  public failure: 'unsaved' | 'rejects' | undefined;
+  public readonly addMany = jasmine
+    .createSpy('addMany')
+    .and.callFake((entries: T[]): Promise<{ saved: boolean; added: T[] }> => {
+      if (this.failure === 'rejects') {
         return Promise.reject(new Error('write failed'));
       }
-      if (this.unsavedFor.includes(name)) {
-        const unsaved = JSON.parse(JSON.stringify(entry)) as T;
-        (unsaved as { config: { uuid: string } }).config.uuid = `uuid-${name}`;
-        return Promise.resolve({ entry: unsaved, saved: false });
+      if (this.failure === 'unsaved') {
+        return Promise.resolve({ saved: false, added: [] });
       }
-      this.stored.push(JSON.parse(JSON.stringify(entry)) as T);
-      return Promise.resolve({ entry, saved: true });
+      this.stored.push(...(JSON.parse(JSON.stringify(entries)) as T[]));
+      return Promise.resolve({ saved: true, added: entries });
     });
-  public readonly removeManyByUUID = jasmine
-    .createSpy('removeManyByUUID')
-    .and.resolveTo(true);
 
   public getAllEntries(): T[] {
     return this.entries;
@@ -267,7 +264,7 @@ describe('UIExcel', () => {
       expect(bean.decaffeinated).toBeTrue();
       expect(bean.finished).toBeTrue();
       expect(bean.roast).toBe('CITY_ROAST');
-      expect(beanStorage.addAndConfirm).toHaveBeenCalledTimes(1);
+      expect(beanStorage.addMany).toHaveBeenCalledTimes(1);
     });
 
     it('reports the import and shows the imported beans', async () => {
@@ -646,95 +643,53 @@ describe('UIExcel', () => {
         true,
       ];
 
-      it('reports how many beans were imported and how many were not, and shows the imported ones', async () => {
-        beanStorage.failFor = ['Second'];
-
+      it('stores all beans of the file with one call of the storage', async () => {
         const beans = await importBeans([
           { Name: 'First' },
           { Name: 'Second' },
           { Name: 'Third' },
         ]);
 
-        expect(beans.map((bean) => bean.name)).toEqual(['First', 'Third']);
-        expect(translateInstant).toHaveBeenCalledWith(
-          'BEANS_IMPORTED_PARTLY_DESCRIPTION',
-          { imported: 2, failed: 1 },
-        );
-        expect(showMessage.calls.allArgs()).toEqual([
-          ['BEANS_IMPORTED_PARTLY_DESCRIPTION', 'CARE'],
-        ]);
-        const shown = showBeans.calls.mostRecent().args[0] as Bean[];
-        expect(shown.map((bean) => bean.name)).toEqual(['First', 'Third']);
-        expect(uiLog.errors).toEqual([
-          'Excel import - Bean not stored: write failed',
+        expect(beanStorage.addMany).toHaveBeenCalledTimes(1);
+        expect(beans.map((bean) => bean.name)).toEqual([
+          'First',
+          'Second',
+          'Third',
         ]);
       });
 
-      it('does not count a bean the storage took but could not write, and takes it out again', async () => {
-        beanStorage.unsavedFor = ['First', 'Third'];
+      for (const failure of ['unsaved', 'rejects'] as const) {
+        it(`reports the storage and not the file when the beans could not be stored (${failure})`, async () => {
+          beanStorage.failure = failure;
 
-        await importBeans([
-          { Name: 'First' },
-          { Name: 'Second' },
-          { Name: 'Third' },
-        ]);
+          const beans = await importBeans([
+            { Name: 'First' },
+            { Name: 'Second' },
+          ]);
 
-        expect(translateInstant).toHaveBeenCalledWith(
-          'BEANS_IMPORTED_PARTLY_DESCRIPTION',
-          { imported: 1, failed: 2 },
-        );
-        const shown = showBeans.calls.mostRecent().args[0] as Bean[];
-        expect(shown.map((bean) => bean.name)).toEqual(['Second']);
-        expect(beanStorage.removeManyByUUID).toHaveBeenCalledOnceWith([
-          'uuid-First',
-          'uuid-Third',
-        ]);
-      });
+          expect(beans).toEqual([]);
+          expect(showMessage.calls.allArgs()).toEqual([notSavedMessage]);
+          expect(showBeans).not.toHaveBeenCalled();
+          expect(uiLog.errors).toEqual(
+            failure === 'rejects'
+              ? ['Excel import - Beans not stored: write failed']
+              : [],
+          );
+        });
+      }
 
-      it('still reports the import when a bean that was not written cannot be taken out', async () => {
-        beanStorage.unsavedFor = ['First'];
-        beanStorage.removeManyByUUID.and.rejectWith(new Error('still full'));
+      it('adds no message of its own when the storage has told the user', async () => {
+        beanStorage.failure = 'unsaved';
+        spyOn(StorageClass, 'getMessagesShown').and.returnValues(3, 4);
 
-        await importBeans([{ Name: 'First' }, { Name: 'Second' }]);
+        await importBeans([{ Name: 'First' }]);
 
-        expect(showMessage.calls.allArgs()).toEqual([
-          ['BEANS_IMPORTED_PARTLY_DESCRIPTION', 'CARE'],
-        ]);
-        expect(uiLog.errors).toEqual([
-          'Excel import - Cleanup failed: still full',
-        ]);
-      });
-
-      it('logs a bean that was not written and stays in the storage', async () => {
-        beanStorage.unsavedFor = ['First'];
-        beanStorage.removeManyByUUID.and.resolveTo(false);
-
-        await importBeans([{ Name: 'First' }, { Name: 'Second' }]);
-
-        expect(showMessage.calls.allArgs()).toEqual([
-          ['BEANS_IMPORTED_PARTLY_DESCRIPTION', 'CARE'],
-        ]);
-        expect(uiLog.errors).toEqual([
-          'Excel import - Cleanup failed: beans not removed',
-        ]);
-      });
-
-      it('reports the storage and not the file when no bean could be stored', async () => {
-        beanStorage.failFor = ['First'];
-        beanStorage.unsavedFor = ['Second'];
-
-        const beans = await importBeans([
-          { Name: 'First' },
-          { Name: 'Second' },
-        ]);
-
-        expect(beans).toEqual([]);
-        expect(showMessage.calls.allArgs()).toEqual([notSavedMessage]);
+        expect(showMessage).not.toHaveBeenCalled();
         expect(showBeans).not.toHaveBeenCalled();
       });
 
-      it('leaves the settings alone when no bean that needs them could be stored', async () => {
-        beanStorage.failFor = ['Frozen'];
+      it('leaves the settings alone when the beans that need them could not be stored', async () => {
+        beanStorage.failure = 'unsaved';
 
         await importBeans([
           { Name: 'Plain' },
@@ -766,7 +721,7 @@ describe('UIExcel', () => {
           excel.importBeansByExcel(xlsxFile({ Sheet1: [{ Name: 'Lost' }] })),
         ).toBeResolved();
 
-        expect(beanStorage.addAndConfirm).not.toHaveBeenCalled();
+        expect(beanStorage.addMany).not.toHaveBeenCalled();
         expect(showBeans).not.toHaveBeenCalled();
         expect(showMessage).toHaveBeenCalledTimes(1);
         expect(showMessage.calls.mostRecent().args.slice(1)).toEqual([
@@ -782,7 +737,7 @@ describe('UIExcel', () => {
 
         await expectAsync(excel.importBeansByExcel(brokenZip)).toBeResolved();
 
-        expect(beanStorage.addAndConfirm).not.toHaveBeenCalled();
+        expect(beanStorage.addMany).not.toHaveBeenCalled();
         expect(saveSettings).not.toHaveBeenCalled();
         expect(showBeans).not.toHaveBeenCalled();
         expect(showMessage).toHaveBeenCalledTimes(1);
@@ -796,7 +751,7 @@ describe('UIExcel', () => {
       it('reports a failure and stores nothing without a file', async () => {
         await expectAsync(excel.importBeansByExcel(undefined)).toBeResolved();
 
-        expect(beanStorage.addAndConfirm).not.toHaveBeenCalled();
+        expect(beanStorage.addMany).not.toHaveBeenCalled();
         expect(showMessage).toHaveBeenCalledTimes(1);
       });
 
@@ -808,7 +763,7 @@ describe('UIExcel', () => {
           { Name: 'Breaks', 'Frozen Date': 44594 },
         ]);
 
-        expect(beanStorage.addAndConfirm).not.toHaveBeenCalled();
+        expect(beanStorage.addMany).not.toHaveBeenCalled();
         expect(saveSettings).not.toHaveBeenCalled();
         expect(showMessage.calls.allArgs()).toEqual([
           ['no id', 'IMPORT_UNSUCCESSFULLY', 'OK', false],
@@ -906,7 +861,7 @@ describe('UIExcel', () => {
           true,
         ],
       ]);
-      expect(beanStorage.addAndConfirm).not.toHaveBeenCalled();
+      expect(beanStorage.addMany).not.toHaveBeenCalled();
     });
 
     it('keeps the defaults for a row with only a name', async () => {
@@ -1013,43 +968,8 @@ describe('UIExcel', () => {
       ] as never[]);
     });
 
-    it('reports how many green beans were imported and how many were not', async () => {
-      greenBeanStorage.failFor = ['Second'];
-      greenBeanStorage.unsavedFor = ['Third'];
-
-      const beans = await importGreenBeans([
-        { Name: 'First' },
-        { Name: 'Second' },
-        { Name: 'Third' },
-      ]);
-
-      expect(beans.map((bean) => bean.name)).toEqual(['First']);
-      expect(translateInstant).toHaveBeenCalledWith(
-        'BEANS_IMPORTED_PARTLY_DESCRIPTION',
-        { imported: 1, failed: 2 },
-      );
-      expect(showMessage.calls.allArgs()).toEqual([
-        ['BEANS_IMPORTED_PARTLY_DESCRIPTION', 'CARE'],
-      ]);
-      expect(greenBeanStorage.removeManyByUUID).toHaveBeenCalledOnceWith([
-        'uuid-Third',
-      ]);
-    });
-
-    it('stores the green beans after one that could not be stored', async () => {
-      greenBeanStorage.failFor = ['First'];
-
-      const beans = await importGreenBeans([
-        { Name: 'First' },
-        { Name: 'Second' },
-        { Name: 'Third' },
-      ]);
-
-      expect(beans.map((bean) => bean.name)).toEqual(['Second', 'Third']);
-    });
-
     it('reports the storage and not the file when no green bean could be stored', async () => {
-      greenBeanStorage.failFor = ['Only'];
+      greenBeanStorage.failure = 'unsaved';
 
       await importGreenBeans([{ Name: 'Only', '1. Country': 'Kenya' }]);
 
@@ -1076,7 +996,7 @@ describe('UIExcel', () => {
         excel.importGreenBeansByExcel(xlsxFile({ Beans: [{ Name: 'Lost' }] })),
       ).toBeResolved();
 
-      expect(greenBeanStorage.addAndConfirm).not.toHaveBeenCalled();
+      expect(greenBeanStorage.addMany).not.toHaveBeenCalled();
       expect(showMessage).toHaveBeenCalledTimes(1);
       expect(showMessage.calls.mostRecent().args.slice(1)).toEqual([
         'IMPORT_UNSUCCESSFULLY',
@@ -2076,5 +1996,86 @@ describe('UIExcel', () => {
       ]);
       expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);
     });
+  });
+});
+
+describe('UIExcel importing beans into the real storage', () => {
+  let database: MemoryDatabase;
+  let excel: UIExcel;
+  let beans: UIBeanStorage;
+  let showMessage: jasmine.Spy;
+  let showBeans: jasmine.Spy;
+
+  const rows = Array.from({ length: 40 }, (_, i) => ({ Name: `Bean ${i}` }));
+
+  beforeEach(async () => {
+    database = new MemoryDatabase();
+    showMessage = jasmine.createSpy('showMessage').and.resolveTo(undefined);
+    showBeans = jasmine.createSpy('showBeans');
+    const alert = { showMessage };
+    const providers = database.providers();
+    // The import and the storage show their messages in the same place.
+    (UIAlert.getInstance as jasmine.Spy).and.returnValue(alert);
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        ...providers,
+        UIExcel,
+        { provide: UIAlert, useValue: alert },
+        { provide: UIBeanHelper, useValue: { showBeans } },
+        {
+          provide: UISettingsStorage,
+          useValue: { getSettings: () => new Settings() },
+        },
+        ...[
+          Platform,
+          UIHelper,
+          UIBrewStorage,
+          UIGreenBeanStorage,
+          UIPreparationStorage,
+          UIMillStorage,
+          UIFileHelper,
+        ].map((service) => ({ provide: service, useValue: {} })),
+      ],
+    });
+    database.values.set('BEANS', [
+      { config: { uuid: 'there' }, name: 'There' },
+    ]);
+    beans = TestBed.inject(UIBeanStorage);
+    await beans.initializeStorage();
+    excel = TestBed.inject(UIExcel);
+  });
+
+  it('writes the beans once for 40 imported beans', async () => {
+    await excel.importBeansByExcel(xlsxFile({ Beans: rows }));
+
+    expect(database.writes('BEANS')).toBe(1);
+    expect(database.uuids('BEANS').length).toBe(41);
+    expect(new Set(database.uuids('BEANS')).size).toBe(41);
+    expect(showMessage.calls.allArgs()).toEqual([
+      [
+        'BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
+        'IMPORT_SUCCESSFULLY',
+        undefined,
+        true,
+      ],
+    ]);
+    expect(showBeans.calls.mostRecent().args[0].length).toBe(40);
+  });
+
+  it('leaves no bean in the storage and shows one message when they could not be written', async () => {
+    database.failingWrites.add('BEANS');
+
+    await excel.importBeansByExcel(xlsxFile({ Beans: rows }));
+
+    expect(showMessage).toHaveBeenCalledTimes(1);
+    expect(showBeans).not.toHaveBeenCalled();
+    expect(database.uuids('BEANS')).toEqual(['there']);
+    expect(beans.getRawEntries().length).toBe(1);
+
+    // The next write of the beans stores none of them either.
+    database.failingWrites.clear();
+    await beans.update(beans.getAllEntries()[0]);
+    expect(database.uuids('BEANS')).toEqual(['there']);
   });
 });
