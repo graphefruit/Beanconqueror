@@ -23,23 +23,14 @@ export type PerfTier = 7_000 | 15_000 | 30_000;
  * `beanDeleteWithBrews` is from only three runs (2026-11-15, machine 8 to 22 % busy), by the
  * same rule. Deleting the 200 brews one by one took 51 s with 15,000 brews before.
  *
- * `millDeleteWithBrews` is from three runs (2026-11-16) while the machine was 35 to 59 % busy
- * with other test runs, so none of them counts by the rule above: derive it again when the
- * machine is idle. The grinder has 2,483 / 5,311 / 10,639 brews. Deleting the 2,483 brews one by
- * one took 223 s with 7,000 brews before. While every card of the grinders that are left counted
- * its beans brew by brew when the list is built again, the values were 585 / 1,185 / 3,453 ms
- * (same day, machine 14 to 32 % busy). The toast shows before or after the list is built, so
- * `visible` in the `PERF` line is not the time of the deletion alone.
- *
- * `waterDeleteWithBrews` is from three runs (2026-11-16) while the machine was 19 to 51 % busy
- * with other test runs; four of the nine values were measured above 30 %, so derive it again
- * when the machine is idle. The water has 1,801 / 3,875 / 7,814 brews, which are saved once
- * without it.
- *
- * `beanListOpenByLastUse` is from three runs (2026-11-16) while the machine was 29 to 59 % busy,
- * so only one value counts by the rule above: derive it again when the machine is idle. While
- * the sort went through all brews for both beans of every comparison, one run took 3,150 /
- * 5,448 / 9,372 ms (same day, machine 32 to 47 % busy).
+ * `millDeleteWithBrews`, `waterDeleteWithBrews` and `beanListOpenByLastUse` are from three runs
+ * (2026-11-16, machine 7 to 21 % busy), by the same rule. The grinder has 2,483 / 5,311 / 10,639
+ * brews; deleting the 2,483 brews one by one took 223 s with 7,000 brews before, and while every
+ * card of the grinders that are left counted its beans brew by brew when the list is built
+ * again, the values were 585 / 1,185 / 3,453 ms. The toast shows before or after the list is
+ * built, so `visible` in the `PERF` line is not the time of the deletion alone. The water has
+ * 1,801 / 3,875 / 7,814 brews, which are saved once without it. While the sort by last use went
+ * through all brews for both beans of every comparison, one run took 3,150 / 5,448 / 9,372 ms.
  */
 export interface Budget {
   /** Navigation start until the home screen shows the brew count. */
@@ -114,10 +105,10 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     brewListScrollLongestFrame: 200, // 112 / 145
     search: 170, // 90 / 112
     beanListOpen: 640, // 414 / 488
-    beanListOpenByLastUse: 760, // 509 / 578
+    beanListOpenByLastUse: 540, // 399 / 414
     beanDeleteWithBrews: 600, // 438 / 458
-    millDeleteWithBrews: 600, // 427 / 460
-    waterDeleteWithBrews: 780, // 575 / 599
+    millDeleteWithBrews: 540, // 408 / 410
+    waterDeleteWithBrews: 700, // 508 / 533
     statisticsOpen: 140, // 74 / 81
     statisticsBrewCharts: 330, // 228 / 250
     export: 1_000, // 748 / 763
@@ -131,10 +122,10 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     brewListScrollLongestFrame: 300, // 179 / 224
     search: 200, // 118 / 146
     beanListOpen: 640, // 414 / 432
-    beanListOpenByLastUse: 760, // 497 / 512; not below the budget for 7,000 brews
+    beanListOpenByLastUse: 540, // 403 / 411
     beanDeleteWithBrews: 740, // 562 / 565
-    millDeleteWithBrews: 770, // 584 / 590
-    waterDeleteWithBrews: 1_200, // 860 / 921
+    millDeleteWithBrews: 660, // 500 / 503
+    waterDeleteWithBrews: 1_100, // 766 / 789
     statisticsOpen: 160, // 85 / 101
     statisticsBrewCharts: 450, // 320 / 340
     export: 1_900, // 1,364 / 1,395
@@ -148,10 +139,10 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     brewListScrollLongestFrame: 300, // 168 / 210
     search: 200, // 111 / 116
     beanListOpen: 680, // 459 / 519
-    beanListOpenByLastUse: 780, // 533 / 593
+    beanListOpenByLastUse: 550, // 406 / 418
     beanDeleteWithBrews: 1_300, // 853 / 954
-    millDeleteWithBrews: 1_200, // 857 / 881
-    waterDeleteWithBrews: 2_000, // 1,463 / 1,494
+    millDeleteWithBrews: 970, // 726 / 741
+    waterDeleteWithBrews: 1_700, // 1,254 / 1,265
     statisticsOpen: 210, // 112 / 154
     statisticsBrewCharts: 710, // 531 / 541
     export: 2_300, // 1,588 / 1,760
