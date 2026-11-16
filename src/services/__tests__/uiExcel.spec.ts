@@ -482,7 +482,7 @@ describe('UIExcel', () => {
         expect(bean.bean_information).toEqual([{ country: 'Kenya' } as never]);
       });
 
-      it('known gap: every variety of a blend is stored with the values of the last one', async () => {
+      it('stores every variety of a blend with its own values', async () => {
         const [bean] = await importBeans([
           {
             Name: 'Blend',
@@ -493,14 +493,14 @@ describe('UIExcel', () => {
           },
         ]);
 
-        // Wanted: Ethiopia 60 % and Brazil 40 %.
         expect(bean.bean_information).toEqual([
-          { country: 'Brazil', percentage: 40 } as never,
+          { country: 'Ethiopia', percentage: 60 } as never,
           { country: 'Brazil', percentage: 40 } as never,
         ]);
+        expect(bean.bean_information[0]).not.toBe(bean.bean_information[1]);
       });
 
-      it('known gap: four varieties become four copies of the mixed last values', async () => {
+      it('gives each of four varieties only its own columns', async () => {
         const [bean] = await importBeans([
           {
             Name: 'Blend of four',
@@ -514,28 +514,26 @@ describe('UIExcel', () => {
           },
         ]);
 
-        // A column only an earlier variety has leaks into all of them.
-        const mixed = {
-          country: 'Peru',
-          region: 'Guji',
-          farm: 'Fazenda',
-          variety: 'Caturra',
-        };
         expect(bean.bean_information).toEqual([
-          mixed,
-          mixed,
-          mixed,
-          mixed,
+          { country: 'Ethiopia', region: 'Guji' },
+          { country: 'Brazil', farm: 'Fazenda' },
+          { country: 'Kenya' },
+          { country: 'Peru', variety: 'Caturra' },
         ] as never[]);
       });
 
-      it('known gap: a gap between the varieties is closed, with the later values', async () => {
+      it('stores the first and the third variety when the second is missing', async () => {
         const [bean] = await importBeans([
-          { Name: 'Gap', '1. Country': 'Ethiopia', '3. Country': 'Kenya' },
+          {
+            Name: 'Gap',
+            '1. Country': 'Ethiopia',
+            '1. Region': 'Guji',
+            '3. Country': 'Kenya',
+          },
         ]);
 
         expect(bean.bean_information).toEqual([
-          { country: 'Kenya' },
+          { country: 'Ethiopia', region: 'Guji' },
           { country: 'Kenya' },
         ] as never[]);
       });
@@ -887,16 +885,15 @@ describe('UIExcel', () => {
         },
       ]);
 
-      // Known gap as for roasted beans: all four carry the last values.
       expect(bean.bean_information.map((entry) => entry.country)).toEqual([
-        'Panama',
-        'Panama',
-        'Panama',
+        'Kenya',
+        'Peru',
+        'Brazil',
         'Panama',
       ]);
     });
 
-    it('known gap: every variety is stored with the values of the last one', async () => {
+    it('stores every variety of a blend with its own values', async () => {
       const [bean] = await importGreenBeans([
         {
           Name: 'Green blend',
@@ -908,9 +905,27 @@ describe('UIExcel', () => {
       ]);
 
       expect(bean.bean_information).toEqual([
-        { country: 'Brazil', percentage: 40 } as never,
+        { country: 'Ethiopia', percentage: 60 } as never,
         { country: 'Brazil', percentage: 40 } as never,
       ]);
+      expect(bean.bean_information[0]).not.toBe(bean.bean_information[1]);
+    });
+
+    it('stores the first and the third variety when the second is missing', async () => {
+      const [bean] = await importGreenBeans([
+        {
+          Name: 'Green gap',
+          '1. Country': 'Ethiopia',
+          '1. Region': 'Guji',
+          '3. Country': 'Kenya',
+          '3. Farm': 'Karogoto',
+        },
+      ]);
+
+      expect(bean.bean_information).toEqual([
+        { country: 'Ethiopia', region: 'Guji' },
+        { country: 'Kenya', farm: 'Karogoto' },
+      ] as never[]);
     });
 
     it('known gap: reports success although one of two green beans could not be stored', async () => {
@@ -1497,9 +1512,9 @@ describe('UIExcel', () => {
         expect(imported.roast as unknown).toBe(2);
         expect(imported.roast_custom).toBe('');
         expect(imported.roast_range).toBe(0);
-        // Both varieties carry the values of the second one.
+        // Each variety keeps its own values.
         expect(imported.bean_information.map((info) => info.country)).toEqual([
-          'Brazil',
+          'Ethiopia',
           'Brazil',
         ]);
         expect(imported.config.uuid).not.toBe('bean-1');

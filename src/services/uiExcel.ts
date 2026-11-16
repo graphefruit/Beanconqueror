@@ -1013,9 +1013,8 @@ export class UIExcel {
           bean.finished = archivedEntry;
         }
 
-        const beanInformation: IBeanInformation = {} as IBeanInformation;
-
         for (let i = 1; i < 5; i++) {
+          const beanInformation: IBeanInformation = {} as IBeanInformation;
           let hasOneBeanInformation: boolean = false;
           const informationCertificationEntry =
             entry[i + '. Bean certification'];
@@ -1297,9 +1296,8 @@ export class UIExcel {
           bean.finished = archivedEntry;
         }
 
-        const beanInformation: IBeanInformation = {} as IBeanInformation;
-
         for (let i = 1; i < 5; i++) {
+          const beanInformation: IBeanInformation = {} as IBeanInformation;
           let hasOneBeanInformation: boolean = false;
           //We support a max out of 4 entries.
           const informationCertificationEntry =
