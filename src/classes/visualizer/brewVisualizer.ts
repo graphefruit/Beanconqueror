@@ -1,5 +1,6 @@
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
 import { IBrewVisualizer } from '../../interfaces/visualizer/iBrewVisualizer';
+import { IVisualizerPreparationTool } from '../../interfaces/visualizer/iPreparationVisualizer';
 import { BrewFlow } from '../brew/brewFlow';
 import { Config } from '../objectConfig/objectConfig';
 
@@ -43,6 +44,9 @@ export class BrewVisualizer implements IBrewVisualizer {
   public brew_beverage_quantity_type: BREW_QUANTITY_TYPES_ENUM;
 
   public ey: number;
+
+  public used_preparation_tools: IVisualizerPreparationTool[];
+
   constructor() {
     this.grind_size = '';
     this.grind_weight = 0;
@@ -76,5 +80,6 @@ export class BrewVisualizer implements IBrewVisualizer {
     this.vessel_weight = 0;
     this.config = new Config();
     this.ey = 0;
+    this.used_preparation_tools = [];
   }
 }

@@ -121,6 +121,7 @@ export class VisualizerService {
       vS.mapBean(_brew.getBean());
       vS.mapWater(_brew.getWater());
       vS.mapPreparation(_brew.getPreparation());
+      vS.mapUsedPreparationTools(_brew, _brew.getPreparation());
       vS.mapMill(_brew.getMill());
       vS.brewFlow = await this.readFlowProfile(_brew);
       // Put the actual visualizer id into the request if we stored one
@@ -193,6 +194,7 @@ export class VisualizerService {
     try {
       vS.mapBrew(_brew);
       vS.mapPreparation(_brew.getPreparation());
+      vS.mapUsedPreparationTools(_brew, _brew.getPreparation());
 
       delete vS.bean;
       delete vS.water;
