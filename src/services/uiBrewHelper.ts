@@ -619,9 +619,12 @@ export class UIBrewHelper {
     return true;
   }
 
-  private async openBrewForm(_componentProps?: Record<string, unknown>) {
+  /** Resolves to false when the form was not opened. */
+  private async openBrewForm(
+    _componentProps?: Record<string, unknown>,
+  ): Promise<boolean> {
     if (!this.canOpenBrewFormIfNotShowMessage()) {
-      return;
+      return false;
     }
     this.brewFormOpen = true;
     try {
@@ -637,12 +640,15 @@ export class UIBrewHelper {
     } finally {
       this.brewFormOpen = false;
     }
+    return true;
   }
 
-  public async addBrew() {
-    if (this.canBrewIfNotShowMessage()) {
-      await this.openBrewForm();
-    }
+  /**
+   * Resolves once the form is closed, to false when it was not opened, so a
+   * caller that navigates afterwards can leave the user where they are.
+   */
+  public async addBrew(): Promise<boolean> {
+    return this.canBrewIfNotShowMessage() && (await this.openBrewForm());
   }
 
   public async addBrewWithPresetBean(_bean) {

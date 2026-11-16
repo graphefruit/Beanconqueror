@@ -1,6 +1,7 @@
 import { devices, type Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
+import { beanAction, openBeansTab } from './support/beans';
 import {
   brewField,
   fillBrewField,
@@ -47,6 +48,24 @@ test('the Brew quick action during a brew keeps the open brew form', async ({
 
   await saveBrew(page);
   await expect(page.getByRole('tab', { name: 'Current ( 2 )' })).toBeVisible();
+});
+
+test('the Brew quick action during a brew leaves the user on the tab they were on', async ({
+  page,
+}) => {
+  await openBeansTab(page);
+  await beanAction(page, 'Ethiopia Yirgacheffe Natural', 'Repeat last brew');
+  await expect(brewField(page, 'Creation Date')).toBeVisible();
+
+  await runQuickAction(page, 'Brew');
+  await expect(toast(page, 'A brew is already open')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(
+    page.getByRole('tab', { name: 'Beans', exact: true }),
+  ).toHaveAttribute('aria-selected', 'true');
+  await expect(page).toHaveURL(/\/home\/beans$/);
 });
 
 test('the Brew quick action opens the brew form again after one was cancelled', async ({

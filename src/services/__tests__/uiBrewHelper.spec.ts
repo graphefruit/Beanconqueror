@@ -206,6 +206,16 @@ describe('UIBrewHelper opening the brew form', () => {
     expect(modalController.dismiss).not.toHaveBeenCalled();
   });
 
+  it('reports whether the brew form was opened, so a caller only navigates after its own form', async () => {
+    const first = helper.addBrew();
+    await settle();
+
+    await expectAsync(helper.addBrew()).toBeResolvedTo(false);
+
+    modalController.brewForms()[0].dismiss();
+    await expectAsync(first).toBeResolvedTo(true);
+  });
+
   it('tells the user that a brew form is already open', async () => {
     void helper.addBrew();
     await settle();

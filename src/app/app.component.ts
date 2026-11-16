@@ -870,8 +870,9 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __trackNewBrew() {
-    if (this.uiBrewHelper.canBrew()) {
-      await this.uiBrewHelper.addBrew();
+    // A quick action that is turned down, because a brew form is already
+    // open, must not switch the tab underneath that form.
+    if (this.uiBrewHelper.canBrew() && (await this.uiBrewHelper.addBrew())) {
       this.router.navigate(['/home/brews'], { replaceUrl: true });
     }
   }
