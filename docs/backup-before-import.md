@@ -111,10 +111,11 @@ deletes itself:
   and of every export, which the next export replaces.
 - The automatic backup of a day
   (`Beanconqueror_automatic_export_<DD_MM_YYYY>.zip`): it is replaced on that
-  day, so it only counts when it was imported on a later day, and it is
-  deleted when the app starts a week after its day, so it no longer counts
-  from then on. A backup written before that keeps its name, also once the
-  automatic backup is deleted. Its data is an earlier state of the data of
+  day, so it only counts when it was imported on a later day, and it can
+  be deleted when the app starts a week after its day (only the eight newest
+  are kept beyond that), so it no longer counts from then on. A backup
+  written before that keeps its name, also once the automatic backup is
+  deleted. Its data is an earlier state of the data of
   this device, which the user left again without changing it.
 - One of these files (`Beanconqueror_pre_import_…`), when going back: the
   rotation after the next import can delete it, and the file written before

@@ -133,8 +133,7 @@ describe('UIFileHelper', () => {
       deleteExternalSharedFile: () =>
         fileHelper.deleteExternalSharedFile('a.txt'),
       listAutomaticBackupFiles: () => fileHelper.listAutomaticBackupFiles(),
-      deleteZIPBackupsOlderThanSevenDays: () =>
-        fileHelper.deleteZIPBackupsOlderThanSevenDays(),
+      deleteOldAutomaticBackups: () => fileHelper.deleteOldAutomaticBackups(),
       duplicateInternalFile: () => fileHelper.duplicateInternalFile('a.txt'),
     };
 
@@ -821,105 +820,132 @@ describe('UIFileHelper', () => {
       });
     });
 
-    describe('deleteZIPBackupsOlderThanSevenDays', () => {
-      // Today and the seven days before it are kept: eight files, not seven.
-      it('keeps the backups of today and of the seven days before, deletes the older ones', async () => {
-        today(2026, 3, 20);
-        await writeExported(
-          backup('20_03_2026'),
-          backup('19_03_2026'),
-          backup('14_03_2026'),
-          backup('13_03_2026'),
-          backup('12_03_2026'),
-          backup('11_03_2026'),
-          backup('20_02_2026'),
-          backup('20_03_2025'),
+    describe('deleteOldAutomaticBackups', () => {
+      /** The backups of the days `first` to `last` of a month like 01_2020. */
+      const backupsOf = (month: string, first: number, last: number) =>
+        Array.from({ length: last - first + 1 }, (_, index) =>
+          backup(`${String(first + index).padStart(2, '0')}_${month}`),
         );
 
-        await fileHelper.deleteZIPBackupsOlderThanSevenDays();
+      // Daily use: today and the seven days before it, eight files.
+      it('keeps the eight newest backups, deletes the older ones', async () => {
+        today(2026, 3, 20);
+        await writeExported(...backupsOf('03_2026', 10, 20));
+
+        await fileHelper.deleteOldAutomaticBackups();
+
+        expect(await exported()).toEqual(backupsOf('03_2026', 13, 20));
+      });
+
+      it('keeps the eight newest backups however old they are', async () => {
+        today(2026, 3, 20);
+        await writeExported(...backupsOf('01_2025', 1, 10));
+
+        await fileHelper.deleteOldAutomaticBackups();
+
+        expect(await exported()).toEqual(backupsOf('01_2025', 3, 10));
+      });
+
+      it('keeps all of them when there are no more than eight', async () => {
+        today(2026, 3, 20);
+        await writeExported(...backupsOf('01_2020', 1, 8));
+
+        await fileHelper.deleteOldAutomaticBackups();
+
+        expect(await exported()).toEqual(backupsOf('01_2020', 1, 8));
+      });
+
+      // By the text of the names, 01_01_2026 and 02_02_2026 were the oldest.
+      it('takes the newest by the day in the name, across months and years', async () => {
+        today(2026, 12, 1);
+        const kept = [
+          backup('31_12_2025'),
+          backup('01_01_2026'),
+          backup('02_02_2026'),
+          backup('03_03_2026'),
+          backup('04_04_2026'),
+          backup('05_05_2026'),
+          backup('06_06_2026'),
+          backup('07_07_2026'),
+        ];
+        await writeExported(
+          backup('28_02_2025'),
+          backup('30_11_2025'),
+          ...kept,
+        );
+
+        await fileHelper.deleteOldAutomaticBackups();
+
+        expect(await exported()).toEqual([...kept].sort());
+      });
+
+      it('counts a backup of a future day as the newest and keeps it', async () => {
+        today(2026, 3, 20);
+        await writeExported(
+          backup('21_03_2026'),
+          backup('20_03_2026'),
+          ...backupsOf('03_2026', 4, 10),
+        );
+
+        await fileHelper.deleteOldAutomaticBackups();
 
         expect(await exported()).toEqual(
           [
+            backup('21_03_2026'),
             backup('20_03_2026'),
-            backup('19_03_2026'),
+            ...backupsOf('03_2026', 5, 10),
+          ].sort(),
+        );
+      });
+
+      // The backups before an import count on it, see canBeImportedAgain().
+      it('keeps the backups of the last seven days, also when backups of future days are the eight newest', async () => {
+        today(2026, 3, 20);
+        await writeExported(
+          ...backupsOf('03_2026', 21, 28),
+          backup('20_03_2026'),
+          backup('14_03_2026'),
+          backup('13_03_2026'),
+          backup('12_03_2026'),
+        );
+
+        await fileHelper.deleteOldAutomaticBackups();
+
+        expect(await exported()).toEqual(
+          [
+            ...backupsOf('03_2026', 21, 28),
+            backup('20_03_2026'),
             backup('14_03_2026'),
             backup('13_03_2026'),
           ].sort(),
         );
       });
 
-      it('counts the days across the end of a month', async () => {
-        today(2026, 3, 3);
-        await writeExported(
-          backup('03_03_2026'),
-          backup('01_03_2026'),
-          backup('28_02_2026'),
-          backup('24_02_2026'),
-          backup('23_02_2026'),
-          backup('29_02_2026'),
-        );
-
-        await fileHelper.deleteZIPBackupsOlderThanSevenDays();
-
-        expect(await exported()).toEqual(
-          [
-            backup('03_03_2026'),
-            backup('01_03_2026'),
-            backup('28_02_2026'),
-            backup('24_02_2026'),
-          ].sort(),
-        );
-      });
-
-      it('counts the days across the end of a year', async () => {
-        today(2026, 1, 3);
-        await writeExported(
-          backup('03_01_2026'),
-          backup('01_01_2026'),
-          backup('31_12_2025'),
-          backup('27_12_2025'),
-          backup('26_12_2025'),
-          backup('03_01_2025'),
-        );
-
-        await fileHelper.deleteZIPBackupsOlderThanSevenDays();
-
-        expect(await exported()).toEqual(
-          [
-            backup('03_01_2026'),
-            backup('01_01_2026'),
-            backup('31_12_2025'),
-            backup('27_12_2025'),
-          ].sort(),
-        );
-      });
-
       it('never deletes files with another name or folders', async () => {
         today(2026, 3, 20);
-        await writeExported(
+        const others = [
           'Beanconqueror.zip',
-          'Beanconqueror_pre_import_01_01_2020.zip',
-          'x' + backup('01_01_2020'),
-          'beanconqueror_automatic_export_01_01_2020.zip',
-        );
-        await makeExportedFolder(backup('01_01_2020'));
+          'Beanconqueror_pre_import_01_01_2019.zip',
+          'x' + backup('01_01_2019'),
+          'beanconqueror_automatic_export_01_01_2019.zip',
+        ];
+        await writeExported(...others, ...backupsOf('01_2020', 1, 9));
+        await makeExportedFolder(backup('01_01_2019'));
 
-        await fileHelper.deleteZIPBackupsOlderThanSevenDays();
+        await fileHelper.deleteOldAutomaticBackups();
 
         expect(await exported()).toEqual(
           [
-            'Beanconqueror.zip',
-            'Beanconqueror_pre_import_01_01_2020.zip',
-            'x' + backup('01_01_2020'),
-            'beanconqueror_automatic_export_01_01_2020.zip',
-            backup('01_01_2020'),
+            ...others,
+            backup('01_01_2019'),
+            ...backupsOf('01_2020', 2, 9),
           ].sort(),
         );
       });
 
       it('leaves files in other folders alone', async () => {
         today(2026, 3, 20);
-        await writeExported(backup('01_01_2020'));
+        await writeExported(...backupsOf('01_2020', 1, 9));
         await fileHelper.writeInternalFileFromText('zip', backup('01_01_2020'));
         await fileHelper.writeFileFromText(
           'zip',
@@ -927,9 +953,9 @@ describe('UIFileHelper', () => {
           Directory.External,
         );
 
-        await fileHelper.deleteZIPBackupsOlderThanSevenDays();
+        await fileHelper.deleteOldAutomaticBackups();
 
-        expect(await exported()).toEqual([]);
+        expect(await exported()).toEqual(backupsOf('01_2020', 2, 9));
         expect(await namesIn('', Directory.Data)).toEqual([
           backup('01_01_2020'),
         ]);
@@ -938,31 +964,33 @@ describe('UIFileHelper', () => {
         );
       });
 
-      // Only the eight exact names are kept; everything else with the prefix
-      // goes, also what is newer than today.
-      it('known gap: deletes prefixed files of a future day and with any other ending', async () => {
+      // A copy the user renamed or the system numbered is not ours to delete,
+      // and does not take the place of a backup either.
+      it('never deletes files that only start like a backup, and does not count them', async () => {
         today(2026, 3, 20);
-        await writeExported(
-          backup('20_03_2026'),
-          backup('21_03_2026'),
-          BACKUP_PREFIX + '20_03_2026 (1).zip',
-          BACKUP_PREFIX + '20_03_2026.json',
+        const others = [
+          BACKUP_PREFIX + '01_01_2019 (1).zip',
+          BACKUP_PREFIX + '01_01_2019.json',
+          BACKUP_PREFIX + '01_01_2019.ZIP',
+          BACKUP_PREFIX + '01_01_2019.zip.bak',
+          BACKUP_PREFIX + '1_1_2019.zip',
           BACKUP_PREFIX + 'kept_by_hand.zip',
+          // Not a day.
+          backup('29_02_2019'),
+          backup('01_13_2019'),
+        ];
+        await writeExported(...others, ...backupsOf('01_2020', 1, 9));
+
+        await fileHelper.deleteOldAutomaticBackups();
+
+        expect(await exported()).toEqual(
+          [...others, ...backupsOf('01_2020', 2, 9)].sort(),
         );
-
-        await fileHelper.deleteZIPBackupsOlderThanSevenDays();
-
-        expect(await exported()).toEqual([backup('20_03_2026')]);
       });
 
       it('goes on with the other files when one cannot be deleted', async () => {
         today(2026, 3, 20);
-        await writeExported(
-          backup('01_01_2020'),
-          backup('02_01_2020'),
-          backup('03_01_2020'),
-          backup('20_03_2026'),
-        );
+        await writeExported(...backupsOf('01_2020', 1, 11));
         const original = Reflect.get(FilesystemWeb.prototype, 'deleteFile');
         const deleteFile = spyOn(FilesystemWeb.prototype, 'deleteFile');
         deleteFile.and.callFake(async function (this: FilesystemWeb, options) {
@@ -973,11 +1001,11 @@ describe('UIFileHelper', () => {
         });
 
         await expectAsync(
-          fileHelper.deleteZIPBackupsOlderThanSevenDays(),
+          fileHelper.deleteOldAutomaticBackups(),
         ).toBeResolved();
 
         expect(await exported()).toEqual(
-          [backup('02_01_2020'), backup('20_03_2026')].sort(),
+          [backup('02_01_2020'), ...backupsOf('01_2020', 4, 11)].sort(),
         );
         expect(uiLog.error).toHaveBeenCalledTimes(1);
       });
@@ -987,7 +1015,7 @@ describe('UIFileHelper', () => {
         await makeExportedFolder('other');
 
         await expectAsync(
-          fileHelper.deleteZIPBackupsOlderThanSevenDays(),
+          fileHelper.deleteOldAutomaticBackups(),
         ).toBeResolved();
 
         expect(await exported()).toEqual(['other']);
@@ -1000,7 +1028,7 @@ describe('UIFileHelper', () => {
         spyOn(FilesystemWeb.prototype, 'readdir').and.rejectWith(error);
 
         await expectAsync(
-          fileHelper.deleteZIPBackupsOlderThanSevenDays(),
+          fileHelper.deleteOldAutomaticBackups(),
         ).toBeRejectedWith(error);
         expect(uiLog.error).toHaveBeenCalledTimes(1);
       });

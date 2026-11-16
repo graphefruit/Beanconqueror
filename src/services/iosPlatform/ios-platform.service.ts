@@ -34,7 +34,7 @@ export class IosPlatformService {
       this.uiHelper.isBeanconqurorAppReady().then(
         () => {
           // Delete on startup old json backup files
-          this.uiFileHelper.deleteZIPBackupsOlderThanSevenDays().then(
+          this.uiFileHelper.deleteOldAutomaticBackups().then(
             () => {},
             () => {},
           );

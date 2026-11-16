@@ -509,7 +509,7 @@ describe('Whether an imported file can be imported again', () => {
     ).toBe(false);
   });
 
-  it('holds for the automatic backup of an earlier day until the app deletes it a week later', () => {
+  it('holds for the automatic backup of an earlier day until the app can delete it a week later', () => {
     expect(
       canBeImportedAgain(automaticBackup('12_11_2026'), at(13, 11, 9), NOW),
     ).toBe(true);
@@ -519,7 +519,7 @@ describe('Whether an imported file can be imported again', () => {
     expect(
       canBeImportedAgain(automaticBackup('05_11_2026'), at(13, 11, 9), NOW),
     ).toBe(false);
-    // Imported while it was kept, deleted at a start since.
+    // Imported while it was kept for sure, no longer so since.
     expect(
       canBeImportedAgain(automaticBackup('05_11_2026'), at(10, 11), NOW),
     ).toBe(false);

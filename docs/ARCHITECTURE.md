@@ -456,8 +456,8 @@ flowchart LR
 - Automatic backups: on Android and iOS, `AndroidPlatformService` and
   `IosPlatformService` listen to `STORAGE_CHANGED` with a 3 s debounce and call
   `saveAutomaticBackups()`, which writes `Beanconqueror.zip` into the data
-  directory and a dated copy under `Download/Beanconqueror_export/`; the
-  copies are removed after seven days
+  directory and a dated copy under `Download/Beanconqueror_export/`; at
+  start the eight newest copies are kept and older ones removed
   (`src/services/androidPlatform/android-platform.service.ts`,
   `src/services/iosPlatform/ios-platform.service.ts`).
 - At start (native only), `checkBackup()` reads a single file: the internal

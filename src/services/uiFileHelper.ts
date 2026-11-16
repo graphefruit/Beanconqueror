@@ -17,6 +17,19 @@ import moment from 'moment';
 import { InstanceClass } from './instanceClass';
 import { UILog } from './uiLog';
 
+/**
+ * An automatic backup is not deleted before this many days after its day
+ * have passed. canBeImportedAgain() of the backups before an import relies
+ * on it.
+ */
+export const AUTOMATIC_BACKUP_DAYS_KEPT = 7;
+
+/** As many as daily use leaves behind: today and the days before it. */
+const AUTOMATIC_BACKUPS_KEPT = AUTOMATIC_BACKUP_DAYS_KEPT + 1;
+
+const AUTOMATIC_BACKUP_FILE_NAME =
+  /^Beanconqueror_automatic_export_(\d{2}_\d{2}_\d{4})\.zip$/;
+
 export interface CreateTempCacheDirectoryResult {
   path: string;
   directory: Directory;
@@ -421,21 +434,19 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
-  public async deleteZIPBackupsOlderThanSevenDays(): Promise<void> {
-    this.uiLog.debug('deleteZIPBackupsOlderThanSevenDays starting');
+  /**
+   * Deletes the automatic backups of a day except the newest
+   * AUTOMATIC_BACKUPS_KEPT, by the day in their name and however old they
+   * are: after a long break the last backups are still there. Files whose
+   * name is not exactly the one of such a backup are never touched.
+   */
+  public async deleteOldAutomaticBackups(): Promise<void> {
+    this.uiLog.debug('deleteOldAutomaticBackups starting');
 
     if (!this.platform.is('capacitor')) {
       throw new Error(
         'File system operations are only supported on native platforms.',
       );
-    }
-
-    const lastSevenDays: string[] = [];
-    for (let i = 0; i < 8; i++) {
-      const day: string = moment().subtract(i, 'days').format('DD_MM_YYYY');
-      const automatedBackupFileName: string =
-        'Beanconqueror_automatic_export_' + day + '.zip';
-      lastSevenDays.push(automatedBackupFileName);
     }
 
     try {
@@ -444,27 +455,27 @@ export class UIFileHelper extends InstanceClass {
         directory: Directory.External,
       });
 
-      for (const directoryEntry of exportDir.files) {
-        if (directoryEntry.type !== 'file') {
-          continue;
-        }
+      const firstDayKept = moment().subtract(
+        AUTOMATIC_BACKUP_DAYS_KEPT,
+        'days',
+      );
+      const outdated = exportDir.files
+        .filter((directoryEntry) => directoryEntry.type === 'file')
+        .map((directoryEntry) => ({
+          directoryEntry,
+          day: moment(
+            AUTOMATIC_BACKUP_FILE_NAME.exec(directoryEntry.name)?.[1],
+            'DD_MM_YYYY',
+            true,
+          ),
+        }))
+        .filter((backup) => backup.day.isValid())
+        .sort((a, b) => b.day.valueOf() - a.day.valueOf())
+        .slice(AUTOMATIC_BACKUPS_KEPT)
+        // Only matters when files dated in the future fill the newest places.
+        .filter((backup) => backup.day.isBefore(firstDayKept, 'day'));
 
-        if (
-          !directoryEntry.name.startsWith('Beanconqueror_automatic_export_')
-        ) {
-          // If the file does not start with our prefix then don't touch it
-          continue;
-        }
-
-        if (lastSevenDays.includes(directoryEntry.name)) {
-          this.uiLog.info(
-            'Backup file ',
-            directoryEntry.name,
-            'is not older than 7 days, so we will keep it',
-          );
-          continue;
-        }
-
+      for (const { directoryEntry } of outdated) {
         try {
           this.uiLog.info(
             'Deleting outdated backup file',
@@ -485,10 +496,7 @@ export class UIFileHelper extends InstanceClass {
         }
       }
     } catch (error) {
-      this.uiLog.error(
-        'Error occured in deleteZIPBackupsOlderThanSevenDays',
-        error,
-      );
+      this.uiLog.error('Error occured in deleteOldAutomaticBackups', error);
       throw error;
     }
   }

@@ -3,6 +3,7 @@ import { inject, Service } from '@angular/core';
 import { FileInfo } from '@capacitor/filesystem';
 import moment from 'moment';
 
+import { AUTOMATIC_BACKUP_DAYS_KEPT } from '../uiFileHelper';
 import { UILog } from '../uiLog';
 import { PRE_IMPORT_BACKUP_FILES } from './pre-import-backup-files';
 
@@ -56,12 +57,6 @@ const BACKUP_FILE_NAME = 'Beanconqueror.zip';
 const AUTOMATIC_BACKUP_FILE_PREFIX = 'Beanconqueror_automatic_export_';
 
 /**
- * Days an automatic backup is kept after its day, see
- * UIFileHelper.deleteZIPBackupsOlderThanSevenDays().
- */
-const AUTOMATIC_BACKUP_DAYS_KEPT = 7;
-
-/**
  * Whether the backup file named `_fileName`, imported at `_importedAt`, is
  * at `_now` still there as it was imported, so it can be imported again
  * (times in milliseconds since epoch). Only then does the backup of the
@@ -71,8 +66,9 @@ const AUTOMATIC_BACKUP_DAYS_KEPT = 7;
  * - Beanconqueror.zip is the name of the internal backup, which the
  *   automatic backups replace after every change and which the Files app
  *   shows on iOS, and of every export, which the next export replaces.
- * - The automatic backup of a day is replaced on that day, and deleted at
- *   start-up a week later.
+ * - The automatic backup of a day is replaced on that day, and can be
+ *   deleted at start-up once a week has passed and newer ones are there
+ *   (UIFileHelper.deleteOldAutomaticBackups()).
  * - A backup of this service that data was brought back from: the rotation
  *   after the next import can delete it, and the backup written before
  *   that import is then the only copy of that data.
