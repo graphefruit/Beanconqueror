@@ -6,10 +6,10 @@ import {
   ElementRef,
   HostListener,
   inject,
-  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -30,7 +30,6 @@ import { add } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
-import { Subscription } from 'rxjs';
 
 import { Brew } from '../../classes/brew/brew';
 import { Settings } from '../../classes/settings/settings';
@@ -76,7 +75,7 @@ import { BrewFilterComponent } from './brew-filter/brew-filter.component';
     ShortPressDirective,
   ],
 })
-export class BrewPage implements OnInit, OnDestroy {
+export class BrewPage implements OnInit {
   private readonly modalCtrl = inject(ModalController);
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
@@ -123,7 +122,6 @@ export class BrewPage implements OnInit, OnDestroy {
   public archivedBrewsCollapsed = false;
 
   public settings: Settings;
-  private brewStorageChangeSubscription: Subscription;
 
   public uiIsSortActive = false;
   public uiIsFilterActive = false;
@@ -145,6 +143,18 @@ export class BrewPage implements OnInit, OnDestroy {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
     this.openBrewsFilter = this.settings.GET_BREW_FILTER();
+
+    this.uiBrewStorage
+      .attachOnEvent()
+      .pipe(takeUntilDestroyed())
+      .subscribe((val?: { obj?: { config?: { uuid?: string } } }) => {
+        // Find if this change emitted a brew we can focus
+        if (val?.obj?.config?.uuid) {
+          this.lastInteractedBrewId = val.obj.config.uuid;
+        }
+        // If an bean is added/deleted/changed we trigger this here, why we do this? Because when we import from the Beanconqueror website an bean, and we're actually on this page, this won't get shown.
+        this.loadBrews();
+      });
   }
 
   public ionViewWillEnter(): void {
@@ -157,17 +167,6 @@ export class BrewPage implements OnInit, OnDestroy {
     this.openSortBrewsFilter = this.settings.brew_sort.OPEN;
 
     this.loadBrews();
-
-    this.brewStorageChangeSubscription = this.uiBrewStorage
-      .attachOnEvent()
-      .subscribe((val: any) => {
-        // Find if this change emitted a brew we can focus
-        if (val && val.obj && val.obj.config && val.obj.config.uuid) {
-          this.lastInteractedBrewId = val.obj.config.uuid;
-        }
-        // If an bean is added/deleted/changed we trigger this here, why we do this? Because when we import from the Beanconqueror website an bean, and we're actually on this page, this won't get shown.
-        this.loadBrews();
-      });
   }
 
   public segmentChanged() {
@@ -798,13 +797,6 @@ export class BrewPage implements OnInit, OnDestroy {
   }
 
   public ngOnInit() {}
-
-  public async ngOnDestroy() {
-    if (this.brewStorageChangeSubscription) {
-      this.brewStorageChangeSubscription.unsubscribe();
-      this.brewStorageChangeSubscription = undefined;
-    }
-  }
 
   public async longPressAdd(_event) {
     _event.target.blur();

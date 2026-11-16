@@ -8,6 +8,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -87,6 +88,13 @@ export class MillPage implements OnInit {
   public segment = 'open';
   public segmentScrollHeight: string = undefined;
 
+  public constructor() {
+    this.uiBrewStorage
+      .attachOnEvent()
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.loadMills());
+  }
+
   public ngOnInit(): void {}
 
   public segmentChanged() {
@@ -128,10 +136,6 @@ export class MillPage implements OnInit {
     this.settings = this.uiSettingsStorage.getSettings();
     this.__initializeMills();
     this.retriggerScroll();
-
-    this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
-      this.loadMills();
-    });
   }
 
   public getActiveMills(): Mill[] {
