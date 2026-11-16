@@ -82,7 +82,7 @@
           <ion-row>
             <ion-col class="ion-text-center" size="6">
               <ion-card class="small-card" style="height: 100%;">
-                <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getMillsCount()}}
+                <ion-card-header class="card-background" style="font-size: 1.2em;">{{general.mills}}
                 </ion-card-header>
                 <ion-card-content>
                   {{"NAV_MILL" | translate}}
@@ -91,7 +91,7 @@
             </ion-col>
             <ion-col class="ion-text-center" size="6">
               <ion-card class="small-card" style="height: 100%;">
-                <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getPreparationsCount()}}
+                <ion-card-header class="card-background" style="font-size: 1.2em;">{{general.preparations}}
                 </ion-card-header>
                 <ion-card-content>
                   {{"PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD" | translate}}
@@ -100,7 +100,7 @@
             </ion-col>
             <ion-col class="ion-text-center" size="6">
               <ion-card class="small-card" style="height: 100%;">
-                <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getTotalGround() | number : '.0-2'}}&nbsp;kg
+                <ion-card-header class="card-background" style="font-size: 1.2em;">{{general.totalGround | number : '.0-2'}}&nbsp;kg
                 </ion-card-header>
                 <ion-card-content>
                   {{"PAGE_STATISTICS_TOTAL_GROUND_BEANS" | translate}}
@@ -110,8 +110,8 @@
             <ion-col class="ion-text-center" size="6">
               <ion-card class="small-card" style="height: 100%;">
                 <ion-card-header class="card-background"
-                  style="font-size: 1.2em;">{{uiStatistic.getSpentMoneyForCoffeeBeans() | number : '.0-2'}}&nbsp;
-                  {{getCurrencySymbol()}}
+                  style="font-size: 1.2em;">{{general.spentMoney | number : '.0-2'}}&nbsp;
+                  {{general.currencySymbol}}
                 </ion-card-header>
                 <ion-card-content>
                   {{"PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE" | translate}}
@@ -120,7 +120,7 @@
             </ion-col>
             <ion-col class="ion-text-center" size="6">
               <ion-card class="small-card" style="height: 100%;">
-                <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getBrewsDrunk() | number : '.0'}}
+                <ion-card-header class="card-background" style="font-size: 1.2em;">{{general.brewsDrunk | number : '.0'}}
                 </ion-card-header>
                 <ion-card-content>
                   {{"PAGE_STATISTICS_DRUNKEN_BREWS" | translate}}
@@ -129,7 +129,7 @@
             </ion-col>
             <ion-col class="ion-text-center" size="6">
               <ion-card class="small-card" style="height: 100%;">
-                <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getTotalDrunk() | number : '.0-2'}}
+                <ion-card-header class="card-background" style="font-size: 1.2em;">{{general.totalDrunk | number : '.0-2'}}
                 </ion-card-header>
                 <ion-card-content>
                   {{"PAGE_STATISTICS_DRUNKEN_QUANTITY" | translate}} (kg / l)
@@ -138,7 +138,7 @@
             </ion-col>
             <ion-col class="ion-text-center" size="6">
               <ion-card class="small-card" style="height: 100%;">
-                <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.brewedTime()}}
+                <ion-card-header class="card-background" style="font-size: 1.2em;">{{general.brewedTime}}
                 </ion-card-header>
                 <ion-card-content>
                   {{"PAGE_STATISTICS_BREW_TIME" | translate}}
@@ -147,7 +147,7 @@
             </ion-col>
             <ion-col class="ion-text-center" size="6">
               <ion-card class="small-card" style="height: 100%;">
-                <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.photosTaken() | number : '.0'}}
+                <ion-card-header class="card-background" style="font-size: 1.2em;">{{general.photosTaken | number : '.0'}}
                 </ion-card-header>
                 <ion-card-content>
                   {{"PAGE_STATISTICS_PHOTOS_TAKEN" | translate}}

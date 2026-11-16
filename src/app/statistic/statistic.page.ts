@@ -127,8 +127,35 @@ export class StatisticPage implements OnInit {
   // throws "Canvas is already in use" otherwise).
   private chartRegistry: Record<string, Chart> = {};
 
-  public getCurrencySymbol() {
-    return this.currencyService.getActualCurrencySymbol();
+  /**
+   * The numbers of the General tab. Each one goes through all brews, so they
+   * are worked out when the page is created or entered and when the range
+   * changes, not with every change detection.
+   */
+  public general: {
+    mills: number;
+    preparations: number;
+    totalGround: number;
+    spentMoney: number;
+    brewsDrunk: number;
+    totalDrunk: number;
+    brewedTime: string | number;
+    photosTaken: number;
+    currencySymbol: string;
+  };
+
+  private __loadGeneralNumbers(): void {
+    this.general = {
+      mills: this.uiStatistic.getMillsCount(),
+      preparations: this.uiStatistic.getPreparationsCount(),
+      totalGround: this.uiStatistic.getTotalGround(),
+      spentMoney: this.uiStatistic.getSpentMoneyForCoffeeBeans(),
+      brewsDrunk: this.uiStatistic.getBrewsDrunk(),
+      totalDrunk: this.uiStatistic.getTotalDrunk(),
+      brewedTime: this.uiStatistic.brewedTime(),
+      photosTaken: this.uiStatistic.photosTaken(),
+      currencySymbol: this.currencyService.getActualCurrencySymbol(),
+    };
   }
 
   public ionViewDidEnter(): void {}
@@ -137,6 +164,7 @@ export class StatisticPage implements OnInit {
     this.rangeMode = 'ALL';
     this.dateRange = getDefaultStatisticDateRange();
     this.uiStatistic.setDateRange(this.dateRange);
+    this.__loadGeneralNumbers();
   }
 
   public onRangeModeChange(mode: STATISTIC_RANGE_MODE): void {
@@ -194,6 +222,7 @@ export class StatisticPage implements OnInit {
 
   private __applyDateRange(): void {
     this.uiStatistic.setDateRange(this.dateRange);
+    this.__loadGeneralNumbers();
     this.__reloadActiveSegmentCharts();
     this.changeDetectorRef?.markForCheck();
   }
@@ -213,7 +242,7 @@ export class StatisticPage implements OnInit {
         this.loadGrinderCharts();
         break;
       default:
-        // GENERAL has no charts; scalar cards refresh via change detection.
+        // GENERAL has no charts.
         break;
     }
   }
@@ -249,8 +278,9 @@ export class StatisticPage implements OnInit {
 
   public loadBrewCharts() {
     setTimeout(() => {
-      this.__loadDrinkingChart();
-      this.__loadBrewChart();
+      const byMonth = this.__getBrewsSortedForMonth();
+      this.__loadDrinkingChart(byMonth);
+      this.__loadBrewChart(byMonth);
       this.__loadBrewPerDayChart();
     }, 250);
   }
@@ -549,12 +579,16 @@ export class StatisticPage implements OnInit {
 
   public loadGrinderCharts() {
     setTimeout(() => {
-      this.__loadGrindingChart();
-      this.__loadGrinderUsageTimelineChart();
+      const byMonth = this.__getBrewsSortedForMonth();
+      this.__loadGrindingChart(byMonth);
+      this.__loadGrinderUsageTimelineChart(byMonth);
     }, 250);
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    // The first render comes before the page is entered and shows the numbers.
+    this.ionViewWillEnter();
+  }
 
   private __getBrewsSortedForMonth(): Array<BrewView> {
     const brewViews: Array<BrewView> = [];
@@ -645,9 +679,10 @@ export class StatisticPage implements OnInit {
     return brewViews;
   }
 
-  private __loadGrinderUsageTimelineChart(): void {
+  private __loadGrinderUsageTimelineChart(
+    brewView: Array<BrewView> = this.__getBrewsSortedForMonth(),
+  ): void {
     const brewEntries: Array<Brew> = this.uiBrewStorage.getAllEntries();
-    const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
     // Take the last 12 Months when showing all-time data; otherwise show
     // every bucket within the selected range.
     const lastBrewViews: Array<BrewView> =
@@ -830,8 +865,9 @@ export class StatisticPage implements OnInit {
       } as any,
     );
   }
-  private __loadDrinkingChart(): void {
-    const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
+  private __loadDrinkingChart(
+    brewView: Array<BrewView> = this.__getBrewsSortedForMonth(),
+  ): void {
     // Take the last 12 Months when showing all-time data; otherwise show
     // every bucket within the selected range.
     const lastBrewViews: Array<BrewView> =
@@ -922,8 +958,9 @@ export class StatisticPage implements OnInit {
       } as any,
     );
   }
-  private __loadBrewChart(): void {
-    const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
+  private __loadBrewChart(
+    brewView: Array<BrewView> = this.__getBrewsSortedForMonth(),
+  ): void {
     // Take the last 12 Months when showing all-time data; otherwise show
     // every bucket within the selected range.
     const lastBrewViews: Array<BrewView> =
@@ -961,8 +998,9 @@ export class StatisticPage implements OnInit {
     } as any);
   }
 
-  private __loadGrindingChart(): void {
-    const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
+  private __loadGrindingChart(
+    brewView: Array<BrewView> = this.__getBrewsSortedForMonth(),
+  ): void {
     // Take the last 12 Months when showing all-time data; otherwise show
     // every bucket within the selected range.
     const lastBrewViews: Array<BrewView> =

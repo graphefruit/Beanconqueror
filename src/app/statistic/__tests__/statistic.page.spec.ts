@@ -54,6 +54,12 @@ describe('StatisticPage - Beans Average Rating by Country', () => {
     const statisticSpy = jasmine.createSpyObj('UIStatistic', [
       'getMillsCount',
       'getPreparationsCount',
+      'getTotalGround',
+      'getSpentMoneyForCoffeeBeans',
+      'getBrewsDrunk',
+      'getTotalDrunk',
+      'brewedTime',
+      'photosTaken',
       'setDateRange',
     ]);
     const millStorageSpy = jasmine.createSpyObj('UIMillStorage', [
