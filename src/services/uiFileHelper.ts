@@ -438,7 +438,9 @@ export class UIFileHelper extends InstanceClass {
    * Deletes the automatic backups of a day except the newest
    * AUTOMATIC_BACKUPS_KEPT, by the day in their name and however old they
    * are: after a long break the last backups are still there. Files whose
-   * name is not exactly the one of such a backup are never touched.
+   * name is not exactly the one of such a backup are never touched, nor are
+   * backups of a day in the future: someone named them so on purpose, and
+   * they do not take the place of a real one.
    */
   public async deleteOldAutomaticBackups(): Promise<void> {
     this.uiLog.debug('deleteOldAutomaticBackups starting');
@@ -455,10 +457,7 @@ export class UIFileHelper extends InstanceClass {
         directory: Directory.External,
       });
 
-      const firstDayKept = moment().subtract(
-        AUTOMATIC_BACKUP_DAYS_KEPT,
-        'days',
-      );
+      const today = moment();
       const outdated = exportDir.files
         .filter((directoryEntry) => directoryEntry.type === 'file')
         .map((directoryEntry) => ({
@@ -469,11 +468,11 @@ export class UIFileHelper extends InstanceClass {
             true,
           ),
         }))
-        .filter((backup) => backup.day.isValid())
+        .filter(
+          (backup) => backup.day.isValid() && !backup.day.isAfter(today, 'day'),
+        )
         .sort((a, b) => b.day.valueOf() - a.day.valueOf())
-        .slice(AUTOMATIC_BACKUPS_KEPT)
-        // Only matters when files dated in the future fill the newest places.
-        .filter((backup) => backup.day.isBefore(firstDayKept, 'day'));
+        .slice(AUTOMATIC_BACKUPS_KEPT);
 
       for (const { directoryEntry } of outdated) {
         try {

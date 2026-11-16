@@ -879,12 +879,12 @@ describe('UIFileHelper', () => {
         expect(await exported()).toEqual([...kept].sort());
       });
 
-      it('counts a backup of a future day as the newest and keeps it', async () => {
+      it('keeps a backup of a future day and does not count it', async () => {
         today(2026, 3, 20);
         await writeExported(
           backup('21_03_2026'),
           backup('20_03_2026'),
-          ...backupsOf('03_2026', 4, 10),
+          ...backupsOf('03_2026', 4, 11),
         );
 
         await fileHelper.deleteOldAutomaticBackups();
@@ -893,32 +893,37 @@ describe('UIFileHelper', () => {
           [
             backup('21_03_2026'),
             backup('20_03_2026'),
-            ...backupsOf('03_2026', 5, 10),
+            ...backupsOf('03_2026', 5, 11),
           ].sort(),
         );
       });
 
-      // The backups before an import count on it, see canBeImportedAgain().
-      it('keeps the backups of the last seven days, also when backups of future days are the eight newest', async () => {
+      // After a long break the real backups are still there.
+      it('keeps the eight newest real backups when eight are of future days', async () => {
         today(2026, 3, 20);
         await writeExported(
-          ...backupsOf('03_2026', 21, 28),
-          backup('20_03_2026'),
-          backup('14_03_2026'),
-          backup('13_03_2026'),
-          backup('12_03_2026'),
+          ...backupsOf('04_2026', 1, 8),
+          ...backupsOf('01_2026', 1, 10),
         );
 
         await fileHelper.deleteOldAutomaticBackups();
 
         expect(await exported()).toEqual(
           [
-            ...backupsOf('03_2026', 21, 28),
-            backup('20_03_2026'),
-            backup('14_03_2026'),
-            backup('13_03_2026'),
+            ...backupsOf('04_2026', 1, 8),
+            ...backupsOf('01_2026', 3, 10),
           ].sort(),
         );
+      });
+
+      // The backups before an import count on it, see canBeImportedAgain().
+      it('keeps the backups of the last seven days', async () => {
+        today(2026, 3, 20);
+        await writeExported(...backupsOf('03_2026', 1, 20));
+
+        await fileHelper.deleteOldAutomaticBackups();
+
+        expect(await exported()).toEqual(backupsOf('03_2026', 13, 20));
       });
 
       it('never deletes files with another name or folders', async () => {
