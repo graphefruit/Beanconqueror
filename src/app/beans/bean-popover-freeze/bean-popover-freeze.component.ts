@@ -37,7 +37,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import moment from 'moment/moment';
 
 import { Bean } from '../../../classes/bean/bean';
-import { Brew } from '../../../classes/brew/brew';
 import { Config } from '../../../classes/objectConfig/objectConfig';
 import { Settings } from '../../../classes/settings/settings';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
@@ -189,23 +188,42 @@ export class BeanPopoverFreezeComponent implements OnInit {
   }
 
   public async save() {
-    let result: 'FROZEN' | 'UNCHANGED' | 'INCOMPLETE' = 'INCOMPLETE';
+    let frozen = false;
     try {
+      // Asked first: the bags and the bean they are taken from are stored
+      // together, so nothing can be stored before the answer.
+      const deleteOriginal = await this.__askToDeleteOriginal();
       await this.uiAlert.showLoadingSpinner();
-      result = (await this.__freezeBags()) ? 'FROZEN' : 'UNCHANGED';
+      frozen = await this.__freezeBags(deleteOriginal);
     } catch (ex) {
       this.uiLog.error('Freeze bean - Unsuccessfully', ex);
     } finally {
       await this.uiAlert.hideLoadingSpinner();
     }
-    if (result !== 'FROZEN') {
-      await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
-      if (result === 'INCOMPLETE') {
-        // The bags can be stored and the bean of this dialog reduced by
-        // now: saving again from here would freeze them a second time.
-        await this.dismiss();
-      }
+    if (!frozen) {
+      // Nothing was stored and the bean of this dialog is as it was: the
+      // dialog stays open for another try.
+      await this.uiAlert.showMessage(
+        'BEAN_FREEZE_NOTHING_FROZEN',
+        'CARE',
+        undefined,
+        true,
+      );
       return;
+    }
+    if (this.__isUsedUp() && this.__hasBrews()) {
+      // The freezing is done; a failure here must not report otherwise.
+      try {
+        await this.uiAlert.showMessage(
+          'BEAN_POPOVER_FROZEN_BEAN_WILL_BE_ARCHIVED_NOW_MESSAGE',
+          'INFORMATION',
+          'OK',
+          true,
+        );
+        await this.uiBeanHelper.archiveBeanWithRatingQuestion(this.bean);
+      } catch (ex) {
+        this.uiLog.error('Freeze bean - Archive question not shown', ex);
+      }
     }
     this.dismiss();
     const modal = await this.modalController.create({
@@ -217,41 +235,49 @@ export class BeanPopoverFreezeComponent implements OnInit {
     await modal.onWillDismiss();
   }
 
+  /** Whether the bags take all that is left of the bean. */
+  private __isUsedUp(): boolean {
+    return (
+      this.uiHelper.toFixedIfNecessary(
+        this.leftOverBeanBagWeight - this.getActualFreezingQuantity(),
+        1,
+      ) === 0
+    );
+  }
+
+  private __hasBrews(): boolean {
+    return (
+      this.uiBeanHelper.getAllBrewsForThisBean(this.bean.config.uuid).length > 0
+    );
+  }
+
+  /**
+   * A bean that is used up by the bags and has no brews can go. Resolves
+   * whether the user wants it deleted; false as well when it is not asked.
+   */
+  private async __askToDeleteOriginal(): Promise<boolean> {
+    if (!this.__isUsedUp() || this.__hasBrews()) {
+      return false;
+    }
+    const choice = await this.uiAlert.showConfirm(
+      'BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE',
+      'CARE',
+      true,
+    );
+    return choice === 'YES';
+  }
+
   private async __updateOriginal(): Promise<void> {
     if (!(await this.uiBeanStorage.update(this.bean))) {
       throw new Error('The bean was not saved');
     }
   }
 
-  /**
-   * Bags that were not all stored are taken back instead of taking the
-   * stored ones off the bean: the bean stays as it was, nothing is counted
-   * twice, and the dialog can save the same bags again.
-   */
-  private async __undoCreatedBeans(_copiedFiles: Array<string>): Promise<void> {
-    // Every write stores all beans: a bag whose removal was not written is
-    // off the disk with the next removal that was. What is left then comes
-    // back with a restart unless the beans are written before, and needs its
-    // photos.
-    let stillOnDisk: Array<Bean> = [];
-    for (const created of this.allNewCreatedBeans) {
-      if (await this.uiBeanStorage.removeByUUID(created.config.uuid)) {
-        stillOnDisk = [];
-      } else {
-        stillOnDisk.push(created);
-      }
-    }
-    this.allNewCreatedBeans = [];
-    if (stillOnDisk.length > 0) {
-      this.uiLog.error(
-        `Freeze bean - ${stillOnDisk.length} bags not taken off the disk`,
-      );
-    }
-    const keptFiles = stillOnDisk.flatMap((kept) => kept.attachments);
+  /** The photos copied for bags that were not stored belong to nothing. */
+  private async __deleteCopiedFiles(
+    _copiedFiles: Array<string>,
+  ): Promise<void> {
     for (const file of _copiedFiles) {
-      if (keptFiles.includes(file)) {
-        continue;
-      }
       try {
         await this.uiFileHelper.deleteInternalFile(file);
       } catch (ex) {
@@ -261,31 +287,12 @@ export class BeanPopoverFreezeComponent implements OnInit {
   }
 
   /**
-   * Resolves false when the bags could not be stored and nothing was
-   * changed. Rejects when the bags are stored but the bean they were taken
-   * from could not be written.
+   * Stores the bags and what becomes of the bean they are taken from with
+   * one save. Resolves false when that could not be stored: nothing was
+   * changed then, in the storage or on the bean of this dialog, and the
+   * photos copied for the bags are deleted again.
    */
-  private async __freezeBags(): Promise<boolean> {
-    const spillOver = this.uiHelper.toFixedIfNecessary(
-      this.leftOverBeanBagWeight - this.getActualFreezingQuantity(),
-      1,
-    );
-
-    let index = 1;
-
-    //If burnInPercentage is set, we know its a roasted one.
-    let burnInPercentage = 0;
-    if (this.bean.bean_roast_information.green_bean_weight > 0) {
-      //250
-      const originalWeight = this.bean.weight;
-      //220
-      const originalGreenBeanWeight =
-        this.bean.bean_roast_information.green_bean_weight;
-
-      //Example 12%
-
-      burnInPercentage = 100 - (originalWeight * 100) / originalGreenBeanWeight;
-    }
+  private async __freezeBags(_deleteOriginal: boolean): Promise<boolean> {
     const totalActualBeanWeight = this.bean.weight;
     let totalGreenBeanWeight = 0;
     if (this.bean.bean_roast_information.green_bean_weight > 0) {
@@ -351,134 +358,83 @@ export class BeanPopoverFreezeComponent implements OnInit {
       //If we froze the initial bean already, we use this as the reference again.
       groupBeanId = this.bean.frozenGroupId;
     }
-    const copiedFiles: Array<string> = [];
-    try {
-      for await (const bag of this.addedBags) {
-        await this.__createNewFrozenBean(
-          bag.weight,
-          bag.type,
-          index,
-          groupBeanId,
-          burnInPercentage,
-          totalActualBeanWeight,
-          totalGreenBeanWeight,
-          copyAttachments,
-          copiedFiles,
-        );
-        index = index + 1;
-      }
-    } catch (ex) {
-      this.uiLog.error('Freeze bean - Bag not stored', ex);
-      await this.__undoCreatedBeans(copiedFiles);
-      return false;
-    }
-
-    if (spillOver === 0) {
-      //The whole beanbag will be finished after this
-      const brews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-        this.bean.config.uuid,
-      );
-      if (brews.length > 0) {
-        const oldWeight = this.uiHelper.toFixedIfNecessary(this.bean.weight, 1);
-        this.bean.weight = this.uiHelper.toFixedIfNecessary(
-          this.bean.weight - this.getActualFreezingQuantity(),
-          1,
-        );
-        try {
-          const newCost = this.uiHelper.toFixedIfNecessary(
-            (this.bean.cost * this.bean.weight) / oldWeight,
-            2,
-          );
-          this.bean.cost = newCost;
-        } catch (ex) {
-          this.bean.cost = 0;
-        }
-
-        if (this.bean.bean_roast_information.green_bean_weight > 0) {
-          const percentageBeanWeightShare =
-            this.bean.weight / totalActualBeanWeight;
-          this.bean.bean_roast_information.green_bean_weight =
-            this.uiHelper.toFixedIfNecessary(
-              totalGreenBeanWeight * percentageBeanWeightShare,
-              2,
-            );
-        }
-
-        await this.uiAlert.hideLoadingSpinner();
-        //Don't delete the bean, because we did brews with this
-        this.bean.frozenGroupId = groupBeanId;
-        await this.__updateOriginal();
-        await this.uiAlert.showMessage(
-          'BEAN_POPOVER_FROZEN_BEAN_WILL_BE_ARCHIVED_NOW_MESSAGE',
-          'INFORMATION',
-          'OK',
-          true,
-        );
-        await this.uiBeanHelper.archiveBeanWithRatingQuestion(this.bean);
-      } else {
-        await this.uiAlert.hideLoadingSpinner();
-        let choice: string;
-        try {
-          choice = await this.uiAlert.showConfirm(
-            'BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE',
-            'CARE',
-            true,
-          );
-        } catch (ex) {
-          // The bean is untouched: without the answer the bags would stay
-          // next to it and count twice.
-          this.uiLog.error('Freeze bean - Question not shown', ex);
-          await this.__undoCreatedBeans(copiedFiles);
-          return false;
-        }
-        if (choice === 'YES') {
-          //The bag doesn't have any brews, so just delete it.
-          if (!(await this.uiBeanStorage.removeByUUID(this.bean.config.uuid))) {
-            throw new Error('The bean was not deleted');
-          }
-        } else {
-          //Reset the weight to zero atleast.
-          this.bean.weight = 0;
-          if (this.bean.bean_roast_information.green_bean_weight > 0) {
-            this.bean.bean_roast_information.green_bean_weight = 0;
-          }
-
-          await this.__updateOriginal();
-        }
-      }
-    } else {
-      // We need to update our bean bag.
-      /**
-       * Because we had already maybe some brews, we take the bean weight, and subtract it with the spill over, because just using the spill over would not take previus brews into account
-       */
+    // A copy: the bean of this dialog changes only once all is stored.
+    const original: Bean = this.uiHelper.cloneData(this.bean);
+    if (!this.__isUsedUp() || this.__hasBrews()) {
+      // Because we had already maybe some brews, we take the bean weight, and subtract it with the spill over, because just using the spill over would not take previus brews into account
       const oldWeight = this.uiHelper.toFixedIfNecessary(this.bean.weight, 1);
-      this.bean.weight = this.uiHelper.toFixedIfNecessary(
+      original.weight = this.uiHelper.toFixedIfNecessary(
         this.bean.weight - this.getActualFreezingQuantity(),
         1,
       );
       try {
-        const newCost = this.uiHelper.toFixedIfNecessary(
-          (this.bean.cost * this.bean.weight) / oldWeight,
+        original.cost = this.uiHelper.toFixedIfNecessary(
+          (this.bean.cost * original.weight) / oldWeight,
           2,
         );
-        this.bean.cost = newCost;
       } catch (ex) {
-        this.bean.cost = 0;
+        original.cost = 0;
       }
-
-      if (this.bean.bean_roast_information.green_bean_weight > 0) {
+      if (totalGreenBeanWeight > 0) {
         const percentageBeanWeightShare =
-          this.bean.weight / totalActualBeanWeight;
-        this.bean.bean_roast_information.green_bean_weight =
+          original.weight / totalActualBeanWeight;
+        original.bean_roast_information.green_bean_weight =
           this.uiHelper.toFixedIfNecessary(
             totalGreenBeanWeight * percentageBeanWeightShare,
             2,
           );
       }
-
-      this.bean.frozenGroupId = groupBeanId;
-      await this.__updateOriginal();
+      original.frozenGroupId = groupBeanId;
+    } else if (!_deleteOriginal) {
+      //Reset the weight to zero atleast.
+      original.weight = 0;
+      if (totalGreenBeanWeight > 0) {
+        original.bean_roast_information.green_bean_weight = 0;
+      }
     }
+
+    const copiedFiles: Array<string> = [];
+    let saved = false;
+    try {
+      const bags: Array<Bean> = [];
+      for (const bag of this.addedBags) {
+        bags.push(
+          await this.__createNewFrozenBean(
+            bag.weight,
+            bag.type,
+            groupBeanId,
+            totalActualBeanWeight,
+            totalGreenBeanWeight,
+            copyAttachments,
+            copiedFiles,
+          ),
+        );
+      }
+      const result = await this.uiBeanStorage.applyChanges(
+        _deleteOriginal
+          ? { add: bags, remove: [this.bean.config.uuid] }
+          : { add: bags, update: [original] },
+      );
+      saved = result.saved;
+      if (saved) {
+        this.allNewCreatedBeans = result.added.map((added) => {
+          const newBean = new Bean();
+          newBean.initializeByObject(added);
+          return newBean;
+        });
+      }
+    } catch (ex) {
+      this.uiLog.error('Freeze bean - Bags not stored', ex);
+    }
+    if (!saved) {
+      await this.__deleteCopiedFiles(copiedFiles);
+      return false;
+    }
+    this.bean.weight = original.weight;
+    this.bean.cost = original.cost;
+    this.bean.bean_roast_information.green_bean_weight =
+      original.bean_roast_information.green_bean_weight;
+    this.bean.frozenGroupId = original.frozenGroupId;
     return true;
   }
 
@@ -498,17 +454,16 @@ export class BeanPopoverFreezeComponent implements OnInit {
     return fileUri.path;
   }
 
+  /** The bean for one bag, not stored yet; its photos are copied already. */
   private async __createNewFrozenBean(
     _freezingWeight: number,
     _freezingType: BEAN_FREEZING_STORAGE_ENUM,
-    _index: number,
     _groupBeanId: string,
-    _burnInPercentage: number,
     _totalBeanWeight: number,
     _totalGreenBeanWeight: number,
     _copyAttachments: Array<string>,
     _copiedFiles: Array<string>,
-  ) {
+  ): Promise<Bean> {
     const clonedBean: Bean = this.uiHelper.cloneData(this.bean);
 
     clonedBean.frozenId = this.uiBeanHelper.generateFrozenId();
@@ -554,16 +509,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     }
 
     clonedBean.config = new Config();
-    const added = await this.uiBeanStorage.addAndConfirm(clonedBean);
-    const newBean: Bean = new Bean();
-    newBean.initializeByObject(added.entry);
-    if (!added.saved) {
-      // The storage still holds the bag and would write it with the next
-      // bean, also with the removal of a bag stored before.
-      await this.uiBeanStorage.removeByUUID(newBean.config.uuid);
-      throw new Error('The frozen bean was not saved');
-    }
-    this.allNewCreatedBeans.push(newBean);
+    return clonedBean;
   }
 
   public chooseDate(_event) {

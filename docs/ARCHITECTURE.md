@@ -284,6 +284,17 @@ writes:
     refused write once per session, a failed save once).
     `StorageClass.getMessagesShown()` tells a caller whether it did, so the
     caller shows its own message only when the collection stayed silent.
+- Freezing a bean into bags (`bean-popover-freeze`) is one `applyChanges`:
+  all bags are added and the bean they are taken from is reduced, emptied or
+  removed with the same save. A bean that the bags use up and that has no
+  brews is asked about before anything is stored. The photos of the bags
+  are copied before the save and deleted again when it fails. After a
+  failure nothing is frozen and the bean of the dialog is the one from
+  before, as `BEAN_FREEZE_NOTHING_FROZEN` tells the user; the dialog stays
+  open for another try. That message is shown also when the collection has
+  reported the failed save itself. Marking a best brew
+  (`brew-information`) saves the brew and the one that loses the mark with
+  one `updateMany`.
 - `removeManyByUUID(uuids)` removes several entries with one save, one
   `DELETE` event and one journal write. `DeleteCommands`
   (`src/stores/delete-commands.ts`) deletes with it what takes other entries

@@ -1549,6 +1549,7 @@
     "TOAST_PREPARATION_MACHINE_TURNED_OFF_UNSUCCESSFULLY": "Maschine konnte nicht ausgeschaltet werden",
     "FREEZE_BEAN": "Bohne einfrieren",
     "BEAN_HAS_BEEN_FROZEN": "Bohne wurde eingefroren",
+    "BEAN_FREEZE_NOTHING_FROZEN": "Das Einfrieren ist fehlgeschlagen. Es wurde nichts eingefroren und die Bohne ist unverändert. Bitte versuche es erneut.",
     "FIND_AUTOMATIC_BACKUP_FILES": "Suchen und Importieren einer automatischen Sicherungsdatei",
     "FIND_AUTOMATIC_BACKUP_FILES_DESCRIPTION": "Suche im internen Gerätespeicher nach automatischen Sicherungsdateien, wähle eine aus und importiere diese",
     "NO_AUTOMATIC_BACKUPS_FOUND": "Keine automatischen Backups gefunden",
