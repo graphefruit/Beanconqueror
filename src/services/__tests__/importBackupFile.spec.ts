@@ -1302,6 +1302,29 @@ describe('Restoring the internal backup at start-up', () => {
     });
   }
 
+  it('removes the backup just written and no older one when the restore was rolled back', async () => {
+    const internalBackup = await internalBackupWithMoreBrews();
+    const before = completeData('own');
+    const device = await startDevice(before, {
+      internalBackup,
+      files: OLDER_BACKUPS,
+    });
+    spyOn(device.helper, 'showDataCorruptionPopover').and.resolveTo(true);
+
+    for (let start = 0; start < 3; start++) {
+      device.failingWrites.add('BREWS');
+      await device.helper.checkBackup();
+      await new Promise((_resolve) => setTimeout(_resolve, 2));
+    }
+
+    // The backup was written before anything was replaced.
+    expect(
+      device.writes.filter((_write) => _write.startsWith('file ')).length,
+    ).toBe(3);
+    expect(writtenBackups(device).sort()).toEqual(OLDER_BACKUPS);
+    expect(Object.fromEntries(device.data)).toEqual(before);
+  });
+
   it('keeps the backup just written when the restore could not be rolled back', async () => {
     const internalBackup = await internalBackupWithMoreBrews();
     const before = completeData('own');
@@ -1343,6 +1366,24 @@ describe('Restoring the internal backup at start-up', () => {
     const [file] = kept.filter((_path) => !OLDER_BACKUPS.includes(_path));
     expect(kept.length).toBe(3);
     expect((await readBackupFile(device, file)).BREWS).toEqual(before.BREWS);
+  });
+
+  it('leaves the backup just written when it cannot be removed after the restore was rolled back', async () => {
+    const before = storedData('own');
+    const device = await startDevice(before, { files: OLDER_BACKUPS });
+    device.failingWrites.add('BREWS');
+    spyOn(device.directory.files, 'remove').and.rejectWith(
+      new Error('not removable'),
+    );
+
+    const result = await device.helper.importBackup(
+      { SETTINGS: [{ language: 'en' }], BREWS: entries('brew', 3) },
+      'internal_backup',
+    );
+
+    expect(result).toEqual({ BACKUP: true });
+    expect(writtenBackups(device).length).toBe(OLDER_BACKUPS.length + 1);
+    expect(Object.fromEntries(device.data)).toEqual(before);
   });
 
   it('writes the internal backup again once it was restored', async () => {

@@ -351,6 +351,23 @@ describe('PreImportBackupService', () => {
     );
   });
 
+  it('removes a single backup and never rejects when it cannot be removed', async () => {
+    const paths = [
+      backupPath('2026-11-01_10-00-00-000'),
+      backupPath('2026-11-02_10-00-00-000'),
+    ];
+    const fake = createFakeFiles(paths);
+    const { service, uiLog } = setUp(fake.files);
+
+    await service.remove(paths[1]);
+    expect([...fake.stored.keys()]).toEqual([paths[0]]);
+
+    fake.failing.remove.add(paths[0]);
+    await expectAsync(service.remove(paths[0])).toBeResolved();
+    expect([...fake.stored.keys()]).toEqual([paths[0]]);
+    expect(uiLog.error).toHaveBeenCalledTimes(1);
+  });
+
   it('never rejects when old backups cannot be listed or removed', async () => {
     const paths = [
       backupPath('2026-11-01_10-00-00-000'),

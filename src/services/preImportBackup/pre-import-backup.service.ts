@@ -266,6 +266,22 @@ export class PreImportBackupService {
     }
   }
 
+  /**
+   * Deletes the backup at `_path`, the path write() resolved. Never rejects:
+   * the backup is only kept when deleting fails.
+   */
+  public async remove(_path: string): Promise<void> {
+    try {
+      await this.files.remove(_path);
+      this.uiLog.log(`PreImportBackupService - removed ${_path}`);
+    } catch (ex) {
+      this.uiLog.error(
+        `PreImportBackupService - ${_path} could not be removed`,
+        ex,
+      );
+    }
+  }
+
   /** The backups, newest first. None when they cannot be listed; never rejects. */
   public async list(): Promise<FileInfo[]> {
     if (!this.files.isAvailable()) {

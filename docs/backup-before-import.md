@@ -138,10 +138,18 @@ it and the data of that file are both kept.
 
 Older files are deleted once an import has completed. A failed import of a
 file chosen in the settings deletes none, so the file it was started from is
-still there if it fails. A failed restore of the internal backup at start-up
-deletes older ones as well: `Beanconqueror.zip` is not one of these files, and
-the next start offers the restore again and writes a file before it, so
-without that a restore failing at every start would add one at every start.
+still there if it fails. A restore of the internal backup at start-up that
+fails adds no file over the starts either, as the next start offers the
+restore again and writes a file before it:
+
+- It was rolled back: the file just written is deleted again and the older
+  ones stay. The stored data is the same as before the restore, and a file
+  written at every such start would push the older ones out after three
+  starts. When the file cannot be deleted, it stays until the next completed
+  import deletes older files.
+- It could not be rolled back: the file just written is never deleted, and
+  older ones are deleted as after a completed import (`Beanconqueror.zip` is
+  not one of these files).
 
 ## When an import fails or is stopped
 
@@ -156,7 +164,9 @@ The current data is never left changed without a file that holds it:
   before but the backup file brought along, and says that the data was not
   changed. The stored keys and values are those from before again; values
   that belong to this installation (`LOCAL_ONLY_STORAGE_KEYS`) are neither
-  written back nor removed. The file written before the import stays.
+  written back nor removed. The file written before an import of a file
+  chosen in the settings stays; the one written before a restore of the
+  internal backup at start-up is deleted again (see above).
 - Writing the values back or removing such a key fails as well, or the app
   is closed during the import: the stored data can be a mix of old and
   imported values. The file written before the import is complete by then,
