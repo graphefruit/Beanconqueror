@@ -45,6 +45,9 @@ describe('AutomaticBackupService', () => {
       providers: [{ provide: UILog, useValue: uiLog }],
     });
     eventQueue = TestBed.inject(EventQueueService);
+    // The first call loads the plugin; the listener of the service is only
+    // attached before the one below once it is loaded.
+    await App.addListener('pause', () => undefined);
     TestBed.inject(AutomaticBackupService).start(
       'test-Platform',
       () =>
