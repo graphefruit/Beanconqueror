@@ -95,6 +95,8 @@ export abstract class StorageClass {
    * stores the whole collection, so a write would replace them.
    */
   private isInitialized: number = -1;
+  /** Callers of storageReady() from before the read that is running ended. */
+  private readonly waitingForRead: Array<() => void> = [];
 
   /** One message about refused writes is enough, the remedy is a restart. */
   private static refusedWriteReported = false;
@@ -206,31 +208,31 @@ export abstract class StorageClass {
   }
 
   public async storageReady(): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
-      if (this.isInitialized === -1) {
-        const intV: any = setInterval(async () => {
-          if (this.isInitialized === 1) {
-            this.uiLog.log(`Storage ${this.DB_PATH} ready`);
-            window.clearInterval(intV);
-            resolve(undefined);
-          } else if (this.isInitialized === 0) {
-            window.clearInterval(intV);
-            this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
-            reject();
-          }
-        }, 250);
-      } else {
-        if (this.isInitialized === 1) {
-          this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
-          resolve(undefined);
-        } else if (this.isInitialized === 0) {
-          this.uiLog.log(`Storage ${this.DB_PATH} - already not - ready`);
-          reject();
-        }
-      }
-    });
+    const already = this.isInitialized !== -1;
+    while (this.isInitialized === -1) {
+      await new Promise<void>((resolve) => this.waitingForRead.push(resolve));
+    }
+    if (this.isInitialized === 1) {
+      this.uiLog.log(
+        already
+          ? `Storage ${this.DB_PATH} - already - ready`
+          : `Storage ${this.DB_PATH} ready`,
+      );
+      return undefined;
+    }
+    this.uiLog.log(
+      already
+        ? `Storage ${this.DB_PATH} - already not - ready`
+        : `Storage ${this.DB_PATH} not ready`,
+    );
+    return Promise.reject();
+  }
 
-    return promise;
+  private __readFinished(_initialized: 0 | 1): void {
+    this.isInitialized = _initialized;
+    for (const proceed of this.waitingForRead.splice(0)) {
+      proceed();
+    }
   }
 
   public async reinitializeStorage() {
@@ -767,7 +769,7 @@ export abstract class StorageClass {
             this.uiLog.log(`Storage empty but successfull - ${this.DB_PATH}`);
             // No beans have been added yet
             this.storedData = [];
-            this.isInitialized = 1;
+            this.__readFinished(1);
           } else {
             this.uiLog.log(`Storage successfull - ${this.DB_PATH}`);
             try {
@@ -777,7 +779,7 @@ export abstract class StorageClass {
             } catch (ex) {}
 
             this.storedData = _data;
-            this.isInitialized = 1;
+            this.__readFinished(1);
           }
           this.__forgetExistingDeletions();
           resolve(undefined);
@@ -789,7 +791,7 @@ export abstract class StorageClass {
             e,
           );
           this.storedData = [];
-          this.isInitialized = 0;
+          this.__readFinished(0);
           reject();
         },
       );

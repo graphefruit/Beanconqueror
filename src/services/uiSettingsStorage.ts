@@ -13,6 +13,11 @@ export class UISettingsStorage extends StorageClass {
   public static instance: UISettingsStorage;
   private settings: Settings = new Settings();
   private isSettingsInitialized: number = -1;
+  private settingsIsTakenOver: () => void;
+  /** Resolves when `isSettingsInitialized` is set, also after a failed read. */
+  private readonly settingsTakenOver = new Promise<void>((resolve) => {
+    this.settingsIsTakenOver = resolve;
+  });
 
   public static getInstance(): UISettingsStorage {
     if (UISettingsStorage.instance) {
@@ -38,6 +43,7 @@ export class UISettingsStorage extends StorageClass {
           }
           this.settings.initializeByObject(entries[0]);
           this.isSettingsInitialized = 1;
+          this.settingsIsTakenOver();
         } else {
           // Take the new settings obj.
           await this.chooseExperienceModeForNewSettings();
@@ -45,11 +51,13 @@ export class UISettingsStorage extends StorageClass {
           this.settings = new Settings();
           this.settings.initializeByObject(data);
           this.isSettingsInitialized = 1;
+          this.settingsIsTakenOver();
         }
       },
       () => {
         // Outsch, cant do much.
         this.isSettingsInitialized = 0;
+        this.settingsIsTakenOver();
       },
     );
   }
@@ -59,31 +67,22 @@ export class UISettingsStorage extends StorageClass {
   }
 
   public async storageReady(): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
-      if (this.isSettingsInitialized === -1) {
-        const intV: any = setInterval(() => {
-          if (this.isSettingsInitialized === 1) {
-            this.uiLog.log(`Storage ${this.DB_PATH} ready`);
-            window.clearInterval(intV);
-            resolve(undefined);
-          } else if (this.isSettingsInitialized === 0) {
-            window.clearInterval(intV);
-            this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
-            reject();
-          }
-        }, 250);
-      } else {
-        if (this.isSettingsInitialized === 1) {
-          this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
-          resolve(undefined);
-        } else if (this.isSettingsInitialized === 0) {
-          this.uiLog.log(`Storage ${this.DB_PATH} - already - not - ready`);
-          reject();
-        }
-      }
-    });
-
-    return promise;
+    const already = this.isSettingsInitialized !== -1;
+    await this.settingsTakenOver;
+    if (this.isSettingsInitialized === 1) {
+      this.uiLog.log(
+        already
+          ? `Storage ${this.DB_PATH} - already - ready`
+          : `Storage ${this.DB_PATH} ready`,
+      );
+      return undefined;
+    }
+    this.uiLog.log(
+      already
+        ? `Storage ${this.DB_PATH} - already - not - ready`
+        : `Storage ${this.DB_PATH} not ready`,
+    );
+    return Promise.reject();
   }
 
   public async reinitializeStorage() {
