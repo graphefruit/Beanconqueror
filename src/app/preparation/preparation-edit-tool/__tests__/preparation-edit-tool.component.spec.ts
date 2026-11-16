@@ -92,12 +92,22 @@ function createDevice(_initial: Record<string, unknown>) {
   );
   const read = (_key: string) =>
     Promise.resolve(data.has(_key) ? structuredClone(data.get(_key)) : null);
+  /** The keys in the order they were written, also when it failed. */
+  const writes: string[] = [];
+  /** Keys that cannot be written. */
+  const failing = new Set<string>();
   return {
     data,
+    writes,
+    failing,
     uiStorage: {
       get: read,
       getOrFail: read,
       set: (_key: string, _value: unknown) => {
+        writes.push(_key);
+        if (failing.has(_key)) {
+          return Promise.reject(new Error('write failed'));
+        }
         data.set(_key, structuredClone(_value));
         return Promise.resolve(true);
       },
@@ -109,8 +119,12 @@ type Device = ReturnType<typeof createDevice>;
 
 /** Starts the storages on the given device, like an app start. */
 async function startApp(_device: Device) {
-  const uiAlert = jasmine.createSpyObj('UIAlert', ['showConfirm']);
+  const uiAlert = jasmine.createSpyObj('UIAlert', [
+    'showConfirm',
+    'showMessage',
+  ]);
   uiAlert.showConfirm.and.resolveTo('YES');
+  uiAlert.showMessage.and.resolveTo();
   const uiSettingsStorage = jasmine.createSpyObj('UISettingsStorage', [
     'getSettings',
     'saveSettings',
@@ -164,7 +178,13 @@ async function startApp(_device: Device) {
   const preparationStorage = TestBed.inject(UIPreparationStorage);
   await brewStorage.initializeStorage();
   await preparationStorage.initializeStorage();
-  return { brewStorage, preparationStorage, uiAlert };
+  return {
+    brewStorage,
+    preparationStorage,
+    uiAlert,
+    uiSettingsStorage,
+    modalController: TestBed.inject(ModalController),
+  };
 }
 
 describe('PreparationEditToolComponent deleting a tool', () => {
@@ -188,11 +208,20 @@ describe('PreparationEditToolComponent deleting a tool', () => {
     });
   });
 
+  /** Starts the app again after the tool was deleted. */
+  async function deleteToolAndRestart(
+    _toolUuid: string,
+    _choice: ConfirmationDialogResult = 'YES',
+  ) {
+    await deleteTool(_toolUuid, _choice);
+    return startApp(device);
+  }
+
   /**
    * Deletes the tool in the tool dialog, opened from the edit dialog of the
-   * preparation, and starts the app again.
+   * preparation.
    */
-  async function deleteToolAndRestart(
+  async function deleteTool(
     _toolUuid: string,
     _choice: ConfirmationDialogResult = 'YES',
   ) {
@@ -216,7 +245,7 @@ describe('PreparationEditToolComponent deleting a tool', () => {
     now = DELETED_AT;
     await dialog.deleteTool();
 
-    return startApp(device);
+    return app;
   }
 
   it('removes the tool from the stored preparation instead of archiving it', async () => {
@@ -266,6 +295,83 @@ describe('PreparationEditToolComponent deleting a tool', () => {
     const brew = restarted.brewStorage.getEntryByUUID('brew-with-filter');
     expect(brew.method_of_preparation_tools).toEqual([FILTER_UUID]);
     expect(brew.config).toEqual(jasmine.objectContaining(EARLIER_CHANGE));
+  });
+
+  it('saves the brews once, however many used the tool', async () => {
+    const app = await deleteTool(SCALE_UUID);
+
+    expect(device.writes).toEqual(['BREWS', 'PREPARATION']);
+    expect(app.uiAlert.showMessage).not.toHaveBeenCalled();
+    expect(app.uiSettingsStorage.saveSettings).toHaveBeenCalledTimes(1);
+    expect(app.modalController.dismiss).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the tool in brews and preparation when the brews cannot be saved', async () => {
+    const stored = structuredClone(Object.fromEntries(device.data));
+    device.failing.add('BREWS');
+
+    const app = await deleteTool(SCALE_UUID);
+
+    expect(device.writes).toEqual(['BREWS']);
+    expect(Object.fromEntries(device.data)).toEqual(stored);
+    // In memory as well, also for a list that holds the brews already.
+    for (const brew of app.brewStorage.getAllEntries()) {
+      expect(brew.method_of_preparation_tools)
+        .withContext(brew.config.uuid)
+        .toEqual(
+          app.brewStorage.getByUUID(brew.config.uuid)
+            .method_of_preparation_tools,
+        );
+    }
+    expect(
+      app.brewStorage.getEntryByUUID('brew-with-scale')
+        .method_of_preparation_tools,
+    ).toEqual([SCALE_UUID]);
+    expect(
+      app.preparationStorage.getByUUID(PREPARATION_UUID).tools.length,
+    ).toBe(3);
+    expect(app.uiAlert.showMessage.calls.allArgs()).toEqual([
+      ['ERROR_OCCURED', 'CARE', undefined, true],
+    ]);
+    // The dialog stays open and the filters stay as they are.
+    expect(app.modalController.dismiss).not.toHaveBeenCalled();
+    expect(app.uiSettingsStorage.saveSettings).not.toHaveBeenCalled();
+  });
+
+  it('reports a preparation that could not be saved after the brews', async () => {
+    device.failing.add('PREPARATION');
+
+    const app = await deleteTool(SCALE_UUID);
+
+    expect(device.writes).toEqual(['BREWS', 'PREPARATION']);
+    // What is in memory is what is stored: the preparation keeps the tool.
+    expect(
+      app.preparationStorage.getByUUID(PREPARATION_UUID).tools.length,
+    ).toBe(3);
+    expect(app.uiAlert.showMessage).toHaveBeenCalledTimes(1);
+    expect(app.modalController.dismiss).not.toHaveBeenCalled();
+  });
+
+  it('writes nothing when the preparations could not be read', async () => {
+    const app = await startApp(device);
+    const preparation = new Preparation();
+    preparation.initializeByObject(
+      app.preparationStorage.getByUUID(PREPARATION_UUID),
+    );
+    const dialog = TestBed.inject(PreparationEditToolComponent);
+    Object.assign(dialog, {
+      preparation,
+      preparationTool: preparation.tools[2],
+    });
+    dialog.ionViewWillEnter();
+    spyOn(device.uiStorage, 'getOrFail').and.rejectWith(new Error('no read'));
+    await app.preparationStorage.reinitializeStorage().catch(() => undefined);
+
+    await dialog.deleteTool();
+
+    expect(device.writes).toEqual([]);
+    expect(app.uiAlert.showMessage).toHaveBeenCalledTimes(1);
+    expect(app.modalController.dismiss).not.toHaveBeenCalled();
   });
 
   it('changes nothing when the deletion is not confirmed', async () => {

@@ -23,12 +23,14 @@ import { Brew } from '../../../classes/brew/brew';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import { Settings } from '../../../classes/settings/settings';
+import { StorageClass } from '../../../classes/storageClass';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIHelper } from '../../../services/uiHelper';
+import { UILog } from '../../../services/uiLog';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -61,6 +63,7 @@ export class PreparationEditToolComponent {
   private readonly uiAlert = inject(UIAlert);
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiLog = inject(UILog);
 
   public static readonly COMPONENT_ID: string = 'preparation-edit-tool';
   public data: PreparationTool = new PreparationTool();
@@ -102,27 +105,69 @@ export class PreparationEditToolComponent {
       PREPARATION_TRACKING.TITLE,
       PREPARATION_TRACKING.ACTIONS.TOOL_DELETED,
     );
-    if (relatedBrews.length > 0) {
-      for (const brew of relatedBrews) {
-        for (let i = 0; i < brew.method_of_preparation_tools.length; i++) {
-          if (brew.method_of_preparation_tools[i] === this.data.config.uuid) {
-            brew.method_of_preparation_tools.splice(i, 1);
-            break;
-          }
-        }
-        await this.uiBrewStorage.update(brew);
-
-        // await  this.uiBrewStorage.removeByUUID(brew.config.uuid);
+    const shown = StorageClass.getMessagesShown();
+    if (!(await this.__deleteToolFrom(relatedBrews))) {
+      // The dialog stays open; a collection that reported the failure has
+      // told the user already.
+      if (StorageClass.getMessagesShown() === shown) {
+        await this.uiAlert.showMessage(
+          'ERROR_OCCURED',
+          'CARE',
+          undefined,
+          true,
+        );
       }
+      return;
     }
-
-    this.clonedPreparation.deleteTool(this.data);
-    await this.uiPreparationStorage.update(this.clonedPreparation);
     const settings: Settings = this.uiSettingsStorage.getSettings();
     settings.resetFilter();
     await this.uiSettingsStorage.saveSettings(settings);
 
     this.dismiss();
+  }
+
+  /**
+   * Takes the tool out of the brews with one save, then out of the
+   * preparation. Resolves whether both are saved. The brews keep the tool
+   * when they could not be saved; only when the preparation could not be
+   * saved after them, it keeps the tool without brews.
+   */
+  private async __deleteToolFrom(_brews: Brew[]): Promise<boolean> {
+    try {
+      // An empty list removes nothing but tells whether the preparations
+      // take writes, before the brews are changed.
+      if (!(await this.uiPreparationStorage.removeManyByUUID([]))) {
+        return false;
+      }
+      // Copies: the brews of the storage stay as they are when the save
+      // fails.
+      const brews = _brews.map((brew) => {
+        const changed = new Brew();
+        changed.initializeByObject(brew);
+        changed.method_of_preparation_tools = [
+          ...brew.method_of_preparation_tools,
+        ];
+        changed.method_of_preparation_tools.splice(
+          changed.method_of_preparation_tools.indexOf(this.data.config.uuid),
+          1,
+        );
+        return changed;
+      });
+      if (!(await this.uiBrewStorage.updateMany(brews))) {
+        return false;
+      }
+      // A copy with a list of its own: the list of the dialog can be the
+      // stored one, which has to stay as it is when the save fails.
+      const preparation = new Preparation();
+      preparation.initializeByObject(this.clonedPreparation);
+      preparation.tools = [...preparation.tools];
+      preparation.deleteTool(this.data);
+      // Puts the stored preparation back when it could not be saved.
+      return await this.uiPreparationStorage.updateMany([preparation]);
+    } catch (ex) {
+      this.uiLog.error('Preparation tool - Delete - Unsuccessfully', ex);
+      return false;
+    }
   }
 
   public async archiveTool() {
