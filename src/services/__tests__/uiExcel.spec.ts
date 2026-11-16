@@ -205,6 +205,13 @@ describe('UIExcel', () => {
     return greenBeanStorage.stored;
   }
 
+  const exportFailedMessage = [
+    'ERROR_OCCURED',
+    'EXCEL_EXPORT',
+    undefined,
+    true,
+  ];
+
   const importFailedMessage = [
     'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
     'IMPORT_UNSUCCESSFULLY',
@@ -1429,29 +1436,75 @@ describe('UIExcel', () => {
       expect(hideLoadingSpinner).toHaveBeenCalled();
     });
 
-    it('known gap: closes the spinner without any message when the file cannot be written', async () => {
+    it('logs and reports a file that cannot be written and closes the spinner', async () => {
       exportFileToDefaultDirectory.and.rejectWith(new Error('disk full'));
 
       await expectAsync(excel.export()).toBeResolved();
 
       expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);
+      expect(showMessage).toHaveBeenCalledOnceWith(...exportFailedMessage);
+      expect(uiLog.errors).toEqual(['Excel export - Error occured: disk full']);
+    });
+
+    it('reports nothing when the user leaves the share sheet', async () => {
+      exportFileToDefaultDirectory.and.rejectWith(new Error('Share canceled'));
+
+      await expectAsync(excel.export()).toBeResolved();
+
+      expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);
       expect(showMessage).not.toHaveBeenCalled();
-      expect(uiLog.logs).toEqual([]);
       expect(uiLog.errors).toEqual([]);
     });
 
-    it('known gap: fails with the spinner left open when a sheet name is too long for Excel', async () => {
-      // Excel allows at most 31 characters in a sheet name.
-      setup({ NAV_BREWS: 'A sheet name that is far too long for Excel' });
+    it('reports a workbook that cannot be built and closes the spinner', async () => {
+      brewStorage.getAllEntries = () => {
+        throw new Error('no brews');
+      };
 
-      await expectAsync(excel.export()).toBeRejectedWithError(
-        /cannot exceed 31 chars/,
-      );
+      await expectAsync(excel.export()).toBeResolved();
 
       expect(exportFileToDefaultDirectory).not.toHaveBeenCalled();
-      expect(showLoadingSpinner).toHaveBeenCalledTimes(1);
-      expect(hideLoadingSpinner).not.toHaveBeenCalled();
+      expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);
+      expect(showMessage).toHaveBeenCalledOnceWith(...exportFailedMessage);
+      expect(uiLog.errors).toEqual(['Excel export - Error occured: no brews']);
+    });
+
+    it('cuts a sheet name that is too long for Excel to 31 characters', async () => {
+      setup({ NAV_BREWS: 'A sheet name that is far too long for Excel' });
+
+      await excel.export();
+
+      const file = await exportedFile();
+      expect(file.sheetNames[0]).toBe('A sheet name that is far too lo');
       expect(showMessage).not.toHaveBeenCalled();
+    });
+
+    it('keeps sheet names apart that are the same after cutting or but for the case', async () => {
+      setup({
+        NAV_BREWS: 'A sheet name that is far too long for brews',
+        NAV_BEANS: 'A sheet name that is far too long for beans',
+        NAV_PREPARATION: 'a SHEET name that is far too long for methods',
+        NAV_MILL: 'Grinders',
+      });
+
+      await excel.export();
+
+      expect((await exportedFile()).sheetNames).toEqual([
+        'A sheet name that is far too lo',
+        'A sheet name that is far to (2)',
+        'a SHEET name that is far to (3)',
+        'Grinders',
+      ]);
+    });
+
+    it('replaces the characters Excel forbids in a sheet name', async () => {
+      setup({ NAV_BREWS: "'Brews: a/b\\c?d*e[f]'" });
+
+      await excel.export();
+
+      expect((await exportedFile()).sheetNames[0]).toBe(
+        '_Brews_ a_b_c_d_e_f__',
+      );
     });
 
     describe('read back by the bean import', () => {
@@ -1708,33 +1761,52 @@ describe('UIExcel', () => {
       ]);
     });
 
-    it('known gap: fails with the spinner left open for a custom metric with a long name', async () => {
+    it('cuts the sheet names of custom metrics with long names and keeps them apart', async () => {
       const flow = {
         weight: [],
         waterFlow: [],
         customMetrics: {
           // "Flow metric " leaves 19 of the 31 characters of a sheet name.
           a_metric_name_of_20_: [{ timestamp: 't', brew_time: '1', value: 1 }],
+          a_metric_name_of_20x: [{ timestamp: 't', brew_time: '2', value: 2 }],
         },
       } as unknown as BrewFlow;
 
-      await expectAsync(
-        excel.exportBrewFlowProfile(flow),
-      ).toBeRejectedWithError(/cannot exceed 31 chars/);
+      await excel.exportBrewFlowProfile(flow);
+
+      const sheets = await exportedSheets();
+      expect(Object.keys(sheets).slice(2)).toEqual([
+        'Flow metric a_metric_name_of_20',
+        'Flow metric a_metric_name_o (2)',
+      ]);
+      expect(sheets['Flow metric a_metric_name_o (2)'][1]).toEqual([
+        't',
+        '2',
+        2,
+      ]);
+      expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);
+    });
+
+    it('reports a profile that cannot be turned into sheets and closes the spinner', async () => {
+      const flow = { weight: [], waterFlow: undefined } as unknown as BrewFlow;
+
+      await expectAsync(excel.exportBrewFlowProfile(flow)).toBeResolved();
 
       expect(exportFileToDefaultDirectory).not.toHaveBeenCalled();
       expect(showLoadingSpinner).toHaveBeenCalledTimes(1);
-      expect(hideLoadingSpinner).not.toHaveBeenCalled();
+      expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);
+      expect(showMessage).toHaveBeenCalledOnceWith(...exportFailedMessage);
     });
 
-    it('known gap: closes the spinner without any message when the file cannot be written', async () => {
+    it('logs and reports a file that cannot be written and closes the spinner', async () => {
       exportFileToDefaultDirectory.and.rejectWith(new Error('disk full'));
       const flow = { weight: [], waterFlow: [] } as unknown as BrewFlow;
 
       await expectAsync(excel.exportBrewFlowProfile(flow)).toBeResolved();
 
       expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);
-      expect(showMessage).not.toHaveBeenCalled();
+      expect(showMessage).toHaveBeenCalledOnceWith(...exportFailedMessage);
+      expect(uiLog.errors).toEqual(['Excel export - Error occured: disk full']);
     });
   });
 
@@ -1883,8 +1955,8 @@ describe('UIExcel', () => {
       await throughThePauses(excel.exportBrewByWeights([]));
 
       expect(exportFileToDefaultDirectory).not.toHaveBeenCalled();
-      expect(showMessage).toHaveBeenCalledOnceWith('Workbook is empty');
-      expect(uiLog.logs).toEqual([
+      expect(showMessage).toHaveBeenCalledOnceWith(...exportFailedMessage);
+      expect(uiLog.errors).toEqual([
         'Excel export - Error occured: Workbook is empty',
       ]);
       expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);

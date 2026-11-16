@@ -64,6 +64,64 @@ export class UIExcel {
     return wb;
   }
 
+  /**
+   * Excel allows 31 characters in a sheet name, none of \ / ? * [ ] :, no
+   * apostrophe at either end and no name twice, whatever the case.
+   */
+  private appendSheet(_wb: WorkBook, _ws: WorkSheet, _name: string): void {
+    const cleaned = _name.replace(/[\\/?*[\]:]/g, '_');
+    const taken = _wb.SheetNames.map((name) => name.toLowerCase());
+    let name = cleaned.slice(0, 31).replace(/^'|'$/g, '_');
+    for (let counter = 2; taken.includes(name.toLowerCase()); counter++) {
+      const suffix = ` (${counter})`;
+      name = cleaned.slice(0, 31 - suffix.length).replace(/^'/, '_') + suffix;
+    }
+    XLSX.utils.book_append_sheet(_wb, _ws, name);
+  }
+
+  /**
+   * Builds the workbook and hands the file over. Whatever fails on the way is
+   * logged and reported, and the spinner closes in every case.
+   */
+  private async exportWorkbook(
+    _filename: string,
+    _build: () => WorkBook | Promise<WorkBook>,
+  ): Promise<void> {
+    try {
+      await this.uiAlert.showLoadingSpinner();
+      try {
+        const wb: WorkBook = await _build();
+        const wbout: ArrayBuffer = XLSX.write(wb, {
+          bookType: 'xlsx',
+          type: 'array',
+        });
+        const blob: Blob = new Blob([wbout], {
+          type: 'application/octet-stream',
+        });
+        await this.uiFileHelper.exportFileToDefaultDirectory(
+          _filename,
+          blob,
+          true,
+        );
+      } finally {
+        await this.uiAlert.hideLoadingSpinner();
+      }
+    } catch (ex) {
+      // The file is written before the share sheet opens, and leaving that
+      // sheet is reported as an error by the share plugin.
+      if (/cancel/i.test(ex?.message)) {
+        return;
+      }
+      this.uiLog.error(`Excel export - Error occured: ${ex?.message}`);
+      await this.uiAlert.showMessage(
+        'ERROR_OCCURED',
+        'EXCEL_EXPORT',
+        undefined,
+        true,
+      );
+    }
+  }
+
   private generateBrewFlowProfileRaw(_flow: BrewFlow): WorkBook {
     const wb: WorkBook = XLSX.utils.book_new();
     const header: Array<string> = [];
@@ -96,11 +154,7 @@ export class UIExcel {
       wsData.push(wbEntry);
     }
     const ws: WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(
-      wb,
-      ws,
-      this.translate.instant('Flow profile raw'),
-    );
+    this.appendSheet(wb, ws, this.translate.instant('Flow profile raw'));
 
     const header_flow: Array<string> = [];
     header_flow.push('Timestamp');
@@ -117,7 +171,7 @@ export class UIExcel {
       wsDataFlow.push(wbEntry);
     }
     const wsFlow: WorkSheet = XLSX.utils.aoa_to_sheet(wsDataFlow);
-    XLSX.utils.book_append_sheet(
+    this.appendSheet(
       wb,
       wsFlow,
       this.translate.instant('Flow profile calculated'),
@@ -145,7 +199,7 @@ export class UIExcel {
       }
       const wsFlowRealtime: WorkSheet =
         XLSX.utils.aoa_to_sheet(wsDataFlowRealtime);
-      XLSX.utils.book_append_sheet(
+      this.appendSheet(
         wb,
         wsFlowRealtime,
         this.translate.instant('Flow profile realtime'),
@@ -171,7 +225,7 @@ export class UIExcel {
       }
       const wsFlowRealtime: WorkSheet =
         XLSX.utils.aoa_to_sheet(wsDataPressureFlow);
-      XLSX.utils.book_append_sheet(
+      this.appendSheet(
         wb,
         wsFlowRealtime,
         this.translate.instant('Flow pressure'),
@@ -197,7 +251,7 @@ export class UIExcel {
       const wsFlowRealtime: WorkSheet = XLSX.utils.aoa_to_sheet(
         wsDataTemperatureFlow,
       );
-      XLSX.utils.book_append_sheet(
+      this.appendSheet(
         wb,
         wsFlowRealtime,
         this.translate.instant('Flow temperature'),
@@ -226,7 +280,7 @@ export class UIExcel {
       }
       const wsWaterDispensed: WorkSheet =
         XLSX.utils.aoa_to_sheet(wsDataWaterDispensed);
-      XLSX.utils.book_append_sheet(
+      this.appendSheet(
         wb,
         wsWaterDispensed,
         this.translate.instant('Flow water dispensed'),
@@ -258,7 +312,7 @@ export class UIExcel {
       const wsWaterDispensedRealtime: WorkSheet = XLSX.utils.aoa_to_sheet(
         wsDataWaterDispensedRealtime,
       );
-      XLSX.utils.book_append_sheet(
+      this.appendSheet(
         wb,
         wsWaterDispensedRealtime,
         this.translate.instant('Flow water disp. realtime'),
@@ -288,7 +342,7 @@ export class UIExcel {
         }
         const wsCustomMetric: WorkSheet =
           XLSX.utils.aoa_to_sheet(wsDataCustomMetric);
-        XLSX.utils.book_append_sheet(
+        this.appendSheet(
           wb,
           wsCustomMetric,
           this.translate.instant('Flow metric ') + key,
@@ -332,7 +386,7 @@ export class UIExcel {
       const wsFinalWeight: WorkSheet = XLSX.utils.aoa_to_sheet(
         wsDatafinalWeightFlow,
       );
-      XLSX.utils.book_append_sheet(wb, wsFinalWeight, 'Brew by weight');
+      this.appendSheet(wb, wsFinalWeight, 'Brew by weight');
     }
 
     return wb;
@@ -363,7 +417,7 @@ export class UIExcel {
     }
 
     const ws: WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(_wb, ws, this.translate.instant('NAV_MILL'));
+    this.appendSheet(_wb, ws, this.translate.instant('NAV_MILL'));
   }
   private exportPreparationMethods(_wb: WorkBook) {
     const header: Array<string> = [];
@@ -397,11 +451,7 @@ export class UIExcel {
     }
 
     const ws: WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(
-      _wb,
-      ws,
-      this.translate.instant('NAV_PREPARATION'),
-    );
+    this.appendSheet(_wb, ws, this.translate.instant('NAV_PREPARATION'));
   }
 
   private exportBeans(_wb: WorkBook) {
@@ -500,7 +550,7 @@ export class UIExcel {
       );
     }
     const ws: WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(_wb, ws, this.translate.instant('NAV_BEANS'));
+    this.appendSheet(_wb, ws, this.translate.instant('NAV_BEANS'));
   }
 
   private exportBrews(_wb: WorkBook) {
@@ -630,65 +680,35 @@ export class UIExcel {
       wsData.push(entry);
     }
     const ws: WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(_wb, ws, this.translate.instant('NAV_BREWS'));
+    this.appendSheet(_wb, ws, this.translate.instant('NAV_BREWS'));
   }
 
   public async exportBrewFlowProfile(_flow: BrewFlow) {
     if (!_flow) {
       return;
     }
-    await this.uiAlert.showLoadingSpinner();
-    const wb: WorkBook = this.generateBrewFlowProfileRaw(_flow);
-
-    const filename: string =
+    await this.exportWorkbook(
       'Beanconqueror_Flowprofile_Raw_' +
-      moment().format('HH_mm_ss_DD_MM_YYYY').toString() +
-      '.xlsx';
-    try {
-      /* generate Blob */
-      const wbout: ArrayBuffer = XLSX.write(wb, {
-        bookType: 'xlsx',
-        type: 'array',
-      });
-      const blob: Blob = new Blob([wbout], {
-        type: 'application/octet-stream',
-      });
-      try {
-        await this.uiFileHelper.exportFileToDefaultDirectory(
-          filename,
-          blob,
-          true,
-        );
-        await this.uiAlert.hideLoadingSpinner();
-        // We share directly, so we don'T download into download folders.
-        /**if (this.platform.is('android')) {
-                  const alert = await this.alertCtrl.create({
-                    header: this.translate.instant('DOWNLOADED'),
-                    subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-                      fileName: filename,
-                    }),
-                    buttons: ['OK'],
-                  });
-                  await alert.present();
-                }**/
-      } catch (ex) {}
-    } catch (e) {
-      if (e.message.match(/It was determined/)) {
-        /* in the browser, use writeFile */
-        XLSX.writeFile(wb, filename);
-      } else {
-        this.uiAlert.showMessage(e.message);
-        this.uiLog.log(`Excel export - Error occured: ${e.message}`);
-      }
-    }
-    await this.uiAlert.hideLoadingSpinner();
+        moment().format('HH_mm_ss_DD_MM_YYYY').toString() +
+        '.xlsx',
+      () => this.generateBrewFlowProfileRaw(_flow),
+    );
   }
 
   public async exportBrewByWeightsSmall(
     _entry: Array<{ BREW: Brew; FLOW: BrewFlow }>,
   ) {
-    await this.uiAlert.showLoadingSpinner();
+    await this.exportWorkbook(
+      'Beanconqueror_All_Brew_ByWeights_' +
+        moment().format('HH_mm_ss_DD_MM_YYYY').toString() +
+        '.xlsx',
+      () => this.brewByWeightsSmallWorkbook(_entry),
+    );
+  }
 
+  private async brewByWeightsSmallWorkbook(
+    _entry: Array<{ BREW: Brew; FLOW: BrewFlow }>,
+  ): Promise<WorkBook> {
     let counter: number = 0;
 
     const wb: WorkBook = XLSX.utils.book_new();
@@ -734,60 +754,28 @@ export class UIExcel {
         const wsFinalWeight: WorkSheet = XLSX.utils.aoa_to_sheet(
           wsDatafinalWeightFlow,
         );
-        XLSX.utils.book_append_sheet(wb, wsFinalWeight, 'S-' + counter);
+        this.appendSheet(wb, wsFinalWeight, 'S-' + counter);
         counter = counter + 1;
       }
     }
 
-    const filename: string =
-      'Beanconqueror_All_Brew_ByWeights_' +
-      moment().format('HH_mm_ss_DD_MM_YYYY').toString() +
-      '.xlsx';
-    try {
-      /* generate Blob */
-      const wbout: ArrayBuffer = XLSX.write(wb, {
-        bookType: 'xlsx',
-        type: 'array',
-      });
-      const blob: Blob = new Blob([wbout], {
-        type: 'application/octet-stream',
-      });
-      try {
-        await this.uiFileHelper.exportFileToDefaultDirectory(
-          filename,
-          blob,
-          true,
-        );
-        await this.uiAlert.hideLoadingSpinner();
-        // We share directly, so we don'T download into download folders.
-        /**if (this.platform.is('android')) {
-                 const alert = await this.alertCtrl.create({
-                 header: this.translate.instant('DOWNLOADED'),
-                 subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-                 fileName: filename,
-                 }),
-                 buttons: ['OK'],
-                 });
-                 await alert.present();
-                 }**/
-      } catch (ex) {}
-    } catch (e) {
-      if (e.message.match(/It was determined/)) {
-        /* in the browser, use writeFile */
-        XLSX.writeFile(wb, filename);
-      } else {
-        this.uiAlert.showMessage(e.message);
-        this.uiLog.log(`Excel export - Error occured: ${e.message}`);
-      }
-    }
-    await this.uiAlert.hideLoadingSpinner();
+    return wb;
   }
 
   public async exportBrewByWeights(
     _entry: Array<{ BREW: Brew; FLOW: BrewFlow }>,
   ) {
-    await this.uiAlert.showLoadingSpinner();
+    await this.exportWorkbook(
+      'Beanconqueror_All_Brew_ByWeights_' +
+        moment().format('HH_mm_ss_DD_MM_YYYY').toString() +
+        '.xlsx',
+      () => this.brewByWeightsWorkbook(_entry),
+    );
+  }
 
+  private async brewByWeightsWorkbook(
+    _entry: Array<{ BREW: Brew; FLOW: BrewFlow }>,
+  ): Promise<WorkBook> {
     let counter: number = 0;
 
     const wb: WorkBook = XLSX.utils.book_new();
@@ -850,53 +838,12 @@ export class UIExcel {
         const wsFinalWeight: WorkSheet = XLSX.utils.aoa_to_sheet(
           wsDatafinalWeightFlow,
         );
-        XLSX.utils.book_append_sheet(wb, wsFinalWeight, 'S-' + counter);
+        this.appendSheet(wb, wsFinalWeight, 'S-' + counter);
         counter = counter + 1;
       }
     }
 
-    const filename: string =
-      'Beanconqueror_All_Brew_ByWeights_' +
-      moment().format('HH_mm_ss_DD_MM_YYYY').toString() +
-      '.xlsx';
-    try {
-      /* generate Blob */
-      const wbout: ArrayBuffer = XLSX.write(wb, {
-        bookType: 'xlsx',
-        type: 'array',
-      });
-      const blob: Blob = new Blob([wbout], {
-        type: 'application/octet-stream',
-      });
-      try {
-        await this.uiFileHelper.exportFileToDefaultDirectory(
-          filename,
-          blob,
-          true,
-        );
-        await this.uiAlert.hideLoadingSpinner();
-        // We share directly, so we don'T download into download folders.
-        /**if (this.platform.is('android')) {
-                 const alert = await this.alertCtrl.create({
-                 header: this.translate.instant('DOWNLOADED'),
-                 subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-                 fileName: filename,
-                 }),
-                 buttons: ['OK'],
-                 });
-                 await alert.present();
-                 }**/
-      } catch (ex) {}
-    } catch (e) {
-      if (e.message.match(/It was determined/)) {
-        /* in the browser, use writeFile */
-        XLSX.writeFile(wb, filename);
-      } else {
-        this.uiAlert.showMessage(e.message);
-        this.uiLog.log(`Excel export - Error occured: ${e.message}`);
-      }
-    }
-    await this.uiAlert.hideLoadingSpinner();
+    return wb;
   }
   private getAvgFlow(_flow: BrewFlow): number {
     if (_flow.waterFlow && _flow.waterFlow.length > 0) {
@@ -1480,40 +1427,13 @@ export class UIExcel {
   }
   /* Export button */
   public async export() {
-    await this.uiAlert.showLoadingSpinner();
-    const wb: WorkBook = this.write();
-
     const dateTimeStr: string = this.uiHelper.formateDate(
       new Date().getTime() / 1000,
       'DD_MM_YYYY_HH_mm_ss',
     );
-    const filename: string = 'Beanconqueror_export_' + dateTimeStr + '.xlsx';
-    try {
-      /* generate Blob */
-      const wbout: ArrayBuffer = XLSX.write(wb, {
-        bookType: 'xlsx',
-        type: 'array',
-      });
-      const blob: Blob = new Blob([wbout], {
-        type: 'application/octet-stream',
-      });
-      try {
-        await this.uiFileHelper.exportFileToDefaultDirectory(
-          filename,
-          blob,
-          true,
-        );
-        await this.uiAlert.hideLoadingSpinner();
-      } catch (ex) {}
-    } catch (e) {
-      if (e.message.match(/It was determined/)) {
-        /* in the browser, use writeFile */
-        XLSX.writeFile(wb, filename);
-      } else {
-        this.uiAlert.showMessage(e.message);
-        this.uiLog.log(`Excel export - Error occured: ${e.message}`);
-      }
-    }
-    await this.uiAlert.hideLoadingSpinner();
+    await this.exportWorkbook(
+      'Beanconqueror_export_' + dateTimeStr + '.xlsx',
+      () => this.write(),
+    );
   }
 }
