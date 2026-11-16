@@ -885,6 +885,71 @@ describe('UIFileHelper', () => {
         );
       });
 
+      /** Like the plugin on a device: the file is deleted, then moving fails. */
+      function failMoving(): void {
+        spyOn(FilesystemWeb.prototype, 'rename').and.callFake(
+          async (options) => {
+            await Filesystem.deleteFile({
+              path: options.to,
+              directory: options.toDirectory,
+            }).catch(() => undefined);
+            throw new Error('rename failed');
+          },
+        );
+      }
+
+      it('keeps the complete new file when renaming fails after the file from before was deleted', async () => {
+        await writeExported(backup('02_03_2026'));
+        failMoving();
+
+        await expectAsync(replaceBackupOfTheDay()).toBeRejectedWithError(
+          'rename failed',
+        );
+
+        expect(await exported()).toEqual([unfinished]);
+        expect(
+          await fileHelper.readFileAsBase64(
+            `${EXPORT_DIR}/${unfinished}`,
+            Directory.External,
+          ),
+        ).toBe(BYTES_BASE64);
+        // It is no backup to choose or count, and the next write removes it.
+        expect(await fileHelper.listAutomaticBackupFiles()).toEqual([]);
+        (FilesystemWeb.prototype.rename as jasmine.Spy).and.callThrough();
+        await replaceBackupOfTheDay();
+        expect(await exported()).toEqual([backup('02_03_2026')]);
+      });
+
+      it('keeps the complete new file when renaming fails and there was no file before', async () => {
+        failMoving();
+
+        await expectAsync(replaceBackupOfTheDay()).toBeRejectedWithError(
+          'rename failed',
+        );
+
+        expect(await exported()).toEqual([unfinished]);
+      });
+
+      it('keeps the complete internal backup when renaming fails after the one before was deleted', async () => {
+        await fileHelper.writeInternalFileFromText('zip', 'Beanconqueror.zip');
+        failMoving();
+
+        await expectAsync(
+          fileHelper.replaceInternalFileFromBlob(
+            new Blob([BYTES]),
+            'Beanconqueror.zip',
+            'Beanconqueror.zip.part',
+          ),
+        ).toBeRejectedWithError('rename failed');
+
+        expect(
+          await fileHelper.statInternalFile('Beanconqueror.zip'),
+        ).toBeUndefined();
+        expect(
+          await fileHelper.readInternalFileAsBase64('Beanconqueror.zip.part'),
+        ).toBe(BYTES_BASE64);
+      });
+
       it('never deletes an unfinished file as an old backup, the next write does', async () => {
         today(2026, 3, 20);
         await writeExported(unfinished, backup('01_03_2026'));

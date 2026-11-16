@@ -586,9 +586,13 @@ flowchart LR
   leaves the file from before as it was. A `.part` file is never listed or
   counted; the next write deletes it first. The plugin renames by
   deleting the old file and moving the new one, on Android and iOS alike,
-  so for that moment the file is missing.
-- An app ended in that moment leaves no `Beanconqueror.zip`, only the
-  complete `Beanconqueror.zip.part`. At start (native only),
+  so for that moment the file is missing. A write that fails deletes its
+  `.part` file. A rename that fails deletes it only while the file from
+  before is still there; when that one is gone, the complete `.part` file
+  is the only one left and stays.
+- An app ended in that moment, or a move that failed, leaves no
+  `Beanconqueror.zip`, only the complete `Beanconqueror.zip.part`. At start
+  (native only),
   `checkDatabaseReadable()` first gives that file its name
   (`__nameCompleteUnfinishedInternalBackup`), so everything after it finds
   the internal backup: only when there is no `Beanconqueror.zip`, and only
