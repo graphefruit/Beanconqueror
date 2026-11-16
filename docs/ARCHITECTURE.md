@@ -871,6 +871,11 @@ file maps them onto Ionic's variables at the end.
   with the same text) and its icon is `aria-hidden`. A toggle keeps one name
   and tells its state with `aria-pressed`
   (`e2e/brew-list-toolbar.spec.ts`).
+- Icons: `ion-icon` is an image to assistive technology. One that only
+  decorates text next to it is `aria-hidden`; one that tells something on its
+  own (favourite, frozen, best brew, a connected device) has a translated
+  `aria-label`. The help icons get theirs from `TooltipDirective`
+  (`src/directive/tooltip.directive.ts`).
 - Overlays: `OverlayStackA11yService`
   (`src/services/a11y/overlay-stack-a11y.service.ts`, started in
   `AppComponent`) keeps only the overlay on top in the accessibility tree; the

@@ -10,7 +10,7 @@
   </ion-item>
   <div class="ion-margin-horizontal">
     @for (flavor of customFlavors; track flavor; let i = $index) {
-      <ion-chip (click)="removeCustomFlavor(i)">{{flavor}} <ion-icon name="close" /></ion-chip>
+      <ion-chip (click)="removeCustomFlavor(i)">{{flavor}} <ion-icon aria-hidden="true" name="close" /></ion-chip>
     }
   </div>
   <ion-list-header>

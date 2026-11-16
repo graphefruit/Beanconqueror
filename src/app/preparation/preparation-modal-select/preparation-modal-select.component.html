@@ -92,7 +92,7 @@
 <ng-template #preparationInformationCard let-prep='prep'>
   <h6>
     @if ((prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_DEVICE_CONNECTION)) {
-      <ion-icon style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
+      <ion-icon [attr.aria-label]="'PREPARATION_DEVICE_CONNECTION' | translate" style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
        />
     }
     {{ prep.name }}
@@ -109,7 +109,7 @@
 <ng-template #preparationThumbnailCard let-prep='prep'>
   <ion-thumbnail slot="end">
     @if (!(prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)) {
-      <ion-icon class="full-sized-icon"
+      <ion-icon aria-hidden="true" class="full-sized-icon"
       name="{{prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON}}" />
     }
     @if ((prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)) {

@@ -48,7 +48,7 @@
       </ion-item>
       <div class="ion-padding-horizontal">
         @for (tool of getActiveTools(); track tool; let i = $index) {
-          <ion-chip (click)="editTool(tool)">{{tool.name}} <ion-icon name="beanconqueror-edit" /></ion-chip>
+          <ion-chip (click)="editTool(tool)">{{tool.name}} <ion-icon aria-hidden="true" name="beanconqueror-edit" /></ion-chip>
         }
       </div>
       @if (getArchivedTools().length > 0) {
@@ -59,7 +59,7 @@
       @if (getArchivedTools().length > 0) {
         <div class="ion-padding-horizontal">
           @for (tool of getArchivedTools(); track tool; let i = $index) {
-            <ion-chip (click)="editTool(tool)">{{tool.name}} <ion-icon name="beanconqueror-edit" /></ion-chip>
+            <ion-chip (click)="editTool(tool)">{{tool.name}} <ion-icon aria-hidden="true" name="beanconqueror-edit" /></ion-chip>
           }
         </div>
       }

@@ -8,30 +8,30 @@
         <ion-col class="expand-fill-space" style="margin: auto 0;">
           <div class="ion-no-padding font-size-20 ion-title no-overflow-ellipsis center-icons-to-text add-child-margin">
             @if(beanGroup()) {
-            <ion-icon name="file-tray-full-outline" />
+            <ion-icon [attr.aria-label]="'A11Y.BEAN_GROUP' | translate" name="file-tray-full-outline" />
             }
             @if ((bean.decaffeinated)) {
-            <ion-icon name="moon" />
+            <ion-icon [attr.aria-label]="'BEAN_DATA_DECAFFEINATED' | translate" name="moon" />
             }
             @if (frozen()) {
-            <ion-icon name="snow-outline" />
+            <ion-icon [attr.aria-label]="'FROZEN_BEANS' | translate" name="snow-outline" />
             }
             @if (frozen() === false && bean.frozenId) {
             <div style="display: flex;">
-              (<ion-icon name="snow-outline" />)
+              (<ion-icon [attr.aria-label]="'A11Y.UNFROZEN' | translate" name="snow-outline" />)
             </div>
             }
             @if (selfRoasted()) {
-            <ion-icon name="flame-outline" />
+            <ion-icon [attr.aria-label]="'A11Y.SELF_ROASTED' | translate" name="flame-outline" />
             }
             @if (scanned()) {
-            <ion-icon name="qr-code-outline" />
+            <ion-icon [attr.aria-label]="'A11Y.SCANNED' | translate" name="qr-code-outline" />
             }
             @if (bean.shared) {
-            <ion-icon name="share-social-outline" />
+            <ion-icon [attr.aria-label]="'A11Y.SHARED' | translate" name="share-social-outline" />
             }
             @if (bean.favourite) {
-            <ion-icon name="heart" />
+            <ion-icon [attr.aria-label]="'POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE' | translate" name="heart" />
             }
             <div class="ion-justify-content-start center-icons-to-text expand-fill-space">
               <div class="expand-fill-space no-overflow-ellipsis" style="margin-right:-5px;">
@@ -49,7 +49,7 @@
         <ion-col size="auto" class="stacked-info children-force-newline hide-if-empty">
           @if (bean.frozenId) {
           <div class="ion-justify-content-end center-icons-to-text frozen-id-label">
-            <ion-icon name="pricetag-outline" />
+            <ion-icon [attr.aria-label]="'BEAN_DATA_FROZEN_ID' | translate" name="pricetag-outline" />
             <div>
               {{bean.frozenId}}
             </div>

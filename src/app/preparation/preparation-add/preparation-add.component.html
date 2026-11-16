@@ -14,7 +14,7 @@
               @if (key !== 'CUSTOM_PREPARATION') {
                 <ion-card-content>
                   <div class="ion-text-center">
-                    <ion-icon name="{{data.getIcon(key)}}" slot="icon-only" />
+                    <ion-icon aria-hidden="true" name="{{data.getIcon(key)}}" slot="icon-only" />
                   </div>
                   <div class="ion-text-center">
                     {{'PREPARATION_TYPE_' + key | translate}}
@@ -24,7 +24,7 @@
               @if (key === 'CUSTOM_PREPARATION') {
                 <ion-card-content>
                   <div class="ion-text-center">
-                    <ion-icon name="beanconqueror-preparation-custom" slot="icon-only" />
+                    <ion-icon aria-hidden="true" name="beanconqueror-preparation-custom" slot="icon-only" />
                   </div>
                   <div class="ion-text-center" style="line-height:initial;">
                     {{ 'PREPARATION_TYPE_ADD_CUSTOM' | translate }}

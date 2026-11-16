@@ -1484,11 +1484,6 @@
       "count": 2
     }
   },
-  "src/app/water-section/water/water-add/water-add.component.html": {
-    "@angular-eslint/template/alt-text": {
-      "count": 1
-    }
-  },
   "src/app/water-section/water/water-add/water-add.component.ts": {
     "@angular-eslint/no-empty-lifecycle-method": {
       "count": 1
@@ -2984,11 +2979,6 @@
     },
     "no-empty": {
       "count": 3
-    }
-  },
-  "src/components/water-information-card/water-information-card.component.html": {
-    "@angular-eslint/template/alt-text": {
-      "count": 1
     }
   },
   "src/components/water-information-card/water-information-card.component.ts": {

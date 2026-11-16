@@ -216,7 +216,7 @@
 }
 @if ((data | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_BLEND)) {
   <ion-button (click)="addAnotherSort()" add-next-sort color="accent" expand="block">
-    <ion-icon name="beanconqueror-dashboard-add-fill" size="large" slot="start" />
+    <ion-icon aria-hidden="true" name="beanconqueror-dashboard-add-fill" size="large" slot="start" />
     <span class="ion-text-bold" slot="end">{{"BEAN_ADD_ANOTHER_SORT" | translate}}</span>
   </ion-button>
 }

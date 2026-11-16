@@ -2,12 +2,10 @@
   "add-bean": {
     "light": [
       "aria-dialog-name | #bean-add,.modal-wrapper",
-      "role-img-alt | .icon-16",
       "tabindex | .button-small"
     ],
     "dark": [
       "aria-dialog-name | #bean-add,.modal-wrapper",
-      "role-img-alt | .icon-16",
       "tabindex | .button-small"
     ]
   },
@@ -17,16 +15,14 @@
       "landmark-banner-is-top-level | beans > ion-header",
       "landmark-main-is-top-level | beans > ion-content",
       "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content",
-      "role-img-alt | ion-icon[name=\"beanconqueror-beans\"]"
+      "landmark-unique | app-home > ion-content"
     ],
     "dark": [
       "color-contrast | .text-color-inactive.ion-margin-top",
       "landmark-banner-is-top-level | beans > ion-header",
       "landmark-main-is-top-level | beans > ion-content",
       "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content",
-      "role-img-alt | ion-icon[name=\"beanconqueror-beans\"]"
+      "landmark-unique | app-home > ion-content"
     ]
   },
   "brews": {
@@ -35,16 +31,14 @@
       "landmark-banner-is-top-level | brew > ion-header",
       "landmark-main-is-top-level | brew > ion-content",
       "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content",
-      "role-img-alt | div:nth-child(1) > .ion-color-inactive.icon-large[color=\"inactive\"]"
+      "landmark-unique | app-home > ion-content"
     ],
     "dark": [
       "color-contrast | .text-color-inactive.ion-margin-top",
       "landmark-banner-is-top-level | brew > ion-header",
       "landmark-main-is-top-level | brew > ion-content",
       "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content",
-      "role-img-alt | div:nth-child(1) > .ion-color-inactive.icon-large[color=\"inactive\"]"
+      "landmark-unique | app-home > ion-content"
     ]
   },
   "home": {
@@ -53,18 +47,14 @@
       "landmark-banner-is-top-level | ion-header",
       "landmark-main-is-top-level | dashboard > ion-content",
       "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content",
-      "role-img-alt | .ion-color-inactive",
-      "role-img-alt | ion-icon[color=\"accent\"]"
+      "landmark-unique | app-home > ion-content"
     ],
     "dark": [
       "color-contrast | .text-color-inactive",
       "landmark-banner-is-top-level | ion-header",
       "landmark-main-is-top-level | dashboard > ion-content",
       "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content",
-      "role-img-alt | .ion-color-inactive",
-      "role-img-alt | ion-icon[color=\"accent\"]"
+      "landmark-unique | app-home > ion-content"
     ]
   },
   "mills": {
@@ -115,28 +105,10 @@
   },
   "settings": {
     "light": [
-      "nested-interactive | .item-multiple-inputs,button[type=\"button\"]",
-      "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(2) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(3) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(4) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(5) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(6) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-lines-none.item-label[lines=\"none\"] > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-lines-none.item-label[lines=\"none\"]:nth-child(11) > ion-icon[name=\"information-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-lines-none.item-label[lines=\"none\"]:nth-child(6) > ion-icon[name=\"information-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-lines-none.item-label[lines=\"none\"]:nth-child(8) > ion-icon[name=\"information-outline\"][slot=\"end\"]"
+      "nested-interactive | .item-multiple-inputs,button[type=\"button\"]"
     ],
     "dark": [
-      "nested-interactive | .item-multiple-inputs,button[type=\"button\"]",
-      "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(2) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(3) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(4) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(5) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-label[button=\"\"][tappable=\"\"]:nth-child(6) > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-lines-none.item-label[lines=\"none\"] > .flip-rtl[name=\"chevron-forward-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-lines-none.item-label[lines=\"none\"]:nth-child(11) > ion-icon[name=\"information-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-lines-none.item-label[lines=\"none\"]:nth-child(6) > ion-icon[name=\"information-outline\"][slot=\"end\"]",
-      "role-img-alt | .item-lines-none.item-label[lines=\"none\"]:nth-child(8) > ion-icon[name=\"information-outline\"][slot=\"end\"]"
+      "nested-interactive | .item-multiple-inputs,button[type=\"button\"]"
     ]
   }
 }

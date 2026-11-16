@@ -13,10 +13,10 @@
               <ion-card-content>
                 <div class="ion-text-center">
                   @if (key.startsWith('EMPIRICAL') === false) {
-                    <ion-icon name="{{data.getIcon(key)}}" slot="icon-only" />
+                    <ion-icon aria-hidden="true" name="{{data.getIcon(key)}}" slot="icon-only" />
                   }
                   @if (key.startsWith('EMPIRICAL') === true) {
-                    <img src='assets/img/{{key.toLowerCase()}}.png' class='empirical-water' />
+                    <img alt="" src='assets/img/{{key.toLowerCase()}}.png' class='empirical-water' />
                   }
                 </div>
                 <div class="ion-text-center">
@@ -27,7 +27,7 @@
             @if (key === 'CUSTOM_WATER') {
               <ion-card-content>
                 <div class="ion-text-center">
-                  <ion-icon name="water-outline" slot="icon-only" style='width:64px!important;' />
+                  <ion-icon aria-hidden="true" name="water-outline" slot="icon-only" style='width:64px!important;' />
                 </div>
                 <div class="ion-text-center" style="line-height:initial;">
                   {{'WATER_TYPE_ADD_CUSTOM' | translate}}

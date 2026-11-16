@@ -51,23 +51,23 @@
                       <ion-item>
                         <ion-col class='ion-text-bold' size='12'>
                           @if (brew.best_brew) {
-                            <ion-icon name='trophy'
+                            <ion-icon [attr.aria-label]="'POPOVER_BEST_BREW' | translate" name='trophy'
                             style='top: 3px;position: relative;margin-right:5px;' />
                           }
                           @if (brew.favourite) {
-                            <ion-icon name='heart'
+                            <ion-icon [attr.aria-label]="'POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE' | translate" name='heart'
                             style='top: 3px;position: relative;margin-right:5px;' />
                           }
                           @if (brew?.flow_profile) {
-                            <ion-icon name='analytics-outline'
+                            <ion-icon [attr.aria-label]="'A11Y.HAS_GRAPH' | translate" name='analytics-outline'
                             style='top: 3px;position: relative;margin-right:5px;' />
                           }
                           @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)) {
-                            <ion-icon style='top: 3px;position: relative;margin-right:5px;' name='snow-outline'
+                            <ion-icon [attr.aria-label]="'FROZEN_BEANS' | translate" style='top: 3px;position: relative;margin-right:5px;' name='snow-outline'
                              />
                           }
                           @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_UNFROZEN)) {
-                            (<ion-icon style='top: 3px;position: relative;' name='snow-outline' />)
+                            (<ion-icon [attr.aria-label]="'A11Y.UNFROZEN' | translate" style='top: 3px;position: relative;' name='snow-outline' />)
                           }
                           {{ bean?.name }}
                         </ion-col>
@@ -148,15 +148,15 @@
                          date and time wrap instead when the text is large. -->
                     <span class='brew-date-time'>
                       @if (brew.best_brew) {
-                        <ion-icon name='trophy'
+                        <ion-icon [attr.aria-label]="'POPOVER_BEST_BREW' | translate" name='trophy'
                         style='top: 3px;position: relative;margin-right:5px;' />
                       }
                       @if (brew.favourite) {
-                        <ion-icon name='heart'
+                        <ion-icon [attr.aria-label]="'POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE' | translate" name='heart'
                         style='top: 3px;position: relative;margin-right:5px;' />
                       }
                       @if (brew?.flow_profile) {
-                        <ion-icon name='analytics-outline'
+                        <ion-icon [attr.aria-label]="'A11Y.HAS_GRAPH' | translate" name='analytics-outline'
                         style='top: 3px;position: relative;margin-right:5px;' />
                       }
                       <strong>{{ brew.config.unix_timestamp | formatDate:[$safeNavigationMigration(settings?.date_format)] }}</strong><span
@@ -173,11 +173,11 @@
                 <ion-col [size]='brew?.rating>0 ? (uiHasCustomRatingRange? 10:8) :12'>
                   <div class='ion-no-padding font-size-20 ion-title brew-title'>
                     @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_FROZEN)) {
-                      <ion-icon style='top: 3px;position: relative;margin-right:5px;' name='snow-outline'
+                      <ion-icon [attr.aria-label]="'FROZEN_BEANS' | translate" style='top: 3px;position: relative;margin-right:5px;' name='snow-outline'
                        />
                     }
                     @if ((bean | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_UNFROZEN)) {
-                      (<ion-icon style='top: 3px;position: relative;' name='snow-outline' />)
+                      (<ion-icon [attr.aria-label]="'A11Y.UNFROZEN' | translate" style='top: 3px;position: relative;' name='snow-outline' />)
                     }
                     {{ bean?.name }}@if (bean?.roaster) {
                     <span class='font-size-16'>&nbsp;({{ bean?.roaster }})</span>
@@ -473,7 +473,7 @@
 <ng-template #preparationImage>
   @let hasPreparationPhoto = (preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS);
   @if(hasPreparationPhoto === false) {
-    <ion-icon class='full-sized-icon' name='{{preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON}}' />
+    <ion-icon aria-hidden="true" class='full-sized-icon' name='{{preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON}}' />
   } @else {
     <div style='margin: 0 auto;height: 100%;display: flex;align-items: center;' tappable>
       <async-image [filePath]='$safeNavigationMigration(preparation?.attachments[0])' class='bean-slider' />

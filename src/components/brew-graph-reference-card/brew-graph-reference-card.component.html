@@ -7,11 +7,11 @@
           <ion-row>
             <ion-col size="12">
               @if (brew?.best_brew) {
-                <ion-icon name="trophy" style="top: 3px;position: relative;margin-right:5px;" />
+                <ion-icon [attr.aria-label]="'POPOVER_BEST_BREW' | translate" name="trophy" style="top: 3px;position: relative;margin-right:5px;" />
                 }@if (brew?.favourite) {
-                <ion-icon name="heart" style="top: 3px;position: relative;margin-right:5px;" />
+                <ion-icon [attr.aria-label]="'POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE' | translate" name="heart" style="top: 3px;position: relative;margin-right:5px;" />
                 }@if (brew?.flow_profile) {
-                <ion-icon name="analytics-outline" style="top: 3px;position: relative;margin-right:5px;" />
+                <ion-icon [attr.aria-label]="'A11Y.HAS_GRAPH' | translate" name="analytics-outline" style="top: 3px;position: relative;margin-right:5px;" />
                 }<strong>{{brew.config.unix_timestamp | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</strong><span class="ion-padding-start">{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</span>
               </ion-col>
             </ion-row>

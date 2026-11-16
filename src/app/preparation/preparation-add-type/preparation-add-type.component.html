@@ -32,7 +32,7 @@
     </ion-item>
     <div class="ion-padding-horizontal">
       @for (tool of data.tools; track tool; let i = $index) {
-        <ion-chip (click)="deleteTool(tool)">{{tool.name}} <ion-icon name="close" /></ion-chip>
+        <ion-chip (click)="deleteTool(tool)">{{tool.name}} <ion-icon aria-hidden="true" name="close" /></ion-chip>
       }
     </div>
   </form>

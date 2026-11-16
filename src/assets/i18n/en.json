@@ -1973,6 +1973,13 @@
         "RESET_TIMER": "Reset timer",
         "COPY_TO_CLIPBOARD": "Copy to clipboard",
         "ADD_AROMA": "Add aroma",
-        "REMOVE_AROMA": "Remove aroma: {{aroma}}"
+        "REMOVE_AROMA": "Remove aroma: {{aroma}}",
+        "BEAN_GROUP": "Bean group",
+        "UNFROZEN": "Unfrozen",
+        "SELF_ROASTED": "Self-roasted",
+        "SCANNED": "Added by QR code",
+        "SHARED": "Shared",
+        "HAS_GRAPH": "With graph",
+        "NOT_FROZEN": "Not frozen"
     }
 }

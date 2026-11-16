@@ -4,60 +4,60 @@
     <ng-content header-slot="end">
     @if(brewBrewing?.brewBrewingPreparationDeviceEl?.uiHasAPreparationDeviceSet) {
       @if (brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected) {
-        <ion-chip header-slot="end" outline='true' class='machine-connected'>
+        <ion-chip header-slot="end" role="img" [attr.aria-label]="('PREPARATION_DEVICE_CONNECTION' | translate) + ': ' + ('CONNECTED' | translate)" outline='true' class='machine-connected'>
         @switch ($safeNavigationMigration(brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType)) {
           @case (PreparationDeviceType.METICULOUS) {
-              <ion-icon name="beanconqueror-meticulous-logo" size='large' />
-              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi" />
+              <ion-icon aria-hidden="true" name="beanconqueror-meticulous-logo" size='large' />
+              <ion-icon aria-hidden="true" style='margin-left: -10px;' color="dark" name="beanconqueror-wifi" />
           }
           @case (PreparationDeviceType.SANREMO_YOU) {
-              <ion-icon name="beanconqueror-sanremo-you-logo" size='large' />
-              <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-wifi" />
+              <ion-icon aria-hidden="true" name="beanconqueror-sanremo-you-logo" size='large' />
+              <ion-icon aria-hidden="true" style='margin-left: 0px;' color="dark" name="beanconqueror-wifi" />
           }
           @case (PreparationDeviceType.XENIA) {
-            <ion-icon name="beanconqueror-xenia-logo" size='large' />
-            <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi" />
+            <ion-icon aria-hidden="true" name="beanconqueror-xenia-logo" size='large' />
+            <ion-icon aria-hidden="true" style='margin-left: -10px;' color="dark" name="beanconqueror-wifi" />
           }
           @case (PreparationDeviceType.GAGGIUINO) {
-            <ion-icon name="beanconqueror-gaggiuino-logo" size='large' />
-            <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi" />
+            <ion-icon aria-hidden="true" name="beanconqueror-gaggiuino-logo" size='large' />
+            <ion-icon aria-hidden="true" style='margin-left: -10px;' color="dark" name="beanconqueror-wifi" />
           }
           @case (PreparationDeviceType.MOVE2) {
-            <ion-icon name="beanconqueror-profitec-logo" size='large' />
-            <ion-icon style='margin-left: -10px;' color="dark" name="bluetooth-outline" />
+            <ion-icon aria-hidden="true" name="beanconqueror-profitec-logo" size='large' />
+            <ion-icon aria-hidden="true" style='margin-left: -10px;' color="dark" name="bluetooth-outline" />
           }
           @case (PreparationDeviceType.GAGGIMATE) {
-            <ion-icon name="beanconqueror-gaggimate-logo" size='large' />
-            <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi" />
+            <ion-icon aria-hidden="true" name="beanconqueror-gaggimate-logo" size='large' />
+            <ion-icon aria-hidden="true" style='margin-left: -10px;' color="dark" name="beanconqueror-wifi" />
           }
         }
         </ion-chip>
       } @else {
-        <ion-chip header-slot="end" outline='true' class='machine-disconnected'>
+        <ion-chip header-slot="end" role="img" [attr.aria-label]="('PREPARATION_DEVICE_CONNECTION' | translate) + ': ' + ('DISCONNECTED' | translate)" outline='true' class='machine-disconnected'>
           @switch ($safeNavigationMigration(brewBrewing?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType)) {
             @case (PreparationDeviceType.METICULOUS) {
-              <ion-icon name="beanconqueror-meticulous-logo" size='large' />
-              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi" />
+              <ion-icon aria-hidden="true" name="beanconqueror-meticulous-logo" size='large' />
+              <ion-icon aria-hidden="true" style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi" />
             }
             @case (PreparationDeviceType.SANREMO_YOU) {
-              <ion-icon name="beanconqueror-sanremo-you-logo" size='large' />
-              <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi" />
+              <ion-icon aria-hidden="true" name="beanconqueror-sanremo-you-logo" size='large' />
+              <ion-icon aria-hidden="true" style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi" />
             }
             @case (PreparationDeviceType.XENIA) {
-              <ion-icon name="beanconqueror-xenia-logo" size='large' />
-              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi" />
+              <ion-icon aria-hidden="true" name="beanconqueror-xenia-logo" size='large' />
+              <ion-icon aria-hidden="true" style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi" />
             }
             @case (PreparationDeviceType.GAGGIUINO) {
-              <ion-icon name="beanconqueror-gaggiuino-logo" size='large' />
-              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi" />
+              <ion-icon aria-hidden="true" name="beanconqueror-gaggiuino-logo" size='large' />
+              <ion-icon aria-hidden="true" style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi" />
             }
             @case (PreparationDeviceType.MOVE2) {
-              <ion-icon name="beanconqueror-profitec-logo" size='large' />
-              <ion-icon style='margin-left: -10px;' color="dark" name="bluetooth-outline" />
+              <ion-icon aria-hidden="true" name="beanconqueror-profitec-logo" size='large' />
+              <ion-icon aria-hidden="true" style='margin-left: -10px;' color="dark" name="bluetooth-outline" />
             }
             @case (PreparationDeviceType.GAGGIMATE) {
-              <ion-icon name="beanconqueror-gaggimate-logo" size='large' />
-              <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi" />
+              <ion-icon aria-hidden="true" name="beanconqueror-gaggimate-logo" size='large' />
+              <ion-icon aria-hidden="true" style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi" />
             }
           }
         </ion-chip>

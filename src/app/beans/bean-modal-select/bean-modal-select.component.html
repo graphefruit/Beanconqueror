@@ -56,7 +56,7 @@
           } @else {
             <div class='ion-padding ion-text-center'>
               <div>
-                <ion-icon color='inactive' name='beanconqueror-beans' size='large' />
+                <ion-icon aria-hidden="true" color='inactive' name='beanconqueror-beans' size='large' />
               </div>
               <div class='text-color-inactive ion-margin-top'>
                 {{ "PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate }}
@@ -95,7 +95,7 @@
           } @else {
             <div class='ion-padding ion-text-center'>
               <div>
-                <ion-icon color='inactive' name='beanconqueror-beans' size='large' />
+                <ion-icon aria-hidden="true" color='inactive' name='beanconqueror-beans' size='large' />
               </div>
               <div class='text-color-inactive ion-margin-top'>
                 {{ "PAGE_BEANS_LIST_YOU_GOT_NO_FROZEN_BEANS" | translate }}
@@ -135,7 +135,7 @@
           } @else {
             <div class='ion-padding ion-text-center'>
               <div>
-                <ion-icon color='inactive' name='beanconqueror-beans' size='large' />
+                <ion-icon aria-hidden="true" color='inactive' name='beanconqueror-beans' size='large' />
               </div>
               <div class='text-color-inactive ion-margin-top'>
                 {{ "PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate }}
@@ -169,7 +169,7 @@
       @if (bean?.frozenDate && bean?.unfrozenDate) {
         (
       }
-      <ion-icon style="top: 3px;position: relative;"
+      <ion-icon [attr.aria-label]="(bean?.frozenDate && bean?.unfrozenDate ? 'A11Y.UNFROZEN' : 'FROZEN_BEANS') | translate" style="top: 3px;position: relative;"
                 name="snow-outline" />@if (bean?.frozenDate && bean?.unfrozenDate) {
         )
       }&nbsp;

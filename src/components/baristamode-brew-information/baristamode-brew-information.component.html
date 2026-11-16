@@ -31,7 +31,7 @@
                 <ion-col size='12'>
                   <ion-title class='ion-no-padding font-size-18'>
                     @if (brew?.flow_profile) {
-                      <ion-icon name='analytics-outline'
+                      <ion-icon [attr.aria-label]="'A11Y.HAS_GRAPH' | translate" name='analytics-outline'
                       style='top: 3px;position: relative;margin-right:5px;' />
                     }
                     <strong>{{ brew.config.unix_timestamp | formatDate:[$safeNavigationMigration(settings?.date_format)] }}</strong><span

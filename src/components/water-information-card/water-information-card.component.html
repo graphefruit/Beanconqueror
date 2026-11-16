@@ -39,10 +39,10 @@
           <ion-col class="ion-justify-content-center ion-no-padding" size="3">
             <div style='width:100%;height:100%;text-align:center'>
               @if (water.type.startsWith('EMPIRICAL') === false) {
-                <ion-icon class="full-sized-icon" name="{{water.getIcon()}}" />
+                <ion-icon aria-hidden="true" class="full-sized-icon" name="{{water.getIcon()}}" />
               }
               @if (water.type.startsWith('EMPIRICAL') === true) {
-                <img class='empirical-water' src='assets/img/{{water.type.toLowerCase()}}.png' />
+                <img alt="" class='empirical-water' src='assets/img/{{water.type.toLowerCase()}}.png' />
               }
             </div>
           </ion-col>

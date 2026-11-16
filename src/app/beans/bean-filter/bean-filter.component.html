@@ -51,8 +51,8 @@
   </ion-item>
   <ion-item style='margin-top:-10px;'>
     <ion-range min="0" dualKnobs="true" snaps="true" max="5" snaps="true" step="0.5" [(ngModel)]="filter.roast_range">
-      <ion-icon size="small" slot="start" name="beanconqueror-bean-rating-empty" />
-      <ion-icon slot="end" name="beanconqueror-bean-rating-full" />
+      <ion-icon aria-hidden="true" size="small" slot="start" name="beanconqueror-bean-rating-empty" />
+      <ion-icon aria-hidden="true" slot="end" name="beanconqueror-bean-rating-full" />
     </ion-range>
   </ion-item>
 
@@ -63,8 +63,8 @@
   </ion-item>
   <ion-item style='margin-top:-10px;'>
     <ion-range min="0" dualKnobs="true" snaps="true" [pinFormatter]='pinFormatter' pin='true'  [max]="maxBeanRating" [step]="$safeNavigationMigration(settings?.bean_rating_steps)" [(ngModel)]="filter.rating">
-      <ion-icon size="small" slot="start" name="beanconqueror-brew-rating-empty" />
-      <ion-icon slot="end" name="beanconqueror-brew-rating-full" />
+      <ion-icon aria-hidden="true" size="small" slot="start" name="beanconqueror-brew-rating-empty" />
+      <ion-icon aria-hidden="true" slot="end" name="beanconqueror-brew-rating-full" />
     </ion-range>
   </ion-item>
 

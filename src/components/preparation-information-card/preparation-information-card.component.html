@@ -5,7 +5,7 @@
         <ion-row>
           <ion-col size="11"><div class="ion-no-padding font-size-20 ion-title">
             @if ((preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_DEVICE_CONNECTION)) {
-              <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="wifi-outline"
+              <ion-icon [attr.aria-label]="'PREPARATION_DEVICE_CONNECTION' | translate" style="top: 3px;position: relative;margin-right:5px;" name="wifi-outline"
                />
             }
           {{preparation.name}}</div>
@@ -54,7 +54,7 @@
         </ion-col>
         @if (!(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)) {
           <ion-col class="ion-justify-content-center ion-no-padding" size="3">
-            <ion-icon class="full-sized-icon" name="{{(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON)}}" />
+            <ion-icon aria-hidden="true" class="full-sized-icon" name="{{(preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.GET_ICON)}}" />
           </ion-col>
         }
         @if ((preparation | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_PHOTOS)) {

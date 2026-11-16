@@ -7,20 +7,20 @@
   <ion-card>
 
     <ion-item>
-      <ion-icon name="information-circle-outline" slot="start" />
+      <ion-icon aria-hidden="true" name="information-circle-outline" slot="start" />
       <div class="white-space-normal">
         GNU General Public License v3.0
       </div>
     </ion-item>
     @if (analyticsEnabled) {
       <ion-item>
-        <ion-icon name="analytics-outline" slot="start" />
+        <ion-icon aria-hidden="true" name="analytics-outline" slot="start" />
         <div [innerHTML]="'ANALYTICS_INFORMATION_ABOUT' | translate:{analyticsId: analyticsId}"></div>
         <div></div>
       </ion-item>
     }
     <ion-item lines="none">
-      <ion-icon name="help-buoy-outline" slot="start" />
+      <ion-icon aria-hidden="true" name="help-buoy-outline" slot="start" />
       <div>{{versionStr}}</div>
     </ion-item>
   </ion-card>

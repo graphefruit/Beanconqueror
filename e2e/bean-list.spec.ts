@@ -141,9 +141,16 @@ test('frozen portions of one bag share a card that opens to show them', async ({
     '12 days old',
   );
 
+  // The symbols before the name are spoken, and so is the one of the id.
+  await expect(
+    frozen.getByRole('img', { name: 'Frozen', exact: true }),
+  ).toBeVisible();
+  await expect(frozen.getByRole('img', { name: 'Frozen id' })).toBeVisible();
+
   // The first portion stands for the group.
   const group = beanCard(page, BEANS.portion).first();
   await expect(group).toContainText('ZP1');
+  await expect(group.getByRole('img', { name: 'Bean group' })).toBeVisible();
   await group.getByRole('button', { name: 'Expand bean group' }).click();
   await expect(beanCards(page)).toHaveCount(4);
   await expect(group).toContainText('ZP2');
@@ -156,6 +163,9 @@ test('frozen portions of one bag share a card that opens to show them', async ({
   await beanAction(page, BEANS.frozen, 'Favourite');
   await expect(
     page.getByRole('button', { name: 'Expand bean group' }),
+  ).toBeVisible();
+  await expect(
+    beanCard(page, BEANS.frozen).getByRole('img', { name: 'Favourite' }),
   ).toBeVisible();
   await expect(beanCards(page)).toHaveCount(2);
 });

@@ -18,7 +18,7 @@
         <ion-card class="ion-no-margin" (click)="openUnwrapped(2026)" tappable>
           <ion-card-header>
             <ion-card-title>
-              <ion-icon color='accent' name="gift-outline" />
+              <ion-icon aria-hidden="true" color='accent' name="gift-outline" />
               {{ 'UNWRAPPED.BUTTON.TITLE' | translate }}
             </ion-card-title>
             <ion-card-subtitle>{{ 'UNWRAPPED.BUTTON.SUBTITLE' | translate }}</ion-card-subtitle>
@@ -73,8 +73,8 @@
           <ion-card-header class="ion-no-padding ion-no-margin">
             <ion-card-title>
               @if(settings.freeze_coffee_beans) {
-              <ion-icon color='accent-secondary' style="top: 3px;position: relative;"
-                name="thermometer-outline" />&nbsp;{{leftOverBeansWeight}}<br /><ion-icon color='accent-secondary' style="top: 3px;position: relative;"
+              <ion-icon [attr.aria-label]="'A11Y.NOT_FROZEN' | translate" color='accent-secondary' style="top: 3px;position: relative;"
+                name="thermometer-outline" />&nbsp;{{leftOverBeansWeight}}<br /><ion-icon [attr.aria-label]="'FROZEN_BEANS' | translate" color='accent-secondary' style="top: 3px;position: relative;"
                 name="snow-outline" />&nbsp;{{leftOverFrozenBeansWeight}}
               } @else {
               {{leftOverBeansWeight}}
@@ -100,7 +100,7 @@
   } @else {
   <div class="ion-padding ion-text-center">
     <div>
-      <ion-icon color="inactive" name="beanconqueror-cup" size="large" />
+      <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-cup" size="large" />
     </div>
     <div class="text-color-inactive ion-margin-top">
       {{"PAGE_BREWS_NO_ENTRIES" | translate}}

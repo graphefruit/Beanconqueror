@@ -9,14 +9,14 @@
     <ion-card>
       <ion-item (click)="openLink($event,licences[key].LINK)" button tappable>
         <ion-title>{{ licences[key].TITLE }}</ion-title>
-        <ion-icon name="chevron-forward-outline" slot="end" />
+        <ion-icon aria-hidden="true" name="chevron-forward-outline" slot="end" />
       </ion-item>
       <ion-item (click)="licences[key].ACTIVE = !licences[key].ACTIVE" button lines="none" tappable>
         @if (licences[key].ACTIVE != true) {
-          <ion-icon name="chevron-down-outline" slot="start" />
+          <ion-icon aria-hidden="true" name="chevron-down-outline" slot="start" />
         }
         @if (licences[key].ACTIVE === true) {
-          <ion-icon name="chevron-up-outline" slot="start" />
+          <ion-icon aria-hidden="true" name="chevron-up-outline" slot="start" />
         }
         <ion-label>{{"MORE_INFORMATION" | translate}}</ion-label>
       </ion-item>

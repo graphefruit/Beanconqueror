@@ -96,7 +96,7 @@
           <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_METICULOUS.TITLE" | translate }}</span>
         </ion-item>
         <ion-item (click)="importShotFromMeticulous()" button tappable lines="none">
-          <ion-icon name="cloud-download-outline" slot='start' />
+          <ion-icon aria-hidden="true" name="cloud-download-outline" slot='start' />
           <span>{{ "IMPORT_SHOT_FROM_METICULOUS" | translate }}</span>
         </ion-item>
         <div class="or-separator">
@@ -174,7 +174,7 @@
             </ion-item>
             @if (!data.preparationDeviceBrew.params.stopAtWeight) {
               <ion-label class='ion-padding-horizontal' color="danger">
-                <ion-icon color='danger' style="top: 3px; position: relative;"
+                <ion-icon aria-hidden="true" color='danger' style="top: 3px; position: relative;"
                           name="information-circle-outline" />
                 @if (data.preparationDeviceBrew.params.selectedMode !== SanremoYOUMode.MANUAL_CONTROLLING) {
                   <span style="display: inline;">{{
@@ -282,7 +282,7 @@
           <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_GAGGIUINO.TITLE" | translate }}</span>
         </ion-item>
         <ion-item (click)="importShotFromGaggiuino()" button tappable>
-          <ion-icon name="cloud-download-outline" slot='start' />
+          <ion-icon aria-hidden="true" name="cloud-download-outline" slot='start' />
           <span>{{ "IMPORT_SHOT_FROM_GAGGIUINO" | translate }}</span>
         </ion-item>
       </ion-card>
@@ -292,7 +292,7 @@
         <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_GAGGIMATE.TITLE" | translate }}</span>
       </ion-item>
       <ion-item (click)="importShotFromGaggimate()" button tappable>
-        <ion-icon name="cloud-download-outline" slot='start' />
+        <ion-icon aria-hidden="true" name="cloud-download-outline" slot='start' />
         <span>{{ "IMPORT_SHOT_FROM_GAGGIMATE" | translate }}</span>
       </ion-item>
     </ion-card>

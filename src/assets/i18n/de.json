@@ -1973,6 +1973,13 @@
         "RESET_TIMER": "Timer zurücksetzen",
         "COPY_TO_CLIPBOARD": "In die Zwischenablage kopieren",
         "ADD_AROMA": "Aroma hinzufügen",
-        "REMOVE_AROMA": "Aroma entfernen: {{aroma}}"
+        "REMOVE_AROMA": "Aroma entfernen: {{aroma}}",
+        "BEAN_GROUP": "Bohnengruppe",
+        "UNFROZEN": "Aufgetaut",
+        "SELF_ROASTED": "Selbst geröstet",
+        "SCANNED": "Per QR-Code hinzugefügt",
+        "SHARED": "Geteilt",
+        "HAS_GRAPH": "Mit Graf",
+        "NOT_FROZEN": "Nicht gefroren"
     }
 }

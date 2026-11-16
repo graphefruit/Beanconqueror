@@ -53,7 +53,7 @@
 
     <div class="ion-padding">
       <ion-button expand="block" (click)="save()" [disabled]="unfreezeWeight <= 0 || unfreezeWeight > maxWeight">
-        <ion-icon name="thermometer-outline" slot="start" />
+        <ion-icon aria-hidden="true" name="thermometer-outline" slot="start" />
         @if(unfreezeWeight === maxWeight) {
           {{"POPOVER_UNFREEZE_COFFEE_BEAN" | translate}}
 
