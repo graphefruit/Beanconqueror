@@ -511,16 +511,14 @@ export class BeansPage {
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.IMPORT_MENU_OPENED,
     );
-    const popover = await ActionsPopoverComponent.create(this.modalController, {
+    const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'bean-import-popover',
       items: this.buildImportActions(),
       breakpoints: [0, 0.45],
       initialBreakpoint: 0.45,
     });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role !== undefined) {
-      switch (data.role as BEAN_IMPORT_ACTION) {
+    if (role !== undefined) {
+      switch (role as BEAN_IMPORT_ACTION) {
         case BEAN_IMPORT_ACTION.QR_SCAN:
           await this.scanBean();
           break;

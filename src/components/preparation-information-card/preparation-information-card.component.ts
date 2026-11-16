@@ -231,18 +231,16 @@ export class PreparationInformationCardComponent implements OnInit {
 
     const machineState = signal({ isConnected: false, isTurnedOn: false });
     void this.retrieveMachineState().then((s) => machineState.set(s));
-    const popover = await ActionsPopoverComponent.create(this.modalController, {
+    const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'preparation-popover-actions',
       items: this.buildPreparationActions(machineState),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,
     });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role !== undefined) {
-      await this.internalPreparationAction(data.role as PREPARATION_ACTION);
+    if (role !== undefined) {
+      await this.internalPreparationAction(role as PREPARATION_ACTION);
       this.preparationAction.emit([
-        data.role as PREPARATION_ACTION,
+        role as PREPARATION_ACTION,
         this.preparation,
       ]);
     }

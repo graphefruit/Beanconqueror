@@ -133,16 +133,14 @@ export class BaristamodeBrewInformationComponent implements OnInit {
   public async showBrewActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    const popover = await ActionsPopoverComponent.create(this.modalCtrl, {
+    const role = await ActionsPopoverComponent.pick(this.modalCtrl, {
       id: 'baristamode-brew-popover-actions',
       items: this.buildBrewActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role !== undefined) {
-      await this.internalBrewAction(data.role as BREW_ACTION);
+    if (role !== undefined) {
+      await this.internalBrewAction(role as BREW_ACTION);
     }
   }
 

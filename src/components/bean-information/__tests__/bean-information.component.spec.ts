@@ -493,13 +493,11 @@ describe('BeanInformationComponent', () => {
       expect(emitted).toEqual([]);
     });
 
-    it('send the role of a menu closed by a tap beside it, without an action', async () => {
+    it('do nothing when the menu is closed by a tap beside it', async () => {
       choose('backdrop' as BEAN_ACTION);
       await card.showBeanActions(event());
 
-      expect(emitted.map(([action]) => action)).toEqual([
-        'backdrop' as BEAN_ACTION,
-      ]);
+      expect(emitted).toEqual([]);
       const { getAllBrewsForThisBean, ...actions } = helper;
       expect(getAllBrewsForThisBean).toHaveBeenCalled();
       for (const spy of [
@@ -653,19 +651,21 @@ describe('BeanInformationComponent', () => {
       expect(modal.create).toHaveBeenCalled();
     });
 
-    const delegated: [BEAN_ACTION, () => jasmine.Spy][] = [
+    const frozen = { frozenDate: new Date(NOW - DAY).toISOString() };
+    const delegated: [BEAN_ACTION, () => jasmine.Spy, Partial<IBean>?][] = [
       [BEAN_ACTION.REPEAT, () => helper.repeatBean],
       [BEAN_ACTION.EDIT, () => helper.editBean],
       [BEAN_ACTION.CUPPING, () => helper.cupBean],
       [BEAN_ACTION.PHOTO_GALLERY, () => image.viewPhotos],
       [BEAN_ACTION.SHARE, () => share.shareBean],
       [BEAN_ACTION.FREEZE, () => helper.freezeBean],
-      [BEAN_ACTION.UNFREEZE, () => helper.unfreezeBean],
+      [BEAN_ACTION.UNFREEZE, () => helper.unfreezeBean, frozen],
       [BEAN_ACTION.GENERATE_INTERNAL_SHARE_CODE, () => helper.generateQRCode],
       [BEAN_ACTION.BEANS_CONSUMED, () => helper.archiveBeanWithRatingQuestion],
     ];
-    for (const [action, spy] of delegated) {
+    for (const [action, spy, fields] of delegated) {
       it(`hand the bean on for ${action}`, async () => {
+        beans.change([storedBean('alpha', { ...alpha, ...fields })]);
         choose(action);
         await card.showBeanActions(event());
 
@@ -716,7 +716,7 @@ describe('BeanInformationComponent', () => {
     });
 
     it('thaw a bean without weight at once', async () => {
-      beans.change([storedBean('alpha', { ...alpha, weight: 0 })]);
+      beans.change([storedBean('alpha', { ...alpha, ...frozen, weight: 0 })]);
       choose(BEAN_ACTION.UNFREEZE);
       await card.showBeanActions(event());
 
@@ -951,8 +951,14 @@ describe('BeanInformationComponent', () => {
         expect(brewHelper.repeatBrew).not.toHaveBeenCalled();
       });
 
-      it('pass on the error of a failing brew lookup', async () => {
-        helper.getAllBrewsForThisBean.and.throwError('broken');
+      it('pass on the error of a brew lookup that fails after the menu', async () => {
+        let lookups = 0;
+        helper.getAllBrewsForThisBean.and.callFake(() => {
+          if (lookups++ > 0) {
+            throw new Error('broken');
+          }
+          return [last];
+        });
 
         await expectAsync(card.showBeanActions(event())).toBeRejectedWithError(
           'broken',

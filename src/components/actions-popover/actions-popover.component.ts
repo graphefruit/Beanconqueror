@@ -80,6 +80,13 @@ export function popoverDivider(
   return { itemType: 'divider', ...config };
 }
 
+interface ActionsPopoverOptions {
+  id: string;
+  items: PopoverItem[];
+  breakpoints: number[];
+  initialBreakpoint: number;
+}
+
 @Component({
   selector: 'actions-popover',
   template: `
@@ -178,14 +185,28 @@ export class ActionsPopoverComponent {
     });
   }
 
-  static create(
+  /**
+   * Shows the menu and resolves the role of the action chosen in it.
+   * Undefined when it was closed without one: Ionic then puts its own
+   * reason into the role, 'backdrop' for a tap beside the menu.
+   */
+  static async pick(
     modalController: ModalController,
-    opts: {
-      id: string;
-      items: PopoverItem[];
-      breakpoints: number[];
-      initialBreakpoint: number;
-    },
+    opts: ActionsPopoverOptions,
+  ): Promise<string | undefined> {
+    const popover = await ActionsPopoverComponent.create(modalController, opts);
+    await popover.present();
+    const { role } = await popover.onWillDismiss();
+    return opts.items.some(
+      (item) => item.itemType === 'action' && item.role === role,
+    )
+      ? role
+      : undefined;
+  }
+
+  private static create(
+    modalController: ModalController,
+    opts: ActionsPopoverOptions,
   ): Promise<HTMLIonModalElement> {
     return modalController.create({
       component: ActionsPopoverComponent,

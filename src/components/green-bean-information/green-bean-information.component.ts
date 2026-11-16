@@ -129,20 +129,15 @@ export class GreenBeanInformationComponent implements OnInit {
       GREEN_BEAN_TRACKING.TITLE,
       GREEN_BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await ActionsPopoverComponent.create(this.modalController, {
+    const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'green-bean-popover-actions',
       items: this.buildGreenBeanActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role !== undefined) {
-      await this.internalBeanAction(data.role as GREEN_BEAN_ACTION);
-      this.greenBeanAction.emit([
-        data.role as GREEN_BEAN_ACTION,
-        this.greenBean,
-      ]);
+    if (role !== undefined) {
+      await this.internalBeanAction(role as GREEN_BEAN_ACTION);
+      this.greenBeanAction.emit([role as GREEN_BEAN_ACTION, this.greenBean]);
     }
   }
 

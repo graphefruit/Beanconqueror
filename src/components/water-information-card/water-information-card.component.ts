@@ -105,17 +105,15 @@ export class WaterInformationCardComponent implements OnInit {
       WATER_TRACKING.TITLE,
       WATER_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await ActionsPopoverComponent.create(this.modalController, {
+    const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'water-popover-actions',
       items: this.buildWaterActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,
     });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role !== undefined) {
-      await this.internalAction(data.role as WATER_ACTION);
-      this.waterAction.emit([data.role as WATER_ACTION, this.water]);
+    if (role !== undefined) {
+      await this.internalAction(role as WATER_ACTION);
+      this.waterAction.emit([role as WATER_ACTION, this.water]);
     }
   }
 

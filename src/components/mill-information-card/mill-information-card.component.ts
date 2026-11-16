@@ -285,17 +285,15 @@ export class MillInformationCardComponent implements OnInit {
       MILL_TRACKING.TITLE,
       MILL_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await ActionsPopoverComponent.create(this.modalController, {
+    const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'mill-popover-actions',
       items: this.buildMillActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,
     });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role !== undefined) {
-      await this.internalMillAction(data.role as MILL_ACTION);
-      this.millAction.emit([data.role as MILL_ACTION, this.mill]);
+    if (role !== undefined) {
+      await this.internalMillAction(role as MILL_ACTION);
+      this.millAction.emit([role as MILL_ACTION, this.mill]);
     }
   }
 

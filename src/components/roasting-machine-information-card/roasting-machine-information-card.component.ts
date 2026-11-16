@@ -91,18 +91,16 @@ export class RoastingMachineInformationCardComponent {
       ROASTING_MACHINE_TRACKING.TITLE,
       ROASTING_MACHINE_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await ActionsPopoverComponent.create(this.modalController, {
+    const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'roasting-machine-popover-actions',
       items: this.buildRoastingMachineActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,
     });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role !== undefined) {
-      await this.internalAction(data.role as ROASTING_MACHINE_ACTION);
+    if (role !== undefined) {
+      await this.internalAction(role as ROASTING_MACHINE_ACTION);
       this.roastingMachineAction.emit([
-        data.role as ROASTING_MACHINE_ACTION,
+        role as ROASTING_MACHINE_ACTION,
         this.roastingMachine,
       ]);
     }

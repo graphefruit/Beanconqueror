@@ -101,17 +101,15 @@ export class GraphInformationCardComponent implements OnInit {
       GRAPH_TRACKING.TITLE,
       GRAPH_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await ActionsPopoverComponent.create(this.modalController, {
+    const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'graph-popover-actions',
       items: this.buildGraphActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,
     });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role !== undefined) {
-      await this.internalAction(data.role as GRAPH_ACTION);
-      this.graphAction.emit([data.role as GRAPH_ACTION, this.graph]);
+    if (role !== undefined) {
+      await this.internalAction(role as GRAPH_ACTION);
+      this.graphAction.emit([role as GRAPH_ACTION, this.graph]);
     }
   }
 

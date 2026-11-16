@@ -307,17 +307,15 @@ export class BrewInformationComponent implements OnInit, OnChanges {
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await ActionsPopoverComponent.create(this.modalCtrl, {
+    const role = await ActionsPopoverComponent.pick(this.modalCtrl, {
       id: 'brew-popover-actions',
       items: this.buildBrewActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role !== undefined) {
-      await this.internalBrewAction(data.role as BREW_ACTION);
-      this.brewAction.emit([data.role as BREW_ACTION, this.brew]);
+    if (role !== undefined) {
+      await this.internalBrewAction(role as BREW_ACTION);
+      this.brewAction.emit([role as BREW_ACTION, this.brew]);
     }
   }
 

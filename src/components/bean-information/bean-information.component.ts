@@ -280,7 +280,7 @@ export class BeanInformationComponent {
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS,
     );
-    const popover = await ActionsPopoverComponent.create(this.modalController, {
+    const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'bean-popover-actions',
       items: beanActions(this.actionBean, {
         freezeEnabled: this.settings.freeze_coffee_beans === true,
@@ -289,11 +289,9 @@ export class BeanInformationComponent {
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role !== undefined) {
-      await this.internalBeanAction(data.role as BEAN_ACTION);
-      this.beanAction.emit([data.role as BEAN_ACTION, this.actionBean]);
+    if (role !== undefined) {
+      await this.internalBeanAction(role as BEAN_ACTION);
+      this.beanAction.emit([role as BEAN_ACTION, this.actionBean]);
     }
   }
 
