@@ -52,6 +52,7 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIHelper } from '../../../services/uiHelper';
+import { UILog } from '../../../services/uiLog';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
 import { BeanPopoverFrozenListComponent } from '../bean-popover-frozen-list/bean-popover-frozen-list.component';
@@ -102,6 +103,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
   private readonly uiAlert = inject(UIAlert);
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiToast = inject(UIToast);
+  private readonly uiLog = inject(UILog);
 
   public static COMPONENT_ID = 'bean-popover-freeze';
   public settings: Settings;
@@ -175,13 +177,79 @@ export class BeanPopoverFreezeComponent implements OnInit {
     this.bean.frozenStorageType = this.frozenStorage;
     this.bean.frozenNote = this.frozenNote;
 
-    await this.uiBeanStorage.update(this.bean);
+    try {
+      await this.__updateOriginal();
+    } catch (ex) {
+      this.uiLog.error('Freeze bean - Unsuccessfully', ex);
+      await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
+      return;
+    }
     this.uiToast.showInfoToast('BEAN_HAS_BEEN_FROZEN', true);
     this.dismiss();
   }
 
   public async save() {
-    await this.uiAlert.showLoadingSpinner();
+    let result: 'FROZEN' | 'UNCHANGED' | 'INCOMPLETE' = 'INCOMPLETE';
+    try {
+      await this.uiAlert.showLoadingSpinner();
+      result = (await this.__freezeBags()) ? 'FROZEN' : 'UNCHANGED';
+    } catch (ex) {
+      this.uiLog.error('Freeze bean - Unsuccessfully', ex);
+    } finally {
+      await this.uiAlert.hideLoadingSpinner();
+    }
+    if (result !== 'FROZEN') {
+      await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
+      if (result === 'INCOMPLETE') {
+        // The bags are stored and the bean of this dialog is already
+        // reduced: saving again from here would freeze them a second time.
+        await this.dismiss();
+      }
+      return;
+    }
+    this.dismiss();
+    const modal = await this.modalController.create({
+      component: BeanPopoverFrozenListComponent,
+      id: BeanPopoverFrozenListComponent.COMPONENT_ID,
+      componentProps: { frozenBeansList: this.allNewCreatedBeans },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  private async __updateOriginal(): Promise<void> {
+    if (!(await this.uiBeanStorage.update(this.bean))) {
+      throw new Error('The bean was not saved');
+    }
+  }
+
+  /**
+   * Bags that were not all stored are taken back instead of taking the
+   * stored ones off the bean: the bean stays as it was, nothing is counted
+   * twice, and the dialog can save the same bags again.
+   */
+  private async __undoCreatedBeans(_copiedFiles: Array<string>): Promise<void> {
+    // Also the bag that was not saved: the storage still holds it and would
+    // write it with the next bean.
+    for (const created of this.allNewCreatedBeans) {
+      await this.uiBeanStorage.removeByUUID(created.config.uuid);
+    }
+    this.allNewCreatedBeans = [];
+    for (const file of _copiedFiles) {
+      try {
+        await this.uiFileHelper.deleteInternalFile(file);
+      } catch (ex) {
+        this.uiLog.error('Freeze bean - Copied photo not deleted', ex);
+      }
+    }
+  }
+
+  /**
+   * Resolves false when the bags could not be stored and nothing was
+   * changed. Rejects when the bags are stored but the bean they were taken
+   * from could not be written.
+   */
+  private async __freezeBags(): Promise<boolean> {
     const spillOver = this.uiHelper.toFixedIfNecessary(
       this.leftOverBeanBagWeight - this.getActualFreezingQuantity(),
       1,
@@ -267,18 +335,26 @@ export class BeanPopoverFreezeComponent implements OnInit {
       //If we froze the initial bean already, we use this as the reference again.
       groupBeanId = this.bean.frozenGroupId;
     }
-    for await (const bag of this.addedBags) {
-      await this.__createNewFrozenBean(
-        bag.weight,
-        bag.type,
-        index,
-        groupBeanId,
-        burnInPercentage,
-        totalActualBeanWeight,
-        totalGreenBeanWeight,
-        copyAttachments,
-      );
-      index = index + 1;
+    const copiedFiles: Array<string> = [];
+    try {
+      for await (const bag of this.addedBags) {
+        await this.__createNewFrozenBean(
+          bag.weight,
+          bag.type,
+          index,
+          groupBeanId,
+          burnInPercentage,
+          totalActualBeanWeight,
+          totalGreenBeanWeight,
+          copyAttachments,
+          copiedFiles,
+        );
+        index = index + 1;
+      }
+    } catch (ex) {
+      this.uiLog.error('Freeze bean - Bag not stored', ex);
+      await this.__undoCreatedBeans(copiedFiles);
+      return false;
     }
 
     if (spillOver === 0) {
@@ -315,7 +391,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
         await this.uiAlert.hideLoadingSpinner();
         //Don't delete the bean, because we did brews with this
         this.bean.frozenGroupId = groupBeanId;
-        await this.uiBeanStorage.update(this.bean);
+        await this.__updateOriginal();
         await this.uiAlert.showMessage(
           'BEAN_POPOVER_FROZEN_BEAN_WILL_BE_ARCHIVED_NOW_MESSAGE',
           'INFORMATION',
@@ -332,7 +408,9 @@ export class BeanPopoverFreezeComponent implements OnInit {
         );
         if (choice === 'YES') {
           //The bag doesn't have any brews, so just delete it.
-          await this.uiBeanStorage.removeByUUID(this.bean.config.uuid);
+          if (!(await this.uiBeanStorage.removeByUUID(this.bean.config.uuid))) {
+            throw new Error('The bean was not deleted');
+          }
         } else {
           //Reset the weight to zero atleast.
           this.bean.weight = 0;
@@ -340,7 +418,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
             this.bean.bean_roast_information.green_bean_weight = 0;
           }
 
-          await this.uiBeanStorage.update(this.bean);
+          await this.__updateOriginal();
         }
       }
     } else {
@@ -374,17 +452,9 @@ export class BeanPopoverFreezeComponent implements OnInit {
       }
 
       this.bean.frozenGroupId = groupBeanId;
-      await this.uiBeanStorage.update(this.bean);
+      await this.__updateOriginal();
     }
-    await this.uiAlert.hideLoadingSpinner();
-    this.dismiss();
-    const modal = await this.modalController.create({
-      component: BeanPopoverFrozenListComponent,
-      id: BeanPopoverFrozenListComponent.COMPONENT_ID,
-      componentProps: { frozenBeansList: this.allNewCreatedBeans },
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    return true;
   }
 
   private async saveBase64Photo(base64: string): Promise<string> {
@@ -412,6 +482,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     _totalBeanWeight: number,
     _totalGreenBeanWeight: number,
     _copyAttachments: Array<string>,
+    _copiedFiles: Array<string>,
   ) {
     const clonedBean: Bean = this.uiHelper.cloneData(this.bean);
 
@@ -430,6 +501,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     if (_copyAttachments && _copyAttachments.length > 0) {
       for await (let attachment of _copyAttachments) {
         const fileUri = await this.saveBase64Photo(attachment);
+        _copiedFiles.push(fileUri);
         clonedBean.attachments.push(fileUri);
       }
     }
@@ -457,10 +529,13 @@ export class BeanPopoverFreezeComponent implements OnInit {
     }
 
     clonedBean.config = new Config();
-    const newClonedBean = await this.uiBeanStorage.add(clonedBean);
+    const added = await this.uiBeanStorage.addAndConfirm(clonedBean);
     const newBean: Bean = new Bean();
-    newBean.initializeByObject(newClonedBean);
+    newBean.initializeByObject(added.entry);
     this.allNewCreatedBeans.push(newBean);
+    if (!added.saved) {
+      throw new Error('The frozen bean was not saved');
+    }
   }
 
   public chooseDate(_event) {
