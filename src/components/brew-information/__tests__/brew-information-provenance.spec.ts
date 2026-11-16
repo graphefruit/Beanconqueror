@@ -11,6 +11,7 @@ import { Brew, BrewInstanceHelper } from '../../../classes/brew/brew';
 import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
+import { StorageClass } from '../../../classes/storageClass';
 import { BeanFunction } from '../../../pipes/bean/beanFunction';
 import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
@@ -501,14 +502,36 @@ describe('BrewInformationComponent imported provenance', () => {
       expect(toast.showInfoToast).not.toHaveBeenCalled();
     });
 
-    it('does not report a repeat that was not saved', async () => {
+    it('adds no message of its own when the storage has told the user that the repeat was not saved', async () => {
       const copy = makeBrew();
       render(makeBrew());
       brewHelper.copyBrewToRepeat.and.returnValue(copy);
       brewStorage.addAndConfirm.and.resolveTo({ entry: copy, saved: false });
+      spyOn(StorageClass, 'getMessagesShown').and.returnValues(3, 4);
 
       await fixture.componentInstance.fastRepeatBrew();
 
+      expect(alert.showMessage).not.toHaveBeenCalled();
+      expect(tracking.trackBrew).not.toHaveBeenCalled();
+      expect(toast.showInfoToast).not.toHaveBeenCalled();
+    });
+
+    it('tells the user itself when the repeat was not saved and the storage stayed silent', async () => {
+      const copy = makeBrew();
+      render(makeBrew());
+      brewHelper.copyBrewToRepeat.and.returnValue(copy);
+      brewStorage.addAndConfirm.and.resolveTo({ entry: copy, saved: false });
+      // A collection that was not read reports its refused writes only once
+      spyOn(StorageClass, 'getMessagesShown').and.returnValue(4);
+
+      await fixture.componentInstance.fastRepeatBrew();
+
+      expect(alert.showMessage).toHaveBeenCalledOnceWith(
+        'ERROR_OCCURED',
+        'CARE',
+        undefined,
+        true,
+      );
       expect(tracking.trackBrew).not.toHaveBeenCalled();
       expect(toast.showInfoToast).not.toHaveBeenCalled();
     });

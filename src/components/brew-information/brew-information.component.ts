@@ -51,6 +51,7 @@ import { BrewFlow } from '../../classes/brew/brewFlow';
 import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
+import { StorageClass } from '../../classes/storageClass';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
@@ -479,9 +480,18 @@ export class BrewInformationComponent implements OnInit, OnChanges {
         );
         return;
       }
+      const shown = StorageClass.getMessagesShown();
       const added = await this.uiBrewStorage.addAndConfirm(repeatBrew);
       if (!added.saved) {
-        // The storage has already told the user that nothing was saved
+        // The storage does not report every write it turns down
+        if (StorageClass.getMessagesShown() === shown) {
+          await this.uiAlert.showMessage(
+            'ERROR_OCCURED',
+            'CARE',
+            undefined,
+            true,
+          );
+        }
         return;
       }
 
