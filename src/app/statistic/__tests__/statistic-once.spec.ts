@@ -282,7 +282,7 @@ describe('StatisticPage - numbers and month groups are worked out once', () => {
 
         expect(page.general).toEqual({ ...numbers, brewsDrunk: 6 });
         expect(page.rangeMode).toBe('THIS_MONTH');
-        expect(statistic.setDateRange).not.toHaveBeenCalled();
+        expect(statistic.setDateRange.calls.count()).toBe(0);
       });
     }
 
@@ -293,14 +293,14 @@ describe('StatisticPage - numbers and month groups are worked out once', () => {
       );
       injector.get(StatisticPage);
       events.brew.next();
-      expect(statistic.getBrewsDrunk).toHaveBeenCalledTimes(2);
+      expect(statistic.getBrewsDrunk.calls.count()).toBe(2);
 
       // The page of the test module goes on listening.
       injector.destroy();
       statistic.getBrewsDrunk.calls.reset();
       events.brew.next();
 
-      expect(statistic.getBrewsDrunk).toHaveBeenCalledTimes(1);
+      expect(statistic.getBrewsDrunk.calls.count()).toBe(1);
     });
   });
 });
