@@ -5,7 +5,6 @@ import {
   EventEmitter,
   inject,
   Input,
-  OnInit,
   Output,
   Signal,
   signal,
@@ -29,7 +28,6 @@ import { wifiOutline } from 'ionicons/icons';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { PreparationCustomParametersComponent } from '../../app/preparation/preparation-custom-parameters/preparation-custom-parameters.component';
-import { Brew } from '../../classes/brew/brew';
 import { Preparation } from '../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { PreparationDevice } from '../../classes/preparationDevice/preparationDevice';
@@ -51,6 +49,7 @@ import { UIPreparationHelper } from '../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
+import { BrewUsageStore } from '../../stores/brews/brew-usage.store';
 import { DeleteCommands } from '../../stores/delete-commands';
 import {
   ActionsPopoverComponent,
@@ -82,7 +81,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
     IonText,
   ],
 })
-export class PreparationInformationCardComponent implements OnInit {
+export class PreparationInformationCardComponent {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly modalController = inject(ModalController);
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
@@ -94,81 +93,26 @@ export class PreparationInformationCardComponent implements OnInit {
   private readonly uiImage = inject(UIImage);
   private readonly uiBrewHelper = inject(UIBrewHelper);
   private readonly uiHelper = inject(UIHelper);
+  private readonly brewUsageStore = inject(BrewUsageStore);
 
   @Input() public preparation: Preparation;
 
   @Output() public preparationAction: EventEmitter<any> = new EventEmitter();
 
-  public brewsCount: number = 0;
-  public weightCount: number = 0;
-  public drunkenQuantity: number = 0;
-  public beansCount: number = 0;
+  private readonly usage = computed(() =>
+    this.brewUsageStore.byPreparation().get(this.preparation.config.uuid),
+  );
+  public readonly brewsCount = computed(() => this.usage()?.brews ?? 0);
+  public readonly weightCount = computed((): number =>
+    this.uiHelper.toFixedIfNecessary(this.usage()?.grindWeight ?? 0, 2),
+  );
+  public readonly drunkenQuantity = computed((): number =>
+    this.uiHelper.toFixedIfNecessary((this.usage()?.quantity ?? 0) / 1000, 2),
+  );
+  public readonly beansCount = computed(() => this.usage()?.beans.size ?? 0);
 
   constructor() {
     addIcons({ wifiOutline });
-  }
-
-  public ngOnInit() {
-    this.brewsCount = this.getBrewsCount();
-    this.weightCount = this.getWeightCount();
-    this.drunkenQuantity = this.getDrunkenQuantity();
-    this.beansCount = this.getBeansCount();
-
-    this.brewsCount = this.uiHelper.toFixedIfNecessary(this.brewsCount, 0);
-    this.weightCount = this.uiHelper.toFixedIfNecessary(this.weightCount, 2);
-    this.drunkenQuantity = this.uiHelper.toFixedIfNecessary(
-      this.drunkenQuantity,
-      2,
-    );
-    this.beansCount = this.uiHelper.toFixedIfNecessary(this.beansCount, 0);
-  }
-
-  public getBrewsCount(): number {
-    const relatedBrews: Array<Brew> =
-      this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        this.preparation.config.uuid,
-      );
-    return relatedBrews.length;
-  }
-
-  public getWeightCount(): number {
-    const relatedBrews: Array<Brew> =
-      this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        this.preparation.config.uuid,
-      );
-    let grindWeight: number = 0;
-    for (const brew of relatedBrews) {
-      grindWeight += brew.grind_weight;
-    }
-    return grindWeight;
-  }
-
-  public getDrunkenQuantity(): number {
-    const relatedBrews: Array<Brew> =
-      this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        this.preparation.config.uuid,
-      );
-    let drunkenQuantity: number = 0;
-    for (const brew of relatedBrews) {
-      if (brew.brew_beverage_quantity > 0) {
-        drunkenQuantity += brew.brew_beverage_quantity;
-      } else {
-        drunkenQuantity += brew.brew_quantity;
-      }
-    }
-    return drunkenQuantity / 1000;
-  }
-
-  public getBeansCount(): number {
-    const relatedBrews: Array<Brew> =
-      this.uiPreparationHelper.getAllBrewsForThisPreparation(
-        this.preparation.config.uuid,
-      );
-    const distinctBeans = relatedBrews.filter((bean, i, arr) => {
-      return arr.indexOf(arr.find((t) => t.bean === bean.bean)) === i;
-    });
-
-    return distinctBeans.length;
   }
 
   private async resetSettings() {

@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   EventEmitter,
   inject,
   Input,
-  OnInit,
   Output,
 } from '@angular/core';
 
@@ -30,10 +30,12 @@ import MILL_TRACKING from '../../data/tracking/millTracking';
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { MILL_ACTION } from '../../enums/mills/millActions';
 import { MILL_FUNCTION_PIPE_ENUM } from '../../enums/mills/millFunctionPipe';
+import { IBrew } from '../../interfaces/brew/iBrew';
 import { FormatDatePipe } from '../../pipes/formatDate';
 import { MillFunction } from '../../pipes/mill/millFunction';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { UIHelper } from '../../services/uiHelper';
 import { UIImage } from '../../services/uiImage';
@@ -41,6 +43,7 @@ import { UIMillHelper } from '../../services/uiMillHelper';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
+import { BrewUsageStore } from '../../stores/brews/brew-usage.store';
 import { DeleteCommands } from '../../stores/delete-commands';
 import {
   ActionsPopoverComponent,
@@ -71,7 +74,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
     IonText,
   ],
 })
-export class MillInformationCardComponent implements OnInit {
+export class MillInformationCardComponent {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly modalController = inject(ModalController);
   private readonly uiMillHelper = inject(UIMillHelper);
@@ -83,98 +86,55 @@ export class MillInformationCardComponent implements OnInit {
   private readonly uiImage = inject(UIImage);
   private readonly uiBrewHelper = inject(UIBrewHelper);
   private readonly uiHelper = inject(UIHelper);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly brewUsageStore = inject(BrewUsageStore);
 
   @Input() public mill: Mill;
 
   @Output() public millAction: EventEmitter<any> = new EventEmitter();
   public settings: Settings;
 
-  public brewsCount: number = 0;
-  public weightCount: number = 0;
-  public beansCount: number = 0;
-  public lastUsedGrindSizeForBrew: string = '';
-  public lastUsedBean: string = '';
-  public lastUsed: number = 0;
+  private readonly usage = computed(() =>
+    this.brewUsageStore.byMill().get(this.mill.config.uuid),
+  );
+  private readonly lastBrew = computed(() => {
+    const stored = this.usage()?.lastBrew;
+    if (!stored) {
+      return undefined;
+    }
+    const brew = new Brew();
+    brew.initializeByObject(stored as unknown as IBrew);
+    return brew;
+  });
+
+  public readonly brewsCount = computed(() => this.usage()?.brews ?? 0);
+  public readonly weightCount = computed((): number =>
+    this.uiHelper.toFixedIfNecessary(this.usage()?.grindWeight ?? 0, 2),
+  );
+  public readonly beansCount = computed(() => this.usage()?.beans.size ?? 0);
+  public readonly lastUsed = computed(
+    () => this.lastBrew()?.config.unix_timestamp ?? -1,
+  );
+  public readonly lastUsedGrindSizeForBrew = computed(() => {
+    const brew = this.lastBrew();
+    if (!brew) {
+      return '-';
+    }
+    return brew.mill_speed > 0
+      ? brew.grind_size + ' @ ' + brew.mill_speed
+      : brew.grind_size;
+  });
+  public readonly lastUsedBean = computed(() => {
+    const brew = this.lastBrew();
+    // Brew.getBean() throws for a bean that no longer exists.
+    if (!brew || !this.uiBeanStorage.getByUUID(brew.bean)) {
+      return '-';
+    }
+    return brew.getBean().name;
+  });
 
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
-  }
-
-  public ngOnInit() {
-    this.brewsCount = this.getBrewsCount();
-    this.weightCount = this.getWeightCount();
-    this.beansCount = this.getBeansCount();
-    this.lastUsedBean = this.getLastUsedBean();
-    this.lastUsed = this.getLastUsed();
-    this.lastUsedGrindSizeForBrew = this.getLastUsedGrindSizeForBrew();
-
-    this.brewsCount = this.uiHelper.toFixedIfNecessary(this.brewsCount, 0);
-    this.weightCount = this.uiHelper.toFixedIfNecessary(this.weightCount, 2);
-    this.beansCount = this.uiHelper.toFixedIfNecessary(this.beansCount, 0);
-  }
-
-  public getBrewsCount(): number {
-    const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      this.mill.config.uuid,
-    );
-    return relatedBrews.length;
-  }
-
-  public getWeightCount(): number {
-    const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      this.mill.config.uuid,
-    );
-    let grindWeight: number = 0;
-    for (const brew of relatedBrews) {
-      grindWeight += brew.grind_weight;
-    }
-    return grindWeight;
-  }
-
-  public getBeansCount(): number {
-    const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      this.mill.config.uuid,
-    );
-    const distinctBeans = relatedBrews.filter((bean, i, arr) => {
-      return arr.indexOf(arr.find((t) => t.bean === bean.bean)) === i;
-    });
-
-    return distinctBeans.length;
-  }
-  public getLastUsed(): number {
-    let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      this.mill.config.uuid,
-    );
-    if (relatedBrews.length > 0) {
-      relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
-      return relatedBrews[0].config.unix_timestamp;
-    }
-    return -1;
-  }
-
-  public getLastUsedGrindSizeForBrew(): string {
-    let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      this.mill.config.uuid,
-    );
-    if (relatedBrews.length > 0) {
-      relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
-      if (relatedBrews[0].mill_speed > 0) {
-        return relatedBrews[0].grind_size + ' @ ' + relatedBrews[0].mill_speed;
-      } else {
-        return relatedBrews[0].grind_size;
-      }
-    }
-    return '-';
-  }
-  public getLastUsedBean(): string {
-    let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
-      this.mill.config.uuid,
-    );
-    if (relatedBrews.length > 0) {
-      relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
-      return relatedBrews[0].getBean().name;
-    }
-    return '-';
   }
 
   public async show() {

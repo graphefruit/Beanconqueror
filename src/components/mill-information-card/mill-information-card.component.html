@@ -26,32 +26,32 @@
                 <ion-col size="6">
                   <ion-label class="card-headline">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-label><br/>
 
-                  <ion-text>{{brewsCount}}</ion-text>
+                  <ion-text>{{brewsCount()}}</ion-text>
                 </ion-col>
                 <ion-col size="6">
                   <ion-label class="card-headline">{{"COFFEE_GRAMS_GRINDED" | translate}}</ion-label><br/>
-                  <ion-text>{{weightCount}}</ion-text>
+                  <ion-text>{{weightCount()}}</ion-text>
                 </ion-col>
                 <ion-col size="6">
                   <ion-label class="card-headline">{{"BEANS_USED" | translate}}</ion-label><br/>
-                  <ion-text>{{beansCount}}</ion-text>
+                  <ion-text>{{beansCount()}}</ion-text>
                 </ion-col>
                 <ion-col size="6">
                   <ion-label class="card-headline">{{"LAST_USE" | translate}}</ion-label><br/>
-                  @if (brewsCount> 0) {
-                    <ion-text>{{lastUsed | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</ion-text>
+                  @if (brewsCount() > 0) {
+                    <ion-text>{{lastUsed() | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</ion-text>
                   }
-                  @if (brewsCount <= 0) {
+                  @if (brewsCount() <= 0) {
                     <ion-text>-</ion-text>
                   }
                 </ion-col>
                 <ion-col size="6">
                   <ion-label class="card-headline">{{"LAST_USED_GRIND_SIZE_SETTING" | translate}}</ion-label><br/>
-                  <ion-text>{{lastUsedGrindSizeForBrew}}</ion-text>
+                  <ion-text>{{lastUsedGrindSizeForBrew()}}</ion-text>
                 </ion-col>
                 <ion-col size="6">
                   <ion-label class="card-headline">{{"LAST_USED_BEAN" | translate}}</ion-label><br/>
-                  <ion-text>{{lastUsedBean}}</ion-text>
+                  <ion-text>{{lastUsedBean()}}</ion-text>
                 </ion-col>
                 @if (mill?.note !== '') {
                   <ion-col size="12">

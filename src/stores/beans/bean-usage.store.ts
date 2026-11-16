@@ -61,7 +61,8 @@ export function buildBeanUsage(
 
 type Mutable<T> = { -readonly [K in keyof T]: T[K] };
 
-function field(
+/** A field of a stored brew, or `missing` when the brew does not have it. */
+export function field(
   brew: Record<string, unknown>,
   key: string,
   missing: unknown,

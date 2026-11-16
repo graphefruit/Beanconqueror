@@ -507,6 +507,9 @@ new code ◀─signal── CollectionStore      entries
   (`src/stores/beans/bean-usage.store.ts`) reads the stored brews once after
   each change and gives brew count, grams used and last brew per bean, by the
   rule of `src/services/beanUsage/used-bean-weight.ts`.
+  `BrewUsageStore` (`src/stores/brews/brew-usage.store.ts`) does the same per
+  grinder and per preparation method for their cards: brew count, weights,
+  different beans and the last brew.
 - Rules on store data are pure functions with the time as a parameter
   (`src/stores/beans/bean-rules.ts`); each gives the result of the method of
   the same name on `Bean`.

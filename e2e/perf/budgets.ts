@@ -23,16 +23,13 @@ export type PerfTier = 7_000 | 15_000 | 30_000;
  * `beanDeleteWithBrews` is from only three runs (2026-11-15, machine 8 to 22 % busy), by the
  * same rule. Deleting the 200 brews one by one took 51 s with 15,000 brews before.
  *
- * `millDeleteWithBrews` is from three runs (2026-11-15) while the machine was 41 to 95 % busy
+ * `millDeleteWithBrews` is from three runs (2026-11-16) while the machine was 35 to 59 % busy
  * with other test runs, so none of them counts by the rule above: derive it again when the
  * machine is idle. The grinder has 2,483 / 5,311 / 10,639 brews. Deleting the 2,483 brews one by
- * one took 223 s with 7,000 brews before. Four more runs the same day (machine 22 to 50 % busy)
- * gave 537 to 552 / 1,138 to 1,175 / 3,170 to 3,323 ms; only three of these values were measured
- * at most 30 % busy, so the budgets are unchanged and still to be derived on an idle machine.
- * A CPU profile with 30,000 brews shows where the time goes: 2.4 of 2.9 s of work are the cards
- * of the grinders that are left counting their beans (`MillInformationCardComponent
- * .getBeansCount()`) when the list is built again, not the deletion. The toast shows before or
- * after that, so `visible` in the `PERF` line is not the time of the deletion alone either.
+ * one took 223 s with 7,000 brews before. While every card of the grinders that are left counted
+ * its beans brew by brew when the list is built again, the values were 585 / 1,185 / 3,453 ms
+ * (same day, machine 14 to 32 % busy). The toast shows before or after the list is built, so
+ * `visible` in the `PERF` line is not the time of the deletion alone.
  *
  * `waterDeleteWithBrews` is from three runs (2026-11-16) while the machine was 19 to 51 % busy
  * with other test runs; four of the nine values were measured above 30 %, so derive it again
@@ -111,7 +108,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     search: 170, // 90 / 112
     beanListOpen: 640, // 414 / 488
     beanDeleteWithBrews: 600, // 438 / 458
-    millDeleteWithBrews: 750, // 537 / 573
+    millDeleteWithBrews: 600, // 427 / 460
     waterDeleteWithBrews: 780, // 575 / 599
     statisticsOpen: 140, // 74 / 81
     statisticsBrewCharts: 330, // 228 / 250
@@ -127,7 +124,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     search: 200, // 118 / 146
     beanListOpen: 640, // 414 / 432
     beanDeleteWithBrews: 740, // 562 / 565
-    millDeleteWithBrews: 1_500, // 1,137 / 1,149
+    millDeleteWithBrews: 770, // 584 / 590
     waterDeleteWithBrews: 1_200, // 860 / 921
     statisticsOpen: 160, // 85 / 101
     statisticsBrewCharts: 450, // 320 / 340
@@ -143,7 +140,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     search: 200, // 111 / 116
     beanListOpen: 680, // 459 / 519
     beanDeleteWithBrews: 1_300, // 853 / 954
-    millDeleteWithBrews: 4_400, // 3,274 / 3,326
+    millDeleteWithBrews: 1_200, // 857 / 881
     waterDeleteWithBrews: 2_000, // 1,463 / 1,494
     statisticsOpen: 210, // 112 / 154
     statisticsBrewCharts: 710, // 531 / 541
