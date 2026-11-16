@@ -12,9 +12,9 @@
       <ion-label>
         {{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
         <br />
-        @if (openBeans?.length !== openBeansLength) {
+        @if (openBeansShownLength !== openBeansLength) {
         <span class="value">
-          ( {{ openBeans?.length }} / {{ openBeansLength }} )
+          ( {{ openBeansShownLength }} / {{ openBeansLength }} )
         </span>
         } @else {
         <span class="value">( {{ openBeansLength }} )</span>
@@ -26,9 +26,9 @@
       <ion-label>
         {{"FROZEN_BEANS" | translate}}
         <br />
-        @if (frozenBeans?.length !== frozenBeansLength) {
+        @if (frozenBeansShownLength !== frozenBeansLength) {
         <span class="value">
-          ( {{ frozenBeans?.length }} / {{ frozenBeansLength }} )
+          ( {{ frozenBeansShownLength }} / {{ frozenBeansLength }} )
         </span>
         } @else {
         <span class="value">( {{ frozenBeansLength }} )</span>
@@ -41,9 +41,9 @@
       <ion-label>
         {{"TAB_ARCHIVE" | translate}}
         <br />
-        @if (finishedBeans?.length !== finishedBeansLength) {
+        @if (finishedBeansShownLength !== finishedBeansLength) {
         <span class="value">
-          ( {{ finishedBeans?.length }} / {{ finishedBeansLength }} )
+          ( {{ finishedBeansShownLength }} / {{ finishedBeansLength }} )
         </span>
         } @else {
         <span class="value">( {{ finishedBeansLength }} )</span>
