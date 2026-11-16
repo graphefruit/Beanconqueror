@@ -183,7 +183,9 @@ async function startApp(_device: Device) {
     preparationStorage,
     uiAlert,
     uiSettingsStorage,
-    modalController: TestBed.inject(ModalController),
+    modalController: TestBed.inject(
+      ModalController,
+    ) as jasmine.SpyObj<ModalController>,
   };
 }
 
