@@ -3,6 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { ModalController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 
+import { fillMissingChangeInfo } from '../../classes/changeTracking/changeTracking';
+import { deriveNewUuids } from '../../classes/changeTracking/duplicateEntries';
 import { withImportedUserProfile } from '../../classes/settings/importedUserProfile';
 import {
   createLegacyData,
@@ -108,8 +110,8 @@ function uuids(_entries: StoredEntry[]): string[] {
   return _entries.map((_entry) => _entry.config.uuid as string);
 }
 
-const UUID_V4 =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const UUID_V8 =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-8[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 /**
  * A backup of an older app version: the identical brews of the legacy data
@@ -142,13 +144,35 @@ describe('Importing a backup cleans up entries that share a uuid', () => {
     );
     const mills = target.data.get('MILL') as StoredEntry[];
     expect(uuids(mills.slice(0, 2))).toEqual(['mill-0', 'mill-1']);
-    expect(mills[2].config.uuid).toMatch(UUID_V4);
+    expect(mills[2].config.uuid).toMatch(UUID_V8);
     expect(mills[2].note).toBe('differing');
     // Not change tracked, so not cleaned; only the missing user profile is
     // added.
     expect(target.data.get('SETTINGS')).toEqual(
       data.SETTINGS.map(withImportedUserProfile),
     );
+  });
+
+  it('gives a differing copy the same uuid as every other device', async () => {
+    const data = createBackupData();
+    const backup = await exportBackup(data);
+
+    const first = await startDevice({});
+    await first.uiStorage.import(structuredClone(backup));
+    const second = await startDevice({});
+    await second.uiStorage.import(structuredClone(backup));
+
+    const uuid: string = (first.data.get('MILL') as StoredEntry[])[2].config
+      .uuid;
+    expect(uuid).toMatch(UUID_V8);
+    expect((second.data.get('MILL') as StoredEntry[])[2].config.uuid).toBe(
+      uuid,
+    );
+    // A device that stores the data cleans it up at start, after the change
+    // info was filled in, and gives the copy this uuid too.
+    fillMissingChangeInfo(data.MILL);
+    const atStart = await deriveNewUuids('MILL', data.MILL);
+    expect(atStart(data.MILL[2])).toBe(uuid);
   });
 
   it('logs what it did', async () => {
@@ -198,7 +222,7 @@ describe('Importing a backup cleans up entries that share a uuid', () => {
     const backup = await exportBackup(data);
     const target = await startDevice({});
     // The copy of mill-1 cannot get a new uuid.
-    spyOn(crypto, 'randomUUID').and.throwError('no uuid');
+    spyOn(crypto.subtle, 'digest').and.rejectWith(new Error('no uuid'));
 
     expect(await target.uiStorage.import(backup)).toEqual({ BACKUP: false });
 

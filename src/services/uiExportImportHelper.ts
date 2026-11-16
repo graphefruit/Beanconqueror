@@ -505,7 +505,7 @@ export class UIExportImportHelper {
         // entries than the device, although nothing was lost. The device is
         // counted the same way (UIStorage.hasCorruptedData), so copies it
         // still stores before the cleanup do not hide a lost entry either.
-        this.uiStorage.removeDuplicateEntries(fileData);
+        await this.uiStorage.removeDuplicateEntries(fileData);
         let importBackup: boolean = false;
         if (!hasData && isAutomaticBackup === false) {
           /**We don't have any data, so we import the latest file data

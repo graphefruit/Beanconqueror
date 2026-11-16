@@ -437,7 +437,7 @@ export class UIStorage {
       importData = this.__withImportedUserProfile(
         this.__keepDeviceSecrets(_data, _backup),
       );
-      this.removeDuplicateEntries(importData);
+      await this.removeDuplicateEntries(importData);
       this.__fillMissingChangeInfo(importData);
       if (previousNote !== undefined) {
         // The note is about the data stored so far. It must not be taken
@@ -498,14 +498,12 @@ export class UIStorage {
    * Never throws; a failed cleanup does not stop the import. Each
    * collection is either cleaned completely or left as it is.
    */
-  public removeDuplicateEntries(_data: any): void {
+  public async removeDuplicateEntries(_data: any): Promise<void> {
     if (typeof _data !== 'object' || _data === null) {
       return;
     }
     try {
-      const results = removeDuplicateEntriesFromData(_data, () =>
-        crypto.randomUUID(),
-      );
+      const results = await removeDuplicateEntriesFromData(_data);
       for (const [collection, result] of Object.entries(results)) {
         const prefix = `UIStorage - Backup - Duplicate entries in ${collection}`;
         this.uiLog.log(

@@ -284,13 +284,14 @@ function findReferencedUuids(
  * @param _entries the stored entries of the collection
  * @param _data all stored data by storage key, to look for references; the
  *   value for `_collection` is not read, `_entries` is used instead
- * @param _createUuid gives the new uuid of a differing copy
+ * @param _createUuid gives the new uuid of a differing copy, see
+ *   deriveNewUuids; a uuid the collection already holds is refused
  */
 export function removeDuplicateEntries(
   _collection: string,
   _entries: unknown[],
   _data: Readonly<Record<string, unknown>>,
-  _createUuid: () => string,
+  _createUuid: (_copy: unknown) => string,
 ): DuplicateCleanupResult {
   const result: DuplicateCleanupResult = {
     groups: 0,
@@ -308,7 +309,8 @@ export function removeDuplicateEntries(
   const differing = new Map<string, number[]>();
   /** The first entry and removed copies of each shared uuid. */
   const ignore = new Map<unknown, string>();
-  for (const [uuid, found] of positionsByUuid(_entries)) {
+  const positions = positionsByUuid(_entries);
+  for (const [uuid, found] of positions) {
     if (found.length < 2) {
       continue;
     }
@@ -331,6 +333,7 @@ export function removeDuplicateEntries(
   // known, so a failure leaves the entries as they were.
   const newUuids = new Map<number, string>();
   if (differing.size > 0) {
+    const taken = new Set(positions.keys());
     const values = Object.keys(_data)
       .filter((_key) => _key !== _collection)
       .map((_key) => _data[_key]);
@@ -351,7 +354,11 @@ export function removeDuplicateEntries(
         continue;
       }
       for (const position of copies) {
-        const newUuid = _createUuid();
+        const newUuid = _createUuid(_entries[position]);
+        if (taken.has(newUuid)) {
+          throw new Error(`The uuid ${newUuid} is already taken`);
+        }
+        taken.add(newUuid);
         newUuids.set(position, newUuid);
         result.renamed.push({ uuid, new_uuid: newUuid });
       }
@@ -380,15 +387,111 @@ export function removeDuplicateEntries(
 }
 
 /**
+ * The entry as text that is the same wherever the entry is stored: as JSON
+ * writes it, so as a backup file holds it, with the keys in a fixed order.
+ */
+function stableJson(_value: unknown): string {
+  return JSON.stringify(_value, (_key, _item: unknown) =>
+    isRecord(_item)
+      ? Object.fromEntries(
+          Object.keys(_item)
+            .sort()
+            .map((_name) => [_name, _item[_name]]),
+        )
+      : _item,
+  );
+}
+
+/**
+ * A uuid made from the SHA-256 of the collection, the entry and `_attempt`.
+ * It is marked as version 8 (RFC 9562), a uuid that is not random.
+ */
+async function deriveUuid(
+  _collection: string,
+  _entry: Record<string, unknown>,
+  _attempt: number,
+): Promise<string> {
+  const text = stableJson([_collection, withoutChangeInfo(_entry), _attempt]);
+  const bytes = new Uint8Array(
+    await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)),
+  );
+  bytes[6] = (bytes[6] & 0x0f) | 0x80;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = Array.from(bytes.subarray(0, 16), (_byte) =>
+    _byte.toString(16).padStart(2, '0'),
+  ).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+/**
+ * Derives the new uuids removeDuplicateEntries gives the differing copies
+ * in `_entries`, and resolves to its `_createUuid`. Two devices that clean
+ * up the same data give the same copy the same uuid that way, so a later
+ * sync does not take it for two entries.
+ *
+ * The uuid is derived from the collection and the content of the copy with
+ * the shared uuid, whatever the order of its keys. The change info is left
+ * out: an import cleans up before it is filled in, the update at start
+ * after, and both must give the same uuid. A derived uuid that the
+ * collection already holds, or that another copy got, is derived again with
+ * a counter, so no two entries end up with the same uuid.
+ *
+ * Nothing is changed and this never rejects. The returned function throws
+ * for an entry that was not a differing copy when this ran, or whose uuid
+ * could not be derived.
+ */
+export async function deriveNewUuids(
+  _collection: string,
+  _entries: readonly unknown[],
+): Promise<(_copy: unknown) => string> {
+  const newUuids = new Map<unknown, string>();
+  let failure = new Error('No uuid was derived for this entry');
+  try {
+    const positions = positionsByUuid(Array.isArray(_entries) ? _entries : []);
+    const taken = new Set(positions.keys());
+    for (const found of positions.values()) {
+      if (found.length < 2) {
+        continue;
+      }
+      const { distinct } = splitIdenticalCopies(_entries, found);
+      for (const position of distinct.slice(1)) {
+        const copy: unknown = _entries[position];
+        // Always true, only entries with a uuid are grouped.
+        if (!isRecord(copy)) {
+          continue;
+        }
+        let attempt = 0;
+        let uuid = await deriveUuid(_collection, copy, attempt);
+        while (taken.has(uuid)) {
+          uuid = await deriveUuid(_collection, copy, ++attempt);
+        }
+        taken.add(uuid);
+        newUuids.set(copy, uuid);
+      }
+    }
+  } catch (ex) {
+    // Only fails the cleanup when a copy needs a new uuid: most copies are
+    // removed or kept, which works without.
+    failure = ex instanceof Error ? ex : new Error(String(ex));
+  }
+  return (_copy) => {
+    const uuid = newUuids.get(_copy);
+    if (uuid === undefined) {
+      throw failure;
+    }
+    return uuid;
+  };
+}
+
+/**
  * Runs removeDuplicateEntries for every change tracked collection in
  * `_data`, for example a backup that is imported. References are looked for
  * in all of `_data`. The collections are changed in place. Returns the
  * results of the collections that contain entries sharing a uuid.
  */
-export function removeDuplicateEntriesFromData(
+export async function removeDuplicateEntriesFromData(
   _data: Record<string, unknown>,
-  _createUuid: () => string,
-): Record<string, DuplicateCleanupResult> {
+): Promise<Record<string, DuplicateCleanupResult>> {
   const results: Record<string, DuplicateCleanupResult> = {};
   if (typeof _data !== 'object' || _data === null) {
     return results;
@@ -402,7 +505,7 @@ export function removeDuplicateEntriesFromData(
       collection,
       entries,
       _data,
-      _createUuid,
+      await deriveNewUuids(collection, entries),
     );
     if (result.groups > 0) {
       results[collection] = result;

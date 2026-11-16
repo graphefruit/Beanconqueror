@@ -59,7 +59,10 @@ test('copies of a brew left by an older version are cleaned up at start', async 
   // differing copy is a brew of its own now. Everything else is unchanged.
   expect(brews).toHaveLength(2);
   expect(brews[0]).toEqual(brew);
-  expect(brews[1].config.uuid).not.toBe(brew.config.uuid);
+  // The new uuid is derived from the copy, not random (version 8).
+  expect(brews[1].config.uuid).toMatch(
+    /^[0-9a-f]{8}-[0-9a-f]{4}-8[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+  );
   expect({
     ...brews[1],
     config: { ...brews[1].config, uuid: brew.config.uuid },

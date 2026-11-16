@@ -651,6 +651,30 @@ each collection once and is only recorded when everything was stored.
 entry are removed, differing copies are kept. An imported backup is cleaned up
 the same way.
 
+A differing copy that nothing depends on becomes an entry of its own with a
+new uuid. That uuid is not random but derived (`deriveNewUuids`), so two
+devices that clean up the same data, at start or by importing the same backup,
+give the same copy the same uuid and a later sync does not take it for two
+entries:
+
+- It is the SHA-256 (Web Crypto) of the collection, the entry and a counter,
+  written as a version 8 uuid (RFC 9562). The entry goes in as JSON writes it,
+  so as a backup file holds it, with sorted keys: the stored order of the keys
+  plays no part. Its `config.uuid`, the shared uuid, is part of it.
+- The change info (`created_at`, `updated_at`, `rev`, `updated_by`) is left
+  out. An import cleans up before the change info is filled in, `UPDATE_17`
+  runs after `UPDATE_16` filled it in, and entries changed since carry the id
+  of the device. Everything else in the entry goes in.
+- The first entry in the stored order keeps the shared uuid, as before: it is
+  the one every reference finds and every change is stored into. The order is
+  part of the data and is the same after a backup and its import.
+- A derived uuid that the collection already holds, or that another copy got
+  in the same run, is derived again with the next counter value. The cleanup
+  refuses a uuid that is taken and then changes nothing in that collection.
+- Devices only get the same uuids from the same entries. A backup of an older
+  app version is cleaned up before the later data updates changed its entries
+  and can so get other uuids than a device that ran those updates first.
+
 `UPDATE_18` takes preparation tools out of the brews they do not belong to
 (`BrewReferencesService.removeForeignTools()` in
 `src/services/brewReferences/brew-references.service.ts`). A tool belongs to

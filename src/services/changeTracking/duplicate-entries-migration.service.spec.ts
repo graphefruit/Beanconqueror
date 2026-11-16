@@ -186,8 +186,8 @@ function uuids(_entries: StoredEntry[]): string[] {
   return _entries.map((_entry) => _entry.config.uuid as string);
 }
 
-const UUID_V4 =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const UUID_V8 =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-8[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 /** Checks the cleaned collections of `createDuplicatedData` on the device. */
 function expectCleaned(_device: Device, _legacy: Record<string, any>): void {
@@ -204,7 +204,7 @@ function expectCleaned(_device: Device, _legacy: Record<string, any>): void {
   // Nothing refers to mill-1: its differing copy is an entry of its own now.
   const mills = stored(_device, 'MILL');
   expect(mills.slice(0, 2)).toEqual(_legacy.MILL.slice(0, 2));
-  expect(mills[2].config.uuid).toMatch(UUID_V4);
+  expect(mills[2].config.uuid).toMatch(UUID_V8);
   expect({
     ...mills[2],
     config: { ...mills[2].config, uuid: 'mill-1' },
@@ -258,10 +258,54 @@ describe('DuplicateEntriesMigrationService', () => {
     expect(stored(device, 'GRAPH')).toEqual([legacy.GRAPH[0]]);
     expect(stored(device, 'MILL')[2].config).toEqual({
       ...legacy.MILL[2].config,
-      uuid: jasmine.stringMatching(UUID_V4),
+      uuid: jasmine.stringMatching(UUID_V8),
     });
     expect(app.record).not.toHaveBeenCalled();
     expect(writtenKeys(app.set)).not.toContain('DELETION_JOURNAL');
+  });
+
+  it('gives a differing copy the same uuid on every device', async () => {
+    const legacy = createDuplicatedData();
+    // The same data on a second device: the change info already filled in,
+    // the keys stored in another order, another device id.
+    const other = structuredClone(legacy);
+    other.MILL = other.MILL.map((_mill: StoredEntry) =>
+      Object.fromEntries(
+        Object.entries({
+          ..._mill,
+          config: { ...CHANGE_INFO, updated_by: 'device-b', ..._mill.config },
+        }).reverse(),
+      ),
+    );
+    const first = createDeviceDatabase(legacy);
+    const second = createDeviceDatabase(other);
+
+    await (await startApp(first)).migration.run();
+    await (await startApp(second)).migration.run();
+
+    const uuid: string = stored(first, 'MILL')[2].config.uuid;
+    expect(uuid).toMatch(UUID_V8);
+    expect(stored(second, 'MILL')[2].config.uuid).toBe(uuid);
+    expect(stored(second, 'MILL')[2].config.updated_by).toBe('device-b');
+  });
+
+  it('changes nothing and stays open when no uuid can be derived', async () => {
+    const legacy = createDuplicatedData();
+    const device = createDeviceDatabase(legacy);
+    const app = await startApp(device);
+    const digest = spyOn(crypto.subtle, 'digest').and.rejectWith(
+      new Error('no digest'),
+    );
+
+    expect(await app.migration.run()).toBeFalse();
+
+    // The collections before are cleaned, MILL and the rest are untouched.
+    expect(writtenKeys(app.set)).toEqual(['BEANS', 'BREWS']);
+    expect(stored(device, 'MILL')).toEqual(legacy.MILL);
+
+    digest.and.callThrough();
+    expect(await app.migration.run()).toBeTrue();
+    expectCleaned(device, legacy);
   });
 
   it('writes each changed collection once and nothing on a second run', async () => {

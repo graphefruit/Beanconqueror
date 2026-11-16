@@ -2,6 +2,7 @@ import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import {
   countChangedEntries,
   countWithoutIdenticalCopies,
+  deriveNewUuids,
   isSameEntry,
   removeDuplicateEntries,
   removeDuplicateEntriesFromData,
@@ -547,6 +548,27 @@ describe('duplicateEntries', () => {
       expect(entries).toEqual(before);
     });
 
+    it('refuses a new uuid the collection already holds and changes nothing', () => {
+      for (const taken of ['bean-y', 'new-1']) {
+        const entries = [
+          entry('bean-x', { name: 'A' }),
+          entry('bean-x', { name: 'B' }),
+          entry('bean-x', { name: 'C' }),
+          entry('bean-y'),
+        ];
+        const before = structuredClone(entries);
+        const answers = ['new-1', taken];
+
+        expect(() =>
+          removeDuplicateEntries('BEANS', entries, {}, () => answers.shift()),
+        )
+          .withContext(taken)
+          .toThrowError(`The uuid ${taken} is already taken`);
+
+        expect(entries).withContext(taken).toEqual(before);
+      }
+    });
+
     it('leaves entries without a uuid and other values alone', () => {
       const withoutUuid = { name: 'no uuid', config: {} };
       const entries: unknown[] = [
@@ -573,8 +595,242 @@ describe('duplicateEntries', () => {
     });
   });
 
+  describe('deriveNewUuids', () => {
+    const UUID_V8 =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-8[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
+    /** Cleans the entries up with derived uuids. */
+    async function clean(_collection: string, _entries: unknown[]) {
+      return removeDuplicateEntries(
+        _collection,
+        _entries,
+        {},
+        await deriveNewUuids(_collection, _entries),
+      );
+    }
+
+    /** The same value with the keys of every object in reverse order. */
+    function withReversedKeys<T>(_value: T): T {
+      if (Array.isArray(_value)) {
+        return _value.map(withReversedKeys) as T;
+      }
+      if (typeof _value !== 'object' || _value === null) {
+        return _value;
+      }
+      return Object.fromEntries(
+        Object.entries(_value)
+          .reverse()
+          .map(([_key, _item]) => [_key, withReversedKeys(_item)]),
+      ) as T;
+    }
+
+    function uuidByName(_entries: Entry[]): Record<string, string> {
+      return Object.fromEntries(
+        _entries.map((_entry): [string, string] => [
+          _entry.name as string,
+          _entry.config.uuid as string,
+        ]),
+      );
+    }
+
+    it('gives a differing copy a uuid in the form of a version 8 uuid', async () => {
+      const entries = [
+        entry('shared-1', { name: 'A' }),
+        entry('shared-1', { name: 'B' }),
+      ];
+
+      const result = await clean('WATER', entries);
+
+      expect(entries[1].config.uuid).toMatch(UUID_V8);
+      expect(result.renamed).toEqual([
+        { uuid: 'shared-1', new_uuid: entries[1].config.uuid },
+      ]);
+    });
+
+    it('gives the same uuids whatever the order of the entries and of their keys', async () => {
+      const create = (): Entry[] => [
+        entry('shared-1', { name: 'A', values: [1, { a: 'b', c: 'd' }] }),
+        entry('other', { name: 'other' }),
+        entry('shared-1', { name: 'B', values: [1, { a: 'b', c: 'd' }] }),
+        entry('shared-1', { name: 'C' }),
+      ];
+      const entries = create();
+      const [first, other, second, third] = create().map(withReversedKeys);
+      // The first entry keeps the uuid; it is the one all references find.
+      const reordered = [first, third, second, other];
+      expect(Object.keys(reordered[2])).not.toEqual(Object.keys(entries[2]));
+
+      await clean('WATER', entries);
+      await clean('WATER', reordered);
+
+      expect(uuidByName(reordered)).toEqual(uuidByName(entries));
+      expect(new Set(uuids(entries)).size).toBe(4);
+    });
+
+    it('leaves out the change info', async () => {
+      const entries = [
+        entry('shared-1', { name: 'A' }),
+        entry('shared-1', { name: 'B' }),
+      ];
+      const filled = [
+        entry('shared-1', { name: 'A' }),
+        entry(
+          'shared-1',
+          { name: 'B' },
+          { created_at: 5, updated_at: 7, rev: 3, updated_by: 'device-b' },
+        ),
+      ];
+
+      await clean('WATER', entries);
+      await clean('WATER', filled);
+
+      expect(filled[1].config.uuid).toBe(entries[1].config.uuid);
+      expect(filled[1].config.rev).toBe(3);
+    });
+
+    it('derives the uuid from the collection, the shared uuid and the content', async () => {
+      const derived = async (
+        _collection: string,
+        _uuid: string,
+        _values: Entry,
+        _config: Entry = {},
+      ): Promise<string> => {
+        const entries = [
+          entry(_uuid, { name: 'A' }),
+          entry(_uuid, { name: 'B', ..._values }, _config),
+        ];
+        await clean(_collection, entries);
+        return entries[1].config.uuid as string;
+      };
+
+      const uuid = await derived('WATER', 'shared-1', {});
+
+      expect(await derived('WATER', 'shared-1', {})).toBe(uuid);
+      expect(await derived('MILL', 'shared-1', {})).not.toBe(uuid);
+      expect(await derived('WATER', 'shared-2', {})).not.toBe(uuid);
+      expect(await derived('WATER', 'shared-1', { note: 'other' })).not.toBe(
+        uuid,
+      );
+      expect(
+        await derived(
+          'WATER',
+          'shared-1',
+          {},
+          { unix_timestamp: 1_600_000_001 },
+        ),
+      ).not.toBe(uuid);
+    });
+
+    it('derives the same uuid from a stored entry and from a backup of it', async () => {
+      const create = (): Entry[] => [
+        entry('shared-1', { name: 'A' }),
+        entry('shared-1', {
+          name: 'B',
+          weight: Number.NaN,
+          opened: new Date(1_600_000_000_000),
+          missing: undefined,
+          values: [undefined, 1],
+        }),
+      ];
+      const entries = create();
+      const backup: Entry[] = JSON.parse(JSON.stringify(create()));
+
+      await clean('WATER', entries);
+      await clean('WATER', backup);
+
+      expect(backup[1].config.uuid).toBe(entries[1].config.uuid);
+    });
+
+    it('counts on when two copies would get the same uuid', async () => {
+      // Different entries, but alike as JSON writes them.
+      const create = (): Entry[] => [
+        entry('shared-1', { name: 'A' }),
+        entry('shared-1', { name: 'B', values: [Number.NaN] }),
+        entry('shared-1', { name: 'B', values: [null] }),
+      ];
+      const entries = create();
+      const single = create().slice(0, 2);
+      const swapped = create();
+      swapped.push(swapped.splice(1, 1)[0]);
+
+      const result = await clean('WATER', entries);
+      await clean('WATER', single);
+      await clean('WATER', swapped);
+
+      expect(result.renamed.length).toBe(2);
+      expect(entries.length).toBe(3);
+      expect(new Set(uuids(entries)).size).toBe(3);
+      expect(entries[1].config.uuid).toBe(single[1].config.uuid);
+      expect(entries[2].config.uuid).toMatch(UUID_V8);
+      expect(uuids(swapped)).toEqual(uuids(entries));
+    });
+
+    it('counts on when another entry already carries the derived uuid', async () => {
+      const create = (): Entry[] => [
+        entry('shared-1', { name: 'A' }),
+        entry('shared-1', { name: 'B' }),
+      ];
+      const free = create();
+      await clean('WATER', free);
+      const derived: string = free[1].config.uuid;
+      const entries = [...create(), entry(derived, { name: 'taken' })];
+      const again = structuredClone(entries);
+
+      await clean('WATER', entries);
+      await clean('WATER', again);
+
+      expect(entries.length).toBe(3);
+      expect(entries[1].config.uuid).toMatch(UUID_V8);
+      expect(new Set(uuids(entries)).size).toBe(3);
+      expect(entries[2]).toEqual(entry(derived, { name: 'taken' }));
+      expect(again).toEqual(entries);
+    });
+
+    it('changes nothing when it runs again', async () => {
+      const entries = [
+        entry('shared-1', { name: 'A' }),
+        entry('shared-1', { name: 'B' }),
+        entry('shared-1', { name: 'C' }),
+      ];
+      await clean('WATER', entries);
+      const afterFirstRun = structuredClone(entries);
+
+      const result = await clean('WATER', entries);
+
+      expect(entries).toEqual(afterFirstRun);
+      expect(result.groups).toBe(0);
+    });
+
+    it('changes nothing itself and gives no uuid for other entries', async () => {
+      const entries = [
+        entry('shared-1', { name: 'A' }),
+        entry('shared-1', { name: 'B' }),
+      ];
+      const before = structuredClone(entries);
+
+      const createUuid = await deriveNewUuids('WATER', entries);
+
+      expect(entries).toEqual(before);
+      expect(createUuid(entries[1])).toMatch(UUID_V8);
+      expect(() => createUuid(entries[0])).toThrowError(
+        'No uuid was derived for this entry',
+      );
+      expect(() => createUuid(structuredClone(entries[1]))).toThrowError();
+      expect(() =>
+        removeDuplicateEntries(
+          'WATER',
+          structuredClone(entries),
+          {},
+          createUuid,
+        ),
+      ).toThrowError();
+      const none = await deriveNewUuids('WATER', undefined);
+      expect(() => none(entries[1])).toThrowError();
+    });
+  });
+
   describe('removeDuplicateEntriesFromData', () => {
-    it('cleans all change tracked collections of the data and nothing else', () => {
+    it('cleans all change tracked collections of the data and nothing else', async () => {
       const bean = entry('bean-x');
       const brewEntry = brew('brew-x');
       const settings = { config: { uuid: 'settings' } };
@@ -585,35 +841,35 @@ describe('duplicateEntries', () => {
         SETTINGS: [settings, structuredClone(settings)],
         VERSION: 'not a list',
       };
+      const createUuid = await deriveNewUuids('MILL', data.MILL);
+      const derived = createUuid(data.MILL[1]);
 
-      const results = removeDuplicateEntriesFromData(data, uuidSource());
+      const results = await removeDuplicateEntriesFromData(data);
 
       expect(uuids(data.BEANS)).toEqual(['bean-x']);
       expect(uuids(data.BREWS)).toEqual(['brew-x']);
-      expect(uuids(data.MILL)).toEqual(['mill-x', 'new-1']);
+      expect(uuids(data.MILL)).toEqual(['mill-x', derived]);
       expect(data.SETTINGS.length).toBe(2);
       expect(Object.keys(results).sort()).toEqual(['BEANS', 'BREWS', 'MILL']);
       expect(results.BREWS.removed).toBe(1);
       expect(results.MILL.renamed.length).toBe(1);
     });
 
-    it('looks for references in the other collections of the data', () => {
+    it('looks for references in the other collections of the data', async () => {
       const data: Record<string, any> = {
         BEANS: [entry('bean-x', { name: 'A' }), entry('bean-x', { name: 'B' })],
         BREWS: [brew('brew-a', { bean: 'bean-x' })],
       };
 
-      const results = removeDuplicateEntriesFromData(data, uuidSource());
+      const results = await removeDuplicateEntriesFromData(data);
 
       expect(results.BEANS.kept).toEqual(['bean-x']);
       expect(uuids(data.BEANS)).toEqual(['bean-x', 'bean-x']);
     });
 
-    it('accepts data without collections', () => {
-      expect(removeDuplicateEntriesFromData({}, uuidSource())).toEqual({});
-      expect(removeDuplicateEntriesFromData(null as any, uuidSource())).toEqual(
-        {},
-      );
+    it('accepts data without collections', async () => {
+      expect(await removeDuplicateEntriesFromData({})).toEqual({});
+      expect(await removeDuplicateEntriesFromData(null as any)).toEqual({});
     });
   });
 

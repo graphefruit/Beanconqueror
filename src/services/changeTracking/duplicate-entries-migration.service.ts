@@ -2,6 +2,7 @@ import { inject, Service } from '@angular/core';
 
 import {
   countChangedEntries,
+  deriveNewUuids,
   DuplicateCleanupResult,
   removeDuplicateEntries,
 } from '../../classes/changeTracking/duplicateEntries';
@@ -32,7 +33,8 @@ interface CollectionResult {
  * Data migration that cleans up entries sharing a uuid in all change tracked
  * collections (see removeDuplicateEntries): identical copies are removed,
  * differing copies get a new uuid when nothing depends on the shared one and
- * are kept as they are otherwise.
+ * are kept as they are otherwise. The new uuid is derived from the copy
+ * (deriveNewUuids), so every device gives the same copy the same uuid.
  *
  * Each collection is cleaned in memory and written once through the system
  * write path, and only when something changed. The change info of the
@@ -102,12 +104,19 @@ export class DuplicateEntriesMigrationService {
     const collection = _storage.getDBPath();
     // Set by the fill callback; stays undefined when it could not run.
     let result = undefined as DuplicateCleanupResult | undefined;
+    // Derived before the write: the hash is not there at once, and the
+    // entries must not change between the decisions and the changes. An
+    // entry replaced in between has no new uuid, so nothing is changed.
+    const createUuid = await deriveNewUuids(
+      collection,
+      StorageClass.prototype.getAllEntries.call(_storage),
+    );
     const saved = await _storage.backfillWithoutTouch((_entries) => {
       result = removeDuplicateEntries(
         collection,
         _entries,
         this.storedData(),
-        () => crypto.randomUUID(),
+        createUuid,
       );
       return countChangedEntries(result);
     });
