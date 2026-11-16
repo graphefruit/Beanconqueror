@@ -292,15 +292,17 @@ writes:
   exists and all collections take writes, each collection is saved once, the
   brews first and the entry last. A command resolves false when nothing or
   not all was deleted, and the card then shows a message instead of the
-  toast. A roasting machine takes nothing along: the beans naming it are
-  updated one by one, as before. A water takes nothing along either: its
-  card (`water-information-card`) first checks that the waters take writes,
-  takes the water out of all brews naming it with one `updateMany`, then
-  removes it. Brews that could not be saved keep the water, in memory as
-  well, since the card hands over changed copies. Only when the water
-  cannot be removed after the brews were saved, it is left without brews
-  and can be deleted again. The card shows `ERROR_OCCURED` unless a
-  collection has reported the failure.
+  toast. A water and a roasting machine take nothing along. Their cards
+  (`water-information-card`, `roasting-machine-information-card`) first
+  check that the collection of the entry takes writes, take the entry out
+  of all brews or beans naming it with one `updateMany`, then remove it.
+  Brews or beans that could not be saved keep naming it, in memory as well,
+  since the cards hand over changed copies. Only when the entry cannot be
+  removed after they were saved, it is left with nothing naming it and can
+  be deleted again. The cards show `ERROR_OCCURED` unless a collection has
+  reported the failure. Deleting a tool of a preparation
+  (`preparation-edit-tool`) works the same way: one save of the brews, then
+  one of the preparation, and the dialog stays open when one of them fails.
   - A refused write changes nothing. A save that fails for good ends in the
     iOS database dialog of `UIStorage.set`, which only reloads the app: the
     save does not return, the stored entries are the ones from before. Only

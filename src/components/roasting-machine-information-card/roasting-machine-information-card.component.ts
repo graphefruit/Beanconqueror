@@ -25,6 +25,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { Bean } from '../../classes/bean/bean';
 import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
+import { StorageClass } from '../../classes/storageClass';
 import ROASTING_MACHINE_TRACKING from '../../data/tracking/roastingMachineTracking';
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { ROASTING_MACHINE_ACTION } from '../../enums/roasting-machine/roastingMachineAction';
@@ -33,9 +34,11 @@ import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIImage } from '../../services/uiImage';
+import { UILog } from '../../services/uiLog';
 import { UIRoastingMachineHelper } from '../../services/uiRoastingMachineHelper';
 import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
 import { UIToast } from '../../services/uiToast';
+import { Deletion } from '../../stores/delete-commands';
 import {
   ActionsPopoverComponent,
   popoverAction,
@@ -75,6 +78,7 @@ export class RoastingMachineInformationCardComponent {
   private readonly uiBeanHelper = inject(UIBeanHelper);
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiRoastingMachineHelper = inject(UIRoastingMachineHelper);
+  private readonly uiLog = inject(UILog);
 
   @Input() public roastingMachine: RoastingMachine;
   @Output() public roastingMachineAction: EventEmitter<any> =
@@ -214,27 +218,65 @@ export class RoastingMachineInformationCardComponent {
       return;
     }
 
-    await this.uiAlert.withLoadingSpinner(async () => {
-      this.uiAnalytics.trackEvent(
-        ROASTING_MACHINE_TRACKING.TITLE,
-        ROASTING_MACHINE_TRACKING.ACTIONS.DELETE,
-      );
-      await this.__delete();
-      this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY');
-    });
+    const deletion = await this.uiAlert.withLoadingSpinner(
+      async (): Promise<Deletion> => {
+        this.uiAnalytics.trackEvent(
+          ROASTING_MACHINE_TRACKING.TITLE,
+          ROASTING_MACHINE_TRACKING.ACTIONS.DELETE,
+        );
+        const shown = StorageClass.getMessagesShown();
+        if (await this.__delete()) {
+          this.uiToast.showInfoToast(
+            'TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY',
+          );
+          return 'deleted';
+        }
+        return StorageClass.getMessagesShown() === shown
+          ? 'failed'
+          : 'reported';
+      },
+    );
+    // After 'reported' the user has been told already.
+    if (deletion === 'failed') {
+      await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
+    }
   }
 
-  private async __delete() {
-    const beans: Array<Bean> =
-      this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(
-        this.roastingMachine.config.uuid,
+  /**
+   * Takes the machine out of all beans with one save, then deletes it.
+   * Resolves whether the machine is gone. The beans keep it when they could
+   * not be saved; only when the machine could not be deleted after them, it
+   * is left without beans and can be deleted again.
+   */
+  private async __delete(): Promise<boolean> {
+    try {
+      // An empty list removes nothing but tells whether the machines take
+      // writes, before the beans are changed.
+      if (!(await this.uiRoastingMachineStorage.removeManyByUUID([]))) {
+        return false;
+      }
+      // Copies: the beans of the storage stay as they are when the save
+      // fails.
+      const beans = this.uiBeanHelper
+        .getAllRoastedBeansForRoastingMachine(this.roastingMachine.config.uuid)
+        .map((bean) => {
+          const changed = new Bean();
+          changed.initializeByObject(bean);
+          changed.bean_roast_information.roaster_machine = '';
+          return changed;
+        });
+      return (
+        (await this.uiBeanStorage.updateMany(beans)) &&
+        (await this.uiRoastingMachineStorage.removeManyByUUID([
+          this.roastingMachine.config.uuid,
+        ]))
       );
-    for (const bean of beans) {
-      bean.bean_roast_information.roaster_machine = '';
-      await this.uiBeanStorage.update(bean);
+    } catch (ex) {
+      this.uiLog.error('Roasting machine - Delete - Unsuccessfully', ex);
+      return false;
     }
-    await this.uiRoastingMachineStorage.removeByObject(this.roastingMachine);
   }
+
   public getRoastQuantity(): number {
     const beans: Array<Bean> =
       this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(
