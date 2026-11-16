@@ -821,14 +821,17 @@ describe('Importing a backup', () => {
     const device = await startDevice(before, { fileSystem: false });
     device.failingReads.count = 1;
 
-    await expectAsync(
-      device.helper.importBackup(
+    const failed = await device.helper
+      .importBackup(
         { SETTINGS: [{}], BREWS: entries('brew', 1) },
         'import',
         'x.zip',
-      ),
-    ).toBeRejected();
+      )
+      .then(fail, (_error: unknown) => _error);
 
+    // Nothing was replaced, so the data is not said to be incomplete.
+    expect(failed).toEqual(new Error('read failed'));
+    expect(failed).not.toBeInstanceOf(ImportNotRolledBackError);
     expect(Object.fromEntries(device.data)).toEqual(before);
   });
 
