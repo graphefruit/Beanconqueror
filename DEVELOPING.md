@@ -208,7 +208,8 @@ statistics, start-up or backups.
   info, so the start includes the migration check but no migration. The import writes entries
   that already have their change info as well. The import test goes through Settings > Import with the generated ZIP.
 - Measured: start until the home screen is interactive, opening the brew list and scrolling it to
-  the end (duration, slow frames, longest frame), search in the brew list, opening the bean list,
+  the end (duration, slow frames, longest frame), search in the brew list, opening the bean list
+  (also sorted by last use),
   deleting a bean with 200 brews, deleting the grinder with the most brews, deleting the water with the most brews, statistics with the brew charts, export (from the tap until the app hands the ZIP to the
   browser) and import (from the moment the app gets the file until the success message).
 - The brew charts count as drawn when every chart canvas of the segment has been painted on and

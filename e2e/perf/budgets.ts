@@ -35,6 +35,11 @@ export type PerfTier = 7_000 | 15_000 | 30_000;
  * with other test runs; four of the nine values were measured above 30 %, so derive it again
  * when the machine is idle. The water has 1,801 / 3,875 / 7,814 brews, which are saved once
  * without it.
+ *
+ * `beanListOpenByLastUse` is from three runs (2026-11-16) while the machine was 29 to 59 % busy,
+ * so only one value counts by the rule above: derive it again when the machine is idle. While
+ * the sort went through all brews for both beans of every comparison, one run took 3,150 /
+ * 5,448 / 9,372 ms (same day, machine 32 to 47 % busy).
  */
 export interface Budget {
   /** Navigation start until the home screen shows the brew count. */
@@ -49,6 +54,8 @@ export interface Budget {
   /** Search in the brew list until the list shows the matches, after the field's debounce. */
   search: number;
   beanListOpen: number;
+  /** The same with the current beans sorted by "recently used", newest first. */
+  beanListOpenByLastUse: number;
   /**
    * Deleting a bean with 200 brews, from the answer to the question until the list has lost the
    * bean and the main thread is quiet.
@@ -107,6 +114,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     brewListScrollLongestFrame: 200, // 112 / 145
     search: 170, // 90 / 112
     beanListOpen: 640, // 414 / 488
+    beanListOpenByLastUse: 760, // 509 / 578
     beanDeleteWithBrews: 600, // 438 / 458
     millDeleteWithBrews: 600, // 427 / 460
     waterDeleteWithBrews: 780, // 575 / 599
@@ -123,6 +131,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     brewListScrollLongestFrame: 300, // 179 / 224
     search: 200, // 118 / 146
     beanListOpen: 640, // 414 / 432
+    beanListOpenByLastUse: 760, // 497 / 512; not below the budget for 7,000 brews
     beanDeleteWithBrews: 740, // 562 / 565
     millDeleteWithBrews: 770, // 584 / 590
     waterDeleteWithBrews: 1_200, // 860 / 921
@@ -139,6 +148,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     brewListScrollLongestFrame: 300, // 168 / 210
     search: 200, // 111 / 116
     beanListOpen: 680, // 459 / 519
+    beanListOpenByLastUse: 780, // 533 / 593
     beanDeleteWithBrews: 1_300, // 853 / 954
     millDeleteWithBrews: 1_200, // 857 / 881
     waterDeleteWithBrews: 2_000, // 1,463 / 1,494

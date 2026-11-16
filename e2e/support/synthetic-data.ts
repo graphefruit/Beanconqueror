@@ -290,6 +290,11 @@ export interface SyntheticSettings {
     /** The app chose the mode, so the note about it is still to be shown. */
     mode_hint_pending: true;
   };
+  /** `IBeanPageSort` per list of the bean page; without it the lists are sorted by name. */
+  bean_sort?: Record<
+    'OPEN' | 'ARCHIVED' | 'FROZEN',
+    { sort_after: string; sort_order: string }
+  >;
 }
 
 /** `src/classes/version/iVersion.ts` (class `Version`). */

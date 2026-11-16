@@ -278,6 +278,54 @@ for (const tier of TIERS) {
       }
     });
 
+    test('bean list opens sorted by last use', async ({ page }, testInfo) => {
+      const base = dataSet(tier).data;
+      const sorted: SyntheticDataSet = {
+        ...base,
+        SETTINGS: [
+          {
+            ...base.SETTINGS[0],
+            bean_sort: {
+              OPEN: { sort_after: 'RECENTLY_USED', sort_order: 'DESCENDING' },
+              ARCHIVED: { sort_after: 'UNKOWN', sort_order: 'UNKOWN' },
+              FROZEN: { sort_after: 'UNKOWN', sort_order: 'UNKOWN' },
+            },
+          },
+        ],
+      };
+      const { data } = await startWithData(page, tier, testInfo, {
+        data: sorted,
+        json: JSON.stringify(sorted),
+      });
+      const lastUse = new Map<string, number>();
+      for (const brew of data.BREWS) {
+        lastUse.set(
+          brew.bean,
+          Math.max(lastUse.get(brew.bean) ?? 0, brew.config.unix_timestamp),
+        );
+      }
+      const byLastUse = data.BEANS.filter((b) => !b.finished)
+        .map((b) => ({ uuid: b.config.uuid, at: lastUse.get(b.config.uuid) }))
+        .sort((a, b) => (b.at ?? -1) - (a.at ?? -1));
+      // Otherwise the first card depends on the order of beans used at the same time.
+      expect(byLastUse[0].at).toBeGreaterThan(byLastUse[1].at ?? -1);
+
+      await tabBar(page).getByRole('tab', { name: 'Beans' }).click();
+      const beans = await waitUntilSettled(
+        page,
+        { selector: 'ag-virtual-scroll bean-information' },
+        'input',
+      );
+      await expect(
+        page.locator('ag-virtual-scroll bean-information').first(),
+      ).toHaveId(`bean-${byLastUse[0].uuid}`);
+      await measureMachineLoad(testInfo, 'after');
+      report(testInfo, tier, 'bean list by last use', { ...beans });
+      if (checkBudgets) {
+        checkBudget('beanListOpenByLastUse', beans.settled, budget, testInfo);
+      }
+    });
+
     test('deleting a bean with 200 brews', async ({ page }, testInfo) => {
       const { data } = await startWithData(
         page,

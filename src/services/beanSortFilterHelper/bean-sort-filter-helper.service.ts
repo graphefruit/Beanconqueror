@@ -11,6 +11,8 @@ import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
+import { beanAgeInDays } from '../../stores/beans/bean-rules';
+import { BeanUsageStore } from '../../stores/beans/bean-usage.store';
 import { UIBeanHelper } from '../uiBeanHelper';
 import { UIHelper } from '../uiHelper';
 
@@ -19,6 +21,7 @@ export class BeanSortFilterHelperService {
   private readonly modalCtrl = inject(ModalController);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiBeanHelper = inject(UIBeanHelper);
+  private readonly beanUsageStore = inject(BeanUsageStore);
 
   public async showSort(_sort: IBeanPageSort) {
     const beanSort: IBeanPageSort = this.uiHelper.cloneData(_sort);
@@ -234,28 +237,24 @@ export class BeanSortFilterHelperService {
             return 0;
           });
           break;
-        case BEAN_SORT_AFTER.BEAN_AGE:
-          filterBeans = filterBeans.sort((a, b) => {
-            if (a.beanAgeInDays() < b.beanAgeInDays()) {
-              return -1;
-            }
-            if (a.beanAgeInDays() > b.beanAgeInDays()) {
-              return 1;
-            }
-            return 0;
-          });
+        case BEAN_SORT_AFTER.BEAN_AGE: {
+          const usage = this.beanUsageStore.usage();
+          const now = Date.now();
+          // As Bean.beanAgeInDays()
+          filterBeans = this.sortByNumber(filterBeans, (bean) =>
+            beanAgeInDays(bean, now, usage.get(bean.config.uuid)?.lastBrewAt),
+          );
           break;
-        case BEAN_SORT_AFTER.RECENTLY_USED:
-          filterBeans = filterBeans.sort((a, b) => {
-            if (a.getLastUsed() < b.getLastUsed()) {
-              return -1;
-            }
-            if (a.getLastUsed() > b.getLastUsed()) {
-              return 1;
-            }
-            return 0;
-          });
+        }
+        case BEAN_SORT_AFTER.RECENTLY_USED: {
+          const usage = this.beanUsageStore.usage();
+          // As Bean.getLastUsed()
+          filterBeans = this.sortByNumber(
+            filterBeans,
+            (bean) => usage.get(bean.config.uuid)?.lastBrewAt ?? -1,
+          );
           break;
+        }
         case BEAN_SORT_AFTER.BEAN_ROASTING_TYPE:
           filterBeans = filterBeans.sort((a, b) => {
             const nameA = a.bean_roasting_type.toUpperCase();
@@ -385,6 +384,15 @@ export class BeanSortFilterHelperService {
       }
     }
     return filterBeans;
+  }
+
+  /**
+   * Sorts ascending by a number worked out once per bean instead of in every
+   * comparison; beans with the same number keep their order.
+   */
+  private sortByNumber(beans: Bean[], numberOf: (bean: Bean) => number) {
+    const numbers = new Map(beans.map((bean) => [bean, numberOf(bean)]));
+    return beans.sort((a, b) => numbers.get(a) - numbers.get(b));
   }
 
   private manageRoastingDateEnd(filter: IBeanPageFilter, filterBeans: Bean[]) {

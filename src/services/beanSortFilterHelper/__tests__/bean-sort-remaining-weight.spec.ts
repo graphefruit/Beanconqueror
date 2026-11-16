@@ -6,6 +6,7 @@ import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
+import { BeanUsageStore } from '../../../stores/beans/bean-usage.store';
 import { UIBeanHelper } from '../../uiBeanHelper';
 import { UIHelper } from '../../uiHelper';
 import { BeanSortFilterHelperService } from '../bean-sort-filter-helper.service';
@@ -59,6 +60,7 @@ describe('BeanSortFilterHelperService - sort by remaining weight', () => {
       providers: [
         BeanSortFilterHelperService,
         { provide: UIBeanHelper, useValue: beanHelper },
+        { provide: BeanUsageStore, useValue: {} },
         { provide: UIHelper, useValue: {} },
         { provide: ModalController, useValue: {} },
       ],
