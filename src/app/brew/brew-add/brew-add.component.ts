@@ -355,7 +355,8 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       this.data.coordinates.heading = resp.coords.heading;
       this.data.coordinates.speed = resp.coords.speed;
       this.data.coordinates.longitude = resp.coords.longitude;
-      this.uiLog.info('BREW - Coordinates found', this.data.coordinates);
+      // Without the values: the user can export the log and send it on.
+      this.uiLog.info('BREW - Coordinates found');
     } catch (error) {
       this.uiLog.error('BREW - No Coordinates found', error);
       if (_highAccuracy === true) {
