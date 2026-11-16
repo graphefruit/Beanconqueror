@@ -711,6 +711,10 @@ export class UIExportImportHelper {
    * no Beanconqueror.zip: beside it the unfinished file is an older write or
    * one that was cut off. A file that cannot be read as a backup is left for
    * the next automatic backup to delete. Never rejects.
+   *
+   * A renaming that failed leaves the same behind while the app goes on, so
+   * every automatic backup does this before it writes: its write deletes the
+   * unfinished file first and would leave no backup at all if it then fails.
    */
   private async __nameCompleteUnfinishedInternalBackup(): Promise<void> {
     try {
@@ -910,6 +914,7 @@ export class UIExportImportHelper {
       );
   }
   private async __saveInternalBeanconquerorDump(_blob: Blob) {
+    await this.__nameCompleteUnfinishedInternalBackup();
     try {
       await this.uiFileHelper.replaceInternalFileFromBlob(
         _blob,

@@ -27,6 +27,16 @@ function storedData(_brews: number): Record<string, unknown> {
   };
 }
 
+/** The same with all an automatic backup wants before it writes. */
+function storedDataToBackUp(_brews: number): Record<string, unknown> {
+  return {
+    ...storedData(_brews),
+    MILL: [{ config: { uuid: 'mill-1' } }],
+    PREPARATION: [{ config: { uuid: 'preparation-1' } }],
+    BEANS: [{ config: { uuid: 'bean-1' } }],
+  };
+}
+
 function createDeviceDatabase(
   _stored: Record<string, unknown>,
   _readable: boolean,
@@ -77,6 +87,13 @@ describe('A complete internal backup that did not get its name', () => {
         files.delete(_from);
         return Promise.resolve();
       });
+    /** As UIFileHelper.replaceFileFromBlob: the unfinished file goes first. */
+    const replaceInternalFileFromBlob = jasmine
+      .createSpy('replaceInternalFileFromBlob')
+      .and.callFake(async (_blob: Blob, _path: string, _unfinished: string) => {
+        files.delete(_unfinished);
+        files.set(_path, new Uint8Array(await _blob.arrayBuffer()));
+      });
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
@@ -120,9 +137,16 @@ describe('A complete internal backup that did not get its name', () => {
             readInternalJSONFile: () =>
               Promise.reject(new Error('File does not exist')),
             renameInternalFile,
+            replaceInternalFileFromBlob,
+            replaceFileFromBlob: () => Promise.resolve(),
           },
         },
-        { provide: UISettingsStorage, useValue: {} },
+        {
+          provide: UISettingsStorage,
+          useValue: {
+            getSettings: () => ({ show_backup_issues: false }),
+          },
+        },
         {
           provide: UIAlert,
           useValue: {
@@ -161,6 +185,8 @@ describe('A complete internal backup that did not get its name', () => {
       files,
       errors,
       renameInternalFile,
+      replaceInternalFileFromBlob,
+      helper,
       popover,
       importBackup,
       filesWhenBackupsOffered,
@@ -303,6 +329,41 @@ describe('A complete internal backup that did not get its name', () => {
     expect(files.get(UNFINISHED)).toBe(complete);
     expect(importBackup).not.toHaveBeenCalled();
     expect(errors.length).toBe(1);
+  });
+
+  it('gets the name before the next automatic backup deletes it, so a failed write leaves a backup', async () => {
+    const data = storedDataToBackUp(20);
+    const complete = await writeBackupFile(data);
+    const { helper, files, replaceInternalFileFromBlob } = await startApp(
+      data,
+      { [UNFINISHED]: complete },
+    );
+    replaceInternalFileFromBlob.and.callFake(
+      (_blob: Blob, _path: string, _unfinished: string) => {
+        files.delete(_unfinished);
+        return Promise.reject(new Error('write failed'));
+      },
+    );
+
+    await helper.saveAutomaticBackups();
+
+    expect(replaceInternalFileFromBlob).toHaveBeenCalledTimes(1);
+    expect([...files.keys()]).toEqual([BACKUP]);
+    expect(files.get(BACKUP)).toBe(complete);
+  });
+
+  it('is replaced by the next automatic backup when that one is written', async () => {
+    const data = storedDataToBackUp(20);
+    const complete = await writeBackupFile(storedDataToBackUp(10));
+    const { helper, files, errors } = await startApp(data, {
+      [UNFINISHED]: complete,
+    });
+
+    await helper.saveAutomaticBackups();
+
+    expect([...files.keys()]).toEqual([BACKUP]);
+    expect(files.get(BACKUP)).not.toBe(complete);
+    expect(errors).toEqual([]);
   });
 
   it('does and logs nothing when there is neither file', async () => {

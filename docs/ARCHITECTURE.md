@@ -601,7 +601,10 @@ flowchart LR
   `.part` file is an older or cut off write and is left alone. A file that
   cannot be read, or that cannot be renamed, is left as it is and logged;
   the start goes on without an internal backup and the next write deletes
-  the file. No automatic backup is expected to write at the same time: a run
+  the file. A move that failed leaves the same behind while the app goes
+  on, so `__saveInternalBeanconquerorDump` does the same before every write:
+  that write deletes the `.part` file first and would leave no internal
+  backup at all if it then fails. No automatic backup is expected to write at the same time: a run
   is only started 3 s after `STORAGE_CHANGED`, which only a write to the
   database sends, and the start itself (`__appReady`) writes nothing before
   this point right after `UIStorage.init()`. No test holds this, and writes
