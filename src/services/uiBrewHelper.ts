@@ -73,7 +73,8 @@ export class UIBrewHelper {
 
   private canBrewBoolean: boolean = undefined;
 
-  // Set before a brew form is created and reset once it is dismissed
+  // Set before a brew form or the preparation chooser in front of it is
+  // created and reset once it is dismissed
   private brewFormOpen = false;
 
   private settings: Settings;
@@ -738,28 +739,36 @@ export class UIBrewHelper {
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.LONG_PRESS_ADD,
     );
-    const modal = await this.modalController.create({
-      component: BrewChoosePreparationToBrewComponent,
-      id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
-      backdropDismiss: false,
-      breakpoints: [0, 1],
-      // One sheet size only: the drag handle cannot change anything, so it stays
-      // out of the tab order (Ionic 9 makes it a keyboard stop by default).
-      handleBehavior: 'none',
-      initialBreakpoint: 1,
-    });
-    //A hack - when the user long-presses to upen op the modal, the backdrop would be "triggered" by removing the thumb, and the menu would dismiss directly.
-    //Therefore give some time and enable dismiss then again.
-    setTimeout(() => {
-      modal.backdropDismiss = true;
-    }, 3000);
-    await modal.present();
-
-    const { data } = await modal.onWillDismiss();
-    if (data !== undefined && data.preparation) {
+    // Two NFC scans or links in a row would stack two choosers.
+    this.brewFormOpen = true;
+    let chosen: { preparation?: Preparation } | undefined;
+    try {
+      const modal = await this.modalController.create({
+        component: BrewChoosePreparationToBrewComponent,
+        id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
+        cssClass: 'popover-actions',
+        backdropDismiss: false,
+        breakpoints: [0, 1],
+        // One sheet size only: the drag handle cannot change anything, so it stays
+        // out of the tab order (Ionic 9 makes it a keyboard stop by default).
+        handleBehavior: 'none',
+        initialBreakpoint: 1,
+      });
+      //A hack - when the user long-presses to upen op the modal, the backdrop would be "triggered" by removing the thumb, and the menu would dismiss directly.
+      //Therefore give some time and enable dismiss then again.
+      setTimeout(() => {
+        modal.backdropDismiss = true;
+      }, 3000);
+      // Listen before presenting, else a dismiss during the opening is missed
+      const willDismiss = modal.onWillDismiss<{ preparation?: Preparation }>();
+      await modal.present();
+      chosen = (await willDismiss).data;
+    } finally {
+      this.brewFormOpen = false;
+    }
+    if (chosen?.preparation) {
       const compProps = {
-        loadSpecificLastPreparation: data.preparation,
+        loadSpecificLastPreparation: chosen.preparation,
       };
 
       if (_presetBean) {

@@ -265,11 +265,11 @@ describe('UIBrewHelper opening the brew form', () => {
     });
   });
 
-  it('does not open a second brew form from the chooser when one was opened meanwhile', async () => {
+  it('turns down a brew form while the chooser is open and opens the one of the chooser', async () => {
     void helper.longPressAddBrew();
     await settle();
-    void helper.addBrew();
-    await settle();
+    await expectAsync(helper.addBrew()).toBeResolvedTo(false);
+    expect(showInfoToast).toHaveBeenCalledOnceWith('TOAST_BREW_ALREADY_OPEN');
 
     modalController
       .preparationChoosers()[0]
@@ -277,7 +277,90 @@ describe('UIBrewHelper opening the brew form', () => {
     await settle();
 
     expect(modalController.brewForms().length).toBe(1);
-    expect(modalController.brewForms()[0].dismissed).toBeFalse();
+    expect(modalController.brewForms()[0].options.componentProps).toEqual({
+      loadSpecificLastPreparation: preparation,
+    });
+  });
+
+  it('opens one preparation chooser when two NFC tags or links ask for it at the same time', async () => {
+    void helper.startBrewAndChoosePreparationMethodForBeanByInternalShareCode(
+      'BEAN01',
+    );
+    void helper.startBrewAndChoosePreparationMethodForBeanByInternalShareCode(
+      'BEAN01',
+    );
+    await settle();
+    void helper.longPressAddBrew();
+    await settle();
+
+    expect(modalController.preparationChoosers().length).toBe(1);
+    expect(showInfoToast).toHaveBeenCalledTimes(2);
+  });
+
+  it('offers the chooser again after it was closed without a choice', async () => {
+    void helper.longPressAddBrew();
+    await settle();
+    modalController.preparationChoosers()[0].dismiss();
+    await settle();
+
+    void helper.longPressAddBrew();
+    await settle();
+
+    expect(modalController.preparationChoosers().length).toBe(2);
+    expect(modalController.brewForms().length).toBe(0);
+    expect(showInfoToast).not.toHaveBeenCalled();
+  });
+
+  it('offers the chooser again after the brew form it opened was closed', async () => {
+    void helper.longPressAddBrew();
+    await settle();
+    modalController.preparationChoosers()[0].dismiss({ preparation });
+    await settle();
+    modalController.brewForms()[0].dismiss();
+    await settle();
+
+    void helper.longPressAddBrew();
+    await settle();
+
+    expect(modalController.preparationChoosers().length).toBe(2);
+  });
+
+  it('offers the chooser again after it was closed while it was still opening', async () => {
+    modalController.prepareNextModal = (modal) => {
+      modal.present = () => {
+        modal.dismiss();
+        return Promise.resolve();
+      };
+    };
+    void helper.longPressAddBrew();
+    await settle();
+
+    void helper.longPressAddBrew();
+    await settle();
+
+    expect(modalController.preparationChoosers().length).toBe(2);
+  });
+
+  it('offers the chooser again after creating or presenting the previous one failed', async () => {
+    const create = spyOn(modalController, 'create').and.rejectWith(
+      new Error('create failed'),
+    );
+    await expectAsync(helper.longPressAddBrew()).toBeRejectedWithError(
+      'create failed',
+    );
+    create.and.callThrough();
+    modalController.prepareNextModal = (modal) => {
+      modal.present = () => Promise.reject(new Error('present failed'));
+    };
+    await expectAsync(helper.longPressAddBrew()).toBeRejectedWithError(
+      'present failed',
+    );
+
+    void helper.longPressAddBrew();
+    await settle();
+
+    expect(modalController.preparationChoosers().length).toBe(2);
+    expect(modalController.preparationChoosers()[1].presented).toBeTrue();
   });
 
   it('opens a brew form again after the previous one was closed', async () => {
