@@ -27,6 +27,7 @@ import { waterOutline } from 'ionicons/icons';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { Brew } from '../../classes/brew/brew';
+import { StorageClass } from '../../classes/storageClass';
 import { Water } from '../../classes/water/water';
 import WATER_TRACKING from '../../data/tracking/waterTracking';
 import { LongPressDirective } from '../../directive/long-press.directive';
@@ -37,9 +38,11 @@ import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIImage } from '../../services/uiImage';
+import { UILog } from '../../services/uiLog';
 import { UIToast } from '../../services/uiToast';
 import { UIWaterHelper } from '../../services/uiWaterHelper';
 import { UIWaterStorage } from '../../services/uiWaterStorage';
+import { Deletion } from '../../stores/delete-commands';
 import {
   ActionsPopoverComponent,
   popoverAction,
@@ -79,6 +82,7 @@ export class WaterInformationCardComponent implements OnInit {
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiWaterHelper = inject(UIWaterHelper);
   private readonly uiBrewHelper = inject(UIBrewHelper);
+  private readonly uiLog = inject(UILog);
 
   @Input() public water: Water;
   @Output() public waterAction: EventEmitter<any> = new EventEmitter();
@@ -234,14 +238,26 @@ export class WaterInformationCardComponent implements OnInit {
       return;
     }
 
-    await this.uiAlert.withLoadingSpinner(async () => {
-      this.uiAnalytics.trackEvent(
-        WATER_TRACKING.TITLE,
-        WATER_TRACKING.ACTIONS.DELETE,
-      );
-      await this.__delete();
-      this.uiToast.showInfoToast('TOAST_WATER_DELETED_SUCCESSFULLY');
-    });
+    const deletion = await this.uiAlert.withLoadingSpinner(
+      async (): Promise<Deletion> => {
+        this.uiAnalytics.trackEvent(
+          WATER_TRACKING.TITLE,
+          WATER_TRACKING.ACTIONS.DELETE,
+        );
+        const shown = StorageClass.getMessagesShown();
+        if (await this.__delete()) {
+          this.uiToast.showInfoToast('TOAST_WATER_DELETED_SUCCESSFULLY');
+          return 'deleted';
+        }
+        return StorageClass.getMessagesShown() === shown
+          ? 'failed'
+          : 'reported';
+      },
+    );
+    // After 'reported' the user has been told already.
+    if (deletion === 'failed') {
+      await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
+    }
   }
 
   private getAllRelatedBrews(): Array<Brew> {
@@ -254,16 +270,35 @@ export class WaterInformationCardComponent implements OnInit {
     }
     return [];
   }
-  private async __delete() {
-    // Remove all references in brews
-    const brews: Array<Brew> = this.getAllRelatedBrews();
-    if (brews && brews.length > 0) {
-      for (const brew of brews) {
-        brew.water = '';
-        await this.uiBrewStorage.update(brew);
+  /**
+   * Takes the water out of all brews with one save, then deletes it.
+   * Resolves whether the water is gone. The brews keep it when they could
+   * not be saved; only when the water could not be deleted after them, it is
+   * left without brews and can be deleted again.
+   */
+  private async __delete(): Promise<boolean> {
+    try {
+      // An empty list removes nothing but tells whether the waters take
+      // writes, before the brews are changed.
+      if (!(await this.uiWaterStorage.removeManyByUUID([]))) {
+        return false;
       }
+      // Copies: the brews of the storage stay as they are when the save
+      // fails.
+      const brews = this.getAllRelatedBrews().map((brew) => {
+        const changed = new Brew();
+        changed.initializeByObject(brew);
+        changed.water = '';
+        return changed;
+      });
+      return (
+        (await this.uiBrewStorage.updateMany(brews)) &&
+        (await this.uiWaterStorage.removeManyByUUID([this.water.config.uuid]))
+      );
+    } catch (ex) {
+      this.uiLog.error('Water - Delete - Unsuccessfully', ex);
+      return false;
     }
-    await this.uiWaterStorage.removeByObject(this.water);
   }
 
   public getUsedTimes() {
