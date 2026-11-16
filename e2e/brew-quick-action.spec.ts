@@ -8,6 +8,7 @@ import {
   saveBrew,
 } from './support/brew-form';
 import { completeFirstRunWithBrew } from './support/first-brew';
+import { toast } from './support/toast';
 
 /**
  * The home screen quick actions of the app icon exist on iOS only. The app
@@ -40,7 +41,7 @@ test('the Brew quick action during a brew keeps the open brew form', async ({
   await runQuickAction(page, 'Brew');
 
   // The hint shows that the quick action has been handled.
-  await expect(page.getByText('A brew is already open')).toBeVisible();
+  await expect(toast(page, 'A brew is already open')).toBeVisible();
   await expect(page.getByRole('dialog')).toHaveCount(1);
   await expect(brewField(page, 'Ground Coffee (gr)')).toHaveValue('17');
 
