@@ -705,6 +705,20 @@ describe('UIExcel', () => {
         ]);
       });
 
+      it('logs a bean that was not written and stays in the storage', async () => {
+        beanStorage.unsavedFor = ['First'];
+        beanStorage.removeManyByUUID.and.resolveTo(false);
+
+        await importBeans([{ Name: 'First' }, { Name: 'Second' }]);
+
+        expect(showMessage.calls.allArgs()).toEqual([
+          ['BEANS_IMPORTED_PARTLY_DESCRIPTION', 'CARE'],
+        ]);
+        expect(uiLog.errors).toEqual([
+          'Excel import - Cleanup failed: beans not removed',
+        ]);
+      });
+
       it('reports the storage and not the file when no bean could be stored', async () => {
         beanStorage.failFor = ['First'];
         beanStorage.unsavedFor = ['Second'];
@@ -1544,6 +1558,7 @@ describe('UIExcel', () => {
       expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);
       expect(showMessage).not.toHaveBeenCalled();
       expect(uiLog.errors).toEqual([]);
+      expect(uiLog.logs).toEqual(['Excel export - Cancelled: Share canceled']);
     });
 
     it('reports a workbook that cannot be built and closes the spinner', async () => {
@@ -1585,6 +1600,16 @@ describe('UIExcel', () => {
         'a SHEET name that is far to (3)',
         'Grinders',
       ]);
+    });
+
+    it('lets no numbered sheet name start with an apostrophe', async () => {
+      setup({ NAV_BREWS: "'Brews", NAV_BEANS: '_Brews', NAV_MILL: "'brews" });
+
+      await excel.export();
+
+      expect((await exportedFile()).sheetNames).toEqual(
+        jasmine.arrayContaining(['_Brews', '_Brews (2)', '_brews (3)']),
+      );
     });
 
     it('replaces the characters Excel forbids in a sheet name', async () => {

@@ -110,6 +110,7 @@ export class UIExcel {
       // The file is written before the share sheet opens, and leaving that
       // sheet is reported as an error by the share plugin.
       if (/cancel/i.test(ex?.message)) {
+        this.uiLog.log(`Excel export - Cancelled: ${ex?.message}`);
         return;
       }
       this.uiLog.error(`Excel export - Error occured: ${ex?.message}`);
@@ -890,7 +891,9 @@ export class UIExcel {
     if (notSaved.length > 0) {
       try {
         // All at once: every save that fails raises an alert of its own.
-        await _storage.removeManyByUUID(notSaved);
+        if (!(await _storage.removeManyByUUID(notSaved))) {
+          this.uiLog.error('Excel import - Cleanup failed: beans not removed');
+        }
       } catch (ex) {
         this.uiLog.error(`Excel import - Cleanup failed: ${ex?.message}`);
       }
