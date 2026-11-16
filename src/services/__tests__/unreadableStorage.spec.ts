@@ -226,7 +226,6 @@ describe('Checking the internal backup at start-up with a database that cannot b
     _helper: UIExportImportHelper,
   ): Promise<void> {
     await _helper.saveAutomaticBackups();
-    await new Promise((_resolve) => setTimeout(_resolve, 200));
   }
 
   it('does not go on with the start, but asks to start the app again or to choose a backup', async () => {

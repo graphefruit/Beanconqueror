@@ -791,8 +791,9 @@ export class UIExportImportHelper {
     return moment().format('DD_MM_YYYY').toString();
   }
 
+  /** Resolves once both files are written or writing them failed. */
   public async saveAutomaticBackups() {
-    this.uiStorage
+    await this.uiStorage
       .export()
       .then(async (_stored) => ({
         stored: _stored,
@@ -812,14 +813,16 @@ export class UIExportImportHelper {
             }
             if (hasData && !actualUIStorageDataObj.CORRUPTED) {
               this.uiLog.debug('Start writing automatic backups');
+              const writes: Promise<void>[] = [];
               if (this.internalBackupNotRestored || this.databaseNotRead) {
                 this.uiLog.info(
                   'Internal backup kept, it was not restored at start-up or not everything was read',
                 );
               } else {
-                this.__saveInternalBeanconquerorDump(_blob);
+                writes.push(this.__saveInternalBeanconquerorDump(_blob));
               }
-              this.__saveAutomaticBeanconquerorDump(_blob);
+              writes.push(this.__saveAutomaticBeanconquerorDump(_blob));
+              await Promise.allSettled(writes);
             } else if (hasData && actualUIStorageDataObj.CORRUPTED) {
               this.uiLog.error(
                 'Data inside the database seems like corrupted / no data',

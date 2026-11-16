@@ -1476,6 +1476,10 @@ describe('The automatic backups', () => {
   /** Writes the automatic backups as the app does after a change. */
   async function writeAutomaticBackups(_device: Device): Promise<void> {
     await _device.helper.saveAutomaticBackups();
+  }
+
+  /** Lets what is waiting for an answer go on. */
+  async function settle(): Promise<void> {
     await new Promise((_resolve) => setTimeout(_resolve, 200));
   }
 
@@ -1499,6 +1503,47 @@ describe('The automatic backups', () => {
         ),
       ).toEqual(stored);
     }
+  });
+
+  it('are only done once both files are written', async () => {
+    const device = await startDevice(completeData());
+    let finishInternal!: () => void;
+    let finishOfTheDay!: () => void;
+    device.fileHelper.writeInternalFileFromBlob.and.returnValue(
+      new Promise<void>((_resolve) => (finishInternal = _resolve)),
+    );
+    device.fileHelper.writeFileFromBlob.and.returnValue(
+      new Promise<void>((_resolve) => (finishOfTheDay = _resolve)),
+    );
+    let done = false;
+    void device.helper.saveAutomaticBackups().then(() => (done = true));
+
+    await settle();
+    expect(device.fileHelper.writeInternalFileFromBlob).toHaveBeenCalled();
+    expect(device.fileHelper.writeFileFromBlob).toHaveBeenCalled();
+    expect(done).toBeFalse();
+
+    finishInternal();
+    await settle();
+    expect(done).toBeFalse();
+
+    finishOfTheDay();
+    await settle();
+    expect(done).toBeTrue();
+  });
+
+  it('are done and still write the other file when one cannot be written', async () => {
+    const device = await startDevice(completeData());
+    device.fileHelper.writeInternalFileFromBlob.and.rejectWith(
+      new Error('disk full'),
+    );
+
+    await writeAutomaticBackups(device);
+
+    expect(device.fileHelper.writeFileFromBlob).toHaveBeenCalledTimes(1);
+    expect(device.uiLog.error).toHaveBeenCalledOnceWith(
+      'Could not to export normal ZIP file',
+    );
   });
 
   it('write neither file when brews are stored without beans', async () => {
