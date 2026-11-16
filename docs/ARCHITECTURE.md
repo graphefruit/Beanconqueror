@@ -583,10 +583,24 @@ flowchart LR
   Both files are written under another name (`Beanconqueror.zip.part`,
   `Beanconqueror_automatic_export.zip.part`) and renamed once complete
   (`UIFileHelper.replaceFileFromBlob`), so a write the system cuts off
-  leaves the file from before as it was. A `.part` file is never read,
-  listed or counted; the next write deletes it first. The plugin renames by
+  leaves the file from before as it was. A `.part` file is never listed or
+  counted; the next write deletes it first. The plugin renames by
   deleting the old file and moving the new one, on Android and iOS alike,
   so for that moment the file is missing.
+- An app ended in that moment leaves no `Beanconqueror.zip`, only the
+  complete `Beanconqueror.zip.part`. At start (native only),
+  `checkDatabaseReadable()` first gives that file its name
+  (`__nameCompleteUnfinishedInternalBackup`), so everything after it finds
+  the internal backup: only when there is no `Beanconqueror.zip`, and only
+  when the file can be read as a backup the way an import reads it
+  (`getJSONFromZIPArrayBufferContent`). Beside a `Beanconqueror.zip` the
+  `.part` file is an older or cut off write and is left alone. A file that
+  cannot be read, or that cannot be renamed, is left as it is and logged;
+  the start goes on without an internal backup and the next write deletes
+  the file. No automatic backup can write at the same time: a run is only
+  started by `STORAGE_CHANGED`, which only a write to the database sends,
+  and nothing writes before this point right after `UIStorage.init()`. The
+  `.part` file of the dated copy is not taken over.
 - At start (native only), `checkBackup()` reads a single file: the internal
   `Beanconqueror.zip` in the data directory, or the legacy `Beanconqueror.json`
   when there is no ZIP (`readBackupZIPFile`). Despite its name,

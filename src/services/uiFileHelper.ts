@@ -283,7 +283,8 @@ export class UIFileHelper extends InstanceClass {
    * the system ends the app while it writes, the file at `path` is still the
    * complete one from before. What a write left behind at `unfinishedPath`
    * is deleted before the next one, and right away when the write or the
-   * renaming fails. A file at `unfinishedPath` is never to be read.
+   * renaming fails. A file at `unfinishedPath` is never to be taken for the
+   * one at `path`.
    *
    * The plugin renames on Android and iOS by deleting the file at `path` and
    * moving the new one there, so for that moment there is no file at `path`.
@@ -323,6 +324,16 @@ export class UIFileHelper extends InstanceClass {
       unfinishedPath,
       this.getDataDirectory(),
     );
+  }
+
+  public async renameInternalFile(from: string, to: string): Promise<void> {
+    this.uiLog.debug('renameInternalFile from', from, 'to', to);
+    await Filesystem.rename({
+      from: from,
+      to: to,
+      directory: this.getDataDirectory(),
+      toDirectory: this.getDataDirectory(),
+    });
   }
 
   public async writeFileFromText(

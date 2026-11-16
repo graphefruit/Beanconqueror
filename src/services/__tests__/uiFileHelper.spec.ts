@@ -543,6 +543,21 @@ describe('UIFileHelper', () => {
       expect(await fileHelper.statInternalFile('backup.zip')).toBeUndefined();
     });
 
+    it('renames a file in the app data directory', async () => {
+      await fileHelper.writeInternalFileFromText('zip', 'backup.zip.part');
+
+      await fileHelper.renameInternalFile('backup.zip.part', 'backup.zip');
+
+      expect(await namesIn('', Directory.Data)).toEqual(['backup.zip']);
+      expect(await fileHelper.readInternalFileAsText('backup.zip')).toBe('zip');
+    });
+
+    it('rejects when the file to rename is not there', async () => {
+      await expectAsync(
+        fileHelper.renameInternalFile('backup.zip.part', 'backup.zip'),
+      ).toBeRejected();
+    });
+
     it('deletes the file and leaves the others', async () => {
       await fileHelper.writeInternalFileFromText('a', 'a.txt');
       await fileHelper.writeInternalFileFromText('b', 'b.txt');

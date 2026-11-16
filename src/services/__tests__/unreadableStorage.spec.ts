@@ -160,6 +160,10 @@ describe('Checking the internal backup at start-up with a database that cannot b
         {
           provide: UIFileHelper,
           useValue: {
+            statInternalFile: () =>
+              Promise.resolve(
+                _backupFile ? { name: 'Beanconqueror.zip' } : undefined,
+              ),
             readInternalFileAsUint8Array: () => Promise.resolve(_backupFile),
             readFileAsUint8Array,
             replaceInternalFileFromBlob,

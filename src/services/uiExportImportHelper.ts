@@ -44,6 +44,8 @@ import { UISettingsStorage } from './uiSettingsStorage';
 import { StoredValues, UIStorage } from './uiStorage';
 
 const EXPORT_MAIN_FILE_NAME = 'Beanconqueror.json';
+const INTERNAL_BACKUP_ZIP = 'Beanconqueror.zip';
+const INTERNAL_BACKUP_PART = 'Beanconqueror.zip.part';
 const EXPORT_CHUNKING_CONFIG = [
   {
     propertyName: 'BREWS',
@@ -627,8 +629,13 @@ export class UIExportImportHelper {
    * Called right after UIStorage.init() in the app. A database that cannot
    * be read is not taken for an empty one (see
    * __importChosenBackupOfUnreadableDatabase).
+   *
+   * Before that, and so before anything reads the internal backup or a
+   * change can start an automatic backup, a complete internal backup that
+   * did not get its name is given it.
    */
   public async checkDatabaseReadable(): Promise<void> {
+    await this.__nameCompleteUnfinishedInternalBackup();
     if ((await this.uiStorage.getDataState()) === 'unknown') {
       await this.__importChosenBackupOfUnreadableDatabase();
     }
@@ -696,6 +703,45 @@ export class UIExportImportHelper {
     }
   }
 
+  /**
+   * An automatic backup renames its complete file to Beanconqueror.zip, for
+   * which the plugin deletes the file of that name first. When the app was
+   * ended in between, the complete file still has its unfinished name and
+   * no internal backup is left, so it gets the name here. Only when there is
+   * no Beanconqueror.zip: beside it the unfinished file is an older write or
+   * one that was cut off. A file that cannot be read as a backup is left for
+   * the next automatic backup to delete. Never rejects.
+   */
+  private async __nameCompleteUnfinishedInternalBackup(): Promise<void> {
+    try {
+      if (
+        (await this.uiFileHelper.statInternalFile(INTERNAL_BACKUP_ZIP)) !==
+          undefined ||
+        (await this.uiFileHelper.statInternalFile(INTERNAL_BACKUP_PART)) ===
+          undefined
+      ) {
+        return;
+      }
+      await this.getJSONFromZIPArrayBufferContent(
+        await this.uiFileHelper.readInternalFileAsUint8Array(
+          INTERNAL_BACKUP_PART,
+        ),
+      );
+      await this.uiFileHelper.renameInternalFile(
+        INTERNAL_BACKUP_PART,
+        INTERNAL_BACKUP_ZIP,
+      );
+      this.uiLog.info(
+        'Internal backup - was complete but not renamed, renamed it now',
+      );
+    } catch (ex) {
+      this.uiLog.error(
+        'Internal backup - the unfinished file is no complete backup or could not be renamed, left as it is',
+        ex,
+      );
+    }
+  }
+
   private importBackupJSON(_parsedJSON: unknown) {
     const promise = new Promise(async (resolve, reject) => {
       await this.uiAlert.showLoadingSpinner();
@@ -753,7 +799,7 @@ export class UIExportImportHelper {
   private readBackupZIPFile() {
     // If we don't got any data, we check now if there is a Beanconqueror.zip saved.
     const promise = new Promise(async (resolve, reject) => {
-      this.uiFileHelper.readInternalFileAsUint8Array('Beanconqueror.zip').then(
+      this.uiFileHelper.readInternalFileAsUint8Array(INTERNAL_BACKUP_ZIP).then(
         async (_arrayBuffer) => {
           try {
             this.uiLog.log('Read ZIP-File, we found an zip-file');
@@ -867,8 +913,8 @@ export class UIExportImportHelper {
     try {
       await this.uiFileHelper.replaceInternalFileFromBlob(
         _blob,
-        'Beanconqueror.zip',
-        'Beanconqueror.zip.part',
+        INTERNAL_BACKUP_ZIP,
+        INTERNAL_BACKUP_PART,
       );
     } catch (ex) {
       this.uiLog.error('Could not to export normal ZIP file');
