@@ -320,4 +320,20 @@ describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with
 
     expect(component.data.preparationDeviceBrew.params).toBe(params);
   });
+
+  it('does not take the settings of another brew while a brew is edited', async () => {
+    component.isEdit = true;
+
+    await (
+      component as unknown as Presetting
+    ).instanceMeticulousPreparationDevice(meticulous);
+
+    expect(component.data.preparationDeviceBrew.type).toBe(
+      PreparationDeviceType.METICULOUS,
+    );
+    expect(component.data.preparationDeviceBrew.params.chosenProfileId).toBe(
+      '',
+    );
+    expect(cloneData).not.toHaveBeenCalled();
+  });
 });
