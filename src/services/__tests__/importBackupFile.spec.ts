@@ -1371,6 +1371,24 @@ describe('Restoring the internal backup at start-up', () => {
     expect((await readBackupFile(device, file)).BREWS).toEqual(before.BREWS);
   });
 
+  it('keeps the backup just written when the data cannot be read after the restore was rolled back', async () => {
+    const before = storedData('own');
+    const device = await startDevice(before, { files: OLDER_BACKUPS });
+    device.failingWrites.add('BREWS');
+    spyOn(device.database, 'get').and.rejectWith(new Error('read failed'));
+
+    const result = await device.helper.importBackup(
+      { SETTINGS: [{ language: 'en' }], BREWS: entries('brew', 3) },
+      'internal_backup',
+    );
+
+    expect(result).toEqual({ BACKUP: true });
+    const kept = writtenBackups(device);
+    const [file] = kept.filter((_path) => !OLDER_BACKUPS.includes(_path));
+    expect(kept.length).toBe(3);
+    expect((await readBackupFile(device, file)).BREWS).toEqual(before.BREWS);
+  });
+
   it('leaves the backup just written when it cannot be removed after the restore was rolled back', async () => {
     const before = storedData('own');
     const device = await startDevice(before, { files: OLDER_BACKUPS });

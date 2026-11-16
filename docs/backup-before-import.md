@@ -147,7 +147,8 @@ restore again and writes a file before it:
   written at every such start would push the older ones out after three
   starts. When the file cannot be deleted, it stays until the next completed
   import deletes older files.
-- It could not be rolled back: the file just written is never deleted, and
+- It could not be rolled back, or the database cannot be read after it was
+  rolled back: the file just written is never deleted, and
   older ones are deleted as after a completed import (`Beanconqueror.zip` is
   not one of these files).
 

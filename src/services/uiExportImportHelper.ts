@@ -229,7 +229,8 @@ export class UIExportImportHelper {
    * with a new backup before it. When that restore was rolled back, the
    * backup just written is removed instead and the older ones stay: the
    * stored data is the same as before, and the backup written at every such
-   * start would push the older ones out.
+   * start would push the older ones out. It is kept as after a restore that
+   * could not be rolled back when the database cannot be read afterwards.
    *
    * Rejects with ImportNotRolledBackError when the import failed and could
    * not be rolled back; the backup written before is never removed then.
@@ -275,7 +276,9 @@ export class UIExportImportHelper {
       if (
         written !== undefined &&
         _source === 'internal_backup' &&
-        rolledBack
+        rolledBack &&
+        // The file is only a second copy while the data can be read.
+        (await this.uiStorage.getDataState()) !== 'unknown'
       ) {
         await this.preImportBackup.remove(written);
       } else if (
