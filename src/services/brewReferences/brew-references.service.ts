@@ -3,8 +3,10 @@ import { inject, Service } from '@angular/core';
 import { Brew } from '../../classes/brew/brew';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
+import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
 import { UILog } from '../uiLog';
+import { UIMillStorage } from '../uiMillStorage';
 import { UIPreparationStorage } from '../uiPreparationStorage';
 import { UISettingsStorage } from '../uiSettingsStorage';
 
@@ -13,6 +15,8 @@ interface StoredEntry {
 }
 
 interface StoredBrew extends StoredEntry {
+  bean?: unknown;
+  mill?: unknown;
   method_of_preparation?: unknown;
   method_of_preparation_tools?: unknown;
 }
@@ -29,6 +33,8 @@ interface StoredPreparation extends StoredEntry {
 export class BrewReferencesService {
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiMillStorage = inject(UIMillStorage);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly uiLog = inject(UILog);
 
@@ -117,6 +123,57 @@ export class BrewReferencesService {
   }
 
   /**
+   * Writes into the log how many brews refer to a bean, a grinder or a
+   * preparation that is not stored. Changes nothing. Only counts when all
+   * four collections are read; a reference that is empty is none.
+   */
+  public logMissingReferences(): void {
+    try {
+      const storages = [
+        this.uiBrewStorage,
+        this.uiBeanStorage,
+        this.uiMillStorage,
+        this.uiPreparationStorage,
+      ];
+      if (!storages.every((_storage) => _storage.isRead())) {
+        this.uiLog.info('Brew references - not counted, not everything read');
+        return;
+      }
+      const beans = storedUuids(this.uiBeanStorage.getRawEntries());
+      const mills = storedUuids(this.uiMillStorage.getRawEntries());
+      const preparations = storedUuids(
+        this.uiPreparationStorage.getRawEntries(),
+      );
+      const isMissing = (_uuid: unknown, _stored: Set<unknown>) =>
+        typeof _uuid === 'string' && _uuid !== '' && !_stored.has(_uuid);
+      const brews = this.uiBrewStorage.getRawEntries() as (StoredBrew | null)[];
+      let bean = 0;
+      let mill = 0;
+      let preparation = 0;
+      for (const brew of brews) {
+        if (isMissing(brew?.bean, beans)) {
+          bean++;
+        }
+        if (isMissing(brew?.mill, mills)) {
+          mill++;
+        }
+        if (isMissing(brew?.method_of_preparation, preparations)) {
+          preparation++;
+        }
+      }
+      // Numbers only: uuids and names stay out of the log.
+      this.uiLog.info('Brew references - brews referring to missing entries', {
+        brews: brews.length,
+        missing_bean: bean,
+        missing_mill: mill,
+        missing_preparation: preparation,
+      });
+    } catch (ex) {
+      this.uiLog.error('Brew references - could not be counted', ex);
+    }
+  }
+
+  /**
    * The tool uuids of each stored preparation. Preparations that share a
    * uuid count as one with the tools of all of them.
    */
@@ -181,6 +238,14 @@ export class BrewReferencesService {
     }
     return { removed: 0, saved: false };
   }
+}
+
+function storedUuids(_entries: readonly unknown[]): Set<unknown> {
+  const uuids = new Set<unknown>();
+  for (const entry of _entries as (StoredEntry | null)[]) {
+    uuids.add(entry?.config?.uuid);
+  }
+  return uuids;
 }
 
 /** The uuids that more than one of the entries has. */

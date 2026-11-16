@@ -57,6 +57,7 @@ import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popo
 import { OverlayStackA11yService } from '../services/a11y/overlay-stack-a11y.service';
 import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { AttachmentManifestService } from '../services/attachmentManifest/attachment-manifest.service';
+import { BrewReferencesService } from '../services/brewReferences/brew-references.service';
 import { CleanupService } from '../services/cleanupService/cleanup.service';
 import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { DeletionJournalService } from '../services/deletionJournal/deletion-journal.service';
@@ -122,6 +123,7 @@ export class AppComponent implements AfterViewInit {
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly navCtrl = inject(NavController);
   private readonly uiUpdate = inject(UIUpdate);
+  private readonly brewReferences = inject(BrewReferencesService);
   private readonly uiVersionStorage = inject(UiVersionStorage);
   private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
   private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
@@ -371,6 +373,7 @@ export class AppComponent implements AfterViewInit {
             this.uiLog.log('App finished loading');
             this.uiExportImportHelper.allCollectionsRead();
             await this.__checkUpdate();
+            this.brewReferences.logMissingReferences();
             // After the data updates, which can still change uuids.
             await this.deleteCommands.finishInterrupted();
             await this.__checkCleanup();

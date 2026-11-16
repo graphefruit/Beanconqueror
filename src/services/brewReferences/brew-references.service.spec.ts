@@ -444,4 +444,52 @@ describe('BrewReferencesService', () => {
       });
     });
   });
+
+  describe('logMissingReferences', () => {
+    function withMissingReferences(): StoredData {
+      const data = createData();
+      data.BREWS[0].bean = 'deleted-bean';
+      data.BREWS[1].bean = 'deleted-bean';
+      data.BREWS[2].mill = 'deleted-mill';
+      // No grinder chosen: refers to nothing.
+      data.BREWS[4].mill = '';
+      return data;
+    }
+
+    it('logs how many brews refer to a missing bean, grinder and preparation, and changes nothing', async () => {
+      const data = withMissingReferences();
+      const device = createDeviceDatabase(data);
+      const { service, info, set } = await startApp(device);
+
+      service.logMissingReferences();
+
+      expect(info).toHaveBeenCalledTimes(1);
+      expect(info.calls.mostRecent().args[1]).toEqual({
+        brews: 5,
+        missing_bean: 2,
+        missing_mill: 1,
+        missing_preparation: 1,
+      });
+      expect(JSON.stringify(info.calls.allArgs())).not.toContain('deleted-');
+      expect(set).not.toHaveBeenCalled();
+      expect(device.data.get('BREWS')).toEqual(data.BREWS);
+    });
+
+    for (const notRead of [
+      UIBrewStorage,
+      UIBeanStorage,
+      UIMillStorage,
+      UIPreparationStorage,
+    ]) {
+      it(`counts nothing while ${notRead.name} is not read`, async () => {
+        const device = createDeviceDatabase(withMissingReferences());
+        const { service, info } = await startApp(device, [notRead]);
+
+        service.logMissingReferences();
+
+        expect(info).toHaveBeenCalledTimes(1);
+        expect(info.calls.mostRecent().args.length).toBe(1);
+      });
+    }
+  });
 });

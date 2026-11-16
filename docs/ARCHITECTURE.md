@@ -640,6 +640,12 @@ reference chooser is not stored. Barista mode brews carry no tools.
 - Its log line carries numbers only (brews, changed, without preparation,
   left because they share a uuid, tools removed from the filters).
 
+At every start, after the migrations, `logMissingReferences()` of the same
+service writes one log line with the number of brews that refer to a bean, a
+grinder or a preparation that is not stored. It changes nothing, reads the
+stored entries once, logs no uuids or names and counts only when all four
+collections are read.
+
 A new migration touches three places in `src/services/uiUpdate.ts`: the
 `updateVersions` array in `checkUpdate()`, the chain of
 `__checkUpdateForDataVersion('UPDATE_n', …)` calls below it, and a new `case`
