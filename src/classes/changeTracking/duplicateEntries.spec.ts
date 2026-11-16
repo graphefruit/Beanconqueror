@@ -786,6 +786,33 @@ describe('duplicateEntries', () => {
       expect(again).toEqual(entries);
     });
 
+    it('counts on until the derived uuid is free', async () => {
+      const create = (): Entry[] => [
+        entry('shared-1', { name: 'A' }),
+        entry('shared-1', { name: 'B' }),
+      ];
+      const taken: string[] = [];
+      for (let i = 0; i < 2; i++) {
+        const before = [
+          ...create(),
+          ...taken.map((_uuid) => entry(_uuid, { name: 'taken' })),
+        ];
+        await clean('WATER', before);
+        taken.push(before[1].config.uuid as string);
+      }
+      const entries = [
+        ...create(),
+        ...taken.map((_uuid) => entry(_uuid, { name: 'taken' })),
+      ];
+
+      await clean('WATER', entries);
+
+      expect(new Set(taken).size).toBe(2);
+      expect(entries.length).toBe(4);
+      expect(entries[1].config.uuid).toMatch(UUID_V8);
+      expect(new Set(uuids(entries)).size).toBe(4);
+    });
+
     it('changes nothing when it runs again', async () => {
       const entries = [
         entry('shared-1', { name: 'A' }),
