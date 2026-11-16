@@ -3667,17 +3667,11 @@
     }
   },
   "src/services/uiExcel.ts": {
-    "@typescript-eslint/await-thenable": {
-      "count": 2
-    },
     "@typescript-eslint/no-floating-promises": {
-      "count": 9
+      "count": 4
     },
     "eqeqeq": {
       "count": 3
-    },
-    "no-empty": {
-      "count": 8
     },
     "no-prototype-builtins": {
       "count": 9
