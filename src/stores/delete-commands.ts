@@ -231,6 +231,8 @@ export class DeleteCommands {
       } finally {
         // Whatever the result: the user sees it and decides what is next.
         // Tried again, so a single failure does not leave the note behind.
+        // A note left behind lets the next start delete the entry, also
+        // when this command resolved false.
         for (let attempt = 1; attempt <= 3; attempt++) {
           try {
             await this.uiStorage.remove(PENDING_DELETION_STORAGE_KEY);

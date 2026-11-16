@@ -331,6 +331,16 @@ writes:
     - A note that could not be removed stays until the next start, the next
       of these deletions or the next import removes it. After 24 hours it is
       only removed and nothing is deleted for it.
+    - It cannot tell a command that returned from one that did not. When a
+      command resolved false, the user was shown the error and the note
+      could not be removed, a start within 24 hours still deletes the entry
+      if nothing depends on it.
+    - The three attempts to remove the note follow each other without a
+      pause, so they cover a single failure, not a database that is away
+      for a moment.
+    - The 24 hours are measured with the device clock. With the clock set
+      back to a time within 24 hours after the note was written, an older
+      note counts as fresh.
 
 Entries from before change tracking have `updated_at` 0, `rev` 0 and
 `updated_by` `''` ("unknown") and a `created_at` estimated from

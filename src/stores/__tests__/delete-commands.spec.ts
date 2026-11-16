@@ -342,6 +342,23 @@ describe('DeleteCommands', () => {
         expect(database.uuids('BREWS')).toEqual([]);
       });
 
+      it('as before: the next start deletes it after the command resolved false and the note could not be removed', async () => {
+        await startWith([stored('kept'), stored('doomed')], []);
+        database.failingWrites.add(key);
+        failRemoving(3);
+
+        expect(await run('doomed')).toBeFalse();
+
+        expect(database.uuids(key)).toEqual(['kept', 'doomed']);
+        expect(database.values.has(NOTE)).toBeTrue();
+
+        database.failingWrites.clear();
+        await commands.finishInterrupted();
+
+        expect(database.uuids(key)).toEqual(['kept']);
+        expect(database.values.has(NOTE)).toBeFalse();
+      });
+
       it('deletes a brew of it that was added while the note was written', async () => {
         await startWith([stored('doomed')], brewsOf('doomed', 2));
         addWhileNoting('BREWS', brew('late', 'doomed'));
@@ -667,6 +684,7 @@ describe('DeleteCommands', () => {
     const STARTED = Date.now() - 60_000;
     const DAY = 24 * 60 * 60 * 1000;
     const AGES: [age: string, ms: number, deleted: boolean][] = [
+      ['0 ms', 0, true],
       ['just under 24 hours', DAY - 1, true],
       ['exactly 24 hours', DAY, true],
       ['just over 24 hours', DAY + 1, false],
