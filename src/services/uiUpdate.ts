@@ -18,6 +18,7 @@ import { BREW_DISPLAY_IMAGE_TYPE } from '../enums/brews/brewDisplayImageType';
 import { PREPARATION_STYLE_TYPE } from '../enums/preparations/preparationStyleTypes';
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
 import { UpdatePopoverComponent } from '../popover/update-popover/update-popover.component';
+import { BrewReferencesService } from './brewReferences/brew-references.service';
 import { ChangeTrackingMigrationService } from './changeTracking/change-tracking-migration.service';
 import { DuplicateEntriesMigrationService } from './changeTracking/duplicate-entries-migration.service';
 import { UIAlert } from './uiAlert';
@@ -54,12 +55,21 @@ export class UIUpdate {
   private readonly duplicateEntriesMigration = inject(
     DuplicateEntriesMigrationService,
   );
+  private readonly brewReferences = inject(BrewReferencesService);
 
-  public async checkUpdate() {
+  /**
+   * `_afterImport`: the stored data was just replaced by a backup. Its
+   * VERSION entry tells which updates the installation it comes from had
+   * run, but UPDATE_18 has to run on every imported backup.
+   */
+  public async checkUpdate(_afterImport: boolean = false) {
     this.uiLog.info('Check updates');
     const hasData: boolean = (await this.uiStorage.getDataState()) === 'data';
 
     try {
+      if (_afterImport) {
+        await this.__reopenDataVersion('UPDATE_18');
+      }
       const updateVersions: Array<string> = [
         'UPDATE_1',
         'UPDATE_2',
@@ -78,6 +88,7 @@ export class UIUpdate {
         'UPDATE_15',
         'UPDATE_16',
         'UPDATE_17',
+        'UPDATE_18',
       ];
       const version: Version = this.uiVersionStorage.getVersion();
       const _silentUpdate = hasData;
@@ -108,6 +119,7 @@ export class UIUpdate {
       await this.__checkUpdateForDataVersion('UPDATE_15', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_16', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_17', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_18', !hasData);
     } catch (ex) {
       if (this.uiAlert.isLoadingSpinnerShown()) {
         await this.uiAlert.hideLoadingSpinner();
@@ -656,6 +668,18 @@ export class UIUpdate {
               return;
             }
             break;
+          case 'UPDATE_18':
+            // Takes the preparation tools out of each brew that do not
+            // belong to its preparation. Unlike the updates before, the
+            // changed brews count as changed, so a sync passes them on.
+            // When the brews or preparations are not read or something
+            // could not be stored it is not marked as done, so the next
+            // start runs it again.
+            if (!(await this.brewReferences.removeForeignTools())) {
+              resolve(false);
+              return;
+            }
+            break;
           default:
             break;
         }
@@ -666,6 +690,20 @@ export class UIUpdate {
       }
     });
     return promise;
+  }
+
+  /**
+   * Stored as not run before it runs again, so a run that fails is repeated
+   * at the next start.
+   */
+  private async __reopenDataVersion(_dataVersion: string): Promise<void> {
+    const version: Version = this.uiVersionStorage.getVersion();
+    if (version.checkIfDataVersionWasUpdated(_dataVersion)) {
+      version.updatedDataVersions = version.updatedDataVersions.filter(
+        (_version) => _version !== _dataVersion,
+      );
+      await this.uiVersionStorage.saveVersion(version);
+    }
   }
 
   private async __checkUpdateForDataVersion(

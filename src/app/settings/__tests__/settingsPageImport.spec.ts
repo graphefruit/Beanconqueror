@@ -351,7 +351,9 @@ describe('SettingsPage loading the collections again after an import', () => {
     for (const [path, storage] of Object.entries(storages)) {
       expect(uuids(storage.getAllEntries())).toEqual([`imported-${path}`]);
     }
-    expect(checkUpdate).toHaveBeenCalledTimes(1);
+    // As after an import: updates of imported data run also when the
+    // backup lists them as done.
+    expect(checkUpdate).toHaveBeenCalledOnceWith(true);
     // The internal backup may be written again.
     expect(allCollectionsRead).toHaveBeenCalledTimes(1);
   });

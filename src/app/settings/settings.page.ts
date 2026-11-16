@@ -1903,7 +1903,7 @@ export class SettingsPage {
       graphStorageCallback,
       baristamodeBrewStorageCallback,
     ]);
-    await this.uiUpdate.checkUpdate();
+    await this.uiUpdate.checkUpdate(true);
   }
 
   public async checkVisualizerConnection() {

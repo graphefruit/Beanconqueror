@@ -594,7 +594,7 @@ flowchart LR
 ### Start migrations
 
 `UIUpdate.checkUpdate()` (`src/services/uiUpdate.ts`) runs the data migrations
-`UPDATE_1` … `UPDATE_17` in order. A migration that succeeds is recorded in the
+`UPDATE_1` … `UPDATE_18` in order. A migration that succeeds is recorded in the
 `VERSION` entry (`Version.pushUpdatedDataVersion`) and does not run again. If
 `__updateDataVersion()` returns `false` or throws, nothing is recorded and the
 migration runs again on the next start (`__checkUpdateForDataVersion`). When
@@ -612,12 +612,40 @@ each collection once and is only recorded when everything was stored.
 entry are removed, differing copies are kept. An imported backup is cleaned up
 the same way.
 
+`UPDATE_18` takes preparation tools out of the brews they do not belong to
+(`BrewReferencesService.removeForeignTools()` in
+`src/services/brewReferences/brew-references.service.ts`). A tool belongs to
+one preparation: a brew keeps only the tools in the tool list of its own
+preparation, archived ones included. A brew whose preparation is not stored
+stays as it is, and so do brews that share a uuid, because a brew is replaced
+by its uuid. The brew filters of the settings (`brew_filter.OPEN` and
+`.ARCHIVED`) lose the tools that no preparation has; the filter of the graph
+reference chooser is not stored. Barista mode brews carry no tools.
+
+- It reads the stored entries (`getRawEntries()`) and builds `Brew` objects
+  only for the brews it changes. These are stored with one `updateMany`, so
+  unlike the migrations before they count as changed by this device
+  (`rev`, `updated_at`, `updated_by`) and a sync passes them on. Brews that
+  stay as they are are not touched.
+- It runs only when `BREWS` and `PREPARATION` are read
+  (`StorageClass.isRead()`); with a collection that is not read every tool
+  would look foreign. Then, and when the brews or the settings could not be
+  saved, nothing is recorded and the next start runs it again. After a
+  failed save the brews and the filters are the ones from before.
+- It runs on every imported backup as well: after an import
+  `SettingsPage.__reinitializeStorages` calls `checkUpdate(true)`, which
+  stores `UPDATE_18` as not run before the migrations run, also when the
+  `VERSION` entry of the backup lists it. A run that fails after an import
+  is therefore repeated at the next start.
+- Its log line carries numbers only (brews, changed, without preparation,
+  left because they share a uuid, tools removed from the filters).
+
 A new migration touches three places in `src/services/uiUpdate.ts`: the
 `updateVersions` array in `checkUpdate()`, the chain of
 `__checkUpdateForDataVersion('UPDATE_n', …)` calls below it, and a new `case`
 in `__updateDataVersion()`. It writes entries with `{ touch: false }` (or
 `backfillWithoutTouch()`), so a migration does not count as a change by the
-user. The synthetic test data lists the migrations it counts as applied
+user; `UPDATE_18` is the exception described above. The synthetic test data lists the migrations it counts as applied
 (`APPLIED_DATA_VERSIONS` in `e2e/support/synthetic-data.ts`); add the new one
 there and generate what it would have written, otherwise
 `src/test-utils/__tests__/synthetic-data.spec.ts` fails. Existing migrations

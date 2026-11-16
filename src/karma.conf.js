@@ -24,6 +24,7 @@ const NEW_CODE = [
   'src/services/attachmentManifest/**',
   'src/services/automaticBackup/**',
   'src/services/beanUsage/**',
+  'src/services/brewReferences/**',
   'src/services/changeTracking/**',
   'src/services/deletionJournal/**',
   'src/services/deviceIdentity/**',

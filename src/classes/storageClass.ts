@@ -243,6 +243,14 @@ export abstract class StorageClass {
     return this.isInitialized;
   }
 
+  /**
+   * Whether the stored entries were read. Until then the collection looks
+   * empty, so nothing may be concluded from an entry missing in it.
+   */
+  public isRead(): boolean {
+    return this.isInitialized === 1;
+  }
+
   public async add(_entry, _options: StorageAddOptions = {}): Promise<any> {
     const result = await this.addAndConfirm(_entry, _options);
     return result.entry;

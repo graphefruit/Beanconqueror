@@ -10,6 +10,7 @@ import { Brew } from '../../classes/brew/brew';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
 import { Version } from '../../classes/version/iVersion';
+import { BrewReferencesService } from '../brewReferences/brew-references.service';
 import { ChangeTrackingMigrationService } from '../changeTracking/change-tracking-migration.service';
 import { DuplicateEntriesMigrationService } from '../changeTracking/duplicate-entries-migration.service';
 import { UIAlert } from '../uiAlert';
@@ -236,6 +237,10 @@ describe('UIUpdate change info migration', () => {
         UIUpdate,
         { provide: ChangeTrackingMigrationService, useValue: { run } },
         {
+          provide: BrewReferencesService,
+          useValue: { removeForeignTools: () => Promise.resolve(true) },
+        },
+        {
           provide: DuplicateEntriesMigrationService,
           useValue: { run: () => Promise.resolve(true) },
         },
@@ -358,6 +363,10 @@ describe('UIUpdate duplicate entries migration', () => {
         },
         { provide: DuplicateEntriesMigrationService, useValue: { run } },
         {
+          provide: BrewReferencesService,
+          useValue: { removeForeignTools: () => Promise.resolve(true) },
+        },
+        {
           provide: UiVersionStorage,
           useValue: { getVersion: () => version, saveVersion },
         },
@@ -458,5 +467,175 @@ describe('UIUpdate duplicate entries migration', () => {
     await (uiUpdate as any).__checkUpdateForDataVersion('UPDATE_17', false);
 
     expect(run).not.toHaveBeenCalled();
+  });
+});
+
+describe('UIUpdate foreign brew tools update', () => {
+  let removeForeignTools: jasmine.Spy;
+  let version: Version;
+  let saveVersion: jasmine.Spy;
+  /** The data versions of each saved VERSION entry. */
+  let savedVersions: string[][];
+  let hasData: boolean;
+  let uiUpdate: UIUpdate;
+
+  beforeEach(() => {
+    removeForeignTools = jasmine.createSpy('removeForeignTools');
+    hasData = true;
+    version = new Version();
+    savedVersions = [];
+    saveVersion = jasmine
+      .createSpy('saveVersion')
+      .and.callFake((_version: Version) => {
+        savedVersions.push([..._version.updatedDataVersions]);
+        return Promise.resolve();
+      });
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        UIUpdate,
+        {
+          provide: ChangeTrackingMigrationService,
+          useValue: { run: () => Promise.resolve(true) },
+        },
+        {
+          provide: DuplicateEntriesMigrationService,
+          useValue: { run: () => Promise.resolve(true) },
+        },
+        { provide: BrewReferencesService, useValue: { removeForeignTools } },
+        {
+          provide: UiVersionStorage,
+          useValue: { getVersion: () => version, saveVersion },
+        },
+        {
+          provide: UILog,
+          useValue: {
+            log: () => undefined,
+            info: () => undefined,
+            error: () => undefined,
+          },
+        },
+        { provide: UIBrewStorage, useValue: {} },
+        { provide: UIBeanStorage, useValue: {} },
+        { provide: UIPreparationStorage, useValue: {} },
+        { provide: UIMillStorage, useValue: {} },
+        { provide: UISettingsStorage, useValue: {} },
+        { provide: Platform, useValue: { is: () => true } },
+        { provide: ModalController, useValue: {} },
+        { provide: UIFileHelper, useValue: {} },
+        {
+          provide: UIAlert,
+          useValue: {
+            showLoadingSpinner: () => Promise.resolve(),
+            hideLoadingSpinner: () => Promise.resolve(),
+            isLoadingSpinnerShown: () => false,
+          },
+        },
+        { provide: TranslateService, useValue: {} },
+        {
+          provide: UIStorage,
+          useValue: {
+            getDataState: () => Promise.resolve(hasData ? 'data' : 'empty'),
+          },
+        },
+        { provide: UIHelper, useValue: {} },
+      ],
+    });
+    uiUpdate = TestBed.inject(UIUpdate);
+  });
+
+  function markDone(_upTo: number) {
+    for (let i = 1; i <= _upTo; i++) {
+      version.pushUpdatedDataVersion(`UPDATE_${i}`);
+    }
+  }
+
+  it('runs during the start-up update check and is marked as done', async () => {
+    markDone(17);
+    removeForeignTools.and.resolveTo(true);
+
+    await uiUpdate.checkUpdate();
+
+    expect(removeForeignTools).toHaveBeenCalledTimes(1);
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_18')).toBeTrue();
+    expect(saveVersion).toHaveBeenCalledWith(version);
+  });
+
+  it('runs during the start-up update check on a new install', async () => {
+    markDone(17);
+    hasData = false;
+    removeForeignTools.and.resolveTo(true);
+
+    await uiUpdate.checkUpdate();
+
+    expect(removeForeignTools).toHaveBeenCalledTimes(1);
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_18')).toBeTrue();
+  });
+
+  it('stays open and runs again at the next start when it could not finish', async () => {
+    markDone(17);
+    removeForeignTools.and.resolveTo(false);
+
+    await uiUpdate.checkUpdate();
+
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_18')).toBeFalse();
+    expect(saveVersion).not.toHaveBeenCalled();
+
+    removeForeignTools.and.resolveTo(true);
+    await uiUpdate.checkUpdate();
+
+    expect(removeForeignTools).toHaveBeenCalledTimes(2);
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_18')).toBeTrue();
+  });
+
+  it('does not run again at a start once it is done', async () => {
+    markDone(18);
+
+    await uiUpdate.checkUpdate();
+
+    expect(removeForeignTools).not.toHaveBeenCalled();
+    expect(saveVersion).not.toHaveBeenCalled();
+  });
+
+  it('runs again after an import, also when the backup lists it as done', async () => {
+    markDone(18);
+    removeForeignTools.and.resolveTo(true);
+
+    await uiUpdate.checkUpdate(true);
+
+    expect(removeForeignTools).toHaveBeenCalledTimes(1);
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_18')).toBeTrue();
+    expect(
+      version.updatedDataVersions.filter((_v) => _v === 'UPDATE_18').length,
+    ).toBe(1);
+    // Stored as open before it runs and as done afterwards.
+    expect(savedVersions.map((_v) => _v.includes('UPDATE_18'))).toEqual([
+      false,
+      true,
+    ]);
+  });
+
+  it('is stored as open when it could not finish after an import', async () => {
+    markDone(18);
+    removeForeignTools.and.resolveTo(false);
+
+    await uiUpdate.checkUpdate(true);
+
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_18')).toBeFalse();
+    expect(savedVersions.map((_v) => _v.includes('UPDATE_18'))).toEqual([
+      false,
+    ]);
+    // The other updates the backup lists stay done.
+    expect(savedVersions[0].length).toBe(17);
+  });
+
+  it('runs once after an import of a backup that does not list it', async () => {
+    markDone(17);
+    removeForeignTools.and.resolveTo(true);
+
+    await uiUpdate.checkUpdate(true);
+
+    expect(removeForeignTools).toHaveBeenCalledTimes(1);
+    expect(savedVersions.map((_v) => _v.includes('UPDATE_18'))).toEqual([true]);
   });
 });

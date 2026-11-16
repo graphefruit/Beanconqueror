@@ -319,7 +319,7 @@ export interface SyntheticDataSet {
  * app gets a migration that is missing here.
  */
 export const APPLIED_DATA_VERSIONS = Array.from(
-  { length: 17 },
+  { length: 18 },
   (_, i) => `UPDATE_${i + 1}`,
 );
 
