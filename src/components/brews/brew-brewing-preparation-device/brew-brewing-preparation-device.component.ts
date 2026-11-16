@@ -437,20 +437,12 @@ export class BrewBrewingPreparationDeviceComponent
           if (wasSomethingSet === false) {
             // maybe the passed brew, didn't had any params in it - why ever?!
             // Is add
-            const brews: Brew[] = this.uiHelper
-              .cloneData(this.uiBrewStorage.getAllEntries())
-              .reverse();
-            if (brews.length > 0) {
-              const foundEntry = brews.find(
-                (b) =>
-                  b.preparationDeviceBrew.type === PreparationDeviceType.XENIA,
-              );
-              if (foundEntry) {
-                this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-                  foundEntry.preparationDeviceBrew,
-                );
-                wasSomethingSet = true;
-              }
+            const lastDeviceBrew = this.lastDeviceBrew(
+              PreparationDeviceType.XENIA,
+            );
+            if (lastDeviceBrew) {
+              this.data.preparationDeviceBrew = lastDeviceBrew;
+              wasSomethingSet = true;
             }
           }
 
@@ -543,6 +535,25 @@ export class BrewBrewingPreparationDeviceComponent
     await this.disconnectCurrentDevice();
   }
 
+  /**
+   * The machine settings of the last brew in the storage's array that used
+   * this kind of machine. A copy: the form changes them, and the brews of the
+   * storage are the live data.
+   */
+  private lastDeviceBrew(
+    type: PreparationDeviceType,
+  ): PreparationDeviceBrew | undefined {
+    const brews = this.uiBrewStorage.getAllEntries();
+    for (let i = brews.length - 1; i >= 0; i--) {
+      if (brews[i].preparationDeviceBrew.type === type) {
+        return this.uiHelper.cloneData(
+          brews[i].preparationDeviceBrew,
+        ) as PreparationDeviceBrew;
+      }
+    }
+    return undefined;
+  }
+
   private async instanceMove2PreparationDevice(
     connectedDevice: Move2Device,
     _brew: Brew = null,
@@ -563,19 +574,11 @@ export class BrewBrewingPreparationDeviceComponent
             _brew?.preparationDeviceBrew.params;
         } else {
           // Is add
-          const brews: Brew[] = this.uiHelper
-            .cloneData(this.uiBrewStorage.getAllEntries())
-            .reverse();
-          if (brews.length > 0) {
-            const foundEntry = brews.find(
-              (b) =>
-                b.preparationDeviceBrew.type === PreparationDeviceType.MOVE2,
-            );
-            if (foundEntry) {
-              this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-                foundEntry.preparationDeviceBrew,
-              );
-            }
+          const lastDeviceBrew = this.lastDeviceBrew(
+            PreparationDeviceType.MOVE2,
+          );
+          if (lastDeviceBrew) {
+            this.data.preparationDeviceBrew = lastDeviceBrew;
           }
         }
       }
@@ -703,20 +706,11 @@ export class BrewBrewingPreparationDeviceComponent
         } else {
           /** Just if we don't have a chosenProfile find one :)**/
           // Is add
-          const brews: Brew[] = this.uiHelper
-            .cloneData(this.uiBrewStorage.getAllEntries())
-            .reverse();
-          if (brews.length > 0) {
-            const foundEntry = brews.find(
-              (b) =>
-                b.preparationDeviceBrew.type ===
-                PreparationDeviceType.METICULOUS,
-            );
-            if (foundEntry) {
-              this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-                foundEntry.preparationDeviceBrew,
-              );
-            }
+          const lastDeviceBrew = this.lastDeviceBrew(
+            PreparationDeviceType.METICULOUS,
+          );
+          if (lastDeviceBrew) {
+            this.data.preparationDeviceBrew = lastDeviceBrew;
           }
         }
       }
@@ -808,20 +802,11 @@ export class BrewBrewingPreparationDeviceComponent
             _brew?.preparationDeviceBrew.params;
         } else {
           // Is add
-          const brews: Brew[] = this.uiHelper
-            .cloneData(this.uiBrewStorage.getAllEntries())
-            .reverse();
-          if (brews.length > 0) {
-            const foundEntry = brews.find(
-              (b) =>
-                b.preparationDeviceBrew.type ===
-                PreparationDeviceType.SANREMO_YOU,
-            );
-            if (foundEntry) {
-              this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-                foundEntry.preparationDeviceBrew,
-              );
-            }
+          const lastDeviceBrew = this.lastDeviceBrew(
+            PreparationDeviceType.SANREMO_YOU,
+          );
+          if (lastDeviceBrew) {
+            this.data.preparationDeviceBrew = lastDeviceBrew;
           }
         }
       }
