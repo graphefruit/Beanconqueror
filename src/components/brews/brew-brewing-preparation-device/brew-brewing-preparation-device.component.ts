@@ -536,22 +536,29 @@ export class BrewBrewingPreparationDeviceComponent
   }
 
   /**
-   * The machine settings of the last brew in the storage's array that used
-   * this kind of machine. A copy: the form changes them, and the brews of the
-   * storage are the live data.
+   * The machine settings of the newest brew that used this kind of machine.
+   * Found by the time of the brew, because other pages sort the storage's
+   * array in place; of two brews with the same time the later one in the
+   * array wins, which is the one saved last. A copy: the form changes them,
+   * and the brews of the storage are the live data.
    */
   private lastDeviceBrew(
     type: PreparationDeviceType,
   ): PreparationDeviceBrew | undefined {
-    const brews = this.uiBrewStorage.getAllEntries();
-    for (let i = brews.length - 1; i >= 0; i--) {
-      if (brews[i].preparationDeviceBrew.type === type) {
-        return this.uiHelper.cloneData(
-          brews[i].preparationDeviceBrew,
-        ) as PreparationDeviceBrew;
+    let newest: Brew | undefined;
+    for (const brew of this.uiBrewStorage.getAllEntries()) {
+      if (
+        brew.preparationDeviceBrew.type === type &&
+        (!newest || brew.config.unix_timestamp >= newest.config.unix_timestamp)
+      ) {
+        newest = brew;
       }
     }
-    return undefined;
+    return newest
+      ? (this.uiHelper.cloneData(
+          newest.preparationDeviceBrew,
+        ) as PreparationDeviceBrew)
+      : undefined;
   }
 
   private async instanceMove2PreparationDevice(

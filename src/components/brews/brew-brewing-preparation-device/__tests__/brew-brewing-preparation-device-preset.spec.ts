@@ -18,9 +18,15 @@ import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 import { UIToast } from '../../../../services/uiToast';
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device.component';
 
-function brew(uuid: string, type: PreparationDeviceType, profile: string) {
+function brew(
+  uuid: string,
+  type: PreparationDeviceType,
+  profile: string,
+  time: number,
+) {
   const entry = new Brew();
   entry.config.uuid = uuid;
+  entry.config.unix_timestamp = time;
   entry.preparationDeviceBrew.type = type;
   entry.preparationDeviceBrew.params = { chosenProfileId: profile };
   return entry;
@@ -45,12 +51,11 @@ describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with
   };
 
   beforeEach(() => {
-    // The order of the storage's array, whatever sorted it last.
     brews = [
-      brew('1', PreparationDeviceType.METICULOUS, 'first'),
-      brew('2', PreparationDeviceType.SANREMO_YOU, 'sanremo'),
-      brew('3', PreparationDeviceType.METICULOUS, 'last'),
-      brew('4', PreparationDeviceType.NONE, 'none'),
+      brew('1', PreparationDeviceType.METICULOUS, 'first', 100),
+      brew('2', PreparationDeviceType.SANREMO_YOU, 'sanremo', 200),
+      brew('3', PreparationDeviceType.METICULOUS, 'last', 300),
+      brew('4', PreparationDeviceType.NONE, 'none', 400),
     ];
     cloneData = jasmine
       .createSpy('cloneData')
@@ -85,7 +90,7 @@ describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with
     component.data = new Brew();
   });
 
-  it('takes the settings of the last brew in the array that used the machine', async () => {
+  it('takes the settings of the newest brew that used the machine', async () => {
     await (
       component as unknown as Presetting
     ).instanceMeticulousPreparationDevice(meticulous);
@@ -98,7 +103,7 @@ describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with
     });
   });
 
-  it('takes the oldest brew with the machine while the array is sorted newest first', async () => {
+  it('takes the newest brew with the machine while the array is sorted newest first', async () => {
     // The dashboard and the brew form sort the array of the storage in place.
     brews.reverse();
 
@@ -107,7 +112,23 @@ describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with
     ).instanceMeticulousPreparationDevice(meticulous);
 
     expect(component.data.preparationDeviceBrew.params).toEqual({
-      chosenProfileId: 'first',
+      chosenProfileId: 'last',
+    });
+  });
+
+  it('takes the later brew in the array of two with the same time, wherever they stand', async () => {
+    brews = [
+      brew('3', PreparationDeviceType.METICULOUS, 'last', 300),
+      brew('5', PreparationDeviceType.METICULOUS, 'saved last', 300),
+      brew('1', PreparationDeviceType.METICULOUS, 'first', 100),
+    ];
+
+    await (
+      component as unknown as Presetting
+    ).instanceMeticulousPreparationDevice(meticulous);
+
+    expect(component.data.preparationDeviceBrew.params).toEqual({
+      chosenProfileId: 'saved last',
     });
   });
 
@@ -129,7 +150,7 @@ describe('BrewBrewingPreparationDeviceComponent - settings of the last brew with
   });
 
   it('keeps the new settings when no brew used the machine', async () => {
-    brews = [brew('4', PreparationDeviceType.NONE, 'none')];
+    brews = [brew('4', PreparationDeviceType.NONE, 'none', 400)];
 
     await (
       component as unknown as Presetting
