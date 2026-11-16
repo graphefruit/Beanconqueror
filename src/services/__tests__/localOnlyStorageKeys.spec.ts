@@ -301,6 +301,43 @@ describe('Values local to one installation', () => {
     expect(deviceB.data.has(PENDING_DELETION_STORAGE_KEY)).toBeFalse();
   });
 
+  it('are not removed when a failed import removes the keys its file brought along', async () => {
+    const deviceB = await startDevice({
+      SETTINGS: [{ language: 'en' }],
+      BREWS: entries('own-brew', 2),
+    });
+    // Stored while the import runs, as the device id is at a first start.
+    const set = deviceB.database.set;
+    spyOn(deviceB.database, 'set').and.callFake(
+      (key: string, value: unknown) => {
+        if (key === 'SETTINGS') {
+          for (const [localKey, localValue] of Object.entries(
+            localValues('b'),
+          )) {
+            deviceB.data.set(localKey, localValue);
+          }
+        }
+        return set(key, value);
+      },
+    );
+    deviceB.failingWrites.add('BREWS');
+
+    const result = await deviceB.uiStorage.import({
+      ...localValues('a'),
+      SETTINGS: [{ language: 'de' }],
+      WATER: entries('water', 1),
+      BREWS: entries('brew', 2),
+    });
+
+    expect(result).toEqual({ BACKUP: true });
+    expect(deviceB.data.has('WATER')).toBeFalse();
+    for (const key of LOCAL_KEYS) {
+      expect(deviceB.data.get(key))
+        .withContext(key)
+        .toEqual(localValues('b')[key]);
+    }
+  });
+
   it('are imported over although the note about an entry that is being deleted cannot be removed', async () => {
     const deviceB = await startDevice({
       ...localValues('b'),

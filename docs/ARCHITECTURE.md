@@ -500,7 +500,8 @@ flowchart LR
   chunk files in order.
 - `UIStorage.import()` (`src/services/uiStorage.ts`) first exports the current
   data as a safety backup, then writes every imported key except the
-  local-only ones. If that fails, it writes the safety backup back. Credentials
+  local-only ones. If that fails, it writes the safety backup back and removes
+  the keys only the imported file brought along. Credentials
   already on the device are kept (`withDeviceSettingsSecrets`). Entries of the
   imported file that lack change info get it filled in before they are written
   (`__fillMissingChangeInfo`); values the file brings along are kept.

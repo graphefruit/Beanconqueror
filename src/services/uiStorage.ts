@@ -393,6 +393,11 @@ export class UIStorage {
    * cannot be read, it is imported without a copy, and an import that fails
    * is reported as one that could not be rolled back.
    *
+   * Resolves `{ BACKUP: false }` once the import is stored, and
+   * `{ BACKUP: true }` when it failed and was rolled back: the stored keys
+   * and values are those from before again. Rejects with `{ BACKUP: true }`
+   * when the rollback failed as well; the stored data can then be a mix.
+   *
    * `_current` are values the caller read before (readValues()). They are
    * kept as the copy to roll back to while nothing was written since;
    * otherwise the current data is read again.
@@ -427,8 +432,9 @@ export class UIStorage {
           });
     this.writeCount++;
     const previousNote: unknown = _backup?.[LAST_RESTORE_STORAGE_KEY];
+    let importData: any;
     try {
-      const importData = this.__withImportedUserProfile(
+      importData = this.__withImportedUserProfile(
         this.__keepDeviceSecrets(_data, _backup),
       );
       this.removeDuplicateEntries(importData);
@@ -454,6 +460,7 @@ export class UIStorage {
           throw new Error('UIStorage - Import - nothing to roll back to');
         }
         await this.__importBackup(_backup);
+        await this.__removeImportedKeys(importData, _backup);
       } catch (ex) {
         throw { BACKUP: true };
       }
@@ -625,6 +632,25 @@ export class UIStorage {
 
   private async __safteyBackup(): Promise<any> {
     return await this.export();
+  }
+
+  /**
+   * Removes the keys only the backup file brought along, once the values
+   * from before were written back, so a rolled back import leaves exactly
+   * the keys stored before. Rejects when one cannot be removed.
+   */
+  private async __removeImportedKeys(
+    _importData: any,
+    _backup: any,
+  ): Promise<void> {
+    for (const key of Object.keys(_importData ?? {})) {
+      if (
+        !isLocalOnlyStorageKey(key) &&
+        !Object.prototype.hasOwnProperty.call(_backup, key)
+      ) {
+        await this._storage.remove(key);
+      }
+    }
   }
 
   private async __importBackup(_data: any): Promise<void> {
