@@ -248,6 +248,8 @@ async function startDevice(
     showMessage: jasmine.createSpy('showMessage'),
   };
   const fileHelper = {
+    // No unfinished file is left from a write before.
+    statInternalFile: () => Promise.resolve(undefined),
     readInternalFileAsUint8Array: () =>
       Promise.resolve(_options.internalBackup),
     // Beanconqueror.zip, which the start-up check reads.
