@@ -192,13 +192,18 @@ for (const card of CARDS) {
       showMessage = step('message', Promise.resolve());
       showInfoToast = step('toast');
       trackEvent = step('tracked');
+      // The collections tell only once per start that they were not read.
+      (
+        StorageClass as unknown as { refusedWriteReported: boolean }
+      ).refusedWriteReported = false;
+      const alert = { showConfirm, withLoadingSpinner, showMessage };
+      const providers = database.providers();
+      // The card and the collections show their messages in the same place.
+      (UIAlert.getInstance as jasmine.Spy).and.returnValue(alert);
       TestBed.configureTestingModule({
         providers: [
-          ...database.providers(),
-          {
-            provide: UIAlert,
-            useValue: { showConfirm, withLoadingSpinner, showMessage },
-          },
+          ...providers,
+          { provide: UIAlert, useValue: alert },
           { provide: UIToast, useValue: { showInfoToast } },
           { provide: UIAnalytics, useValue: { trackEvent } },
           {
@@ -319,27 +324,71 @@ for (const card of CARDS) {
       ).toEqual(notes);
     });
 
-    it('shows one message and nothing else when not all of it could be deleted', async () => {
-      database.failingWrites.add(card.key);
+    const OWN_MESSAGE = ['ERROR_OCCURED', 'CARE', undefined, true];
+    const NOT_READ = [
+      'STORAGE_NOT_READ_NOTHING_SAVED',
+      undefined,
+      undefined,
+      true,
+    ];
+    const unreadableBrews = async () => {
+      database.unreadable.add('BREWS');
+      await storages.BREWS.reinitializeStorage().catch(() => undefined);
+    };
+    /** Each way a deletion fails, and the one message the user sees then. */
+    const FAILURES: {
+      name: string;
+      arrange: () => unknown;
+      message: unknown[];
+    }[] = [
+      {
+        name: 'its collection could not be saved, which the collection tells',
+        arrange: () => database.failingWrites.add(card.key),
+        message: [jasmine.any(String), 'CRITICAL ERROR - SAVE SET'],
+      },
+      {
+        name: 'the brews were not read, which the collection tells',
+        arrange: unreadableBrews,
+        message: NOT_READ,
+      },
+      {
+        name: 'the brews were not read and the collection told so before',
+        arrange: async () => {
+          await unreadableBrews();
+          await storages.BREWS.removeManyByUUID(['brew-1']);
+          showMessage.calls.reset();
+          steps = [];
+        },
+        message: OWN_MESSAGE,
+      },
+      {
+        name: 'the note of the deletion could not be stored',
+        arrange: () => database.failingWrites.add('PENDING_DELETION'),
+        message: OWN_MESSAGE,
+      },
+      {
+        name: 'the entry is gone already',
+        arrange: () => storages[card.key].removeManyByUUID(['doomed']),
+        message: OWN_MESSAGE,
+      },
+    ];
+    for (const failure of FAILURES) {
+      it(`shows exactly one message and nothing else when ${failure.name}`, async () => {
+        await failure.arrange();
 
-      await deleteEntry();
+        await deleteEntry();
 
-      expect(steps).toEqual([
-        'spinner shown',
-        'tracked',
-        'spinner hidden',
-        'message',
-      ]);
-      expect(showMessage).toHaveBeenCalledOnceWith(
-        'ERROR_OCCURED',
-        'CARE',
-        undefined,
-        true,
-      );
-      expect(showInfoToast).not.toHaveBeenCalled();
-      expect(settings.bean_filter.OPEN.favourite).toBeTrue();
-      expect(database.uuids(card.key)).toContain('doomed');
-    });
+        expect(showMessage.calls.allArgs()).toEqual([failure.message]);
+        // The card shows its own message only after the spinner.
+        expect(steps).toEqual(
+          failure.message === OWN_MESSAGE
+            ? ['spinner shown', 'tracked', 'spinner hidden', 'message']
+            : ['spinner shown', 'tracked', 'message', 'spinner hidden'],
+        );
+        expect(showInfoToast).not.toHaveBeenCalled();
+        expect(settings.bean_filter.OPEN.favourite).toBeTrue();
+      });
+    }
 
     it('hides the spinner and shows no toast when deleting throws', async () => {
       spyOn(TestBed.inject(DeleteCommands), card.command).and.rejectWith(

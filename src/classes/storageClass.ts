@@ -76,6 +76,8 @@ export abstract class StorageClass {
   /** One message about refused writes is enough, the remedy is a restart. */
   private static refusedWriteReported = false;
 
+  private static messagesShown = 0;
+
   protected constructor(protected dbPath: string) {
     this.DB_PATH = dbPath;
   }
@@ -105,8 +107,20 @@ export abstract class StorageClass {
     ...message: Parameters<UIAlertService['showMessage']>
   ): Promise<void> {
     const { UIAlert } = await import('../services/uiAlert');
-    const alertPromise = UIAlert.getInstance()?.showMessage(...message);
-    void alertPromise?.catch(onRejected);
+    const alert = UIAlert.getInstance();
+    if (alert) {
+      StorageClass.messagesShown++;
+      void alert.showMessage(...message)?.catch(onRejected);
+    }
+  }
+
+  /**
+   * How many messages the collections have shown to the user. Compared
+   * around a write, it tells whether the user already knows of its failure,
+   * so the caller does not put a second message on top.
+   */
+  public static getMessagesShown(): number {
+    return StorageClass.messagesShown;
   }
 
   private async showAlertSafely(

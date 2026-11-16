@@ -479,21 +479,22 @@ export class PreparationInformationCardComponent implements OnInit {
       return;
     }
 
-    const deleted = await this.uiAlert.withLoadingSpinner(async () => {
+    const deletion = await this.uiAlert.withLoadingSpinner(async () => {
       this.uiAnalytics.trackEvent(
         PREPARATION_TRACKING.TITLE,
         PREPARATION_TRACKING.ACTIONS.DELETE,
       );
-      const done = await this.deleteCommands.deletePreparation(
+      const result = await this.deleteCommands.deletePreparation(
         this.preparation.config.uuid,
       );
-      if (done) {
+      if (result === 'deleted') {
         this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
         await this.resetSettings();
       }
-      return done;
+      return result;
     }, 'PLEASE_WAIT_DO_NOT_CLOSE_APP');
-    if (!deleted) {
+    // After 'reported' the user has been told already.
+    if (deletion === 'failed') {
       await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
     }
   }

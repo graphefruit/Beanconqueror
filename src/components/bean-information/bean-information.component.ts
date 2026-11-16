@@ -627,21 +627,22 @@ export class BeanInformationComponent {
       return;
     }
 
-    const deleted = await this.uiAlert.withLoadingSpinner(async () => {
+    const deletion = await this.uiAlert.withLoadingSpinner(async () => {
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.DELETE,
       );
-      const done = await this.deleteCommands.deleteBean(
+      const result = await this.deleteCommands.deleteBean(
         this.actionBean.config.uuid,
       );
-      if (done) {
+      if (result === 'deleted') {
         this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
         await this.resetSettings();
       }
-      return done;
+      return result;
     }, 'PLEASE_WAIT_DO_NOT_CLOSE_APP');
-    if (!deleted) {
+    // After 'reported' the user has been told already.
+    if (deletion === 'failed') {
       await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
     }
   }

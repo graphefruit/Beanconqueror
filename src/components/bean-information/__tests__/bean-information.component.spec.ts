@@ -34,7 +34,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
 import { BeanStore } from '../../../stores/beans/bean.store';
 import { FakeStoreSource } from '../../../stores/core/__tests__/fake-store-source';
-import { DeleteCommands } from '../../../stores/delete-commands';
+import { DeleteCommands, Deletion } from '../../../stores/delete-commands';
 import {
   BeanActionEvent,
   BeanInformationComponent,
@@ -189,7 +189,7 @@ describe('BeanInformationComponent', () => {
     );
     toast = spies(['showInfoToast']);
     commands = spies(['deleteBean']);
-    commands.deleteBean.and.resolveTo(true);
+    commands.deleteBean.and.resolveTo('deleted');
     analytics = spies(['trackEvent']);
     brewHelper = spies(['showAssociatedBrews', 'repeatBrew']);
     modal = spies(['create']);
@@ -762,7 +762,7 @@ describe('BeanInformationComponent', () => {
         choose(BEAN_ACTION.DELETE);
       });
 
-      function command(result: Promise<boolean>) {
+      function command(result: Promise<Deletion>) {
         commands.deleteBean.and.callFake(() => {
           steps.push('command');
           return result;
@@ -785,7 +785,7 @@ describe('BeanInformationComponent', () => {
 
       it('with a toast and all filters reset once it is done', async () => {
         settings.bean_filter.OPEN.favourite = true;
-        command(Promise.resolve(true));
+        command(Promise.resolve('deleted'));
         await card.showBeanActions(event());
 
         expect(commands.deleteBean).toHaveBeenCalledOnceWith('alpha');
@@ -810,7 +810,7 @@ describe('BeanInformationComponent', () => {
 
       it('with one message and nothing else when it failed', async () => {
         settings.bean_filter.OPEN.favourite = true;
-        command(Promise.resolve(false));
+        command(Promise.resolve('failed'));
         await card.showBeanActions(event());
 
         expect(steps).toEqual([
@@ -829,6 +829,22 @@ describe('BeanInformationComponent', () => {
         expect(toast.showInfoToast).not.toHaveBeenCalled();
         expect(settings.bean_filter.OPEN.favourite).toBeTrue();
         expect(emitted.map(([action]) => action)).toEqual([BEAN_ACTION.DELETE]);
+      });
+
+      it('with no message of its own when the user was told about the failure', async () => {
+        settings.bean_filter.OPEN.favourite = true;
+        command(Promise.resolve('reported'));
+        await card.showBeanActions(event());
+
+        expect(steps).toEqual([
+          'spinner shown',
+          'tracked',
+          'command',
+          'spinner hidden',
+        ]);
+        expect(alert.showMessage).not.toHaveBeenCalled();
+        expect(toast.showInfoToast).not.toHaveBeenCalled();
+        expect(settings.bean_filter.OPEN.favourite).toBeTrue();
       });
 
       it('hides the spinner when deleting throws', async () => {

@@ -18,6 +18,13 @@ import { UIStorage } from '../services/uiStorage';
 type Removal = [storage: StorageClass, uuids: string[]];
 type Stored = Record<string, unknown> & { config?: { uuid?: string } };
 
+/**
+ * What became of a deletion. After `reported` a collection has told the user
+ * about the failure, and the caller shows no message of its own; after
+ * `failed` nobody has.
+ */
+export type Deletion = 'deleted' | 'failed' | 'reported';
+
 /** Stored while an entry and the entries depending on it are deleted. */
 interface PendingDeletion {
   collection: string;
@@ -36,11 +43,11 @@ const PENDING_DELETION_MAX_AGE_MS = 24 * 60 * 60 * 1000;
  * save per collection: the dependent entries first, so an entry never
  * disappears while others still point to it, then the entry.
  *
- * Every command resolves whether all of it is gone and never rejects.
- * Nothing is deleted when the entry is unknown, when one of the collections
- * does not take writes or when the first one could not be saved. Only when
- * a later one could not be saved, the entry is left without the dependent
- * entries deleted until then.
+ * Every command resolves what became of it and never rejects: `deleted`
+ * only when all of it is gone. Nothing is deleted when the entry is unknown,
+ * when one of the collections does not take writes or when the first one
+ * could not be saved. Only when a later one could not be saved, the entry is
+ * left without the dependent entries deleted until then.
  */
 @Service()
 export class DeleteCommands {
@@ -81,22 +88,22 @@ export class DeleteCommands {
   ]);
 
   /** The bean and its brews. */
-  public deleteBean(_uuid: string): Promise<boolean> {
+  public deleteBean(_uuid: string): Promise<Deletion> {
     return this.delete(this.uiBeanStorage, _uuid);
   }
 
   /** The mill and the brews ground with it. */
-  public deleteMill(_uuid: string): Promise<boolean> {
+  public deleteMill(_uuid: string): Promise<Deletion> {
     return this.delete(this.uiMillStorage, _uuid);
   }
 
   /** The preparation method and the brews made with it. */
-  public deletePreparation(_uuid: string): Promise<boolean> {
+  public deletePreparation(_uuid: string): Promise<Deletion> {
     return this.delete(this.uiPreparationStorage, _uuid);
   }
 
   /** The green bean, the beans roasted from it and their brews. */
-  public deleteGreenBean(_uuid: string): Promise<boolean> {
+  public deleteGreenBean(_uuid: string): Promise<Deletion> {
     return this.delete(this.uiGreenBeanStorage, _uuid);
   }
 
@@ -196,6 +203,18 @@ export class DeleteCommands {
   private async delete(
     _storage: StorageClass,
     _uuid: string,
+  ): Promise<Deletion> {
+    const shown = StorageClass.getMessagesShown();
+    if (await this.remove(_storage, _uuid)) {
+      return 'deleted';
+    }
+    return StorageClass.getMessagesShown() === shown ? 'failed' : 'reported';
+  }
+
+  /** Resolves whether all of it is gone. */
+  private async remove(
+    _storage: StorageClass,
+    _uuid: string,
   ): Promise<boolean> {
     try {
       if (!_storage.getByUUID(_uuid)) {
@@ -232,7 +251,7 @@ export class DeleteCommands {
         // Whatever the result: the user sees it and decides what is next.
         // Tried again, so a single failure does not leave the note behind.
         // A note left behind lets the next start delete the entry, also
-        // when this command resolved false.
+        // when this command failed.
         for (let attempt = 1; attempt <= 3; attempt++) {
           try {
             await this.uiStorage.remove(PENDING_DELETION_STORAGE_KEY);

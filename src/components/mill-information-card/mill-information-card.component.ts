@@ -250,19 +250,22 @@ export class MillInformationCardComponent implements OnInit {
       return;
     }
 
-    const deleted = await this.uiAlert.withLoadingSpinner(async () => {
+    const deletion = await this.uiAlert.withLoadingSpinner(async () => {
       this.uiAnalytics.trackEvent(
         MILL_TRACKING.TITLE,
         MILL_TRACKING.ACTIONS.DELETE,
       );
-      const done = await this.deleteCommands.deleteMill(this.mill.config.uuid);
-      if (done) {
+      const result = await this.deleteCommands.deleteMill(
+        this.mill.config.uuid,
+      );
+      if (result === 'deleted') {
         this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
         await this.resetSettings();
       }
-      return done;
+      return result;
     }, 'PLEASE_WAIT_DO_NOT_CLOSE_APP');
-    if (!deleted) {
+    // After 'reported' the user has been told already.
+    if (deletion === 'failed') {
       await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
     }
   }

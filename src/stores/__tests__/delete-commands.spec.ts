@@ -2,6 +2,7 @@ import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { StorageClass } from '../../classes/storageClass';
+import { UIAlert } from '../../services/uiAlert';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIExportImportHelper } from '../../services/uiExportImportHelper';
@@ -9,7 +10,7 @@ import { UIGreenBeanStorage } from '../../services/uiGreenBeanStorage';
 import { UIMillStorage } from '../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { MemoryDatabase, uuidsOf } from '../../test-utils/memory-database';
-import { DeleteCommands } from '../delete-commands';
+import { DeleteCommands, Deletion } from '../delete-commands';
 
 type Stored = Record<string, unknown> & {
   config: { uuid: string; rev?: number };
@@ -41,6 +42,8 @@ describe('DeleteCommands', () => {
   let commands: DeleteCommands;
   /** What the start checks tell about restoring the internal backup. */
   let restoreAtStartFailed: boolean;
+  /** Called for each message a collection shows to the user. */
+  let message: jasmine.Spy;
 
   const inMemory = (key: string) => uuidsOf(storages[key].getRawEntries());
   const noted = () => database.journal().map((_note) => _note.uuid);
@@ -58,6 +61,25 @@ describe('DeleteCommands', () => {
         .catch(() => undefined);
     }
     commands = TestBed.inject(DeleteCommands);
+    // Every result is checked against the messages of the collections:
+    // exactly one when it says that the user was told, none otherwise.
+    for (const name of [
+      'deleteBean',
+      'deleteMill',
+      'deletePreparation',
+      'deleteGreenBean',
+    ] as const) {
+      const command: (uuid: string) => Promise<Deletion> =
+        commands[name].bind(commands);
+      spyOn(commands, name).and.callFake(async (uuid: string) => {
+        const shown = message.calls.count();
+        const deletion = await command(uuid);
+        expect(message.calls.count() - shown)
+          .withContext(deletion)
+          .toBe(deletion === 'reported' ? 1 : 0);
+        return deletion;
+      });
+    }
   }
 
   /** Removing a value fails this often before it works. */
@@ -86,6 +108,10 @@ describe('DeleteCommands', () => {
   beforeEach(() => {
     database = new MemoryDatabase();
     restoreAtStartFailed = false;
+    // The collections tell only once per start that they were not read.
+    (
+      StorageClass as unknown as { refusedWriteReported: boolean }
+    ).refusedWriteReported = false;
     TestBed.configureTestingModule({
       providers: [
         ...database.providers(),
@@ -95,6 +121,8 @@ describe('DeleteCommands', () => {
         },
       ],
     });
+    message = (UIAlert.getInstance() as unknown as { showMessage: jasmine.Spy })
+      .showMessage;
   });
 
   const WITH_BREWS = [
@@ -149,7 +177,7 @@ describe('DeleteCommands', () => {
             .subscribe((_event) => removed.push(_event.id));
         }
 
-        expect(await run('doomed')).toBeTrue();
+        expect(await run('doomed')).toBe('deleted');
 
         // Deleting the brews one by one saved the brews 300 times.
         expect(database.written()).toEqual([
@@ -179,14 +207,14 @@ describe('DeleteCommands', () => {
         // It is unknown from then on.
         expect(storages[key].getByUUID('doomed')).toBeUndefined();
         database.set.calls.reset();
-        expect(await run('doomed')).toBeFalse();
+        expect(await run('doomed')).toBe('failed');
         expect(database.set).not.toHaveBeenCalled();
       });
 
       it('saves only its own collection when it has no brews', async () => {
         await startWith([stored('doomed')], [brew('other', 'kept')]);
 
-        expect(await run('doomed')).toBeTrue();
+        expect(await run('doomed')).toBe('deleted');
 
         expect(database.written()).toEqual([NOTE, key, 'DELETION_JOURNAL']);
         expect(database.uuids(key)).toEqual([]);
@@ -197,8 +225,8 @@ describe('DeleteCommands', () => {
       it('writes nothing for an unknown one', async () => {
         await startWith([stored('kept')], brewsOf('unknown', 2));
 
-        expect(await run('unknown')).toBeFalse();
-        expect(await run('')).toBeFalse();
+        expect(await run('unknown')).toBe('failed');
+        expect(await run('')).toBe('failed');
 
         expect(database.set).not.toHaveBeenCalled();
         expect(inMemory('BREWS').length).toBe(2);
@@ -209,7 +237,9 @@ describe('DeleteCommands', () => {
           database.unreadable.add(unreadable);
           await startWith([stored('doomed')], brewsOf('doomed', 2));
 
-          expect(await run('doomed')).toBeFalse();
+          expect(await run('doomed')).toBe(
+            unreadable === key ? 'failed' : 'reported',
+          );
 
           expect(database.set).not.toHaveBeenCalled();
           expect(database.uuids(key)).toEqual(['doomed']);
@@ -217,13 +247,37 @@ describe('DeleteCommands', () => {
         });
       }
 
+      it('leaves the message to the caller when the brews were not read and the user was told before', async () => {
+        database.unreadable.add('BREWS');
+        await startWith([stored('doomed')], []);
+
+        expect(await run('doomed')).toBe('reported');
+        expect(message).toHaveBeenCalledOnceWith(
+          'STORAGE_NOT_READ_NOTHING_SAVED',
+          undefined,
+          undefined,
+          true,
+        );
+        expect(await run('doomed')).toBe('failed');
+        expect(database.uuids(key)).toEqual(['doomed']);
+      });
+
+      it('leaves the message to the caller when a collection could not tell the user', async () => {
+        await startWith([stored('doomed')], brewsOf('doomed', 2));
+        database.failingWrites.add('BREWS');
+        (UIAlert.getInstance as jasmine.Spy).and.returnValue(undefined);
+
+        expect(await run('doomed')).toBe('failed');
+        expect(message).not.toHaveBeenCalled();
+      });
+
       it('deletes nothing while its collection does not take writes although it is known', async () => {
         await startWith([stored('doomed')], brewsOf('doomed', 2));
         const remove = spyOn(storages[key], 'removeManyByUUID').and.resolveTo(
           false,
         );
 
-        expect(await run('doomed')).toBeFalse();
+        expect(await run('doomed')).toBe('failed');
 
         expect(remove).toHaveBeenCalledOnceWith([]);
         expect(database.set).not.toHaveBeenCalled();
@@ -234,7 +288,7 @@ describe('DeleteCommands', () => {
         await startWith([stored('doomed')], brewsOf('doomed', 3));
         database.failingWrites.add('BREWS');
 
-        expect(await run('doomed')).toBeFalse();
+        expect(await run('doomed')).toBe('reported');
 
         expect(database.writes(key)).toBe(0);
         expect(database.values.has(NOTE)).toBeFalse();
@@ -249,7 +303,7 @@ describe('DeleteCommands', () => {
         await startWith([stored('doomed')], brewsOf('doomed', 3));
         database.failingWrites.add(key);
 
-        expect(await run('doomed')).toBeFalse();
+        expect(await run('doomed')).toBe('reported');
 
         expect(database.uuids('BREWS')).toEqual([]);
         expect(inMemory(key)).toEqual(['doomed']);
@@ -260,7 +314,7 @@ describe('DeleteCommands', () => {
 
         database.failingWrites.clear();
         database.set.calls.reset();
-        expect(await run('doomed')).toBeTrue();
+        expect(await run('doomed')).toBe('deleted');
 
         expect(database.written()).toEqual([NOTE, key, 'DELETION_JOURNAL']);
         expect(database.uuids(key)).toEqual([]);
@@ -281,7 +335,7 @@ describe('DeleteCommands', () => {
           });
         }
 
-        expect(await run('doomed')).toBeTrue();
+        expect(await run('doomed')).toBe('deleted');
 
         const note = {
           collection: key,
@@ -300,7 +354,7 @@ describe('DeleteCommands', () => {
         await startWith([stored('doomed')], brewsOf('doomed', 2));
         database.failingWrites.add(NOTE);
 
-        expect(await run('doomed')).toBeFalse();
+        expect(await run('doomed')).toBe('failed');
 
         expect(database.written()).toEqual([NOTE]);
         expect(database.uuids(key)).toEqual(['doomed']);
@@ -315,7 +369,7 @@ describe('DeleteCommands', () => {
           await startWith([stored('doomed')], brewsOf('doomed', 2));
           failRemoving(failures);
 
-          expect(await run('doomed')).toBeTrue();
+          expect(await run('doomed')).toBe('deleted');
 
           expect(database.remove.calls.allArgs()).toEqual(
             Array(failures + 1).fill([NOTE]),
@@ -330,7 +384,7 @@ describe('DeleteCommands', () => {
         await startWith([stored('doomed')], brewsOf('doomed', 2));
         failRemoving(3);
 
-        expect(await run('doomed')).toBeTrue();
+        expect(await run('doomed')).toBe('deleted');
 
         expect(database.remove.calls.allArgs()).toEqual([
           [NOTE],
@@ -342,12 +396,12 @@ describe('DeleteCommands', () => {
         expect(database.uuids('BREWS')).toEqual([]);
       });
 
-      it('as before: the next start deletes it after the command resolved false and the note could not be removed', async () => {
+      it('as before: the next start deletes it after the command failed and the note could not be removed', async () => {
         await startWith([stored('kept'), stored('doomed')], []);
         database.failingWrites.add(key);
         failRemoving(3);
 
-        expect(await run('doomed')).toBeFalse();
+        expect(await run('doomed')).toBe('reported');
 
         expect(database.uuids(key)).toEqual(['kept', 'doomed']);
         expect(database.values.has(NOTE)).toBeTrue();
@@ -363,7 +417,7 @@ describe('DeleteCommands', () => {
         await startWith([stored('doomed')], brewsOf('doomed', 2));
         addWhileNoting('BREWS', brew('late', 'doomed'));
 
-        expect(await run('doomed')).toBeTrue();
+        expect(await run('doomed')).toBe('deleted');
 
         expect(database.uuids('BREWS')).toEqual([]);
         expect(inMemory('BREWS')).toEqual([]);
@@ -385,7 +439,7 @@ describe('DeleteCommands', () => {
           ],
         );
 
-        expect(await run('doomed')).toBeTrue();
+        expect(await run('doomed')).toBe('deleted');
 
         expect(database.uuids('BREWS')).toEqual(['other']);
         expect(noted()).toEqual(['twin', 'doomed']);
@@ -397,7 +451,7 @@ describe('DeleteCommands', () => {
           [brew('twin', 'kept'), brew('twin', 'doomed')],
         );
 
-        expect(await run('doomed')).toBeTrue();
+        expect(await run('doomed')).toBe('deleted');
 
         // The brew of the other one is gone and the one of the deleted one
         // is left behind, as when the brews were deleted one by one.
@@ -409,11 +463,11 @@ describe('DeleteCommands', () => {
         expect(noted()).toEqual(['doomed']);
       });
 
-      it('resolves false instead of rejecting', async () => {
+      it('resolves that it failed instead of rejecting', async () => {
         await startWith([stored('doomed')], brewsOf('doomed', 1));
         spyOn(storages.BREWS, 'getRawEntries').and.throwError('unexpected');
 
-        await expectAsync(run('doomed')).toBeResolvedTo(false);
+        await expectAsync(run('doomed')).toBeResolvedTo('failed');
 
         expect(database.set).not.toHaveBeenCalled();
       });
@@ -470,7 +524,7 @@ describe('DeleteCommands', () => {
           .subscribe((_event) => removed.push(_event.id));
       }
 
-      expect(await commands.deleteGreenBean('doomed')).toBeTrue();
+      expect(await commands.deleteGreenBean('doomed')).toBe('deleted');
 
       expect(database.written()).toEqual([
         NOTE,
@@ -492,7 +546,7 @@ describe('DeleteCommands', () => {
     it('saves only the green beans when nothing was roasted from it', async () => {
       await start({ ...seed(), GREEN_BEANS: [stored('lonely')] });
 
-      expect(await commands.deleteGreenBean('lonely')).toBeTrue();
+      expect(await commands.deleteGreenBean('lonely')).toBe('deleted');
 
       expect(database.written()).toEqual([
         NOTE,
@@ -505,8 +559,8 @@ describe('DeleteCommands', () => {
     it('writes nothing for an unknown one', async () => {
       await start({ ...seed(), GREEN_BEANS: [stored('kept')] });
 
-      expect(await commands.deleteGreenBean('doomed')).toBeFalse();
-      expect(await commands.deleteGreenBean('')).toBeFalse();
+      expect(await commands.deleteGreenBean('doomed')).toBe('failed');
+      expect(await commands.deleteGreenBean('')).toBe('failed');
 
       expect(database.set).not.toHaveBeenCalled();
     });
@@ -516,7 +570,9 @@ describe('DeleteCommands', () => {
         database.unreadable.add(key);
         await start(seed());
 
-        expect(await commands.deleteGreenBean('doomed')).toBeFalse();
+        expect(await commands.deleteGreenBean('doomed')).toBe(
+          key === 'GREEN_BEANS' ? 'failed' : 'reported',
+        );
 
         expect(database.set).not.toHaveBeenCalled();
         expect(state((_key) => database.uuids(_key))).toEqual(untouched());
@@ -527,7 +583,7 @@ describe('DeleteCommands', () => {
       await start(seed());
       database.failingWrites.add('BREWS');
 
-      expect(await commands.deleteGreenBean('doomed')).toBeFalse();
+      expect(await commands.deleteGreenBean('doomed')).toBe('reported');
 
       expect(database.written()).toEqual([NOTE, 'BREWS']);
       expect(database.values.has(NOTE)).toBeFalse();
@@ -542,7 +598,7 @@ describe('DeleteCommands', () => {
         'removeManyByUUID',
       ).and.resolveTo(false);
 
-      expect(await commands.deleteGreenBean('doomed')).toBeFalse();
+      expect(await commands.deleteGreenBean('doomed')).toBe('failed');
 
       expect(remove).toHaveBeenCalledOnceWith([]);
       expect(database.set).not.toHaveBeenCalled();
@@ -565,7 +621,7 @@ describe('DeleteCommands', () => {
         });
       }
 
-      expect(await commands.deleteGreenBean('doomed')).toBeTrue();
+      expect(await commands.deleteGreenBean('doomed')).toBe('deleted');
 
       const note = {
         collection: 'GREEN_BEANS',
@@ -584,7 +640,7 @@ describe('DeleteCommands', () => {
       await start(seed());
       database.failingWrites.add(NOTE);
 
-      expect(await commands.deleteGreenBean('doomed')).toBeFalse();
+      expect(await commands.deleteGreenBean('doomed')).toBe('failed');
 
       expect(database.written()).toEqual([NOTE]);
       expect(state((key) => database.uuids(key))).toEqual(untouched());
@@ -597,7 +653,7 @@ describe('DeleteCommands', () => {
         await start(seed());
         failRemoving(failures);
 
-        expect(await commands.deleteGreenBean('doomed')).toBeTrue();
+        expect(await commands.deleteGreenBean('doomed')).toBe('deleted');
 
         expect(database.remove.calls.allArgs()).toEqual(
           Array(failures + 1).fill([NOTE]),
@@ -611,7 +667,7 @@ describe('DeleteCommands', () => {
       await start(seed());
       failRemoving(3);
 
-      expect(await commands.deleteGreenBean('doomed')).toBeTrue();
+      expect(await commands.deleteGreenBean('doomed')).toBe('deleted');
 
       expect(database.remove.calls.allArgs()).toEqual([[NOTE], [NOTE], [NOTE]]);
       expect(database.values.has(NOTE)).toBeTrue();
@@ -622,18 +678,18 @@ describe('DeleteCommands', () => {
       await start(seed());
       addWhileNoting('BEANS', roast('late', 'doomed'));
 
-      expect(await commands.deleteGreenBean('doomed')).toBeTrue();
+      expect(await commands.deleteGreenBean('doomed')).toBe('deleted');
 
       expect(state((key) => database.uuids(key))).toEqual(gone);
       expect(state(inMemory)).toEqual(gone);
     });
 
-    it('resolves false instead of rejecting', async () => {
+    it('resolves that it failed instead of rejecting', async () => {
       await start(seed());
       spyOn(storages.BEANS, 'getRawEntries').and.throwError('unexpected');
 
       await expectAsync(commands.deleteGreenBean('doomed')).toBeResolvedTo(
-        false,
+        'failed',
       );
 
       expect(database.set).not.toHaveBeenCalled();
@@ -648,7 +704,7 @@ describe('DeleteCommands', () => {
         await start(seed());
         database.failingWrites.add(failing);
 
-        expect(await commands.deleteGreenBean('doomed')).toBeFalse();
+        expect(await commands.deleteGreenBean('doomed')).toBe('reported');
 
         expect(state((key) => database.uuids(key))).toEqual(left);
         expect(state(inMemory)).toEqual(left);
@@ -656,7 +712,7 @@ describe('DeleteCommands', () => {
 
         database.failingWrites.clear();
         database.set.calls.reset();
-        expect(await commands.deleteGreenBean('doomed')).toBeTrue();
+        expect(await commands.deleteGreenBean('doomed')).toBe('deleted');
 
         expect(database.written()).toEqual([
           NOTE,
