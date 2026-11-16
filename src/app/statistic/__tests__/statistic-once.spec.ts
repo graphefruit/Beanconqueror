@@ -1,8 +1,10 @@
+import { createEnvironmentInjector, EnvironmentInjector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { TranslateService } from '@ngx-translate/core';
 import { Chart } from 'chart.js';
 import moment from 'moment';
+import { Subject } from 'rxjs';
 
 import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
@@ -39,6 +41,7 @@ describe('StatisticPage - numbers and month groups are worked out once', () => {
   let page: StatisticPage;
   let statistic: jasmine.SpyObj<UIStatistic>;
   let canvases: Record<string, HTMLCanvasElement>;
+  let events: Record<'brew' | 'bean' | 'mill' | 'preparation', Subject<void>>;
 
   function chartData(name: string) {
     const { labels, datasets } = Chart.getChart(canvases[name]).data;
@@ -59,6 +62,13 @@ describe('StatisticPage - numbers and month groups are worked out once', () => {
     statistic.getTotalDrunk.and.returnValue(0.75);
     statistic.brewedTime.and.returnValue('00:10:00');
     statistic.photosTaken.and.returnValue(4);
+
+    events = {
+      brew: new Subject(),
+      bean: new Subject(),
+      mill: new Subject(),
+      preparation: new Subject(),
+    };
 
     const brews = [
       brew('2026-03-20T10:00:00', {
@@ -96,8 +106,20 @@ describe('StatisticPage - numbers and month groups are worked out once', () => {
             getUnixTimestamp: () => moment('2026-03-25T12:00:00').unix(),
           },
         },
-        { provide: UIBrewStorage, useValue: { getAllEntries: () => brews } },
-        { provide: UIBeanStorage, useValue: { getAllEntries: () => [] } },
+        {
+          provide: UIBrewStorage,
+          useValue: {
+            getAllEntries: () => brews,
+            attachOnEvent: () => events.brew,
+          },
+        },
+        {
+          provide: UIBeanStorage,
+          useValue: {
+            getAllEntries: () => [],
+            attachOnEvent: () => events.bean,
+          },
+        },
         {
           provide: UISettingsStorage,
           useValue: { getSettings: () => new Settings() },
@@ -107,9 +129,13 @@ describe('StatisticPage - numbers and month groups are worked out once', () => {
           useValue: {
             getAllEntries: () => [],
             getMillNameByUUID: (uuid: string) => `Mill ${uuid}`,
+            attachOnEvent: () => events.mill,
           },
         },
-        { provide: UIPreparationStorage, useValue: {} },
+        {
+          provide: UIPreparationStorage,
+          useValue: { attachOnEvent: () => events.preparation },
+        },
         { provide: TranslateService, useValue: createMockTranslateService({}) },
         {
           provide: CurrencyService,
@@ -234,6 +260,47 @@ describe('StatisticPage - numbers and month groups are worked out once', () => {
 
       expect(page.general).toEqual({ ...numbers, brewsDrunk: 1 });
       expect(calls).toEqual(['range THIS_MONTH', 'brews']);
+    });
+
+    it('are worked out again each time the page is entered', () => {
+      page.ionViewWillEnter();
+      statistic.getBrewsDrunk.and.returnValue(6);
+
+      page.ionViewWillEnter();
+
+      expect(page.general).toEqual({ ...numbers, brewsDrunk: 6 });
+    });
+
+    for (const storage of ['brew', 'bean', 'mill', 'preparation'] as const) {
+      it(`follow a change of the ${storage}s while the page stays open`, () => {
+        page.ionViewWillEnter();
+        page.onRangeModeChange('THIS_MONTH');
+        statistic.getBrewsDrunk.and.returnValue(6);
+        statistic.setDateRange.calls.reset();
+
+        events[storage].next();
+
+        expect(page.general).toEqual({ ...numbers, brewsDrunk: 6 });
+        expect(page.rangeMode).toBe('THIS_MONTH');
+        expect(statistic.setDateRange).not.toHaveBeenCalled();
+      });
+    }
+
+    it('stop following the storages when the page is destroyed', () => {
+      const injector = createEnvironmentInjector(
+        [StatisticPage],
+        TestBed.inject(EnvironmentInjector),
+      );
+      injector.get(StatisticPage);
+      events.brew.next();
+      expect(statistic.getBrewsDrunk).toHaveBeenCalledTimes(2);
+
+      // The page of the test module goes on listening.
+      injector.destroy();
+      statistic.getBrewsDrunk.calls.reset();
+      events.brew.next();
+
+      expect(statistic.getBrewsDrunk).toHaveBeenCalledTimes(1);
     });
   });
 });

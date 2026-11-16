@@ -7,6 +7,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -31,6 +32,7 @@ import { Chart } from 'chart.js';
 import currencyToSymbolMap from 'currency-symbol-map/map';
 import Gradient from 'javascript-color-gradient';
 import moment from 'moment';
+import { merge } from 'rxjs';
 
 import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
@@ -129,8 +131,8 @@ export class StatisticPage implements OnInit {
 
   /**
    * The numbers of the General tab. Each one goes through all brews, so they
-   * are worked out when the page is created or entered and when the range
-   * changes, not with every change detection.
+   * are worked out when the page is created or entered and when the range or
+   * the stored data changes, not with every change detection.
    */
   public general: {
     mills: number;
@@ -156,6 +158,22 @@ export class StatisticPage implements OnInit {
       photosTaken: this.uiStatistic.photosTaken(),
       currencySymbol: this.currencyService.getActualCurrencySymbol(),
     };
+  }
+
+  public constructor() {
+    // A brew saved from a form above the page (NFC tag, link) does not enter
+    // the page again.
+    merge(
+      this.uiBrewStorage.attachOnEvent(),
+      this.uiBeanStorage.attachOnEvent(),
+      this.uiMillStorage.attachOnEvent(),
+      this.uiPreparationStorage.attachOnEvent(),
+    )
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.__loadGeneralNumbers();
+        this.changeDetectorRef?.markForCheck();
+      });
   }
 
   public ionViewDidEnter(): void {}

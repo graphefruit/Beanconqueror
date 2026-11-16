@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { TranslateService } from '@ngx-translate/core';
 import { Chart } from 'chart.js';
+import { EMPTY } from 'rxjs';
 
 import { Brew } from '../../../classes/brew/brew';
 import { Mill } from '../../../classes/mill/mill';
@@ -40,8 +41,16 @@ describe('StatisticPage - Beans Average Rating by Country', () => {
     settings.bean_rating = 5;
     settings.brew_rating = 5;
 
-    beanStorageSpy = jasmine.createSpyObj('UIBeanStorage', ['getAllEntries']);
-    brewStorageSpy = jasmine.createSpyObj('UIBrewStorage', ['getAllEntries']);
+    beanStorageSpy = jasmine.createSpyObj('UIBeanStorage', [
+      'getAllEntries',
+      'attachOnEvent',
+    ]);
+    brewStorageSpy = jasmine.createSpyObj('UIBrewStorage', [
+      'getAllEntries',
+      'attachOnEvent',
+    ]);
+    beanStorageSpy.attachOnEvent.and.returnValue(EMPTY);
+    brewStorageSpy.attachOnEvent.and.returnValue(EMPTY);
     settingsStorageSpy = createMockUISettingsStorage();
     settingsStorageSpy.getSettings.and.returnValue(settings);
 
@@ -65,12 +74,16 @@ describe('StatisticPage - Beans Average Rating by Country', () => {
     const millStorageSpy = jasmine.createSpyObj('UIMillStorage', [
       'getAllEntries',
       'getMillNameByUUID',
+      'attachOnEvent',
     ]);
+    millStorageSpy.attachOnEvent.and.returnValue(EMPTY);
     millStorageSpy.getMillNameByUUID.and.callFake((id: string) => `Mill-${id}`);
     const prepStorageSpy = jasmine.createSpyObj('UIPreparationStorage', [
       'getAllEntries',
       'getPreparationNameByUUID',
+      'attachOnEvent',
     ]);
+    prepStorageSpy.attachOnEvent.and.returnValue(EMPTY);
     prepStorageSpy.getPreparationNameByUUID.and.callFake(
       (id: string) => `Prep-${id}`,
     );
