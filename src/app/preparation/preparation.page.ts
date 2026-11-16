@@ -6,6 +6,7 @@ import {
   ElementRef,
   HostListener,
   inject,
+  OnDestroy,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -25,6 +26,7 @@ import {
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
+import { merge, Subscription } from 'rxjs';
 
 import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
@@ -66,7 +68,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
     NgTemplateOutlet,
   ],
 })
-export class PreparationPage {
+export class PreparationPage implements OnDestroy {
   modalCtrl = inject(ModalController);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
   private readonly uiBrewStorage = inject(UIBrewStorage);
@@ -114,6 +116,7 @@ export class PreparationPage {
   @ViewChild('preparationContent', { read: ElementRef })
   public preparationContent: ElementRef;
   public segmentScrollHeight: string = undefined;
+  private storageChanges: Subscription;
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -123,9 +126,20 @@ export class PreparationPage {
     this.__initializePreparations();
     this.retriggerScroll();
     this.setUIParams();
-    this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
+    // Building the list replaces every card, as it shows copies. A card that
+    // deletes its method is replaced when the brews go and its event reaches
+    // nobody, so the list follows the methods themselves as well.
+    this.storageChanges?.unsubscribe();
+    this.storageChanges = merge(
+      this.uiBrewStorage.attachOnEvent(),
+      this.uiPreparationStorage.attachOnEvent(),
+    ).subscribe(() => {
       this.loadPreparations();
     });
+  }
+
+  public ngOnDestroy(): void {
+    this.storageChanges?.unsubscribe();
   }
 
   public loadPreparations(): void {

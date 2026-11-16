@@ -45,14 +45,6 @@ async function deleteAndCheck(
     options: string;
     question: string;
     toast: string;
-    /**
-     * Known defect: the list of the preparation methods is built again when
-     * the brews are removed, which replaces the card that deletes; the list
-     * does not hear from that card any more and shows the deleted method
-     * until the page is opened again. It was the same when the brews were
-     * deleted one by one.
-     */
-    staysOnTheList?: boolean;
     /** What is stored afterwards, per collection. */
     left: Record<string, string[]>;
     /** The removed entries in the order of their notes. */
@@ -87,9 +79,7 @@ async function deleteAndCheck(
   await choose('Yes');
   await expect(toast(page, flow.toast)).toBeVisible();
   await dialogsClosed(page);
-  if (!flow.staysOnTheList) {
-    await expect(card).toHaveCount(0);
-  }
+  await expect(card).toHaveCount(0);
   await expect.poll(stored).toEqual(flow.left);
 
   const device = await readStoredValue<{ device_id: string }>(page, 'DEVICE');
@@ -134,7 +124,6 @@ const WITH_BREWS = [
     question:
       'Delete preparation method? All associated brews will be deleted as well!',
     toast: 'Preparation method has been deleted',
-    staysOnTheList: true,
   },
 ] as const;
 
