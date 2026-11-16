@@ -564,6 +564,13 @@ flowchart LR
   start the eight newest copies are kept and older ones removed
   (`src/services/androidPlatform/android-platform.service.ts`,
   `src/services/iosPlatform/ios-platform.service.ts`).
+  Both files are written under another name (`Beanconqueror.zip.part`,
+  `Beanconqueror_automatic_export.zip.part`) and renamed once complete
+  (`UIFileHelper.replaceFileFromBlob`), so a write the system cuts off
+  leaves the file from before as it was. A `.part` file is never read,
+  listed or counted; the next write deletes it first. The plugin renames by
+  deleting the old file and moving the new one, on Android and iOS alike,
+  so for that moment the file is missing.
 - At start (native only), `checkBackup()` reads a single file: the internal
   `Beanconqueror.zip` in the data directory, or the legacy `Beanconqueror.json`
   when there is no ZIP (`readBackupZIPFile`). Despite its name,

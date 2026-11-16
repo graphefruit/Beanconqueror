@@ -110,11 +110,11 @@ describe('Checking the internal backup at start-up with a database that cannot b
   ) {
     const log = createLog();
     const chosenFiles = [..._chosenFiles];
-    const writeInternalFileFromBlob = jasmine
-      .createSpy('writeInternalFileFromBlob')
+    const replaceInternalFileFromBlob = jasmine
+      .createSpy('replaceInternalFileFromBlob')
       .and.resolveTo(undefined);
-    const writeFileFromBlob = jasmine
-      .createSpy('writeFileFromBlob')
+    const replaceFileFromBlob = jasmine
+      .createSpy('replaceFileFromBlob')
       .and.resolveTo(undefined);
     const readFileAsUint8Array = jasmine
       .createSpy('readFileAsUint8Array')
@@ -162,8 +162,8 @@ describe('Checking the internal backup at start-up with a database that cannot b
           useValue: {
             readInternalFileAsUint8Array: () => Promise.resolve(_backupFile),
             readFileAsUint8Array,
-            writeInternalFileFromBlob,
-            writeFileFromBlob,
+            replaceInternalFileFromBlob,
+            replaceFileFromBlob,
           },
         },
         {
@@ -204,8 +204,8 @@ describe('Checking the internal backup at start-up with a database that cannot b
       popover,
       importBackup,
       log,
-      writeInternalFileFromBlob,
-      writeFileFromBlob,
+      replaceInternalFileFromBlob,
+      replaceFileFromBlob,
       readFileAsUint8Array,
       showIOSIndexedDBIssues,
       showMessage,
@@ -417,7 +417,7 @@ describe('Checking the internal backup at start-up with a database that cannot b
     const data = createLegacyData({ brews: 20, beans: 4 });
     const backupFile = await writeBackupFile(data);
     const state = { readable: false };
-    const { helper, writeInternalFileFromBlob, writeFileFromBlob } =
+    const { helper, replaceInternalFileFromBlob, replaceFileFromBlob } =
       await startApp(data, state, backupFile, [INTERNAL_BACKUP_URI]);
     await helper.checkBackup();
 
@@ -425,14 +425,14 @@ describe('Checking the internal backup at start-up with a database that cannot b
     state.readable = true;
     await saveAutomaticBackups(helper);
 
-    expect(writeInternalFileFromBlob).not.toHaveBeenCalled();
+    expect(replaceInternalFileFromBlob).not.toHaveBeenCalled();
     // The backup of the day is still written.
-    expect(writeFileFromBlob).toHaveBeenCalledTimes(1);
+    expect(replaceFileFromBlob).toHaveBeenCalledTimes(1);
 
     helper.allCollectionsRead();
     await saveAutomaticBackups(helper);
 
-    expect(writeInternalFileFromBlob).toHaveBeenCalledTimes(1);
+    expect(replaceInternalFileFromBlob).toHaveBeenCalledTimes(1);
   });
 
   it('still imports the internal backup without asking when the database is empty', async () => {
@@ -466,15 +466,15 @@ describe('Checking the internal backup at start-up with a database that cannot b
   it('writes no automatic backup while the database cannot be read', async () => {
     const data = createLegacyData({ brews: 20, beans: 4 });
     const state = { readable: true };
-    const { helper, writeInternalFileFromBlob, writeFileFromBlob } =
+    const { helper, replaceInternalFileFromBlob, replaceFileFromBlob } =
       await startApp(data, state);
     spyOn(helper, 'buildExportZIP').and.resolveTo(new Blob(['zip']));
     state.readable = false;
 
     await saveAutomaticBackups(helper);
 
-    expect(writeInternalFileFromBlob).not.toHaveBeenCalled();
-    expect(writeFileFromBlob).not.toHaveBeenCalled();
+    expect(replaceInternalFileFromBlob).not.toHaveBeenCalled();
+    expect(replaceFileFromBlob).not.toHaveBeenCalled();
   });
 });
 

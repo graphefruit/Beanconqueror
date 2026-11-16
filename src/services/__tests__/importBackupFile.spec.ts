@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { ModalController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 
-import { FileInfo } from '@capacitor/filesystem';
+import { Directory, FileInfo } from '@capacitor/filesystem';
 import moment from 'moment';
 
 import {
@@ -251,11 +251,13 @@ async function startDevice(
     readInternalFileAsUint8Array: () =>
       Promise.resolve(_options.internalBackup),
     // Beanconqueror.zip, which the start-up check reads.
-    writeInternalFileFromBlob: jasmine
-      .createSpy('writeInternalFileFromBlob')
+    replaceInternalFileFromBlob: jasmine
+      .createSpy('replaceInternalFileFromBlob')
       .and.resolveTo(),
     // The automatic backup of the day.
-    writeFileFromBlob: jasmine.createSpy('writeFileFromBlob').and.resolveTo(),
+    replaceFileFromBlob: jasmine
+      .createSpy('replaceFileFromBlob')
+      .and.resolveTo(),
   };
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
@@ -1101,7 +1103,7 @@ describe('Restoring the internal backup at start-up', () => {
    */
   async function writeAutomaticBackups(_device: Device): Promise<void> {
     const written = new Promise<void>((_resolve) => {
-      _device.fileHelper.writeFileFromBlob.and.callFake(() => {
+      _device.fileHelper.replaceFileFromBlob.and.callFake(() => {
         _resolve();
         return Promise.resolve();
       });
@@ -1111,11 +1113,11 @@ describe('Restoring the internal backup at start-up', () => {
   }
 
   async function writtenInternalBackup(_device: Device): Promise<any> {
-    expect(_device.fileHelper.writeInternalFileFromBlob).toHaveBeenCalledTimes(
-      1,
-    );
+    expect(
+      _device.fileHelper.replaceInternalFileFromBlob,
+    ).toHaveBeenCalledTimes(1);
     const [blob, path] =
-      _device.fileHelper.writeInternalFileFromBlob.calls.mostRecent().args;
+      _device.fileHelper.replaceInternalFileFromBlob.calls.mostRecent().args;
     expect(path).toBe('Beanconqueror.zip');
     return await _device.helper.getJSONFromZIPArrayBufferContent(
       await (blob as Blob).arrayBuffer(),
@@ -1133,9 +1135,11 @@ describe('Restoring the internal backup at start-up', () => {
     await writeAutomaticBackups(device);
     await writeAutomaticBackups(device);
 
-    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
+    expect(
+      device.fileHelper.replaceInternalFileFromBlob,
+    ).not.toHaveBeenCalled();
     // The work of this session still goes into the automatic backup.
-    expect(device.fileHelper.writeFileFromBlob).toHaveBeenCalledTimes(2);
+    expect(device.fileHelper.replaceFileFromBlob).toHaveBeenCalledTimes(2);
   });
 
   it('keeps the internal backup also when it was to be restored without asking', async () => {
@@ -1157,7 +1161,9 @@ describe('Restoring the internal backup at start-up', () => {
 
     await writeAutomaticBackups(device);
 
-    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
+    expect(
+      device.fileHelper.replaceInternalFileFromBlob,
+    ).not.toHaveBeenCalled();
   });
 
   it('keeps the internal backup when importing it was rolled back', async () => {
@@ -1171,7 +1177,9 @@ describe('Restoring the internal backup at start-up', () => {
 
     await writeAutomaticBackups(device);
 
-    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
+    expect(
+      device.fileHelper.replaceInternalFileFromBlob,
+    ).not.toHaveBeenCalled();
   });
 
   it('keeps the internal backup after it was not restored also once every collection was read', async () => {
@@ -1184,7 +1192,9 @@ describe('Restoring the internal backup at start-up', () => {
     device.helper.allCollectionsRead();
     await writeAutomaticBackups(device);
 
-    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
+    expect(
+      device.fileHelper.replaceInternalFileFromBlob,
+    ).not.toHaveBeenCalled();
   });
 
   it('keeps the internal backup when importing it failed and could not be rolled back', async () => {
@@ -1199,7 +1209,9 @@ describe('Restoring the internal backup at start-up', () => {
 
     await writeAutomaticBackups(device);
 
-    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
+    expect(
+      device.fileHelper.replaceInternalFileFromBlob,
+    ).not.toHaveBeenCalled();
   });
 
   const OUTCOMES: {
@@ -1519,8 +1531,8 @@ describe('The automatic backups', () => {
 
     expect(readAll).toHaveBeenCalledTimes(1);
     for (const write of [
-      device.fileHelper.writeInternalFileFromBlob,
-      device.fileHelper.writeFileFromBlob,
+      device.fileHelper.replaceInternalFileFromBlob,
+      device.fileHelper.replaceFileFromBlob,
     ]) {
       expect(write).toHaveBeenCalledTimes(1);
       const blob = write.calls.mostRecent().args[0] as Blob;
@@ -1530,24 +1542,38 @@ describe('The automatic backups', () => {
         ),
       ).toEqual(stored);
     }
+    // Each under another name until it is complete, never the final one.
+    expect(
+      device.fileHelper.replaceInternalFileFromBlob.calls
+        .mostRecent()
+        .args.slice(1),
+    ).toEqual(['Beanconqueror.zip', 'Beanconqueror.zip.part']);
+    const folder = 'Download/Beanconqueror_export/';
+    expect(
+      device.fileHelper.replaceFileFromBlob.calls.mostRecent().args.slice(1),
+    ).toEqual([
+      `${folder}Beanconqueror_automatic_export_${moment().format('DD_MM_YYYY')}.zip`,
+      `${folder}Beanconqueror_automatic_export.zip.part`,
+      Directory.External,
+    ]);
   });
 
   it('are only done once both files are written', async () => {
     const device = await startDevice(completeData());
     let finishInternal!: () => void;
     let finishOfTheDay!: () => void;
-    device.fileHelper.writeInternalFileFromBlob.and.returnValue(
+    device.fileHelper.replaceInternalFileFromBlob.and.returnValue(
       new Promise<void>((_resolve) => (finishInternal = _resolve)),
     );
-    device.fileHelper.writeFileFromBlob.and.returnValue(
+    device.fileHelper.replaceFileFromBlob.and.returnValue(
       new Promise<void>((_resolve) => (finishOfTheDay = _resolve)),
     );
     let done = false;
     void device.helper.saveAutomaticBackups().then(() => (done = true));
 
     await settle();
-    expect(device.fileHelper.writeInternalFileFromBlob).toHaveBeenCalled();
-    expect(device.fileHelper.writeFileFromBlob).toHaveBeenCalled();
+    expect(device.fileHelper.replaceInternalFileFromBlob).toHaveBeenCalled();
+    expect(device.fileHelper.replaceFileFromBlob).toHaveBeenCalled();
     expect(done).toBeFalse();
 
     finishInternal();
@@ -1561,13 +1587,13 @@ describe('The automatic backups', () => {
 
   it('are done and still write the other file when one cannot be written', async () => {
     const device = await startDevice(completeData());
-    device.fileHelper.writeInternalFileFromBlob.and.rejectWith(
+    device.fileHelper.replaceInternalFileFromBlob.and.rejectWith(
       new Error('disk full'),
     );
 
     await writeAutomaticBackups(device);
 
-    expect(device.fileHelper.writeFileFromBlob).toHaveBeenCalledTimes(1);
+    expect(device.fileHelper.replaceFileFromBlob).toHaveBeenCalledTimes(1);
     expect(device.uiLog.error).toHaveBeenCalledOnceWith(
       'Could not to export normal ZIP file',
     );
@@ -1580,8 +1606,10 @@ describe('The automatic backups', () => {
 
     await writeAutomaticBackups(device);
 
-    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
-    expect(device.fileHelper.writeFileFromBlob).not.toHaveBeenCalled();
+    expect(
+      device.fileHelper.replaceInternalFileFromBlob,
+    ).not.toHaveBeenCalled();
+    expect(device.fileHelper.replaceFileFromBlob).not.toHaveBeenCalled();
     expect(device.uiLog.error).toHaveBeenCalledWith(
       'Data inside the database seems like corrupted / no data',
     );
@@ -1593,8 +1621,10 @@ describe('The automatic backups', () => {
 
     await writeAutomaticBackups(device);
 
-    expect(device.fileHelper.writeInternalFileFromBlob).not.toHaveBeenCalled();
-    expect(device.fileHelper.writeFileFromBlob).not.toHaveBeenCalled();
+    expect(
+      device.fileHelper.replaceInternalFileFromBlob,
+    ).not.toHaveBeenCalled();
+    expect(device.fileHelper.replaceFileFromBlob).not.toHaveBeenCalled();
     expect(device.uiLog.error).toHaveBeenCalledWith(
       'ZIP file could not be saved',
     );

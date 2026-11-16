@@ -865,9 +865,10 @@ export class UIExportImportHelper {
   }
   private async __saveInternalBeanconquerorDump(_blob: Blob) {
     try {
-      await this.uiFileHelper.writeInternalFileFromBlob(
+      await this.uiFileHelper.replaceInternalFileFromBlob(
         _blob,
         'Beanconqueror.zip',
+        'Beanconqueror.zip.part',
       );
     } catch (ex) {
       this.uiLog.error('Could not to export normal ZIP file');
@@ -889,11 +890,15 @@ export class UIExportImportHelper {
     if (welcomePagedShowed === true && brewsAdded === true) {
       this.uiLog.log('Start to export automatic ZIP file');
       try {
-        await this.uiFileHelper.writeFileFromBlob(
+        await this.uiFileHelper.replaceFileFromBlob(
           _blob,
           'Download/Beanconqueror_export/Beanconqueror_automatic_export_' +
             this.getAutomatedBackupFilename() +
             '.zip',
+          // The same on every day, so the next write removes what a write
+          // of a day before left behind. Without the "_" that starts the
+          // day, it is not listed as an automatic backup.
+          'Download/Beanconqueror_export/Beanconqueror_automatic_export.zip.part',
           Directory.External,
         );
       } catch (ex) {

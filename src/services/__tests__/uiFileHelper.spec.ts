@@ -127,6 +127,13 @@ describe('UIFileHelper', () => {
         fileHelper.writeFileFromBase64(BYTES_BASE64, 'a.bin', Directory.Data),
       writeFileFromBlob: () =>
         fileHelper.writeFileFromBlob(blob, 'a.bin', Directory.Data),
+      replaceFileFromBlob: () =>
+        fileHelper.replaceFileFromBlob(
+          blob,
+          'a.bin',
+          'a.bin.part',
+          Directory.Data,
+        ),
       writeExternalFileFromBase64ForSharing: () =>
         fileHelper.writeExternalFileFromBase64ForSharing(BYTES_BASE64, 'a.bin'),
       deleteFile: () => fileHelper.deleteFile('a.txt', Directory.Data),
@@ -175,8 +182,8 @@ describe('UIFileHelper', () => {
         fileHelper.writeInternalFileFromText('text', 'a.txt'),
       writeInternalFileFromBase64: () =>
         fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'a.bin'),
-      writeInternalFileFromBlob: () =>
-        fileHelper.writeInternalFileFromBlob(blob, 'a.bin'),
+      replaceInternalFileFromBlob: () =>
+        fileHelper.replaceInternalFileFromBlob(blob, 'a.bin', 'a.bin.part'),
       deleteInternalFile: () => fileHelper.deleteInternalFile('a.txt'),
       generateInternalPath: () => fileHelper.generateInternalPath('a', '.txt'),
       makeParentDirsInternal: () =>
@@ -394,9 +401,10 @@ describe('UIFileHelper', () => {
       ['a blob without type', ''],
     ]) {
       it(`reads back the content of ${title}`, async () => {
-        const result = await fileHelper.writeInternalFileFromBlob(
+        const result = await fileHelper.writeFileFromBlob(
           new Blob([BYTES], { type }),
           'backup.zip',
+          Directory.Data,
         );
 
         expect(result).toEqual({
@@ -422,9 +430,10 @@ describe('UIFileHelper', () => {
         'writeFile',
       ).and.callThrough();
       const handedOver = async (type: string) => {
-        await fileHelper.writeInternalFileFromBlob(
+        await fileHelper.writeFileFromBlob(
           new Blob([BYTES], { type }),
           'backup.zip',
+          Directory.Data,
         );
         return writeFile.calls.mostRecent().args[0].data;
       };
@@ -748,6 +757,157 @@ describe('UIFileHelper', () => {
 
     const exported = () => namesIn(EXPORT_DIR, Directory.External);
     const backup = (day: string) => `${BACKUP_PREFIX}${day}.zip`;
+
+    describe('replaceFileFromBlob', () => {
+      const day = `${EXPORT_DIR}/${backup('02_03_2026')}`;
+      const unfinished = 'Beanconqueror_automatic_export.zip.part';
+      const replaceBackupOfTheDay = () =>
+        fileHelper.replaceFileFromBlob(
+          new Blob([BYTES]),
+          day,
+          `${EXPORT_DIR}/${unfinished}`,
+          Directory.External,
+        );
+      const backupOfTheDay = () =>
+        fileHelper.readFileAsBase64(day, Directory.External);
+      /** Writes the first bytes of the file as a write does that is cut off. */
+      function cutOffWrites(failing: boolean): jasmine.Spy {
+        return spyOn(FilesystemWeb.prototype, 'writeFile').and.callFake(
+          async (options) => {
+            // Not through writeFile, which is replaced here.
+            await Filesystem.appendFile({ ...options, data: 'AAE=' });
+            if (failing) {
+              throw new Error('disk full');
+            }
+            return { uri: '' };
+          },
+        );
+      }
+
+      it('writes a file that is not there yet, folders included', async () => {
+        await replaceBackupOfTheDay();
+
+        expect(await backupOfTheDay()).toBe(BYTES_BASE64);
+        expect(await exported()).toEqual([backup('02_03_2026')]);
+      });
+
+      it('replaces the file and leaves no other one behind', async () => {
+        await writeExported(backup('02_03_2026'));
+
+        await replaceBackupOfTheDay();
+
+        expect(await backupOfTheDay()).toBe(BYTES_BASE64);
+        expect(await exported()).toEqual([backup('02_03_2026')]);
+      });
+
+      it('keeps the file from before while the new one is not complete', async () => {
+        await writeExported(backup('02_03_2026'));
+        const writing = cutOffWrites(false);
+        // The system ends the app here: nothing follows the write.
+        spyOn(FilesystemWeb.prototype, 'rename').and.returnValue(
+          new Promise<void>(() => undefined),
+        );
+
+        void replaceBackupOfTheDay();
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        expect(writing).toHaveBeenCalledTimes(1);
+        expect(await fileHelper.readFileAsText(day, Directory.External)).toBe(
+          'zip',
+        );
+        // What is left of the cut off file is no backup to choose or count.
+        expect(await exported()).toEqual([unfinished, backup('02_03_2026')]);
+        expect(
+          (await fileHelper.listAutomaticBackupFiles()).map(
+            (file) => file.name,
+          ),
+        ).toEqual([backup('02_03_2026')]);
+      });
+
+      it('deletes what a write that was cut off left behind before it writes', async () => {
+        await writeExported(backup('01_03_2026'), unfinished);
+        let whenWriting: string[] | undefined;
+        spyOn(FilesystemWeb.prototype, 'writeFile').and.callFake(async () => {
+          whenWriting = await exported();
+          throw new Error('disk full');
+        });
+
+        await expectAsync(replaceBackupOfTheDay()).toBeRejectedWithError(
+          'disk full',
+        );
+
+        expect(whenWriting).toEqual([backup('01_03_2026')]);
+        expect(await exported()).toEqual([backup('01_03_2026')]);
+      });
+
+      it('deletes the cut off file and rejects when writing fails', async () => {
+        await writeExported(backup('02_03_2026'));
+        cutOffWrites(true);
+
+        await expectAsync(replaceBackupOfTheDay()).toBeRejectedWithError(
+          'disk full',
+        );
+
+        expect(await exported()).toEqual([backup('02_03_2026')]);
+        expect(await fileHelper.readFileAsText(day, Directory.External)).toBe(
+          'zip',
+        );
+      });
+
+      it('deletes the new file and rejects when it cannot get its name', async () => {
+        await writeExported(backup('02_03_2026'));
+        spyOn(FilesystemWeb.prototype, 'rename').and.rejectWith(
+          new Error('rename failed'),
+        );
+
+        await expectAsync(replaceBackupOfTheDay()).toBeRejectedWithError(
+          'rename failed',
+        );
+
+        expect(await exported()).toEqual([backup('02_03_2026')]);
+        expect(await fileHelper.readFileAsText(day, Directory.External)).toBe(
+          'zip',
+        );
+      });
+
+      it('never deletes an unfinished file as an old backup, the next write does', async () => {
+        today(2026, 3, 20);
+        await writeExported(unfinished, backup('01_03_2026'));
+
+        await fileHelper.deleteOldAutomaticBackups();
+        expect(await exported()).toContain(unfinished);
+
+        await replaceBackupOfTheDay();
+        expect(await exported()).toEqual([
+          backup('01_03_2026'),
+          backup('02_03_2026'),
+        ]);
+      });
+    });
+
+    describe('replaceInternalFileFromBlob', () => {
+      it('replaces the file in the app data directory', async () => {
+        await Filesystem.writeFile({
+          path: 'Beanconqueror.zip',
+          data: 'old',
+          directory: Directory.Data,
+          encoding: Encoding.UTF8,
+        });
+
+        await fileHelper.replaceInternalFileFromBlob(
+          new Blob([BYTES]),
+          'Beanconqueror.zip',
+          'Beanconqueror.zip.part',
+        );
+
+        expect(
+          await fileHelper.readInternalFileAsBase64('Beanconqueror.zip'),
+        ).toBe(BYTES_BASE64);
+        expect(await namesIn('', Directory.Data)).toEqual([
+          'Beanconqueror.zip',
+        ]);
+      });
+    });
 
     describe('listAutomaticBackupFiles', () => {
       it('gives the files with the name of an automatic backup', async () => {

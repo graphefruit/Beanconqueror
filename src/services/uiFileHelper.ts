@@ -277,12 +277,52 @@ export class UIFileHelper extends InstanceClass {
     return this.writeFileFromBase64(base64, path, directory);
   }
 
-  public async writeInternalFileFromBlob(
+  /**
+   * Replaces the file at `path` with `blob`. The data is written to
+   * `unfinishedPath` and only gets the name `path` once it is complete: when
+   * the system ends the app while it writes, the file at `path` is still the
+   * complete one from before. What a write left behind at `unfinishedPath`
+   * is deleted before the next one, and right away when the write or the
+   * renaming fails. A file at `unfinishedPath` is never to be read.
+   *
+   * The plugin renames on Android and iOS by deleting the file at `path` and
+   * moving the new one there, so for that moment there is no file at `path`.
+   */
+  public async replaceFileFromBlob(
     blob: Blob,
     path: string,
-  ): Promise<{ path: string; fullpath: string }> {
-    this.uiLog.debug('writeInternalFileFromBlob for path', path);
-    return this.writeFileFromBlob(blob, path, this.getDataDirectory());
+    unfinishedPath: string,
+    directory: Directory,
+  ): Promise<void> {
+    const deleteUnfinished = () =>
+      this.deleteFile(unfinishedPath, directory).catch(() => undefined);
+    await deleteUnfinished();
+    try {
+      await this.writeFileFromBlob(blob, unfinishedPath, directory);
+      await Filesystem.rename({
+        from: unfinishedPath,
+        to: path,
+        directory: directory,
+        toDirectory: directory,
+      });
+    } catch (error) {
+      await deleteUnfinished();
+      throw error;
+    }
+  }
+
+  public async replaceInternalFileFromBlob(
+    blob: Blob,
+    path: string,
+    unfinishedPath: string,
+  ): Promise<void> {
+    this.uiLog.debug('replaceInternalFileFromBlob for path', path);
+    await this.replaceFileFromBlob(
+      blob,
+      path,
+      unfinishedPath,
+      this.getDataDirectory(),
+    );
   }
 
   public async writeFileFromText(
