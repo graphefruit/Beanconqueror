@@ -34,7 +34,6 @@ export class AndroidPlatformService {
     if (this.platform.is('capacitor') && this.platform.is('android')) {
       this.uiHelper.isBeanconqurorAppReady().then(
         () => {
-          // Delete on startup old json backup files
           this.uiFileHelper.deleteOldAutomaticBackups().then(
             () => {},
             () => {},

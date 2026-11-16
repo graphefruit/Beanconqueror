@@ -33,7 +33,6 @@ export class IosPlatformService {
     if (this.platform.is('capacitor') && this.platform.is('ios')) {
       this.uiHelper.isBeanconqurorAppReady().then(
         () => {
-          // Delete on startup old json backup files
           this.uiFileHelper.deleteOldAutomaticBackups().then(
             () => {},
             () => {},
