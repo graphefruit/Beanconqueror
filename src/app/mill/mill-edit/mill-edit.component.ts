@@ -26,11 +26,13 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { Mill } from '../../../classes/mill/mill';
+import { storedOrReported } from '../../../classes/storedOrReported';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
 import MILL_TRACKING from '../../../data/tracking/millTracking';
 import { IMill } from '../../../interfaces/mill/iMill';
+import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIImage } from '../../../services/uiImage';
@@ -68,6 +70,7 @@ export class MillEditComponent implements OnInit {
   private readonly uiImage = inject(UIImage);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
   private readonly uiAnalytics = inject(UIAnalytics);
 
   public static COMPONENT_ID: string = 'mill-edit';
@@ -90,9 +93,14 @@ export class MillEditComponent implements OnInit {
   }
 
   public async __editMill() {
-    if (await this.uiMillStorage.update(this.data)) {
-      await this.uiImage.deleteRemovedPhotos(this.data);
+    if (
+      !(await storedOrReported(this.uiAlert, () =>
+        this.uiMillStorage.update(this.data),
+      ))
+    ) {
+      return;
     }
+    await this.uiImage.deleteRemovedPhotos(this.data);
     this.uiToast.showInfoToast('TOAST_MILL_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       MILL_TRACKING.TITLE,

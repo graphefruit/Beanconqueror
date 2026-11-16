@@ -267,6 +267,13 @@ writes:
   the caches drop their objects. So nothing a failed write left in memory
   reaches the disk with the next save of the collection. The known gap of
   `applyChanges` about a write saved meanwhile holds here as well.
+- The forms that add or edit a bean, green bean, mill, preparation, water or
+  roasting machine save through `storedOrReported()`
+  (`src/classes/storedOrReported.ts`). Only when the entry was stored they
+  show their toast, delete the files of removed photos and close. Otherwise
+  the form stays open with what was entered and the user gets one message:
+  the one of the collection, or `ERROR_OCCURED` when it stayed silent. The
+  forms of a brew and of a graph do not do this yet.
 - `applyChanges({ update, remove, add })` is the one way to write several
   entries of a collection with a single save: it replaces, removes and adds,
   in this order, and stores all of it or nothing. `updateMany(entries)`,

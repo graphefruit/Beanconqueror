@@ -20,6 +20,7 @@ import {
 
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
+import { storedOrReported } from '../../../../classes/storedOrReported';
 import { Water } from '../../../../classes/water/water';
 import TrackContentImpression from '../../../../data/tracking/trackContentImpression/trackContentImpression';
 import WATER_TRACKING from '../../../../data/tracking/waterTracking';
@@ -27,6 +28,7 @@ import { DisableDoubleClickDirective } from '../../../../directive/disable-doubl
 import { WATER_TYPES } from '../../../../enums/water/waterTypes';
 import { WATER_UNIT } from '../../../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
+import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIToast } from '../../../../services/uiToast';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
@@ -53,6 +55,7 @@ export class WaterAddTypeComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiWaterStorage = inject(UIWaterStorage);
   private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly translate = inject(TranslateService);
 
@@ -392,7 +395,13 @@ export class WaterAddTypeComponent implements OnInit {
     }
   }
   public async __add() {
-    await this.uiWaterStorage.add(this.data);
+    if (
+      !(await storedOrReported(this.uiAlert, () =>
+        this.uiWaterStorage.addAndConfirm(this.data),
+      ))
+    ) {
+      return;
+    }
     this.uiAnalytics.trackEvent(
       WATER_TRACKING.TITLE,
       WATER_TRACKING.ACTIONS.ADD_FINISH,

@@ -33,6 +33,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
+import { storedOrReported } from '../../../classes/storedOrReported';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
@@ -157,9 +158,14 @@ export class PreparationEditComponent implements OnInit {
       //this.data.default_last_coffee_parameters.coffee_first_drip_time = false;
     }
 
-    if (await this.uiPreparationStorage.update(this.data)) {
-      await this.uiImage.deleteRemovedPhotos(this.data);
+    if (
+      !(await storedOrReported(this.uiAlert, () =>
+        this.uiPreparationStorage.update(this.data),
+      ))
+    ) {
+      return;
     }
+    await this.uiImage.deleteRemovedPhotos(this.data);
     this.uiToast.showInfoToast('TOAST_PREPARATION_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,

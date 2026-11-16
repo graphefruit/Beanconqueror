@@ -26,11 +26,13 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
+import { storedOrReported } from '../../../../classes/storedOrReported';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../../components/header/header.component';
 import { PhotoAddComponent } from '../../../../components/photo-add/photo-add.component';
 import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
 import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
+import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIImage } from '../../../../services/uiImage';
@@ -68,6 +70,7 @@ export class RoastingMachineEditComponent implements OnInit {
   private readonly uiImage = inject(UIImage);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
   private readonly uiAnalytics = inject(UIAnalytics);
 
   public static COMPONENT_ID: string = 'roasting-machine-edit';
@@ -91,9 +94,14 @@ export class RoastingMachineEditComponent implements OnInit {
   }
 
   public async __edit() {
-    if (await this.uiRoastingMachineStorage.update(this.data)) {
-      await this.uiImage.deleteRemovedPhotos(this.data);
+    if (
+      !(await storedOrReported(this.uiAlert, () =>
+        this.uiRoastingMachineStorage.update(this.data),
+      ))
+    ) {
+      return;
     }
+    await this.uiImage.deleteRemovedPhotos(this.data);
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       ROASTING_MACHINE_TRACKING.TITLE,

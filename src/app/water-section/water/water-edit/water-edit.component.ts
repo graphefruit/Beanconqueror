@@ -29,6 +29,7 @@ import { informationCircleOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { storedOrReported } from '../../../../classes/storedOrReported';
 import { Water } from '../../../../classes/water/water';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../../components/header/header.component';
@@ -39,6 +40,7 @@ import { RemoveEmptyNumberDirective } from '../../../../directive/remove-empty-n
 import { WATER_UNIT } from '../../../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
 import { KeysPipe } from '../../../../pipes/keys';
+import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIImage } from '../../../../services/uiImage';
@@ -82,6 +84,7 @@ export class WaterEditComponent {
   private readonly uiImage = inject(UIImage);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
   private readonly uiAnalytics = inject(UIAnalytics);
 
   public static readonly COMPONENT_ID = 'water-edit';
@@ -110,9 +113,14 @@ export class WaterEditComponent {
   }
 
   public async __edit() {
-    if (await this.uiWaterStorage.update(this.data)) {
-      await this.uiImage.deleteRemovedPhotos(this.data);
+    if (
+      !(await storedOrReported(this.uiAlert, () =>
+        this.uiWaterStorage.update(this.data),
+      ))
+    ) {
+      return;
     }
+    await this.uiImage.deleteRemovedPhotos(this.data);
     this.uiToast.showInfoToast('TOAST_WATER_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       WATER_TRACKING.TITLE,

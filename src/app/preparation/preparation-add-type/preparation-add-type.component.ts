@@ -31,12 +31,14 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
+import { storedOrReported } from '../../../classes/storedOrReported';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
 import { TooltipDirective } from '../../../directive/tooltip.directive';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -71,6 +73,7 @@ export class PreparationAddTypeComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
   private readonly translate = inject(TranslateService);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
@@ -115,7 +118,16 @@ export class PreparationAddTypeComponent implements OnInit {
       this.data.manage_parameters.coffee_first_drip_time = false;
       this.data.default_last_coffee_parameters.coffee_first_drip_time = false;
     }
-    const newPreparation = await this.uiPreparationStorage.add(this.data);
+    let newPreparation: Preparation;
+    if (
+      !(await storedOrReported(this.uiAlert, async () => {
+        const added = await this.uiPreparationStorage.addAndConfirm(this.data);
+        newPreparation = added.entry;
+        return added.saved;
+      }))
+    ) {
+      return;
+    }
     this.dismiss(true);
 
     this.uiAnalytics.trackContentImpression(

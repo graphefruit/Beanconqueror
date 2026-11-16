@@ -111,6 +111,7 @@ describe('Photos removed in an edit form', () => {
           [form.storage]: storage,
           uiImage,
           uiToast: jasmine.createSpyObj('UIToast', ['showInfoToast']),
+          uiAlert: jasmine.createSpyObj('UIAlert', ['showMessage']),
           uiAnalytics: jasmine.createSpyObj('UIAnalytics', ['trackEvent']),
           modalController: jasmine.createSpyObj('ModalController', ['dismiss']),
           ...form.extra?.(),

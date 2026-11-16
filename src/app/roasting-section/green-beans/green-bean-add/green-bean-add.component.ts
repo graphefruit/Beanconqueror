@@ -23,6 +23,7 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
+import { storedOrReported } from '../../../../classes/storedOrReported';
 import { BeanSortInformationComponent } from '../../../../components/beans/bean-sort-information/bean-sort-information.component';
 import { GreenBeanGeneralInformationComponent } from '../../../../components/beans/green-bean-general-information/green-bean-general-information.component';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
@@ -30,6 +31,7 @@ import { HeaderComponent } from '../../../../components/header/header.component'
 import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
 import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
 import { IBeanInformation } from '../../../../interfaces/bean/iBeanInformation';
+import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIFileHelper } from '../../../../services/uiFileHelper';
 import { UIGreenBeanStorage } from '../../../../services/uiGreenBeanStorage';
@@ -68,6 +70,7 @@ export class GreenBeanAddComponent implements OnInit {
   uiHelper = inject(UIHelper);
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
   private readonly uiAnalytics = inject(UIAnalytics);
 
   public static COMPONENT_ID: string = 'green-bean-add';
@@ -100,7 +103,13 @@ export class GreenBeanAddComponent implements OnInit {
   }
 
   public async __addBean() {
-    await this.uiGreenBeanStorage.add(this.data);
+    if (
+      !(await storedOrReported(this.uiAlert, () =>
+        this.uiGreenBeanStorage.addAndConfirm(this.data),
+      ))
+    ) {
+      return;
+    }
     this.uiToast.showInfoToast('TOAST_GREEN_BEAN_ADDED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       GREEN_BEAN_TRACKING.TITLE,

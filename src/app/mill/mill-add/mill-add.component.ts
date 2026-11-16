@@ -22,9 +22,11 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { Mill } from '../../../classes/mill/mill';
+import { storedOrReported } from '../../../classes/storedOrReported';
 import MILL_TRACKING from '../../../data/tracking/millTracking';
 import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIToast } from '../../../services/uiToast';
@@ -52,6 +54,7 @@ export class MillAddComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiMillStorage = inject(UIMillStorage);
   private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
   private readonly uiAnalytics = inject(UIAnalytics);
 
   public static COMPONENT_ID: string = 'mill-add';
@@ -69,7 +72,13 @@ export class MillAddComponent implements OnInit {
   }
 
   public async __addMill() {
-    await this.uiMillStorage.add(this.data);
+    if (
+      !(await storedOrReported(this.uiAlert, () =>
+        this.uiMillStorage.addAndConfirm(this.data),
+      ))
+    ) {
+      return;
+    }
     this.uiAnalytics.trackContentImpression(
       TrackContentImpression.STATISTICS_GRINDER_NAME,
       this.data.name,

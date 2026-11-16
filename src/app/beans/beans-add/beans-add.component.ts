@@ -27,6 +27,7 @@ import moment from 'moment';
 import { Bean } from '../../../classes/bean/bean';
 import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { Settings } from '../../../classes/settings/settings';
+import { storedOrReported } from '../../../classes/storedOrReported';
 import { BeanFreezeInformationComponent } from '../../../components/beans/bean-freeze-information/bean-freeze-information.component';
 import { BeanGeneralInformationComponent } from '../../../components/beans/bean-general-information/bean-general-information.component';
 import { BeanRoastInformationComponent } from '../../../components/beans/bean-roast-information/bean-roast-information.component';
@@ -256,7 +257,13 @@ export class BeansAddComponent implements OnInit {
     if (this.data.frozenDate && this.data.frozenId === '') {
       this.data.frozenId = this.uiBeanHelper.generateFrozenId();
     }
-    await this.uiBeanStorage.add(this.data);
+    if (
+      !(await storedOrReported(this.uiAlert, () =>
+        this.uiBeanStorage.addAndConfirm(this.data),
+      ))
+    ) {
+      return;
+    }
 
     const eventsToTrack = [];
     const impressionsToTrack = [];

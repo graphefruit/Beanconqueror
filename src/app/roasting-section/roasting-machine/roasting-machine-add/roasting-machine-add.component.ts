@@ -20,8 +20,10 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-machine';
+import { storedOrReported } from '../../../../classes/storedOrReported';
 import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
 import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
+import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
 import { UIToast } from '../../../../services/uiToast';
@@ -48,6 +50,7 @@ export class RoastingMachineAddComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
   private readonly uiToast = inject(UIToast);
+  private readonly uiAlert = inject(UIAlert);
   private readonly uiAnalytics = inject(UIAnalytics);
 
   public static COMPONENT_ID: string = 'roasting-machine-add';
@@ -66,7 +69,13 @@ export class RoastingMachineAddComponent implements OnInit {
   }
 
   public async __add() {
-    await this.uiRoastingMachineStorage.add(this.data);
+    if (
+      !(await storedOrReported(this.uiAlert, () =>
+        this.uiRoastingMachineStorage.addAndConfirm(this.data),
+      ))
+    ) {
+      return;
+    }
     this.uiAnalytics.trackEvent(
       ROASTING_MACHINE_TRACKING.TITLE,
       ROASTING_MACHINE_TRACKING.ACTIONS.ADD_FINISH,
