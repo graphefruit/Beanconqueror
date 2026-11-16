@@ -1418,20 +1418,17 @@
     }
   },
   "src/app/statistic/statistic.page.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
     "@angular-eslint/prefer-on-push-component-change-detection": {
       "count": 1
     },
     "@typescript-eslint/no-empty-function": {
-      "count": 2
+      "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
       "count": 2
     },
     "@typescript-eslint/no-unsafe-return": {
-      "count": 2
+      "count": 1
     },
     "no-empty": {
       "count": 1
@@ -2442,11 +2439,8 @@
     }
   },
   "src/classes/storageClass.ts": {
-    "@typescript-eslint/no-misused-promises": {
-      "count": 1
-    },
     "@typescript-eslint/prefer-promise-reject-errors": {
-      "count": 3
+      "count": 2
     },
     "no-empty": {
       "count": 1
@@ -3766,7 +3760,7 @@
   },
   "src/services/uiSettingsStorage.ts": {
     "@typescript-eslint/prefer-promise-reject-errors": {
-      "count": 2
+      "count": 1
     }
   },
   "src/services/uiStatistic.ts": {
@@ -3806,7 +3800,7 @@
   },
   "src/services/uiVersionStorage.ts": {
     "@typescript-eslint/prefer-promise-reject-errors": {
-      "count": 2
+      "count": 1
     }
   },
   "src/services/visualizerService/visualizer-service.service.ts": {
