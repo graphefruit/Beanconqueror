@@ -40,9 +40,18 @@ export class AutomaticBackupService {
       this.timer = setTimeout(saveNow, DELAY_AFTER_LAST_CHANGE_MS);
     });
     // The timer may never fire once the app is in the background.
-    void App.addListener('pause', () => {
+    const saveIfWaiting = () => {
       if (this.timer !== undefined) {
         saveNow();
+      }
+    };
+    void App.addListener('pause', saveIfWaiting);
+    // iOS only tells of the pause once the app is in the background, which
+    // it never is when it is closed from the app switcher; it is inactive
+    // as soon as the switcher opens.
+    void App.addListener('appStateChange', (_state) => {
+      if (!_state.isActive) {
+        saveIfWaiting();
       }
     });
   }

@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { App } from '@capacitor/app';
+import { AppWeb } from '@capacitor/app/dist/esm/web';
 
 import { AppEvent } from '../../classes/appEvent/appEvent';
 import { AppEventType } from '../../enums/appEvent/appEvent';
@@ -157,6 +158,27 @@ describe('AutomaticBackupService', () => {
     jasmine.clock().tick(1000);
 
     pauseApp();
+
+    expect(runs.length).toBe(1);
+    jasmine.clock().tick(3000);
+    expect(runs.length).toBe(1);
+  });
+
+  it('writes at once when the app becomes inactive while a change waits, before it is paused', async () => {
+    const addListener = spyOn(
+      AppWeb.prototype,
+      'addListener',
+    ).and.callThrough();
+    await App.addListener('resume', () => undefined);
+    const plugin = addListener.calls.mostRecent().object as unknown as {
+      notifyListeners(_event: string, _data: unknown): void;
+    };
+    changeStorage();
+    jasmine.clock().tick(1000);
+
+    plugin.notifyListeners('appStateChange', { isActive: true });
+    expect(runs.length).toBe(0);
+    plugin.notifyListeners('appStateChange', { isActive: false });
 
     expect(runs.length).toBe(1);
     jasmine.clock().tick(3000);
