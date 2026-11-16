@@ -49,6 +49,7 @@ import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIHelper } from '../../../services/uiHelper';
+import { UIImage } from '../../../services/uiImage';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
@@ -94,6 +95,7 @@ export class BrewEditComponent implements OnInit {
   private readonly visualizerService = inject(VisualizerService);
   private readonly hapticService = inject(HapticService);
   private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiImage = inject(UIImage);
 
   public static readonly COMPONENT_ID: string = 'brew-edit';
   @ViewChild('brewBrewing', { read: BrewBrewingComponent, static: false })
@@ -241,6 +243,7 @@ export class BrewEditComponent implements OnInit {
     const stored = await this.uiBrewStorage.update(this.data);
     if (stored) {
       await this.deleteUnreferencedFlowProfile();
+      await this.uiImage.deleteRemovedPhotos(this.data);
     }
 
     void this.uiPreparationHelper.doMachineSpecificSyncs(this.data);

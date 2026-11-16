@@ -38,6 +38,7 @@ describe('PhotoAddComponent', () => {
       'showOptionChooser',
       'choosePhoto',
       'takePhoto',
+      'removePhotoOnSave',
     ]);
     uiFileHelper = createMockUIFileHelper();
     fileDeletions = [];
@@ -67,9 +68,13 @@ describe('PhotoAddComponent', () => {
       .compileComponents();
   }));
 
-  /** Shows the component for a bean with these photos, at the moment the form opens. */
-  function open(attachments: string[]): void {
+  /**
+   * Shows the component for a bean with these photos, at the moment the form
+   * opens. Only a stored bean has a uuid.
+   */
+  function open(attachments: string[], uuid = ''): void {
     const bean = new Bean();
+    bean.config.uuid = uuid;
     bean.attachments = attachments;
     fixture = TestBed.createComponent(PhotoAddComponent);
     component = fixture.componentInstance;
@@ -146,7 +151,7 @@ describe('PhotoAddComponent', () => {
     }));
   });
 
-  describe('deleting a photo', () => {
+  describe('deleting a photo of an entry that is not stored yet', () => {
     it('removes the photo and its file and tells the form', fakeAsync(() => {
       open(['a.jpg', 'b.jpg']);
       settle();
@@ -241,6 +246,54 @@ describe('PhotoAddComponent', () => {
 
       expect(() => tick(SLIDER_REFRESH_DELAY)).not.toThrow();
       expect(component.data.attachments).toEqual([]);
+    }));
+  });
+
+  describe('deleting a photo of a stored entry', () => {
+    it('takes the photo off the form and leaves its file to the save', fakeAsync(() => {
+      open(['a.jpg', 'b.jpg'], 'bean-1');
+      settle();
+
+      tapDelete(0);
+      tick(SLIDER_REFRESH_DELAY);
+
+      expect(component.data.attachments).toEqual(['b.jpg']);
+      expect(uiFileHelper.deleteInternalFile).not.toHaveBeenCalled();
+      expect(uiImage.removePhotoOnSave).toHaveBeenCalledOnceWith(
+        component.data,
+        'a.jpg',
+      );
+      expect(uiToast.showInfoToast).toHaveBeenCalledOnceWith('IMAGE_DELETED');
+      expect(emitted).toEqual([component.data]);
+    }));
+
+    it('leaves the photos of the stored entry as they are', fakeAsync(() => {
+      // The forms copy the entry, but not its list of photos.
+      const stored = ['a.jpg', 'b.jpg'];
+      open(stored, 'bean-1');
+      settle();
+
+      tapDelete(0);
+
+      expect(stored).toEqual(['a.jpg', 'b.jpg']);
+      expect(component.data.attachments).toEqual(['b.jpg']);
+    }));
+
+    it('deletes the file of a photo that was added in the form', fakeAsync(() => {
+      uiImage.takePhoto.and.resolveTo('taken.jpg');
+      open(['a.jpg'], 'bean-1');
+      settle();
+      choose('TAKE');
+
+      tapDelete(1);
+      fileDeleted();
+      tick(SLIDER_REFRESH_DELAY);
+
+      expect(component.data.attachments).toEqual(['a.jpg']);
+      expect(uiFileHelper.deleteInternalFile).toHaveBeenCalledOnceWith(
+        'taken.jpg',
+      );
+      expect(uiImage.removePhotoOnSave).not.toHaveBeenCalled();
     }));
   });
 

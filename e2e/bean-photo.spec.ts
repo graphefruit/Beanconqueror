@@ -49,7 +49,9 @@ test('a user is told when the camera refuses to take a bean photo', async ({
  * removed today. The web build cannot read or delete photo files, so the
  * bean carries the address of an image of the app instead of a file path
  * (see `photoUrl` in `support/bean-data.ts`). Taking or choosing a photo,
- * and what happens to the files, cannot be reached in the browser.
+ * and what happens to the files, cannot be reached in the browser; that the
+ * file of a removed photo is only deleted after the save is covered by the
+ * unit tests of `photo-add` and `UIImage`.
  */
 test.describe('a bean with a photo', () => {
   /** Shows the bean with the photo as the only card and returns the card. */
@@ -72,9 +74,8 @@ test.describe('a bean with a photo', () => {
     // Known defect: the buttons on a photo (move left, move right, delete)
     // have no names; "delete" is the third.
     await slides(page).getByRole('button').nth(2).click();
-    // Only in the web build, which has no file to delete; the photo is
-    // taken off the bean in the form nevertheless.
-    await expect(toast(page, 'Image could not be deleted')).toBeVisible();
+    // Only the form loses the photo here; the file is left to the save.
+    await expect(toast(page, 'Image has been deleted')).toBeVisible();
     await expect(slides(page)).toHaveCount(0);
   }
 
@@ -129,8 +130,6 @@ test.describe('a bean with a photo', () => {
     await page.getByRole('button', { name: 'Cancel' }).click();
     await dialogsClosed(page);
 
-    // On a device the file is deleted at once, before "Save" (known defect):
-    // there the bean would keep a photo whose file is gone.
     expect(await storedBeans(page)).toEqual(data.BEANS);
     await expect(card.locator('async-image').getByRole('img')).toBeVisible();
   });

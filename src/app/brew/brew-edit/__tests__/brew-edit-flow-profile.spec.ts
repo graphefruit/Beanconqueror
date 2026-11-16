@@ -6,6 +6,7 @@ describe('BrewEditComponent flow profile file', () => {
   const STORED_PATH = 'brews/brew-1_flow_profile.json';
   let component: BrewEditComponent;
   let uiFileHelper: jasmine.SpyObj<any>;
+  let uiImage: jasmine.SpyObj<any>;
   let uiBrewStorage: jasmine.SpyObj<any>;
   let brewBrewing: jasmine.SpyObj<any>;
   let modalController: jasmine.SpyObj<any>;
@@ -54,6 +55,7 @@ describe('BrewEditComponent flow profile file', () => {
       },
       brewBrewing,
       uiFileHelper,
+      uiImage,
       uiBrewStorage,
       uiBrewHelper: jasmine.createSpyObj('UIBrewHelper', [
         'cleanInvisibleBrewData',
@@ -80,6 +82,9 @@ describe('BrewEditComponent flow profile file', () => {
     uiFileHelper.deleteInternalFile.and.callFake((_path: string) => {
       calls.push('delete ' + _path);
       return Promise.resolve();
+    });
+    uiImage = jasmine.createSpyObj('UIImage', {
+      deleteRemovedPhotos: Promise.resolve(),
     });
     uiBrewStorage = jasmine.createSpyObj('UIBrewStorage', ['update']);
     uiBrewStorage.update.and.callFake((_brew: Brew) => {
@@ -155,6 +160,25 @@ describe('BrewEditComponent flow profile file', () => {
     await component.updateBrew();
 
     expect(uiFileHelper.deleteInternalFile).not.toHaveBeenCalled();
+  });
+
+  it('deletes the photos removed in the form after the brew was stored', async () => {
+    await component.updateBrew();
+
+    expect(uiImage.deleteRemovedPhotos).toHaveBeenCalledOnceWith(
+      component.data,
+    );
+    expect(uiBrewStorage.update).toHaveBeenCalledBefore(
+      uiImage.deleteRemovedPhotos,
+    );
+  });
+
+  it('keeps the photos removed in the form when the brew could not be stored', async () => {
+    uiBrewStorage.update.and.resolveTo(false);
+
+    await component.updateBrew();
+
+    expect(uiImage.deleteRemovedPhotos).not.toHaveBeenCalled();
   });
 
   it('touches no file for a brew that never had a graph', async () => {

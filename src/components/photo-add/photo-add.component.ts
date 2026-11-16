@@ -53,6 +53,8 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
   >();
   @ViewChild('photoSlides', { static: false }) public photoSlides:
     ElementRef | undefined;
+  /** Photos added here: no stored entry refers to their files yet. */
+  private readonly addedPaths = new Set<string>();
 
   constructor() {
     addIcons({ arrowBackOutline, arrowForwardOutline, trash });
@@ -91,6 +93,7 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
       currentData.value,
       fileName,
     );
+    this.addedPaths.add(fileUri.path);
     this.data.attachments.push(fileUri.path);
   }
   public addImage(): void {
@@ -101,6 +104,7 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
           (_paths) => {
             if (_paths.length > 0) {
               for (const path of _paths) {
+                this.addedPaths.add(path.toString());
                 this.data.attachments.push(path.toString());
               }
 
@@ -120,6 +124,7 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
         // TAKE
         this.uiImage.takePhoto().then(
           (_path) => {
+            this.addedPaths.add(_path);
             this.data.attachments.push(_path);
             this.emitChanges();
           },
@@ -149,10 +154,24 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
   }
 
   public async deleteImage(_index: number) {
-    const splicedPaths: Array<string> = this.data.attachments.splice(_index, 1);
+    const splicedPaths: Array<string> = this.data.attachments.slice(
+      _index,
+      _index + 1,
+    );
+    // A list of its own: the form shares the array with the stored entry,
+    // which keeps its photos until the form is saved.
+    this.data.attachments = this.data.attachments.filter(
+      (_path, index) => index !== _index,
+    );
     for (const path of splicedPaths) {
       try {
-        await this.uiFileHelper.deleteInternalFile(path);
+        if (this.data.config.uuid && !this.addedPaths.delete(path)) {
+          // The stored entry still shows this photo: its file has to outlive
+          // a cancelled form and a save that fails.
+          this.uiImage.removePhotoOnSave(this.data, path);
+        } else {
+          await this.uiFileHelper.deleteInternalFile(path);
+        }
         this.emitChanges();
         this.uiToast.showInfoToast('IMAGE_DELETED');
       } catch (ex) {

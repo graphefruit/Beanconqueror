@@ -42,6 +42,41 @@ export class UIImage {
   private readonly modalCtrl = inject(ModalController);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
 
+  /**
+   * Photos the user took off a stored entry in its form, by entry. The
+   * stored entry refers to their files until the form is saved, so they are
+   * only deleted then (`deleteRemovedPhotos`), and never when it is cancelled.
+   */
+  private readonly removedPhotos = new WeakMap<object, string[]>();
+
+  public removePhotoOnSave(_entry: object, _path: string): void {
+    const paths = this.removedPhotos.get(_entry) ?? [];
+    paths.push(_path);
+    this.removedPhotos.set(_entry, paths);
+  }
+
+  /**
+   * Deletes the files of the photos that were taken off `_entry` in its
+   * form. Only to be called after the entry was stored without them.
+   */
+  public async deleteRemovedPhotos(_entry: {
+    attachments: string[];
+  }): Promise<void> {
+    const paths = this.removedPhotos.get(_entry) ?? [];
+    this.removedPhotos.delete(_entry);
+    for (const path of paths) {
+      // A form that reloads its entry shows the photo again.
+      if (_entry.attachments.includes(path)) {
+        continue;
+      }
+      try {
+        await this.uiFileHelper.deleteInternalFile(path);
+      } catch {
+        // The entry is stored; a file that is left over does no harm.
+      }
+    }
+  }
+
   private getImageQuality(): number {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.image_quality;

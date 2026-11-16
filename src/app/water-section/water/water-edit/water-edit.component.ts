@@ -41,6 +41,7 @@ import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
 import { KeysPipe } from '../../../../pipes/keys';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIHelper } from '../../../../services/uiHelper';
+import { UIImage } from '../../../../services/uiImage';
 import { UIToast } from '../../../../services/uiToast';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 
@@ -78,6 +79,7 @@ import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 export class WaterEditComponent {
   private readonly modalController = inject(ModalController);
   private readonly uiWaterStorage = inject(UIWaterStorage);
+  private readonly uiImage = inject(UIImage);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiToast = inject(UIToast);
   private readonly uiAnalytics = inject(UIAnalytics);
@@ -108,7 +110,9 @@ export class WaterEditComponent {
   }
 
   public async __edit() {
-    await this.uiWaterStorage.update(this.data);
+    if (await this.uiWaterStorage.update(this.data)) {
+      await this.uiImage.deleteRemovedPhotos(this.data);
+    }
     this.uiToast.showInfoToast('TOAST_WATER_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       WATER_TRACKING.TITLE,

@@ -102,7 +102,9 @@ export class GreenBeanEditComponent implements OnInit {
     return valid;
   }
   private async __editBean() {
-    await this.uiGreenBeanStorage.update(this.data);
+    if (await this.uiGreenBeanStorage.update(this.data)) {
+      await this.uiImage.deleteRemovedPhotos(this.data);
+    }
     this.uiToast.showInfoToast('TOAST_GREEN_BEAN_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       GREEN_BEAN_TRACKING.TITLE,

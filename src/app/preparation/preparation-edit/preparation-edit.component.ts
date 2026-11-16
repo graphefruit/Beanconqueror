@@ -47,6 +47,7 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIHelper } from '../../../services/uiHelper';
+import { UIImage } from '../../../services/uiImage';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIToast } from '../../../services/uiToast';
@@ -85,6 +86,7 @@ import { UIToast } from '../../../services/uiToast';
 export class PreparationEditComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
+  private readonly uiImage = inject(UIImage);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiToast = inject(UIToast);
   private readonly uiAlert = inject(UIAlert);
@@ -155,7 +157,9 @@ export class PreparationEditComponent implements OnInit {
       //this.data.default_last_coffee_parameters.coffee_first_drip_time = false;
     }
 
-    await this.uiPreparationStorage.update(this.data);
+    if (await this.uiPreparationStorage.update(this.data)) {
+      await this.uiImage.deleteRemovedPhotos(this.data);
+    }
     this.uiToast.showInfoToast('TOAST_PREPARATION_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       PREPARATION_TRACKING.TITLE,

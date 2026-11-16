@@ -525,7 +525,10 @@ Android, `src/services/uiFileHelper.ts`). The database only stores the path.
 
 - Photos: `attachments` arrays on beans, brews and other entries; files are
   written through `src/services/uiImage.ts` with
-  `UIFileHelper.generateInternalPath()`.
+  `UIFileHelper.generateInternalPath()`. A photo removed in the edit form of
+  a stored entry (`src/components/photo-add/`) keeps its file until the entry
+  was stored without it (`UIImage.deleteRemovedPhotos()`); a cancelled form
+  or a failed save leaves entry and file as they were.
 - Flow profiles (scale, pressure and temperature readings of a brew):
   `brews/<uuid>_flow_profile.json`, written by
   `src/components/brews/brew-brewing/brew-brewing.component.ts`; imported

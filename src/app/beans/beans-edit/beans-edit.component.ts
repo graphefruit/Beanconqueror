@@ -39,6 +39,7 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIImage } from '../../../services/uiImage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
 
@@ -70,6 +71,7 @@ import { UIToast } from '../../../services/uiToast';
 export class BeansEditComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly uiImage = inject(UIImage);
   private readonly uiToast = inject(UIToast);
   private readonly uiAnalytics = inject(UIAnalytics);
   readonly uiBeanHelper = inject(UIBeanHelper);
@@ -155,7 +157,9 @@ export class BeansEditComponent implements OnInit {
     if (this.data.frozenDate && this.data.frozenId === '') {
       this.data.frozenId = this.uiBeanHelper.generateFrozenId();
     }
-    await this.uiBeanStorage.update(this.data);
+    if (await this.uiBeanStorage.update(this.data)) {
+      await this.uiImage.deleteRemovedPhotos(this.data);
+    }
 
     if (originalFrozenGroupId && !this.data.frozenGroupId) {
       const remainingBeans = this.uiBeanStorage

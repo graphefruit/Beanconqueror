@@ -33,6 +33,7 @@ import MILL_TRACKING from '../../../data/tracking/millTracking';
 import { IMill } from '../../../interfaces/mill/iMill';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIHelper } from '../../../services/uiHelper';
+import { UIImage } from '../../../services/uiImage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIToast } from '../../../services/uiToast';
 
@@ -64,6 +65,7 @@ import { UIToast } from '../../../services/uiToast';
 export class MillEditComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly uiImage = inject(UIImage);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiToast = inject(UIToast);
   private readonly uiAnalytics = inject(UIAnalytics);
@@ -88,7 +90,9 @@ export class MillEditComponent implements OnInit {
   }
 
   public async __editMill() {
-    await this.uiMillStorage.update(this.data);
+    if (await this.uiMillStorage.update(this.data)) {
+      await this.uiImage.deleteRemovedPhotos(this.data);
+    }
     this.uiToast.showInfoToast('TOAST_MILL_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       MILL_TRACKING.TITLE,

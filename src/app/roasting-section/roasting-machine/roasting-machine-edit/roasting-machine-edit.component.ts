@@ -33,6 +33,7 @@ import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachine
 import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIHelper } from '../../../../services/uiHelper';
+import { UIImage } from '../../../../services/uiImage';
 import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
 import { UIToast } from '../../../../services/uiToast';
 
@@ -64,6 +65,7 @@ import { UIToast } from '../../../../services/uiToast';
 export class RoastingMachineEditComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
+  private readonly uiImage = inject(UIImage);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiToast = inject(UIToast);
   private readonly uiAnalytics = inject(UIAnalytics);
@@ -89,7 +91,9 @@ export class RoastingMachineEditComponent implements OnInit {
   }
 
   public async __edit() {
-    await this.uiRoastingMachineStorage.update(this.data);
+    if (await this.uiRoastingMachineStorage.update(this.data)) {
+      await this.uiImage.deleteRemovedPhotos(this.data);
+    }
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       ROASTING_MACHINE_TRACKING.TITLE,
