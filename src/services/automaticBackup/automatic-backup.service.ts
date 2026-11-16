@@ -7,11 +7,15 @@ import { EventQueueService } from '../queueService/queue-service.service';
 import { UILog } from '../uiLog';
 
 const DELAY_AFTER_LAST_CHANGE_MS = 3000;
+const RUN_TIME_LIMIT_MS = 5 * 60 * 1000;
 
 /**
  * Writes the automatic backups a few seconds after the stored data last
  * changed. Only one run writes at a time: changes that come while it writes
- * lead to exactly one more run after it.
+ * lead to exactly one more run after it. A run that is not done after five
+ * minutes no longer holds the next one back: a write that never ends, as
+ * after the database connection was lost, would otherwise stop the automatic
+ * backups until the app is started again.
  */
 @Service()
 export class AutomaticBackupService {
@@ -56,10 +60,21 @@ export class AutomaticBackupService {
       do {
         this.runAgain = false;
         this.uiLog.log(_platformName + ' - Start to export ZIP file');
+        let timeLimit: ReturnType<typeof setTimeout> | undefined;
         try {
-          await _save();
+          await Promise.race([
+            _save(),
+            new Promise((_resolve, _reject) => {
+              timeLimit = setTimeout(
+                () => _reject(new Error('Not done within the time limit')),
+                RUN_TIME_LIMIT_MS,
+              );
+            }),
+          ]);
         } catch (ex) {
           this.uiLog.error('Automatic backup failed', ex);
+        } finally {
+          clearTimeout(timeLimit);
         }
       } while (this.runAgain);
     } finally {

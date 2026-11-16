@@ -125,6 +125,30 @@ describe('AutomaticBackupService', () => {
     expect(runs.length).toBe(2);
   });
 
+  it('writes again after a change that follows a run that never ends', async () => {
+    changeStorage();
+    jasmine.clock().tick(3000);
+    changeStorage();
+    jasmine.clock().tick(3000);
+    jasmine.clock().tick(5 * 60 * 1000 - 3001);
+    await settle();
+    expect(runs.length).toBe(1);
+    expect(uiLog.error).not.toHaveBeenCalled();
+
+    jasmine.clock().tick(1);
+    await settle();
+    expect(uiLog.error.calls.count()).toBe(1);
+    // The change that was due during the run.
+    expect(runs.length).toBe(2);
+
+    jasmine.clock().tick(5 * 60 * 1000);
+    await settle();
+    expect(runs.length).toBe(2);
+    changeStorage();
+    jasmine.clock().tick(3000);
+    expect(runs.length).toBe(3);
+  });
+
   it('writes at once when the app is paused while a change waits', () => {
     changeStorage();
     jasmine.clock().tick(1000);
