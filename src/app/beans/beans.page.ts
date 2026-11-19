@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 import {
   IonButton,
@@ -28,7 +29,7 @@ import {
   Platform,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { add } from 'ionicons/icons';
+import { add, settingsOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
@@ -135,6 +136,7 @@ function groupFrozenPortions(beans: Bean[]): (Bean | BeanGroup)[] {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
+    RouterLink,
     NgTemplateOutlet,
     AgVirtualScrollComponent,
     BeanInformationComponent,
@@ -307,7 +309,7 @@ export class BeansPage {
   private lastInteractedBeanId: string = null;
 
   public constructor() {
-    addIcons({ add });
+    addIcons({ add, settingsOutline });
     // Whoever changed a bean: the scroll positions have to be saved before
     // the lists get their new entries.
     this.beanStore.changes

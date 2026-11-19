@@ -16,5 +16,7 @@ export async function openFromProfile(
     await expect(page).toHaveURL(/\/home\/profile$/, { timeout: 2000 });
   }).toPass();
   const name = new RegExp(`^${entry.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`);
-  await page.getByRole('link', { name }).click();
+  // The tabs left behind stay in the page, and the gears of the Beans and
+  // Brews tabs share their names with hub entries.
+  await page.locator('app-profile').getByRole('link', { name }).click();
 }

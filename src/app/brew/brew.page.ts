@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 import {
   IonButton,
@@ -26,7 +27,7 @@ import {
   ModalController,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { add } from 'ionicons/icons';
+import { add, settingsOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
@@ -55,6 +56,7 @@ import { BrewFilterComponent } from './brew-filter/brew-filter.component';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
+    RouterLink,
     NgTemplateOutlet,
     AgVirtualScrollComponent,
     BrewInformationComponent,
@@ -139,7 +141,7 @@ export class BrewPage implements OnInit {
   private forceScrollToTop = false;
 
   constructor() {
-    addIcons({ add });
+    addIcons({ add, settingsOutline });
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
     this.openBrewsFilter = this.settings.GET_BREW_FILTER();
