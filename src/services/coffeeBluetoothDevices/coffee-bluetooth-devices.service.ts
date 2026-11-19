@@ -4,7 +4,7 @@ import { Capacitor } from '@capacitor/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject } from 'rxjs';
 
-import { InsmartScale } from '../../classes/devices/insmartScale';
+import { InsmartScale } from 'src/classes/devices/insmartScale';
 import { BasicGrillThermometer } from 'src/classes/devices/basicGrillThermometer';
 import { BlackcoffeeScale } from 'src/classes/devices/blackcoffeeScale';
 import { BluetoothScale } from 'src/classes/devices/bluetoothDevice';
