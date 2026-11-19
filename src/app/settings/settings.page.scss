@@ -12,17 +12,12 @@
     margin: 0px;
     padding: 0px;
 
-    ion-list-header {
-      padding-left: 10px;
-      font-size: 16px;
-    }
-
     ion-item {
       --background: none;
       --padding-start: 0px;
       --padding-end: 0px;
       --inner-padding-end: 0px;
-      font-size: 14px;
+      font-size: var(--bq-type-caption);
       --min-height: 0px;
 
       ion-icon {
