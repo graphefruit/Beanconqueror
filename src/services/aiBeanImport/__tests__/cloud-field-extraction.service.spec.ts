@@ -239,7 +239,7 @@ describe('CloudFieldExtractionService', () => {
       expect(bean.decaffeinated).toBe(true);
     });
 
-    it('appends the stored prompt appendix to the request and prompt log', async () => {
+    it('appends the stored prompt appendix to the request but logs only the start of prompt and answer', async () => {
       // Arrange
       const settings = new Settings();
       settings.cloud_ai_prompt_appendix = 'Prioritize explicit farm names.';
@@ -260,6 +260,8 @@ describe('CloudFieldExtractionService', () => {
         roaster: 'Test',
         bean_mix: 'SINGLE_ORIGIN',
         origins: [],
+        // Makes the answer longer than the log keeps.
+        unused: 'Text from the label of the bag. '.repeat(5),
       });
       const expectedSuffix =
         'Additional extraction instructions from the user:\n' +
@@ -279,8 +281,21 @@ describe('CloudFieldExtractionService', () => {
         (message) => message.role === 'user',
       );
       expect(userMessage.content.endsWith(expectedSuffix)).toBe(true);
-      expect(mockLogger.log).toHaveBeenCalledWith(
-        jasmine.stringMatching(expectedSuffix),
+      const logged = mockLogger.log.calls
+        .allArgs()
+        .map((args: string[]) => args[0]);
+      expect(logged).toContain(
+        jasmine.stringMatching(
+          `^\\[Cloud LLM\\] prompt: [\\s\\S]{100}… \\(${userMessage.content.length} chars\\)$`,
+        ),
+      );
+      expect(logged).toContain(
+        jasmine.stringMatching(
+          /^\[Cloud LLM\] response: [\s\S]{100}… \(\d+ chars\)$/,
+        ),
+      );
+      expect(logged.join('\n')).not.toContain(
+        'Prioritize explicit farm names.',
       );
     });
 

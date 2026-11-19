@@ -9,6 +9,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { CapacitorPluginMlKitTextRecognition } from '@pantrist/capacitor-plugin-ml-kit-text-recognition';
 
+import { textSummary } from '../../classes/log/logSummary';
 import { UIAlert } from '../uiAlert';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIImage } from '../uiImage';
@@ -100,7 +101,7 @@ export class CameraOcrService {
       return null;
     }
 
-    this.uiLog.log('CameraOcr: OCR extracted text: ' + rawText);
+    this.uiLog.log('CameraOcr: OCR extracted text: ' + textSummary(rawText));
 
     return { ocrResult, rawText };
   }

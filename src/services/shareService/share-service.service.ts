@@ -174,7 +174,7 @@ export class ShareService {
     }
 
     const beanMessage: string = 'https://beanconqueror.com?' + jsonParams;
-    this.uiLog.debug(beanMessage);
+    this.uiLog.debug(`Share bean link (${beanMessage.length} chars)`);
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.SHARE,

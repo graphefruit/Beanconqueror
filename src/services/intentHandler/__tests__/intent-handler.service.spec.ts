@@ -449,6 +449,27 @@ describe('IntentHandlerService', () => {
     ]);
   });
 
+  for (const prefix of [
+    'https://beanconqueror.com/?',
+    'beanconqueror://ADD_USER_BEAN?',
+  ]) {
+    it(`logs a shared bean only by its length (${prefix})`, async () => {
+      const bean = 'Q'.repeat(400) + 'BeanOfSomeoneElse';
+      const sharedUrl = `${prefix}shareUserBean0=${bean.slice(0, 400)}&shareUserBean1=${bean.slice(400)}`;
+      uiBeanHelper.addUserSharedBean.and.resolveTo();
+
+      await service.handleDeepLink(sharedUrl);
+
+      expect(uiBeanHelper.addUserSharedBean.calls.allArgs()).toEqual([[bean]]);
+      expect(JSON.stringify(uiLog.log.calls.allArgs())).not.toContain(
+        'BeanOfSomeoneElse',
+      );
+      expect(uiLog.log.calls.allArgs()).toContain([
+        `Handle deeplink: ADD_USER_BEAN (${sharedUrl.length} chars)`,
+      ]);
+    });
+  }
+
   it('imports a brew handoff with a trailing slash before the query', async () => {
     await service.handleDeepLink(withTrailingSlash(url));
 

@@ -5,6 +5,7 @@ import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject } from 'rxjs';
 
+import { textSummary } from '../../classes/log/logSummary';
 import { IntentHandlerService } from '../intentHandler/intent-handler.service';
 import { UIAlert } from '../uiAlert';
 import { UIHelper } from '../uiHelper';
@@ -116,7 +117,8 @@ export class NfcService {
     }
   }
   private __handleNFCData(_tag) {
-    this.uiLog.log('We read NFC-Tag', _tag);
+    // The tag carries its serial number; its link is logged when it is opened.
+    this.uiLog.log('We read NFC-Tag');
     if (_tag) {
       let data = NfcPlugin.NdefPlugin.textHelper.decodePayload(
         _tag.ndefMessage[0].payload,
@@ -149,7 +151,7 @@ export class NfcService {
     NfcPlugin.write(
       record,
       (success) => {
-        this.uiLog.log('NFC-Date wrote successfully: ' + _text);
+        this.uiLog.log('NFC-Date wrote successfully: ' + textSummary(_text));
         if (this.platform.is('android')) {
           this.uiAlert.showMessage(
             'NFC.WRITE_COMPLETED_DESCRIPTION',
@@ -160,7 +162,7 @@ export class NfcService {
         }
       },
       (error) => {
-        this.uiLog.log('NFC-Date wrote unsuccessfully: ' + _text);
+        this.uiLog.log('NFC-Date wrote unsuccessfully: ' + textSummary(_text));
         if (this.platform.is('android')) {
           this.uiAlert.showMessage(
             'NFC.WRITE_UNCOMPLETED_DESCRIPTION',

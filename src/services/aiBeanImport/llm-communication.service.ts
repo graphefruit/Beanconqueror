@@ -1,5 +1,7 @@
 import { CapgoLLM } from '@capgo/capacitor-llm';
 
+import { textSummary } from '../../classes/log/logSummary';
+
 /**
  * Local type extension — the native Swift plugin already supports `instructions`
  * in `createChat()`, but the published TypeScript types don't expose the
@@ -135,7 +137,7 @@ export async function sendLLMPrompt(
   const resolveOnce = (value: string) => {
     if (!resolved) {
       resolved = true;
-      logger?.log('[Apple Intelligence] response: ' + value);
+      logger?.log('[Apple Intelligence] response: ' + textSummary(value));
       void cleanup();
       resolvePromise(value);
     }
@@ -161,7 +163,7 @@ export async function sendLLMPrompt(
   }, timeoutMs);
 
   // Send message (don't await - let the promise handle completion)
-  logger?.log('[Apple Intelligence] prompt: ' + prompt);
+  logger?.log('[Apple Intelligence] prompt: ' + textSummary(prompt));
   void LLM.sendMessage({
     chatId,
     message: prompt,

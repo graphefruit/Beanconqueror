@@ -1,6 +1,7 @@
 import { inject, Service } from '@angular/core';
 
 import { Bean } from '../../classes/bean/bean';
+import { textSummary } from '../../classes/log/logSummary';
 import {
   buildCloudExtractionPrompt,
   CLOUD_BEAN_IMPORT_SYSTEM_INSTRUCTIONS,
@@ -78,7 +79,7 @@ export class CloudFieldExtractionService {
 
     // 3. Send to cloud LLM — throws on API errors, timeouts, network failures
     log.log('[Cloud LLM] model: ' + config.model);
-    log.log('[Cloud LLM] prompt: ' + userPrompt);
+    log.log('[Cloud LLM] prompt: ' + textSummary(userPrompt));
 
     const response = await sendCloudLLMPrompt(
       config,
@@ -89,7 +90,7 @@ export class CloudFieldExtractionService {
       this.createDiagnosticHandler(log),
     );
 
-    log.log('[Cloud LLM] response: ' + response.content);
+    log.log('[Cloud LLM] response: ' + textSummary(response.content));
     if (response.usage) {
       log.log(
         `Token usage: ${response.usage.prompt_tokens} prompt, ${response.usage.completion_tokens} completion`,

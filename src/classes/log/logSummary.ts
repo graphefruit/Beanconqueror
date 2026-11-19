@@ -8,3 +8,17 @@ export function errorSummary(error: unknown): string {
   const status = (error as { status?: unknown } | null | undefined)?.status;
   return typeof status === 'number' ? `${type} (status ${status})` : type;
 }
+
+/** How much of a long text the app log keeps. */
+export const LOG_TEXT_LENGTH = 100;
+
+/**
+ * What the app log keeps of a text the user captured or entered (a label, a
+ * prompt, the answer of an AI): its start and its full length.
+ */
+export function textSummary(text: string): string {
+  if (text.length <= LOG_TEXT_LENGTH) {
+    return text;
+  }
+  return `${text.slice(0, LOG_TEXT_LENGTH)}… (${text.length} chars)`;
+}

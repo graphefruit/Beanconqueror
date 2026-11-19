@@ -14,6 +14,10 @@ import {
   Platform,
 } from '@ionic/angular';
 
+import type { ShareOptions } from '@capacitor/share';
+// The plugin object is a proxy that cannot be spied on; the web
+// implementation behind it can.
+import { ShareWeb } from '@capacitor/share/dist/esm/web';
 import { of, throwError } from 'rxjs';
 
 import { BeanArchivePopoverComponent } from '../../app/beans/bean-archive-popover/bean-archive-popover.component';
@@ -777,12 +781,12 @@ describe('UIBeanHelper', () => {
 
   describe('a bean shared by another user', () => {
     let shareService: ShareService;
+    let share: jasmine.Spy;
 
     /** The text the sender shares for the bean, as the real sender builds it. */
     async function sharedCode(_bean: Bean): Promise<string> {
-      log.debug.calls.reset();
       await shareService.shareBean(_bean);
-      const link = log.debug.calls.mostRecent().args[0] as string;
+      const link = (share.calls.mostRecent().args[0] as ShareOptions).text;
       return link
         .substring(link.indexOf('?') + 1)
         .split('&')
@@ -827,6 +831,19 @@ describe('UIBeanHelper', () => {
 
     beforeEach(() => {
       shareService = TestBed.inject(ShareService);
+      share = spyOn(ShareWeb.prototype, 'share').and.resolveTo({});
+    });
+
+    it('logs only the length of the link of a shared bean', async () => {
+      log.debug.calls.reset();
+
+      const code = await sharedCode(sendersBean());
+
+      const link = (share.calls.mostRecent().args[0] as ShareOptions).text;
+      expect(log.debug.calls.allArgs()).toEqual([
+        [`Share bean link (${link.length} chars)`],
+      ]);
+      expect(code.length).toBeGreaterThan(400);
     });
 
     it('opens the add dialog with what the sender shared', async () => {
