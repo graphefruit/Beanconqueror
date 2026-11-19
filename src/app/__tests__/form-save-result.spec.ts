@@ -6,6 +6,7 @@ import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine
 import { StorageClass } from '../../classes/storageClass';
 import { storedOrReported } from '../../classes/storedOrReported';
 import { Water } from '../../classes/water/water';
+import { PREPARATION_TYPES } from '../../enums/preparations/preparationTypes';
 import type { UIAlert } from '../../services/uiAlert';
 import { BeansAddComponent } from '../beans/beans-add/beans-add.component';
 import { BeansEditComponent } from '../beans/beans-edit/beans-edit.component';
@@ -43,8 +44,8 @@ describe('storedOrReported', () => {
         await storedOrReported(uiAlert, () => Promise.resolve(unsaved)),
       ).toBeFalse();
       expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
-        'ERROR_OCCURED',
-        'CARE',
+        'STORAGE_SAVE_FAILED',
+        undefined,
         undefined,
         true,
       );
@@ -81,7 +82,11 @@ describe('Saving a form', () => {
     save: string;
     saveArguments?: unknown[];
     toast: string;
+    /** What the form hands to whoever opened it, when it differs from a plain close. */
+    dismissed?: [object, string | undefined];
   }
+
+  type Tracking = Record<string, jasmine.Spy>;
 
   const beanForm = () => ({
     bean: new Bean(),
@@ -154,6 +159,7 @@ describe('Saving a form', () => {
       extra: beanForm,
       save: 'addBean',
       toast: 'TOAST_BEAN_ADDED_SUCCESSFULLY',
+      dismissed: [{ dismissed: true }, 'saved'],
     },
     {
       name: 'green bean add',
@@ -175,7 +181,8 @@ describe('Saving a form', () => {
       name: 'preparation add',
       component: PreparationAddTypeComponent,
       storage: 'uiPreparationStorage',
-      data: () => new Preparation(),
+      data: () =>
+        Object.assign(new Preparation(), { type: PREPARATION_TYPES.XENIA }),
       extra: () => ({
         preparationForm: { valid: true },
         uiPreparationHelper: jasmine.createSpyObj('UIPreparationHelper', [
@@ -184,6 +191,7 @@ describe('Saving a form', () => {
       }),
       save: 'addPreparation',
       toast: 'TOAST_PREPARATION_ADDED_SUCCESSFULLY',
+      dismissed: [{ dismissed: true, added: true }, undefined],
     },
     {
       name: 'water add',
@@ -192,6 +200,7 @@ describe('Saving a form', () => {
       data: () => new Water(),
       save: 'add',
       toast: 'TOAST_WATER_ADDED_SUCCESSFULLY',
+      dismissed: [{ dismissed: true, added: true }, undefined],
     },
     {
       name: 'roasting machine add',
@@ -213,6 +222,12 @@ describe('Saving a form', () => {
       let uiAlert: jasmine.SpyObj<Pick<UIAlert, 'showMessage'>>;
       let uiImage: jasmine.SpyObj<{ deleteRemovedPhotos: () => Promise<void> }>;
       let modalController: jasmine.SpyObj<{ dismiss: () => void }>;
+      let uiAnalytics: Tracking;
+      const tracked = () =>
+        Object.values(uiAnalytics).reduce(
+          (_calls, _spy) => _calls + _spy.calls.count(),
+          0,
+        );
       let component: { data: { name: string } } & Record<
         string,
         (..._arguments: unknown[]) => Promise<void>
@@ -236,6 +251,12 @@ describe('Saving a form', () => {
         uiAlert.showMessage.and.resolveTo();
         uiImage = jasmine.createSpyObj('UIImage', ['deleteRemovedPhotos']);
         modalController = jasmine.createSpyObj('ModalController', ['dismiss']);
+        uiAnalytics = jasmine.createSpyObj('UIAnalytics', [
+          'trackEvent',
+          'trackContentImpression',
+          'trackBulkEvents',
+          'trackBulkContentImpressions',
+        ]);
         component = Object.assign(Object.create(form.component.prototype), {
           data,
           [form.storage]: {
@@ -247,12 +268,7 @@ describe('Saving a form', () => {
           uiImage,
           uiToast,
           uiAlert,
-          uiAnalytics: jasmine.createSpyObj('UIAnalytics', [
-            'trackEvent',
-            'trackContentImpression',
-            'trackBulkEvents',
-            'trackBulkContentImpressions',
-          ]),
+          uiAnalytics,
           modalController,
           ...form.extra?.(),
         });
@@ -263,6 +279,12 @@ describe('Saving a form', () => {
 
         expect(uiToast.showInfoToast).toHaveBeenCalledOnceWith(form.toast);
         expect(modalController.dismiss).toHaveBeenCalledTimes(1);
+        if (form.dismissed) {
+          expect(
+            (modalController.dismiss as jasmine.Spy).calls.first().args,
+          ).toEqual([...form.dismissed, jasmine.any(String)]);
+        }
+        expect(tracked()).toBeGreaterThan(0);
         expect(uiAlert.showMessage).not.toHaveBeenCalled();
       });
 
@@ -274,10 +296,11 @@ describe('Saving a form', () => {
         expect(uiToast.showInfoToast).not.toHaveBeenCalled();
         expect(modalController.dismiss).not.toHaveBeenCalled();
         expect(uiImage.deleteRemovedPhotos).not.toHaveBeenCalled();
+        expect(tracked()).toBe(0);
         expect(component.data.name).toBe('Entry');
         expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
-          'ERROR_OCCURED',
-          'CARE',
+          'STORAGE_SAVE_FAILED',
+          undefined,
           undefined,
           true,
         );
@@ -295,4 +318,35 @@ describe('Saving a form', () => {
       });
     });
   }
+
+  it('connects the machine of the stored preparation', async () => {
+    const data = Object.assign(new Preparation(), {
+      type: PREPARATION_TYPES.XENIA,
+    });
+    const stored = new Preparation();
+    const uiPreparationHelper = jasmine.createSpyObj('UIPreparationHelper', [
+      'connectDevice',
+    ]);
+    const form = Object.assign(
+      Object.create(PreparationAddTypeComponent.prototype),
+      {
+        data,
+        preparationForm: { valid: true },
+        uiPreparationStorage: {
+          addAndConfirm: () => Promise.resolve({ entry: stored, saved: true }),
+        },
+        uiPreparationHelper,
+        uiToast: jasmine.createSpyObj('UIToast', ['showInfoToast']),
+        uiAnalytics: jasmine.createSpyObj('UIAnalytics', [
+          'trackEvent',
+          'trackContentImpression',
+        ]),
+        modalController: jasmine.createSpyObj('ModalController', ['dismiss']),
+      },
+    );
+
+    await form.addPreparation();
+
+    expect(uiPreparationHelper.connectDevice).toHaveBeenCalledOnceWith(stored);
+  });
 });
