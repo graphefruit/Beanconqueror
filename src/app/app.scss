@@ -69,8 +69,9 @@ ag-virtual-scroll.clear-of-fab {
   box-sizing: border-box;
   padding-bottom: calc(56px + 2 * var(--bq-space-4));
 }
-// The plus takes the label colour of the fill (5.22:1) rather than the global
+// Icons on a coral fill take its label colour (5.22:1) rather than the global
 // icon colour (3.31:1 on coral light, 1.31:1 dark).
+ion-button.button-solid.ion-color-accent ion-icon,
 ion-fab-button ion-icon {
   color: var(--bq-text-on-accent);
 }

@@ -3,6 +3,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import { suggestionField } from './support/beans';
 import { setParameter } from './support/brew-form';
+import { contrast, firstColour } from './support/colour';
 import { completeFirstRun } from './support/first-run';
 import { openFromProfile } from './support/profile';
 import { readStoredValue } from './support/stored-values';
@@ -178,3 +179,38 @@ test('a blend keeps its varieties when its mix is looked at but not changed', as
   await expect(page.getByText(/^2\.\sBean Type$/)).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Brazil' })).toBeVisible();
 });
+
+for (const dark of [false, true]) {
+  const theme = dark ? 'dark' : 'light';
+  test(`the icon of "Add another bean type" takes the label colour (${theme})`, async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await completeFirstRun(page);
+    await enableVarietyInformation(page);
+    await openAddBean(page);
+    await openMix(page);
+    const mix = page.getByRole('alertdialog', { name: 'Blend' });
+    await mix.getByRole('radio', { name: 'Blend' }).click();
+    await mix.getByRole('button', { name: 'Choose' }).click();
+    await expect(mix).toHaveCount(0);
+    await showTab(page, 'Variety information');
+    await page.evaluate(
+      (on) => document.documentElement.classList.toggle('ion-palette-dark', on),
+      dark,
+    );
+
+    const colours = await page
+      .getByRole('button', { name: 'Add another bean type' })
+      .evaluate((native) => {
+        const host = (native.getRootNode() as ShadowRoot).host;
+        return {
+          icon: getComputedStyle(host.querySelector('ion-icon')!).color,
+          fill: getComputedStyle(native).backgroundColor,
+        };
+      });
+    expect(
+      contrast(firstColour(colours.icon), firstColour(colours.fill)),
+    ).toBeGreaterThanOrEqual(4.5);
+  });
+}
