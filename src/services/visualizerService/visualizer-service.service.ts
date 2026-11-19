@@ -5,6 +5,7 @@ import { CapacitorCookies, CapacitorHttp } from '@capacitor/core';
 import BaristamodeBrew from '../../classes/brew/baristamodeBrew';
 import { Brew } from '../../classes/brew/brew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
+import { errorSummary } from '../../classes/log/logSummary';
 import { Settings } from '../../classes/settings/settings';
 import { Visualizer } from '../../classes/visualizer/visualizer';
 import { UIAlert } from '../uiAlert';
@@ -168,7 +169,11 @@ export class VisualizerService {
       }
       return;
     } catch (error) {
-      this.uiLog.error('Upload visualizer shot error occurred', error);
+      // The message can quote the whole answer of the server.
+      this.uiLog.error(
+        'Upload visualizer shot error occurred',
+        errorSummary(error),
+      );
       if (_showToast === true) {
         this.uiToast.showInfoToastBottom(
           'VISUALIZER.SHOT.UPLOAD_UNSUCCESSFULLY',
@@ -240,7 +245,11 @@ export class VisualizerService {
       }
       return;
     } catch (error) {
-      this.uiLog.error('Upload visualizer shot error occurred', error);
+      // The message can quote the whole answer of the server.
+      this.uiLog.error(
+        'Upload visualizer shot error occurred',
+        errorSummary(error),
+      );
       if (_showToast === true) {
         this.uiToast.showInfoToastBottom(
           'VISUALIZER.SHOT.UPLOAD_UNSUCCESSFULLY',
@@ -261,22 +270,23 @@ export class VisualizerService {
         url: settings.visualizer_url + 'api/me', // https://visualizer.coffee/api/me
         headers: this.getAuthHeaders(settings),
       });
+      // The answer describes the account and its headers can hold a session.
       if (response.status === 200 && response.data) {
-        this.uiLog.info(
-          'Visualizer connection check successful, got data:',
-          response.data,
-        );
+        this.uiLog.info('Visualizer connection check successful');
         return true;
       }
 
       this.uiLog.error(
-        'Visualizer connection check did not return data:',
-        response,
+        'Visualizer connection check did not return data, status:',
+        response.status,
       );
       return false;
     } catch (errorResponse) {
       // Typical case that ends up here: wrong credentials, 401 status code
-      this.uiLog.error('Visualizer connection check errored:', errorResponse);
+      this.uiLog.error(
+        'Visualizer connection check errored:',
+        errorSummary(errorResponse),
+      );
       return false;
     }
   }

@@ -211,10 +211,6 @@ export class UIAnalytics {
       this.uiLog.log(
         `Sending ${requests.length} content impressions via Matomo Bulk Tracking API.`,
       );
-      this.uiLog.debug(
-        'Bulk content impression payload (first request):',
-        requests.length > 0 ? requests[0] : 'N/A',
-      );
 
       const response = await fetch(
         `${this.matomoUrl}?module=API&method=CoreAdminHome.bulkTrack&format=json`,
@@ -309,10 +305,6 @@ export class UIAnalytics {
 
       this.uiLog.log(
         `Sending ${requests.length} events via Matomo Bulk Tracking API.`,
-      );
-      this.uiLog.debug(
-        'Bulk event payload (first request):',
-        requests.length > 0 ? requests[0] : 'N/A',
       );
 
       const response = await fetch(

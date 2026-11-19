@@ -1,5 +1,9 @@
+import { CapacitorHttp } from '@capacitor/core';
+
 import { WEBHOOK_AUTH_TYPE_ENUM } from '../../enums/settings/webhookAuthType';
 import { BrewByWeightWebhookConfig } from '../../interfaces/settings/iSettings';
+import { UILog } from '../../services/uiLog';
+import { errorSummary } from '../log/logSummary';
 
 /**
  * Builds the HTTP headers required for a brew-by-weight webhook request
@@ -42,4 +46,20 @@ export function buildWebhookHeaders(
   }
 
   return headers;
+}
+
+/**
+ * Calls the webhook without waiting for its answer. A failure is logged
+ * without the address, which often holds the key of the webhook.
+ */
+export function triggerBrewByWeightWebhook(
+  cfg: BrewByWeightWebhookConfig,
+  uiLog: Pick<UILog, 'error'>,
+): void {
+  void CapacitorHttp.get({
+    url: cfg.url.trim(),
+    headers: buildWebhookHeaders(cfg),
+  }).catch((error: unknown) => {
+    uiLog.error('Brew-by-weight webhook failed', errorSummary(error));
+  });
 }

@@ -31,6 +31,7 @@ import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import _ from 'lodash';
 
 import { Bean } from '../../classes/bean/bean';
+import { errorSummary } from '../../classes/log/logSummary';
 import { Settings } from '../../classes/settings/settings';
 import {
   ActionsPopoverComponent,
@@ -695,7 +696,11 @@ export class BeansPage {
     } catch (error: any) {
       const errorMessage =
         error?.message || error?.toString() || 'Unknown error';
-      this.uiLog.warn('Cloud AI bean import error: ' + errorMessage);
+      // The message can quote the answer of the provider.
+      this.uiLog.warn(
+        'Cloud AI bean import error',
+        errorSummary(error?.originalError ?? error),
+      );
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_FAILED,
@@ -934,7 +939,11 @@ export class BeansPage {
     } catch (error: any) {
       const errorMessage =
         error?.message || error?.toString() || 'Unknown error';
-      this.uiLog.warn('Cloud AI bean import (multi) error: ' + errorMessage);
+      // The message can quote the answer of the provider.
+      this.uiLog.warn(
+        'Cloud AI bean import (multi) error',
+        errorSummary(error?.originalError ?? error),
+      );
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.AI_IMPORT_CLOUD_FAILED,

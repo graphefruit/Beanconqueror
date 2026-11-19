@@ -40,7 +40,6 @@ import {
   waterOutline,
 } from 'ionicons/icons';
 
-import { CapacitorHttp } from '@capacitor/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import moment from 'moment/moment';
 import regression from 'regression';
@@ -79,7 +78,7 @@ import {
 import { SanremoShotData } from '../../../classes/preparationDevice/sanremo/sanremoShotData';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
-import { buildWebhookHeaders } from '../../../classes/settings/brewByWeightWebhook';
+import { triggerBrewByWeightWebhook } from '../../../classes/settings/brewByWeightWebhook';
 import { Settings } from '../../../classes/settings/settings';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { BREW_GRAPH_TYPE } from '../../../enums/brews/brewGraphType';
@@ -3565,14 +3564,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
           if (webhookThresholdHit) {
             this.webhookFired = true;
-            void CapacitorHttp.get({
-              url: cfg.url.trim(),
-              headers: buildWebhookHeaders(cfg),
-            }).catch((_err) => {
-              const msg = `Brew-by-weight webhook failed (${cfg.url}): ${_err}`;
-              console.error(msg);
-              this.uiLog.error(msg);
-            });
+            triggerBrewByWeightWebhook(cfg, this.uiLog);
           }
         }
 

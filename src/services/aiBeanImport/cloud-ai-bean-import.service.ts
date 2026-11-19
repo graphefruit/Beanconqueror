@@ -3,6 +3,7 @@ import { inject, Service } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Bean } from '../../classes/bean/bean';
+import { errorSummary } from '../../classes/log/logSummary';
 import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import { UIAlert } from '../uiAlert';
 import { UILog } from '../uiLog';
@@ -78,10 +79,11 @@ export class CloudAIBeanImportService {
           : typeof error === 'string'
             ? error
             : 'Unknown error';
+      // The message can quote the answer of the provider.
       this.uiLog.error(
-        `Cloud AI Bean Import error at step [${currentStep}]: ${errorMessage}`,
+        `Cloud AI Bean Import error at step [${currentStep}]`,
+        errorSummary(error),
       );
-      this.uiLog.error('Full error: ' + JSON.stringify(error));
       await this.uiAlert.hideLoadingSpinner();
 
       throw createAIBeanImportError(
@@ -143,10 +145,11 @@ export class CloudAIBeanImportService {
           : typeof error === 'string'
             ? error
             : 'Unknown error';
+      // The message can quote the answer of the provider.
       this.uiLog.error(
-        `Cloud AI Multi-Photo Import error at step [${currentStep}]: ${errorMessage}`,
+        `Cloud AI Multi-Photo Import error at step [${currentStep}]`,
+        errorSummary(error),
       );
-      this.uiLog.error('Full error: ' + JSON.stringify(error));
 
       throw createAIBeanImportError(
         `[${currentStep}] ${errorMessage}`,

@@ -468,6 +468,10 @@ describe('VisualizerService', () => {
         expect(showInfoToastBottom.calls.allArgs()).toEqual([
           ['VISUALIZER.SHOT.UPLOAD_UNSUCCESSFULLY'],
         ]);
+        // The answer of the server stays out of the app log.
+        expect(log.error.calls.allArgs()).toEqual([
+          ['Upload visualizer shot error occurred', 'Error'],
+        ]);
       });
     }
 
@@ -641,6 +645,9 @@ describe('VisualizerService', () => {
         service.uploadBaristamodeBrewToVisualizer(brew),
       ).toBeRejectedWithError('Received invalid visualizer reponse: {}');
 
+      expect(log.error.calls.allArgs()).toEqual([
+        ['Upload visualizer shot error occurred', 'Error'],
+      ]);
       expect(database.set).not.toHaveBeenCalled();
       expect(showInfoToastBottom.calls.allArgs()).toEqual([
         ['VISUALIZER.SHOT.UPLOAD_UNSUCCESSFULLY'],
@@ -761,25 +768,31 @@ describe('VisualizerService', () => {
 
       answer = () => json({ id: 7 }, 201);
       expect(await service.checkConnection()).toBeFalse();
+
+      // Only the status: the answer and its headers stay out of the app log.
+      expect(log.error.calls.allArgs()).toEqual([
+        ['Visualizer connection check did not return data, status:', 401],
+        ['Visualizer connection check did not return data, status:', 200],
+        ['Visualizer connection check did not return data, status:', 201],
+      ]);
     });
 
     it('is not connected when the server cannot be reached', async () => {
       answer = () => Promise.reject(new TypeError('Failed to fetch'));
 
       expect(await service.checkConnection()).toBeFalse();
-      expect(log.error).toHaveBeenCalledTimes(1);
+      expect(log.error.calls.allArgs()).toEqual([
+        ['Visualizer connection check errored:', 'TypeError'],
+      ]);
     });
 
-    it('known gap: writes the answer of the server, the account, to the app log', async () => {
+    it('keeps the answer of the server, the account, out of the app log', async () => {
       answer = () => json({ id: 7, email: 'user@example.org' });
 
       await service.checkConnection();
 
       expect(log.info.calls.allArgs()).toEqual([
-        [
-          'Visualizer connection check successful, got data:',
-          { id: 7, email: 'user@example.org' },
-        ],
+        ['Visualizer connection check successful'],
       ]);
     });
   });
