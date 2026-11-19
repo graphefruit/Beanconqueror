@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 
 import {
   IonBadge,
-  IonContent,
   IonIcon,
   IonLabel,
   IonTabBar,
@@ -29,7 +28,6 @@ import { UIPreparationStorage } from '../../services/uiPreparationStorage';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
-    IonContent,
     IonTabs,
     IonTabBar,
     IonTabButton,

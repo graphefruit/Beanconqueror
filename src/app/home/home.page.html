@@ -1,11 +1,12 @@
-<ion-content>
-  <ion-tabs>
-
+<ion-tabs>
+  <!-- The tab bar is the app's navigation landmark; the pages hold their own
+       banner and main landmarks. -->
+  <nav slot="bottom">
     <!-- The href only makes Ionic's inner link focusable for keyboard users;
          Ionic cancels the link's default action and ion-tabs still navigates
          by the tab name. Ionic selects a tab on Enter/Space keyup, so the
          link's own click on Enter keydown is cancelled to select only once. -->
-    <ion-tab-bar slot="bottom" (keydown.enter)="$event.preventDefault()">
+    <ion-tab-bar (keydown.enter)="$event.preventDefault()">
       <ion-tab-button tab="dashboard" href="/home/dashboard" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-home" aria-hidden="true" />
         <ion-label>{{"NAV_HOME" | translate}}</ion-label>
@@ -18,17 +19,17 @@
         <ion-icon class="menu-icon" name="beanconqueror-bean" aria-hidden="true" />
         <ion-label>{{"NAV_BEANS" | translate}}</ion-label>
         @if (!beansExist) {
-<ion-badge color="danger" />
-}
+          <ion-badge color="danger" />
+        }
       </ion-tab-button>
 
       <ion-tab-button tab="profile" href="/home/profile" tappable>
         <ion-icon class="menu-icon" name="person-outline" aria-hidden="true" />
         <ion-label>{{"NAV_PROFILE" | translate}}</ion-label>
         @if (!preparationsExist || !millsExist) {
-<ion-badge color="danger" />
-}
+          <ion-badge color="danger" />
+        }
       </ion-tab-button>
     </ion-tab-bar>
-  </ion-tabs>
-</ion-content>
+  </nav>
+</ion-tabs>

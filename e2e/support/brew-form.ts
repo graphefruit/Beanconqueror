@@ -101,9 +101,9 @@ export function topDialog(page: Page): Locator {
   return page.getByRole('dialog').last();
 }
 
-/** The brew cards of the Brews tab (the page's inner main region). */
+/** The brew cards of the Brews tab (the page's main region). */
 export function brewList(page: Page): Locator {
-  return page.getByRole('main').getByRole('main');
+  return page.locator('brew').getByRole('main');
 }
 
 /** Opens the action sheet of the n-th brew card in the current list. */

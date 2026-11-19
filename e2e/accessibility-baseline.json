@@ -1,105 +1,31 @@
 {
   "add-bean": {
-    "light": [
-      "tabindex | .button-small"
-    ],
-    "dark": [
-      "tabindex | .button-small"
-    ]
+    "light": ["tabindex | .button-small"],
+    "dark": ["tabindex | .button-small"]
   },
   "beans": {
-    "light": [
-      "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | beans > ion-header",
-      "landmark-main-is-top-level | beans > ion-content",
-      "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content"
-    ],
-    "dark": [
-      "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | beans > ion-header",
-      "landmark-main-is-top-level | beans > ion-content",
-      "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content"
-    ]
+    "light": ["color-contrast | .text-color-inactive.ion-margin-top"],
+    "dark": ["color-contrast | .text-color-inactive.ion-margin-top"]
   },
   "brews": {
-    "light": [
-      "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | brew > ion-header",
-      "landmark-main-is-top-level | brew > ion-content",
-      "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content"
-    ],
-    "dark": [
-      "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | brew > ion-header",
-      "landmark-main-is-top-level | brew > ion-content",
-      "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content"
-    ]
+    "light": ["color-contrast | .text-color-inactive.ion-margin-top"],
+    "dark": ["color-contrast | .text-color-inactive.ion-margin-top"]
   },
   "home": {
-    "light": [
-      "color-contrast | .text-color-inactive",
-      "landmark-banner-is-top-level | ion-header",
-      "landmark-main-is-top-level | dashboard > ion-content",
-      "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content"
-    ],
-    "dark": [
-      "color-contrast | .text-color-inactive",
-      "landmark-banner-is-top-level | ion-header",
-      "landmark-main-is-top-level | dashboard > ion-content",
-      "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content"
-    ]
+    "light": ["color-contrast | .text-color-inactive"],
+    "dark": ["color-contrast | .text-color-inactive"]
   },
   "mills": {
-    "light": [
-      "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | mill > ion-header",
-      "landmark-main-is-top-level | mill > ion-content",
-      "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content"
-    ],
-    "dark": [
-      "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | mill > ion-header",
-      "landmark-main-is-top-level | mill > ion-content",
-      "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content"
-    ]
+    "light": ["color-contrast | .text-color-inactive.ion-margin-top"],
+    "dark": ["color-contrast | .text-color-inactive.ion-margin-top"]
   },
   "preparations": {
-    "light": [
-      "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | preparation > ion-header",
-      "landmark-main-is-top-level | preparation > ion-content",
-      "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content"
-    ],
-    "dark": [
-      "color-contrast | .text-color-inactive.ion-margin-top",
-      "landmark-banner-is-top-level | preparation > ion-header",
-      "landmark-main-is-top-level | preparation > ion-content",
-      "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content"
-    ]
+    "light": ["color-contrast | .text-color-inactive.ion-margin-top"],
+    "dark": ["color-contrast | .text-color-inactive.ion-margin-top"]
   },
   "profile": {
-    "light": [
-      "landmark-banner-is-top-level | app-profile > ion-header",
-      "landmark-main-is-top-level | app-profile > ion-content",
-      "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content"
-    ],
-    "dark": [
-      "landmark-banner-is-top-level | app-profile > ion-header",
-      "landmark-main-is-top-level | app-profile > ion-content",
-      "landmark-no-duplicate-main | app-home > ion-content",
-      "landmark-unique | app-home > ion-content"
-    ]
+    "light": [],
+    "dark": []
   },
   "settings": {
     "light": [
