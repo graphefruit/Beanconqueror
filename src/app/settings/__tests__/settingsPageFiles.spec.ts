@@ -441,6 +441,20 @@ describe('SettingsPage files of an export and an import', () => {
       expect(share).toHaveBeenCalledBefore(showMessage);
     });
 
+    it('tells how many files are missing also when sharing the zip is cancelled', async () => {
+      const texts = watchTexts();
+      await Filesystem.deleteFile({
+        path: 'photo_brew.jpg',
+        directory: Directory.Data,
+      });
+      share.and.rejectWith(new Error('Share canceled'));
+
+      await expectAsync(page.export()).toBeRejected();
+
+      expect(showMessage.calls.allArgs()).toEqual([['FILES_NOT_COPIED']]);
+      expect(texts).toHaveBeenCalledWith('FILES_NOT_COPIED', { count: 1 });
+    });
+
     it('tells nothing more when every file was copied', async () => {
       await page.export();
 

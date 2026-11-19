@@ -1120,15 +1120,19 @@ export class SettingsPage {
   }
 
   public async export() {
-    await this.uiAlert.withLoadingSpinner(async () => {
-      // Do an export to the default export location
-      const defaultExportPath = {
-        path: 'Download/Beanconqueror_export',
-        directory: Directory.External,
-      };
-      await this.exportToPath(defaultExportPath, true);
-    });
-    await this.__reportFilesNotCopied();
+    try {
+      await this.uiAlert.withLoadingSpinner(async () => {
+        // Do an export to the default export location
+        const defaultExportPath = {
+          path: 'Download/Beanconqueror_export',
+          directory: Directory.External,
+        };
+        await this.exportToPath(defaultExportPath, true);
+      });
+    } finally {
+      // Also when sharing the zip was cancelled: the files are missing all the same.
+      await this.__reportFilesNotCopied();
+    }
   }
 
   /** Tells how many photos and graph files the export or import could not copy. */
