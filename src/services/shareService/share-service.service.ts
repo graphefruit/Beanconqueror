@@ -145,7 +145,7 @@ export class ShareService {
     protoBean.attachments = [];
     protoBean.favourite = false;
     protoBean.rating = 0;
-    protoBean.archived = false;
+    protoBean.finished = false;
 
     if (_bean.bean_roasting_type === ('UNKNOWN' as BEAN_ROASTING_TYPE_ENUM)) {
       protoBean.bean_roasting_type =

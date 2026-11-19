@@ -296,6 +296,8 @@ export class UIBeanHelper {
       bean.attachments = [];
       bean.favourite = false;
       bean.rating = 0;
+      // Links of older versions carry the archived state of the sender.
+      bean.finished = false;
       bean.config = new Config();
 
       await this.downloadAndAddAttachAttachments(

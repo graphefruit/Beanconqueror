@@ -983,13 +983,28 @@ describe('UIBeanHelper', () => {
       expect(opened().length).toBe(1);
     });
 
-    it('known gap: a bean the sender had archived arrives archived', async () => {
+    it('brings a bean the sender had archived as an active one and leaves it archived for the sender', async () => {
       const bean = sendersBean();
       bean.finished = true;
 
-      await helper.addUserSharedBean(await sharedCode(bean));
+      const code = await sharedCode(bean);
+      await helper.addUserSharedBean(code);
 
-      expect(template().finished).toBeTrue();
+      expect(
+        BeanProto.decode(
+          Uint8Array.from(atob(code), (_char) => _char.charCodeAt(0)),
+        ).finished,
+      ).toBeFalse();
+      expect(template().finished).toBeFalse();
+      expect(bean.finished).toBeTrue();
+    });
+
+    it('brings a bean as an active one also from a code that says it is archived', async () => {
+      await helper.addUserSharedBean(
+        foreignCode({ name: 'Archived elsewhere', finished: true }),
+      );
+
+      expect(template().finished).toBeFalse();
     });
 
     it('known gap: leaves the frozen state behind, but brings the uuids of the green bean and the roasting machine of the sender', async () => {
