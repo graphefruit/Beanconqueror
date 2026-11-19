@@ -12,6 +12,10 @@ ion-item {
   max-height: 200px;
   overflow-y: auto;
   background: var(--ion-color-accent-secondary);
+  // The caramel list keeps its colour in both modes, so its text and focus
+  // ring do too: espresso reaches 5.29:1 on it, white only 3.27:1.
+  --bq-focus-ring: var(--bq-palette-espresso-900);
+  color: var(--bq-palette-espresso-900);
 }
 
 .suggestion {

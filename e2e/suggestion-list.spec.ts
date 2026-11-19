@@ -8,6 +8,7 @@ import {
   startWithBeans,
   suggestionField,
 } from './support/beans';
+import { contrast, firstColour } from './support/colour';
 
 /**
  * The fields of the bean form that suggest the values of the stored beans are
@@ -116,3 +117,42 @@ test('a country is picked from its suggestions with the keyboard', async ({
   await expect(country).toHaveValue('Colombia');
   await expect(suggestions(page)).toHaveCount(0);
 });
+
+for (const dark of [false, true]) {
+  const theme = dark ? 'dark' : 'light';
+  test(`the suggestions and the active one are readable (${theme})`, async ({
+    page,
+  }) => {
+    await startWithBeans(page);
+    await openAddBean(page);
+    await page.evaluate(
+      (on) => document.documentElement.classList.toggle('ion-palette-dark', on),
+      dark,
+    );
+
+    const roaster = suggestionField(page, 'Roaster');
+    await roaster.pressSequentially('rös');
+    await roaster.press('ArrowDown');
+    const active = suggestions(page).getByRole('option', {
+      name: ROASTER_NORTH,
+    });
+    await expect(active).toHaveAttribute('aria-selected', 'true');
+
+    const colours = await active.evaluate((option) => {
+      const list = getComputedStyle(option.parentElement!);
+      const style = getComputedStyle(option);
+      return {
+        text: style.color,
+        ring: style.outlineColor,
+        surface: list.backgroundColor,
+      };
+    });
+    const surface = firstColour(colours.surface);
+    expect(contrast(firstColour(colours.text), surface)).toBeGreaterThanOrEqual(
+      4.5,
+    );
+    expect(contrast(firstColour(colours.ring), surface)).toBeGreaterThanOrEqual(
+      3,
+    );
+  });
+}
