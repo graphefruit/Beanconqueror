@@ -1377,7 +1377,7 @@
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 30
+      "count": 29
     },
     "@typescript-eslint/no-redundant-type-constituents": {
       "count": 1

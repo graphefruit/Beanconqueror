@@ -698,8 +698,10 @@ flowchart LR
   read.
 - Photos and flow profiles are not part of the ZIP. On Android, the manual
   export in settings copies them next to it (`exportToPath` in
-  `src/app/settings/settings.page.ts`); on iOS the data directory is visible to
-  the user.
+  `src/app/settings/settings.page.ts`) and an import from settings copies
+  them back; on iOS the data directory is visible to the user. A file that
+  is missing or cannot be copied is skipped and logged; after the export or
+  the successful import the user is told how many (`FILES_NOT_COPIED`).
 
 ### Start migrations
 

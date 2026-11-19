@@ -240,6 +240,9 @@ export class SettingsPage {
   public readonly isAndroid: boolean;
   public readonly isIos: boolean;
 
+  /** Photos and graph files the running export or import could not copy. */
+  private filesNotCopied = 0;
+
   private __cleanupAttachmentData(
     _data: (
       IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine
@@ -1042,7 +1045,12 @@ export class SettingsPage {
         fromDirectoryUri: cacheDir.uri,
         toSafTreeUri: safTreeUri,
       });
-      this.uiAlert.showMessage(this.translate.instant('EXPORT_COMPLETED'));
+      this.uiAlert.showMessage(
+        this.translate.instant(
+          this.filesNotCopied > 0 ? 'FILES_NOT_COPIED' : 'EXPORT_COMPLETED',
+          { count: this.filesNotCopied },
+        ),
+      );
     } finally {
       try {
         if (cacheDir) {
@@ -1120,6 +1128,18 @@ export class SettingsPage {
       };
       await this.exportToPath(defaultExportPath, true);
     });
+    await this.__reportFilesNotCopied();
+  }
+
+  /** Tells how many photos and graph files the export or import could not copy. */
+  private async __reportFilesNotCopied(): Promise<void> {
+    if (this.filesNotCopied > 0) {
+      await this.uiAlert.showMessage(
+        this.translate.instant('FILES_NOT_COPIED', {
+          count: this.filesNotCopied,
+        }),
+      );
+    }
   }
 
   private async exportToPath(
@@ -1140,6 +1160,7 @@ export class SettingsPage {
       SETTINGS_TRACKING.TITLE,
       SETTINGS_TRACKING.ACTIONS.EXPORT,
     );
+    this.filesNotCopied = 0;
 
     const zipBlob = await this.uiExportImportHelper.buildExportZIP();
 
@@ -1422,7 +1443,7 @@ export class SettingsPage {
       const sourceFile = this.uiFileHelper.normalizeFileName(fileName);
       const targetFile = `${exportPath.path}/${fileName}`;
 
-      this.uiFileHelper.makeParentDirs(targetFile, exportPath.directory);
+      await this.uiFileHelper.makeParentDirs(targetFile, exportPath.directory);
 
       const copyResult = await Filesystem.copy({
         from: sourceFile,
@@ -1443,6 +1464,7 @@ export class SettingsPage {
         error,
         '.The error will be ignored.',
       );
+      this.filesNotCopied++;
     }
   }
 
@@ -1531,6 +1553,7 @@ export class SettingsPage {
           fileToImport,
           '; Skipping import.',
         );
+        this.filesNotCopied++;
         // Just give up and try to import the other files
         return;
       }
@@ -1558,6 +1581,7 @@ export class SettingsPage {
         '; Error:',
         error,
       );
+      this.filesNotCopied++;
     }
   }
 
@@ -1689,6 +1713,7 @@ export class SettingsPage {
           this.uiAnalytics.disableTracking();
           this.__initializeSettings();
 
+          this.filesNotCopied = 0;
           if (!isIOS && this.platform.is('capacitor')) {
             const brewsData = this.uiBrewStorage.getAllEntries();
             const importAttachmentCollections = [
@@ -1744,6 +1769,7 @@ export class SettingsPage {
           await this.uiAlert.showMessage(
             this.translate.instant('IMPORT_SUCCESSFULLY'),
           );
+          await this.__reportFilesNotCopied();
           if (this.settings.matomo_analytics === undefined) {
             await this.showAnalyticsInformation();
           } else {

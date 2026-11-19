@@ -307,6 +307,15 @@ describe('SettingsPage files of an export and an import', () => {
   const android = () => createPage(['capacitor', 'android']);
   const ios = () => createPage(['capacitor', 'ios']);
 
+  /** The texts the page asks for, with the values it fills in. */
+  function watchTexts(): jasmine.Spy {
+    const instant = jasmine
+      .createSpy('instant')
+      .and.callFake((_key: string) => _key);
+    Object.assign(page, { translate: { instant } });
+    return instant;
+  }
+
   beforeEach(async () => {
     await clearFiles();
     database = new MemoryDatabase();
@@ -396,7 +405,8 @@ describe('SettingsPage files of an export and an import', () => {
       });
     });
 
-    it('goes on with the other files when one is missing, and only logs it', async () => {
+    it('goes on with the other files when one is missing, and tells how many are missing', async () => {
+      const texts = watchTexts();
       await Filesystem.deleteFile({
         path: 'photo_brew.jpg',
         directory: Directory.Data,
@@ -425,11 +435,19 @@ describe('SettingsPage files of an export and an import', () => {
         'Error while exporting photo_brew.jpg .The error will be ignored.',
         'Error while exporting brews/brew-1_flow_profile.json .The error will be ignored.',
       ]);
-      // Nothing tells the user that the export is incomplete.
+      // After the export, which is complete apart from these two files.
+      expect(showMessage.calls.allArgs()).toEqual([['FILES_NOT_COPIED']]);
+      expect(texts).toHaveBeenCalledWith('FILES_NOT_COPIED', { count: 2 });
+      expect(share).toHaveBeenCalledBefore(showMessage);
+    });
+
+    it('tells nothing more when every file was copied', async () => {
+      await page.export();
+
       expect(showMessage).not.toHaveBeenCalled();
     });
 
-    it('known gap: the first export into a new folder misses its first photo and tells nobody', async () => {
+    it('makes the folders of a first export before it copies a file into them', async () => {
       await clearFiles();
       for (const file of SEEDED_FILES) {
         await write(file, `content of ${file}`, Directory.Data);
@@ -437,17 +455,10 @@ describe('SettingsPage files of an export and an import', () => {
 
       await expectAsync(page.export()).toBeResolved();
 
-      // The folder is not made yet when the first file is copied into it.
-      expect(
-        await read(`${EXPORT_DIR}/photo_bean.jpg`, Directory.External),
-      ).toBeUndefined();
-      expect(
-        await read(`${EXPORT_DIR}/photo_water.jpg`, Directory.External),
-      ).toBe('content of photo_water.jpg');
-      expect(log.error.calls.argsFor(0).slice(0, 2)).toEqual([
-        'Error while exporting',
-        'photo_bean.jpg',
-      ]);
+      expect(await filesIn(EXPORT_DIR, Directory.External)).toEqual(
+        [...SEEDED_FILES, 'Beanconqueror.zip'].sort(),
+      );
+      expect(log.error).not.toHaveBeenCalled();
       expect(showMessage).not.toHaveBeenCalled();
     });
 
@@ -819,8 +830,9 @@ describe('SettingsPage files of an export and an import', () => {
       expect(log.error).not.toHaveBeenCalled();
     });
 
-    it('calls the import a success also when files of the backup are missing', async () => {
+    it('calls the import a success also when files of the backup are missing, and tells how many', async () => {
       await open(['capacitor', 'android']);
+      const texts = watchTexts();
       await Filesystem.rmdir({
         path: 'picked/folder',
         directory: Directory.Cache,
@@ -831,7 +843,38 @@ describe('SettingsPage files of an export and an import', () => {
 
       expect(await filesIn('', Directory.Data)).toEqual([]);
       expect(log.error).toHaveBeenCalledTimes(SEEDED_FILES.length);
-      expect(showMessage.calls.allArgs()).toEqual([['IMPORT_SUCCESSFULLY']]);
+      expect(showMessage.calls.allArgs()).toEqual([
+        ['IMPORT_SUCCESSFULLY'],
+        ['FILES_NOT_COPIED'],
+      ]);
+      expect(texts).toHaveBeenCalledWith('FILES_NOT_COPIED', {
+        count: SEEDED_FILES.length,
+      });
+    });
+
+    it('counts a file of the backup that cannot be copied', async () => {
+      await open(['capacitor', 'android']);
+      const texts = watchTexts();
+      const copy = original('copy');
+      spyOn(FilesystemWeb.prototype, 'copy').and.callFake(function (
+        this: FilesystemWeb,
+        _options,
+      ) {
+        return _options.to === 'photo_water.jpg'
+          ? Promise.reject(new Error('disk full'))
+          : copy(this, _options);
+      });
+
+      await page.__importJSON(parsed(), IMPORT_DIR, 'Beanconqueror.zip');
+
+      expect(await filesIn('', Directory.Data)).toEqual(
+        SEEDED_FILES.filter((_file) => _file !== 'photo_water.jpg'),
+      );
+      expect(showMessage.calls.allArgs()).toEqual([
+        ['IMPORT_SUCCESSFULLY'],
+        ['FILES_NOT_COPIED'],
+      ]);
+      expect(texts).toHaveBeenCalledWith('FILES_NOT_COPIED', { count: 1 });
     });
 
     for (const platforms of [['capacitor', 'ios'], ['desktop']]) {
