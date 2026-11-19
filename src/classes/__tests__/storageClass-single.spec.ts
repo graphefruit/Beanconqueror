@@ -299,29 +299,83 @@ describe('StorageClass writing a single entry', () => {
       });
     }
 
-    it('keeps an entry that another write added during the failing save', async () => {
-      for (const write of [
-        (s: StorageClass) => s.add({ config: {}, name: 'new' }),
-        (s: StorageClass) => s.update({ ...entry('b', 2), name: 'changed' }),
-        (s: StorageClass) => s.removeByUUID('b'),
-      ]) {
-        const { storage } = await collection(entries());
-        let fail = true;
-        db.set.and.callFake(async (key: string, value: unknown) => {
-          if (key === 'BREWS' && fail) {
-            fail = false;
-            await storage.add(entry('other'));
-            return false;
+    describe('while another write of the collection is started', () => {
+      const writes: [string, (s: StorageClass) => Promise<unknown>][] = [
+        ['add', (s) => s.add({ config: {}, name: 'new' })],
+        ['update', (s) => s.update({ ...entry('b', 2), name: 'first' })],
+        ['removeByUUID', (s) => s.removeByUUID('b')],
+      ];
+      const others: [string, (s: StorageClass) => Promise<unknown>][] = [
+        ['add', (s) => s.add(entry('other'))],
+        ['update', (s) => s.update({ ...entry('b', 2), name: 'second' })],
+        ['removeByUUID', (s) => s.removeByUUID('a')],
+        ['applyChanges', (s) => s.applyChanges({ remove: ['a'] })],
+      ];
+
+      /** Fails the first save of the brews and starts `other` during it. */
+      function failFirstSaveAndStart(
+        storage: StorageClass,
+        other: (s: StorageClass) => Promise<unknown>,
+        otherFails: boolean,
+      ): () => Promise<unknown> {
+        let first = true;
+        let started: Promise<unknown>;
+        db.set.and.callFake((key: string, value: unknown) => {
+          if (key === 'BREWS' && first) {
+            first = false;
+            started = other(storage);
+            return Promise.resolve(false);
+          }
+          if (key === 'BREWS' && otherFails) {
+            return Promise.resolve(false);
           }
           db.values.set(key, structuredClone(value));
-          return true;
+          return Promise.resolve(true);
         });
+        return () => started;
+      }
 
-        await write(storage);
+      for (const [name, write] of writes) {
+        for (const [otherName, other] of others) {
+          it(`${name} is taken back before a saved ${otherName} changes the entries`, async () => {
+            const { storage } = await collection(entries());
+            const started = failFirstSaveAndStart(storage, other, false);
 
-        expect(
-          storage.getAllEntries().map((_entry: Entry) => _entry.name),
-        ).toEqual(['a', 'b', 'c', 'other']);
+            await write(storage);
+            await started();
+
+            // Nothing of the failed write was stored with the other one.
+            expect(stored()).toEqual(storage.getAllEntries());
+            const expected = structuredClone(entries());
+            if (otherName === 'add') {
+              expected.push(stored()[3]);
+            } else if (otherName === 'update') {
+              expected[1] = stored()[1];
+              expect(stored()[1].name).toBe('second');
+              expect(stored()[1].config.rev).toBe(3);
+            } else {
+              expected.shift();
+            }
+            expect(stored()).toEqual(expected);
+          });
+
+          it(`${name} and a failing ${otherName} leave the entries as they are stored`, async () => {
+            const { storage } = await collection(entries());
+            const list = [...storage.getAllEntries()];
+            const started = failFirstSaveAndStart(storage, other, true);
+
+            await write(storage);
+            await started();
+
+            expect(stored()).toEqual(entries());
+            expect(storage.getAllEntries().length).toBe(3);
+            expect(
+              storage
+                .getAllEntries()
+                .every((_entry: Entry, i: number) => _entry === list[i]),
+            ).toBeTrue();
+          });
+        }
       }
     });
 

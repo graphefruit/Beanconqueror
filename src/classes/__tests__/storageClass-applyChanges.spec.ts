@@ -301,13 +301,14 @@ describe('StorageClass writing several entries with one save', () => {
       expect(beans.getEntryByUUID(added.config.uuid).name).toBe('');
     });
 
-    it('keeps an entry that was added during the failing save', async () => {
+    it('is taken back before an add started during the failing save is stored', async () => {
       const { storage } = await collection([entry('a', 1), entry('b', 1)]);
       let failing = true;
+      let added: Promise<unknown>;
       db.set.and.callFake(async (key: string, value: unknown) => {
         if (key === 'BREWS' && failing) {
           failing = false;
-          await storage.add(entry('ignored'));
+          added = storage.add(entry('ignored'));
           return false;
         }
         db.values.set(key, structuredClone(value));
@@ -317,11 +318,13 @@ describe('StorageClass writing several entries with one save', () => {
       const saved = await storage.updateMany([
         { ...entry('a', 1), name: 'changed' },
       ]);
+      await added;
 
       expect(saved).toBeFalse();
       expect(
         storage.getAllEntries().map((_entry: Entry) => _entry.name),
       ).toEqual(['a', 'b', 'ignored']);
+      expect(stored()).toEqual(storage.getAllEntries());
     });
 
     it('sets no change info in collections without change tracking', async () => {

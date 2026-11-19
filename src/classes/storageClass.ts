@@ -103,6 +103,8 @@ export abstract class StorageClass {
 
   private static messagesShown = 0;
 
+  private lastWrite: Promise<unknown> = Promise.resolve();
+
   protected constructor(protected dbPath: string) {
     this.DB_PATH = dbPath;
   }
@@ -203,6 +205,18 @@ export abstract class StorageClass {
     return true;
   }
 
+  /**
+   * Writes of one collection run one after the other. Each changes the
+   * entries in memory, saves all of them and takes its change back when the
+   * save failed; a write in between would be saved or taken back with it.
+   * So a write never waits for another write of its collection.
+   */
+  private __inTurn<T>(_write: () => Promise<T>): Promise<T> {
+    const result = this.lastWrite.then(_write);
+    this.lastWrite = result.catch(() => undefined);
+    return result;
+  }
+
   public async initializeStorage() {
     await this.__initializeStorage();
   }
@@ -274,9 +288,16 @@ export abstract class StorageClass {
    * without breaking them. Callers that have to undo their work on a failed
    * write use this instead.
    */
-  public async addAndConfirm(
+  public addAndConfirm(
     _entry,
     _options: StorageAddOptions = {},
+  ): Promise<StorageClassAddResult> {
+    return this.__inTurn(() => this.__add(_entry, _options));
+  }
+
+  private async __add(
+    _entry,
+    _options: StorageAddOptions,
   ): Promise<StorageClassAddResult> {
     let newEntry: any;
     let saved = false;
@@ -383,12 +404,17 @@ export abstract class StorageClass {
    * migrations, backfills and similar maintenance; it keeps the change info
    * of the stored entry and counts nothing up.
    *
-   * When the collection could not be saved, the stored entry is the one from
-   * before again, see applyChanges().
+   * When the collection could not be saved, the stored entry is the object
+   * from before again, see applyChanges(). What the caller changed inside
+   * arrays and objects it shares with that entry stays changed.
    */
-  public async update(
+  public update(_obj, _options: StorageWriteOptions = {}): Promise<boolean> {
+    return this.__inTurn(() => this.__update(_obj, _options));
+  }
+
+  private async __update(
     _obj,
-    _options: StorageWriteOptions = {},
+    _options: StorageWriteOptions,
   ): Promise<boolean> {
     if (await this.__refusesWrite('Update')) {
       return false;
@@ -461,7 +487,13 @@ export abstract class StorageClass {
    * Resolves whether the collection was saved (true when nothing had to be
    * saved).
    */
-  public async backfillWithoutTouch(
+  public backfillWithoutTouch(
+    _fill: (entries: any[]) => number,
+  ): Promise<boolean> {
+    return this.__inTurn(() => this.__backfill(_fill));
+  }
+
+  private async __backfill(
     _fill: (entries: any[]) => number,
   ): Promise<boolean> {
     if (await this.__refusesWrite('Backfill')) {
@@ -598,16 +630,16 @@ export abstract class StorageClass {
    * the collection could not be saved: the entries in memory are then the
    * ones from before. Objects the caller changed beforehand stay changed.
    *
-   * Known gap: writes of one collection are not queued. When another write
-   * of this collection is saved while the save of this call fails, that
-   * write has stored the changes of this call with it; they are taken back
-   * in memory only and stay on the device until the next save of the
-   * collection.
-   *
    * Events are sent and deletion notes written only after the save: one
    * event for the call, naming the replaced and added entries in `uuids`.
    */
-  public async applyChanges<T>(
+  public applyChanges<T>(
+    _changes: StorageChanges<T>,
+  ): Promise<StorageChangesResult<T>> {
+    return this.__inTurn(() => this.__applyChanges(_changes));
+  }
+
+  private async __applyChanges<T>(
     _changes: StorageChanges<T>,
   ): Promise<StorageChangesResult<T>> {
     const unsaved: StorageChangesResult<T> = { saved: false, added: [] };
@@ -742,10 +774,9 @@ export abstract class StorageClass {
   }
 
   /**
-   * After a failed save of `_data`: `_undo` takes each change of the write
-   * back by itself, so entries written meanwhile by others stay. Entries read
-   * anew meanwhile are the stored ones; nothing of the write belongs into
-   * them.
+   * After a failed save of `_data`: `_undo` takes the changes of the write
+   * back. Entries read anew meanwhile are the stored ones; nothing of the
+   * write belongs into them.
    */
   private __takeBack(_data: StoredEntry[], _undo: () => void): void {
     if (this.storedData !== _data) {
@@ -833,7 +864,11 @@ export abstract class StorageClass {
     return promise;
   }
 
-  private async __delete(_uuid: string): Promise<boolean> {
+  private __delete(_uuid: string): Promise<boolean> {
+    return this.__inTurn(() => this.__deleteInTurn(_uuid));
+  }
+
+  private async __deleteInTurn(_uuid: string): Promise<boolean> {
     if (await this.__refusesWrite('Delete')) {
       return false;
     }

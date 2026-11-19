@@ -1172,17 +1172,18 @@ describe('StorageClass deletion journal', () => {
       expect(database.has('DELETION_JOURNAL')).toBeFalse();
     });
 
-    it('known gap: an entry added during the failing save stores the collection without the removed entries', async () => {
+    it('stores an entry added during the failing save together with the entries put back', async () => {
       const { storage, removed } = await collection([
         rawEntry('a'),
         rawEntry('b'),
         rawEntry('c'),
       ]);
       let failing = true;
+      let added: Promise<unknown>;
       fakeUIStorage.set.and.callFake(async (key: string, value: unknown) => {
         if (key === 'BREWS' && failing) {
           failing = false;
-          await storage.add(rawEntry('ignored'), { uuid: 'added' });
+          added = storage.add(rawEntry('ignored'), { uuid: 'added' });
           return false;
         }
         database.set(key, structuredClone(value));
@@ -1190,15 +1191,11 @@ describe('StorageClass deletion journal', () => {
       });
 
       expect(await storage.removeManyByUUID(['a', 'c'])).toBeFalse();
+      await added;
 
-      // In memory nothing is lost and nothing is reported as removed ...
       expect(uuids(storage.getAllEntries())).toEqual(['a', 'b', 'c', 'added']);
       expect(removed).toEqual([]);
       expect(database.has('DELETION_JOURNAL')).toBeFalse();
-      // ... but the save of the added entry stored the collection as it was
-      // meanwhile. The next save of the collection stores them again.
-      expect(stored('BREWS')).toEqual(['b', 'added']);
-      await storage.update(storage.getByUUID('b'));
       expect(stored('BREWS')).toEqual(['a', 'b', 'c', 'added']);
     });
 
