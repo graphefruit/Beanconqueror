@@ -258,22 +258,46 @@ writes:
   (`src/services/deletionJournal/deletion-journal.service.ts`). Notes of
   entries that exist again, for example after an import, are dropped when the
   collection loads.
+- The writes of one collection run one after the other
+  (`StorageClass.__inTurn`): each changes the entries in memory, saves the
+  whole collection and takes its change back when the save failed, before
+  the next write starts. So no write is saved or taken back together with
+  another one. A write must therefore never wait for another write of its
+  own collection from inside (it would wait for itself); events are sent
+  without waiting for their subscribers.
 - A single write whose save fails is taken back like one of `applyChanges`
   below: an added entry is gone (`addAndConfirm` resolves `saved: false` and
   what would have been stored, `add` only the latter), an updated entry is
   the object from before, a deleted one is back at its place. The entry event
   (`ADD`, `UPDATE` with `uuid`), `DELETE`, `attachOnRemove()` and the deletion
   note follow only a successful save; after a failed one a bare `UPDATE` lets
-  the caches drop their objects. So nothing a failed write left in memory
-  reaches the disk with the next save of the collection. The known gap of
-  `applyChanges` about a write saved meanwhile holds here as well.
+  the caches drop their objects. So the objects a failed write put into
+  memory do not reach the disk with the next save of the collection.
+  - Not covered: the typed objects (`initializeByObject` is `Object.assign`)
+    share their nested arrays and objects with the stored entry. What a
+    caller changes inside them before `update()` is already in the stored
+    entry and stays there after a failed save; the next save of the
+    collection stores it without new change info. Callers that change
+    nested values work on a copy with a list of its own, as the tool dialog
+    of a preparation does (`preparation-edit-tool.component.ts`).
+  - A caller of `add` that goes on without the answer works with an entry
+    that is not stored. Whatever follows the add (files named after the
+    entry, changes to other entries, a toast) uses `addAndConfirm`. The
+    migrations in `src/services/uiUpdate.ts` and the standard mill after an
+    import (`settings.page.ts`) do not read the answers of their writes yet.
+- Settings and version hold one entry that the storage creates itself. When
+  that could not be saved, `saveSettings()`/`saveVersion()` store it with the
+  next call (`StorageClass.storeOnlyEntry`).
 - The forms that add or edit a bean, green bean, mill, preparation, water or
-  roasting machine save through `storedOrReported()`
+  roasting machine, the forms that add a brew or a graph and the tool dialog
+  of a preparation save through `storedOrReported()`
   (`src/classes/storedOrReported.ts`). Only when the entry was stored they
   show their toast, delete the files of removed photos and close. Otherwise
   the form stays open with what was entered and the user gets one message:
-  the one of the collection, or `ERROR_OCCURED` when it stayed silent. The
-  forms of a brew and of a graph do not do this yet.
+  the one of the collection, or `STORAGE_SAVE_FAILED` from the form when it
+  stayed silent. A brew form keeps the uuid of its brew for the next try, so
+  the flow profile files are written again under the same names. The form
+  that edits a brew does not do this yet.
 - `applyChanges({ update, remove, add })` is the one way to write several
   entries of a collection with a single save: it replaces, removes and adds,
   in this order, and stores all of it or nothing. `updateMany(entries)`,
@@ -285,19 +309,12 @@ writes:
     storage (`prepareEntryForStorage`, for a brew `fixDataTypes()`), so
     nothing of them changes but the change info. It is for maintenance that
     must not normalise old entries on the way.
-  - Known gap: writes of one collection are not queued. When another write
-    of the collection is saved while the save of this call fails
-    (`UIStorage.set` retries for about two seconds), that write has stored
-    the changes of this call with it. They are taken back in memory only and
-    stay on the device until the next save of the collection; an app start
-    in between reads them. For freezing this can leave bags stored whose
-    copied photos were already deleted.
   - Nothing is changed and `saved` is false while the collection takes no
     writes, when an entry to update is not stored or cannot be prepared, and
     when the save fails. After a failed save every change is taken back by
     itself (replaced entries are the objects from before, added ones are
-    gone, removed ones are back at their places), so an entry another write
-    added meanwhile stays. Objects the caller changed before the call stay
+    gone, removed ones are back at their places). Objects the caller changed
+    before the call stay
     changed; callers hand over changed copies or assign new values instead of
     changing nested values of a typed entry, which it shares with the stored
     one.
