@@ -34,7 +34,7 @@ function settingsWithSecrets(prefix: string) {
     cloud_ai_base_url: 'https://ai.example.com',
     brew_by_weight_webhook: {
       active: true,
-      url: 'https://webhook.example.com/stop',
+      url: `https://webhook.example.com/${prefix}-stop`,
       authType: WEBHOOK_AUTH_TYPE_ENUM.BASIC,
       bearerToken: `${prefix}-bearer`,
       basicUsername: `${prefix}-basic-user`,
@@ -56,6 +56,7 @@ function withEmptySecrets(settings: ReturnType<typeof settingsWithSecrets>) {
     cloud_ai_api_key: '',
     brew_by_weight_webhook: {
       ...settings.brew_by_weight_webhook,
+      url: '',
       bearerToken: '',
       basicUsername: '',
       basicPassword: '',
@@ -145,6 +146,7 @@ describe('Backup and export without credentials', () => {
     expect(exported.visualizer_username).toBe('');
     expect(exported.visualizer_password).toBe('');
     expect(exported.cloud_ai_api_key).toBe('');
+    expect(exported.brew_by_weight_webhook.url).toBe('');
     expect(exported.brew_by_weight_webhook.bearerToken).toBe('');
     expect(exported.brew_by_weight_webhook.basicUsername).toBe('');
     expect(exported.brew_by_weight_webhook.basicPassword).toBe('');
@@ -166,7 +168,7 @@ describe('Backup and export without credentials', () => {
 
     const backup = withEmptySecrets(settingsWithSecrets('device'));
     backup.language = 'en';
-    backup.brew_by_weight_webhook.url = 'https://other.example.com';
+    backup.brew_by_weight_webhook.defaultTargetWeight = 40;
     const result = await uiStorage.import({ SETTINGS: [backup], BREWS: [] });
 
     expect(result).toEqual({ BACKUP: false });
@@ -176,7 +178,7 @@ describe('Backup and export without credentials', () => {
       language: 'en',
       brew_by_weight_webhook: {
         ...settingsWithSecrets('device').brew_by_weight_webhook,
-        url: 'https://other.example.com',
+        defaultTargetWeight: 40,
       },
     });
   });
@@ -225,6 +227,7 @@ describe('Backup and export without credentials', () => {
       cloud_ai_api_key: fromNewDevice.cloud_ai_api_key,
       brew_by_weight_webhook: {
         ...expected.brew_by_weight_webhook,
+        url: fromNewDevice.brew_by_weight_webhook.url,
         bearerToken: fromNewDevice.brew_by_weight_webhook.bearerToken,
         basicUsername: fromNewDevice.brew_by_weight_webhook.basicUsername,
         basicPassword: fromNewDevice.brew_by_weight_webhook.basicPassword,
@@ -248,5 +251,31 @@ describe('Backup and export without credentials', () => {
     expect((oldDevice.data.get('SETTINGS') as any[])[0]).toEqual(
       settingsWithSecrets('old'),
     );
+  });
+
+  it('restores the webhook on a device without one, but without its address', async () => {
+    const oldDevice = createDeviceDatabase({
+      SETTINGS: [settingsWithSecrets('old')],
+    });
+    configure(oldDevice.database);
+    await TestBed.inject(UIStorage).init();
+    const zip = await TestBed.inject(UIExportImportHelper).buildExportZIP();
+
+    TestBed.resetTestingModule();
+    const newDevice = createDeviceDatabase({});
+    configure(newDevice.database);
+    const newStorage = TestBed.inject(UIStorage);
+    await newStorage.init();
+    await newStorage.import(
+      await readBackup(TestBed.inject(UIExportImportHelper), zip),
+    );
+
+    const webhook = (newDevice.data.get('SETTINGS') as any[])[0]
+      .brew_by_weight_webhook;
+    expect(webhook).toEqual(
+      withEmptySecrets(settingsWithSecrets('old')).brew_by_weight_webhook,
+    );
+    // The brew form only calls a webhook that has an address.
+    expect(webhook.url).toBe('');
   });
 });

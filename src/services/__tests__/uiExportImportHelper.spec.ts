@@ -128,7 +128,7 @@ describe('UIExportImportHelper backup round trip', () => {
         {
           language: 'en',
           visualizer_password: '',
-          brew_by_weight_webhook: { bearerToken: '', url: 'https://x' },
+          brew_by_weight_webhook: { bearerToken: '', url: '' },
         },
       ],
     });

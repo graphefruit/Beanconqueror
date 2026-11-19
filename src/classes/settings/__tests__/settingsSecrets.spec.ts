@@ -9,7 +9,7 @@ function settingsWithSecrets(prefix: string): Settings {
   settings.visualizer_username = `${prefix}-user`;
   settings.visualizer_password = `${prefix}-password`;
   settings.cloud_ai_api_key = `${prefix}-key`;
-  settings.brew_by_weight_webhook.url = 'https://webhook.example.com';
+  settings.brew_by_weight_webhook.url = `https://webhook.example.com/${prefix}`;
   settings.brew_by_weight_webhook.bearerToken = `${prefix}-bearer`;
   settings.brew_by_weight_webhook.basicUsername = `${prefix}-basic-user`;
   settings.brew_by_weight_webhook.basicPassword = `${prefix}-basic-password`;
@@ -34,9 +34,7 @@ describe('settings secrets', () => {
     expect(stripped.brew_by_weight_webhook.basicUsername).toBe('');
     expect(stripped.brew_by_weight_webhook.basicPassword).toBe('');
     expect(stripped.brew_by_weight_webhook.customHeaderValue).toBe('');
-    expect(stripped.brew_by_weight_webhook.url).toBe(
-      'https://webhook.example.com',
-    );
+    expect(stripped.brew_by_weight_webhook.url).toBe('');
     expect(stripped.brew_by_weight_webhook.customHeaderName).toBe('X-Api-Key');
     expect(plain(live)).toEqual(snapshot);
   });
@@ -60,6 +58,9 @@ describe('settings secrets', () => {
     expect(merged.visualizer_password).toBe('device-password');
     expect(merged.brew_by_weight_webhook.basicPassword).toBe(
       'device-basic-password',
+    );
+    expect(merged.brew_by_weight_webhook.url).toBe(
+      'https://webhook.example.com/device',
     );
     expect(plain(imported)).toEqual(importedSnapshot);
     expect(plain(device)).toEqual(deviceSnapshot);

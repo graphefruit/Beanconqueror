@@ -13,6 +13,7 @@ export type SettingsSecretPath =
 
 /**
  * Settings fields that hold credentials (account logins, API keys, tokens).
+ * The webhook address counts as one: many services put the key into it.
  *
  * Backup and export files leave the device: users keep them in cloud drives,
  * mail them or hand them to other people. Credentials must therefore never be
@@ -24,6 +25,7 @@ export const SETTINGS_SECRET_PATHS: readonly SettingsSecretPath[] = [
   ['visualizer_username'],
   ['visualizer_password'],
   ['cloud_ai_api_key'],
+  ['brew_by_weight_webhook', 'url'],
   ['brew_by_weight_webhook', 'bearerToken'],
   // Username and password only work as a pair, like the Visualizer login.
   ['brew_by_weight_webhook', 'basicUsername'],

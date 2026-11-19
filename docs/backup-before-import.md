@@ -75,8 +75,9 @@ nothing is imported when that fails. Without a copy in memory nothing can be rol
 storing the import fails, the app says that the data can be incomplete and
 that no backup of it was saved, and asks again.
 
-The file is the same ZIP an export writes. It holds no passwords, API keys or
-tokens (they stay on the device, and an import keeps them) and none of the
+The file is the same ZIP an export writes. It holds no passwords, API keys,
+tokens or webhook addresses (they stay on the device, and an import keeps
+them) and none of the
 values that belong to this installation: device id, deletion journal,
 attachment manifest and the note about the last import. Like an export, it
 holds the database only, no photos or flow profile files.

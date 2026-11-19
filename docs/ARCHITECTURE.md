@@ -609,8 +609,10 @@ flowchart LR
   (`__fillMissingChangeInfo`); values the file brings along are kept.
 - Credential filter: `SETTINGS_SECRET_PATHS` in
   `src/classes/settings/settingsSecrets.ts` lists the fields (Visualizer login,
-  cloud AI key, brew-by-weight webhook credentials). They stay in the file with
-  an empty value so the format does not change.
+  cloud AI key, brew-by-weight webhook address and credentials). They stay in
+  the file with an empty value so the format does not change. A device that
+  restores a backup without a webhook of its own has the webhook switched on
+  but without an address, so it is not called until one is entered.
 - Automatic backups: on Android and iOS, `AndroidPlatformService` and
   `IosPlatformService` listen to `STORAGE_CHANGED` with a 3 s debounce and call
   `saveAutomaticBackups()`, which writes `Beanconqueror.zip` into the data

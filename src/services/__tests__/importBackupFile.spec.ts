@@ -727,9 +727,7 @@ describe('Importing a backup', () => {
     expect(content).not.toContain('device-id-a');
     expect(content).not.toContain('deleted-brew');
     expect(content).not.toContain('last_restore_at');
-    expect(saved.SETTINGS[0].brew_by_weight_webhook.url).toBe(
-      'https://webhook.example.com/stop',
-    );
+    expect(saved.SETTINGS[0].brew_by_weight_webhook.url).toBe('');
     expect(saved.BREWS).toEqual(before.BREWS);
     // The credentials stay on the device.
     expect(device.data.get('SETTINGS')).toEqual([
