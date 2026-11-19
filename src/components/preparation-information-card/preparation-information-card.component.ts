@@ -255,7 +255,7 @@ export class PreparationInformationCardComponent {
         role: PREPARATION_ACTION.TURN_MACHINE_OFF,
         translationKey: 'MACHINE_POWER_OFF',
         icon: 'power-outline',
-        iconColor: '#CC3311',
+        iconColor: 'var(--ion-color-danger)',
         lines: 'none',
         visible: canTurnOff,
       }),
