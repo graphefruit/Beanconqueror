@@ -912,11 +912,13 @@ file maps them onto Ionic's variables at the end.
 - Tabs are reachable by keyboard (`src/app/home/home.page.html`).
 - Names: a control that shows only an icon gets its name from a translated
   `aria-label` (keys under `A11Y` in `src/assets/i18n/`, or an existing key
-  with the same text) and its icon is `aria-hidden`. A toggle keeps one name
-  and tells its state with `aria-pressed`
-  (`e2e/brew-list-toolbar.spec.ts`). This holds for new and changed controls;
-  older templates still carry fixed English names (e.g. `Bean options`) and
-  two toggles that change their name instead (bean group, barista graph).
+  with the same text) and its icon is `aria-hidden`. Every `A11Y` key exists
+  in English and German (`src/services/a11y/__tests__/a11y-translations.spec.ts`).
+  A toggle keeps one name and tells its state with `aria-pressed`
+  (`e2e/brew-list-toolbar.spec.ts`), one that shows or hides content with
+  `aria-expanded` (bean group, barista graph; `e2e/bean-list.spec.ts`).
+  `ion-back-button` is named through a translated `aria-label` in each header;
+  Ionic reads it once when the page opens (`e2e/language.spec.ts`).
 - Icons: `ion-icon` is an image to assistive technology. One that only
   decorates text next to it is `aria-hidden`; one that tells something on its
   own (favourite, frozen, best brew, a connected device) has a translated

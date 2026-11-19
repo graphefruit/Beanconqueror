@@ -4,7 +4,7 @@
 
       <ion-col size="11" />
       <ion-col class="ion-text-right" size="1">
-        <ion-button (click)="dismiss()" aria-label="Close controls" fill="clear" style="margin-top: -1px;margin-left:-15px;">
+        <ion-button (click)="dismiss()" [attr.aria-label]="'A11Y.CLOSE_CONTROLS' | translate" fill="clear" style="margin-top: -1px;margin-left:-15px;">
           <ion-icon aria-hidden="true" name="close-outline" slot="icon-only" />
         </ion-button>
       </ion-col>
@@ -28,42 +28,42 @@
 
             @if(brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showBloomTimer) {
               <ion-button (click)="brewComponent.timer.bloomTime()"
-                          aria-label="Set bloom time"
+                          [attr.aria-label]="'A11Y.SET_BLOOM_TIME' | translate"
                           class="big-control-icon" fill="clear" tappable>
                 <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only" />
               </ion-button>
             }
             @if(brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showDripTimer) {
               <ion-button (click)="brewComponent.timer.dripTime()"
-                          aria-label="Set first drip time"
+                          [attr.aria-label]="'A11Y.SET_FIRST_DRIP_TIME' | translate"
                           class="big-control-icon" fill="clear" tappable>
                 <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only" />
               </ion-button>
             }
             @if(brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) {
               <ion-button (click)="pauseTimer()"
-                          aria-label="Pause timer"
+                          [attr.aria-label]="'A11Y.PAUSE_TIMER' | translate"
                           class="big-control-icon" fill="clear" tappable>
                 <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-pause" slot="icon-only" />
               </ion-button>
             }
             @if((!brewComponent.timer.timer.hasStarted || !brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) && brewComponent.timer.getSeconds()>0) {
               <ion-button (click)="resetTimer()"
-                          aria-label="Reset timer"
+                          [attr.aria-label]="'A11Y.RESET_TIMER' | translate"
                           class="big-control-icon" fill="clear" tappable>
                 <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only" />
               </ion-button>
             }
             @if(!brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) {
               <ion-button (click)="resumeTimer()"
-                          aria-label="Resume timer"
+                          [attr.aria-label]="'A11Y.RESUME_TIMER' | translate"
                           class="big-control-icon" fill="clear" tappable>
                 <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
               </ion-button>
             }
             @if(!brewComponent.timer.timer.hasStarted) {
               <ion-button (click)="startTimer()"
-                          aria-label="Start timer"
+                          [attr.aria-label]="'A11Y.START_TIMER' | translate"
                           class="big-control-icon" fill="clear"
                           tappable>
                 <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />

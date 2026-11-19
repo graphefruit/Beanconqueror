@@ -1,6 +1,6 @@
 <ion-header>
   <app-header [title]="'NAV_BEANS' | translate">
-    <app-header-button header-slot="end" icon="beanconqueror-list-add" ariaLabel="Import beans" (clicked)="openImportMenu()" />
+    <app-header-button header-slot="end" icon="beanconqueror-list-add" [ariaLabel]="'A11Y.IMPORT_BEANS' | translate" (clicked)="openImportMenu()" />
     <ion-button header-slot="end" fill="clear" [routerLink]="['/home/beans/bean-parameter']" [attr.aria-label]="'NAV_BEAN_PARAMS' | translate">
       <ion-icon class="ion-color-accent" name="settings-outline" slot="icon-only" aria-hidden="true" />
     </ion-button>

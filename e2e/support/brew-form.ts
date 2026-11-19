@@ -160,11 +160,11 @@ export async function openBrewParameterPage(
 export async function backToBrews(page: Page): Promise<void> {
   // The parameter page below stays in the page with its own back button; the
   // page on top comes last.
-  await page.getByRole('button', { name: 'back', exact: true }).last().click();
+  await page.getByRole('button', { name: 'Back', exact: true }).last().click();
   await page
     .getByRole('banner')
     .filter({ hasText: 'Brewing Parameters' })
-    .getByRole('button', { name: 'back', exact: true })
+    .getByRole('button', { name: 'Back', exact: true })
     .click();
   await expect(page).toHaveURL(/\/home\/profile$/);
   await showBrewsTab(page);

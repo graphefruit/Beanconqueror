@@ -262,6 +262,6 @@ test('thawing a part of a frozen bean splits it', async ({ page }) => {
   await searchBeans(page, 'Zeta');
   await expect(beanCards(page)).toHaveCount(1);
   await expect(
-    page.getByRole('button', { name: 'Expand bean group' }),
-  ).toBeVisible();
+    page.getByRole('button', { name: 'Beans in this group' }),
+  ).toHaveAttribute('aria-expanded', 'false');
 });

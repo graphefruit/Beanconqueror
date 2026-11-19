@@ -63,7 +63,7 @@
           <h2>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.LAST_SHOT" | translate}}<ion-chip style="background-color: #CDC2AC;border-radius: 6px;"><span #lastShot>?</span></ion-chip></h2>
         </ion-col>
         <ion-col size="2"  style="display:flex; flex-direction: column;">
-          <ion-button style="position:relative;top:12px;" [attr.aria-label]="showAdvancedBarista ? 'Collapse barista graph' : 'Expand barista graph'" fill="clear" tappable (click)="toggleGraphOnBaristaMode()">
+          <ion-button style="position:relative;top:12px;" [attr.aria-label]="'A11Y.BARISTA_GRAPH' | translate" [attr.aria-expanded]="showAdvancedBarista" fill="clear" tappable (click)="toggleGraphOnBaristaMode()">
             @if(!showAdvancedBarista) {
               <ion-icon aria-hidden="true" class="ion-color-accent" name="chevron-expand-outline" slot="icon-only" />
             } @else{

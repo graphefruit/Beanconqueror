@@ -152,7 +152,12 @@ test('frozen portions of one bag share a card that opens to show them', async ({
   const group = beanCard(page, BEANS.portion).first();
   await expect(group).toContainText('ZP1');
   await expect(group.getByRole('img', { name: 'Bean group' })).toBeVisible();
-  await group.getByRole('button', { name: 'Expand bean group' }).click();
+  const groupToggle = group.getByRole('button', {
+    name: 'Beans in this group',
+  });
+  await expect(groupToggle).toHaveAttribute('aria-expanded', 'false');
+  await groupToggle.click();
+  await expect(groupToggle).toHaveAttribute('aria-expanded', 'true');
   await expect(beanCards(page)).toHaveCount(4);
   await expect(group).toContainText('ZP2');
   await expect(group).toContainText('ZP3');
@@ -163,8 +168,8 @@ test('frozen portions of one bag share a card that opens to show them', async ({
   // Any action on a card loads the list again, which closes the group.
   await beanAction(page, BEANS.frozen, 'Favourite');
   await expect(
-    page.getByRole('button', { name: 'Expand bean group' }),
-  ).toBeVisible();
+    page.getByRole('button', { name: 'Beans in this group' }),
+  ).toHaveAttribute('aria-expanded', 'false');
   await expect(
     beanCard(page, BEANS.frozen).getByRole('img', { name: 'Favourite' }),
   ).toBeVisible();

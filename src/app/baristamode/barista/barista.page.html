@@ -1,6 +1,6 @@
 <ion-header #ionHeader>
   <app-header [title]="'NAV_BARISTAMODE_SECTION' | translate">
-    <ion-back-button header-slot="start" icon="beanconqueror-back" defaultHref="/home/profile" />
+    <ion-back-button header-slot="start" icon="beanconqueror-back" [attr.aria-label]="'BACK' | translate" defaultHref="/home/profile" />
     @if (isWebSocketConnected() === true ) {
       <ion-chip header-slot="end" role="button" [attr.aria-label]="('PREPARATION_DEVICE_CONNECTION' | translate) + ': ' + ('CONNECTED' | translate)" (click)="showPreparationEdit()" (long-press)="toggleDevInformation()" outline='true' class='machine-connected'>
         <ion-icon aria-hidden="true" name="beanconqueror-sanremo-you-logo" size='large' />
@@ -21,7 +21,7 @@
         <ion-icon aria-hidden="true" color="black" name="beanconqueror-scale-outline" size="large" />
       </ion-chip>
     }
-    <app-header-button header-slot="end" icon="beanconqueror-dots" buttonClass="" ariaLabel="Brew options" (clicked)="popoverActionsBrew()" />
+    <app-header-button header-slot="end" icon="beanconqueror-dots" buttonClass="" [ariaLabel]="'A11Y.BREW_OPTIONS' | translate" (clicked)="popoverActionsBrew()" />
   </app-header>
 </ion-header>
 

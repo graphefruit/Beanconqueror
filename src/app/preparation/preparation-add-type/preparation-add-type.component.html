@@ -26,7 +26,7 @@
 
       <ion-input aria-labelledby='preparationTools' (keyup.enter)="addTool()" [(ngModel)]="nextToolName" name="nextToolName" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text" />
 
-      <ion-button (click)="addTool()" aria-label="Add tool" fill="clear" tappable>
+      <ion-button (click)="addTool()" [attr.aria-label]="'A11Y.ADD_TOOL' | translate" fill="clear" tappable>
         <ion-icon aria-hidden="true" class="font-size-24" color="accent" name="beanconqueror-add" slot="icon-only" />
       </ion-button>
     </ion-item>

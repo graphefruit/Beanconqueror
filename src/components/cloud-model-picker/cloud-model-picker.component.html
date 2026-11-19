@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()"
                   (keydown.enter)="dismiss()"
-                  aria-label="Close">
+                  [attr.aria-label]="'CLOSE' | translate">
         <ion-icon aria-hidden="true" name="close" slot="icon-only" />
       </ion-button>
     </ion-buttons>

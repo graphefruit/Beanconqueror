@@ -1,7 +1,7 @@
 <ion-header>
   <app-header [title]="'ROASTING_SECTION.NAV_GREEN_BEANS' | translate">
-    <ion-back-button header-slot="start" icon="beanconqueror-back" defaultHref="/home/profile" />
-    <app-header-button header-slot="end" icon="beanconqueror-add" ariaLabel="Add green bean" (clicked)="add()" />
+    <ion-back-button header-slot="start" icon="beanconqueror-back" [attr.aria-label]="'BACK' | translate" defaultHref="/home/profile" />
+    <app-header-button header-slot="end" icon="beanconqueror-add" [ariaLabel]="'A11Y.ADD_GREEN_BEAN' | translate" (clicked)="add()" />
   </app-header>
 </ion-header>
 

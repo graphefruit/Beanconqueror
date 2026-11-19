@@ -3,7 +3,7 @@
     <app-header-button
       header-slot="end"
       icon="beanconqueror-add"
-      ariaLabel="Add brew"
+      [ariaLabel]="'ADD_BREW' | translate"
       [longPressEnabled]="true"
       (clicked)="addBrew()"
       (longPressed)="longPressAdd($event)"

@@ -47,11 +47,11 @@ async function enableVarietyInformation(page: Page): Promise<void> {
   await showTab(page, 'Variety information');
   await setParameter(page, 'Enable variety information', true);
 
-  await page.getByRole('button', { name: 'back', exact: true }).click();
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
   await page
     .getByRole('banner')
     .filter({ hasText: 'Bean parameters' })
-    .getByRole('button', { name: 'back', exact: true })
+    .getByRole('button', { name: 'Back', exact: true })
     .click();
   await expect(page).toHaveURL(/\/home\/profile$/);
 }

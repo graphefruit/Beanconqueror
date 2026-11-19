@@ -41,7 +41,7 @@
         </div>
       </ion-col>
       <ion-col class="ion-text-right" size="1">
-        <ion-button (click)="dismiss()" aria-label="Close flow graph" fill="clear" style="margin-top: -1px;margin-left:-15px;">
+        <ion-button (click)="dismiss()" [attr.aria-label]="'A11Y.CLOSE_FLOW_GRAPH' | translate" fill="clear" style="margin-top: -1px;margin-left:-15px;">
           <ion-icon aria-hidden="true" name="close-outline" slot="icon-only" />
         </ion-button>
       </ion-col>
@@ -153,63 +153,63 @@
     <div class="ion-text-center flow-icon-buttons">
       @if(!brewComponent.timer.timer.hasStarted && brewComponent.timer.showListeningButton) {
         <ion-button (click)="startListening();"
-                    aria-label="Start listening to scale"
+                    [attr.aria-label]="'A11Y.START_LISTENING_TO_SCALE' | translate"
                     class="big-icon-only" fill="clear" slot="end" tappable>
           <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-listening-start" slot="icon-only" />
         </ion-button>
       }
       @if(brewComponent.timer.timer.hasStarted && brewComponent.timer.timer.runTimer && brewComponent.timer.ignoreScaleWeightButtonVisible && brewComponent.timer.ignoreWeightButtonActive === true) {
         <ion-button (click)="brewComponent.timer.ignoreScaleWeight();"
-                    aria-label="Ignore scale weight"
+                    [attr.aria-label]="'A11Y.IGNORE_SCALE_WEIGHT' | translate"
                     class="big-icon-only" fill="clear" slot="end" tappable>
           <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-scale-pause" slot="icon-only" />
         </ion-button>
       }
       @if(brewComponent.timer.timer.hasStarted && brewComponent.timer.timer.runTimer && brewComponent.timer.ignoreScaleWeightButtonVisible  && brewComponent.timer.unignoreWeightButtonActive === true) {
         <ion-button (click)="brewComponent.timer.unignoreScaleWeight();"
-                    aria-label="Resume scale weight"
+                    [attr.aria-label]="'A11Y.RESUME_SCALE_WEIGHT' | translate"
                     class="big-icon-only" fill="clear" slot="end" tappable>
           <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-scale-play" slot="icon-only" />
         </ion-button>
       }
       @if(brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showBloomTimer) {
         <ion-button (click)="brewComponent.timer.bloomTime()"
-                    aria-label="Set bloom time"
+                    [attr.aria-label]="'A11Y.SET_BLOOM_TIME' | translate"
                     class="big-icon-only" fill="clear" tappable>
           <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only" />
         </ion-button>
       }
       @if(brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showDripTimer) {
         <ion-button (click)="brewComponent.timer.dripTime()"
-                    aria-label="Set first drip time"
+                    [attr.aria-label]="'A11Y.SET_FIRST_DRIP_TIME' | translate"
                     class="big-icon-only" fill="clear" tappable>
           <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only" />
         </ion-button>
       }
       @if(brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) {
         <ion-button (click)="pauseTimer()"
-                    aria-label="Pause timer"
+                    [attr.aria-label]="'A11Y.PAUSE_TIMER' | translate"
                     class="big-icon-only" fill="clear" tappable>
           <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-pause" slot="icon-only" />
         </ion-button>
       }
       @if((!brewComponent.timer.timer.hasStarted || !brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) && brewComponent.timer.timer.seconds>0) {
         <ion-button (click)="resetTimer($event)"
-                    aria-label="Reset timer"
+                    [attr.aria-label]="'A11Y.RESET_TIMER' | translate"
                     class="big-icon-only" fill="clear" tappable>
           <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only" />
         </ion-button>
       }
       @if(!brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) {
         <ion-button (click)="resumeTimer()"
-                    aria-label="Resume timer"
+                    [attr.aria-label]="'A11Y.RESUME_TIMER' | translate"
                     class="big-icon-only" fill="clear" tappable>
           <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
         </ion-button>
       }
       @if((brewComponent.timer.showListeningButton === true && !brewComponent.timer.timer.hasStarted) || ((settings.bluetooth_scale_listening_threshold_active === false || (brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected === false && settings.bluetooth_scale_listening_threshold_active === true)) && !brewComponent.timer.timer.hasStarted)) {
         <ion-button (click)="startTimer()"
-                    aria-label="Start timer"
+                    [attr.aria-label]="'A11Y.START_TIMER' | translate"
                     class="big-icon-only" fill="clear"
                     tappable>
           <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
@@ -217,7 +217,7 @@
       }
       @if(brewComponent.brewBrewingGraphEl.uiSmartScaleConnected && brewComponent?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring) {
         <ion-button (click)="__tareScale()"
-                    aria-label="Tare scale"
+                    [attr.aria-label]="'A11Y.TARE_SCALE' | translate"
                     class="big-icon-only" fill="clear"
                     tappable>
           <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only" />
@@ -226,7 +226,7 @@
       @if(isIOS()) {
 
         <ion-button (click)="toggleCamera()"
-                    aria-label="Toggle camera"
+                    [attr.aria-label]="'A11Y.TOGGLE_CAMERA' | translate"
                     class="big-icon-only" fill="clear"
                     tappable>
           <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-camera" slot="icon-only" />

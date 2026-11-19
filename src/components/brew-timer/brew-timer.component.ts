@@ -22,6 +22,7 @@ import {
 } from '@ionic/angular';
 
 import { Device } from '@capacitor/device';
+import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
 
@@ -37,7 +38,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   templateUrl: './brew-timer.component.html',
   styleUrls: ['./brew-timer.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [IonItem, IonInput, IonButton, IonIcon],
+  imports: [IonItem, IonInput, IonButton, IonIcon, TranslatePipe],
 })
 export class BrewTimerComponent implements OnInit, OnDestroy {
   private readonly modalCtrl = inject(ModalController);

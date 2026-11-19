@@ -28,6 +28,7 @@ import {
 import { addIcons } from 'ionicons';
 import { closeOutline } from 'ionicons/icons';
 
+import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { Brew } from '../../../classes/brew/brew';
@@ -53,6 +54,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonCard,
     IonCardHeader,
     IonFooter,
+    TranslatePipe,
   ],
 })
 export class BrewMaximizeControlsComponent

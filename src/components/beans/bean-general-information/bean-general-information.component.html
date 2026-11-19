@@ -126,7 +126,7 @@
         prevent-characters remove-empty-number spellcheck="false"
         type="text" tabIndex="2" />
       @if (smartScaleConnected()) {
-        <ion-button style="margin-left:0px;" (click)="bluetoothScaleSetBeanWeight()" aria-label="Set bean weight from scale" tabIndex="1"
+        <ion-button style="margin-left:0px;" (click)="bluetoothScaleSetBeanWeight()" [attr.aria-label]="'A11Y.SET_BEAN_WEIGHT_FROM_SCALE' | translate" tabIndex="1"
           class="big-icon-only" fill="clear" slot="end" tappable>
           <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only" />
         </ion-button>

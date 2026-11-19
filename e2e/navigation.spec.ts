@@ -372,12 +372,14 @@ for (const language of [
     preparations: 'Preparation methods',
     preparationsTitle: 'Methods',
     grinders: 'Grinders',
+    back: 'Back',
   },
   {
     name: 'German',
     preparations: 'Zubereitungsmethoden',
     preparationsTitle: 'Methoden',
     grinders: 'Mühlen',
+    back: 'Zurück',
   },
 ] as const) {
   test(`the preparation and grinder titles fit the header in ${language.name}`, async ({
@@ -404,7 +406,9 @@ for (const language of [
           await screenTitleIsCut(page, title),
           `${title} is not ellipsized at ${textSize}`,
         ).toBe(false);
-        await page.getByRole('button', { name: 'back' }).click();
+        await page
+          .getByRole('button', { name: language.back, exact: true })
+          .click();
         await expect(page).toHaveURL(/\/home\/profile$/);
       }
     }

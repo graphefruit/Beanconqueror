@@ -34,7 +34,7 @@
       </ion-item>
       <ion-item lines="none">
         <ion-label id='preparationTools'>{{"PREPARATION_TOOLS" | translate}}</ion-label>
-        <ion-button [disabled]='data.tools.length <= 0' (click)="sortPreparationTools()" aria-label="Sort preparation tools" fill="clear" tappable>
+        <ion-button [disabled]='data.tools.length <= 0' (click)="sortPreparationTools()" [attr.aria-label]="'SORT_PREPARATION_TOOLS' | translate" fill="clear" tappable>
           <ion-icon aria-hidden="true" class="font-size-24" color="accent" name="swap-vertical-outline" slot="icon-only" />
         </ion-button>
         <ion-icon name="information-outline" slot="end"
@@ -42,7 +42,7 @@
       </ion-item>
       <ion-item style="margin-top: -10px;">
         <ion-input aria-labelledby='preparationTools' (keyup.enter)="addTool()" [(ngModel)]="nextToolName" name="nextToolName" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text" />
-        <ion-button (click)="addTool()" aria-label="Add tool" fill="clear" tappable>
+        <ion-button (click)="addTool()" [attr.aria-label]="'A11Y.ADD_TOOL' | translate" fill="clear" tappable>
           <ion-icon aria-hidden="true" class="font-size-24" color="accent" name="beanconqueror-add" slot="icon-only" />
         </ion-button>
       </ion-item>

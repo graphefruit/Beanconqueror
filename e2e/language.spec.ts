@@ -17,4 +17,17 @@ test('the chosen app language is announced to assistive technology', async ({
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'de');
   await expect(page.getByText('Spracheinstellung')).toBeVisible();
+
+  // Names for screen readers are translated too, the back button's included.
+  // It takes its name when its page opens.
+  await page.locator('settings ion-back-button').click();
+  await page
+    .locator('app-profile')
+    .getByRole('link', { name: /^Einstellungen/ })
+    .click();
+  await expect(
+    page
+      .locator('settings')
+      .getByRole('button', { name: 'Zurück', exact: true }),
+  ).toBeVisible();
 });

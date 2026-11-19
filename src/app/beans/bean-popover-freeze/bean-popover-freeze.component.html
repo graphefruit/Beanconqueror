@@ -69,12 +69,12 @@
         prevent-characters remove-empty-number spellcheck="false"
         type="text" tabIndex="2" />
       <ion-button style='margin-left:0px;' [disabled]='isAddingBagDisabled()' tabIndex="1" (click)='addOnePartialBag()'
-        aria-label="Add single frozen bag"
+        [attr.aria-label]="'A11Y.ADD_SINGLE_FROZEN_BAG' | translate"
         class="big-icon-only" fill="clear" slot="end" tappable>
         <ion-icon aria-hidden="true" name="beanconqueror-add-single-entry" slot='icon-only' />
       </ion-button>
       <ion-button  style='margin-left:0px;' [disabled]='isAddingBagDisabled()' tabIndex="3" (click)='addMaxPartialBags()'
-        aria-label="Add all remaining frozen bags"
+        [attr.aria-label]="'A11Y.ADD_ALL_REMAINING_FROZEN_BAGS' | translate"
         class="big-icon-only"  fill="clear" slot="end" tappable>
         <ion-icon aria-hidden="true" name="beanconqueror-add-list" slot='icon-only' />
       </ion-button>
@@ -99,7 +99,7 @@
                 value='{{key}}'>{{"BEAN_FREEZING_STORAGE_TYPE_" + key | translate}}</ion-select-option>
               }
             </ion-select>
-            <ion-button (click)="deleteBag(i)" aria-label="Delete bag" fill="clear" size="small" slot="end" tappable>
+            <ion-button (click)="deleteBag(i)" [attr.aria-label]="'A11Y.DELETE_BAG' | translate" fill="clear" size="small" slot="end" tappable>
               <ion-icon aria-hidden="true" name="trash-outline"
               slot="icon-only" />
             </ion-button>
