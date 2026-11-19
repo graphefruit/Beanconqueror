@@ -236,3 +236,25 @@ for (const dark of [false, true]) {
     expect(checked).not.toEqual(unchecked);
   });
 }
+
+test('a text field keeps a visible edge in dark mode', async ({ page }) => {
+  await openAddBean(page);
+  await setDark(page, true);
+
+  // The field is drawn by its item: the bottom line of the item's inner row
+  // (inset lines) or of the whole row (full lines).
+  const edge = await textField(page, /^Name/).evaluate((input) => {
+    const item = input.closest('ion-item')!;
+    const native = item.shadowRoot!.querySelector('.item-native')!;
+    const line = [item.shadowRoot!.querySelector('.item-inner')!, native]
+      .map((part) => getComputedStyle(part))
+      .find((style) => parseFloat(style.borderBottomWidth) > 0)!;
+    return {
+      line: line.borderBottomColor,
+      surface: getComputedStyle(native).backgroundColor,
+    };
+  });
+  expect(
+    contrast(firstColour(edge.line), firstColour(edge.surface)),
+  ).toBeGreaterThanOrEqual(3);
+});

@@ -870,6 +870,11 @@ ion-alert {
     --highlight-color-valid: var(--bq-text-primary);
     --highlight-color-invalid: var(--bq-control-error);
   }
+  // The item's bottom line is the only edge of these fields, so it takes the
+  // strong border; plain list rows keep the faint divider.
+  ion-item:has(> ion-input, > ion-select) {
+    --border-color: var(--bq-border-strong);
+  }
   // Typed text never drops below 16px, or iOS zooms in on focus now that
   // pinch zoom is allowed.
   ion-input,

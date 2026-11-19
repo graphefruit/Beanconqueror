@@ -295,12 +295,15 @@ brew-timer,
   // #EA495B misses AA on dark cards (4.2:1); #FF7A88 reaches 6.3:1. Provisional until the designer confirms.
   --bq-text-link: #ff7a88;
   --bq-text-accent: #ff7a88;
-  --bq-nav-inactive: #b8a898;
+  // 8.66:1 on the page, 7.89:1 on the tab bar.
+  --bq-nav-inactive: #c4b5a6;
 
   --bq-action-secondary: #925c38;
 
   --bq-border-subtle: rgba(255, 255, 255, 0.1);
-  --bq-border-strong: rgba(255, 255, 255, 0.1);
+  // A solid edge where the border is the element's outline (UI 3:1): 3.55:1
+  // on the page, 3.24:1 on cards. Translucent white only reached ~1.3:1.
+  --bq-border-strong: #806e5e;
   --bq-border-card: rgba(234, 217, 196, 0.14);
   --bq-focus-ring: var(--bq-palette-white);
   --bq-focus-ring-gap: var(--bq-palette-espresso-900);
@@ -416,7 +419,7 @@ brew-timer,
     #ffffff,
     #2a211a,
     #ff7a88,
-    #b8a898,
+    #c4b5a6,
     rgba(255, 255, 255, 0.1)
   );
 }
