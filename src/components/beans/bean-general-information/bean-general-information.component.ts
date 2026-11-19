@@ -20,7 +20,6 @@ import {
   IonInput,
   IonItem,
   IonLabel,
-  IonList,
   IonRange,
   IonSelect,
   IonSelectOption,
@@ -51,6 +50,7 @@ import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { PhotoAddComponent } from '../../photo-add/photo-add.component';
+import { SuggestionListComponent } from '../../suggestion-list/suggestion-list.component';
 
 declare var cordova;
 @Component({
@@ -65,6 +65,7 @@ declare var cordova;
     PreventCharacterDirective,
     RemoveEmptyNumberDirective,
     PhotoAddComponent,
+    SuggestionListComponent,
     TranslatePipe,
     KeysPipe,
     ToFixedPipe,
@@ -72,7 +73,6 @@ declare var cordova;
     IonCard,
     IonItem,
     IonInput,
-    IonList,
     IonLabel,
     IonSelect,
     IonSelectOption,
@@ -106,9 +106,12 @@ export class BeanGeneralInformationComponent implements OnInit {
   public mixEnum = BEAN_MIX_ENUM;
   public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
 
-  public roasterResultsAvailable: boolean = false;
-  public roasterResults: string[] = [];
-  public roasterFocused: boolean = false;
+  /** The roasters of all stored beans. */
+  public readonly storedRoasters = (): string[] =>
+    this.uiBeanStorage
+      .getAllEntries()
+      .map((bean) => bean.roaster)
+      .filter((roaster) => typeof roaster === 'string');
 
   public maxBeanRating: number = 5;
   public settings: Settings = undefined;
@@ -147,54 +150,6 @@ export class BeanGeneralInformationComponent implements OnInit {
 
   public bluetoothScaleSetBeanWeight() {
     this.data.weight = this.bleManager.getScaleWeight();
-  }
-
-  public onRoasterSearchChange(event: any) {
-    if (!this.roasterFocused) {
-      return;
-    }
-    let actualSearchValue = event.target.value;
-    this.roasterResults = [];
-    this.roasterResultsAvailable = false;
-    if (actualSearchValue === undefined || actualSearchValue === '') {
-      return;
-    }
-
-    actualSearchValue = actualSearchValue.toLowerCase();
-    const filteredEntries = this.uiBeanStorage
-      .getAllEntries()
-      .filter((e) => e.roaster.toLowerCase().includes(actualSearchValue));
-
-    for (const entry of filteredEntries) {
-      this.roasterResults.push(entry.roaster);
-    }
-    // Distinct values
-    this.roasterResults = Array.from(
-      new Set(this.roasterResults.map((e) => e)),
-    );
-
-    if (this.roasterResults.length > 0) {
-      this.roasterResultsAvailable = true;
-    } else {
-      this.roasterResultsAvailable = false;
-    }
-  }
-  public onRoasterSearchLeave($event) {
-    setTimeout(() => {
-      this.roasterResultsAvailable = false;
-      this.roasterResults = [];
-      this.roasterFocused = false;
-    }, 150);
-  }
-  public onRoasterSearchFocus($event) {
-    this.roasterFocused = true;
-  }
-
-  public roasterSelected(selected: string): void {
-    this.data.roaster = selected;
-    this.roasterResults = [];
-    this.roasterResultsAvailable = false;
-    this.roasterFocused = false;
   }
 
   public chooseDate(_event, _keyIdentifier) {

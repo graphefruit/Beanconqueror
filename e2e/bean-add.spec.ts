@@ -13,6 +13,7 @@ import {
   startWithBeans,
   storedBean,
   storedBeans,
+  suggestionField,
 } from './support/beans';
 import { chooseInBrewSelect, openAddBrew } from './support/brew-form';
 import { readStoredValue } from './support/stored-values';
@@ -32,7 +33,7 @@ test('a bean cannot be saved without a name', async ({ page }) => {
 
   // Known defect: without a name "Save" does nothing and says nothing; the
   // name is not marked as missing either.
-  await beanField(page, 'Roaster').fill('Nameless');
+  await suggestionField(page, 'Roaster').fill('Nameless');
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.getByRole('status')).toHaveCount(0);
@@ -55,8 +56,8 @@ test('a new bean is stored with its values and can be brewed', async ({
   await beanField(page, /^Name/).fill('Test Kenia');
 
   // The roasters of the stored beans are suggested.
-  await beanField(page, 'Roaster').pressSequentially('Rös');
-  const suggestion = page.getByRole('button', {
+  await suggestionField(page, 'Roaster').pressSequentially('Rös');
+  const suggestion = page.getByRole('option', {
     name: ROASTER_NORTH,
     exact: true,
   });
@@ -64,7 +65,7 @@ test('a new bean is stored with its values and can be brewed', async ({
   // The list closes shortly after the field is left; a tap delivers the
   // press and the release at once, as a finger does.
   await suggestion.tap();
-  await expect(beanField(page, 'Roaster')).toHaveValue(ROASTER_NORTH);
+  await expect(suggestionField(page, 'Roaster')).toHaveValue(ROASTER_NORTH);
 
   // A decimal comma becomes a point when the field is left.
   await beanField(page, 'Weight').fill('250,5');

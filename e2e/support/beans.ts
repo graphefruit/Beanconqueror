@@ -220,6 +220,11 @@ export function beanField(page: Page, name: string | RegExp): Locator {
   });
 }
 
+/** A text field of the bean form that suggests the values of the stored beans. */
+export function suggestionField(page: Page, name: string): Locator {
+  return page.getByRole('combobox', { name, exact: true, disabled: false });
+}
+
 export async function openAddBean(page: Page): Promise<void> {
   await page
     .getByRole('button', { name: 'Add bean' })

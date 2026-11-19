@@ -11,6 +11,7 @@ import {
   showTab,
   startWithBeans,
   storedBean,
+  suggestionField,
 } from './support/beans';
 
 /**
@@ -85,7 +86,7 @@ test('varieties of a blend are added, copied and deleted in the form', async ({
 
   // A single origin bean has one variety without the tools of a blend.
   await showTab(varietyTab(page));
-  const countries = beanField(page, 'Country');
+  const countries = suggestionField(page, 'Country');
   const percentages = beanField(page, 'Percentage');
   const copy = page.getByRole('button', { name: 'Copy variety information' });
   const remove = page.getByRole('button', { name: 'Delete variety' });
@@ -139,7 +140,7 @@ test('a blend keeps all varieties when it is saved after a look at its mix', asy
 
   await page.getByRole('button', { name: 'Blend, Blend' }).focus();
   await showTab(varietyTab(page));
-  await expect(beanField(page, 'Country')).toHaveCount(3);
+  await expect(suggestionField(page, 'Country')).toHaveCount(3);
   await showTab(page.getByRole('tab', { name: 'General' }));
   await saveBean(page);
 
@@ -158,8 +159,8 @@ test('a blend turned into a single origin bean keeps its first variety only', as
 
   await chooseMix(page, 'Single Origin');
   await showTab(varietyTab(page));
-  await expect(beanField(page, 'Country')).toHaveCount(1);
-  await expect(beanField(page, 'Country')).toHaveValue('Ethiopia');
+  await expect(suggestionField(page, 'Country')).toHaveCount(1);
+  await expect(suggestionField(page, 'Country')).toHaveValue('Ethiopia');
   await saveBean(page);
 
   // The percentage of the blend stays with it.

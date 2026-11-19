@@ -144,4 +144,15 @@ describe('BeanGeneralInformationComponent', () => {
       expect(countries()).toEqual(['Ethiopia', 'Brazil']);
     });
   });
+
+  it('should suggest the roasters of the stored beans, leaving out beans without one', () => {
+    setBean('SINGLE_ORIGIN' as BEAN_MIX_ENUM, ['']);
+    const named = new Bean();
+    named.roaster = 'Rösterei Nord';
+    // Beans from old backups can lack the roaster altogether.
+    const unnamed = Object.assign(new Bean(), { roaster: undefined });
+    TestBed.inject(UIBeanStorage).getAllEntries = () => [named, unnamed];
+
+    expect(component.storedRoasters()).toEqual(['Rösterei Nord']);
+  });
 });

@@ -126,18 +126,18 @@ describe('BeanSortInformationComponent', () => {
     /** Types into a field the way ion-input reports it. */
     function typeInto(field: any, value: string): void {
       field.value = value;
-      field.dispatchEvent(new CustomEvent('ionInput'));
+      field.dispatchEvent(new CustomEvent('ionInput', { bubbles: true }));
       fixture.detectChanges();
     }
 
     function suggestions(sortIndex: number): string[] {
-      const items = sortCard(sortIndex).querySelectorAll('ion-list ion-item');
+      const items = sortCard(sortIndex).querySelectorAll('[role="option"]');
       return Array.from(items, (item) => item.textContent.trim());
     }
 
     it('should list the suggestions only in the sort typed into', () => {
       const field = countryField(1);
-      field.dispatchEvent(new CustomEvent('ionFocus'));
+      field.dispatchEvent(new CustomEvent('ionFocus', { bubbles: true }));
       typeInto(field, 'eth');
 
       expect(suggestions(0)).toEqual([]);
@@ -146,11 +146,11 @@ describe('BeanSortInformationComponent', () => {
 
     it('should fill a picked suggestion into the sort typed into', () => {
       const field = countryField(1);
-      field.dispatchEvent(new CustomEvent('ionFocus'));
+      field.dispatchEvent(new CustomEvent('ionFocus', { bubbles: true }));
       typeInto(field, 'eth');
 
       // Picks the first suggestion the page shows, wherever that is.
-      fixture.nativeElement.querySelector('ion-list ion-item').click();
+      fixture.nativeElement.querySelector('[role="option"]').click();
 
       expect(component.data.bean_information[1].country).toBe('Ethiopia');
       expect(component.data.bean_information[0].country).toBeUndefined();
@@ -158,15 +158,42 @@ describe('BeanSortInformationComponent', () => {
 
     it('should keep suggesting in a sort after the same field of another sort was left', fakeAsync(() => {
       const first = countryField(0);
-      first.dispatchEvent(new CustomEvent('ionFocus'));
-      first.dispatchEvent(new CustomEvent('ionBlur'));
+      first.dispatchEvent(new CustomEvent('ionFocus', { bubbles: true }));
+      first.dispatchEvent(new CustomEvent('ionBlur', { bubbles: true }));
       const second = countryField(1);
-      second.dispatchEvent(new CustomEvent('ionFocus'));
+      second.dispatchEvent(new CustomEvent('ionFocus', { bubbles: true }));
       tick(150);
 
       typeInto(second, 'eth');
 
       expect(suggestions(1)).toEqual(['Ethiopia']);
     }));
+
+    it('should suggest each value of a list once, at most eight', () => {
+      const storedBean = new Bean();
+      storedBean.bean_information = [
+        { country: 'Kenya, Ethiopia; Rwanda' } as IBeanInformation,
+        {
+          country:
+            'Kenya,Colombia, Costa Rica,Brazil,Peru,Panama,Bolivia,Guatemala',
+        } as IBeanInformation,
+      ];
+      mockUIBeanStorage.getAllEntries.and.returnValue([storedBean]);
+      const field = countryField(1);
+      field.dispatchEvent(new CustomEvent('ionFocus', { bubbles: true }));
+
+      typeInto(field, 'a');
+
+      expect(suggestions(1)).toEqual([
+        'Kenya',
+        'Ethiopia',
+        'Rwanda',
+        'Colombia',
+        'Costa Rica',
+        'Brazil',
+        'Panama',
+        'Bolivia',
+      ]);
+    });
   });
 });

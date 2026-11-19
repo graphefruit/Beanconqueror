@@ -1,0 +1,11 @@
+<ng-content />
+@if (options().length > 0) {
+  <ion-item lines="none">
+    <div [attr.aria-label]="'SUGGESTIONS' | translate" [id]="listId" class="suggestions" role="listbox">
+      @for (option of options(); track option.value; let index = $index) {
+        <div [attr.aria-selected]="index === activeIndex()" [class.active]="index === activeIndex()"
+          [id]="optionId(index)" class="suggestion" role="option"><span>{{ option.before }}<strong>{{ option.match }}</strong>{{ option.after }}</span></div>
+      }
+    </div>
+  </ion-item>
+}

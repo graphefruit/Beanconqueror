@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
+import { suggestionField } from './support/beans';
 import { setParameter } from './support/brew-form';
 import { completeFirstRun } from './support/first-run';
 import { openFromProfile } from './support/profile';
@@ -88,7 +89,7 @@ test('a suggestion picked in the second variety of a blend fills that variety', 
   await openAddBean(page);
   await textField(page, /^Name/).fill('Guji Natural');
   await showTab(page, 'Variety information');
-  await textField(page, 'Country').fill('Ethiopia');
+  await suggestionField(page, 'Country').fill('Ethiopia');
   await saveBean(page);
 
   await openAddBean(page);
@@ -101,11 +102,11 @@ test('a suggestion picked in the second variety of a blend fills that variety', 
   await showTab(page, 'Variety information');
   await page.getByRole('button', { name: 'Add another bean type' }).click();
 
-  const countries = textField(page, 'Country');
+  const countries = suggestionField(page, 'Country');
   await expect(countries).toHaveCount(2);
   await countries.nth(1).fill('Eth');
 
-  const suggestion = page.getByRole('button', {
+  const suggestion = page.getByRole('option', {
     name: 'Ethiopia',
     exact: true,
   });
@@ -143,7 +144,7 @@ test('a blend keeps its varieties when its mix is looked at but not changed', as
   await expect(mix).toHaveCount(0);
   await showTab(page, 'Variety information');
   await page.getByRole('button', { name: 'Add another bean type' }).click();
-  const countries = textField(page, 'Country');
+  const countries = suggestionField(page, 'Country');
   await expect(countries).toHaveCount(2);
   await countries.nth(0).fill('Ethiopia');
   await countries.nth(1).fill('Brazil');

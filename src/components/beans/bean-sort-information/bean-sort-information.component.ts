@@ -9,20 +9,11 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import {
-  IonButton,
-  IonCard,
-  IonIcon,
-  IonInput,
-  IonItem,
-  IonLabel,
-  IonList,
-} from '@ionic/angular';
+import { IonButton, IonCard, IonIcon, IonInput, IonItem } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { closeOutline, copyOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { distinct } from 'rxjs/operators';
 
 import { Bean } from '../../../classes/bean/bean';
 import { GreenBean } from '../../../classes/green-bean/green-bean';
@@ -30,13 +21,25 @@ import { Settings } from '../../../classes/settings/settings';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
-import { BeanInformation } from '../../../generated/src/classes/bean/bean';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 import { BeanFunction } from '../../../pipes/bean/beanFunction';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { SuggestionListComponent } from '../../suggestion-list/suggestion-list.component';
+
+/** The fields that suggest the values of the stored beans. */
+const SUGGESTED_FIELDS = [
+  'country',
+  'region',
+  'farm',
+  'farmer',
+  'variety',
+  'processing',
+  'certification',
+] as const;
+type SuggestedField = (typeof SUGGESTED_FIELDS)[number];
 
 @Component({
   selector: 'bean-sort-information',
@@ -54,8 +57,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonButton,
     IonIcon,
     IonInput,
-    IonList,
-    IonLabel,
+    SuggestionListComponent,
   ],
 })
 export class BeanSortInformationComponent implements OnInit {
@@ -69,8 +71,12 @@ export class BeanSortInformationComponent implements OnInit {
   public settings: Settings = undefined;
   public BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
 
-  // Kept per sort, so a blend shows the suggestions only in the sort typed into.
-  public typeaheadSearch = new Map<IBeanInformation, Record<string, any>>();
+  public readonly storedValues = Object.fromEntries(
+    SUGGESTED_FIELDS.map((field) => [
+      field,
+      () => this.valuesOfStoredBeans(field),
+    ]),
+  ) as Record<SuggestedField, () => string[]>;
 
   constructor() {
     addIcons({ copyOutline, closeOutline });
@@ -97,119 +103,22 @@ export class BeanSortInformationComponent implements OnInit {
     // this.data.bean_information.splice(_index, 1);
   }
 
-  public onSearchChange(
-    _beanInformation: IBeanInformation,
-    _type: string,
-    event: any,
-  ) {
-    const typeaheadSearch = this.getTypeaheadSearch(_beanInformation);
-    if (!typeaheadSearch[_type + 'Focused']) {
-      return;
-    }
-    let actualSearchValue = event.target.value;
-    typeaheadSearch[_type + 'ResultsAvailable'] = false;
-    typeaheadSearch[_type + 'Results'] = [];
-    if (actualSearchValue === undefined || actualSearchValue === '') {
-      return;
-    }
-
-    actualSearchValue = actualSearchValue.toLowerCase();
-    const filteredEntries: Array<Bean> = this.uiBeanStorage
-      .getAllEntries()
-      .filter((e) =>
-        e.bean_information.find((be) => {
-          if (be && be.hasOwnProperty(_type) && be[_type]) {
-            return be[_type].toLowerCase().includes(actualSearchValue);
-          }
-        }),
-      );
-
-    for (const entry of filteredEntries) {
-      const beanInfoList = entry.bean_information.filter((be) => {
-        if (be && be.hasOwnProperty(_type) && be[_type]) {
-          return be[_type].toLowerCase().includes(actualSearchValue);
-        }
-      });
-
-      for (const beanInfoEntry of beanInfoList) {
-        if (beanInfoEntry && beanInfoEntry.hasOwnProperty(_type)) {
-          const splittedInfos = beanInfoEntry[_type].split(/(?:,|; )+/);
-          const filterSplittedInfos = splittedInfos.filter((be) => {
-            if (be) {
-              return be.toLowerCase().includes(actualSearchValue);
-            } else {
-              return false;
-            }
-          });
-
-          typeaheadSearch[_type + 'Results'].push(
-            ...new Set(filterSplittedInfos),
+  /** The values of a field in all stored beans, a list like "Bourbon, Typica" split up. */
+  private valuesOfStoredBeans(field: SuggestedField): string[] {
+    const values: string[] = [];
+    for (const bean of this.uiBeanStorage.getAllEntries()) {
+      for (const information of bean.bean_information ?? []) {
+        const value: unknown = information?.[field];
+        if (typeof value === 'string') {
+          values.push(
+            ...value
+              .split(/(?:,|; )+/)
+              .map((part) => part.trim())
+              .filter((part) => part !== ''),
           );
         }
       }
     }
-
-    const distictedValues = [];
-    typeaheadSearch[_type + 'Results'].forEach((element) => {
-      if (!distictedValues.includes(element.trim())) {
-        distictedValues.push(element.trim());
-      }
-    });
-    // Distinct values
-    typeaheadSearch[_type + 'Results'] = distictedValues;
-
-    if (typeaheadSearch[_type + 'Results'].length > 0) {
-      typeaheadSearch[_type + 'ResultsAvailable'] = true;
-    } else {
-      typeaheadSearch[_type + 'ResultsAvailable'] = false;
-    }
-  }
-
-  public searchResultsAvailable(
-    _beanInformation: IBeanInformation,
-    _type,
-  ): boolean {
-    const typeaheadSearch = this.getTypeaheadSearch(_beanInformation);
-    if (typeaheadSearch[_type + 'Results']) {
-      return typeaheadSearch[_type + 'Results'].length > 0;
-    }
-    return false;
-  }
-
-  public getResults(_beanInformation: IBeanInformation, _type: string) {
-    const typeaheadSearch = this.getTypeaheadSearch(_beanInformation);
-    if (typeaheadSearch[_type + 'Results']) {
-      return typeaheadSearch[_type + 'Results'];
-    }
-    return [];
-  }
-  public onSearchLeave(_beanInformation: IBeanInformation, _type: string) {
-    const typeaheadSearch = this.getTypeaheadSearch(_beanInformation);
-    setTimeout(() => {
-      typeaheadSearch[_type + 'ResultsAvailable'] = false;
-      typeaheadSearch[_type + 'Results'] = [];
-      typeaheadSearch[_type + 'Focused'] = false;
-    }, 150);
-  }
-  public onSearchFocus(_beanInformation: IBeanInformation, _type: string) {
-    this.getTypeaheadSearch(_beanInformation)[_type + 'Focused'] = true;
-  }
-
-  public searchResultSelected(
-    _beanInformation: IBeanInformation,
-    _type: string,
-    selected: string,
-  ): void {
-    _beanInformation[_type] = selected;
-    this.onSearchLeave(_beanInformation, _type);
-  }
-
-  private getTypeaheadSearch(
-    _beanInformation: IBeanInformation,
-  ): Record<string, any> {
-    if (!this.typeaheadSearch.has(_beanInformation)) {
-      this.typeaheadSearch.set(_beanInformation, {});
-    }
-    return this.typeaheadSearch.get(_beanInformation);
+    return values;
   }
 }

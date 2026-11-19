@@ -6,22 +6,13 @@
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roaster])) {
-    <ion-item>
-      <ion-input label-placement="stacked" label='{{"BEAN_DATA_ROASTER" | translate}}' #roaster="ngModel" (ionFocus)="onRoasterSearchFocus($event);" (ionBlur)="onRoasterSearchLeave($event)" (ionInput)="onRoasterSearchChange($event)" [(ngModel)]="data.roaster" autocapitalize="sentences"
-        name="roaster" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTER' | translate}}" spellcheck="false"
-        type="text" />
-    </ion-item>
-  }
-  @if (roasterResultsAvailable) {
-    <ion-item lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--ion-color-accent-secondary);">
-        @for (result of roasterResults; track result; let last = $last) {
-          <ion-item (click)="roasterSelected(result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
-            <ion-label>{{result}}</ion-label>
-          </ion-item>
-        }
-      </ion-list>
-    </ion-item>
+    <suggestion-list (picked)="data.roaster = $event" [candidates]="storedRoasters">
+      <ion-item>
+        <ion-input label-placement="stacked" label='{{"BEAN_DATA_ROASTER" | translate}}' #roaster="ngModel" [(ngModel)]="data.roaster" autocapitalize="sentences"
+          name="roaster" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTER' | translate}}" spellcheck="false"
+          type="text" />
+      </ion-item>
+    </suggestion-list>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.buyDate])) {
     <ion-item>

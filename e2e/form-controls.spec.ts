@@ -1,6 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
+import { suggestionField } from './support/beans';
 import { completeFirstRun } from './support/first-run';
 import { openFromProfile } from './support/profile';
 
@@ -145,7 +146,7 @@ test('leaving the required bean name empty is announced as an error', async ({
   const name = textField(page, /^Name/);
   await expect(name).not.toHaveAttribute('aria-invalid', 'true');
   await name.click();
-  await textField(page, 'Roaster').click();
+  await suggestionField(page, 'Roaster').click();
 
   await expect(name).toHaveAttribute('aria-invalid', 'true');
   await expect(name).toHaveAccessibleDescription(
@@ -153,7 +154,7 @@ test('leaving the required bean name empty is announced as an error', async ({
   );
 
   await name.fill('Ethiopia Guji');
-  await textField(page, 'Roaster').click();
+  await suggestionField(page, 'Roaster').click();
   await expect(name).not.toHaveAttribute('aria-invalid', 'true');
 });
 

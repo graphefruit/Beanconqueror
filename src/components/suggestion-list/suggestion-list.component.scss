@@ -1,0 +1,37 @@
+// The field and the list sit in the form as if they were not wrapped.
+:host {
+  display: contents;
+}
+
+ion-item {
+  margin: 5px 16px;
+}
+
+.suggestions {
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: var(--ion-color-accent-secondary);
+}
+
+.suggestion {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+
+  & + & {
+    border-top: 1px solid var(--ion-item-border-color);
+  }
+
+  &.active {
+    outline: var(--bq-focus-ring-width) solid var(--bq-focus-ring);
+    outline-offset: calc(-1 * var(--bq-focus-ring-width));
+  }
+}
+
+strong {
+  font-weight: 700;
+}

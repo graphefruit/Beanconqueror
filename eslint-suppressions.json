@@ -2492,12 +2492,6 @@
   "src/components/beans/bean-sort-information/bean-sort-information.component.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
       "count": 1
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 2
-    },
-    "no-prototype-builtins": {
-      "count": 3
     }
   },
   "src/components/beans/detail/bean-detail-sort-information/__tests__/bean-detail-sort-information.component.spec.ts": {
