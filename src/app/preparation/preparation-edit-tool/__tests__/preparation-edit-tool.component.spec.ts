@@ -24,6 +24,7 @@ import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 import { UIStorage } from '../../../../services/uiStorage';
 import { UIToast } from '../../../../services/uiToast';
 import { createMockTranslateService } from '../../../../test-utils';
+import { PreparationEditComponent } from '../../preparation-edit/preparation-edit.component';
 import { PreparationEditToolComponent } from '../preparation-edit-tool.component';
 
 const T0 = 1_800_000_000_000;
@@ -386,4 +387,122 @@ describe('PreparationEditToolComponent deleting a tool', () => {
 
     expect(Object.fromEntries(device.data)).toEqual(stored);
   });
+});
+
+describe('PreparationEditToolComponent changing a tool', () => {
+  let device: Device;
+
+  beforeEach(() => {
+    spyOn(Date, 'now').and.returnValue(T0);
+    // No alert of the running app: the collection stays silent.
+    spyOn(UIAlert, 'getInstance').and.returnValue(undefined);
+    device = createDevice({ PREPARATION: [storedPreparation()] });
+  });
+
+  /** The tool dialog of the scale, opened from the form of the preparation. */
+  async function openDialog() {
+    const app = await startApp(device);
+    const form = new Preparation();
+    form.initializeByObject(app.preparationStorage.getByUUID(PREPARATION_UUID));
+    const dialog = TestBed.inject(PreparationEditToolComponent);
+    Object.assign(dialog, {
+      preparation: form,
+      preparationTool: form.tools[2],
+    });
+    dialog.ionViewWillEnter();
+    const toast = TestBed.inject(UIToast) as unknown as {
+      showInfoToast: jasmine.Spy;
+    };
+    const toolsInMemory = () =>
+      (app.preparationStorage.getRawEntries()[0] as Preparation).tools.map(
+        (_tool) => `${_tool.name}${_tool.archived ? ' archived' : ''}`,
+      );
+    return { app, form, dialog, toast, toolsInMemory };
+  }
+
+  for (const [name, change, tools] of [
+    [
+      'renamed',
+      async (dialog: PreparationEditToolComponent) => {
+        dialog.data.name = 'Scale renamed';
+        await dialog.editTool();
+      },
+      ['Paper filter', 'Kettle', 'Scale renamed'],
+    ],
+    [
+      'archived',
+      (dialog: PreparationEditToolComponent) => dialog.archiveTool(),
+      ['Paper filter', 'Kettle', 'Scale archived'],
+    ],
+  ] as const) {
+    it(`tells of success and closes as stored when the ${name} tool was saved`, async () => {
+      const { app, dialog, toast, toolsInMemory } = await openDialog();
+
+      await change(dialog);
+
+      expect(toolsInMemory()).toEqual([...tools]);
+      expect(toast.showInfoToast).toHaveBeenCalledOnceWith(
+        'TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY',
+      );
+      expect(app.dismiss).toHaveBeenCalledOnceWith(
+        { dismissed: true },
+        'saved',
+        PreparationEditToolComponent.COMPONENT_ID,
+      );
+      expect(app.uiAlert.showMessage).not.toHaveBeenCalled();
+    });
+
+    it(`stays open with one message when the ${name} tool could not be saved`, async () => {
+      const { app, form, dialog, toast, toolsInMemory } = await openDialog();
+      const archived = dialog.data.archived;
+      device.failing.add('PREPARATION');
+
+      await change(dialog);
+
+      expect(toast.showInfoToast).not.toHaveBeenCalled();
+      expect(app.dismiss).not.toHaveBeenCalled();
+      expect(app.uiAlert.showMessage).toHaveBeenCalledTimes(1);
+      expect(dialog.data.archived).toBe(archived);
+      // Neither the form nor the entries in memory have the change, so the
+      // next save of the collection does not store it.
+      expect(form.tools[2].name).toBe('Scale');
+      expect(form.tools[2].archived).toBe(archived);
+      expect(toolsInMemory()).toEqual(['Paper filter', 'Kettle', 'Scale']);
+    });
+  }
+
+  it('closes as not stored when the dialog is dismissed', async () => {
+    const { app, dialog } = await openDialog();
+
+    dialog.dismiss();
+
+    expect(app.dismiss).toHaveBeenCalledOnceWith(
+      { dismissed: true },
+      undefined,
+      PreparationEditToolComponent.COMPONENT_ID,
+    );
+  });
+
+  for (const stored of [true, false]) {
+    it(`the form ${stored ? 'takes over the stored preparation' : 'keeps what was entered'} when the dialog has ${stored ? '' : 'not '}stored`, async () => {
+      const data = new Preparation();
+      data.name = 'V60 typed by user';
+      const storedEntry = new Preparation();
+      storedEntry.name = 'V60';
+      const form: PreparationEditComponent = Object.assign(
+        Object.create(PreparationEditComponent.prototype),
+        {
+          data,
+          uiPreparationHelper: {
+            editPreparationTool: () => Promise.resolve(stored),
+          },
+          uiPreparationStorage: { getByUUID: () => storedEntry },
+        },
+      );
+
+      await form.editTool(new PreparationTool());
+
+      expect(data.name).toBe(stored ? 'V60' : 'V60 typed by user');
+    });
+  }
 });

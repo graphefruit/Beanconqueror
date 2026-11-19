@@ -24,6 +24,7 @@ import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import { Settings } from '../../../classes/settings/settings';
 import { StorageClass } from '../../../classes/storageClass';
+import { storedOrReported } from '../../../classes/storedOrReported';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { UIAlert } from '../../../services/uiAlert';
@@ -123,7 +124,7 @@ export class PreparationEditToolComponent {
     settings.resetFilter();
     await this.uiSettingsStorage.saveSettings(settings);
 
-    this.dismiss();
+    this.dismiss(true);
   }
 
   /**
@@ -172,7 +173,9 @@ export class PreparationEditToolComponent {
 
   public async archiveTool() {
     this.data.archived = !this.data.archived;
-    await this._editTool();
+    if (!(await this._editTool())) {
+      this.data.archived = !this.data.archived;
+    }
   }
 
   public async editTool() {
@@ -181,24 +184,36 @@ export class PreparationEditToolComponent {
     }
   }
 
-  public async _editTool() {
-    if (this.clonedPreparation.updateTool(this.data)) {
-      await this.uiPreparationStorage.update(this.clonedPreparation);
-      this.uiToast.showInfoToast('TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY');
-      this.uiAnalytics.trackEvent(
-        PREPARATION_TRACKING.TITLE,
-        PREPARATION_TRACKING.ACTIONS.EDIT_TOOL_FINISH,
-      );
-      this.dismiss();
+  /** Resolves whether the tool was stored; the dialog stays open otherwise. */
+  public async _editTool(): Promise<boolean> {
+    // A copy with a list of its own, as for deleting a tool.
+    const preparation = new Preparation();
+    preparation.initializeByObject(this.clonedPreparation);
+    preparation.tools = [...preparation.tools];
+    if (
+      !preparation.updateTool(this.data) ||
+      !(await storedOrReported(this.uiAlert, () =>
+        this.uiPreparationStorage.update(preparation),
+      ))
+    ) {
+      return false;
     }
+    this.uiToast.showInfoToast('TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY');
+    this.uiAnalytics.trackEvent(
+      PREPARATION_TRACKING.TITLE,
+      PREPARATION_TRACKING.ACTIONS.EDIT_TOOL_FINISH,
+    );
+    this.dismiss(true);
+    return true;
   }
 
-  public dismiss(): void {
+  /** `_stored` tells the form that the stored preparation has changed. */
+  public dismiss(_stored = false): void {
     this.modalController.dismiss(
       {
         dismissed: true,
       },
-      undefined,
+      _stored ? 'saved' : undefined,
       PreparationEditToolComponent.COMPONENT_ID,
     );
   }

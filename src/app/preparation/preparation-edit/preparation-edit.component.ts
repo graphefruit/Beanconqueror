@@ -195,10 +195,11 @@ export class PreparationEditComponent implements OnInit {
   }
 
   public async editTool(_tool: PreparationTool) {
-    await this.uiPreparationHelper.editPreparationTool(this.data, _tool);
-    //Reinitialize
-    const prep = this.uiPreparationStorage.getByUUID(this.data.config.uuid);
-    this.data.initializeByObject(prep);
+    if (await this.uiPreparationHelper.editPreparationTool(this.data, _tool)) {
+      //Reinitialize
+      const prep = this.uiPreparationStorage.getByUUID(this.data.config.uuid);
+      this.data.initializeByObject(prep);
+    }
   }
 
   public ngOnInit() {}
