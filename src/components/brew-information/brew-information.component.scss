@@ -118,7 +118,7 @@
         --padding-start: 0px;
         --padding-end: 0px;
         --inner-padding-end: 0px;
-        font-size: 14px;
+        font-size: var(--bq-type-caption);
         --min-height: 0px;
 
         ion-icon {

@@ -15,7 +15,7 @@
 
     .empty-text {
       color: var(--ion-color-medium);
-      font-size: 14px;
+      font-size: var(--bq-type-caption);
       max-width: 280px;
     }
   }

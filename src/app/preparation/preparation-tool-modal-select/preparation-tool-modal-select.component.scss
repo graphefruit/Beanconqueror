@@ -2,7 +2,7 @@
   ion-item {
     margin-left: 16px;
     margin-right: 16px;
-    line-height: 12px;
-    font-size: 12px;
+    line-height: 0.75rem;
+    font-size: var(--bq-type-micro);
   }
 }

@@ -6,13 +6,13 @@
 
     ion-card-title {
       color: var(--ion-color-accent-secondary);
-      font-size: 24px;
+      font-size: var(--bq-type-headline);
       font-weight: bold;
     }
 
     ion-card-subtitle {
       color: var(--ion-text-color);
-      font-size: 14px;
+      font-size: var(--bq-type-caption);
       margin-top: 0px;
     }
   }
@@ -41,7 +41,7 @@
 
     ion-list-header {
       padding-left: 10px;
-      font-size: 16px;
+      font-size: var(--bq-type-body);
     }
   }
 

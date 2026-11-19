@@ -15,7 +15,7 @@
       --background: var(--ion-color-light);
 
       ion-label {
-        font-size: 14px;
+        font-size: var(--bq-type-caption);
       }
     }
   }

@@ -24,14 +24,14 @@
 
   .stat-value {
     color: var(--ion-color-accent-secondary) !important;
-    font-size: 24px !important;
+    font-size: var(--bq-type-headline) !important;
     font-weight: bold !important;
     letter-spacing: -1.05px !important;
   }
 
   .stat-label {
     color: #938f89 !important;
-    font-size: 14px !important;
+    font-size: var(--bq-type-caption) !important;
     font-weight: normal !important;
     text-transform: none !important;
     margin-top: 4px !important;
@@ -56,7 +56,7 @@
   }
 
   .chart-header {
-    font-size: 14px;
+    font-size: var(--bq-type-caption);
     font-weight: bold;
     padding: 14px 16px 8px 16px;
     color: var(--ion-text-color, #000000);

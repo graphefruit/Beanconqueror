@@ -1,6 +1,8 @@
-import type { Locator } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
+import { BEANS } from './support/bean-data';
+import { beanAction, startWithBeans } from './support/beans';
 import { completeFirstRunWithBrew } from './support/first-brew';
 import { completeFirstRun } from './support/first-run';
 
@@ -234,6 +236,83 @@ test.describe('brew cards at 200 % text size', () => {
     ).toBeGreaterThanOrEqual(fit.columnLeft);
     expect(fit.textRight, 'date ends before the divider').toBeLessThanOrEqual(
       fit.dividerLeft,
+    );
+  });
+});
+
+test.describe('screen text at 200 % text size', () => {
+  /**
+   * Sets the root to 200 % and checks that the given size of the text doubles
+   * with it and that neither the text nor the page needs horizontal scrolling.
+   */
+  async function expectTextToGrow(
+    page: Page,
+    text: Locator,
+    name: string,
+    size: 'fontSize' | 'lineHeight' = 'fontSize',
+  ): Promise<void> {
+    const sizesOf = (): Promise<number[]> =>
+      text.evaluateAll(
+        (elements, property) =>
+          elements.map((element) =>
+            parseFloat(getComputedStyle(element)[property]),
+          ),
+        size,
+      );
+    await expect(text.first()).toBeVisible();
+    const before = await sizesOf();
+    expect(before, `${name} found`).not.toHaveLength(0);
+
+    await page.evaluate(() => {
+      document.documentElement.style.fontSize = '200%';
+    });
+    const after = await sizesOf();
+    after.forEach((value, index) => {
+      expect(value, `${name} grows with the text size`).toBeCloseTo(
+        before[index]! * 2,
+        0,
+      );
+    });
+
+    const clipped = await text.evaluateAll((elements) =>
+      elements
+        .filter((element) => element.scrollWidth > element.clientWidth + 1)
+        .map((element) => element.textContent?.trim()),
+    );
+    expect(clipped, `${name} is not cut off`).toEqual([]);
+    const width = await page.evaluate(() => ({
+      content: document.documentElement.scrollWidth,
+      viewport: window.innerWidth,
+    }));
+    expect(
+      width.content,
+      `${name}: no horizontal page scroll`,
+    ).toBeLessThanOrEqual(width.viewport);
+  }
+
+  test('home overview cards', async ({ page }) => {
+    await page.goto('/');
+    await completeFirstRun(page);
+    await page.getByRole('tab', { name: 'Home' }).click();
+    await expectTextToGrow(
+      page,
+      page
+        .locator('ion-card.dashboard')
+        .locator('ion-card-title, ion-card-subtitle'),
+      'overview card text',
+    );
+  });
+
+  test('freeze dialog lines', async ({ page }) => {
+    await startWithBeans(page);
+    await beanAction(page, BEANS.alpha, 'Freeze coffee bean');
+    // Wrapped lines must keep their spacing instead of running into each
+    // other.
+    await expectTextToGrow(
+      page,
+      page.locator('app-bean-popover-freeze').locator('ion-label, .ion-label'),
+      'freeze dialog text',
+      'lineHeight',
     );
   });
 });
