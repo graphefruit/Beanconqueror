@@ -1,10 +1,18 @@
 export type Rgb = [number, number, number];
 
-/** The first colour in a computed value, e.g. of a background or box-shadow. */
-export function firstColour(value: string): Rgb {
-  const match = /rgba?\((\d+), (\d+), (\d+)/.exec(value);
+/**
+ * The first colour in a computed value, e.g. of a background or box-shadow.
+ * A translucent colour is laid over `behind` when given, as it is drawn.
+ */
+export function firstColour(value: string, behind?: Rgb): Rgb {
+  const match = /rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?/.exec(value);
   if (!match) throw new Error(`no colour in "${value}"`);
-  return [Number(match[1]), Number(match[2]), Number(match[3])];
+  const rgb: Rgb = [Number(match[1]), Number(match[2]), Number(match[3])];
+  const alpha = match[4] === undefined ? 1 : Number(match[4]);
+  if (!behind || alpha === 1) return rgb;
+  return rgb.map((channel, i) =>
+    Math.round(channel * alpha + behind[i] * (1 - alpha)),
+  ) as Rgb;
 }
 
 /** WCAG contrast ratio of two opaque colours. */

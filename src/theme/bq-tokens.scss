@@ -50,7 +50,9 @@ $bq-on-action-primary: #ffffff;
 
   // Borders and focus
   --bq-border-subtle: rgba(33, 25, 20, 0.1);
-  --bq-border-strong: rgba(33, 25, 20, 0.14);
+  // A solid edge where the border is the element's outline (UI 3:1): 4.41:1
+  // on cards, 3.20:1 on the page. The translucent espresso reached ~1.3:1.
+  --bq-border-strong: #8a7464;
   --bq-border-card: rgba(33, 25, 20, 0.1);
   // Keyboard focus: 3px ring 2px away from the element (12.5:1 on cream).
   // Coral fills only reach 3.31:1 against the ring, so they get a double ring:

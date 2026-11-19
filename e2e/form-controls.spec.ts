@@ -218,24 +218,28 @@ for (const dark of [false, true]) {
   });
 }
 
-test('a text field keeps a visible edge in dark mode', async ({ page }) => {
-  await openAddBean(page);
-  await setDark(page, true);
+for (const dark of [false, true]) {
+  const theme = dark ? 'dark' : 'light';
+  test(`a text field keeps a visible edge (${theme})`, async ({ page }) => {
+    await openAddBean(page);
+    await setDark(page, dark);
 
-  // The field is drawn by its item: the bottom line of the item's inner row
-  // (inset lines) or of the whole row (full lines).
-  const edge = await textField(page, /^Name/).evaluate((input) => {
-    const item = input.closest('ion-item')!;
-    const native = item.shadowRoot!.querySelector('.item-native')!;
-    const line = [item.shadowRoot!.querySelector('.item-inner')!, native]
-      .map((part) => getComputedStyle(part))
-      .find((style) => parseFloat(style.borderBottomWidth) > 0)!;
-    return {
-      line: line.borderBottomColor,
-      surface: getComputedStyle(native).backgroundColor,
-    };
+    // The field is drawn by its item: the bottom line of the item's inner row
+    // (inset lines) or of the whole row (full lines).
+    const edge = await textField(page, /^Name/).evaluate((input) => {
+      const item = input.closest('ion-item')!;
+      const native = item.shadowRoot!.querySelector('.item-native')!;
+      const line = [item.shadowRoot!.querySelector('.item-inner')!, native]
+        .map((part) => getComputedStyle(part))
+        .find((style) => parseFloat(style.borderBottomWidth) > 0)!;
+      return {
+        line: line.borderBottomColor,
+        surface: getComputedStyle(native).backgroundColor,
+      };
+    });
+    const surface = firstColour(edge.surface);
+    expect(
+      contrast(firstColour(edge.line, surface), surface),
+    ).toBeGreaterThanOrEqual(3);
   });
-  expect(
-    contrast(firstColour(edge.line), firstColour(edge.surface)),
-  ).toBeGreaterThanOrEqual(3);
-});
+}
