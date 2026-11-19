@@ -222,13 +222,7 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
       }
     } else {
       await this.uiAlert.showMessage(
-        this.translate.instant(
-          'PREPARATION_DEVICE.TYPE_GAGGIMATE.ERROR_RECENT_SHOT_LIST_EMPTY_POSSIBLE_VERSION_MISMATCH',
-          {
-            maxShotVersionSupported:
-              this.gaggimateDevice.maxShotVersionSupported,
-          },
-        ),
+        'PREPARATION_DEVICE.TYPE_GAGGIMATE.ERROR_RECENT_SHOT_LIST_EMPTY',
         'CARE',
         'OK',
         true,
