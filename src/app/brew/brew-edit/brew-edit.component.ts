@@ -34,6 +34,7 @@ import {
 } from '../../../classes/devices';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { Settings } from '../../../classes/settings/settings';
+import { storedOrReported } from '../../../classes/storedOrReported';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
@@ -240,11 +241,16 @@ export class BrewEditComponent implements OnInit {
       }
     }
 
-    const stored = await this.uiBrewStorage.update(this.data);
-    if (stored) {
-      await this.deleteUnreferencedFlowProfile();
-      await this.uiImage.deleteRemovedPhotos(this.data);
+    if (
+      !(await storedOrReported(this.uiAlert, () =>
+        this.uiBrewStorage.update(this.data),
+      ))
+    ) {
+      // The form stays open with what was entered.
+      return;
     }
+    await this.deleteUnreferencedFlowProfile();
+    await this.uiImage.deleteRemovedPhotos(this.data);
 
     void this.uiPreparationHelper.doMachineSpecificSyncs(this.data);
 

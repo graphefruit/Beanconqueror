@@ -289,15 +289,14 @@ writes:
   that could not be saved, `saveSettings()`/`saveVersion()` store it with the
   next call (`StorageClass.storeOnlyEntry`).
 - The forms that add or edit a bean, green bean, mill, preparation, water or
-  roasting machine, the forms that add a brew or a graph and the tool dialog
-  of a preparation save through `storedOrReported()`
+  roasting machine, the forms that add or edit a brew, the form that adds a
+  graph and the tool dialog of a preparation save through `storedOrReported()`
   (`src/classes/storedOrReported.ts`). Only when the entry was stored they
   show their toast, delete the files of removed photos and close. Otherwise
   the form stays open with what was entered and the user gets one message:
   the one of the collection, or `STORAGE_SAVE_FAILED` from the form when it
   stayed silent. A brew form keeps the uuid of its brew for the next try, so
-  the flow profile files are written again under the same names. The form
-  that edits a brew does not do this yet.
+  the flow profile files are written again under the same names.
 - `applyChanges({ update, remove, add })` is the one way to write several
   entries of a collection with a single save: it replaces, removes and adds,
   in this order, and stores all of it or nothing. `updateMany(entries)`,

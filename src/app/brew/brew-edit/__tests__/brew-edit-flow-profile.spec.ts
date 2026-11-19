@@ -1,5 +1,6 @@
 import { Brew } from '../../../../classes/brew/brew';
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
+import { UIAlert } from '../../../../services/uiAlert';
 import { BrewEditComponent } from '../brew-edit.component';
 
 describe('BrewEditComponent flow profile file', () => {
@@ -10,6 +11,7 @@ describe('BrewEditComponent flow profile file', () => {
   let uiBrewStorage: jasmine.SpyObj<any>;
   let brewBrewing: jasmine.SpyObj<any>;
   let modalController: jasmine.SpyObj<any>;
+  let uiAlert: jasmine.SpyObj<Pick<UIAlert, 'showMessage'>>;
   let graph: { flow_profile_raw: BrewFlow };
   let calls: string[];
   let storedFlowProfile: string | undefined;
@@ -45,6 +47,9 @@ describe('BrewEditComponent flow profile file', () => {
       return Promise.resolve('brews/' + _uuid + '_flow_profile.json');
     });
     modalController = jasmine.createSpyObj('ModalController', ['dismiss']);
+    uiAlert = jasmine.createSpyObj('UIAlert', {
+      showMessage: Promise.resolve(),
+    });
 
     component = Object.assign(Object.create(BrewEditComponent.prototype), {
       brew: stored,
@@ -70,6 +75,10 @@ describe('BrewEditComponent flow profile file', () => {
         getScale: null,
       }),
       modalController,
+      uiAlert,
+      visualizerService: jasmine.createSpyObj('VisualizerService', [
+        'uploadToVisualizer',
+      ]),
     });
     component.ngOnInit();
     spyOn(component.data, 'getPreparation').and.returnValue({} as any);
@@ -179,6 +188,53 @@ describe('BrewEditComponent flow profile file', () => {
     await component.updateBrew();
 
     expect(uiImage.deleteRemovedPhotos).not.toHaveBeenCalled();
+  });
+
+  it('tells of success, tracks and closes when the brew was stored', async () => {
+    const component_ = component as unknown as Record<
+      string,
+      Record<string, jasmine.Spy>
+    >;
+
+    await component.updateBrew();
+
+    expect(component_.uiToast.showInfoToast).toHaveBeenCalledOnceWith(
+      'TOAST_BREW_EDITED_SUCCESSFULLY',
+    );
+    expect(component_.brewTracking.trackBrew).toHaveBeenCalledTimes(1);
+    expect(component_.uiAnalytics.trackEvent).toHaveBeenCalled();
+    expect(modalController.dismiss).toHaveBeenCalledTimes(1);
+    expect(uiAlert.showMessage).not.toHaveBeenCalled();
+  });
+
+  it('stays open with one message and tells, tracks and uploads nothing when the brew could not be stored', async () => {
+    const component_ = component as unknown as Record<
+      string,
+      Record<string, jasmine.Spy>
+    >;
+    component.settings.visualizer_active = true;
+    component.settings.visualizer_upload_automatic = true;
+    component_.uiAnalytics.trackEvent.calls.reset();
+    uiBrewStorage.update.and.resolveTo(false);
+
+    await component.updateBrew();
+
+    expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
+      'STORAGE_SAVE_FAILED',
+      undefined,
+      undefined,
+      true,
+    );
+    expect(component_.uiToast.showInfoToast).not.toHaveBeenCalled();
+    expect(component_.brewTracking.trackBrew).not.toHaveBeenCalled();
+    expect(component_.uiAnalytics.trackEvent).not.toHaveBeenCalled();
+    expect(
+      component_.uiPreparationHelper.doMachineSpecificSyncs,
+    ).not.toHaveBeenCalled();
+    expect(
+      component_.visualizerService.uploadToVisualizer,
+    ).not.toHaveBeenCalled();
+    expect(modalController.dismiss).not.toHaveBeenCalled();
   });
 
   it('touches no file for a brew that never had a graph', async () => {
