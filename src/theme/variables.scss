@@ -70,7 +70,9 @@
   --ion-color-light-tint: #f5f6f9;
 
   --beanconqueror-highlight-color-item: #ae9f87;
-  --beanconqueror-icon-color: #cdc2ac;
+  // The text colour: 17.30:1 on white, 12.54:1 on cream, and white glyphs
+  // drawn on it by the custom icons keep 17.30:1.
+  --beanconqueror-icon-color: var(--bq-text-primary);
   --beanconqueror-icon-color-inactive: #cccccc;
   --beanconqueror-icon-star-full-color: #504027;
   --beanconqueror-icon-star-empty-color: #bfb9b0;
@@ -170,6 +172,9 @@
   --ion-color-light-tint: #383a3e;
 
   --beanconqueror-highlight-color-item: #383a3e;
+  // Not the light dark-mode text colour: custom icons draw a white glyph on
+  // this colour (3.97:1 here, 1.38:1 on cream). 3.97:1 on cards, 4.36:1 on
+  // the page.
   --beanconqueror-icon-color: #8b7e6a;
   --beanconqueror-icon-color-inactive: #363636;
   --beanconqueror-icon-star-full-color: #bdb5a8;

@@ -500,11 +500,9 @@ ion-alert {
   ion-tab-button ion-label {
     font-size: var(--bq-type-tab-label);
   }
-  ion-label.card-headline {
-    color: #938f89;
-  }
+  ion-label.card-headline,
   ion-col.card-headline {
-    color: #938f89;
+    color: var(--bq-text-secondary);
   }
   ion-label.label-stacked {
     -webkit-transform: translate3d(0, 40%, 0) scale(1);

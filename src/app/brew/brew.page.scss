@@ -11,8 +11,8 @@
     padding-bottom: calc(56px + 2 * var(--bq-space-4));
   }
 
-  // The global icon colour is a faint legacy tone; the plus takes the label
-  // colour of the fill (5.22:1).
+  // The plus takes the label colour of the fill (5.22:1) rather than the
+  // global icon colour (3.31:1 on coral light, 1.31:1 dark).
   ion-fab-button ion-icon {
     color: var(--bq-text-on-accent);
   }
