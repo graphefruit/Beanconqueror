@@ -124,6 +124,32 @@ describe('ShareService', () => {
       expect(uiAlert.copyLogfiles).toHaveBeenCalledTimes(1);
       expect(share).not.toHaveBeenCalled();
     });
+
+    for (const platform of ['android', 'ios'] as const) {
+      it(`shows the log as text when the file cannot be written on ${platform}`, async () => {
+        setup(platform, 'YES');
+        fileHelper.writeExternalFileFromBase64ForSharing.and.rejectWith(
+          new Error('disk full'),
+        );
+        fileHelper.writeInternalFileFromBase64.and.rejectWith(
+          new Error('disk full'),
+        );
+
+        await service.shareLogs();
+
+        expect(uiAlert.copyLogfiles).toHaveBeenCalledTimes(1);
+        expect(share).not.toHaveBeenCalled();
+      });
+    }
+
+    it('does not show the log as text when the user cancels the share dialog', async () => {
+      setup('android', 'YES');
+      share.and.rejectWith(new Error('Share canceled'));
+
+      await service.shareLogs();
+
+      expect(uiAlert.copyLogfiles).not.toHaveBeenCalled();
+    });
   });
 
   describe('sharing a file', () => {

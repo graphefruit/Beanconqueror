@@ -40,7 +40,11 @@ export class ShareService {
     } catch (ex) {}
   }
 
-  public async shareFile(_filename: string, _dataUrl: string) {
+  /** Resolves false when the file could not be written, so nothing was shared. */
+  public async shareFile(
+    _filename: string,
+    _dataUrl: string,
+  ): Promise<boolean> {
     let file: { path: string; fullpath: string } | undefined;
     try {
       let extensionEnding = '.jpg';
@@ -81,11 +85,13 @@ export class ShareService {
         this.uiLog.error('Share - could not remove the shared file', ex);
       }
     }
+    return file !== undefined;
   }
 
   /**
    * Shares the log as a file after the user agreed to what it can contain.
-   * When the log cannot be turned into a file, it is shown as text to copy.
+   * When the log cannot be turned into a file or the file cannot be written,
+   * it is shown as text to copy.
    */
   public async shareLogs(): Promise<void> {
     const choice = await this.uiAlert.showConfirmWithYesNoTranslation(
@@ -110,7 +116,9 @@ export class ShareService {
       await this.uiAlert.copyLogfiles();
       return;
     }
-    await this.shareFile('Beanconqueror_logs', dataUrl);
+    if (!(await this.shareFile('Beanconqueror_logs', dataUrl))) {
+      await this.uiAlert.copyLogfiles();
+    }
   }
 
   private readAsDataUrl(blob: Blob): Promise<string> {

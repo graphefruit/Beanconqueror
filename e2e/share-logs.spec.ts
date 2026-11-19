@@ -43,8 +43,15 @@ test('the log page asks before it shares the log', async ({ page }) => {
   await question.getByRole('button', { name: 'Share' }).click();
   await expect(question).toHaveCount(0);
 
-  // The browser cannot write the file to share; the log shows that only the
-  // second request, the one agreed to, tried to.
+  // The browser cannot write the file to share, so the log is shown as text
+  // to copy instead.
+  const logText = page.locator('log-text');
+  await expect(logText.getByText(HINT)).toBeVisible();
+  await logText.getByRole('button', { name: 'Close' }).click();
+  await expect(logText).toHaveCount(0);
+
+  // The log shows that only the second request, the one agreed to, tried to
+  // write the file.
   await page.getByRole('button', { name: 'back' }).click();
   await page
     .locator('info ion-content')
