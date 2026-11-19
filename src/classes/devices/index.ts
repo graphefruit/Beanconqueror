@@ -1,3 +1,4 @@
+import { InsmartScale } from './insmartScale';
 import { ArgosThermometer } from './argosThermometer';
 import { BasicGrillThermometer } from './basicGrillThermometer';
 import { BlackcoffeeScale } from './blackcoffeeScale';
