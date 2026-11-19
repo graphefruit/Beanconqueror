@@ -69,7 +69,7 @@
     "@ngx-translate/http-loader": "^17.0.0",
     "@pantrist/capacitor-plugin-ml-kit-text-recognition": "^8.1.1",
     "@zip.js/zip.js": "~2.24.0",
-    "ag-virtual-scroll": "~1.20.2",
+    "ag-virtual-scroll": "~1.22.1",
     "ble-central-advertisements": "^1.1.0",
     "chart.js": "~4.6.1",
     "community-cordova-plugin-nfc": "^1.9.0",

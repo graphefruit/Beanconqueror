@@ -145,8 +145,8 @@ importers:
         specifier: ~2.24.0
         version: 2.24.0
       ag-virtual-scroll:
-        specifier: ~1.20.2
-        version: 1.20.2(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))
+        specifier: ~1.22.1
+        version: 1.22.1(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))
       ble-central-advertisements:
         specifier: ^1.1.0
         version: 1.1.0
@@ -2458,11 +2458,11 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  ag-virtual-scroll@1.20.2:
-    resolution: {integrity: sha512-ItmLCq1t6eUWQeqG/8H/bVD5pkh47N5KQlLJUewhta8nxL6Iz6oaWpkmQIBhWfW7x+omDfveEehXmcQgds+yFw==}
+  ag-virtual-scroll@1.22.1:
+    resolution: {integrity: sha512-mA4bfDlTT02W027mrawO/RChacokU6aMDwnQTB8ZgI2Pw/Ct/HSgVC7uRE6sJirUoHDp6tzQ5VJxlPPKUP9IGg==}
     peerDependencies:
-      '@angular/common': '>=18.2.8'
-      '@angular/core': '>=18.2.8'
+      '@angular/common': '>=22.0.1'
+      '@angular/core': '>=22.0.1'
 
   agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
@@ -7173,7 +7173,7 @@ snapshots:
 
   acorn@8.19.0: {}
 
-  ag-virtual-scroll@1.20.2(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3)):
+  ag-virtual-scroll@1.22.1(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3)):
     dependencies:
       '@angular/common': 22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2)
       '@angular/core': 22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3)
