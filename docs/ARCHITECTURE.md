@@ -870,7 +870,9 @@ file maps them onto Ionic's variables at the end.
   `aria-label` (keys under `A11Y` in `src/assets/i18n/`, or an existing key
   with the same text) and its icon is `aria-hidden`. A toggle keeps one name
   and tells its state with `aria-pressed`
-  (`e2e/brew-list-toolbar.spec.ts`).
+  (`e2e/brew-list-toolbar.spec.ts`). This holds for new and changed controls;
+  older templates still carry fixed English names (e.g. `Bean options`) and
+  two toggles that change their name instead (bean group, barista graph).
 - Icons: `ion-icon` is an image to assistive technology. One that only
   decorates text next to it is `aria-hidden`; one that tells something on its
   own (favourite, frozen, best brew, a connected device) has a translated
