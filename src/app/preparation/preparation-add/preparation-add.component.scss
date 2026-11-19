@@ -5,6 +5,7 @@
     ion-icon {
       width: 128px;
       height: 128px;
+      /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Icon size, not text. */
       font-size: 128px;
     }
   }
@@ -15,6 +16,7 @@
       ion-icon {
         width: 96px;
         height: 96px;
+        /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Icon size, not text. */
         font-size: 96px;
       }
     }

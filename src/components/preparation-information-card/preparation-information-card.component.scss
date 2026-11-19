@@ -25,6 +25,7 @@
     right: -20px;
     min-height: 20px;
     ion-icon {
+      /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Icon size, not text. */
       font-size: 18px !important;
       width: 18px !important;
       height: 18px !important;

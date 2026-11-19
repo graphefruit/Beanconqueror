@@ -23,6 +23,7 @@
       ion-icon {
         top: 4px;
         position: relative;
+        /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Icon size, not text. */
         font-size: 17px;
         margin-right: 0px;
         margin-top: 0px;

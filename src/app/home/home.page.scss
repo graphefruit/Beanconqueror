@@ -7,6 +7,7 @@
   ion-tab-button {
     --padding-start: 6px;
     --padding-end: 6px;
+    /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Matches the tab label, which is capped at 14px. */
     line-height: 16px;
     ion-label {
       white-space: nowrap;
@@ -17,6 +18,7 @@
     ion-tab-button {
       --padding-start: 0px;
       --padding-end: 0px;
+      /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Matches the tab label, which is capped at 14px. */
       line-height: 16px;
     }
   }

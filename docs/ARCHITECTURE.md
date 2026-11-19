@@ -954,7 +954,9 @@ text follows the system text size. Inputs never go below 16 px (iOS zoom on
 focus); tab labels and the screen title are capped so bar chrome does not
 clip. CJK languages get system fonts first (`:root:lang(ja)` etc.). Tabular
 figures are used for live readings. `e2e/typography.spec.ts` checks the layout
-at 200 % text size.
+at 200 % text size. Stylelint (`pnpm lint`) rejects `px` for `font-size` and
+`line-height` in SCSS; icon sizes and the brew and device screens are marked
+as exceptions.
 
 ### Tablet column
 

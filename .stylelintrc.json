@@ -1,6 +1,11 @@
 {
-  "extends": "stylelint-config-standard",
+  "customSyntax": "postcss-scss",
+  "reportDescriptionlessDisables": true,
+  "reportNeedlessDisables": true,
   "rules": {
-    "selector-type-no-unknown": [true, { "ignoreTypes": ["/^ion-/"] }]
+    "declaration-property-unit-disallowed-list": {
+      "font-size": ["px"],
+      "line-height": ["px"]
+    }
   }
 }

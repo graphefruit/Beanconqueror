@@ -96,6 +96,7 @@
 
   .brew-information-panel {
     ion-icon {
+      /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Icon size, not text. */
       font-size: 30px;
     }
   }

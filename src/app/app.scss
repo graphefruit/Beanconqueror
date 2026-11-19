@@ -320,6 +320,7 @@ ion-alert {
     --box-shadow: none;
   }
   ion-button ion-icon[slot='icon-only'] {
+    /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Icon size, not text. */
     font-size: 28px;
   }
 
@@ -384,6 +385,7 @@ ion-alert {
     height: 64px !important;
 
     ion-icon {
+      /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Icon size, not text. */
       font-size: 64px !important; //Preferred size here
       width: 44px;
     }
@@ -393,6 +395,7 @@ ion-alert {
     height: 96px !important;
 
     ion-icon {
+      /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Icon size, not text. */
       font-size: 64px !important; //Preferred size here
       width: 44px;
     }
@@ -402,6 +405,7 @@ ion-alert {
     width: 70px !important;
     height: 70px !important;
     ion-icon {
+      /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Icon size, not text. */
       font-size: 128px !important; //Preferred size here
       width: 128px !important;
       height: 128px !important;
@@ -695,6 +699,7 @@ ion-alert {
     right: -20px;
     min-height: 20px;
     ion-icon {
+      /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Icon size, not text. */
       font-size: 18px !important;
       width: 18px !important;
       height: 18px !important;

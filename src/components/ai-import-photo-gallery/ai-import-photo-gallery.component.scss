@@ -8,6 +8,7 @@
     text-align: center;
 
     .empty-icon {
+      /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Icon size, not text. */
       font-size: 64px;
       color: var(--ion-color-medium);
       margin-bottom: 16px;
