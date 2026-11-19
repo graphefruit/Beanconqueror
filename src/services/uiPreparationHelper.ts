@@ -119,10 +119,11 @@ export class UIPreparationHelper {
     await modal.onWillDismiss();
   }
 
+  /** Resolves whether the dialog has stored the preparation. */
   public async editPreparationTool(
     _preparation: Preparation,
     _preparationTool: PreparationTool,
-  ) {
+  ): Promise<boolean> {
     const modal = await this.modalController.create({
       component: PreparationEditToolComponent,
       componentProps: {
@@ -135,7 +136,7 @@ export class UIPreparationHelper {
       initialBreakpoint: 0.75,
     });
     await modal.present();
-    await modal.onWillDismiss();
+    return (await modal.onWillDismiss()).role === 'saved';
   }
 
   public async sortPreparationTools(_preparation: Preparation) {
@@ -158,7 +159,8 @@ export class UIPreparationHelper {
     await modal.onWillDismiss();
   }
 
-  public async repeatPreparation(_preparation: Preparation) {
+  /** Resolves whether the copy was stored. */
+  public async repeatPreparation(_preparation: Preparation): Promise<boolean> {
     const clonedPreparation: Preparation =
       this.uiHelper.cloneData(_preparation);
     // Reset the id and the timestamp, so we'll create a new one
@@ -177,7 +179,9 @@ export class UIPreparationHelper {
 
     // No attachments.
     clonedPreparation.attachments = [];
-    await this.uiPreparationStorage.add(clonedPreparation);
+    const added =
+      await this.uiPreparationStorage.addAndConfirm(clonedPreparation);
+    return added.saved;
   }
 
   public getConnectedDevice(_preparation: Preparation): PreparationDevice {

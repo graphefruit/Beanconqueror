@@ -1293,12 +1293,12 @@ export class BrewBrewingPreparationDeviceComponent
         try {
           await this.uiAlert.showLoadingSpinner('ADD_BEAN');
           // Add the bean to db
-          const addedBean = await this.uiBeanStorage.add(
+          const added = await this.uiBeanStorage.addAndConfirm(
             Object.assign(new Bean(), { name: beanName }),
           );
-          if (addedBean?.config?.uuid) {
+          if (added.saved) {
             // set the bean for the shot
-            this.brewComponent.data.bean = addedBean.config.uuid;
+            this.brewComponent.data.bean = added.entry.config.uuid;
           }
         } finally {
           await this.uiAlert.hideLoadingSpinner();

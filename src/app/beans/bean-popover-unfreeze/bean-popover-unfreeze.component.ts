@@ -30,6 +30,7 @@ import moment from 'moment';
 import { Bean } from '../../../classes/bean/bean';
 import { Config } from '../../../classes/objectConfig/objectConfig';
 import { Settings } from '../../../classes/settings/settings';
+import { storedOrReported } from '../../../classes/storedOrReported';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { UIAlert } from '../../../services/uiAlert';
@@ -233,7 +234,24 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
       }
 
       newBean.config = new Config();
-      await this.uiBeanStorage.add(newBean);
+      if (
+        !(await storedOrReported(this.uiAlert, async () => {
+          const added = await this.uiBeanStorage.addAndConfirm(newBean);
+          if (!added.saved) {
+            // Before the message, which would wait behind the spinner.
+            await this.uiAlert.hideLoadingSpinner();
+          }
+          return added.saved;
+        }))
+      ) {
+        // The frozen bean keeps its weight, the dialog stays open.
+        for (const path of newBean.attachments) {
+          await this.uiFileHelper
+            .deleteInternalFile(path)
+            .catch(() => undefined);
+        }
+        return;
+      }
 
       // Update original bean
       const remainingWeight = this.bean.weight - this.unfreezeWeight;

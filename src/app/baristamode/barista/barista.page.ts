@@ -501,8 +501,12 @@ export class BaristaPage implements OnInit, OnDestroy {
 
       brewObj.method_of_preparation = _data.brew.method_of_preparation;
 
-      const addedBrewObj: BaristamodeBrew =
-        await this.uiBaristamodeBrewStorage.add(brewObj);
+      const added = await this.uiBaristamodeBrewStorage.addAndConfirm(brewObj);
+      if (!added.saved) {
+        // Not stored, so there is no shot to write a flow profile for.
+        return;
+      }
+      const addedBrewObj: BaristamodeBrew = added.entry;
 
       await this.manageFlowProfile(addedBrewObj, _data.flowProfile);
 

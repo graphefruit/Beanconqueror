@@ -40,6 +40,9 @@ describe('BrewAddComponent finish', () => {
     return obj;
   };
 
+  let uiToast: jasmine.SpyObj<{ showInfoToast: (_text: string) => void }>;
+  let brewTracking: jasmine.SpyObj<{ trackBrew: (_brew: Brew) => void }>;
+
   const createComponent = (setCustomBrewTime: boolean): BrewAddComponent => {
     const data = new Brew();
     data.grind_weight = 18;
@@ -52,6 +55,8 @@ describe('BrewAddComponent finish', () => {
     ]);
     uiBrewHelper.checkIfBeanPackageIsConsumed.and.returnValue(false);
     dismiss = jasmine.createSpy('dismiss');
+    uiToast = jasmine.createSpyObj('UIToast', ['showInfoToast']);
+    brewTracking = jasmine.createSpyObj('BrewTracking', ['trackBrew']);
     return Object.assign(Object.create(BrewAddComponent.prototype), {
       data,
       brewBrewing: brewing,
@@ -71,10 +76,14 @@ describe('BrewAddComponent finish', () => {
       uiPreparationHelper: spies('UIPreparationHelper', [
         'doMachineSpecificSyncs',
       ]),
-      uiAlert: spies('UIAlert', ['showLoadingMessage', 'hideLoadingSpinner']),
+      uiAlert: spies('UIAlert', [
+        'showLoadingMessage',
+        'hideLoadingSpinner',
+        'showMessage',
+      ]),
       uiLog: createMockUILog(),
-      uiToast: jasmine.createSpyObj('UIToast', ['showInfoToast']),
-      brewTracking: jasmine.createSpyObj('BrewTracking', ['trackBrew']),
+      uiToast,
+      brewTracking,
       uiAnalytics: jasmine.createSpyObj('UIAnalytics', ['trackBulkEvents']),
       dismiss,
     }) as BrewAddComponent;
@@ -201,5 +210,44 @@ describe('BrewAddComponent finish', () => {
     const [stored] = brewStorage.getAllEntries();
     expect(stored.flow_profile).toBe('');
     expect(stored.note).toBe('Sweet');
+  });
+
+  it('stays open with what was entered when the brew could not be stored, and stores it on the next try', async () => {
+    component = createComponent(true);
+    Object.assign(component, { hide_toast_message: false });
+    mockUIStorage.set.and.resolveTo(false);
+
+    await component.finish();
+
+    expect(brewStorage.getAllEntries()).toEqual([]);
+    expect(dismiss).not.toHaveBeenCalled();
+    expect(uiToast.showInfoToast).not.toHaveBeenCalled();
+    expect(brewTracking.trackBrew).not.toHaveBeenCalled();
+    expect(component.data.note).toBe('Sweet');
+    const { uiAlert } = component as unknown as {
+      uiAlert: Record<string, jasmine.Spy>;
+    };
+    expect(uiAlert.hideLoadingSpinner).toHaveBeenCalledTimes(1);
+    // The collection has reported the failed save itself.
+    expect(uiAlert.showMessage).not.toHaveBeenCalled();
+
+    mockUIStorage.set.and.resolveTo(true);
+    await component.finish();
+
+    const [stored] = brewStorage.getAllEntries();
+    expect(brewStorage.getAllEntries().length).toBe(1);
+    expect(stored.note).toBe('Sweet');
+    // The same files again, none is left behind under another name.
+    expect(brewing.saveFlowProfile.calls.allArgs()).toEqual([
+      [stored.config.uuid],
+      [stored.config.uuid],
+    ]);
+    expect(brewing.saveReferenceFlowProfile).toHaveBeenCalledOnceWith(
+      stored.config.uuid,
+    );
+    expect(uiToast.showInfoToast).toHaveBeenCalledOnceWith(
+      'TOAST_BREW_ADDED_SUCCESSFULLY',
+    );
+    expect(dismiss).toHaveBeenCalledTimes(1);
   });
 });

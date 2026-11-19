@@ -34,6 +34,7 @@ import { PreparationDevice } from '../../classes/preparationDevice/preparationDe
 import { SanremoYOUDevice } from '../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { XeniaDevice } from '../../classes/preparationDevice/xenia/xeniaDevice';
 import { Settings } from '../../classes/settings/settings';
+import { storedOrReported } from '../../classes/storedOrReported';
 import PREPARATION_TRACKING from '../../data/tracking/preparationTracking';
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
@@ -403,7 +404,13 @@ export class PreparationInformationCardComponent {
       PREPARATION_TRACKING.TITLE,
       PREPARATION_TRACKING.ACTIONS.REPEAT,
     );
-    await this.uiPreparationHelper.repeatPreparation(this.preparation);
+    if (
+      !(await storedOrReported(this.uiAlert, () =>
+        this.uiPreparationHelper.repeatPreparation(this.preparation),
+      ))
+    ) {
+      return;
+    }
     this.uiToast.showInfoToast(
       'TOAST_PREPARATION_METHOD_REPEATED_SUCCESSFULLY',
     );

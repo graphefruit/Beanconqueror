@@ -46,6 +46,7 @@ import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { Settings } from '../../../classes/settings/settings';
+import { storedOrReported } from '../../../classes/storedOrReported';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
@@ -153,6 +154,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   public brewBrewing: BrewBrewingComponent;
 
   @Input() private hide_toast_message: boolean;
+  private brewUuid: string | undefined;
 
   public showFooter: boolean = true;
   private initialBeanData: string = '';
@@ -426,16 +428,32 @@ export class BrewAddComponent implements OnInit, OnDestroy {
 
       // The brew is complete before it is stored, so the brew collection is
       // written once. Its flow profile files are named after it, so the uuid
-      // is fixed beforehand.
-      const uuid = crypto.randomUUID();
+      // is fixed beforehand: once for the form, so another try after a failed
+      // save writes the same files again instead of leaving them behind.
+      this.brewUuid ??= crypto.randomUUID();
+      const uuid = this.brewUuid;
       this.uiLog.log('Brew add - Step 3');
       await this.manageFlowProfile(uuid);
 
       this.uiLog.log('Brew add - Step 4');
-      const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data, {
-        uuid,
-        unix_timestamp: this.getCustomBrewTime(),
-      });
+      let addedBrewObj: Brew;
+      if (
+        !(await storedOrReported(this.uiAlert, async () => {
+          const added = await this.uiBrewStorage.addAndConfirm(this.data, {
+            uuid,
+            unix_timestamp: this.getCustomBrewTime(),
+          });
+          addedBrewObj = added.entry;
+          if (!added.saved) {
+            // Before the message, which would wait behind the spinner.
+            await this.uiAlert.hideLoadingSpinner();
+          }
+          return added.saved;
+        }))
+      ) {
+        // The form stays open with what was entered.
+        return;
+      }
 
       void this.uiPreparationHelper.doMachineSpecificSyncs(addedBrewObj);
 

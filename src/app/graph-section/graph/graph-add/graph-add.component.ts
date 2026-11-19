@@ -28,6 +28,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import { Graph } from '../../../../classes/graph/graph';
+import { storedOrReported } from '../../../../classes/storedOrReported';
 import { GraphDisplayCardComponent } from '../../../../components/graph-display-card/graph-display-card.component';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../../components/header/header.component';
@@ -152,7 +153,16 @@ export class GraphAddComponent {
   }
 
   public async __addGraph() {
-    const addedGraphObj: Graph = await this.uiGraphStorage.add(this.data);
+    let addedGraphObj: Graph;
+    if (
+      !(await storedOrReported(this.uiAlert, async () => {
+        const added = await this.uiGraphStorage.addAndConfirm(this.data);
+        addedGraphObj = added.entry;
+        return added.saved;
+      }))
+    ) {
+      return;
+    }
     try {
       addedGraphObj.flow_profile = await this.uiGraphHelper.saveGraph(
         addedGraphObj.config.uuid,
