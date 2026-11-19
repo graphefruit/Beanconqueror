@@ -46,7 +46,9 @@ Whether the internal backup is offered or restored at start-up is decided on
 summary written beside it (`Beanconqueror.zip.meta.json`, see
 docs/ARCHITECTURE.md) says that the file holds no more entries than the
 database is the file not read; when it does, or the summary does not
-belong to the file, the file is read as before.
+belong to the file, the file is read as before. On iOS the Files app shows
+the summary beside `Beanconqueror.zip`; deleting or changing it only makes
+the next start read the file.
 
 When restoring the internal backup at start-up does not happen for that
 reason, or because the import failed and was rolled back, the app says so and
