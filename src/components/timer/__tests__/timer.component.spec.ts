@@ -116,6 +116,21 @@ describe('TimerComponent', () => {
     expect(names).toEqual(['A11Y.RESET_TIMER', 'A11Y.START_TIMER']);
   });
 
+  it('adds its label to the names, to tell the timers of a page apart', () => {
+    fixture = TestBed.createComponent(TimerComponent);
+    fixture.componentRef.setInput('label', 'Mill timer');
+    fixture.componentRef.setInput('initialSeconds', 30);
+    fixture.detectChanges();
+
+    const names = [
+      ...(fixture.nativeElement as HTMLElement).querySelectorAll('ion-button'),
+    ].map((button) => button.getAttribute('aria-label'));
+    expect(names).toEqual([
+      'A11Y.RESET_TIMER: Mill timer',
+      'A11Y.START_TIMER: Mill timer',
+    ]);
+  });
+
   it('has its start value from the first rendering on, without running', () => {
     createTimer({ seconds: 30, milliseconds: 250 });
 

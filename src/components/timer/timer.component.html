@@ -3,27 +3,29 @@
 
   <ion-input label-placement="stacked" label='{{label}}' readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{returnWantedDisplayFormat()}}" />
 
+  <!-- A page can hold several timers: the label tells their buttons apart. -->
+  @let nameSuffix = label ? ': ' + label : '';
   @if (hideControlButtons == false && timer.runTimer && timer.hasStarted && !timer.hasFinished) {
-    <ion-button  (click)="pauseTimer($event)" [attr.aria-label]="'A11Y.PAUSE_TIMER' | translate"
+    <ion-button  (click)="pauseTimer($event)" [attr.aria-label]="('A11Y.PAUSE_TIMER' | translate) + nameSuffix"
       class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-pause" slot="icon-only" />
     </ion-button>
   }
   @if (hideControlButtons == false && (!timer.hasStarted || !timer.runTimer && timer.hasStarted && !timer.hasFinished) && this.getSeconds()>0) {
-    <ion-button (click)="reset($event)" [attr.aria-label]="'A11Y.RESET_TIMER' | translate"
+    <ion-button (click)="reset($event)" [attr.aria-label]="('A11Y.RESET_TIMER' | translate) + nameSuffix"
       class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only" />
     </ion-button>
   }
 
   @if (hideControlButtons == false && !timer.runTimer && timer.hasStarted && !timer.hasFinished) {
-    <ion-button (click)="resumeTimer($event)" [attr.aria-label]="'A11Y.RESUME_TIMER' | translate"
+    <ion-button (click)="resumeTimer($event)" [attr.aria-label]="('A11Y.RESUME_TIMER' | translate) + nameSuffix"
       class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
     </ion-button>
   }
   @if (hideControlButtons == false && !timer.hasStarted) {
-    <ion-button (click)="startTimer(false,$event)" [attr.aria-label]="'A11Y.START_TIMER' | translate" class="big-icon-only" fill="clear" slot="end" tappable>
+    <ion-button (click)="startTimer(false,$event)" [attr.aria-label]="('A11Y.START_TIMER' | translate) + nameSuffix" class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
     </ion-button>
   }
