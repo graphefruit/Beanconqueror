@@ -1008,6 +1008,10 @@ describe('cloud-llm-communication.service', () => {
       await expectAsync(request).toBeRejectedWithError(
         'Cloud LLM request timed out after 30 seconds',
       );
+      // The app log keeps only the type of the error; it names the cause.
+      await expectAsync(request).toBeRejectedWith(
+        jasmine.objectContaining({ name: 'TimeoutError' }),
+      );
       expect(fetchSpy).toHaveBeenCalledTimes(1);
     });
 

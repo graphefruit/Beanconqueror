@@ -123,8 +123,7 @@ class OpenAICompatibleProtocol implements ProviderProtocol {
   // API response shape is not validated — access defensively.
   parseResponse(body: unknown): CloudLLMResponse {
     const usage = dig(body, 'usage') as
-      | { prompt_tokens: number; completion_tokens: number }
-      | undefined;
+      { prompt_tokens: number; completion_tokens: number } | undefined;
     return {
       content: String(dig(body, 'choices', 0, 'message', 'content') ?? ''),
       model: String(dig(body, 'model') ?? ''),
@@ -310,7 +309,12 @@ async function sendOnce(
     return protocol.parseResponse(body);
   } catch (error: unknown) {
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error('Cloud LLM request timed out after 30 seconds');
+      const timeoutError = new Error(
+        'Cloud LLM request timed out after 30 seconds',
+      );
+      // The app log keeps only the name of an error.
+      timeoutError.name = 'TimeoutError';
+      throw timeoutError;
     }
 
     throw error;
