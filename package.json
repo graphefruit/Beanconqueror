@@ -130,7 +130,7 @@
     "karma-jasmine-html-reporter": "^2.3.0",
     "lint-staged": "^16.4.0",
     "postcss-scss": "4.0.9",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.1",
     "skwas-cordova-plugin-datetimepicker": "^3.0.2",
     "stylelint": "18.0.0",
     "ts-proto": "^2.18.4",
