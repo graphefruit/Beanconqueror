@@ -19,6 +19,7 @@ describe('Adding an entry outside the forms', () => {
   let saved: boolean;
   let storage: {
     addAndConfirm: jasmine.Spy;
+    applyChanges: jasmine.Spy;
     update: jasmine.Spy;
     getAllEntries: () => unknown[];
   };
@@ -40,6 +41,9 @@ describe('Adding an entry outside the forms', () => {
           entry.config.uuid = 'added';
           return Promise.resolve({ entry, saved });
         }),
+      applyChanges: jasmine
+        .createSpy('applyChanges')
+        .and.callFake(() => Promise.resolve({ saved, added: [] })),
       update: jasmine.createSpy('update').and.resolveTo(true),
       getAllEntries: () => [],
     };
@@ -112,10 +116,16 @@ describe('Adding an entry outside the forms', () => {
 
       await unfreeze();
 
-      expect(storage.addAndConfirm.calls.mostRecent().args[0].weight).toBe(50);
+      // The part and the rest of the bean are stored together.
+      const [changes] = storage.applyChanges.calls.mostRecent().args as [
+        { update: Bean[]; add: Bean[] },
+      ];
+      expect(changes.add.map((_part) => _part.weight)).toEqual([50]);
+      expect(changes.update.map((_rest) => _rest.weight)).toEqual([150]);
       expect(bean.weight).toBe(150);
       expect(bean.cost).toBe(15);
-      expect(storage.update).toHaveBeenCalledOnceWith(bean);
+      expect(storage.addAndConfirm).not.toHaveBeenCalled();
+      expect(storage.update).not.toHaveBeenCalled();
       expect(uiFileHelper.deleteInternalFile).not.toHaveBeenCalled();
       expect(uiToast.showInfoToast).toHaveBeenCalledTimes(1);
       expect(modalController.dismiss).toHaveBeenCalledTimes(1);
