@@ -111,6 +111,8 @@ export function makeDevice(
       return new WeighMyBruScale(data, type);
     case ScaleType.WEIGHMASTER:
       return new WeighMasterScale(data, type);
+    case ScaleType.INSMART:
+      return new InsmartScale(data, type);
     default:
       return null;
   }
