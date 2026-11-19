@@ -67,13 +67,13 @@
       <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_FREEZE_PARTIAL_BAG" | translate}}'  [(ngModel)]="freezePartialBagGrams" autocapitalize="off" inputmode="decimal"
         name="weight"
         prevent-characters remove-empty-number spellcheck="false"
-        type="text" tabIndex="2" />
-      <ion-button style='margin-left:0px;' [disabled]='isAddingBagDisabled()' tabIndex="1" (click)='addOnePartialBag()'
+        type="text" />
+      <ion-button style='margin-left:0px;' [disabled]='isAddingBagDisabled()' (click)='addOnePartialBag()'
         [attr.aria-label]="'A11Y.ADD_SINGLE_FROZEN_BAG' | translate"
         class="big-icon-only" fill="clear" slot="end" tappable>
         <ion-icon aria-hidden="true" name="beanconqueror-add-single-entry" slot='icon-only' />
       </ion-button>
-      <ion-button  style='margin-left:0px;' [disabled]='isAddingBagDisabled()' tabIndex="3" (click)='addMaxPartialBags()'
+      <ion-button  style='margin-left:0px;' [disabled]='isAddingBagDisabled()' (click)='addMaxPartialBags()'
         [attr.aria-label]="'A11Y.ADD_ALL_REMAINING_FROZEN_BAGS' | translate"
         class="big-icon-only"  fill="clear" slot="end" tappable>
         <ion-icon aria-hidden="true" name="beanconqueror-add-list" slot='icon-only' />
@@ -89,7 +89,7 @@
         @for (bag of addedBags; track bag; let i = $index) {
           <ion-item>
             <div>{{bag.weight}}g</div>
-            <ion-select slot='end'   tabIndex="1"
+            <ion-select slot='end'
               [(ngModel)]='bag.type' cancelText="{{'CANCEL'| translate }}"
               name='frozenStorage'
               okText="{{'CHOOSE'| translate }}"

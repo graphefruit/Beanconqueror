@@ -16,6 +16,7 @@ import {
   suggestionField,
 } from './support/beans';
 import { chooseInBrewSelect, openAddBrew } from './support/brew-form';
+import { tabOrder } from './support/layout';
 import { readStoredValue } from './support/stored-values';
 import { toast } from './support/toast';
 
@@ -112,4 +113,21 @@ test('a new bean is stored with its values and can be brewed', async ({
   await page.getByRole('tab', { name: 'Brews' }).click();
   await openAddBrew(page);
   await chooseInBrewSelect(page, 'Bean Type', 'Test Kenia');
+});
+
+test('Tab moves through the bean form in screen order', async ({ page }) => {
+  await startWithBeans(page);
+  await openAddBean(page);
+
+  const fields = [
+    beanField(page, /^Name/),
+    suggestionField(page, 'Roaster'),
+    beanField(page, 'Weight'),
+    beanField(page, 'Cost'),
+  ];
+  // Starting at the dialog header.
+  expect(
+    await tabOrder(page, fields, 60),
+    'fields in the order Tab reaches them',
+  ).toEqual([0, 1, 2, 3]);
 });

@@ -17,9 +17,9 @@
     <ion-input label-placement="stacked" label='{{"ROASTING_SECTION.BEAN.GREEN_BEAN_WEIGHT" | translate}}' #green_bean_weight="ngModel" [(ngModel)]="data.bean_roast_information.green_bean_weight" autocapitalize="off" inputmode="decimal"
       name="green_bean_weight" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.GREEN_BEAN_WEIGHT' | translate}}"
       prevent-characters remove-empty-number spellcheck="false"
-      type="text" tabIndex="2" />
+      type="text" />
     @if (smartScaleConnected()) {
-      <ion-button style="margin-left:0px;" (click)="bluetoothScaleSetGreenBeanWeight()" [attr.aria-label]="'A11Y.SET_GREEN_BEAN_WEIGHT_FROM_SCALE' | translate" tabIndex="1"
+      <ion-button style="margin-left:0px;" (click)="bluetoothScaleSetGreenBeanWeight()" [attr.aria-label]="'A11Y.SET_GREEN_BEAN_WEIGHT_FROM_SCALE' | translate"
         class="big-icon-only" fill="clear" slot="end" tappable>
         <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only" />
       </ion-button>
@@ -29,9 +29,9 @@
     <ion-input label-placement="stacked" label='{{"BEAN_DATA_WEIGHT_AFTER_ROASTING" | translate}}' #weightRoast="ngModel" [(ngModel)]="data.weight" autocapitalize="off" inputmode="decimal"
       name="weightRoast" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_WEIGHT' | translate}}"
       prevent-characters remove-empty-number spellcheck="false"
-      type="text" tabIndex="2" />
+      type="text" />
     @if (smartScaleConnected()) {
-      <ion-button style="margin-left:0px;" (click)="bluetoothScaleSetRoastBeanWeight()" [attr.aria-label]="'A11Y.SET_ROASTED_BEAN_WEIGHT_FROM_SCALE' | translate" tabIndex="1"
+      <ion-button style="margin-left:0px;" (click)="bluetoothScaleSetRoastBeanWeight()" [attr.aria-label]="'A11Y.SET_ROASTED_BEAN_WEIGHT_FROM_SCALE' | translate"
         class="big-icon-only" fill="clear" slot="end" tappable>
         <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only" />
       </ion-button>

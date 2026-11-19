@@ -3,14 +3,17 @@ import type { Locator, Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import {
   backToBrews,
+  BEVERAGE,
   BREW_TEST_START,
   brewAction,
   brewField,
   openAddBrew,
   openBrewParameterPage,
   setParameter,
+  WATER,
 } from './support/brew-form';
 import { completeFirstRunWithBrew } from './support/first-brew';
+import { tabOrder } from './support/layout';
 
 /**
  * Screen readers (VoiceOver, TalkBack) and the Tab key follow the markup,
@@ -238,22 +241,44 @@ test('Tab moves through the brew form in the sorted order', async ({
     [...tops].sort((a, b) => a - b),
   );
 
-  // Note which field each Tab press lands on, starting at the dialog header.
-  const reached: number[] = [];
-  for (let press = 0; press < 30 && reached.length < fields.length; press++) {
-    await page.keyboard.press('Tab');
-    for (const [index, field] of fields.entries()) {
-      const focused = await field.evaluate(
-        (element) =>
-          (element.getRootNode() as Document | ShadowRoot).activeElement ===
-          element,
-      );
-      if (focused && !reached.includes(index)) {
-        reached.push(index);
-      }
+  // Starting at the dialog header.
+  expect(
+    await tabOrder(page, fields),
+    'fields in the order Tab reaches them',
+  ).toEqual([0, 1, 2, 3, 4, 5]);
+});
+
+test('Tab reaches the buttons beside a field right after the field', async ({
+  page,
+}) => {
+  await openAddBrew(page);
+
+  const controls = [
+    page.getByRole('button', { name: /^Bean Type, / }),
+    brewField(page, 'Ground Coffee (gr)'),
+    page.getByRole('button', { name: 'Brew ratio calculator' }),
+    page.getByRole('button', { name: /^Grinder, / }),
+    brewField(page, WATER),
+    brewField(page, BEVERAGE),
+    page.getByRole('button', { name: 'Calculate beverage quantity' }),
+  ];
+  // Each control lies below the one before it, or beside it to the right.
+  let previous:
+    { x: number; y: number; width: number; height: number } | undefined;
+  for (const control of controls) {
+    const box = (await control.boundingBox())!;
+    if (previous) {
+      const below = box.y >= previous.y + previous.height - 1;
+      const beside =
+        box.y < previous.y + previous.height &&
+        box.x >= previous.x + previous.width - 1;
+      expect(below || beside, 'controls are listed in screen order').toBe(true);
     }
+    previous = box;
   }
-  expect(reached, 'fields in the order Tab reaches them').toEqual([
-    0, 1, 2, 3, 4, 5,
-  ]);
+
+  expect(
+    await tabOrder(page, controls, 80),
+    'controls in the order Tab reaches them',
+  ).toEqual([0, 1, 2, 3, 4, 5, 6]);
 });

@@ -23,14 +23,14 @@
             <ion-item lines="inset">
               <ion-input label-placement="stacked" label='{{"BREW_DATA_GRIND_WEIGHT" | translate}}' [(ngModel)]="data.grind_weight" inputmode="decimal"
                          placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_WEIGHT' | translate}}" prevent-characters remove-empty-number
-                         tabIndex="1" type="text" />
+                         type="text" />
               <ion-button (click)="brewRatioCalculator()" [attr.aria-label]="'A11Y.BREW_RATIO_CALCULATOR' | translate" class="big-icon-only" fill="clear" slot="end" style="margin-left:0px;"
-                          tabIndex="2" tappable>
+                          tappable>
                 <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-brew-ratio" slot="icon-only" />
               </ion-button>
               @if(brewBrewingGraphEl?.uiSmartScaleConnected) {
                 <ion-button (click)="bluetoothScaleSetGrindWeight()" [attr.aria-label]="'A11Y.SET_GRIND_DOSE_FROM_SCALE' | translate" style="margin-left:0px;"
-                            tabIndex="3" class="big-icon-only" fill="clear" slot="end" tappable>
+                            class="big-icon-only" fill="clear" slot="end" tappable>
                   <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only" />
                 </ion-button>
               }
@@ -91,7 +91,7 @@
               @if((data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.IS_PRESSURE_PARAMETER_URL,data.pressure_profile])) {
                 <ion-button style="margin-left:0px;" (click)="openURL(data.pressure_profile)"
                             [attr.aria-label]="'A11Y.OPEN_PRESSURE_PROFILE_URL' | translate"
-                            tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
+                            class="big-icon-only" fill="clear" slot="end" tappable>
                   <ion-icon aria-hidden="true" class="ion-color-accent" name="globe-outline" slot="icon-only" />
                 </ion-button>
               }
@@ -130,7 +130,7 @@
               @if(brewBrewingGraphEl?.uiSmartScaleConnected) {
                 <ion-button style="margin-left:0px;" (click)="bluetoothScaleSetBeanWeightIn()"
                             [attr.aria-label]="'A11Y.SET_BEAN_WEIGHT_IN_FROM_SCALE' | translate"
-                            tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
+                            class="big-icon-only" fill="clear" slot="end" tappable>
                   <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only" />
                 </ion-button>
               }
@@ -226,7 +226,7 @@
                     </ion-label>
                     <ion-input aria-labelledby='brew_quantity' [(ngModel)]="data.brew_quantity" inputmode="decimal"
                                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_QUANTITY' | translate}}" prevent-characters
-                               remove-empty-number type="text" tabIndex="2" />
+                               remove-empty-number type="text" />
                   </ion-item>
                 </ion-col>
                 <ion-col class="ion-no-padding ion-align-self-end" size="2">
@@ -246,7 +246,7 @@
               @if(brewBrewingGraphEl?.uiSmartScaleConnected) {
                 <ion-button style="margin-left:0px;" (click)="bluetoothScaleSetBrewQuantityWeight()"
                             [attr.aria-label]="'A11Y.SET_BREW_WATER_QUANTITY_FROM_SCALE' | translate"
-                            tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
+                            class="big-icon-only" fill="clear" slot="end" tappable>
                   <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only" />
                 </ion-button>
               }
@@ -318,7 +318,7 @@
                       </ion-label>
                       <ion-input aria-labelledby='brew_beverage_quantity' [(ngModel)]="data.brew_beverage_quantity" inputmode="decimal"
                                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_BEVERAGE_QUANTITY' | translate}}" prevent-characters
-                                 remove-empty-number type="text" tabIndex="2" />
+                                 remove-empty-number type="text" />
                     </ion-item>
                   </ion-col>
                   <ion-col class="ion-no-padding ion-align-self-end" size="2">
@@ -342,7 +342,7 @@
               </ion-button>
               @if(brewBrewingGraphEl?.uiSmartScaleConnected) {
                 <ion-button style="margin-left:0px;"
-                            (click)="bluetoothScaleSetBrewBeverageQuantityWeight()" [attr.aria-label]="'A11Y.SET_BEVERAGE_QUANTITY_FROM_SCALE' | translate" tabIndex="1" class="big-icon-only" fill="clear" slot="end"
+                            (click)="bluetoothScaleSetBrewBeverageQuantityWeight()" [attr.aria-label]="'A11Y.SET_BEVERAGE_QUANTITY_FROM_SCALE' | translate" class="big-icon-only" fill="clear" slot="end"
                             tappable>
                   <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only" />
                 </ion-button>
@@ -371,7 +371,7 @@
               </ion-label>
               @if(data.tds && (data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds,data.grind_weight,data.brew_beverage_quantity,data.brew_quantity])) {
                 <ion-button style="margin-left:0px;"
-                            (click)="showExtractionChart($event)" [attr.aria-label]="'A11Y.SHOW_EXTRACTION_CHART' | translate" tabIndex="1" class="big-icon-only" fill="clear" slot="end"
+                            (click)="showExtractionChart($event)" [attr.aria-label]="'A11Y.SHOW_EXTRACTION_CHART' | translate" class="big-icon-only" fill="clear" slot="end"
                             tappable>
                   <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-extraction-chart" slot="icon-only" />
                 </ion-button>

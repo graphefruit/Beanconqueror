@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 /** Layout measurements shared by the tablet and phone-landscape specs. */
 
@@ -158,4 +158,34 @@ export async function shortenViewportForKeyboard(
     screenHeight: screen.height,
   });
   await expect.poll(() => page.evaluate(() => window.innerHeight)).toBe(height);
+}
+
+/**
+ * Presses Tab from where focus is now and returns the indexes of `controls` in
+ * the order focus first reaches them. Controls in between are passed over.
+ */
+export async function tabOrder(
+  page: Page,
+  controls: Locator[],
+  maxPresses = 30,
+): Promise<number[]> {
+  const reached: number[] = [];
+  for (
+    let press = 0;
+    press < maxPresses && reached.length < controls.length;
+    press++
+  ) {
+    await page.keyboard.press('Tab');
+    for (const [index, control] of controls.entries()) {
+      const focused = await control.evaluate(
+        (element) =>
+          (element.getRootNode() as Document | ShadowRoot).activeElement ===
+          element,
+      );
+      if (focused && !reached.includes(index)) {
+        reached.push(index);
+      }
+    }
+  }
+  return reached;
 }

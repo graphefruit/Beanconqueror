@@ -61,7 +61,7 @@
                      [(ngModel)]="data.preparationDeviceBrew.params.scriptAtWeightReachedNumber"
                      (ionBlur)='drawTargetWeight(data.preparationDeviceBrew.params.scriptAtWeightReachedNumber)'
                      inputmode="decimal"
-                     prevent-characters remove-empty-number tabIndex="1" type="text" />
+                     prevent-characters remove-empty-number type="text" />
         </ion-item>
         <ion-item
           [disabled]="!(data.preparationDeviceBrew.params.scriptStartId > 0 && brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected && data.preparationDeviceBrew.params.scriptAtWeightReachedNumber>0)"
@@ -170,7 +170,7 @@
                          (ionBlur)='drawTargetWeight(data.preparationDeviceBrew.params.stopAtWeight)'
                          [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeight" inputmode="decimal"
                          prevent-characters
-                         remove-empty-number tabIndex="1" type="text" />
+                         remove-empty-number type="text" />
             </ion-item>
             @if (!data.preparationDeviceBrew.params.stopAtWeight) {
               <ion-label class='ion-padding-horizontal' color="danger">
@@ -204,7 +204,7 @@
                         <ion-input (ionBlur)="baristaModeWeightChanged('P1')"
                                    [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightP1" inputmode="decimal"
                                    prevent-characters
-                                   remove-empty-number tabIndex="1" type="text" class="sanremo-input">
+                                   remove-empty-number type="text" class="sanremo-input">
                           <ion-label class="sanremo-brew-by-weight-grams" slot="end">gr</ion-label>
                         </ion-input>
 
@@ -224,7 +224,7 @@
                         <ion-input (ionBlur)="baristaModeWeightChanged('P3')"
                                    [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightP3" inputmode="decimal"
                                    prevent-characters
-                                   remove-empty-number tabIndex="1" type="text" class="sanremo-input">
+                                   remove-empty-number type="text" class="sanremo-input">
                           <ion-label class="sanremo-brew-by-weight-grams" slot="end">gr</ion-label>
                         </ion-input>
                       </ion-item>
@@ -243,7 +243,7 @@
                         <ion-input (ionBlur)="baristaModeWeightChanged('P2')"
                                    [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightP2" inputmode="decimal"
                                    prevent-characters
-                                   remove-empty-number tabIndex="1" type="text" class="sanremo-input">
+                                   remove-empty-number type="text" class="sanremo-input">
                           <ion-label class="sanremo-brew-by-weight-grams"  slot="end">gr</ion-label>
                         </ion-input>
                       </ion-item>
@@ -263,7 +263,7 @@
                         <ion-input (ionBlur)="baristaModeWeightChanged('M')"
                                    [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightM" inputmode="decimal"
                                    prevent-characters
-                                   remove-empty-number tabIndex="1" type="text" class="sanremo-input">
+                                   remove-empty-number type="text" class="sanremo-input">
                           <ion-label class="sanremo-brew-by-weight-grams"  slot="end">gr</ion-label>
                         </ion-input>
                       </ion-item>
@@ -329,7 +329,7 @@
                      (ionBlur)='drawTargetWeight(data.preparationDeviceBrew.params.stopAtWeight)'
                      [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeight" inputmode="decimal"
                      prevent-characters
-                     remove-empty-number tabIndex="1" type="text" />
+                     remove-empty-number type="text" />
         </ion-item>
       </ion-card>
   }

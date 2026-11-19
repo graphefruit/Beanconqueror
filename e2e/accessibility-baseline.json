@@ -1,7 +1,7 @@
 {
   "add-bean": {
-    "light": ["tabindex | .button-small"],
-    "dark": ["tabindex | .button-small"]
+    "light": [],
+    "dark": []
   },
   "beans": {
     "light": ["color-contrast | .text-color-inactive.ion-margin-top"],

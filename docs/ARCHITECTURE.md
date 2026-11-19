@@ -910,6 +910,9 @@ file maps them onto Ionic's variables at the end.
   level-1 heading (`src/components/header/header.component.ts`); sections below
   it use real heading elements (e.g. `h2` in `src/app/profile/profile.page.html`).
 - Tabs are reachable by keyboard (`src/app/home/home.page.html`).
+- Tab order follows the markup: no positive `tabindex` (the axe scan reports
+  one); a button beside a field comes right after it
+  (`e2e/reading-order.spec.ts`, `e2e/bean-add.spec.ts`).
 - Names: a control that shows only an icon gets its name from a translated
   `aria-label` (keys under `A11Y` in `src/assets/i18n/`, or an existing key
   with the same text) and its icon is `aria-hidden`. Every `A11Y` key exists
