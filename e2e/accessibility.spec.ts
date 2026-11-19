@@ -178,6 +178,10 @@ const areas: { name: string; open: (page: Page) => Promise<void> }[] = [
       await expect(
         page.getByRole('link', { name: /^Preparation methods/ }),
       ).toBeVisible();
+      // The hub is a little taller than the phone screen, so its footer starts below the
+      // fold, where the tab bar covers it until the page is scrolled. Scanning it there
+      // would measure the tab bar's overlap instead of the links' own target size.
+      await page.locator('app-profile .hub-footer').scrollIntoViewIfNeeded();
     },
   },
   {
