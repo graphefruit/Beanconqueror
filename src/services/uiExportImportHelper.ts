@@ -46,6 +46,26 @@ import { StoredValues, UIStorage } from './uiStorage';
 const EXPORT_MAIN_FILE_NAME = 'Beanconqueror.json';
 const INTERNAL_BACKUP_ZIP = 'Beanconqueror.zip';
 const INTERNAL_BACKUP_PART = 'Beanconqueror.zip.part';
+/** Written beside Beanconqueror.zip, so the start need not read that file. */
+const INTERNAL_BACKUP_SUMMARY = 'Beanconqueror.zip.meta.json';
+const INTERNAL_BACKUP_SUMMARY_PART = 'Beanconqueror.zip.meta.json.part';
+const INTERNAL_BACKUP_SUMMARY_VERSION = 1;
+/** The collections the check at start-up compares with the database. */
+const BACKUP_COUNTED = ['BEANS', 'BREWS', 'PREPARATION', 'MILL'] as const;
+type BackupCounts = Record<(typeof BACKUP_COUNTED)[number], number>;
+
+/**
+ * What is stored beside Beanconqueror.zip. `size` and `mtime` are those of
+ * the file it was written for: a backup of the same size can follow without
+ * a new summary, when the app is ended before the summary is written.
+ */
+interface InternalBackupSummary {
+  version: number;
+  size: number;
+  mtime: number;
+  counts: BackupCounts;
+}
+
 const EXPORT_CHUNKING_CONFIG = [
   {
     propertyName: 'BREWS',
@@ -66,6 +86,41 @@ const EXPORT_CHUNKING_CONFIG = [
 
 function chunkFileName(fileName: string, index: number): string {
   return `Beanconqueror_${fileName}_${index}.json`;
+}
+
+/**
+ * Whether the internal backup holds more beans, brews, preparations or
+ * grinders than the device, whose counts are those of
+ * UIStorage.hasCorruptedData(); always when they are not known.
+ */
+function holdsMoreThanDevice(
+  _backup: Partial<BackupCounts>,
+  _device: BackupCounts | undefined,
+): boolean {
+  return (
+    !_device || BACKUP_COUNTED.some((_key) => _backup[_key] > _device[_key])
+  );
+}
+
+/**
+ * The entries of each counted collection in stored values (UIStorage.export())
+ * as the backup file of them holds them, none when one is no list. Copies of
+ * an entry count as well: the check at start-up removes identical copies
+ * from the file before it counts, so the file never holds more than this,
+ * and holding no more than the device means the same for the file.
+ */
+function backupCountsOf(
+  _stored: Record<string, unknown>,
+): BackupCounts | undefined {
+  const counts: Partial<BackupCounts> = {};
+  for (const key of BACKUP_COUNTED) {
+    const entries: unknown = _stored?.[key];
+    if (entries !== undefined && !Array.isArray(entries)) {
+      return undefined;
+    }
+    counts[key] = Array.isArray(entries) ? entries.length : 0;
+  }
+  return counts as BackupCounts;
 }
 
 /** Whether stored values (UIStorage.export()) hold settings or entries. */
@@ -487,8 +542,11 @@ export class UIExportImportHelper {
       }
       const hasData = dataState === 'data';
 
+      const summary = await this.__readInternalBackupSummary();
       // Read while the database is counted, neither changes anything.
-      const backup = this.__getBiggerFileBackupOrAutomatic();
+      const backup = summary
+        ? undefined
+        : this.__getBiggerFileBackupOrAutomatic();
       let actualUIStorageDataObj;
       if (hasData) {
         actualUIStorageDataObj = await this.uiStorage.hasCorruptedData(
@@ -496,8 +554,20 @@ export class UIExportImportHelper {
           true,
         );
       }
+      if (
+        hasData &&
+        summary &&
+        !holdsMoreThanDevice(summary.counts, actualUIStorageDataObj?.DATA)
+      ) {
+        this.uiLog.log(
+          'checkBackupAndSeeIfDataAreCorrupted - Check over - the summary of the internal backup holds no more data, the file is not read',
+        );
+        return;
+      }
 
-      const { fileData, isAutomaticBackup }: any = await backup;
+      // Otherwise the file decides, as it is the one restored.
+      const { fileData, isAutomaticBackup }: any = await (backup ??
+        this.__getBiggerFileBackupOrAutomatic());
 
       if (fileData) {
         // Counted as an import would store it: after the copies of entries
@@ -517,21 +587,16 @@ export class UIExportImportHelper {
           importBackup = true;
         } else {
           const dataObj = actualUIStorageDataObj?.DATA;
-          let somethingCorrupted = false;
-          if (dataObj) {
-            if (fileData.BEANS?.length > dataObj.BEANS) {
-              somethingCorrupted = true;
-            } else if (fileData.BREWS?.length > dataObj.BREWS) {
-              somethingCorrupted = true;
-            } else if (fileData.PREPARATION?.length > dataObj.PREPARATION) {
-              somethingCorrupted = true;
-            } else if (fileData.MILL?.length > dataObj.MILL) {
-              somethingCorrupted = true;
-            }
-          } else {
-            //We got no data object, so we assume that the data is corrupted, and its likely to be now and automatic backup, else the first if would be jumped
-            somethingCorrupted = true;
-          }
+          // Without counts of the database, the data counts as corrupted.
+          const somethingCorrupted = holdsMoreThanDevice(
+            {
+              BEANS: fileData.BEANS?.length,
+              BREWS: fileData.BREWS?.length,
+              PREPARATION: fileData.PREPARATION?.length,
+              MILL: fileData.MILL?.length,
+            },
+            dataObj,
+          );
 
           this.uiLog.log(
             'checkBackupAndSeeIfDataAreCorrupted- Check over - if we got a deep corruption - Result: ' +
@@ -746,6 +811,42 @@ export class UIExportImportHelper {
     }
   }
 
+  /**
+   * The summary written with Beanconqueror.zip (__saveInternalBackupSummary),
+   * only while that file still has the size and time of change it was
+   * written for. Nothing otherwise, and the file is read. Never rejects.
+   */
+  private async __readInternalBackupSummary(): Promise<
+    InternalBackupSummary | undefined
+  > {
+    try {
+      const summary: Partial<InternalBackupSummary> = JSON.parse(
+        await this.uiFileHelper.readInternalFileAsText(INTERNAL_BACKUP_SUMMARY),
+      );
+      const file =
+        await this.uiFileHelper.statInternalFile(INTERNAL_BACKUP_ZIP);
+      if (
+        summary?.version === INTERNAL_BACKUP_SUMMARY_VERSION &&
+        Number.isFinite(file?.mtime) &&
+        summary.mtime === file.mtime &&
+        summary.size === file.size &&
+        BACKUP_COUNTED.every(
+          (_key) =>
+            Number.isSafeInteger(summary.counts?.[_key]) &&
+            summary.counts[_key] >= 0,
+        )
+      ) {
+        return summary as InternalBackupSummary;
+      }
+      this.uiLog.log(
+        'Internal backup - the summary does not belong to the file, the file is read',
+      );
+    } catch (ex) {
+      this.uiLog.log('Internal backup - no summary read, the file is read', ex);
+    }
+    return undefined;
+  }
+
   private importBackupJSON(_parsedJSON: unknown) {
     const promise = new Promise(async (resolve, reject) => {
       await this.uiAlert.showLoadingSpinner();
@@ -868,7 +969,9 @@ export class UIExportImportHelper {
                   'Internal backup kept, it was not restored at start-up or not everything was read',
                 );
               } else {
-                writes.push(this.__saveInternalBeanconquerorDump(_blob));
+                writes.push(
+                  this.__saveInternalBeanconquerorDump(_blob, stored),
+                );
               }
               writes.push(this.__saveAutomaticBeanconquerorDump(_blob));
               await Promise.allSettled(writes);
@@ -913,7 +1016,11 @@ export class UIExportImportHelper {
         },
       );
   }
-  private async __saveInternalBeanconquerorDump(_blob: Blob) {
+  /** `_stored` are the values `_blob` was built from. */
+  private async __saveInternalBeanconquerorDump(
+    _blob: Blob,
+    _stored: Record<string, unknown>,
+  ) {
     await this.__nameCompleteUnfinishedInternalBackup();
     try {
       await this.uiFileHelper.replaceInternalFileFromBlob(
@@ -921,7 +1028,9 @@ export class UIExportImportHelper {
         INTERNAL_BACKUP_ZIP,
         INTERNAL_BACKUP_PART,
       );
+      await this.__saveInternalBackupSummary(_blob.size, _stored);
     } catch (ex) {
+      // The summary still belongs to the file from before, when it is left.
       this.uiLog.error('Could not to export normal ZIP file');
       const settings = this.uiSettingsStorage.getSettings();
       if (settings.show_backup_issues) {
@@ -931,6 +1040,49 @@ export class UIExportImportHelper {
           'OK',
           true,
         );
+      }
+    }
+  }
+
+  /**
+   * Writes what the check at start-up counts in Beanconqueror.zip beside it,
+   * once that file got its name, so the start need not read it. Like the
+   * file, it is written under another name first. When it cannot be written,
+   * the summary from before no longer belongs to the file and is deleted.
+   * Never rejects; the next start then reads the file.
+   */
+  private async __saveInternalBackupSummary(
+    _size: number,
+    _stored: Record<string, unknown>,
+  ): Promise<void> {
+    try {
+      const counts = backupCountsOf(_stored);
+      const file =
+        await this.uiFileHelper.statInternalFile(INTERNAL_BACKUP_ZIP);
+      // Another size: the file is not the one just written.
+      if (!counts || file?.size !== _size) {
+        throw new Error('Nothing to summarize for the file written');
+      }
+      const summary: InternalBackupSummary = {
+        version: INTERNAL_BACKUP_SUMMARY_VERSION,
+        size: file.size,
+        mtime: file.mtime,
+        counts,
+      };
+      await this.uiFileHelper.replaceInternalFileFromBlob(
+        new Blob([JSON.stringify(summary)]),
+        INTERNAL_BACKUP_SUMMARY,
+        INTERNAL_BACKUP_SUMMARY_PART,
+      );
+    } catch (ex) {
+      this.uiLog.error(
+        'Internal backup - summary not written, the next start reads the file',
+        ex,
+      );
+      try {
+        await this.uiFileHelper.deleteInternalFile(INTERNAL_BACKUP_SUMMARY);
+      } catch {
+        // There is none, or it keeps the time of change of the file before.
       }
     }
   }

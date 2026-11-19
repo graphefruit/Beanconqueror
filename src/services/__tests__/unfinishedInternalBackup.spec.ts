@@ -15,6 +15,7 @@ import { UIStorage } from '../uiStorage';
 
 const BACKUP = 'Beanconqueror.zip';
 const UNFINISHED = 'Beanconqueror.zip.part';
+const SUMMARY = 'Beanconqueror.zip.meta.json';
 
 /** What a device with `_brews` brews stores. */
 function storedData(_brews: number): Record<string, unknown> {
@@ -65,143 +66,181 @@ function createDeviceDatabase(
   };
 }
 
-describe('A complete internal backup that did not get its name', () => {
-  /**
-   * The app on a device storing `_stored`, with `_files` in its data
-   * directory. Without `_readable` the database cannot be read, and the
-   * list of backups offered then stays open.
-   */
-  async function startApp(
-    _stored: Record<string, unknown>,
-    _files: Record<string, Uint8Array> = {},
-    _readable = true,
-  ) {
-    const files = new Map(Object.entries(_files));
-    const errors: unknown[] = [];
-    /** The files in the data directory each time the list was opened. */
-    const filesWhenBackupsOffered: string[][] = [];
-    const renameInternalFile = jasmine
-      .createSpy('renameInternalFile')
-      .and.callFake((_from: string, _to: string) => {
-        files.set(_to, files.get(_from));
-        files.delete(_from);
-        return Promise.resolve();
-      });
-    /** As UIFileHelper.replaceFileFromBlob: the unfinished file goes first. */
-    const replaceInternalFileFromBlob = jasmine
-      .createSpy('replaceInternalFileFromBlob')
-      .and.callFake(async (_blob: Blob, _path: string, _unfinished: string) => {
-        files.delete(_unfinished);
-        files.set(_path, new Uint8Array(await _blob.arrayBuffer()));
-      });
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({
-      providers: [
-        UIExportImportHelper,
-        UIStorage,
-        {
-          provide: Storage,
-          useValue: {
-            create: () =>
-              Promise.resolve(createDeviceDatabase(_stored, _readable)),
-          },
-        },
-        { provide: EventQueueService, useValue: { dispatch: () => undefined } },
-        {
-          provide: UIHelper,
-          useValue: { cloneData: <T>(v: T): T => structuredClone(v) },
-        },
-        // The internal backup is only checked in the app.
-        {
-          provide: Platform,
-          useValue: { is: (_platform: string) => _platform === 'capacitor' },
-        },
-        {
-          provide: UILog,
-          useValue: {
-            log: () => undefined,
-            info: () => undefined,
-            debug: () => undefined,
-            error: (..._message: unknown[]) => errors.push(_message),
-          },
-        },
-        {
-          provide: UIFileHelper,
-          useValue: {
-            statInternalFile: (_name: string) =>
-              Promise.resolve(files.has(_name) ? { name: _name } : undefined),
-            readInternalFileAsUint8Array: (_name: string) =>
-              files.has(_name)
-                ? Promise.resolve(files.get(_name))
-                : Promise.reject(new Error('File does not exist')),
-            readInternalJSONFile: () =>
-              Promise.reject(new Error('File does not exist')),
-            renameInternalFile,
-            replaceInternalFileFromBlob,
-            replaceFileFromBlob: () => Promise.resolve(),
-          },
-        },
-        {
-          provide: UISettingsStorage,
-          useValue: {
-            getSettings: () => ({ show_backup_issues: false }),
-          },
-        },
-        {
-          provide: UIAlert,
-          useValue: {
-            showLoadingSpinner: () => Promise.resolve(),
-            hideLoadingSpinner: () => Promise.resolve(),
-            showIOSIndexedDBIssues: () => Promise.resolve(),
-          },
-        },
-        { provide: UIBrewStorage, useValue: {} },
-        {
-          provide: ModalController,
-          useValue: {
-            create: () => {
-              filesWhenBackupsOffered.push([...files.keys()]);
-              return new Promise(() => undefined);
-            },
-          },
-        },
-      ],
+/**
+ * The app on a device storing `_stored`, with `_files` in its data
+ * directory. Without `_readable` the database cannot be read, and the
+ * list of backups offered then stays open. `_mtimes` are the times of
+ * change of some of the files.
+ */
+async function startApp(
+  _stored: Record<string, unknown>,
+  _files: Record<string, Uint8Array> = {},
+  _readable = true,
+  _mtimes: Record<string, number> = {},
+) {
+  const files = new Map(Object.entries(_files));
+  /** Time of the last change of each file, which a rename keeps. */
+  const mtimes = new Map<string, number>();
+  let clock = 1700000000000;
+  for (const name of files.keys()) {
+    mtimes.set(name, name in _mtimes ? _mtimes[name] : ++clock);
+  }
+  const errors: unknown[] = [];
+  /** The files in the data directory each time the list was opened. */
+  const filesWhenBackupsOffered: string[][] = [];
+  const renameInternalFile = jasmine
+    .createSpy('renameInternalFile')
+    .and.callFake((_from: string, _to: string) => {
+      files.set(_to, files.get(_from));
+      files.delete(_from);
+      mtimes.set(_to, mtimes.get(_from));
+      mtimes.delete(_from);
+      return Promise.resolve();
     });
-    await TestBed.inject(UIStorage).init();
-    const helper = TestBed.inject(UIExportImportHelper);
-    const popover = spyOn(helper, 'showDataCorruptionPopover').and.resolveTo(
-      false,
+  /** As UIFileHelper.replaceFileFromBlob: the unfinished file goes first. */
+  const replaceInternalFileFromBlob = jasmine
+    .createSpy('replaceInternalFileFromBlob')
+    .and.callFake(async (_blob: Blob, _path: string, _unfinished: string) => {
+      files.delete(_unfinished);
+      files.set(_path, new Uint8Array(await _blob.arrayBuffer()));
+      mtimes.set(_path, ++clock);
+    });
+  const readInternalFileAsUint8Array = jasmine
+    .createSpy('readInternalFileAsUint8Array')
+    .and.callFake((_name: string) =>
+      files.has(_name)
+        ? Promise.resolve(files.get(_name))
+        : Promise.reject(new Error('File does not exist')),
     );
-    const importBackup = spyOn(helper, 'importBackup').and.resolveTo({
-      BACKUP: false,
-    });
-    /** The start as the app runs it. */
-    const start = async () => {
-      await helper.checkDatabaseReadable();
-      await helper.checkBackup();
-    };
-    return {
-      start,
-      files,
-      errors,
-      renameInternalFile,
-      replaceInternalFileFromBlob,
-      helper,
-      popover,
-      importBackup,
-      filesWhenBackupsOffered,
-    };
-  }
+  const deleteInternalFile = jasmine
+    .createSpy('deleteInternalFile')
+    .and.callFake((_name: string) =>
+      files.delete(_name)
+        ? Promise.resolve()
+        : Promise.reject(new Error('File does not exist')),
+    );
+  TestBed.resetTestingModule();
+  TestBed.configureTestingModule({
+    providers: [
+      UIExportImportHelper,
+      UIStorage,
+      {
+        provide: Storage,
+        useValue: {
+          create: () =>
+            Promise.resolve(createDeviceDatabase(_stored, _readable)),
+        },
+      },
+      { provide: EventQueueService, useValue: { dispatch: () => undefined } },
+      {
+        provide: UIHelper,
+        useValue: { cloneData: <T>(v: T): T => structuredClone(v) },
+      },
+      // The internal backup is only checked in the app.
+      {
+        provide: Platform,
+        useValue: { is: (_platform: string) => _platform === 'capacitor' },
+      },
+      {
+        provide: UILog,
+        useValue: {
+          log: () => undefined,
+          info: () => undefined,
+          debug: () => undefined,
+          error: (..._message: unknown[]) => errors.push(_message),
+        },
+      },
+      {
+        provide: UIFileHelper,
+        useValue: {
+          statInternalFile: (_name: string) =>
+            Promise.resolve(
+              files.has(_name)
+                ? {
+                    name: _name,
+                    size: files.get(_name).length,
+                    mtime: mtimes.get(_name),
+                  }
+                : undefined,
+            ),
+          readInternalFileAsUint8Array,
+          readInternalFileAsText: (_name: string) =>
+            files.has(_name)
+              ? Promise.resolve(new TextDecoder().decode(files.get(_name)))
+              : Promise.reject(new Error('File does not exist')),
+          deleteInternalFile,
+          readInternalJSONFile: () =>
+            Promise.reject(new Error('File does not exist')),
+          renameInternalFile,
+          replaceInternalFileFromBlob,
+          replaceFileFromBlob: () => Promise.resolve(),
+        },
+      },
+      {
+        provide: UISettingsStorage,
+        useValue: {
+          getSettings: () => ({ show_backup_issues: false }),
+        },
+      },
+      {
+        provide: UIAlert,
+        useValue: {
+          showLoadingSpinner: () => Promise.resolve(),
+          hideLoadingSpinner: () => Promise.resolve(),
+          showIOSIndexedDBIssues: () => Promise.resolve(),
+        },
+      },
+      { provide: UIBrewStorage, useValue: {} },
+      {
+        provide: ModalController,
+        useValue: {
+          create: () => {
+            filesWhenBackupsOffered.push([...files.keys()]);
+            return new Promise(() => undefined);
+          },
+        },
+      },
+    ],
+  });
+  await TestBed.inject(UIStorage).init();
+  const helper = TestBed.inject(UIExportImportHelper);
+  const popover = spyOn(helper, 'showDataCorruptionPopover').and.resolveTo(
+    false,
+  );
+  const importBackup = spyOn(helper, 'importBackup').and.resolveTo({
+    BACKUP: false,
+  });
+  /** The start as the app runs it. */
+  const start = async () => {
+    await helper.checkDatabaseReadable();
+    await helper.checkBackup();
+  };
+  return {
+    start,
+    files,
+    mtimes,
+    errors,
+    readInternalFileAsUint8Array,
+    deleteInternalFile,
+    renameInternalFile,
+    replaceInternalFileFromBlob,
+    helper,
+    popover,
+    importBackup,
+    filesWhenBackupsOffered,
+  };
+}
 
-  /** The backup file a device storing `_data` writes. */
-  async function writeBackupFile(
-    _data: Record<string, unknown>,
-  ): Promise<Uint8Array> {
-    await startApp(_data);
-    const blob = await TestBed.inject(UIExportImportHelper).buildExportZIP();
-    return new Uint8Array(await blob.arrayBuffer());
-  }
+/** The backup file a device storing `_data` writes. */
+async function writeBackupFile(
+  _data: Record<string, unknown>,
+): Promise<Uint8Array> {
+  await startApp(_data);
+  const blob = await TestBed.inject(UIExportImportHelper).buildExportZIP();
+  return new Uint8Array(await blob.arrayBuffer());
+}
 
+describe('A complete internal backup that did not get its name', () => {
   it('gets the name when there is no internal backup, and is restored into an empty database', async () => {
     const data = storedData(20);
     const complete = await writeBackupFile(data);
@@ -361,7 +400,7 @@ describe('A complete internal backup that did not get its name', () => {
 
     await helper.saveAutomaticBackups();
 
-    expect([...files.keys()]).toEqual([BACKUP]);
+    expect([...files.keys()]).toEqual([BACKUP, SUMMARY]);
     expect(files.get(BACKUP)).not.toBe(complete);
     expect(errors).toEqual([]);
   });
@@ -376,5 +415,295 @@ describe('A complete internal backup that did not get its name', () => {
     expect(renameInternalFile).not.toHaveBeenCalled();
     expect(importBackup).not.toHaveBeenCalled();
     expect(errors).toEqual([]);
+  });
+});
+
+describe('The summary of the internal backup', () => {
+  /** The files a device storing `_data` has once its backup was written. */
+  async function backedUp(_data: Record<string, unknown>) {
+    const { helper, files, mtimes, errors } = await startApp(_data);
+    await helper.saveAutomaticBackups();
+    expect(errors).toEqual([]);
+    return {
+      files: Object.fromEntries(files),
+      mtimes: Object.fromEntries(mtimes),
+    };
+  }
+
+  function summaryOf(_files: Record<string, Uint8Array>): any {
+    return JSON.parse(new TextDecoder().decode(_files[SUMMARY]));
+  }
+
+  function withSummary(
+    _files: Record<string, Uint8Array>,
+    _change: (_summary: any) => void,
+  ): Record<string, Uint8Array> {
+    const summary = summaryOf(_files);
+    _change(summary);
+    return {
+      ..._files,
+      [SUMMARY]: new TextEncoder().encode(JSON.stringify(summary)),
+    };
+  }
+
+  /** Starts a device storing `_stored` with `_files`; true when the backup was read. */
+  async function startWith(
+    _stored: Record<string, unknown>,
+    _files: Record<string, Uint8Array>,
+    _mtimes: Record<string, number>,
+  ) {
+    const app = await startApp(_stored, _files, true, _mtimes);
+    await app.start();
+    return {
+      ...app,
+      backupRead: app.readInternalFileAsUint8Array.calls
+        .allArgs()
+        .some(([_name]) => _name === BACKUP),
+    };
+  }
+
+  it('is written once the backup has its name, with its counts, size and time of change', async () => {
+    const { helper, files, mtimes, replaceInternalFileFromBlob } =
+      await startApp(storedDataToBackUp(20));
+
+    await helper.saveAutomaticBackups();
+
+    expect(
+      replaceInternalFileFromBlob.calls
+        .allArgs()
+        .map(([, _path, _unfinished]): unknown[] => [_path, _unfinished]),
+    ).toEqual([
+      [BACKUP, UNFINISHED],
+      [SUMMARY, `${SUMMARY}.part`],
+    ]);
+    expect(summaryOf(Object.fromEntries(files))).toEqual({
+      version: 1,
+      size: files.get(BACKUP).length,
+      mtime: mtimes.get(BACKUP),
+      counts: { BEANS: 1, BREWS: 20, PREPARATION: 1, MILL: 1 },
+    });
+  });
+
+  it('counts the copies of an entry, so the backup never holds more than it says', async () => {
+    const data = storedDataToBackUp(20);
+    const brews = data.BREWS as unknown[];
+    brews.push(structuredClone(brews[0]));
+
+    const { files } = await backedUp(data);
+
+    expect(summaryOf(files).counts.BREWS).toBe(21);
+  });
+
+  it('is not written when a counted collection is no list, as the backup could hold more', async () => {
+    const { helper, files, deleteInternalFile } = await startApp({
+      ...storedDataToBackUp(0),
+      MILL: 'no list',
+    });
+
+    await helper.saveAutomaticBackups();
+
+    expect([...files.keys()]).toEqual([BACKUP]);
+    expect(deleteInternalFile).toHaveBeenCalledOnceWith(SUMMARY);
+  });
+
+  it('spares reading the backup when the device holds as much', async () => {
+    const data = storedDataToBackUp(20);
+    const { files, mtimes } = await backedUp(data);
+
+    const { backupRead, popover, importBackup } = await startWith(
+      data,
+      files,
+      mtimes,
+    );
+
+    expect(backupRead).toBeFalse();
+    expect(popover).not.toHaveBeenCalled();
+    expect(importBackup).not.toHaveBeenCalled();
+  });
+
+  it('lets the backup offer itself, read as before, when it holds more brews than the device', async () => {
+    const data = storedDataToBackUp(30);
+    const { files, mtimes } = await backedUp(data);
+
+    const { backupRead, popover } = await startWith(
+      storedDataToBackUp(20),
+      files,
+      mtimes,
+    );
+
+    expect(backupRead).toBeTrue();
+    expect(popover).toHaveBeenCalledTimes(1);
+    expect(popover.calls.mostRecent().args[1].BREWS).toEqual(data.BREWS);
+  });
+
+  it('lets the backup be restored into an empty database, read as before', async () => {
+    const data = storedDataToBackUp(20);
+    const { files, mtimes } = await backedUp(data);
+
+    const { backupRead, importBackup } = await startWith({}, files, mtimes);
+
+    expect(backupRead).toBeTrue();
+    expect(importBackup).toHaveBeenCalledTimes(1);
+    expect(
+      (importBackup.calls.mostRecent().args[0] as { BREWS: unknown }).BREWS,
+    ).toEqual(data.BREWS);
+  });
+
+  // The summary says the device holds as much: only the backup tells.
+  for (const [kind, change] of [
+    [
+      'is missing',
+      (_files: Record<string, Uint8Array>) =>
+        Object.fromEntries(
+          Object.entries(_files).filter(([_name]) => _name !== SUMMARY),
+        ),
+    ],
+    [
+      'cannot be read as JSON',
+      (_files: Record<string, Uint8Array>) => ({
+        ..._files,
+        [SUMMARY]: new TextEncoder().encode('{"version":1,'),
+      }),
+    ],
+    [
+      'has an unknown version',
+      (_files: Record<string, Uint8Array>) =>
+        withSummary(_files, (_summary) => (_summary.version = 2)),
+    ],
+    [
+      'names another size',
+      (_files: Record<string, Uint8Array>) =>
+        withSummary(_files, (_summary) => _summary.size++),
+    ],
+    [
+      'names another time of change',
+      (_files: Record<string, Uint8Array>) =>
+        withSummary(_files, (_summary) => _summary.mtime++),
+    ],
+    [
+      'misses a count',
+      (_files: Record<string, Uint8Array>) =>
+        withSummary(_files, (_summary) => delete _summary.counts.MILL),
+    ],
+    [
+      'has a count that is no whole number',
+      (_files: Record<string, Uint8Array>) =>
+        withSummary(_files, (_summary) => (_summary.counts.MILL = '1')),
+    ],
+  ] as const) {
+    it(`is not used when it ${kind}, the backup is read`, async () => {
+      const { files, mtimes } = await backedUp(storedDataToBackUp(30));
+      const claimed = withSummary(
+        files,
+        (_summary) => (_summary.counts.BREWS = 20),
+      );
+
+      const { backupRead, popover } = await startWith(
+        storedDataToBackUp(20),
+        change(claimed),
+        mtimes,
+      );
+
+      expect(backupRead).toBeTrue();
+      expect(popover).toHaveBeenCalledTimes(1);
+    });
+  }
+
+  it('is not used while the file gives no time of change', async () => {
+    const { files, mtimes } = await backedUp(storedDataToBackUp(30));
+    const claimed = withSummary(files, (_summary) => {
+      _summary.counts.BREWS = 20;
+      delete _summary.mtime;
+    });
+
+    const { backupRead, popover } = await startWith(
+      storedDataToBackUp(20),
+      claimed,
+      { ...mtimes, [BACKUP]: undefined },
+    );
+
+    expect(backupRead).toBeTrue();
+    expect(popover).toHaveBeenCalledTimes(1);
+  });
+
+  it('is not used for a backup of the same size taken over from the unfinished file', async () => {
+    const { files, mtimes } = await backedUp(storedDataToBackUp(20));
+    const unfinished = await writeBackupFile(storedDataToBackUp(30));
+    // The new backup was not renamed when the app was ended, so the
+    // summary is the one of the file before.
+    const summary = withSummary(
+      files,
+      (_summary) => (_summary.size = unfinished.length),
+    )[SUMMARY];
+
+    const {
+      backupRead,
+      popover,
+      files: after,
+    } = await startWith(
+      storedDataToBackUp(20),
+      { [UNFINISHED]: unfinished, [SUMMARY]: summary },
+      { [UNFINISHED]: mtimes[BACKUP] + 1, [SUMMARY]: mtimes[SUMMARY] },
+    );
+
+    expect(after.get(BACKUP)).toBe(unfinished);
+    expect(backupRead).toBeTrue();
+    expect(popover).toHaveBeenCalledTimes(1);
+  });
+
+  it('is deleted when it cannot be written, without a message', async () => {
+    const { files, mtimes } = await backedUp(storedDataToBackUp(20));
+    const app = await startApp(storedDataToBackUp(30), files, true, mtimes);
+    const replace = app.replaceInternalFileFromBlob.and.callFake(
+      async (_blob: Blob, _path: string) => {
+        if (_path === SUMMARY) {
+          throw new Error('disk full');
+        }
+        app.files.set(_path, new Uint8Array(await _blob.arrayBuffer()));
+        app.mtimes.set(_path, mtimes[BACKUP] + 1);
+      },
+    );
+
+    await app.helper.saveAutomaticBackups();
+
+    expect(replace).toHaveBeenCalledTimes(2);
+    expect(app.deleteInternalFile).toHaveBeenCalledOnceWith(SUMMARY);
+    expect([...app.files.keys()]).toEqual([BACKUP]);
+    expect(app.errors.length).toBe(1);
+  });
+
+  it('is deleted when the backup changed again before it was written', async () => {
+    const { files, mtimes } = await backedUp(storedDataToBackUp(20));
+    const app = await startApp(storedDataToBackUp(30), files, true, mtimes);
+    app.replaceInternalFileFromBlob.and.callFake(
+      (_blob: Blob, _path: string) => {
+        // Another write replaced it by a file of another size.
+        app.files.set(_path, new Uint8Array(0));
+        return Promise.resolve();
+      },
+    );
+
+    await app.helper.saveAutomaticBackups();
+
+    expect(app.replaceInternalFileFromBlob).toHaveBeenCalledTimes(1);
+    expect(app.deleteInternalFile).toHaveBeenCalledOnceWith(SUMMARY);
+    expect(app.errors.length).toBe(1);
+  });
+
+  it('stays when the backup cannot be written, as the file before is left', async () => {
+    const { files, mtimes } = await backedUp(storedDataToBackUp(20));
+    const app = await startApp(storedDataToBackUp(30), files, true, mtimes);
+    app.replaceInternalFileFromBlob.and.rejectWith(new Error('disk full'));
+
+    await app.helper.saveAutomaticBackups();
+
+    expect(app.files.get(SUMMARY)).toBe(files[SUMMARY]);
+    expect(app.deleteInternalFile).not.toHaveBeenCalled();
+    const { backupRead } = await startWith(
+      storedDataToBackUp(20),
+      Object.fromEntries(app.files),
+      Object.fromEntries(app.mtimes),
+    );
+    expect(backupRead).toBeFalse();
   });
 });

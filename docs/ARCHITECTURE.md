@@ -648,9 +648,28 @@ flowchart LR
   this point right after `UIStorage.init()`. No test holds this, and writes
   from elsewhere are not ruled out. The `.part` file of the dated copy is not
   taken over.
-- At start (native only), `checkBackup()` reads a single file: the internal
+- Once `Beanconqueror.zip` has its name, `__saveInternalBackupSummary`
+  writes `Beanconqueror.zip.meta.json` beside it, also under another name
+  first (`.part`): a format version, the size and time of change (`mtime`)
+  the file has by `stat`, and the number of beans, brews, preparations and
+  grinders written into it. Copies of an entry count, so the file never
+  holds more than the summary says (the check removes identical copies
+  before it counts). When the summary cannot be written, or the file
+  already has another size, the summary from before is deleted and the
+  error is logged; the user is not told. Nothing else reads, lists, deletes
+  or imports it.
+- At start (native only), `checkBackup()` first reads that summary
+  (`__readInternalBackupSummary`). It is used only when its version is
+  known, its counts are whole numbers and `Beanconqueror.zip` has exactly
+  its size and time of change; the time is needed as well, as a backup of
+  the same size can follow without a new summary, when the app is ended
+  before it is written or a complete `.part` file is taken over at start.
+  When the database holds data and the summary holds no more beans, brews,
+  preparations or grinders than the database, the check is over without
+  reading the ZIP. In every other case, the same as without a summary, it
+  reads a single file: the internal
   `Beanconqueror.zip` in the data directory, or the legacy `Beanconqueror.json`
-  when there is no ZIP (`readBackupZIPFile`). Despite its name,
+  when there is no ZIP (`readBackupZIPFile`), and that file decides. Despite its name,
   `__getBiggerFileBackupOrAutomatic` compares nothing: the comparison with the
   dated copies is commented out and `isAutomaticBackup` is always `false`. In
   `checkBackupAndSeeIfDataAreCorrupted`, an empty database imports the file

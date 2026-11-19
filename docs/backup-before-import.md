@@ -41,6 +41,13 @@ files kept, and it is not listed for an import. It is removed right away,
 and again before the next backup is written, in case the app was closed while
 writing.
 
+Whether the internal backup is offered or restored at start-up is decided on
+`Beanconqueror.zip` itself. Only when the database holds data and the small
+summary written beside it (`Beanconqueror.zip.meta.json`, see
+docs/ARCHITECTURE.md) says that the file holds no more entries than the
+database is the file not read; when it does, or the summary does not
+belong to the file, the file is read as before.
+
 When restoring the internal backup at start-up does not happen for that
 reason, or because the import failed and was rolled back, the app says so and
 keeps `Beanconqueror.zip` as it is for the rest of the session: the automatic
