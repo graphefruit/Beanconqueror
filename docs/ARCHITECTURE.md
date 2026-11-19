@@ -335,7 +335,13 @@ writes:
   failure nothing is frozen and the bean of the dialog is the one from
   before, as `BEAN_FREEZE_NOTHING_FROZEN` tells the user; the dialog stays
   open for another try. That message is shown also when the collection has
-  reported the failed save itself. Marking a best brew
+  reported the failed save itself. Unfreezing a part of a bag
+  (`bean-popover-unfreeze`) is one `applyChanges` as well: the part is added
+  and the bag gets its group and loses the weight of the part with the same
+  save. When that fails, or a photo cannot be copied, the copies are deleted,
+  the bean of the dialog is the one from before, the user gets one message
+  (`storedOrReported()`) and the dialog stays open; unfreezing the whole bag
+  does the same with its single write. Marking a best brew
   (`brew-information`) saves the brew and the one that loses the mark with
   one `updateMany`. The Excel import (`uiExcel.ts`) stores the beans of a
   file with one `addMany`: all of them or none, so no import is partly

@@ -38,6 +38,7 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIHelper } from '../../../services/uiHelper';
+import { UILog } from '../../../services/uiLog';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
 
@@ -73,6 +74,7 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiAlert = inject(UIAlert);
+  private readonly uiLog = inject(UILog);
 
   public static COMPONENT_ID = 'bean-popover-unfreeze';
   @Input() public bean: Bean;
@@ -137,20 +139,31 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
     }
 
     if (this.unfreezeWeight === this.maxWeight) {
-      // Unfreeze whole bag
-      this.bean.unfrozenDate = moment(new Date()).toISOString();
-      await this.uiBeanStorage.update(this.bean);
+      // Unfreeze whole bag. A copy: the bean of this dialog changes only once
+      // it is stored.
+      const unfrozen: Bean = this.uiHelper.cloneData(this.bean);
+      unfrozen.unfrozenDate = moment(new Date()).toISOString();
+      if (
+        !(await storedOrReported(this.uiAlert, () =>
+          this.uiBeanStorage.update(unfrozen),
+        ))
+      ) {
+        return;
+      }
+      this.bean.unfrozenDate = unfrozen.unfrozenDate;
       this.uiToast.showInfoToast('TOAST_BEAN_UNFROZEN_SUCCESSFULLY');
     } else {
       await this.uiAlert.showLoadingSpinner();
-      // Partial unfreeze
-      if (!this.bean.frozenGroupId) {
-        this.bean.frozenGroupId = crypto.randomUUID();
-        // Update the original bean immediately so the ID is persisted
-        await this.uiBeanStorage.update(this.bean);
+      // Partial unfreeze. The group, the part and the rest of the bag are
+      // stored with one save, so the bag never loses or keeps the weight of
+      // a part alone. A copy: the bean of this dialog changes only once all
+      // is stored.
+      const original: Bean = this.uiHelper.cloneData(this.bean);
+      if (!original.frozenGroupId) {
+        original.frozenGroupId = crypto.randomUUID();
       }
 
-      const newBean: Bean = this.uiHelper.cloneData(this.bean);
+      const newBean: Bean = this.uiHelper.cloneData(original);
 
       // Update new bean properties
       newBean.frozenId = this.uiBeanHelper.generateFrozenId();
@@ -171,6 +184,7 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
       }
 
       // Copy attachments logic
+      let copied = true;
       if (
         this.copyAttachments &&
         this.bean.attachments &&
@@ -227,24 +241,46 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
           } catch (error) {}
         }
 
-        for await (let attachmentBase64 of copyAttachmentsBase64) {
-          const fileUri = await this.saveBase64Photo(attachmentBase64);
-          newBean.attachments.push(fileUri);
+        try {
+          for await (let attachmentBase64 of copyAttachmentsBase64) {
+            const fileUri = await this.saveBase64Photo(attachmentBase64);
+            newBean.attachments.push(fileUri);
+          }
+        } catch (error) {
+          this.uiLog.error('Unfreeze bean - Photo not copied', error);
+          copied = false;
         }
       }
 
       newBean.config = new Config();
+
+      const remainingWeight = this.bean.weight - this.unfreezeWeight;
+      original.weight = this.uiHelper.toFixedIfNecessary(remainingWeight, 1);
+      if (this.bean.cost) {
+        original.cost = this.uiHelper.toFixedIfNecessary(
+          this.bean.cost - newBean.cost,
+          2,
+        );
+      }
+
       if (
         !(await storedOrReported(this.uiAlert, async () => {
-          const added = await this.uiBeanStorage.addAndConfirm(newBean);
-          if (!added.saved) {
+          const saved =
+            copied &&
+            (
+              await this.uiBeanStorage.applyChanges({
+                update: [original],
+                add: [newBean],
+              })
+            ).saved;
+          if (!saved) {
             // Before the message, which would wait behind the spinner.
             await this.uiAlert.hideLoadingSpinner();
           }
-          return added.saved;
+          return saved;
         }))
       ) {
-        // The frozen bean keeps its weight, the dialog stays open.
+        // Nothing was stored: the bag keeps its weight, the dialog stays open.
         for (const path of newBean.attachments) {
           await this.uiFileHelper
             .deleteInternalFile(path)
@@ -252,19 +288,10 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
         }
         return;
       }
+      this.bean.frozenGroupId = original.frozenGroupId;
+      this.bean.weight = original.weight;
+      this.bean.cost = original.cost;
 
-      // Update original bean
-      const remainingWeight = this.bean.weight - this.unfreezeWeight;
-      this.bean.weight = this.uiHelper.toFixedIfNecessary(remainingWeight, 1);
-
-      if (this.bean.cost) {
-        this.bean.cost = this.uiHelper.toFixedIfNecessary(
-          this.bean.cost - newBean.cost,
-          2,
-        );
-      }
-
-      await this.uiBeanStorage.update(this.bean);
       await this.uiAlert.hideLoadingSpinner();
       this.uiToast.showInfoToast('TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY');
     }

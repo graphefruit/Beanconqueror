@@ -307,21 +307,20 @@ describe('BeanPopoverUnfreezeComponent', () => {
       expect(storedOriginal().attachments).toEqual(['photo.jpg']);
     });
 
-    it('known gap: claims success and closes when the bag could not be saved', async () => {
+    it('stays open with one message when the bag could not be saved', async () => {
       await open();
       database.failingWrites.add('BEANS');
 
       await component.save();
 
       expect(storedOriginal().unfrozenDate).toBe('');
-      // The collection reports the failed write, the dialog the opposite.
       expect(showMessage.calls.allArgs()).toEqual([SAVE_FAILED_MESSAGE]);
-      expect(showInfoToast.calls.allArgs()).toEqual([
-        ['TOAST_BEAN_UNFROZEN_SUCCESSFULLY'],
-      ]);
-      expect(dismiss).toHaveBeenCalledTimes(1);
-      // The collection took the failed write back.
+      expect(showInfoToast).not.toHaveBeenCalled();
+      expect(saveSettings).not.toHaveBeenCalled();
+      expect(dismiss).not.toHaveBeenCalled();
+      // The collection took the failed write back, the dialog kept its bean.
       expect(inMemory()[0].unfrozenDate).toBe('');
+      expect(component.bean.unfrozenDate).toBe('');
     });
   });
 
@@ -388,8 +387,8 @@ describe('BeanPopoverUnfreezeComponent', () => {
       expect(storedParts()[0].frozenGroupId).toBe(
         storedOriginal().frozenGroupId,
       );
-      // The group, the part and the remaining weight are three writes.
-      expect(database.written()).toEqual(['BEANS', 'BEANS', 'BEANS']);
+      // The group, the part and the remaining weight are one write.
+      expect(database.written()).toEqual(['BEANS']);
     });
 
     it('keeps the group of a bag that was split before', async () => {
@@ -400,7 +399,7 @@ describe('BeanPopoverUnfreezeComponent', () => {
 
       expect(storedOriginal().frozenGroupId).toBe('group-1');
       expect(storedParts()[0].frozenGroupId).toBe('group-1');
-      expect(database.written()).toEqual(['BEANS', 'BEANS']);
+      expect(database.written()).toEqual(['BEANS']);
     });
 
     it('splits the cost by weight', async () => {
@@ -531,8 +530,6 @@ describe('BeanPopoverUnfreezeComponent', () => {
 
       expect(steps).toEqual([
         'spinner',
-        'write',
-        'write',
         'write',
         'hidden',
         'TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY',
@@ -676,30 +673,35 @@ describe('BeanPopoverUnfreezeComponent', () => {
         expect(storedParts()[0].attachments).toEqual([]);
       });
 
-      it('known gap: a copy that cannot be written leaves the spinner up and only the group stored', async () => {
-        writePhoto.and.callFake((_base64: string, _path: string) =>
-          _path === 'photo-2.jpg'
-            ? Promise.reject(new Error('disk full'))
-            : Promise.resolve({ path: _path, fullpath: `/data/${_path}` }),
-        );
+      it('stores nothing, deletes the copies and stays open with one message when a copy cannot be written', async () => {
+        writePhoto.and.callFake((_base64: string, _path: string) => {
+          if (_path === 'photo-2.jpg') {
+            return Promise.reject(new Error('disk full'));
+          }
+          writtenFiles.set(_path, _base64);
+          return Promise.resolve({ path: _path, fullpath: `/data/${_path}` });
+        });
         await open({ attachments: ['a.jpg', 'b.jpg'] });
         component.unfreezeWeight = 100;
         component.copyAttachments = true;
 
-        await expectAsync(component.save()).toBeRejectedWithError('disk full');
+        await component.save();
 
+        expect(database.set).not.toHaveBeenCalled();
         expect(stored().length).toBe(1);
         expect(storedOriginal().weight).toBe(250);
-        expect(storedOriginal().frozenGroupId).toMatch(UUID_PATTERN);
+        expect(storedOriginal().frozenGroupId).toBe('');
         expect(showLoadingSpinner).toHaveBeenCalledTimes(1);
-        expect(hideLoadingSpinner).not.toHaveBeenCalled();
+        expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);
+        expect(showMessage.calls.allArgs()).toEqual([SAVE_FAILED_MESSAGE]);
         expect(showInfoToast).not.toHaveBeenCalled();
         expect(dismiss).not.toHaveBeenCalled();
-        // The first copy stays behind without an entry that shows it.
+        // The first copy was written and is deleted again.
         expect(writePhoto.calls.argsFor(0)).toEqual([
           'data:image/jpeg;base64,AAAA',
           'photo-1.jpg',
         ]);
+        expect([...writtenFiles.keys()]).toEqual([]);
       });
     });
 
@@ -715,12 +717,7 @@ describe('BeanPopoverUnfreezeComponent', () => {
         expect(stored().length).toBe(1);
         expect(storedOriginal().weight).toBe(250);
         expect(storedOriginal().frozenGroupId).toBe('');
-        // known gap: the group id of the bag is written on its own first,
-        // so the collection reports two failed writes.
-        expect(showMessage.calls.allArgs()).toEqual([
-          SAVE_FAILED_MESSAGE,
-          SAVE_FAILED_MESSAGE,
-        ]);
+        expect(showMessage.calls.allArgs()).toEqual([SAVE_FAILED_MESSAGE]);
         expect(showInfoToast).not.toHaveBeenCalled();
         expect(dismiss).not.toHaveBeenCalled();
         // The photo copied for the part is deleted again.
@@ -728,25 +725,28 @@ describe('BeanPopoverUnfreezeComponent', () => {
         expect(inMemory().map((_bean) => _bean.weight)).toEqual([250]);
       });
 
-      it('known gap: the weight of the part is stored twice when only the last write fails', async () => {
+      it('leaves the bean of the dialog as it was, so another try takes the part off once', async () => {
         await open();
         component.unfreezeWeight = 100;
-        beans.attachOnEvent().subscribe((_event: { type: string }) => {
-          if (_event.type === 'ADD') {
-            database.failingWrites.add('BEANS');
-          }
-        });
+        database.failingWrites.add('BEANS');
 
         await component.save();
 
-        // 250 g became 350 g on the disk.
-        expect(storedOriginal().weight).toBe(250);
-        expect(storedOriginal().cost).toBe(20);
+        expect(component.bean.weight).toBe(250);
+        expect(component.bean.cost).toBe(20);
+        expect(component.bean.frozenGroupId).toBe('');
+
+        database.failingWrites.clear();
+        await component.save();
+
+        expect(storedOriginal().weight).toBe(150);
+        expect(storedOriginal().cost).toBe(12);
         expect(storedParts().map((_bean) => _bean.weight)).toEqual([100]);
-        expect(storedParts()[0].cost).toBe(8);
-        expect(showInfoToast.calls.allArgs()).toEqual([
-          ['TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY'],
-        ]);
+        expect(component.bean.weight).toBe(150);
+        expect(component.bean.cost).toBe(12);
+        expect(component.bean.frozenGroupId).toBe(
+          storedOriginal().frozenGroupId,
+        );
         expect(dismiss).toHaveBeenCalledTimes(1);
       });
 
