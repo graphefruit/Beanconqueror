@@ -169,17 +169,17 @@ export class VisualizerService {
       }
       return;
     } catch (error) {
-      // The message can quote the whole answer of the server.
-      this.uiLog.error(
-        'Upload visualizer shot error occurred',
-        errorSummary(error),
-      );
+      // The message can quote the whole answer of the server, also in the
+      // error passed on: callers that do not catch it hand it to the global
+      // error handler, which logs the message.
+      const summary = errorSummary(error);
+      this.uiLog.error('Upload visualizer shot error occurred', summary);
       if (_showToast === true) {
         this.uiToast.showInfoToastBottom(
           'VISUALIZER.SHOT.UPLOAD_UNSUCCESSFULLY',
         );
       }
-      throw error;
+      throw new Error('Upload visualizer shot failed: ' + summary);
     }
   }
 
@@ -245,17 +245,17 @@ export class VisualizerService {
       }
       return;
     } catch (error) {
-      // The message can quote the whole answer of the server.
-      this.uiLog.error(
-        'Upload visualizer shot error occurred',
-        errorSummary(error),
-      );
+      // The message can quote the whole answer of the server, also in the
+      // error passed on: callers that do not catch it hand it to the global
+      // error handler, which logs the message.
+      const summary = errorSummary(error);
+      this.uiLog.error('Upload visualizer shot error occurred', summary);
       if (_showToast === true) {
         this.uiToast.showInfoToastBottom(
           'VISUALIZER.SHOT.UPLOAD_UNSUCCESSFULLY',
         );
       }
-      throw error;
+      throw new Error('Upload visualizer shot failed: ' + summary);
     }
   }
 

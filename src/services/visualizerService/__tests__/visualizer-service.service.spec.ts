@@ -457,11 +457,11 @@ describe('VisualizerService', () => {
         const brew = await storedBrew();
         answer = () => json(body, 401);
 
+        // Callers that do not catch it hand the error to the global handler,
+        // which logs its message: it must not quote the server either.
         await expectAsync(
           service.uploadToVisualizer(brew),
-        ).toBeRejectedWithError(
-          'Received invalid visualizer reponse: ' + JSON.stringify(body),
-        );
+        ).toBeRejectedWithError('Upload visualizer shot failed: Error');
 
         expect(brew.customInformation.visualizer_id).toBe('');
         expect(database.set).not.toHaveBeenCalled();
@@ -479,11 +479,14 @@ describe('VisualizerService', () => {
       const brew = await storedBrew();
       answer = () => Promise.reject(new TypeError('Failed to fetch'));
       await expectAsync(service.uploadToVisualizer(brew)).toBeRejectedWithError(
-        'Failed to fetch',
+        'Upload visualizer shot failed: TypeError',
       );
 
       answer = () => Promise.resolve(new Response('<html>502</html>'));
-      await expectAsync(service.uploadToVisualizer(brew)).toBeRejected();
+      // The parse error of the browser quotes the start of the answer.
+      await expectAsync(service.uploadToVisualizer(brew)).toBeRejectedWithError(
+        'Upload visualizer shot failed: SyntaxError',
+      );
 
       expect(database.set).not.toHaveBeenCalled();
       expect(showInfoToastBottom.calls.allArgs()).toEqual([
@@ -499,7 +502,7 @@ describe('VisualizerService', () => {
 
       await expectAsync(
         service.uploadToVisualizer(brew, false),
-      ).toBeRejectedWithError('Failed to fetch');
+      ).toBeRejectedWithError('Upload visualizer shot failed: TypeError');
 
       expect(showInfoToastBottom).not.toHaveBeenCalled();
     });
@@ -535,7 +538,7 @@ describe('VisualizerService', () => {
       brew.customInformation = null;
 
       await expectAsync(service.uploadToVisualizer(brew)).toBeRejectedWithError(
-        TypeError,
+        'Upload visualizer shot failed: TypeError',
       );
 
       // The shot is on the server; every further attempt uploads it anew.
@@ -643,7 +646,7 @@ describe('VisualizerService', () => {
 
       await expectAsync(
         service.uploadBaristamodeBrewToVisualizer(brew),
-      ).toBeRejectedWithError('Received invalid visualizer reponse: {}');
+      ).toBeRejectedWithError('Upload visualizer shot failed: Error');
 
       expect(log.error.calls.allArgs()).toEqual([
         ['Upload visualizer shot error occurred', 'Error'],
