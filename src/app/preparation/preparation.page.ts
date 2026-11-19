@@ -15,6 +15,8 @@ import {
   IonBackButton,
   IonButton,
   IonContent,
+  IonFab,
+  IonFabButton,
   IonHeader,
   IonIcon,
   IonLabel,
@@ -23,6 +25,8 @@ import {
   IonSegmentButton,
   ModalController,
 } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { add } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
@@ -30,7 +34,6 @@ import { merge } from 'rxjs';
 
 import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
-import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { PreparationInformationCardComponent } from '../../components/preparation-information-card/preparation-information-card.component';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
@@ -55,10 +58,11 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
     PreparationInformationCardComponent,
     TranslatePipe,
     HeaderComponent,
-    HeaderButtonComponent,
     IonHeader,
     IonBackButton,
     IonContent,
+    IonFab,
+    IonFabButton,
     IonSegment,
     IonSegmentButton,
     IonLabel,
@@ -118,6 +122,7 @@ export class PreparationPage {
   public segmentScrollHeight: string = undefined;
 
   public constructor() {
+    addIcons({ add });
     // Building the list replaces every card, as it shows copies. A card that
     // deletes its method is replaced when the brews go and its event reaches
     // nobody, so the list follows the methods themselves as well.

@@ -13,6 +13,8 @@ import { FormsModule } from '@angular/forms';
 import {
   IonBackButton,
   IonContent,
+  IonFab,
+  IonFabButton,
   IonHeader,
   IonIcon,
   IonLabel,
@@ -21,7 +23,7 @@ import {
   ModalController,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { waterOutline } from 'ionicons/icons';
+import { add, waterOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
@@ -29,7 +31,6 @@ import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { Settings } from '../../../classes/settings/settings';
 import { Water } from '../../../classes/water/water';
-import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { WaterInformationCardComponent } from '../../../components/water-information-card/water-information-card.component';
 import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
@@ -51,10 +52,11 @@ import { UIWaterStorage } from '../../../services/uiWaterStorage';
     WaterInformationCardComponent,
     TranslatePipe,
     HeaderComponent,
-    HeaderButtonComponent,
     IonHeader,
     IonBackButton,
     IonContent,
+    IonFab,
+    IonFabButton,
     IonSegment,
     IonSegmentButton,
     IonLabel,
@@ -93,7 +95,7 @@ export class WaterPage implements OnInit {
   public segmentScrollHeight: string = undefined;
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
-    addIcons({ waterOutline });
+    addIcons({ add, waterOutline });
   }
 
   public ionViewWillEnter(): void {

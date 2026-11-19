@@ -1,7 +1,6 @@
 <ion-header>
   <app-header [title]="'NAV_MILL' | translate">
     <ion-back-button header-slot="start" icon="beanconqueror-back" defaultHref="/home/profile" />
-    <app-header-button header-slot="end" icon="beanconqueror-add" ariaLabel="Add grinder" (clicked)="add()" />
   </app-header>
 </ion-header>
 
@@ -33,7 +32,7 @@
         </div>
       </div>
 }
-      <ag-virtual-scroll #openScroll [items]="openMillsView" [height]="'100vh'" [min-row-height]="263">
+      <ag-virtual-scroll #openScroll [items]="openMillsView" [height]="'100vh'" class="clear-of-fab" [min-row-height]="263">
         @for (mill of openScroll.items; track mill) {
 <mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill" />
 }
@@ -51,7 +50,7 @@
       </div>
 }
 
-      <ag-virtual-scroll #archivedScroll [items]="archiveMillsView" [height]="'100vh'" [min-row-height]="263">
+      <ag-virtual-scroll #archivedScroll [items]="archiveMillsView" [height]="'100vh'" class="clear-of-fab" [min-row-height]="263">
         @for (mill of archivedScroll.items; track mill) {
 <mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill" />
 }
@@ -60,4 +59,9 @@
   }
 
 
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button color="accent" [attr.aria-label]="'ADD_MILL' | translate" (click)="add()">
+      <ion-icon name="add" aria-hidden="true" />
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

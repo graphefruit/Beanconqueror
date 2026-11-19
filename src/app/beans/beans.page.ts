@@ -16,6 +16,8 @@ import { FormsModule } from '@angular/forms';
 import {
   IonButton,
   IonContent,
+  IonFab,
+  IonFabButton,
   IonHeader,
   IonIcon,
   IonLabel,
@@ -25,6 +27,8 @@ import {
   ModalController,
   Platform,
 } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { add } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
@@ -145,6 +149,8 @@ function groupFrozenPortions(beans: Bean[]): (Bean | BeanGroup)[] {
     IonSearchbar,
     IonIcon,
     IonButton,
+    IonFab,
+    IonFabButton,
   ],
 })
 export class BeansPage {
@@ -301,6 +307,7 @@ export class BeansPage {
   private lastInteractedBeanId: string = null;
 
   public constructor() {
+    addIcons({ add });
     // Whoever changed a bean: the scroll positions have to be saved before
     // the lists get their new entries.
     this.beanStore.changes
@@ -497,14 +504,6 @@ export class BeansPage {
       // await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=e7ada0a6');
     }
     this.loadBeans();
-  }
-
-  public async longPressAdd(event) {
-    if (event) {
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-    }
-    await this.add();
   }
 
   public async openImportMenu() {

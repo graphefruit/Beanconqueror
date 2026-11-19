@@ -1,7 +1,6 @@
 <ion-header>
   <app-header [title]="'NAV_PREPARATION' | translate">
     <ion-back-button header-slot="start" icon="beanconqueror-back" defaultHref="/home/profile" />
-    <app-header-button header-slot="end" icon="beanconqueror-add" ariaLabel="Add preparation method" (clicked)="add()" />
   </app-header>
 </ion-header>
 <ion-content #preparationContent>
@@ -55,7 +54,7 @@
               </div>
             </div>
           }
-          <ag-virtual-scroll #openScroll [items]="openPreparationsView" [height]="'100vh'" [min-row-height]="186">
+          <ag-virtual-scroll #openScroll [items]="openPreparationsView" [height]="'100vh'" class="clear-of-fab" [min-row-height]="186">
             @for (preparation of openScroll.items; track preparation) {
               <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
                 [preparation]="preparation"
@@ -81,7 +80,7 @@
               </div>
             </div>
           }
-          <ag-virtual-scroll #archivedScroll [items]="archivePreparationsView" [height]="'100vh'" [min-row-height]="186">
+          <ag-virtual-scroll #archivedScroll [items]="archivePreparationsView" [height]="'100vh'" class="clear-of-fab" [min-row-height]="186">
             @for (preparation of archivedScroll.items; track preparation) {
               <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
                 [preparation]="preparation"
@@ -94,6 +93,11 @@
   </div>
 
 
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button color="accent" [attr.aria-label]="'ADD_PREPARATION' | translate" (click)="add()">
+      <ion-icon name="add" aria-hidden="true" />
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
 
 <ng-template #preparationSearchToolbar>

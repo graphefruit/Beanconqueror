@@ -63,6 +63,17 @@ ion-content {
 ion-icon {
   color: var(--beanconqueror-icon-color);
 }
+// A list with the floating add button over its end scrolls on past it (56px
+// is the size of Ionic's button), so the last entry can be read and opened.
+ag-virtual-scroll.clear-of-fab {
+  box-sizing: border-box;
+  padding-bottom: calc(56px + 2 * var(--bq-space-4));
+}
+// The plus takes the label colour of the fill (5.22:1) rather than the global
+// icon colour (3.31:1 on coral light, 1.31:1 dark).
+ion-fab-button ion-icon {
+  color: var(--bq-text-on-accent);
+}
 .ion-page {
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);

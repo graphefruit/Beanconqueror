@@ -1343,6 +1343,7 @@
     "WATER_TYPE_THIRD_WAVE_WATER_COLD_BREW_PROFILE": "Third Wave Water -Cold Brew Profile",
     "WATER_TYPE_THIRD_WAVE_WATER_LOW_ACID_PROFILE": "Third Wave Water - Low Acid Profile",
     "ADD_WATER": "Add water",
+    "ADD_WATER_RECIPE": "Add water recipe",
     "EXTRACTION_CHART_LABEL_STRONG_UNDEREXTRACTED": "STRONG<br>underextracted",
     "EXTRACTION_CHART_LABEL_STRONG": "STRONG<br>",
     "EXTRACTION_CHART_LABEL_STRONG_HARSH": "STRONG<br>harsh",

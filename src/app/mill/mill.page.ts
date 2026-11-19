@@ -14,6 +14,8 @@ import { FormsModule } from '@angular/forms';
 import {
   IonBackButton,
   IonContent,
+  IonFab,
+  IonFabButton,
   IonHeader,
   IonIcon,
   IonLabel,
@@ -21,13 +23,14 @@ import {
   IonSegmentButton,
   ModalController,
 } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { add } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
 import { Mill } from '../../classes/mill/mill';
 import { Settings } from '../../classes/settings/settings';
-import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { MillInformationCardComponent } from '../../components/mill-information-card/mill-information-card.component';
 import { MILL_ACTION } from '../../enums/mills/millActions';
@@ -49,10 +52,11 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
     MillInformationCardComponent,
     TranslatePipe,
     HeaderComponent,
-    HeaderButtonComponent,
     IonHeader,
     IonBackButton,
     IonContent,
+    IonFab,
+    IonFabButton,
     IonSegment,
     IonSegmentButton,
     IonLabel,
@@ -89,6 +93,7 @@ export class MillPage implements OnInit {
   public segmentScrollHeight: string = undefined;
 
   public constructor() {
+    addIcons({ add });
     this.uiBrewStorage
       .attachOnEvent()
       .pipe(takeUntilDestroyed())

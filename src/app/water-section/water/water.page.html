@@ -1,7 +1,6 @@
 <ion-header>
   <app-header [title]="'WATER_SECTION.NAV_WATER' | translate">
     <ion-back-button header-slot="start" icon="beanconqueror-back" defaultHref="/home/profile" />
-    <app-header-button header-slot="end" icon="beanconqueror-add" ariaLabel="Add water recipe" (clicked)="add()" />
   </app-header>
 </ion-header>
 
@@ -30,7 +29,7 @@
           </div>
         </div>
       }
-      <ag-virtual-scroll #openScroll [items]="openWaters" [height]="'100vh'" [min-row-height]="165">
+      <ag-virtual-scroll #openScroll [items]="openWaters" [height]="'100vh'" class="clear-of-fab" [min-row-height]="165">
         @for (water of openScroll.items; track water) {
           <water-information-card (waterAction)="triggerAction($event[0],$event[1])" [water]="water" />
         }
@@ -48,7 +47,7 @@
             </div>
           </div>
         }
-        <ag-virtual-scroll #archivedScroll [items]="finishedWaters" [height]="'100vh'" [min-row-height]="165">
+        <ag-virtual-scroll #archivedScroll [items]="finishedWaters" [height]="'100vh'" class="clear-of-fab" [min-row-height]="165">
           @for (water of archivedScroll.items; track water) {
             <water-information-card (waterAction)="triggerAction($event[0],$event[1])" [water]="water" />
           }
@@ -56,4 +55,9 @@
       }
     }
   }
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button color="accent" [attr.aria-label]="'ADD_WATER_RECIPE' | translate" (click)="add()">
+      <ion-icon name="add" aria-hidden="true" />
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

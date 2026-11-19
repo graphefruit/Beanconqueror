@@ -1,7 +1,6 @@
 <ion-header>
   <app-header [title]="'NAV_BEANS' | translate">
     <app-header-button header-slot="end" icon="beanconqueror-list-add" ariaLabel="Import beans" (clicked)="openImportMenu()" />
-    <app-header-button header-slot="end" icon="beanconqueror-add" ariaLabel="Add bean" (clicked)="longPressAdd($event)" />
   </app-header>
 </ion-header>
 <ion-content #beanContent>
@@ -68,7 +67,7 @@
     </div>
   </div>
   }
-  <ag-virtual-scroll #openScroll [items]="rows.open()" [height]="'100vh'" [min-row-height]="isCollapseActive()?60:210"
+  <ag-virtual-scroll #openScroll [items]="rows.open()" [height]="'100vh'" class="clear-of-fab" [min-row-height]="isCollapseActive()?60:210"
     (onItemsRender)="renderedRows.open.set($event.items)">
     @for (item of renderedRows.open(); track item) {
     @if ('beans' in item) {
@@ -97,7 +96,7 @@
     </div>
   </div>
   }
-  <ag-virtual-scroll #frozenScroll [items]="rows.frozen()" [height]="'100vh'"
+  <ag-virtual-scroll #frozenScroll [items]="rows.frozen()" [height]="'100vh'" class="clear-of-fab"
     [min-row-height]="isCollapseActive()?60:210" (onItemsRender)="renderedRows.frozen.set($event.items)">
     @for (item of renderedRows.frozen(); track item) {
     @if ('beans' in item) {
@@ -127,7 +126,7 @@
     </div>
   </div>
   }
-  <ag-virtual-scroll #archivedScroll [items]="rows.archive()" [height]="'100vh'"
+  <ag-virtual-scroll #archivedScroll [items]="rows.archive()" [height]="'100vh'" class="clear-of-fab"
     [min-row-height]="isCollapseActive()?60:210" (onItemsRender)="renderedRows.archive.set($event.items)">
     @for (item of renderedRows.archive(); track item) {
     @if ('beans' in item) {
@@ -141,7 +140,12 @@
   }
   }
   }
-
+  <!-- Last in the page: it floats over the bottom right corner of the list. -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button color="accent" [attr.aria-label]="'ADD_BEAN' | translate" (click)="add()">
+      <ion-icon name="add" aria-hidden="true" />
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
 
 <ng-template #beanSearchToolbar>
