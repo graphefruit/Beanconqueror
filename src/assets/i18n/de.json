@@ -2033,7 +2033,7 @@
         "SET_BREW_WATER_QUANTITY_FROM_SCALE": "Wassermenge von der Waage übernehmen",
         "SET_FIRST_DRIP_TIME": "Zeit des ersten Tropfens setzen",
         "SET_GREEN_BEAN_WEIGHT_FROM_SCALE": "Rohbohnengewicht von der Waage übernehmen",
-        "SET_GRIND_DOSE_FROM_SCALE": "Mahlmenge von der Waage übernehmen",
+        "SET_GRIND_DOSE_FROM_SCALE": "Kaffeemehl von der Waage übernehmen",
         "SET_ROASTED_BEAN_WEIGHT_FROM_SCALE": "Gewicht der gerösteten Bohnen von der Waage übernehmen",
         "SHARE_FLOW_PROFILE": "Flussprofil teilen",
         "SHOW_EXTRACTION_CHART": "Extraktionsdiagramm anzeigen",
