@@ -29,6 +29,8 @@ import { BeansAddComponent } from '../../app/beans/beans-add/beans-add.component
 import { BeansDetailComponent } from '../../app/beans/beans-detail/beans-detail.component';
 import { BeansEditComponent } from '../../app/beans/beans-edit/beans-edit.component';
 import { BrewCuppingComponent } from '../../app/brew/brew-cupping/brew-cupping.component';
+import de from '../../assets/i18n/de.json';
+import en from '../../assets/i18n/en.json';
 import { Bean } from '../../classes/bean/bean';
 import { GreenBean } from '../../classes/green-bean/green-bean';
 import { Settings } from '../../classes/settings/settings';
@@ -1013,25 +1015,25 @@ describe('UIBeanHelper', () => {
       ['is no base64', '%%%'],
       ['is cut off', 'CgVBbHBoYRIK'],
       ['is missing', undefined],
+      ['is empty', ''],
     ]) {
-      it(`known gap: opens nothing and tells the user nothing when the code ${name}`, async () => {
+      it(`opens nothing and says that it cannot be read when the code ${name}`, async () => {
         await expectAsync(helper.addUserSharedBean(code)).toBeResolved();
 
         expect(createModal).not.toHaveBeenCalled();
-        expect(showMessage).not.toHaveBeenCalled();
-        expect(steps).toEqual(['spinner hidden']);
+        expect(showMessage.calls.allArgs()).toEqual([
+          ['USER_BEAN_SHARE_CODE_UNREADABLE', 'ERROR_OCCURED', undefined, true],
+        ]);
+        // The spinner of the link is gone before the message.
+        expect(steps).toEqual(['spinner hidden', 'message', 'spinner hidden']);
       });
     }
 
-    it('known gap: an empty code opens the add dialog for a bean without a name', async () => {
-      await helper.addUserSharedBean('');
-
-      expect(opened().length).toBe(1);
-      expect(template().name).toBe('');
-      expect(template().shared).toBeTrue();
-      expect(template().roast).toBeUndefined();
-      expect(template().beanMix).toBeUndefined();
-      expect(template().bean_roasting_type).toBeUndefined();
+    it('says in English and German that a shared bean cannot be read', () => {
+      expect(en.USER_BEAN_SHARE_CODE_UNREADABLE).toContain('could not be read');
+      expect(de.USER_BEAN_SHARE_CODE_UNREADABLE).toContain(
+        'konnte nicht gelesen werden',
+      );
     });
 
     it('known gap: a roast the receiver does not know arrives as no roast at all', async () => {

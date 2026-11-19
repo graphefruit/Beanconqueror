@@ -272,6 +272,9 @@ export class UIBeanHelper {
 
   public async addUserSharedBean(_compressedJson: string) {
     try {
+      if (!_compressedJson) {
+        throw new Error('The code of the shared bean is empty');
+      }
       const encoded = this.uiHelper.decode(_compressedJson);
 
       const protoBean = BeanProto.decode(encoded);
@@ -345,24 +348,23 @@ export class UIBeanHelper {
       }[protoBean.bean_roasting_type];
 
       await this.uiAlert.hideLoadingSpinner();
-      if (bean !== null) {
-        const modal = await this.modalController.create({
-          component: BeansAddComponent,
-          id: BeansAddComponent.COMPONENT_ID,
-          componentProps: { bean_template: bean, user_shared_bean: bean },
-        });
-        await modal.present();
-        await modal.onWillDismiss();
-      } else {
-        this.uiAlert.showMessage(
-          'USER_BEAN_SHARINGSHARING_ERROR',
-          'ERROR_OCCURED',
-          undefined,
-          true,
-        );
-      }
+      const modal = await this.modalController.create({
+        component: BeansAddComponent,
+        id: BeansAddComponent.COMPONENT_ID,
+        componentProps: { bean_template: bean, user_shared_bean: bean },
+      });
+      await modal.present();
+      await modal.onWillDismiss();
     } catch (ex) {
       this.uiLog.error(ex.message);
+      // Before the message, which would wait behind the spinner.
+      await this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.showMessage(
+        'USER_BEAN_SHARE_CODE_UNREADABLE',
+        'ERROR_OCCURED',
+        undefined,
+        true,
+      );
     } finally {
       this.uiAlert.hideLoadingSpinner();
     }
