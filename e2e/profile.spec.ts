@@ -26,9 +26,8 @@ async function setTheme(page: Page, theme: Theme): Promise<void> {
 }
 
 async function switchOnWater(page: Page): Promise<void> {
-  await page.getByRole('link', { name: /^Settings/ }).click();
-  const water = page.getByRole('checkbox', { name: 'Activate water section' });
-  await water.scrollIntoViewIfNeeded();
+  await page.getByRole('link', { name: /^More sections/ }).click();
+  const water = page.getByRole('switch', { name: 'Water' });
   await water.click();
   await expect(water).toBeChecked();
   await page.goBack();
@@ -81,6 +80,7 @@ const ENTRY_NAMES = [
   'Brewing Parameters Which fields a brew records',
   'Bean parameters Which fields a bean records',
   'Calculations Brew ratio, water hardness',
+  'More sections Roasting, water, graphs',
   'Settings Language, appearance, devices, backup',
   'Info & support Impressum, privacy, contact, logs',
 ];
@@ -112,10 +112,9 @@ test('graphs and roasting join the sections once switched on', async ({
   await completeFirstRun(page);
   await openProfile(page);
 
-  await page.getByRole('link', { name: /^Settings/ }).click();
-  for (const name of ['Activate graph section', 'Activate roasting section']) {
-    const toggle = page.getByRole('checkbox', { name });
-    await toggle.scrollIntoViewIfNeeded();
+  await page.getByRole('link', { name: /^More sections/ }).click();
+  for (const name of ['Graphs', 'Bean Roasting']) {
+    const toggle = page.getByRole('switch', { name });
     await toggle.click();
     await expect(toggle).toBeChecked();
   }

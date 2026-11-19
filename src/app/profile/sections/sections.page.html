@@ -1,0 +1,21 @@
+<ion-header>
+  <app-header [title]="'PAGE_SETTINGS_MANAGE_SECTIONS' | translate">
+    <ion-back-button header-slot="start" icon="beanconqueror-back" defaultHref="/home/profile" />
+  </app-header>
+</ion-header>
+<ion-content>
+  <div class="sections">
+    <p class="intro">{{ "PAGE_SECTIONS_DESCRIPTION" | translate }}</p>
+    <ion-list class="group-card" lines="full">
+      @for (section of sections; track section.field) {
+        <ion-item>
+          <ion-toggle justify="space-between" [checked]="settings[section.field]"
+            [helperText]="section.description | translate"
+            (ionChange)="toggle(section.field, $event.detail.checked)">
+            {{ section.title | translate }}
+          </ion-toggle>
+        </ion-item>
+      }
+    </ion-list>
+  </div>
+</ion-content>

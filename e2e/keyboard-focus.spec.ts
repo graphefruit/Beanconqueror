@@ -275,11 +275,8 @@ for (const theme of ['light', 'dark'] as const) {
     await expect(page).toHaveURL(/\/home\/profile$/);
     // Water is opt-in; switched on it closes the equipment card instead of
     // the grinders, so its ring has to survive the card's rounded edge.
-    await page.getByRole('link', { name: /^Settings/ }).click();
-    const water = page.getByRole('checkbox', {
-      name: 'Activate water section',
-    });
-    await water.scrollIntoViewIfNeeded();
+    await page.getByRole('link', { name: /^More sections/ }).click();
+    const water = page.getByRole('switch', { name: 'Water' });
     await water.click();
     await expect(water).toBeChecked();
     await page.goBack();
@@ -293,6 +290,7 @@ for (const theme of ['light', 'dark'] as const) {
       /^Brewing Parameters/,
       /^Bean parameters/,
       /^Calculations/,
+      /^More sections/,
       /^Settings/,
       /^Info & support/,
     ]) {

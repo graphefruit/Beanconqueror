@@ -189,7 +189,7 @@ describe('ProfilePage', () => {
     expect(page.baristaMode).toBeUndefined();
   });
 
-  it('lists graphs and roasting only while they are switched on, after the fixed sections', () => {
+  it('lists graphs and roasting only while they are switched on, between the fixed sections and their switches', () => {
     const page = open().componentInstance;
     const fixed = [
       '/statistic',
@@ -197,7 +197,11 @@ describe('ProfilePage', () => {
       '/bean-parameter',
       '/helper',
     ];
-    expect(page.sections.map((entry) => entry.link)).toEqual(fixed);
+    const switches = '/home/profile/sections';
+    expect(page.sections.map((entry) => entry.link)).toEqual([
+      ...fixed,
+      switches,
+    ]);
 
     settings.show_graph_section = true;
     settings.show_roasting_section = true;
@@ -206,6 +210,7 @@ describe('ProfilePage', () => {
       ...fixed,
       '/graph-section',
       '/roasting-section',
+      switches,
     ]);
 
     settings.show_graph_section = false;
@@ -213,6 +218,7 @@ describe('ProfilePage', () => {
     expect(page.sections.map((entry) => entry.link)).toEqual([
       ...fixed,
       '/roasting-section',
+      switches,
     ]);
   });
 

@@ -1401,9 +1401,6 @@
     },
     "no-constant-binary-expression": {
       "count": 1
-    },
-    "no-empty": {
-      "count": 1
     }
   },
   "src/app/statistic/__tests__/statistic.page.spec.ts": {

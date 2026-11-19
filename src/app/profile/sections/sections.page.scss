@@ -1,0 +1,50 @@
+:host {
+  // One card of switches, as the profile hub groups its entries.
+  .sections {
+    padding: var(--bq-space-2) var(--bq-space-4) var(--bq-space-6);
+  }
+
+  .intro {
+    margin: var(--bq-space-2) 0 var(--bq-space-4);
+    font-size: var(--bq-type-body);
+    line-height: var(--bq-leading-body);
+    color: var(--bq-text-secondary);
+  }
+
+  // No overflow clip, so the focus ring of a switch stays visible at the card
+  // edge; see the profile hub.
+  .group-card {
+    contain: layout style;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--bq-border-card);
+    border-radius: var(--bq-radius-card);
+    background: var(--bq-surface-card);
+  }
+
+  ion-item {
+    --background: var(--bq-surface-card);
+    --padding-start: var(--bq-space-4);
+    --inner-padding-end: var(--bq-space-4);
+    --min-height: var(--bq-touch-target);
+  }
+
+  ion-item:first-child {
+    --border-radius: var(--bq-radius-card) var(--bq-radius-card) 0 0;
+  }
+
+  ion-item:last-child {
+    --border-radius: 0 0 var(--bq-radius-card) var(--bq-radius-card);
+    --border-width: 0;
+  }
+
+  // Ionic cuts a long label off; at a large text size it wraps instead.
+  ion-toggle::part(label) {
+    white-space: normal;
+    hyphens: auto;
+  }
+
+  ion-toggle::part(helper-text) {
+    color: var(--bq-text-secondary);
+  }
+}

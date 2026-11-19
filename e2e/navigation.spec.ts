@@ -86,10 +86,9 @@ test('preparation methods and grinders open from the profile and lead back', asy
 
 /** Switches optional sections on in the settings and returns to the profile. */
 async function switchOnSections(page: Page, toggles: string[]): Promise<void> {
-  await page.getByRole('link', { name: /^Settings/ }).click();
+  await page.getByRole('link', { name: /^More sections/ }).click();
   for (const name of toggles) {
-    const toggle = page.getByRole('checkbox', { name });
-    await toggle.scrollIntoViewIfNeeded();
+    const toggle = page.getByRole('switch', { name });
     await toggle.click();
     await expect(toggle).toBeChecked();
   }
@@ -121,19 +120,19 @@ const FORMER_MENU_PAGES = [
     entry: 'Water',
     url: /\/water-section\/water$/,
     title: 'Water',
-    switchOn: 'Activate water section',
+    switchOn: 'Water',
   },
   {
     entry: 'Graphs',
     url: /\/graph-section\/graph$/,
     title: 'Graphs',
-    switchOn: 'Activate graph section',
+    switchOn: 'Graphs',
   },
   {
     entry: 'Bean Roasting',
     url: /\/roasting-section\/dashboard$/,
     title: 'Green Beans',
-    switchOn: 'Activate roasting section',
+    switchOn: 'Bean Roasting',
   },
 ] as const;
 
@@ -170,9 +169,8 @@ test('water is listed in the profile once the section is switched on', async ({
   await openProfile(page);
   await expect(page.getByRole('link', { name: /^Water/ })).toHaveCount(0);
 
-  await page.getByRole('link', { name: 'Settings' }).click();
-  const water = page.getByRole('checkbox', { name: 'Activate water section' });
-  await water.scrollIntoViewIfNeeded();
+  await page.getByRole('link', { name: /^More sections/ }).click();
+  const water = page.getByRole('switch', { name: 'Water' });
   await water.click();
   await expect(water).toBeChecked();
   await page.goBack();

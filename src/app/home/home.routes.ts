@@ -17,8 +17,9 @@ export const routes: Routes = [
     path: 'profile',
     loadComponent: () => import('../profile/profile.page'),
   },
-  // Preparation methods and grinders live in the profile tab's stack, so the
-  // profile tab stays selected and back returns to the profile page.
+  // Preparation methods, grinders and the section switches live in the profile
+  // tab's stack, so the profile tab stays selected and back returns to the
+  // profile page.
   {
     path: 'profile/preparations',
     loadComponent: () => import('../preparation/preparation.page'),
@@ -26,6 +27,10 @@ export const routes: Routes = [
   {
     path: 'profile/mills',
     loadComponent: () => import('../mill/mill.page'),
+  },
+  {
+    path: 'profile/sections',
+    loadComponent: () => import('../profile/sections/sections.page'),
   },
   // Former tab routes, kept for existing links.
   {

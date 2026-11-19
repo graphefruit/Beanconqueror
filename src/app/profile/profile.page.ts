@@ -20,6 +20,7 @@ import {
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
+  appsOutline,
   calculatorOutline,
   codeSlashOutline,
   informationCircleOutline,
@@ -97,6 +98,13 @@ const ROASTING: HubEntry = {
   icon: 'beanconqueror-coffee-roaster',
   title: 'NAV_ROASTING_SECTION',
   description: 'PROFILE_ROASTING_DESCRIPTION',
+};
+
+const SECTION_SWITCHES: HubEntry = {
+  link: '/home/profile/sections',
+  icon: 'apps-outline',
+  title: 'PAGE_SETTINGS_MANAGE_SECTIONS',
+  description: 'PROFILE_SECTIONS_DESCRIPTION',
 };
 
 const ALWAYS_SHOWN_SECTIONS: HubEntry[] = [
@@ -208,7 +216,10 @@ export class ProfilePage implements OnInit {
   /** Listed while an active Sanremo YOU preparation method exists. */
   public baristaMode?: HubEntry;
 
-  /** Statistics, parameters and calculations, then the optional sections that are switched on. */
+  /**
+   * Statistics, parameters and calculations, then the optional sections that
+   * are switched on, and last the page that switches them.
+   */
   public sections: HubEntry[] = [];
   public readonly appEntries = APP_ENTRIES;
   public readonly socialLinks = SOCIAL_LINKS;
@@ -224,6 +235,7 @@ export class ProfilePage implements OnInit {
 
   constructor() {
     addIcons({
+      appsOutline,
       calculatorOutline,
       waterOutline,
       statsChartOutline,
@@ -272,6 +284,7 @@ export class ProfilePage implements OnInit {
       ...ALWAYS_SHOWN_SECTIONS,
       ...(settings.show_graph_section ? [GRAPHS] : []),
       ...(settings.show_roasting_section ? [ROASTING] : []),
+      SECTION_SWITCHES,
     ];
     this.preparations = countLine('PROFILE_PREPARATIONS', preparations.length);
     this.mills = countLine(

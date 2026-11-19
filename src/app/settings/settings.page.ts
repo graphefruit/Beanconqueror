@@ -430,26 +430,6 @@ export class SettingsPage {
     }
   }
 
-  public async checkWaterSection() {
-    if (this.settings.show_water_section === false) {
-      await this.uiAlert.showLoadingSpinner();
-      try {
-        this.settings.manage_parameters.water = true;
-        await this.saveSettings();
-
-        const preps: Preparation[] = this.uiPreparationStorage.getAllEntries();
-        if (preps.length > 0) {
-          for (const prep of preps) {
-            prep.manage_parameters.water = true;
-            await this.uiPreparationStorage.update(prep);
-          }
-        }
-      } catch (ex) {}
-
-      await this.uiAlert.hideLoadingSpinner();
-    }
-  }
-
   public async checkHealthPlugin() {
     // #200 - Didn't save the settings
     if (this.settings.track_caffeine_consumption) {
