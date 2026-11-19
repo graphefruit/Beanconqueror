@@ -16,13 +16,10 @@ import {
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import stringify from 'safe-stable-stringify';
 
-import { LogTextComponent } from '../../app/info/log/log-text/log-text.component';
 import { AppEventType } from '../../enums/appEvent/appEvent';
 import { EventQueueService } from '../../services/queueService/queue-service.service';
 import { ShareService } from '../../services/shareService/share-service.service';
-import { UILog } from '../../services/uiLog';
 
 @Component({
   selector: 'loading-popover',
@@ -33,7 +30,6 @@ import { UILog } from '../../services/uiLog';
 })
 export class LoadingPopoverComponent implements OnInit {
   private readonly modalController = inject(ModalController);
-  private readonly uiLog = inject(UILog);
   private shareService = inject(ShareService);
   private eventQueue = inject(EventQueueService);
 
@@ -87,25 +83,7 @@ export class LoadingPopoverComponent implements OnInit {
   }
 
   public async sendLogs() {
-    const logs = this.uiLog.getLogs();
-    // Use safe-stable-stringify to prevent bad surprises with circular references
-    const stringifiedJSON = stringify(logs);
-    const blob = new Blob([stringifiedJSON], {
-      type: 'application/json',
-    });
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onloadend = () => {
-      const base64data = reader.result as string;
-      this.shareService.shareFile('Beanconqueror_logs', base64data);
-    };
-    reader.onerror = async () => {
-      const modal = await this.modalController.create({
-        component: LogTextComponent,
-      });
-      await modal.present();
-      await modal.onWillDismiss();
-    };
+    await this.shareService.shareLogs();
   }
   public showDismissButton() {
     this.__showDismissButton = true;

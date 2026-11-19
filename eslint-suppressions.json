@@ -938,9 +938,6 @@
   "src/app/info/log/log.component.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
       "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 1
     }
   },
   "src/app/info/privacy/privacy.component.ts": {
@@ -3261,7 +3258,7 @@
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 2
+      "count": 1
     }
   },
   "src/popover/meticulous-help-popover/meticulous-help-popover.component.html": {

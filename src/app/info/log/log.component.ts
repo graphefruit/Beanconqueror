@@ -13,7 +13,6 @@ import {
   IonHeader,
   IonRow,
   IonText,
-  ModalController,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { sendOutline } from 'ionicons/icons';
@@ -26,10 +25,7 @@ import { HeaderComponent } from '../../../components/header/header.component';
 import { LogLevel } from '../../../enums/logs/log-level';
 import { LogEntry } from '../../../interfaces/log/log-entry';
 import { ShareService } from '../../../services/shareService/share-service.service';
-import { UIFileHelper } from '../../../services/uiFileHelper';
-import { UIHelper } from '../../../services/uiHelper';
 import { UILog } from '../../../services/uiLog';
-import { LogTextComponent } from './log-text/log-text.component';
 
 @Component({
   selector: 'log',
@@ -51,7 +47,6 @@ import { LogTextComponent } from './log-text/log-text.component';
 })
 export class LogComponent implements OnInit {
   private readonly uiLog = inject(UILog);
-  private readonly modalCtrl = inject(ModalController);
   private shareService = inject(ShareService);
 
   public logs: LogEntry[] = [];
@@ -89,24 +84,7 @@ export class LogComponent implements OnInit {
     return formattedMessage;
   }
 
-  public async send(): Promise<any> {
-    // Use safe-stable-stringify to prevent bad surprises with circular references
-    const stringifiedJSON = stringify(this.logs);
-    const blob = new Blob([stringifiedJSON], {
-      type: 'application/json',
-    });
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onloadend = () => {
-      const base64data = reader.result as string;
-      this.shareService.shareFile('Beanconqueror_logs', base64data);
-    };
-    reader.onerror = async () => {
-      const modal = await this.modalCtrl.create({
-        component: LogTextComponent,
-      });
-      await modal.present();
-      await modal.onWillDismiss();
-    };
+  public async send(): Promise<void> {
+    await this.shareService.shareLogs();
   }
 }

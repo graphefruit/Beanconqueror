@@ -4,6 +4,7 @@ import { Platform } from '@ionic/angular';
 
 import { Share } from '@capacitor/share';
 import { TranslateService } from '@ngx-translate/core';
+import { stringify } from 'safe-stable-stringify';
 
 import { Bean } from '../../classes/bean/bean';
 import { Config } from '../../classes/objectConfig/objectConfig';
@@ -17,6 +18,7 @@ import {
   BeanRoastingType,
   Roast,
 } from '../../generated/src/classes/bean/bean';
+import { UIAlert } from '../uiAlert';
 import { UIAnalytics } from '../uiAnalytics';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
@@ -30,6 +32,7 @@ export class ShareService {
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly platform = inject(Platform);
   private readonly uiLog = inject(UILog);
+  private readonly uiAlert = inject(UIAlert);
 
   public async shareImage(_dataUrl: string) {
     try {
@@ -38,6 +41,7 @@ export class ShareService {
   }
 
   public async shareFile(_filename: string, _dataUrl: string) {
+    let file: { path: string; fullpath: string } | undefined;
     try {
       let extensionEnding = '.jpg';
       if (_dataUrl.indexOf('image/png') > 0) {
@@ -48,30 +52,74 @@ export class ShareService {
       }
 
       /** We need to save the file before we can share, because base64 share is not supported**/
-      let path;
-
       if (this.platform.is('android')) {
         /** We need to save the file before we can share, because base64 share is not supported**/
-        path = await this.uiFileHelper.writeExternalFileFromBase64ForSharing(
+        file = await this.uiFileHelper.writeExternalFileFromBase64ForSharing(
           _dataUrl,
           'sharefile' + extensionEnding,
         );
       } else {
-        path = await this.uiFileHelper.writeInternalFileFromBase64(
+        file = await this.uiFileHelper.writeInternalFileFromBase64(
           _dataUrl,
           'sharefile' + extensionEnding,
         );
       }
 
       await Share.share({
-        url: path.fullpath,
+        url: file.fullpath,
       });
-      if (this.platform.is('android')) {
-        await this.uiFileHelper.deleteExternalSharedFile(path.path);
-      } else {
-        await this.uiFileHelper.deleteInternalFile(path.path);
-      }
     } catch (ex) {}
+    // Also when sharing failed or was cancelled: the file can hold the log.
+    if (file) {
+      try {
+        if (this.platform.is('android')) {
+          await this.uiFileHelper.deleteExternalSharedFile(file.path);
+        } else {
+          await this.uiFileHelper.deleteInternalFile(file.path);
+        }
+      } catch (ex) {
+        this.uiLog.error('Share - could not remove the shared file', ex);
+      }
+    }
+  }
+
+  /**
+   * Shares the log as a file after the user agreed to what it can contain.
+   * When the log cannot be turned into a file, it is shown as text to copy.
+   */
+  public async shareLogs(): Promise<void> {
+    const choice = await this.uiAlert.showConfirmWithYesNoTranslation(
+      'SHARE_LOGS_HINT',
+      'SHARE_LOGS_TITLE',
+      'SHARE',
+      'CANCEL',
+      true,
+    );
+    if (choice !== 'YES') {
+      return;
+    }
+    let dataUrl: string;
+    try {
+      // safe-stable-stringify copes with circular references
+      dataUrl = await this.readAsDataUrl(
+        new Blob([stringify(this.uiLog.getLogs())], {
+          type: 'application/json',
+        }),
+      );
+    } catch {
+      await this.uiAlert.copyLogfiles();
+      return;
+    }
+    await this.shareFile('Beanconqueror_logs', dataUrl);
+  }
+
+  private readAsDataUrl(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(blob);
+    });
   }
 
   public async shareUrl(_dataUrl: string) {
