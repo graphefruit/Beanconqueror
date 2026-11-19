@@ -1,7 +1,7 @@
 <ion-header>
   <app-header [title]="'NAV_BREWS' | translate">
     <app-header-button header-slot="end" icon="beanconqueror-list-add" ariaLabel="Import brew" (clicked)="longPressAdd($event)" />
-    <ion-button header-slot="end" fill="clear" [routerLink]="['/brew-parameter']" [attr.aria-label]="'NAV_BREW_PARAMS' | translate">
+    <ion-button header-slot="end" fill="clear" [routerLink]="['/home/brews/brew-parameter']" [attr.aria-label]="'NAV_BREW_PARAMS' | translate">
       <ion-icon class="ion-color-accent" name="settings-outline" slot="icon-only" aria-hidden="true" />
     </ion-button>
   </app-header>

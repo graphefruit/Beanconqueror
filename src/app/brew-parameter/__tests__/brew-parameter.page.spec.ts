@@ -1,12 +1,25 @@
+import { Component, Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { provideRouter, RouterLink } from '@angular/router';
+import {
+  NavigationEnd,
+  NavigationError,
+  provideRouter,
+  Router,
+  RouterLink,
+} from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 
 import { NavController } from '@ionic/angular';
 
 import { TranslateModule } from '@ngx-translate/core';
+import { filter, firstValueFrom } from 'rxjs';
 
+import { BeanParameterPage } from '../../bean-parameter/bean-parameter.page';
 import { BrewParameterPage } from '../brew-parameter.page';
+
+@Component({ template: '' })
+class SubPage {}
 
 describe('BrewParameterPage', () => {
   it('links to the preparation methods in the profile tab', () => {
@@ -21,5 +34,80 @@ describe('BrewParameterPage', () => {
       .queryAll(By.directive(RouterLink))
       .map((element) => element.injector.get(RouterLink).urlTree?.toString());
     expect(links).toEqual(['/home/profile/preparations']);
+  });
+});
+
+/**
+ * The parameter pages are mounted in the Brews, Beans and Profile tabs, so
+ * their pages have to open below wherever the page itself sits.
+ */
+describe('the parameter pages', () => {
+  async function openAt<T>(page: Type<T>, base: string, sub: string) {
+    TestBed.configureTestingModule({
+      imports: [TranslateModule.forRoot()],
+      providers: [
+        { provide: NavController, useValue: {} },
+        provideRouter([
+          {
+            path: base.slice(1),
+            children: [
+              { path: '', component: page },
+              { path: sub, component: SubPage },
+            ],
+          },
+        ]),
+      ],
+    });
+    const harness = await RouterTestingHarness.create();
+    return harness.navigateByUrl(base, page);
+  }
+
+  /** Runs `open` and waits for the navigation it starts. */
+  async function urlAfter(open: () => void): Promise<string> {
+    const router = TestBed.inject(Router);
+    const done = firstValueFrom(
+      router.events.pipe(
+        filter(
+          (event) =>
+            event instanceof NavigationEnd || event instanceof NavigationError,
+        ),
+      ),
+    );
+    open();
+    await done;
+    return router.url;
+  }
+
+  it('open the brew pages in the Brews tab', async () => {
+    const page = await openAt(
+      BrewParameterPage,
+      '/home/brews/brew-parameter',
+      'default',
+    );
+    expect(await urlAfter(() => page.openDefaultParameters())).toBe(
+      '/home/brews/brew-parameter/default',
+    );
+  });
+
+  it('open the brew pages in the Profile tab', async () => {
+    const page = await openAt(
+      BrewParameterPage,
+      '/home/profile/brew-parameter',
+      'manage',
+    );
+    expect(await urlAfter(() => page.openManageParameters())).toBe(
+      '/home/profile/brew-parameter/manage',
+    );
+  });
+
+  it('open the bean pages in the Beans tab', async () => {
+    const page = await openAt(
+      BeanParameterPage,
+      '/home/beans/bean-parameter',
+      'listview',
+    );
+    expect(await urlAfter(() => page.openListViewParameters())).toBe(
+      '/home/beans/bean-parameter/listview',
+    );
   });
 });

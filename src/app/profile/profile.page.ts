@@ -87,7 +87,7 @@ const BARISTA_MODE: HubEntry = {
 };
 
 const GRAPHS: HubEntry = {
-  link: '/graph-section',
+  link: '/home/profile/graph',
   icon: 'beanconqueror-graph',
   title: 'NAV_GRAPH_SECTION',
   description: 'PROFILE_GRAPHS_DESCRIPTION',
@@ -109,19 +109,19 @@ const SECTION_SWITCHES: HubEntry = {
 
 const ALWAYS_SHOWN_SECTIONS: HubEntry[] = [
   {
-    link: '/statistic',
+    link: '/home/profile/statistic',
     icon: 'stats-chart-outline',
     title: 'NAV_STATISTICS',
     description: 'PROFILE_STATISTICS_DESCRIPTION',
   },
   {
-    link: '/brew-parameter',
+    link: '/home/profile/brew-parameter',
     icon: 'beanconqueror-brew',
     title: 'NAV_BREW_PARAMS',
     description: 'PROFILE_BREW_PARAMETERS_DESCRIPTION',
   },
   {
-    link: '/bean-parameter',
+    link: '/home/profile/bean-parameter',
     icon: 'beanconqueror-bean',
     title: 'NAV_BEAN_PARAMS',
     description: 'PROFILE_BEAN_PARAMETERS_DESCRIPTION',
@@ -136,13 +136,13 @@ const ALWAYS_SHOWN_SECTIONS: HubEntry[] = [
 
 const APP_ENTRIES: HubEntry[] = [
   {
-    link: '/settings',
+    link: '/home/profile/settings',
     icon: 'settings-outline',
     title: 'NAV_SETTINGS',
     description: 'PROFILE_SETTINGS_DESCRIPTION',
   },
   {
-    link: '/info',
+    link: '/home/profile/info',
     icon: 'information-circle-outline',
     title: 'PROFILE_INFO_SUPPORT',
     description: 'PROFILE_INFO_SUPPORT_DESCRIPTION',

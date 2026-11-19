@@ -192,9 +192,9 @@ describe('ProfilePage', () => {
   it('lists graphs and roasting only while they are switched on, between the fixed sections and their switches', () => {
     const page = open().componentInstance;
     const fixed = [
-      '/statistic',
-      '/brew-parameter',
-      '/bean-parameter',
+      '/home/profile/statistic',
+      '/home/profile/brew-parameter',
+      '/home/profile/bean-parameter',
       '/helper',
     ];
     const switches = '/home/profile/sections';
@@ -208,7 +208,7 @@ describe('ProfilePage', () => {
     events.settings.next(undefined);
     expect(page.sections.map((entry) => entry.link)).toEqual([
       ...fixed,
-      '/graph-section',
+      '/home/profile/graph',
       '/roasting-section',
       switches,
     ]);

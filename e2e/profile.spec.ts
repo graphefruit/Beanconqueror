@@ -266,19 +266,19 @@ for (const { entry, url, shows, back } of [
   },
   {
     entry: /^Water/,
-    url: /\/water-section\/water$/,
+    url: /\/home\/profile\/water$/,
     shows: { role: 'button', name: 'Add water recipe' },
     back: 'history',
   },
   {
     entry: /^Statistics/,
-    url: /\/statistic$/,
+    url: /\/home\/profile\/statistic$/,
     shows: { role: 'tab', name: 'General' },
     back: 'history',
   },
   {
     entry: /^Settings/,
-    url: /\/settings$/,
+    url: /\/home\/profile\/settings$/,
     shows: { role: 'button', name: /^Language Settings/ },
     back: 'history',
   },

@@ -6,7 +6,8 @@ import { completeFirstRun } from './support/first-run';
 /**
  * The gear at the top right of the Beans and Brews tabs opens the page that
  * chooses which fields a bean or a brew records, the same page the profile
- * lists. Back returns to the list.
+ * lists. The page opens in the list's tab, so the tab bar stays and back
+ * returns to the list.
  */
 
 const LISTS = [
@@ -14,13 +15,13 @@ const LISTS = [
     tab: 'Beans',
     list: /\/home\/beans$/,
     link: 'Bean parameters',
-    page: /\/bean-parameter$/,
+    page: /\/home\/beans\/bean-parameter$/,
   },
   {
     tab: 'Brews',
     list: /\/home\/brews$/,
     link: 'Brewing Parameters',
-    page: /\/brew-parameter$/,
+    page: /\/home\/brews\/brew-parameter$/,
   },
 ];
 
@@ -55,6 +56,7 @@ for (const list of LISTS) {
     await expect(page).toHaveURL(list.page);
     const banner = page.getByRole('banner').filter({ hasText: list.link });
     await expect(banner.getByText(list.link, { exact: true })).toBeVisible();
+    await expect(tab(page, list.tab)).toHaveAttribute('aria-selected', 'true');
 
     await banner.getByRole('button', { name: 'back' }).click();
     await expect(page).toHaveURL(list.list);

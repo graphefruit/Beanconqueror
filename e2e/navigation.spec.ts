@@ -99,32 +99,46 @@ async function switchOnSections(page: Page, toggles: string[]): Promise<void> {
 /**
  * Every page of the former side menu: the hub entry that opens it (the second
  * tap after the Profile tab), the page and its screen title. Optional sections
- * first have to be switched on.
+ * first have to be switched on. Calculations and roasting still switch between
+ * their two pages with a tab bar of their own, so they open without the app's.
  */
 const FORMER_MENU_PAGES = [
-  { entry: 'Statistics', url: /\/statistic$/, title: 'Statistics' },
+  {
+    entry: 'Statistics',
+    url: /\/home\/profile\/statistic$/,
+    title: 'Statistics',
+  },
   {
     entry: 'Brewing Parameters',
-    url: /\/brew-parameter$/,
+    url: /\/home\/profile\/brew-parameter$/,
     title: 'Brewing Parameters',
   },
   {
     entry: 'Bean parameters',
-    url: /\/bean-parameter$/,
+    url: /\/home\/profile\/bean-parameter$/,
     title: 'Bean parameters',
   },
-  { entry: 'Calculations', url: /\/helper\/brew-ratio$/, title: 'Brew Ratio' },
-  { entry: 'Settings', url: /\/settings$/, title: 'Settings' },
-  { entry: 'Info & support', url: /\/info$/, title: 'About Beanconqueror' },
+  {
+    entry: 'Calculations',
+    url: /\/helper\/brew-ratio$/,
+    title: 'Brew Ratio',
+    ownTabBar: true,
+  },
+  { entry: 'Settings', url: /\/home\/profile\/settings$/, title: 'Settings' },
+  {
+    entry: 'Info & support',
+    url: /\/home\/profile\/info$/,
+    title: 'About Beanconqueror',
+  },
   {
     entry: 'Water',
-    url: /\/water-section\/water$/,
+    url: /\/home\/profile\/water$/,
     title: 'Water',
     switchOn: 'Water',
   },
   {
     entry: 'Graphs',
-    url: /\/graph-section\/graph$/,
+    url: /\/home\/profile\/graph$/,
     title: 'Graphs',
     switchOn: 'Graphs',
   },
@@ -133,6 +147,7 @@ const FORMER_MENU_PAGES = [
     url: /\/roasting-section\/dashboard$/,
     title: 'Green Beans',
     switchOn: 'Bean Roasting',
+    ownTabBar: true,
   },
 ] as const;
 
@@ -152,6 +167,10 @@ for (const target of FORMER_MENU_PAGES) {
     await expect(page).toHaveURL(target.url);
     const banner = page.getByRole('banner').filter({ hasText: target.title });
     await expect(banner.getByText(target.title, { exact: true })).toBeVisible();
+    if (!('ownTabBar' in target)) {
+      await expect(tabBar(page)).toBeVisible();
+      await expectProfileTabSelected(page);
+    }
 
     // The arrow in the header leads back to the profile.
     await banner.getByRole('button', { name: 'back' }).click();
@@ -177,7 +196,7 @@ test('water is listed in the profile once the section is switched on', async ({
 
   await expect(page).toHaveURL(/\/home\/profile$/);
   await page.getByRole('link', { name: /^Water/ }).click();
-  await expect(page).toHaveURL(/\/water-section\/water$/);
+  await expect(page).toHaveURL(/\/home\/profile\/water$/);
   await expect(
     page.getByRole('button', { name: 'Add water recipe' }),
   ).toBeVisible();
@@ -222,6 +241,64 @@ for (const { from, to, add } of [
     ).toBeVisible();
   });
 }
+
+for (const { from, to, title } of [
+  { from: '/statistic', to: '/home/profile/statistic', title: 'Statistics' },
+  {
+    from: '/brew-parameter',
+    to: '/home/profile/brew-parameter',
+    title: 'Brewing Parameters',
+  },
+  {
+    from: '/brew-parameter/manage',
+    to: '/home/profile/brew-parameter/manage',
+    title: 'Manage parameters',
+  },
+  {
+    from: '/bean-parameter',
+    to: '/home/profile/bean-parameter',
+    title: 'Bean parameters',
+  },
+  { from: '/settings', to: '/home/profile/settings', title: 'Settings' },
+  { from: '/info', to: '/home/profile/info', title: 'About Beanconqueror' },
+  { from: '/info/about', to: '/home/profile/info/about', title: 'About us' },
+  { from: '/water-section', to: '/home/profile/water', title: 'Water' },
+  { from: '/water-section/water', to: '/home/profile/water', title: 'Water' },
+  { from: '/graph-section', to: '/home/profile/graph', title: 'Graphs' },
+  { from: '/graph-section/graph', to: '/home/profile/graph', title: 'Graphs' },
+] as const) {
+  test(`the former menu link ${from} opens its page in the profile tab`, async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await completeFirstRun(page);
+
+    await followInAppLink(page, from);
+    await expect(page).toHaveURL(new RegExp(`${to}$`));
+    const banner = page.getByRole('banner').filter({ hasText: title });
+    await expect(banner.getByText(title, { exact: true })).toBeVisible();
+    await expect(tabBar(page)).toBeVisible();
+    await expectProfileTabSelected(page);
+  });
+}
+
+test('the statistics card on Home opens the statistics in the Home tab', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+
+  await page.getByText('without coffee').click();
+  await expect(page).toHaveURL(/\/home\/dashboard\/statistic$/);
+  const homeTab = tabBar(page).getByRole('tab', { name: 'Home', exact: true });
+  await expect(homeTab).toHaveAttribute('aria-selected', 'true');
+  await page
+    .getByRole('banner')
+    .filter({ hasText: 'Statistics' })
+    .getByRole('button', { name: 'back' })
+    .click();
+  await expect(page).toHaveURL(/\/home\/dashboard$/);
+});
 
 test('the brewing parameters page still links to the preparation methods', async ({
   page,
@@ -512,9 +589,39 @@ test.describe('the Android back key', () => {
 
   test('returns from statistics to the profile', async ({ page, native }) => {
     await page.getByRole('link', { name: /^Statistics/ }).click();
-    await expect(page).toHaveURL(/\/statistic$/);
+    await expect(page).toHaveURL(/\/home\/profile\/statistic$/);
     await pressHardwareBack(page);
     await expect(page).toHaveURL(/\/home\/profile$/);
+    expect(await minimizeCalls(native)).toEqual([]);
+  });
+
+  test('returns one page at a time from the parameter pages', async ({
+    page,
+    native,
+  }) => {
+    await page.getByRole('link', { name: /^Brewing Parameters/ }).click();
+    await page.getByText('Manage parameters', { exact: true }).click();
+    await expect(page).toHaveURL(/\/home\/profile\/brew-parameter\/manage$/);
+    await pressHardwareBack(page);
+    await expect(page).toHaveURL(/\/home\/profile\/brew-parameter$/);
+    await pressHardwareBack(page);
+    await expect(page).toHaveURL(/\/home\/profile$/);
+    expect(await minimizeCalls(native)).toEqual([]);
+  });
+
+  test('returns from the gear on Beans to the bean list', async ({
+    page,
+    native,
+  }) => {
+    await page.getByRole('tab', { name: 'Beans', exact: true }).click();
+    await page
+      .getByRole('banner')
+      .getByRole('link', { name: 'Bean parameters', exact: true })
+      .filter({ visible: true })
+      .click();
+    await expect(page).toHaveURL(/\/home\/beans\/bean-parameter$/);
+    await pressHardwareBack(page);
+    await expect(page).toHaveURL(/\/home\/beans$/);
     expect(await minimizeCalls(native)).toEqual([]);
   });
 

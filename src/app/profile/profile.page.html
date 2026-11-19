@@ -36,7 +36,7 @@
         </ion-label>
       </ion-item>
       @if (waterSectionVisible) {
-        <ion-item [routerLink]="['/water-section']" detail="true">
+        <ion-item [routerLink]="['/home/profile/water']" detail="true">
           <span class="entry-icon" slot="start" aria-hidden="true">
             <ion-icon name="water-outline" />
           </span>
@@ -66,8 +66,8 @@
     </ion-list>
 
     <div class="hub-footer">
-      <ion-button fill="clear" [routerLink]="['/info/impressum']">{{ "NAV_IMPRESSUM" | translate }}</ion-button>
-      <ion-button fill="clear" [routerLink]="['/info/privacy']">{{ "NAV_PRIVACY" | translate }}</ion-button>
+      <ion-button fill="clear" [routerLink]="['/home/profile/info/impressum']">{{ "NAV_IMPRESSUM" | translate }}</ion-button>
+      <ion-button fill="clear" [routerLink]="['/home/profile/info/privacy']">{{ "NAV_PRIVACY" | translate }}</ion-button>
       @for (link of socialLinks; track link.name) {
         <ion-button class="social-link" fill="clear" [attr.aria-label]="link.name" (click)="openSocialLink(link)">
           <ion-icon slot="icon-only" [name]="link.icon" aria-hidden="true" />

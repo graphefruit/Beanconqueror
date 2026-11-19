@@ -96,9 +96,6 @@
   "src/app/bean-parameter/bean-parameter.page.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
       "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 3
     }
   },
   "src/app/beans/bean-archive-popover/bean-archive-popover.component.ts": {
@@ -342,9 +339,6 @@
     },
     "@typescript-eslint/no-empty-function": {
       "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 5
     }
   },
   "src/app/brew-parameter/default-parameter/default-parameter.component.ts": {
@@ -728,17 +722,6 @@
     },
     "@typescript-eslint/no-floating-promises": {
       "count": 2
-    }
-  },
-  "src/app/graph-section/graph-section.page.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
-      "count": 1
     }
   },
   "src/app/graph-section/graph/graph-add/graph-add.component.ts": {
@@ -1453,17 +1436,6 @@
       "count": 1
     },
     "@typescript-eslint/no-unsafe-return": {
-      "count": 1
-    }
-  },
-  "src/app/water-section/water-section.page.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
       "count": 1
     }
   },

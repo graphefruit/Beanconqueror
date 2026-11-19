@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import {
   IonBackButton,
@@ -36,16 +36,18 @@ import { HeaderComponent } from '../../components/header/header.component';
 })
 export class BeanParameterPage {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   public openManageParameters(): void {
-    this.router.navigate(['/bean-parameter/manage']);
-  }
-
-  public openSortParameters(): void {
-    this.router.navigateByUrl('/bean-parameter/sort');
+    this.open('manage');
   }
 
   public openListViewParameters(): void {
-    this.router.navigateByUrl('/bean-parameter/listview');
+    this.open('listview');
+  }
+
+  /** The page sits in the tab it was opened from; its pages follow it there. */
+  private open(page: string): void {
+    void this.router.navigate([page], { relativeTo: this.route });
   }
 }

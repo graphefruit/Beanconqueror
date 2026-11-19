@@ -4,7 +4,7 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import {
   IonBackButton,
@@ -46,26 +46,32 @@ import { HeaderComponent } from '../../components/header/header.component';
 export class BrewParameterPage implements OnInit {
   navCtrl = inject(NavController);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   public ngOnInit() {}
 
   public openManageParameters(): void {
-    this.router.navigate(['/brew-parameter/manage']);
+    this.open('manage');
   }
 
   public openSortParameters(): void {
-    this.router.navigateByUrl('/brew-parameter/sort');
+    this.open('sort');
   }
 
   public openDefaultParameters(): void {
-    this.router.navigateByUrl('/brew-parameter/default');
+    this.open('default');
   }
   public openRepeatParameters(): void {
-    this.router.navigateByUrl('/brew-parameter/repeat');
+    this.open('repeat');
   }
 
   public openListViewParameters(): void {
-    this.router.navigateByUrl('/brew-parameter/listview');
+    this.open('listview');
+  }
+
+  /** The page sits in the tab it was opened from; its pages follow it there. */
+  private open(page: string): void {
+    void this.router.navigate([page], { relativeTo: this.route });
   }
 }
 

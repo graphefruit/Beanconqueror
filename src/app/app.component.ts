@@ -969,22 +969,19 @@ export class AppComponent implements AfterViewInit {
 
   private __registerBack() {
     this.platform.backButton.subscribeWithPriority(0, () => {
-      // NAvigation handler
-      if (
-        this.router.url.indexOf('/home') === -1 &&
-        this.routerOutlet &&
-        this.routerOutlet.canGoBack()
-      ) {
+      const path = this.router.url.split(/[?#]/)[0];
+      const inTab = path.startsWith('/home/');
+      if (!inTab && this.routerOutlet && this.routerOutlet.canGoBack()) {
         this.routerOutlet.pop();
-      } else if (
-        this.router.url.startsWith('/home/') &&
-        !this.router.url.startsWith('/home/profile/')
-      ) {
+      } else if (/^\/home\/[^/]+$/.test(path)) {
         App.minimizeApp();
       } else {
-        // Every page that is not a tab is opened from the profile, so one
-        // level up is the profile, also when the page has no history.
-        void this.navCtrl.navigateBack('/home/profile');
+        // A page in a tab goes one level up, so a page the profile lists
+        // returns to the profile, also when the page has no history. A page
+        // outside the tabs is opened from the profile.
+        void this.navCtrl.navigateBack(
+          inTab ? path.slice(0, path.lastIndexOf('/')) : '/home/profile',
+        );
       }
     });
   }

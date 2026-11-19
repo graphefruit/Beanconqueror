@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { Routes } from '@angular/router';
+import { Route, Routes } from '@angular/router';
 
 import { UIHelper } from '../services/uiHelper';
 import HomePage from './home/home.page';
@@ -20,6 +20,11 @@ function withAppReadyResolver(routes: Routes): Routes {
   }));
 }
 
+/** Sends a former path to its page in the profile tab (`home.routes.ts`). */
+function movedToProfile(from: string, to = from): Route {
+  return { path: from, redirectTo: `/home/profile/${to}`, pathMatch: 'full' };
+}
+
 export const routes: Routes = withAppReadyResolver([
   {
     path: '',
@@ -38,45 +43,26 @@ export const routes: Routes = withAppReadyResolver([
     loadChildren: () => import('./roasting-section/roasting-section.routes'),
   },
   {
-    path: 'water-section',
-    loadComponent: () => import('./water-section/water-section.page'),
-    loadChildren: () => import('./water-section/water-section.routes'),
-  },
-  {
-    path: 'info',
-    loadChildren: () => import('./info/info.routes'),
-  },
-  {
-    path: 'settings',
-    loadComponent: () => import('./settings/settings.page'),
-    pathMatch: 'full',
-  },
-  {
-    path: 'statistic',
-    loadComponent: () => import('./statistic/statistic.page'),
-    pathMatch: 'full',
-  },
-  {
     path: 'helper',
     loadComponent: () => import('./helper/helper.page'),
     loadChildren: () => import('./helper/helper.routes'),
-  },
-  {
-    path: 'brew-parameter',
-    loadChildren: () => import('./brew-parameter/brew-parameter.routes'),
-  },
-  {
-    path: 'bean-parameter',
-    loadChildren: () => import('./bean-parameter/bean-parameter.routes'),
-  },
-  {
-    path: 'graph-section',
-    loadComponent: () => import('./graph-section/graph-section.page'),
-    loadChildren: () => import('./graph-section/graph-section.routes'),
   },
   {
     path: 'baristamode',
     loadComponent: () => import('./baristamode/baristamode.page'),
     loadChildren: () => import('./baristamode/baristamode.routes'),
   },
+  // Former pages of the side menu, kept for existing links.
+  movedToProfile('statistic'),
+  movedToProfile('settings'),
+  movedToProfile('info'),
+  movedToProfile('info/:page'),
+  movedToProfile('brew-parameter'),
+  movedToProfile('brew-parameter/:page'),
+  movedToProfile('bean-parameter'),
+  movedToProfile('bean-parameter/:page'),
+  movedToProfile('water-section', 'water'),
+  movedToProfile('water-section/water', 'water'),
+  movedToProfile('graph-section', 'graph'),
+  movedToProfile('graph-section/graph', 'graph'),
 ]);
