@@ -479,7 +479,7 @@ describe('BrewBrewingComponent field order', () => {
     // The section header reads the graph.
     expect(
       card('BREW_HEADER_WHILE_BREW').querySelector(
-        'ion-button[aria-label="Maximize controls"]',
+        'ion-button[aria-label="A11Y.MAXIMIZE_CONTROLS"]',
       ),
     ).not.toBeNull();
   });
