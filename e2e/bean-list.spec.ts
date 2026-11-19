@@ -15,6 +15,7 @@ import {
 } from './support/beans';
 import { completeFirstRun } from './support/first-run';
 import { readStoredValue } from './support/stored-values';
+import { scrollToEnd } from './support/virtual-list';
 
 /**
  * Characterization of the bean list as it works today: the three segments
@@ -246,12 +247,10 @@ test('the list stays where it is after a card action and returns to the top for 
 
   // The last card; the list only renders the cards near the screen.
   const last = beanCard(page, BEANS.portionSource);
-  const list = page.locator('ag-virtual-scroll').filter({ visible: true });
-  await expect(async () => {
-    // The list grows while it renders the cards it scrolls to.
-    await list.evaluate((element) => element.scrollTo(0, element.scrollHeight));
-    await expect(last).toBeVisible({ timeout: 1000 });
-  }).toPass();
+  await scrollToEnd(
+    page.locator('ag-virtual-scroll').filter({ visible: true }),
+  );
+  await expect(last).toBeInViewport();
   await expect(beanCard(page, BEANS.alpha)).toHaveCount(0);
 
   await beanAction(page, BEANS.portionSource, 'Favourite');

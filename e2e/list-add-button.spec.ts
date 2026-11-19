@@ -4,6 +4,7 @@ import { expect, test } from './fixtures';
 import { openFromProfile } from './support/profile';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
+import { isUncovered, scrollToEnd } from './support/virtual-list';
 
 /**
  * Every list adds its entries from a floating button at the bottom right, as
@@ -16,6 +17,10 @@ interface List {
   open: (page: Page) => Promise<void>;
   add: string;
   card: string;
+  /** The button of a card that opens its actions. */
+  options: string;
+  /** The button that collapses the cards, if the list has one. */
+  collapse?: string;
   /** A field of the form the button opens. */
   opens: (page: Page) => Locator;
 }
@@ -29,6 +34,8 @@ const LISTS: List[] = [
     },
     add: 'Add bean',
     card: 'beans bean-information',
+    options: 'Bean options',
+    collapse: 'Collapse bean list items',
     opens: (page) => page.getByRole('textbox', { name: /^Name/ }),
   },
   {
@@ -36,6 +43,7 @@ const LISTS: List[] = [
     open: (page) => openFromProfile(page, 'Grinders'),
     add: 'Add grinder',
     card: 'mill mill-information-card',
+    options: 'Grinder options',
     opens: (page) => page.getByRole('textbox', { name: /^Name/ }),
   },
   {
@@ -43,6 +51,7 @@ const LISTS: List[] = [
     open: (page) => openFromProfile(page, 'Preparation methods'),
     add: 'Add preparation method',
     card: 'preparation preparation-information-card',
+    options: 'Preparation options',
     opens: (page) =>
       page.locator('ion-modal').getByText('V60', { exact: true }),
   },
@@ -51,6 +60,7 @@ const LISTS: List[] = [
     open: (page) => openFromProfile(page, 'Water'),
     add: 'Add water recipe',
     card: 'app-water water-information-card',
+    options: 'Water options',
     opens: (page) =>
       page.locator('ion-modal').getByText('Pure Coffee Water', { exact: true }),
   },
@@ -59,7 +69,8 @@ const LISTS: List[] = [
 async function startWithData(page: Page): Promise<void> {
   const data = generateDataSet({
     brews: 30,
-    beans: 10,
+    // Enough available beans that the collapsed list scrolls, too.
+    beans: 60,
     endDate: new Date('2026-11-01T18:00:00Z'),
   });
   data.SETTINGS[0].show_water_section = true;
@@ -71,6 +82,14 @@ function tabBar(page: Page) {
   return page.getByRole('tablist').filter({
     has: page.getByRole('tab', { name: 'Home', exact: true }),
   });
+}
+
+/** The list scrolls itself and renders only the cards in view. */
+function listOf(page: Page, list: List): Locator {
+  return page
+    .locator(list.card.split(' ')[0])
+    .locator('ag-virtual-scroll')
+    .first();
 }
 
 function addButton(page: Page, name: string) {
@@ -114,28 +133,36 @@ for (const list of LISTS) {
     const cards = page.locator(list.card);
     await expect(cards.first()).toBeVisible();
 
-    // The list scrolls itself and renders only the cards in view. Scrolled
-    // and measured again until the page has finished sliding in.
-    const scroller = page
-      .locator(list.card.split(' ')[0])
-      .locator('ag-virtual-scroll')
-      .first();
+    await scrollToEnd(listOf(page, list));
+    // Measured again until the page has finished sliding in.
     await expect(async () => {
-      await scroller.evaluate((element) => {
-        element.scrollTop = element.scrollHeight;
-        element.dispatchEvent(new Event('scroll'));
-      });
-      expect(
-        await scroller.evaluate(
-          (element) =>
-            element.scrollTop + element.clientHeight >=
-            element.scrollHeight - 1,
-        ),
-      ).toBe(true);
       const button = (await addButton(page, list.add).boundingBox())!;
       const last = (await cards.last().boundingBox())!;
       expect(last.y + last.height).toBeLessThanOrEqual(button.y);
     }).toPass();
+  });
+
+  // Collapsed cards are short, so their options sit closest to the bottom.
+  test(`${list.name}: the options of the last entry can be tapped past the add button`, async ({
+    page,
+  }) => {
+    await startWithData(page);
+    await list.open(page);
+    const cards = page.locator(list.card);
+    await expect(cards.first()).toBeVisible();
+    if (list.collapse) {
+      await page
+        .getByRole('button', { name: list.collapse })
+        .filter({ visible: true })
+        .click();
+    }
+
+    const options = cards
+      .last()
+      .getByRole('button', { name: list.options, exact: true });
+    await scrollToEnd(listOf(page, list));
+    await expect(options).toBeInViewport();
+    await expect.poll(() => isUncovered(options)).toBe(true);
   });
 }
 

@@ -4,6 +4,7 @@ import { expect, test } from './fixtures';
 import { completeFirstRunWithBrew } from './support/first-brew';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
+import { isUncovered, scrollToEnd } from './support/virtual-list';
 
 /**
  * On the Brews tab a new brew starts from a floating button at the bottom
@@ -66,9 +67,7 @@ test('a long press on the add button offers the last brew as preset', async ({
   await expect(page.getByText('Use last brew as preset')).toBeVisible();
 });
 
-test('the last brew of a long list scrolls clear of the add button', async ({
-  page,
-}) => {
+async function showLongBrewList(page: Page) {
   await seedDatabase(
     page,
     generateDataSet({
@@ -79,27 +78,43 @@ test('the last brew of a long list scrolls clear of the add button', async ({
   );
   await page.goto('/');
   await showBrews(page);
-  const cards = page.locator('brew brew-information');
-  await expect(cards.first()).toBeVisible();
+  await expect(page.locator('brew brew-information').first()).toBeVisible();
+}
 
-  // The list scrolls itself and renders only the cards in view.
-  const list = page.locator('brew ag-virtual-scroll').first();
-  await expect(async () => {
-    await list.evaluate((element) => {
-      element.scrollTop = element.scrollHeight;
-      element.dispatchEvent(new Event('scroll'));
-    });
-    expect(
-      await list.evaluate(
-        (element) =>
-          element.scrollTop + element.clientHeight >= element.scrollHeight - 1,
-      ),
-    ).toBe(true);
-  }).toPass();
+/** The list scrolls itself and renders only the cards in view. */
+function brewList(page: Page) {
+  return page.locator('brew ag-virtual-scroll').first();
+}
+
+test('the last brew of a long list scrolls clear of the add button', async ({
+  page,
+}) => {
+  await showLongBrewList(page);
+  const cards = page.locator('brew brew-information');
+  await scrollToEnd(brewList(page));
 
   const button = (await addBrew(page).boundingBox())!;
   await expect(async () => {
     const last = (await cards.last().boundingBox())!;
     expect(last.y + last.height).toBeLessThanOrEqual(button.y);
   }).toPass();
+});
+
+// Collapsed cards are short, so their options sit closest to the bottom.
+test('the options of the last brew can be tapped past the add button', async ({
+  page,
+}) => {
+  await showLongBrewList(page);
+  await page
+    .getByRole('button', { name: 'Collapse brew list items' })
+    .filter({ visible: true })
+    .click();
+
+  const options = page
+    .locator('brew brew-information')
+    .last()
+    .getByRole('button', { name: 'Brew options', exact: true });
+  await scrollToEnd(brewList(page));
+  await expect(options).toBeInViewport();
+  await expect.poll(() => isUncovered(options)).toBe(true);
 });
