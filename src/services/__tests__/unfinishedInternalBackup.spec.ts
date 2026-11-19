@@ -536,6 +536,36 @@ describe('The summary of the internal backup', () => {
     expect(popover.calls.mostRecent().args[1].BREWS).toEqual(data.BREWS);
   });
 
+  for (const key of ['BEANS', 'PREPARATION', 'MILL']) {
+    for (const withItsSummary of [true, false]) {
+      it(`lets the backup offer itself when it holds more of ${key} than the device, ${withItsSummary ? 'with' : 'without'} a summary`, async () => {
+        const data = storedDataToBackUp(20);
+        data[key] = [
+          ...(data[key] as unknown[]),
+          { config: { uuid: `${key}-2` } },
+        ];
+        const backup = await backedUp(data);
+        const files = withItsSummary
+          ? backup.files
+          : Object.fromEntries(
+              Object.entries(backup.files).filter(
+                ([_name]) => _name !== SUMMARY,
+              ),
+            );
+
+        const { backupRead, popover } = await startWith(
+          storedDataToBackUp(20),
+          files,
+          backup.mtimes,
+        );
+
+        expect(backupRead).toBeTrue();
+        expect(popover).toHaveBeenCalledTimes(1);
+        expect(popover.calls.mostRecent().args[1][key]).toEqual(data[key]);
+      });
+    }
+  }
+
   it('lets the backup be restored into an empty database, read as before', async () => {
     const data = storedDataToBackUp(20);
     const { files, mtimes } = await backedUp(data);
@@ -589,6 +619,11 @@ describe('The summary of the internal backup', () => {
       'has a count that is no whole number',
       (_files: Record<string, Uint8Array>) =>
         withSummary(_files, (_summary) => (_summary.counts.MILL = '1')),
+    ],
+    [
+      'has a negative count',
+      (_files: Record<string, Uint8Array>) =>
+        withSummary(_files, (_summary) => (_summary.counts.BREWS = -1)),
     ],
   ] as const) {
     it(`is not used when it ${kind}, the backup is read`, async () => {
