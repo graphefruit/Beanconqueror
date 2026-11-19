@@ -228,11 +228,8 @@ export class UIAnalytics {
           `Matomo Bulk Tracking API call for content impressions successful. Status: ${response.status}`,
         );
         try {
-          const responseData = await response.json();
-          this.uiLog.debug(
-            'Matomo Bulk Tracking API response data (content impressions):',
-            responseData,
-          );
+          // The answer is not logged: only the status is needed.
+          await response.json();
           return true;
         } catch (e) {
           if (response.status !== 204) {
@@ -243,10 +240,8 @@ export class UIAnalytics {
           }
         }
       } else {
-        const errorText = await response.text();
         this.uiLog.error(
           `Matomo Bulk Tracking API call for content impressions failed. Status: ${response.status}`,
-          errorText,
         );
       }
     } catch (ex) {
@@ -323,11 +318,8 @@ export class UIAnalytics {
           `Matomo Bulk Tracking API call for events successful. Status: ${response.status}`,
         );
         try {
-          const responseData = await response.json();
-          this.uiLog.debug(
-            'Matomo Bulk Tracking API response data (events):',
-            responseData,
-          );
+          // The answer is not logged: only the status is needed.
+          await response.json();
         } catch (e) {
           if (response.status !== 204) {
             this.uiLog.warn(
@@ -337,10 +329,8 @@ export class UIAnalytics {
           }
         }
       } else {
-        const errorText = await response.text();
         this.uiLog.error(
           `Matomo Bulk Tracking API call for events failed. Status: ${response.status}`,
-          errorText,
         );
       }
     } catch (ex) {

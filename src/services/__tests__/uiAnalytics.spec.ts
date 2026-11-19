@@ -44,4 +44,22 @@ describe('UIAnalytics bulk tracking', () => {
     expect(logged.length).toBeGreaterThan(0);
     expect(JSON.stringify(logged)).not.toContain(USER_ID);
   });
+
+  for (const status of [200, 500]) {
+    it(`logs only the status of a Matomo answer (${status})`, async () => {
+      spyOn(window, 'fetch').and.callFake(() =>
+        Promise.resolve(
+          new Response(JSON.stringify({ visitor: USER_ID }), { status }),
+        ),
+      );
+
+      await analytics.trackBulkEvents([{ category: 'Bean', action: 'Add' }]);
+      await analytics.trackBulkContentImpressions([
+        { contentName: 'Brew', contentPiece: 'Card' },
+      ]);
+
+      expect(JSON.stringify(logged)).toContain(`Status: ${status}`);
+      expect(JSON.stringify(logged)).not.toContain(USER_ID);
+    });
+  }
 });
