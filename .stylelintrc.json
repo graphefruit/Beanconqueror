@@ -4,6 +4,7 @@
   "reportNeedlessDisables": true,
   "rules": {
     "declaration-property-unit-disallowed-list": {
+      "font": ["px"],
       "font-size": ["px"],
       "line-height": ["px"]
     }

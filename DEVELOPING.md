@@ -78,7 +78,7 @@ pnpm exec eslint "src/**/*.ts" "src/**/*.html" --prune-suppressions
 
 Do not regenerate the file with `--suppress-all` to hide new errors.
 
-`pnpm lint` also runs Stylelint on `src/**/*.scss`: `font-size` and `line-height` must not use `px`
+`pnpm lint` also runs Stylelint on `src/**/*.scss`: `font`, `font-size` and `line-height` must not use `px`
 (use the `--bq-type-*` tokens, `rem` or `em`); an exception needs a
 `stylelint-disable-next-line … -- <reason>` comment.
 
