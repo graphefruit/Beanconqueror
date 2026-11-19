@@ -283,8 +283,8 @@ writes:
   - A caller of `add` that goes on without the answer works with an entry
     that is not stored. Whatever follows the add (files named after the
     entry, changes to other entries, a toast) uses `addAndConfirm`. The
-    migrations in `src/services/uiUpdate.ts` and the standard mill after an
-    import (`settings.page.ts`) do not read the answers of their writes yet.
+    standard mill after an import (`settings.page.ts`) stops at the first
+    write that was not stored and only logs it; the collection reports it.
 - Settings and version hold one entry that the storage creates itself. When
   that could not be saved, `saveSettings()`/`saveVersion()` store it with the
   next call (`StorageClass.storeOnlyEntry`).
@@ -702,7 +702,23 @@ flowchart LR
 `UPDATE_1` … `UPDATE_18` in order. A migration that succeeds is recorded in the
 `VERSION` entry (`Version.pushUpdatedDataVersion`) and does not run again. If
 `__updateDataVersion()` returns `false` or throws, nothing is recorded and the
-migration runs again on the next start (`__checkUpdateForDataVersion`). When
+migration runs again on the next start (`__checkUpdateForDataVersion`); the
+migrations after it do not run at this start, so they always run in order.
+
+A migration is not recorded when one of its writes was not stored
+(`__stored`): it stops at that write and runs again at the next start. That
+holds for every migration that comes to the same result when it runs again
+on data it changed in part. Three would not: `UPDATE_4` (iOS) moves the files
+of an entry before it writes the entry, so a second run could no longer find
+them; `UPDATE_5` stores the settings first and leaves out the preparations
+once the settings carry the new order; `UPDATE_15` multiplies the crack times
+of every bean by 60, also of beans already converted. They go on with the
+other entries, only log how many writes were not stored (`__logNotStored`)
+and are recorded all the same, as before. Running again also means that the
+settings migrations reset filters and sorts again, `UPDATE_8` asks for the
+analytics consent again and `UPDATE_6` and `UPDATE_9` set the tools and the
+repeat parameters of the preparations again, also when the user changed them
+between the two starts. When
 `UIStorage.getDataState()` is `'empty'` and a migration is pending, a loading
 spinner is shown while they run; with existing data they run without it.
 
@@ -784,12 +800,12 @@ grinder or a preparation that is not stored. It changes nothing, reads the
 stored entries once, logs no uuids or names and counts only when all four
 collections are read.
 
-A new migration touches three places in `src/services/uiUpdate.ts`: the
-`updateVersions` array in `checkUpdate()`, the chain of
-`__checkUpdateForDataVersion('UPDATE_n', …)` calls below it, and a new `case`
-in `__updateDataVersion()`. It writes entries with `{ touch: false }` (or
+A new migration touches two places in `src/services/uiUpdate.ts`: the
+`updateVersions` array in `checkUpdate()` and a new `case` in
+`__updateDataVersion()`. It writes entries with `{ touch: false }` (or
 `backfillWithoutTouch()`), so a migration does not count as a change by the
-user; `UPDATE_18` is the exception described above. The synthetic test data lists the migrations it counts as applied
+user; `UPDATE_18` is the exception described above. It reads the answer of
+every write and is not recorded when one was not stored. The synthetic test data lists the migrations it counts as applied
 (`APPLIED_DATA_VERSIONS` in `e2e/support/synthetic-data.ts`); add the new one
 there and generate what it would have written, otherwise
 `src/test-utils/__tests__/synthetic-data.spec.ts` fails. Existing migrations

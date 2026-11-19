@@ -1796,7 +1796,8 @@ export class SettingsPage {
   /**
    * Imported brews need a mill. Pointing them at the standard mill is a
    * correction made by the app, not a user change, so the imported entries
-   * keep the change info they came with.
+   * keep the change info they came with. Stops at the first write that was
+   * not stored; the collection reports it.
    */
   private async __addStandardMillAfterImport(): Promise<void> {
     if (
@@ -1806,12 +1807,18 @@ export class SettingsPage {
       // We got an update and we got no mills yet, therefore we add a Standard mill.
       const data: Mill = new Mill();
       data.name = 'Standard';
-      await this.uiMillStorage.add(data);
+      if (!(await this.uiMillStorage.addAndConfirm(data)).saved) {
+        this.uiLog.error('Import - standard mill not stored');
+        return;
+      }
 
       const brews: Brew[] = this.uiBrewStorage.getAllEntries();
       for (const brew of brews) {
         brew.mill = data.config.uuid;
-        await this.uiBrewStorage.update(brew, { touch: false });
+        if (!(await this.uiBrewStorage.update(brew, { touch: false }))) {
+          this.uiLog.error('Import - brews not pointed at the standard mill');
+          return;
+        }
       }
     }
   }

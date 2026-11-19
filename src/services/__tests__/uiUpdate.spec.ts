@@ -10,6 +10,7 @@ import { Brew } from '../../classes/brew/brew';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
 import { Version } from '../../classes/version/iVersion';
+import { MemoryDatabase } from '../../test-utils/memory-database';
 import { BrewReferencesService } from '../brewReferences/brew-references.service';
 import { ChangeTrackingMigrationService } from '../changeTracking/change-tracking-migration.service';
 import { DuplicateEntriesMigrationService } from '../changeTracking/duplicate-entries-migration.service';
@@ -34,22 +35,35 @@ interface RecordedUpdate {
 
 const ATTACHMENT_NAME = 'migration-spec-attachment.jpg';
 
+/** Runs one data update, as the start-up check does. */
+function runUpdate(_uiUpdate: UIUpdate, _version: string): Promise<boolean> {
+  return (
+    _uiUpdate as unknown as {
+      __updateDataVersion(_version: string): Promise<boolean>;
+    }
+  ).__updateDataVersion(_version);
+}
+
 function collectionStorage(
   name: string,
   entries: unknown[],
   recorded: RecordedUpdate[],
   currentVersion: () => string,
+  stored: () => boolean,
 ) {
   return {
     getAllEntries: () => entries,
-    add: jasmine
-      .createSpy(`${name}.add`)
-      .and.callFake(async (entry: unknown) => structuredClone(entry)),
+    addAndConfirm: jasmine
+      .createSpy(`${name}.addAndConfirm`)
+      .and.callFake(async (entry: unknown) => ({
+        entry: structuredClone(entry),
+        saved: stored(),
+      })),
     update: jasmine
       .createSpy(`${name}.update`)
       .and.callFake(async (_entry: unknown, options?: unknown) => {
         recorded.push({ version: currentVersion(), storage: name, options });
-        return true;
+        return stored();
       }),
   };
 }
@@ -84,11 +98,23 @@ describe('UIUpdate data migrations and change info', () => {
   let recorded: RecordedUpdate[];
   let version: string;
   let uiUpdate: UIUpdate;
+  /** What every write of the updates resolves. */
+  let stored: boolean;
+  /** Writes of entries and of the settings, in the order they were made. */
+  let writes: string[];
+  let logError: jasmine.Spy;
 
   beforeEach(async () => {
     recorded = [];
     version = '';
+    stored = true;
+    writes = [];
+    logError = jasmine.createSpy('error');
     const current = () => version;
+    const isStored = () => {
+      writes.push(version);
+      return stored;
+    };
     const fixtures = createFixtures();
 
     const settings = new Settings();
@@ -105,6 +131,7 @@ describe('UIUpdate data migrations and change info', () => {
             fixtures.brews,
             recorded,
             current,
+            isStored,
           ),
         },
         {
@@ -114,6 +141,7 @@ describe('UIUpdate data migrations and change info', () => {
             fixtures.beans,
             recorded,
             current,
+            isStored,
           ),
         },
         {
@@ -123,17 +151,18 @@ describe('UIUpdate data migrations and change info', () => {
             fixtures.preparations,
             recorded,
             current,
+            isStored,
           ),
         },
         {
           provide: UIMillStorage,
-          useValue: collectionStorage('MILL', [], recorded, current),
+          useValue: collectionStorage('MILL', [], recorded, current, isStored),
         },
         {
           provide: UISettingsStorage,
           useValue: {
             getSettings: () => settings,
-            saveSettings: async () => true,
+            saveSettings: async () => isStored(),
           },
         },
         {
@@ -141,7 +170,7 @@ describe('UIUpdate data migrations and change info', () => {
           useValue: {
             log: () => undefined,
             info: () => undefined,
-            error: () => undefined,
+            error: logError,
           },
         },
         { provide: UiVersionStorage, useValue: {} },
@@ -192,7 +221,7 @@ describe('UIUpdate data migrations and change info', () => {
   it('rewrites entries only through the system write path', async () => {
     for (let i = 1; i <= 15; i++) {
       version = `UPDATE_${i}`;
-      const done = await (uiUpdate as any).__updateDataVersion(version);
+      const done = await runUpdate(uiUpdate, version);
       expect(done).withContext(version).toBeTrue();
     }
 
@@ -216,6 +245,132 @@ describe('UIUpdate data migrations and change info', () => {
         .withContext(`${call.version}:${call.storage}`)
         .toEqual({ touch: false });
     }
+  });
+
+  // These come to the same result when they run again on data they changed
+  // in part, so a write that was not stored leaves them open.
+  for (const i of [1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14]) {
+    it(`leaves UPDATE_${i} open and writes nothing more when a write was not stored`, async () => {
+      version = `UPDATE_${i}`;
+      stored = false;
+
+      const done = await runUpdate(uiUpdate, version);
+
+      expect(done).toBeFalse();
+      expect(writes).toEqual([version]);
+    });
+  }
+
+  // These would change entries a second time when they ran again.
+  for (const [i, notStored] of [
+    [4, 1],
+    [5, 2],
+    [15, 1],
+  ]) {
+    it(`records UPDATE_${i} as done and logs the writes that were not stored`, async () => {
+      version = `UPDATE_${i}`;
+      stored = false;
+
+      const done = await runUpdate(uiUpdate, version);
+
+      expect(done).toBeTrue();
+      expect(writes.length).toBe(notStored);
+      expect(logError).toHaveBeenCalledOnceWith(
+        `${version} - ${notStored} writes not stored, not run again`,
+      );
+    });
+  }
+});
+
+describe('UIUpdate running a data update again at the next start', () => {
+  let database: MemoryDatabase;
+  let beans: UIBeanStorage;
+  let uiUpdate: UIUpdate;
+
+  /** A bean as it was stored before UPDATE_1: one photo and its origin on the bean. */
+  function beanBeforeUpdate1(_uuid: string, _filePath: string) {
+    return {
+      ...(JSON.parse(JSON.stringify(new Bean())) as object),
+      config: { uuid: _uuid, unix_timestamp: 1 },
+      filePath: _filePath,
+      country: 'Kenya',
+      bean_information: [],
+    };
+  }
+
+  beforeEach(() => {
+    database = new MemoryDatabase();
+    const settings = new Settings();
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        ...database.providers(),
+        UIUpdate,
+        { provide: UIBrewStorage, useValue: { getAllEntries: () => [] } },
+        { provide: UIMillStorage, useValue: { getAllEntries: () => [] } },
+        {
+          provide: UIPreparationStorage,
+          useValue: { getAllEntries: () => [] },
+        },
+        {
+          provide: UISettingsStorage,
+          useValue: {
+            getSettings: () => settings,
+            saveSettings: () => Promise.resolve(true),
+          },
+        },
+        { provide: UiVersionStorage, useValue: {} },
+        { provide: ChangeTrackingMigrationService, useValue: {} },
+        { provide: DuplicateEntriesMigrationService, useValue: {} },
+        { provide: BrewReferencesService, useValue: {} },
+        { provide: Platform, useValue: { is: () => false } },
+        { provide: ModalController, useValue: {} },
+        { provide: UIFileHelper, useValue: {} },
+        { provide: UIAlert, useValue: {} },
+        { provide: UIHelper, useValue: {} },
+      ],
+    });
+    beans = TestBed.inject(UIBeanStorage);
+    uiUpdate = TestBed.inject(UIUpdate);
+  });
+
+  /** Stores the beans and reads them as a start does. */
+  async function start(_stored: unknown[]): Promise<void> {
+    database.values.set('BEANS', structuredClone(_stored));
+    await beans.initializeStorage();
+  }
+
+  it('UPDATE_1 stores the same beans after a write that was not stored as in one go', async () => {
+    const before = [
+      beanBeforeUpdate1('a', 'a.jpg'),
+      beanBeforeUpdate1('b', 'b.jpg'),
+      beanBeforeUpdate1('c', ''),
+    ];
+    await start(before);
+    expect(await runUpdate(uiUpdate, 'UPDATE_1')).toBeTrue();
+    const inOneGo = database.values.get('BEANS');
+
+    await start(before);
+    let beanWrites = 0;
+    database.set.and.callFake((_key: string, _value: unknown) => {
+      if (_key === 'BEANS' && ++beanWrites === 2) {
+        return Promise.reject(new Error('write failed'));
+      }
+      database.values.set(_key, structuredClone(_value));
+      return Promise.resolve(true);
+    });
+    expect(await runUpdate(uiUpdate, 'UPDATE_1')).toBeFalse();
+    // The first bean is stored changed, the others as they were.
+    expect(
+      (database.values.get('BEANS') as { filePath?: string }[]).map(
+        (_bean) => _bean.filePath,
+      ),
+    ).toEqual([undefined, 'b.jpg', '']);
+
+    await start(database.values.get('BEANS') as unknown[]);
+    expect(await runUpdate(uiUpdate, 'UPDATE_1')).toBeTrue();
+
+    expect(database.values.get('BEANS')).toEqual(inOneGo);
   });
 });
 
@@ -436,6 +591,9 @@ describe('UIUpdate duplicate entries migration', () => {
   });
 
   it('runs after the change info migration', async () => {
+    for (let i = 1; i <= 15; i++) {
+      version.pushUpdatedDataVersion(`UPDATE_${i}`);
+    }
     const order: string[] = [];
     const changeInfo = TestBed.inject(ChangeTrackingMigrationService);
     spyOn(changeInfo, 'run').and.callFake(() => {
@@ -450,6 +608,22 @@ describe('UIUpdate duplicate entries migration', () => {
     await uiUpdate.checkUpdate();
 
     expect(order).toEqual(['UPDATE_16', 'UPDATE_17']);
+  });
+
+  it('does not run while the change info migration is not done', async () => {
+    for (let i = 1; i <= 15; i++) {
+      version.pushUpdatedDataVersion(`UPDATE_${i}`);
+    }
+    spyOn(TestBed.inject(ChangeTrackingMigrationService), 'run').and.resolveTo(
+      false,
+    );
+
+    await uiUpdate.checkUpdate();
+
+    expect(run).not.toHaveBeenCalled();
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_16')).toBeFalse();
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_17')).toBeFalse();
+    expect(saveVersion).not.toHaveBeenCalled();
   });
 
   it('stays open when something could not be stored', async () => {

@@ -103,24 +103,15 @@ export class UIUpdate {
         }
       }
 
-      await this.__checkUpdateForDataVersion('UPDATE_1', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_2', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_3', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_4', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_5', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_6', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_7', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_8', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_9', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_10', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_11', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_12', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_13', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_14', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_15', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_16', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_17', !hasData);
-      await this.__checkUpdateForDataVersion('UPDATE_18', !hasData);
+      for (const updateVersion of updateVersions) {
+        // An update that is not done ends the check: the updates after it
+        // build on it and run in order at a later start.
+        if (
+          !(await this.__checkUpdateForDataVersion(updateVersion, !hasData))
+        ) {
+          break;
+        }
+      }
     } catch (ex) {
       if (this.uiAlert.isLoadingSpinnerShown()) {
         await this.uiAlert.hideLoadingSpinner();
@@ -143,12 +134,16 @@ export class UIUpdate {
               // We got an update and we got no mills yet, therefore we add a Standard mill.
               const data: Mill = new Mill();
               data.name = 'Standard';
-              await this.uiMillStorage.add(data);
+              this.__stored(
+                (await this.uiMillStorage.addAndConfirm(data)).saved,
+              );
 
               const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
               for (const brew of brews) {
                 brew.mill = data.config.uuid;
-                await this.uiBrewStorage.update(brew, { touch: false });
+                this.__stored(
+                  await this.uiBrewStorage.update(brew, { touch: false }),
+                );
               }
             }
             // We made an update, filePath just could storage one image, but we want to storage multiple ones.
@@ -202,7 +197,9 @@ export class UIUpdate {
                   needsUpdate = true;
                 }
                 if (bean.fixDataTypes() || needsUpdate) {
-                  await this.uiBeanStorage.update(bean, { touch: false });
+                  this.__stored(
+                    await this.uiBeanStorage.update(bean, { touch: false }),
+                  );
                 }
               }
             }
@@ -234,13 +231,19 @@ export class UIUpdate {
                         brew.brew_beverage_quantity = brew.brew_quantity;
                         brew.brew_beverage_quantity_type =
                           brew.brew_quantity_type;
-                        await this.uiBrewStorage.update(brew, { touch: false });
+                        this.__stored(
+                          await this.uiBrewStorage.update(brew, {
+                            touch: false,
+                          }),
+                        );
                       }
                     }
                   }
-                  await this.uiPreparationStorage.update(preparation, {
-                    touch: false,
-                  });
+                  this.__stored(
+                    await this.uiPreparationStorage.update(preparation, {
+                      touch: false,
+                    }),
+                  );
                 }
               }
             }
@@ -249,7 +252,9 @@ export class UIUpdate {
               const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
               for (const brew of brews) {
                 if (brew.fixDataTypes()) {
-                  await this.uiBrewStorage.update(brew, { touch: false });
+                  this.__stored(
+                    await this.uiBrewStorage.update(brew, { touch: false }),
+                  );
                 }
               }
             }
@@ -266,7 +271,9 @@ export class UIUpdate {
               );
               const highestNumber = settingsAfter[maxKey];
               settings.brew_order.after.tds = highestNumber + 1;
-              await this.uiSettingsStorage.saveSettings(settings);
+              this.__stored(
+                await this.uiSettingsStorage.saveSettings(settings),
+              );
             }
             if (
               settings.brew_order.after.brew_beverage_quantity === null ||
@@ -280,7 +287,9 @@ export class UIUpdate {
               const highestNumber = settingsAfter[maxKey];
               settings.brew_order.after.brew_beverage_quantity =
                 highestNumber + 1;
-              await this.uiSettingsStorage.saveSettings(settings);
+              this.__stored(
+                await this.uiSettingsStorage.saveSettings(settings),
+              );
             }
 
             if (
@@ -337,7 +346,9 @@ export class UIUpdate {
               settings.default_last_coffee_parameters.method_of_preparation = true;
 
               // With this property there also came the change that we moved all parameters to manage_parameters
-              await this.uiSettingsStorage.saveSettings(settings);
+              this.__stored(
+                await this.uiSettingsStorage.saveSettings(settings),
+              );
             }
 
             delete settings.brew_time;
@@ -362,20 +373,24 @@ export class UIUpdate {
             delete settings.tds;
             delete settings.brew_beverage_quantity;
 
-            await this.uiSettingsStorage.saveSettings(settings);
+            this.__stored(await this.uiSettingsStorage.saveSettings(settings));
 
             break;
           case 'UPDATE_2':
             const settings_v2: Settings = this.uiSettingsStorage.getSettings();
             // Reset after we've set new brewfilter
             settings_v2.resetFilter();
-            await this.uiSettingsStorage.saveSettings(settings_v2);
+            this.__stored(
+              await this.uiSettingsStorage.saveSettings(settings_v2),
+            );
             break;
           case 'UPDATE_3':
             const settings_v3: any = this.uiSettingsStorage.getSettings();
             // Delete old analytics property
             delete settings_v3.analytics;
-            await this.uiSettingsStorage.saveSettings(settings_v3);
+            this.__stored(
+              await this.uiSettingsStorage.saveSettings(settings_v3),
+            );
             break;
           case 'UPDATE_4':
             if (this.platform.is('capacitor') && this.platform.is('ios')) {
@@ -391,6 +406,9 @@ export class UIUpdate {
                 this.uiLog.log(
                   `${_version} - Check ${allEntries.length} entries`,
                 );
+                // The files are moved before their entry is written: run again,
+                // it could no longer find the files of an entry not stored.
+                let notStored_v4 = 0;
                 let entryIndex: number = -1;
                 for (const entry of allEntries) {
                   entryIndex++;
@@ -454,7 +472,11 @@ export class UIUpdate {
                       } else if (entry instanceof Bean) {
                         storageToUpdate = this.uiBeanStorage;
                       }
-                      await storageToUpdate.update(entry, { touch: false });
+                      if (
+                        !(await storageToUpdate.update(entry, { touch: false }))
+                      ) {
+                        notStored_v4++;
+                      }
                     }
                   } catch (ex) {
                     this.uiLog.log(
@@ -462,6 +484,7 @@ export class UIUpdate {
                     );
                   }
                 }
+                this.__logNotStored(_version, notStored_v4);
               }
             }
             break;
@@ -481,7 +504,12 @@ export class UIUpdate {
               settings_v5.brew_order.before.water = highestNumber + 1;
               settings_v5.brew_order.before.bean_weight_in = highestNumber + 2;
               settings_v5.brew_order.before.vessel = highestNumber + 3;
-              await this.uiSettingsStorage.saveSettings(settings_v5);
+              // Run again after the settings were stored, it would leave out
+              // the preparations, so it does not run again.
+              let notStored_v5 = 0;
+              if (!(await this.uiSettingsStorage.saveSettings(settings_v5))) {
+                notStored_v5++;
+              }
 
               const preparations_v5: any =
                 this.uiPreparationStorage.getAllEntries();
@@ -489,8 +517,15 @@ export class UIUpdate {
                 prep.brew_order.before.water = highestNumber + 1;
                 prep.brew_order.before.bean_weight_in = highestNumber + 2;
                 prep.brew_order.before.vessel = highestNumber + 3;
-                await this.uiPreparationStorage.update(prep, { touch: false });
+                if (
+                  !(await this.uiPreparationStorage.update(prep, {
+                    touch: false,
+                  }))
+                ) {
+                  notStored_v5++;
+                }
               }
+              this.__logNotStored(_version, notStored_v5);
             }
             break;
           case 'UPDATE_6':
@@ -500,7 +535,9 @@ export class UIUpdate {
               bean.bean_information = this.uiHelper.cloneData(
                 bean.bean_information,
               );
-              await this.uiBeanStorage.update(bean, { touch: false });
+              this.__stored(
+                await this.uiBeanStorage.update(bean, { touch: false }),
+              );
             }
 
             const settings_v6: any = this.uiSettingsStorage.getSettings();
@@ -510,7 +547,9 @@ export class UIUpdate {
 
             // Reset filter, because we got a new sort on beans
             settings_v6.resetFilter();
-            await this.uiSettingsStorage.saveSettings(settings_v6);
+            this.__stored(
+              await this.uiSettingsStorage.saveSettings(settings_v6),
+            );
 
             const preparations_v6: Array<Preparation> =
               this.uiPreparationStorage.getAllEntries();
@@ -518,7 +557,11 @@ export class UIUpdate {
               for (const tool of prep_v6.tools) {
                 tool.archived = false;
               }
-              await this.uiPreparationStorage.update(prep_v6, { touch: false });
+              this.__stored(
+                await this.uiPreparationStorage.update(prep_v6, {
+                  touch: false,
+                }),
+              );
             }
 
             break;
@@ -528,7 +571,9 @@ export class UIUpdate {
             settings_v7.brew_rating_steps = Number(
               settings_v7.brew_rating_steps,
             );
-            await this.uiSettingsStorage.saveSettings(settings_v7);
+            this.__stored(
+              await this.uiSettingsStorage.saveSettings(settings_v7),
+            );
 
             break;
           case 'UPDATE_8':
@@ -548,7 +593,9 @@ export class UIUpdate {
             }
             // Reset matomo analytics to undefined, so we get another update
             settings_v8.matomo_analytics = undefined;
-            await this.uiSettingsStorage.saveSettings(settings_v8);
+            this.__stored(
+              await this.uiSettingsStorage.saveSettings(settings_v8),
+            );
 
             break;
 
@@ -570,7 +617,9 @@ export class UIUpdate {
 
             // Reset filter, because we got a new sort on beans
             settings_v9.resetFilter();
-            await this.uiSettingsStorage.saveSettings(settings_v9);
+            this.__stored(
+              await this.uiSettingsStorage.saveSettings(settings_v9),
+            );
             const preparationListV9: Array<Preparation> =
               this.uiPreparationStorage.getAllEntries();
             for (const prep of preparationListV9) {
@@ -579,7 +628,9 @@ export class UIUpdate {
               prep.repeat_coffee_parameters.coffee_first_drip_time = false;
               prep.repeat_coffee_parameters.brew_beverage_quantity = false;
               prep.repeat_coffee_parameters.brew_quantity = false;
-              await this.uiPreparationStorage.update(prep, { touch: false });
+              this.__stored(
+                await this.uiPreparationStorage.update(prep, { touch: false }),
+              );
             }
 
             break;
@@ -587,13 +638,17 @@ export class UIUpdate {
             const settings_v10: Settings = this.uiSettingsStorage.getSettings();
             settings_v10.resetFilter();
             settings_v10.resetBeanSort();
-            await this.uiSettingsStorage.saveSettings(settings_v10);
+            this.__stored(
+              await this.uiSettingsStorage.saveSettings(settings_v10),
+            );
             break;
           case 'UPDATE_11':
             //#776 - We added a new beansort, thats why we reset the bean sort here.
             const settings_v11: Settings = this.uiSettingsStorage.getSettings();
             settings_v11.resetBeanSort();
-            await this.uiSettingsStorage.saveSettings(settings_v11);
+            this.__stored(
+              await this.uiSettingsStorage.saveSettings(settings_v11),
+            );
             break;
           case 'UPDATE_12':
             const settings_v12: Settings = this.uiSettingsStorage.getSettings();
@@ -604,12 +659,16 @@ export class UIUpdate {
 
             settings_v12.bluetooth_ignore_anomaly_values = false;
             settings_v12.bluetooth_ignore_negative_values = false;
-            await this.uiSettingsStorage.saveSettings(settings_v12);
+            this.__stored(
+              await this.uiSettingsStorage.saveSettings(settings_v12),
+            );
             break;
           case 'UPDATE_13':
             const settings_v13: Settings = this.uiSettingsStorage.getSettings();
             settings_v13.resetBrewFilter();
-            await this.uiSettingsStorage.saveSettings(settings_v13);
+            this.__stored(
+              await this.uiSettingsStorage.saveSettings(settings_v13),
+            );
             break;
           case 'UPDATE_14':
             const settings_v14: any = this.uiSettingsStorage.getSettings();
@@ -618,10 +677,15 @@ export class UIUpdate {
                 BREW_DISPLAY_IMAGE_TYPE.BEAN;
             }
             delete settings_v14.brew_display_bean_image;
-            await this.uiSettingsStorage.saveSettings(settings_v14);
+            this.__stored(
+              await this.uiSettingsStorage.saveSettings(settings_v14),
+            );
             break;
-          case 'UPDATE_15':
+          case 'UPDATE_15': {
             const beans_v15: Array<Bean> = this.uiBeanStorage.getAllEntries();
+            // Run again, it would convert the beans already stored a second
+            // time, so it does not run again.
+            let notStored_v15 = 0;
             for (const bean of beans_v15) {
               let updated = false;
               if (
@@ -642,11 +706,16 @@ export class UIUpdate {
                 );
                 updated = true;
               }
-              if (updated) {
-                await this.uiBeanStorage.update(bean, { touch: false });
+              if (
+                updated &&
+                !(await this.uiBeanStorage.update(bean, { touch: false }))
+              ) {
+                notStored_v15++;
               }
             }
+            this.__logNotStored(_version, notStored_v15);
             break;
+          }
           case 'UPDATE_16':
             // Fills in the change info of all stored entries and stores the
             // user profile of existing installations. It also runs on new
@@ -707,10 +776,11 @@ export class UIUpdate {
     }
   }
 
+  /** Resolves whether the update is done, at this or at an earlier start. */
   private async __checkUpdateForDataVersion(
     _dataVersion: string,
     _silentUpdate: boolean,
-  ) {
+  ): Promise<boolean> {
     const version: Version = this.uiVersionStorage.getVersion();
     let somethingUpdated: boolean = false;
 
@@ -735,10 +805,37 @@ export class UIUpdate {
       }
     } else {
       this.uiLog.info('Data version ' + _dataVersion + ' - No Update');
+      return true;
     }
 
     if (somethingUpdated) {
       await this.uiVersionStorage.saveVersion(version);
+    }
+    return somethingUpdated;
+  }
+
+  /**
+   * Ends a data update when one of its writes was not stored: it is not
+   * recorded as done then and runs again at the next start. Only for the
+   * updates that come to the same result when they run again on data they
+   * changed in part.
+   */
+  private __stored(_saved: boolean): void {
+    if (!_saved) {
+      throw new Error('a write was not stored');
+    }
+  }
+
+  /**
+   * For the updates that would change entries a second time when they ran
+   * again on data they changed in part: writes that were not stored are only
+   * logged, and the update is recorded as done all the same.
+   */
+  private __logNotStored(_version: string, _notStored: number): void {
+    if (_notStored > 0) {
+      this.uiLog.error(
+        `${_version} - ${_notStored} writes not stored, not run again`,
+      );
     }
   }
 

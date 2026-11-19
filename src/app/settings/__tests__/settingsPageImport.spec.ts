@@ -20,15 +20,20 @@ describe('SettingsPage standard mill after an import', () => {
     };
     const uiMillStorage = {
       getAllEntries: () => mills,
-      add: jasmine
-        .createSpy('add')
-        .and.callFake(async (entry: unknown) => structuredClone(entry)),
+      addAndConfirm: jasmine
+        .createSpy('addAndConfirm')
+        .and.callFake(async (entry: unknown) => ({
+          entry: structuredClone(entry),
+          saved: true,
+        })),
     };
+    const uiLog = jasmine.createSpyObj('UILog', ['error']);
     // Only the two storages are needed; the page itself is not rendered.
     const page = Object.create(SettingsPage.prototype);
     page.uiBrewStorage = uiBrewStorage;
     page.uiMillStorage = uiMillStorage;
-    return { page, uiBrewStorage, uiMillStorage };
+    page.uiLog = uiLog;
+    return { page, uiBrewStorage, uiMillStorage, uiLog };
   }
 
   it('points imported brews at the mill without touching their change info', async () => {
@@ -37,7 +42,7 @@ describe('SettingsPage standard mill after an import', () => {
 
     await page.__addStandardMillAfterImport();
 
-    expect(uiMillStorage.add).toHaveBeenCalledTimes(1);
+    expect(uiMillStorage.addAndConfirm).toHaveBeenCalledTimes(1);
     expect(uiBrewStorage.update).toHaveBeenCalledTimes(2);
     for (const args of uiBrewStorage.update.calls.allArgs()) {
       expect(args[1]).toEqual({ touch: false });
@@ -49,8 +54,38 @@ describe('SettingsPage standard mill after an import', () => {
 
     await page.__addStandardMillAfterImport();
 
-    expect(uiMillStorage.add).not.toHaveBeenCalled();
+    expect(uiMillStorage.addAndConfirm).not.toHaveBeenCalled();
     expect(uiBrewStorage.update).not.toHaveBeenCalled();
+  });
+
+  it('leaves the brews alone when the mill was not stored', async () => {
+    const { page, uiBrewStorage, uiMillStorage, uiLog } = pageWith(
+      [new Brew()],
+      [],
+    );
+    uiMillStorage.addAndConfirm.and.resolveTo({ entry: {}, saved: false });
+
+    await page.__addStandardMillAfterImport();
+
+    expect(uiBrewStorage.update).not.toHaveBeenCalled();
+    expect(uiLog.error).toHaveBeenCalledOnceWith(
+      'Import - standard mill not stored',
+    );
+  });
+
+  it('stops at the first brew that was not stored', async () => {
+    const { page, uiBrewStorage, uiLog } = pageWith(
+      [new Brew(), new Brew()],
+      [],
+    );
+    uiBrewStorage.update.and.resolveTo(false);
+
+    await page.__addStandardMillAfterImport();
+
+    expect(uiBrewStorage.update).toHaveBeenCalledTimes(1);
+    expect(uiLog.error).toHaveBeenCalledOnceWith(
+      'Import - brews not pointed at the standard mill',
+    );
   });
 });
 

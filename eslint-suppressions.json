@@ -3745,7 +3745,7 @@
       "count": 2
     },
     "no-case-declarations": {
-      "count": 18
+      "count": 17
     }
   },
   "src/services/uiVersionStorage.ts": {
