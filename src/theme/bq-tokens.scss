@@ -1,7 +1,7 @@
 @use 'sass:color';
 
-// Call-to-action fill. Provisional product decision (coral); change it here and
-// every accent button, checked control and range fill follows in both modes.
+// Call-to-action fill (coral). Change it here and every accent button, checked
+// control and range fill follows in both modes.
 $bq-action-primary: #c73545;
 // Label on the fill: 5.22:1 on #c73545.
 $bq-on-action-primary: #ffffff;
@@ -292,7 +292,7 @@ brew-timer,
 
   --bq-text-primary: var(--bq-palette-white);
   --bq-text-secondary: var(--bq-palette-cream-300);
-  // #EA495B misses AA on dark cards (4.2:1); #FF7A88 reaches 6.3:1. Provisional until the designer confirms.
+  // #EA495B misses AA on dark cards (4.2:1); #FF7A88 reaches 6.3:1.
   --bq-text-link: #ff7a88;
   --bq-text-accent: #ff7a88;
   // 8.66:1 on the page, 7.89:1 on the tab bar.

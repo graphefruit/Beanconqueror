@@ -116,7 +116,7 @@ ion-card.small-card {
 // whose vertical padding would otherwise end up inside the track. The pill has
 // an accent outline, so the choice does not rest on the label colour alone.
 ion-segment-button {
-  letter-spacing: -0.63px;
+  letter-spacing: -0.03em;
   font-size: var(--bq-type-subhead);
   text-transform: capitalize;
   // No max-height: labels wrap to two lines and must grow with the text size
@@ -365,7 +365,7 @@ ion-alert {
   }
 
   ion-card-title {
-    letter-spacing: -1.05px;
+    letter-spacing: -0.05em;
   }
   .big-icon-only {
     width: 64px !important;
@@ -495,7 +495,7 @@ ion-alert {
   ion-label {
     font-size: var(--bq-type-ui-label);
   }
-  // Five tabs share the width of a small phone and the bar does not grow, so
+  // Four tabs share the width of a small phone and the bar does not grow, so
   // tab labels stay compact chrome below the 16px label floor.
   ion-tab-button ion-label {
     font-size: var(--bq-type-tab-label);
@@ -654,7 +654,7 @@ ion-alert {
     --border-width: 1px;
     --box-shadow: var(--bq-shadow-overlay);
     font-weight: bold;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.03em;
 
     --height: 75px;
   }
@@ -834,9 +834,8 @@ ion-alert {
     /**margin-bottom: env(safe-area-inset-bottom);**/
   }
 
-  // On = accent fill (pending design sign-off: an earlier handoff draft used
-  // sage). The 52x32 track with an inset handle replaces Ionic's 36x14 md track,
-  // whose off state was a faint grey.
+  // On = accent fill. The 52x32 track with an inset handle replaces Ionic's
+  // 36x14 md track, whose off state was a faint grey.
   ion-toggle {
     --track-background: var(--bq-control-toggle-off);
     --track-background-checked: var(--ion-color-accent);
