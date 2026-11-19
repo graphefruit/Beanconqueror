@@ -94,6 +94,6 @@ export class UiVersionStorage extends StorageClass {
   }
 
   public async saveVersion(version: IVersion) {
-    await super.update(version);
+    await super.storeOnlyEntry(version);
   }
 }

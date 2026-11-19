@@ -186,6 +186,6 @@ export class UISettingsStorage extends StorageClass {
   }
 
   public async saveSettings(settings: ISettings | Settings): Promise<boolean> {
-    return await super.update(settings);
+    return await super.storeOnlyEntry(settings);
   }
 }

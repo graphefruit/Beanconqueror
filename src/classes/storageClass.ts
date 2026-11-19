@@ -479,6 +479,22 @@ export abstract class StorageClass {
   }
 
   /**
+   * For a collection of one entry that creates it itself: stores `_entry`
+   * also when creating it could not be saved, so the collection is still
+   * empty and there is nothing to replace.
+   */
+  protected async storeOnlyEntry(_entry: StoredEntry): Promise<boolean> {
+    if (this.isRead() && this.storedData.length === 0) {
+      const added = await this.addAndConfirm(_entry, {
+        uuid: _entry.config.uuid,
+        unix_timestamp: _entry.config.unix_timestamp,
+      });
+      return added.saved;
+    }
+    return this.update(_entry);
+  }
+
+  /**
    * System write path for filling in values on many entries at once, for
    * example in migrations. `_fill` changes the given stored entries in place
    * and returns how many it changed; the change info is not touched. The
