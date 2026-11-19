@@ -133,7 +133,7 @@
     "prettier": "^3.10.1",
     "skwas-cordova-plugin-datetimepicker": "^3.0.2",
     "stylelint": "18.0.0",
-    "ts-proto": "^2.18.4",
+    "ts-proto": "^2.18.5",
     "typescript": "~6.0.3",
     "typescript-eslint": "~8.72.2"
   },
