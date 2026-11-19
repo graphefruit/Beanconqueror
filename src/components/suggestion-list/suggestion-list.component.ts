@@ -194,7 +194,9 @@ export class SuggestionListComponent implements AfterContentInit, OnDestroy {
       return;
     }
     const value = (event.target as { value?: unknown } | null)?.value;
-    this.query.set(typeof value === 'string' ? value : '');
+    // A space typed first is dropped; one after the text still narrows the
+    // suggestions to those with a following word.
+    this.query.set(typeof value === 'string' ? value.trimStart() : '');
     this.show(matchSuggestions(this.pool, this.query()));
   }
 

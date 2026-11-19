@@ -173,6 +173,23 @@ describe('SuggestionListComponent', () => {
     ).toEqual(['Nord', 'Nord']);
   });
 
+  it('should ignore spaces before the typed text, not those after it', () => {
+    focus();
+    type(' nord');
+
+    expect(options().map((option) => option.textContent.trim())).toEqual([
+      'Rösterei Nord',
+      'Nord',
+    ]);
+
+    type(' rösterei ');
+
+    expect(options().map((option) => option.textContent.trim())).toEqual([
+      'Rösterei Nord',
+      'Rösterei Süd',
+    ]);
+  });
+
   it(`should show at most ${SUGGESTION_LIMIT} suggestions`, () => {
     host.values = Array.from({ length: 12 }, (_, i) => `Roaster ${i}`);
     focus();
