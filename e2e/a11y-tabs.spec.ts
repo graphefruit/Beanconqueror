@@ -1,0 +1,337 @@
+import type { Locator, Page } from '@playwright/test';
+
+import { expect, test } from './fixtures';
+import { seedDatabase } from './support/seed';
+import { generateDataSet } from './support/synthetic-data';
+import { startsWith, text, type Language } from './support/texts';
+
+/**
+ * Tabs, focus and names for screen reader and keyboard users, in English and
+ * German: segments are tabs with a named panel and their count in words, the
+ * tab bars are reachable and say which tab is selected, focus lands on the
+ * title of a new screen and back on the control that led away, dialogs are
+ * named and modal, the buttons of a list entry name the entry, and the
+ * statistics work by keyboard.
+ */
+
+type Texts = (key: string, params?: Record<string, string>) => string;
+
+async function start(page: Page, language: Language): Promise<void> {
+  const data = generateDataSet({
+    brews: 20,
+    beans: 6,
+    seed: 3,
+    endDate: new Date('2026-11-01T18:00:00Z'),
+  });
+  data.SETTINGS[0].language = language;
+  const graphs = ['Blooming', 'Turbo'].map((name, index) => ({
+    name,
+    note: '',
+    flow_profile: '',
+    finished: false,
+    config: { uuid: `graph-${index}`, unix_timestamp: 1_761_000_000 + index },
+  }));
+  await seedDatabase(page, { ...data, GRAPH: graphs });
+  await page.goto('/');
+  await expect(page).toHaveURL(/\/home\/dashboard$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', language);
+}
+
+/** Shows a screen the way the router does, without a reload. */
+async function show(page: Page, route: string): Promise<void> {
+  await page.evaluate((path) => {
+    history.pushState({}, '', path);
+    dispatchEvent(new PopStateEvent('popstate'));
+  }, route);
+  await expect(page).toHaveURL(new RegExp(`${route}$`));
+}
+
+function visible(locator: Locator): Locator {
+  return locator.filter({ visible: true });
+}
+
+function escape(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** "Available, 6 in total" or "Available, 2 of 6 shown", any numbers. */
+function countedTab(t: Texts, labelKey: string): RegExp {
+  const words = (key: string) =>
+    escape(t(key, { total: '#', shown: '#' })).replace(/#/g, '\\d+');
+  return new RegExp(
+    `^${escape(t(labelKey))}, (${words('A11Y.COUNT_TOTAL')}|${words('A11Y.COUNT_SHOWN')})$`,
+  );
+}
+
+/** The modal on show, whose content is slotted into its dialog. */
+function openModal(page: Page): Locator {
+  return page.locator('ion-modal:not(.overlay-hidden)');
+}
+
+/** The tabs of `tabList` have these names, in this order. */
+async function expectTabs(tabList: Locator, names: string[]): Promise<void> {
+  const tabs = tabList.getByRole('tab');
+  await expect(tabs).toHaveCount(names.length);
+  for (const [index, name] of names.entries()) {
+    await expect(tabs.nth(index)).toHaveAccessibleName(name);
+  }
+}
+
+function tabBar(page: Page): Locator {
+  return visible(page.getByRole('navigation')).getByRole('tablist');
+}
+
+// The barista mode keeps the screen on; the browser refuses that without a tap.
+test.use({ allowedConsoleErrors: [/Wake Lock permission request denied/] });
+
+for (const language of ['en', 'de'] as const) {
+  test.describe(language, () => {
+    const t: Texts = (key, params) => text(language, key, params);
+
+    test('segments are tabs with a named panel and their count in words', async ({
+      page,
+    }) => {
+      await start(page, language);
+
+      for (const [tab, label] of [
+        ['NAV_BEANS', 'PAGE_BEANS_LIST_OBTAINABLE'],
+        ['NAV_BREWS', 'CURRENT'],
+      ]) {
+        await tabBar(page)
+          .getByRole('tab', { name: t(tab) })
+          .click();
+        const tabs = visible(page.getByRole('main').getByRole('tab'));
+        await expect(tabs.first()).toHaveAccessibleName(countedTab(t, label));
+        for (const each of await tabs.all()) {
+          await expect(each).not.toHaveAccessibleName(/[(/)]/);
+        }
+      }
+
+      await show(page, '/home/profile/settings');
+      const settings = page.locator('settings');
+      const general = settings.getByRole('tab', {
+        name: t('PAGE_SETTINGS_TAB_GENERAL'),
+      });
+      const scale = settings.getByRole('tab', {
+        name: t('PAGE_SETTINGS_TAB_BLUETOOTH_SCALE'),
+      });
+      await expect(
+        settings.getByRole('tabpanel', {
+          name: t('PAGE_SETTINGS_TAB_GENERAL'),
+        }),
+      ).toBeVisible();
+
+      // Ionic: arrow keys move focus, Enter selects.
+      await general.focus();
+      await page.keyboard.press('ArrowRight');
+      await expect(scale).toBeFocused();
+      await expect(general).toHaveAttribute('aria-selected', 'true');
+      await page.keyboard.press('Enter');
+      await expect(scale).toHaveAttribute('aria-selected', 'true');
+      await expect(settings.getByRole('tabpanel')).toHaveCount(1);
+      await expect(settings.getByRole('tabpanel')).toHaveAccessibleName(
+        t('PAGE_SETTINGS_TAB_BLUETOOTH_SCALE'),
+      );
+      // The selected tab points to its panel.
+      expect(
+        await scale.evaluate(
+          (tab) => tab.ariaControlsElements?.[0]?.getAttribute('role') ?? null,
+        ),
+      ).toBe('tabpanel');
+    });
+
+    test('the tab bars name and select their tabs and are reachable by keyboard', async ({
+      page,
+    }) => {
+      await start(page, language);
+      const home = tabBar(page);
+      await expectTabs(home, [
+        t('NAV_HOME'),
+        t('NAV_BREWS'),
+        t('NAV_BEANS'),
+        t('NAV_PROFILE'),
+      ]);
+      await expect(home.locator('[aria-selected="true"]')).toHaveCount(1);
+      const beans = home.getByRole('tab', { name: t('NAV_BEANS') });
+      await beans.focus();
+      await page.keyboard.press('Enter');
+      await expect(page).toHaveURL(/\/home\/beans$/);
+      await expect(beans).toHaveAttribute('aria-selected', 'true');
+      // The tab keeps focus, as in the tabs pattern.
+      await expect(beans).toBeFocused();
+
+      await show(page, '/baristamode/barista');
+      const barista = tabBar(page);
+      await expectTabs(barista, [
+        t('NAV_BARISTAMODE_SECTION'),
+        t('NAV_BREWS'),
+        t('NAV_STATISTICS'),
+      ]);
+      const statistics = barista.getByRole('tab', {
+        name: t('NAV_STATISTICS'),
+      });
+      await statistics.focus();
+      await expect(statistics).toBeFocused();
+      await page.keyboard.press('Enter');
+      await expect(page).toHaveURL(/\/baristamode\/statistics$/);
+      await expect(statistics).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('focus lands on the title of a new screen and back where it left', async ({
+      page,
+    }) => {
+      await start(page, language);
+      await tabBar(page)
+        .getByRole('tab', { name: t('NAV_PROFILE') })
+        .click();
+      const link = page
+        .locator('app-profile')
+        .getByRole('link', { name: startsWith(t('NAV_SETTINGS')) });
+      await link.focus();
+      await page.keyboard.press('Enter');
+      await expect(
+        page.getByRole('heading', { level: 1, name: t('NAV_SETTINGS') }),
+      ).toBeFocused();
+
+      await page.keyboard.press('Shift+Tab');
+      await expect(
+        visible(page.getByRole('button', { name: t('BACK'), exact: true })),
+      ).toBeFocused();
+      await page.keyboard.press('Enter');
+      await expect(page).toHaveURL(/\/home\/profile$/);
+      await expect(link).toBeFocused();
+    });
+
+    test('focus goes back to the control that opened a dialog, or to the title once it is gone', async ({
+      page,
+    }) => {
+      await start(page, language);
+      await tabBar(page)
+        .getByRole('tab', { name: t('NAV_BREWS') })
+        .click();
+      await expect(page).toHaveURL(/\/home\/brews$/);
+      const options = page
+        .locator('brew')
+        .getByRole('button', {
+          name: startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' })),
+        })
+        .first();
+      await options.focus();
+      await page.keyboard.press('Enter');
+      await expect(visible(page.getByRole('dialog'))).toHaveCount(1);
+      await page.keyboard.press('Escape');
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      await expect(options).toBeFocused();
+
+      await options.click();
+      await page
+        .getByRole('button', { name: t('DELETE'), exact: true })
+        .click();
+      await page
+        .getByRole('alertdialog')
+        .getByRole('button', { name: t('YES'), exact: true })
+        .click();
+      await expect(page.getByRole('alertdialog')).toHaveCount(0);
+      await expect(
+        page.getByRole('heading', { level: 1, name: t('NAV_BREWS') }),
+      ).toBeFocused();
+    });
+
+    test('dialogs are modal and named after their title or the entry', async ({
+      page,
+    }) => {
+      await start(page, language);
+      await tabBar(page)
+        .getByRole('tab', { name: t('NAV_BEANS') })
+        .click();
+      await expect(page).toHaveURL(/\/home\/beans$/);
+      const options = page
+        .locator('beans')
+        .getByRole('button', {
+          name: startsWith(t('A11Y.OPTIONS_FOR', { name: '' })),
+        })
+        .first();
+      const optionsName = (await options.getAttribute('aria-label')) ?? '';
+      await options.click();
+      const sheet = page.getByRole('dialog', { name: optionsName });
+      await expect(sheet).toBeVisible();
+      await expect(sheet).toHaveAttribute('aria-modal', 'true');
+      // The content is slotted into the dialog: it is found from the host.
+      const sheetContent = openModal(page);
+      await expect(sheetContent.getByRole('button').first()).toBeVisible();
+      await expect(sheetContent.getByRole('banner')).toHaveCount(0);
+      await expect(sheetContent.getByRole('img')).toHaveCount(0);
+      await page.keyboard.press('Escape');
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+
+      await visible(
+        page.getByRole('button', { name: t('ADD_BEAN'), exact: true }),
+      ).click();
+      const dialog = page.getByRole('dialog', { name: t('ADD_BEAN') });
+      await expect(dialog).toBeVisible();
+      await expect(dialog).toHaveAttribute('aria-modal', 'true');
+      // The form's segments have their panel inside the dialog, too.
+      await expect(
+        openModal(page).getByRole('tabpanel', {
+          name: t('BEAN_TAB_GENERAL_INFORMATION'),
+        }),
+      ).toBeVisible();
+    });
+
+    test('the buttons of a list entry name the entry', async ({ page }) => {
+      await start(page, language);
+      const optionsFor = startsWith(t('A11Y.OPTIONS_FOR', { name: '' }));
+      const brewOptions = startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' }));
+      for (const [route, name] of [
+        ['/home/dashboard', brewOptions],
+        ['/home/brews', brewOptions],
+        ['/home/beans', optionsFor],
+        ['/home/profile/preparations', optionsFor],
+        ['/home/profile/mills', optionsFor],
+        ['/home/profile/water', optionsFor],
+        ['/home/profile/graph', optionsFor],
+      ] as const) {
+        await show(page, route);
+        const buttons = visible(page.getByRole('button', { name }));
+        await expect(buttons.first()).toBeVisible();
+        const names = await buttons.evaluateAll((all) =>
+          all.map((each) => each.getAttribute('aria-label')),
+        );
+        expect(names.length, route).toBeGreaterThan(1);
+        expect(new Set(names).size, `names on ${route}`).toBe(names.length);
+      }
+    });
+
+    test('the statistics work by keyboard', async ({ page }) => {
+      await start(page, language);
+      await show(page, '/home/profile/statistic');
+      const statistic = page.locator('statistic');
+      const brews = statistic.getByRole('tab', {
+        name: t('STATISTIC_TAB_BREWS'),
+        exact: true,
+      });
+      await brews.focus();
+      await page.keyboard.press('Enter');
+      await expect(brews).toHaveAttribute('aria-selected', 'true');
+      await expect(
+        statistic.getByRole('tabpanel', { name: t('STATISTIC_TAB_BREWS') }),
+      ).toBeVisible();
+      // A chart is drawn once it is wider than an empty canvas.
+      await expect
+        .poll(() =>
+          statistic
+            .locator('canvas')
+            .first()
+            .evaluate((canvas: HTMLCanvasElement) => canvas.width),
+        )
+        .toBeGreaterThan(300);
+
+      const thisMonth = statistic.getByRole('tab', {
+        name: t('STATISTIC_RANGE_THIS_MONTH'),
+      });
+      await thisMonth.focus();
+      await page.keyboard.press('Enter');
+      await expect(thisMonth).toHaveAttribute('aria-selected', 'true');
+    });
+  });
+}
