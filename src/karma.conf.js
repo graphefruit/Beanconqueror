@@ -22,6 +22,7 @@ const NEW_CODE = [
   'src/components/bean-information/bean-information.component.ts',
   'src/components/segment-label/**',
   'src/components/reorder-buttons/**',
+  'src/components/virtual-list/**',
   'src/classes/settings/importedUserProfile.ts',
   'src/classes/settings/settingsSecrets.ts',
   'src/directive/chip-button.directive.ts',
