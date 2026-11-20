@@ -1,26 +1,50 @@
 import { expect, type Locator } from '@playwright/test';
 
 /**
- * Scrolls a list (`ag-virtual-scroll`) to its end and waits until it stays there. The list is as
- * high as the screen until its page, shortly after it opened, fits it to the space below the
- * toolbar in pixels. It renders only the entries near the screen and counts the others with
- * their minimum height; it measures an entry on the scroll after the one that rendered it, so its
- * end moves down again after the last entries appeared. Scrolled until the length no longer
- * changes.
+ * The list of a page: the building block `app-virtual-list`, marked with `data-virtual-list`,
+ * which scrolls the `ion-content` around it and renders only the rows near the screen.
+ */
+export const VIRTUAL_LIST = '[data-virtual-list]';
+
+/**
+ * Scrolls a list to its end and waits until it stays there: the building block (`VIRTUAL_LIST`),
+ * whose `ion-content` scrolls, or a list of `ag-virtual-scroll`, which scrolls itself. A list
+ * counts the rows it has not rendered yet with an estimated height and measures them once they
+ * are rendered, so its end moves after the last rows appeared; scrolled until the length no
+ * longer changes.
+ *
+ * `ag-virtual-scroll` is as high as the screen until its page, shortly after it opened, fits it
+ * to the space below the toolbar in pixels, and measures a row on the scroll after the one that
+ * rendered it.
  */
 export async function scrollToEnd(list: Locator): Promise<void> {
-  await expect
-    .poll(() => list.evaluate((element) => element.style.height))
-    .toMatch(/px$/);
+  const ownScroller = await list.evaluate(
+    (element) => element.localName === 'ag-virtual-scroll',
+  );
+  if (ownScroller) {
+    await expect
+      .poll(() => list.evaluate((element) => element.style.height))
+      .toMatch(/px$/);
+  }
   let previousHeight = -1;
   await expect(async () => {
     const { height, atEnd } = await list.evaluate((element) => {
-      element.scrollTop = element.scrollHeight;
-      element.dispatchEvent(new Event('scroll'));
+      const scroller =
+        element.localName === 'ag-virtual-scroll'
+          ? element
+          : element
+              .closest('ion-content')
+              ?.shadowRoot?.querySelector<HTMLElement>('.inner-scroll');
+      if (!scroller) {
+        throw new Error('The list is not inside an ion-content');
+      }
+      scroller.scrollTop = scroller.scrollHeight;
+      scroller.dispatchEvent(new Event('scroll'));
       return {
-        height: element.scrollHeight,
+        height: scroller.scrollHeight,
         atEnd:
-          element.scrollTop + element.clientHeight >= element.scrollHeight - 1,
+          scroller.scrollTop + scroller.clientHeight >=
+          scroller.scrollHeight - 1,
       };
     });
     const settled = height === previousHeight;

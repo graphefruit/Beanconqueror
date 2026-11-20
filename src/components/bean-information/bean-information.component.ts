@@ -8,6 +8,7 @@ import {
   EventEmitter,
   inject,
   input,
+  output,
   Output,
   ViewChild,
   viewChild,
@@ -160,6 +161,9 @@ export class BeanInformationComponent {
    */
   public readonly bean = input.required<DeepReadonly<IBean>>();
   public readonly beanGroup = input<BeanGroup>();
+  /** Whether the cards of `beanGroup` are shown; the list keeps it. */
+  public readonly groupExpanded = input(false);
+  public readonly groupToggled = output<void>();
   public readonly showActions = input(true);
   public readonly disabled = input(false);
   public readonly collapsed = input(false);
@@ -337,10 +341,7 @@ export class BeanInformationComponent {
   public toggleGroupExpansion(event: Event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    const group = this.beanGroup();
-    if (group) {
-      group.expanded = !group.expanded;
-    }
+    this.groupToggled.emit();
   }
 
   public async internalBeanAction(action: BEAN_ACTION): Promise<void> {

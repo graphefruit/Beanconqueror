@@ -425,28 +425,30 @@ describe('BeanInformationComponent', () => {
     expect(helper.getAllBrewsForThisBean).not.toHaveBeenCalled();
   });
 
-  it('opens and closes the cards of a group', async () => {
+  it('asks to open a group and shows its cards while it is open', async () => {
     const group: BeanGroup = {
       frozenGroupId: 'g',
       beans: [legacyBean(alpha), legacyBean(beans.entries[1] as IBean)],
-      expanded: false,
     };
     const fixture = await render(group.beans[0], { beanGroup: group });
     const element = fixture.nativeElement as HTMLElement;
     const toggle = () =>
       element.querySelector<HTMLElement>('.ion-text-center ion-button');
+    let toggled = 0;
+    fixture.componentInstance.groupToggled.subscribe(() => toggled++);
 
     toggle()?.click();
     await fixture.whenStable();
 
-    expect(group.expanded).toBeTrue();
+    // The list keeps the state, so the card stays closed until it is told.
+    expect(toggled).toBe(1);
+    expect(element.querySelectorAll('bean-information').length).toBe(0);
+
+    fixture.componentRef.setInput('groupExpanded', true);
+    await fixture.whenStable();
+
     expect(element.querySelectorAll('bean-information').length).toBe(1);
     expect(text(fixture)).toContain('Beta');
-
-    toggle()?.click();
-    await fixture.whenStable();
-
-    expect(element.querySelectorAll('bean-information').length).toBe(0);
   });
 
   describe('actions', () => {
@@ -1100,9 +1102,11 @@ describe('BeanInformationComponent', () => {
       const group: BeanGroup = {
         frozenGroupId: 'g',
         beans: [legacyBean(alpha), legacyBean(beans.entries[1] as IBean)],
-        expanded: true,
       };
-      const parent = await render(group.beans[0], { beanGroup: group });
+      const parent = await render(group.beans[0], {
+        beanGroup: group,
+        groupExpanded: true,
+      });
       const fromParent: BeanActionEvent[] = [];
       parent.componentInstance.beanAction.subscribe((value) =>
         fromParent.push(value),

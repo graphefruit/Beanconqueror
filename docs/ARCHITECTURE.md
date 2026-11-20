@@ -1131,16 +1131,26 @@ conditions). With default change detection they run on every cycle. The
 `src/pipes/bean/beanFunction.ts`) were introduced to move some of these calls
 into pure pipes.
 
-### ag-virtual-scroll
+### Virtual lists
 
-Long lists (brews, beans, preparations, grinders, water, green beans, graphs,
-barista mode brews and several selection modals, 16 templates) use the
-third-party `ag-virtual-scroll` (`~1.20.2`, `package.json`). It renders only the
-visible rows, so list tests must scroll to reach entries, and its behaviour with
-dynamic row heights (larger text, tablets) has to be checked when a list
-changes. It updates its rows on scroll events of its own, which do not reach
-an `OnPush` parent: such a parent takes the rows from `(onItemsRender)` into a
-signal, as the bean list does.
+Long lists render only the rows near the screen. The bean list uses the
+building block `app-virtual-list` (`src/components/virtual-list/`) on
+`@tanstack/angular-virtual`: the page's `ion-content` scrolls, every row is
+measured by a `ResizeObserver` (photos, opened groups, larger text, the
+customizing) and its height is kept per key (`itemKey`) while the items are
+rebuilt, so a reload leaves the list where it is. Content marked
+`virtualListHead` (segments, search) stays at the top; the list ends with room
+for the floating add button. `scrollToKey`, `scrollToTop` and
+`anchor()`/`restore()` (pure functions in `virtual-list-anchor.ts`) move it; the
+host is marked `data-virtual-list` for the tests (`e2e/support/virtual-list.ts`).
+
+The other lists (brews, preparations, grinders, water, green beans, graphs,
+barista mode brews and several selection modals) still use the third-party
+`ag-virtual-scroll` (`~1.22.1`, `package.json`) until they move to the building
+block. It updates its rows on scroll events of its own and measures a row only
+on the scroll after the one that rendered it, so list tests must scroll to
+reach entries, and its behaviour with dynamic row heights (larger text,
+tablets) has to be checked when a list changes.
 
 ## 6. Target picture for new code
 

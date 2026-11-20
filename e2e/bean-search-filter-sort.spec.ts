@@ -8,7 +8,6 @@ import {
   beanNames,
   beanSegment,
   dialogsClosed,
-  LIST_HEIGHT_ERROR,
   NO_BEAN_FILTER,
   openBeansTab,
   searchBeans,
@@ -24,8 +23,6 @@ import { readStoredValue } from './support/stored-values';
  * works today. Each segment has its own search text, filter and sort order;
  * filter and sort order are stored, the search text is not.
  */
-
-test.use({ allowedConsoleErrors: [LIST_HEIGHT_ERROR] });
 
 const BY_NAME = [
   BEANS.alpha,

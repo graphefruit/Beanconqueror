@@ -17,15 +17,6 @@ import { readStoredValue } from './stored-values';
 /** The time the bean tests set the browser clock to. */
 export const BEAN_TEST_NOW = BREW_TEST_START;
 
-/**
- * Known defect: when a segment with beans is shown for the first time or the list is collapsed,
- * the list changes its height during Angular's change detection. The development build, which
- * the tests run against, reports that on the console; nothing is visibly wrong. Tests that
- * switch segments or collapse the list allow exactly this message.
- */
-export const LIST_HEIGHT_ERROR =
-  /NG0100: ExpressionChangedAfterItHasBeenCheckedError.*'height'.*AgVirtualScrollComponent/;
-
 /** A bean as the app stores it; only the fields the tests read. */
 export interface StoredBean {
   name: string;

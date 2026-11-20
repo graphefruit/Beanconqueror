@@ -9,7 +9,6 @@ import {
   beanSegment,
   dialogsClosed,
   findBean,
-  LIST_HEIGHT_ERROR,
   NO_BEAN_FILTER,
   openBeansTab,
   searchBeans,
@@ -29,8 +28,6 @@ import { toast } from './support/toast';
  * device a tap on the freeze date opens the date picker; the web build has
  * none and sets the current time instead.
  */
-
-test.use({ allowedConsoleErrors: [LIST_HEIGHT_ERROR] });
 
 /** Milliseconds between a stored date and the time the clock was set to. */
 function sinceTestStart(date: string): number {

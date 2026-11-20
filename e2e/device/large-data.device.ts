@@ -13,6 +13,7 @@ import {
   isOpenBrew,
   type SyntheticDataSet,
 } from '../support/synthetic-data';
+import { VIRTUAL_LIST } from '../support/virtual-list';
 import {
   APKS,
   brewSaved,
@@ -138,7 +139,7 @@ async function measure(series: Series, data: SyntheticDataSet): Promise<void> {
   await tab(page, 'beans').click();
   const beans = await waitUntilSettled(
     page,
-    { selector: 'ag-virtual-scroll bean-information' },
+    { selector: `${VIRTUAL_LIST} bean-information` },
     'input',
   );
   await expect(

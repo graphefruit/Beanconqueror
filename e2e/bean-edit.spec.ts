@@ -9,7 +9,6 @@ import {
   beanNames,
   beanSegment,
   dialogsClosed,
-  LIST_HEIGHT_ERROR,
   longPress,
   saveBean,
   seededBean,
@@ -26,8 +25,6 @@ import { toast } from './support/toast';
  * Characterization of editing a bean as it works today: what "Save" stores,
  * how the dialog is left without saving, and archiving from the dialog.
  */
-
-test.use({ allowedConsoleErrors: [LIST_HEIGHT_ERROR] });
 
 const DISCARD_QUESTION = /Bean information has been changed/;
 

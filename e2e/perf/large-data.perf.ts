@@ -15,6 +15,7 @@ import {
   withBrewsLeftWithoutStandardMill,
   type SyntheticDataSet,
 } from '../support/synthetic-data';
+import { VIRTUAL_LIST } from '../support/virtual-list';
 import { BUDGETS, FIXED_DELAYS, type Budget, type PerfTier } from './budgets';
 import {
   busyNote,
@@ -297,7 +298,7 @@ for (const tier of TIERS) {
       await tabBar(page).getByRole('tab', { name: 'Beans' }).click();
       const beans = await waitUntilSettled(
         page,
-        { selector: 'ag-virtual-scroll bean-information' },
+        { selector: `${VIRTUAL_LIST} bean-information` },
         'input',
       );
       await expect(
@@ -345,11 +346,11 @@ for (const tier of TIERS) {
       await tabBar(page).getByRole('tab', { name: 'Beans' }).click();
       const beans = await waitUntilSettled(
         page,
-        { selector: 'ag-virtual-scroll bean-information' },
+        { selector: `${VIRTUAL_LIST} bean-information` },
         'input',
       );
       await expect(
-        page.locator('ag-virtual-scroll bean-information').first(),
+        page.locator(`${VIRTUAL_LIST} bean-information`).first(),
       ).toHaveId(`bean-${byLastUse[0].uuid}`);
       await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'bean list by last use', { ...beans });

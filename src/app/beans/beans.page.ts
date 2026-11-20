@@ -3,12 +3,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  ElementRef,
-  HostListener,
   inject,
   Signal,
   signal,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -32,7 +30,6 @@ import { addIcons } from 'ionicons';
 import { add, settingsOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import _ from 'lodash';
 
 import { Bean } from '../../classes/bean/bean';
@@ -51,6 +48,11 @@ import {
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { SegmentLabelComponent } from '../../components/segment-label/segment-label.component';
+import { ListAnchor } from '../../components/virtual-list/virtual-list-anchor';
+import {
+  VirtualListComponent,
+  VirtualRowDirective,
+} from '../../components/virtual-list/virtual-list.component';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import { SearchbarNameDirective } from '../../directive/searchbar-name.directive';
 import { BEAN_IMPORT_ACTION } from '../../enums/beans/beanImportAction';
@@ -79,6 +81,7 @@ import { DeepReadonly } from '../../stores/core/read-only';
 import { BeansAddComponent } from './beans-add/beans-add.component';
 
 type BeanSegment = 'open' | 'archive' | 'frozen';
+type BeanRow = Bean | BeanGroup;
 
 function perSegment<T>(create: () => T): Record<BeanSegment, T> {
   return { open: create(), archive: create(), frozen: create() };
@@ -103,8 +106,8 @@ function segmentOf(bean: Bean): BeanSegment {
 }
 
 /** One entry per frozen group that has more than one bean in `beans`. */
-function groupFrozenPortions(beans: Bean[]): (Bean | BeanGroup)[] {
-  const grouped: (Bean | BeanGroup)[] = [];
+function groupFrozenPortions(beans: Bean[]): BeanRow[] {
+  const grouped: BeanRow[] = [];
   const processedUuids = new Set<string>();
 
   for (const bean of beans) {
@@ -120,7 +123,6 @@ function groupFrozenPortions(beans: Bean[]): (Bean | BeanGroup)[] {
       grouped.push({
         frozenGroupId: bean.frozenGroupId,
         beans: groupMembers,
-        expanded: false,
       });
       groupMembers.forEach((b) => processedUuids.add(b.config.uuid));
     } else {
@@ -141,7 +143,8 @@ function groupFrozenPortions(beans: Bean[]): (Bean | BeanGroup)[] {
     SegmentLabelComponent,
     RouterLink,
     NgTemplateOutlet,
-    AgVirtualScrollComponent,
+    VirtualListComponent,
+    VirtualRowDirective,
     BeanInformationComponent,
     TranslatePipe,
     HeaderComponent,
@@ -179,18 +182,8 @@ export class BeansPage {
   private readonly uiAlert = inject(UIAlert);
   private readonly uiFileHelper = inject(UIFileHelper);
 
-  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
-  public openScroll: AgVirtualScrollComponent;
-  @ViewChild('archivedScroll', {
-    read: AgVirtualScrollComponent,
-    static: false,
-  })
-  public archivedScroll: AgVirtualScrollComponent;
-  @ViewChild('frozenScroll', { read: AgVirtualScrollComponent, static: false })
-  public frozenScroll: AgVirtualScrollComponent;
-
-  @ViewChild('beanContent', { read: ElementRef })
-  public beanContent: ElementRef;
+  private readonly list =
+    viewChild<VirtualListComponent<BeanRow>>(VirtualListComponent);
 
   public readonly segment = signal<BeanSegment>('open');
   public readonly showFrozen = signal(false);
@@ -243,16 +236,33 @@ export class BeansPage {
   });
 
   /** The entries of each list after search, filter and sort. */
-  public readonly rows: Record<BeanSegment, Signal<(Bean | BeanGroup)[]>> = {
+  public readonly rows: Record<BeanSegment, Signal<BeanRow[]>> = {
     open: this.rowsOf('open'),
     archive: this.rowsOf('archive'),
     frozen: this.rowsOf('frozen'),
   };
 
-  /** The entries the virtual scroll of each list renders. */
-  public readonly renderedRows = perSegment(() =>
-    signal<(Bean | BeanGroup)[]>([]),
+  public readonly segmentShown = computed(() => {
+    switch (this.segment()) {
+      case 'frozen':
+        return this.showFrozen();
+      case 'archive':
+        return this.showArchive();
+      default:
+        return true;
+    }
+  });
+
+  /** The entries of the segment shown. */
+  public readonly shownRows = computed(() =>
+    this.segmentShown() ? this.rows[this.segment()]() : [],
   );
+
+  /** The frozen groups whose portions are shown, until the app closes. */
+  public readonly openGroups = signal<ReadonlySet<string>>(new Set());
+
+  public readonly rowKey = (row: BeanRow): string =>
+    'beans' in row ? row.frozenGroupId : row.config.uuid;
 
   public readonly isCollapseActive = computed(() =>
     this.collapsed[this.segment()](),
@@ -292,30 +302,12 @@ export class BeansPage {
     );
   });
 
-  private savedScrollPositions: {
-    open: number;
-    archive: number;
-    frozen: number;
-    openHeights: number[];
-    archiveHeights: number[];
-    frozenHeights: number[];
-  } = {
-    open: 0,
-    archive: 0,
-    frozen: 0,
-    openHeights: [],
-    archiveHeights: [],
-    frozenHeights: [],
-  };
-
-  private forceScrollToTop = false;
-
-  private lastInteractedBeanId: string = null;
+  /** Where each segment was left, to return to it. */
+  private readonly anchors = perSegment<ListAnchor | null>(() => null);
+  private shownSegment: BeanSegment = 'open';
 
   public constructor() {
     addIcons({ add, settingsOutline });
-    // Whoever changed a bean: the scroll positions have to be saved before
-    // the lists get their new entries.
     this.beanStore.changes
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.loadBeans());
@@ -340,7 +332,7 @@ export class BeansPage {
     this.loadBeans();
   }
 
-  private rowsOf(segment: BeanSegment): Signal<(Bean | BeanGroup)[]> {
+  private rowsOf(segment: BeanSegment): Signal<BeanRow[]> {
     return computed(() => {
       const filter = this.filter[segment]();
       if (filter === undefined) {
@@ -364,7 +356,17 @@ export class BeansPage {
     this.__saveCollapseFilter();
 
     this.reloads.update((count) => count + 1);
-    this.retriggerScroll();
+    this.list()?.scrollToTop();
+  }
+
+  public toggleGroup(frozenGroupId: string): void {
+    this.openGroups.update((groups) => {
+      const next = new Set(groups);
+      if (!next.delete(frozenGroupId)) {
+        next.add(frozenGroupId);
+      }
+      return next;
+    });
   }
 
   private async __saveCollapseFilter() {
@@ -374,68 +376,34 @@ export class BeansPage {
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
 
-  public loadBeans(resetScroll: boolean = false): void {
-    if (resetScroll) {
-      this.resetScrollPosition();
-    } else {
-      this.saveScrollPositions();
-    }
-
+  public loadBeans(): void {
     this.reloads.update((count) => count + 1);
-    this.retriggerScroll();
-  }
-
-  private resetScrollPosition(): void {
-    this.forceScrollToTop = true;
-    const segment = this.segment();
-    this.savedScrollPositions[segment] = 0;
-    this.savedScrollPositions[`${segment}Heights`] = [];
-  }
-
-  private saveScrollPositions(): void {
-    if (this.openScroll) {
-      this.savedScrollPositions.open = this.openScroll.currentScroll;
-      const hOpen = (this.openScroll as any).previousItemsHeight;
-      if (hOpen && hOpen.length > 0 && hOpen.some((h) => h !== null)) {
-        this.savedScrollPositions.openHeights = [...hOpen];
-      }
-    }
-    if (this.archivedScroll) {
-      this.savedScrollPositions.archive = this.archivedScroll.currentScroll;
-      const hArc = (this.archivedScroll as any).previousItemsHeight;
-      if (hArc && hArc.length > 0 && hArc.some((h) => h !== null)) {
-        this.savedScrollPositions.archiveHeights = [...hArc];
-      }
-    }
-    if (this.frozenScroll) {
-      this.savedScrollPositions.frozen = this.frozenScroll.currentScroll;
-      const hFroz = (this.frozenScroll as any).previousItemsHeight;
-      if (hFroz && hFroz.length > 0 && hFroz.some((h) => h !== null)) {
-        this.savedScrollPositions.frozenHeights = [...hFroz];
-      }
-    }
   }
 
   public segmentChanged() {
-    this.uiSearchText.set(this.searchText[this.segment()]());
-    this.saveScrollPositions();
-    this.retriggerScroll();
-  }
-
-  public async beanAction(event?: BeanActionEvent): Promise<void> {
-    if (event && event.length > 1) {
-      const bean = event[1];
-      if (bean && bean.config && bean.config.uuid) {
-        this.lastInteractedBeanId = bean.config.uuid;
-      }
+    const list = this.list();
+    if (list) {
+      this.anchors[this.shownSegment] = list.anchor();
     }
-    this.loadBeans();
+    this.shownSegment = this.segment();
+    this.uiSearchText.set(this.searchText[this.segment()]());
+    list?.restore(this.anchors[this.shownSegment]);
   }
 
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    this.retriggerScroll();
+  /** After an action on a card the list stays with its bean. */
+  public beanAction(event?: BeanActionEvent): void {
+    this.loadBeans();
+    const uuid = event?.[1]?.config?.uuid;
+    const row = uuid
+      ? this.rows[this.segment()]().find((entry) =>
+          'beans' in entry
+            ? entry.beans.some((bean) => bean.config.uuid === uuid)
+            : entry.config.uuid === uuid,
+        )
+      : undefined;
+    if (row) {
+      this.list()?.scrollToKey(this.rowKey(row));
+    }
   }
 
   public async showSort() {
@@ -448,7 +416,8 @@ export class BeansPage {
 
       await this.__saveBeanFilter();
 
-      this.loadBeans(true);
+      this.loadBeans();
+      this.list()?.scrollToTop();
     }
   }
 
@@ -462,14 +431,14 @@ export class BeansPage {
       this.filter[segment].set(newFilter);
       await this.__saveBeanFilter();
 
-      this.loadBeans(true);
+      this.loadBeans();
+      this.list()?.scrollToTop();
     }
   }
 
   public research() {
     this.searchText[this.segment()].set(this.uiSearchText());
-    this.resetScrollPosition();
-    this.retriggerScroll();
+    this.list()?.scrollToTop();
   }
 
   public async add() {
@@ -969,156 +938,6 @@ export class BeansPage {
       settings.ai_provider !== AI_PROVIDER_ENUM.APPLE_INTELLIGENCE &&
       settings.ai_provider !== AI_PROVIDER_ENUM.NO_PROVIDER
     );
-  }
-
-  private retriggerScrollTimeout: any;
-
-  private retriggerScroll() {
-    if (this.retriggerScrollTimeout) {
-      clearTimeout(this.retriggerScrollTimeout);
-    }
-    this.retriggerScrollTimeout = setTimeout(() => {
-      const el = this.beanContent?.nativeElement;
-
-      if (!el || el.offsetHeight === 0) {
-        return; // Page is hidden, avoid clearing state
-      }
-
-      const segment = this.segment();
-      let scrollComponent: AgVirtualScrollComponent;
-      if (segment === 'open') {
-        scrollComponent = this.openScroll;
-        if (this.savedScrollPositions.openHeights?.length) {
-          (scrollComponent as any).previousItemsHeight = [
-            ...this.savedScrollPositions.openHeights,
-          ];
-        }
-      } else if (segment === 'archive') {
-        scrollComponent = this.archivedScroll;
-        if (this.savedScrollPositions.archiveHeights?.length) {
-          (scrollComponent as any).previousItemsHeight = [
-            ...this.savedScrollPositions.archiveHeights,
-          ];
-        }
-      } else if (segment === 'frozen') {
-        scrollComponent = this.frozenScroll;
-        if (this.savedScrollPositions.frozenHeights?.length) {
-          (scrollComponent as any).previousItemsHeight = [
-            ...this.savedScrollPositions.frozenHeights,
-          ];
-        }
-      }
-
-      if (!scrollComponent) {
-        return;
-      }
-
-      scrollComponent.el.style.height =
-        el.offsetHeight - scrollComponent.el.offsetTop + 'px';
-
-      // HACK: Manually trigger component refresh to work around initialization
-      //       bug. For some reason the scroll component sees its own height as
-      //       0 during initialization, which causes it to render 0 items. As
-      //       no changes to the component occur after initialization, no
-      //       re-render ever occurs. This forces one. The root cause for
-      //       this issue is currently unknown.
-      if (scrollComponent.items.length === 0) {
-        scrollComponent.refreshData();
-      }
-
-      let targetScrollTop = -1;
-      let snapToDomId: string = null;
-
-      if (this.forceScrollToTop) {
-        targetScrollTop = 0;
-        this.forceScrollToTop = false;
-        this.lastInteractedBeanId = null;
-      } else if (this.lastInteractedBeanId) {
-        const viewArray = this.rows[segment]();
-        const index = viewArray.findIndex((item) => {
-          if (item['beans']) {
-            return item['beans'].some(
-              (b) => b.config.uuid === this.lastInteractedBeanId,
-            );
-          } else {
-            return item['config']?.uuid === this.lastInteractedBeanId;
-          }
-        });
-
-        if (index > -1) {
-          const item = viewArray[index];
-          if (item['beans']) {
-            snapToDomId = 'bean-group-' + item['frozenGroupId'];
-          } else {
-            snapToDomId = 'bean-' + item['config'].uuid;
-          }
-
-          const rowHeight = this.isCollapseActive() ? 60 : 210;
-          const heights = (scrollComponent as any).previousItemsHeight;
-
-          let exactOffset = 0;
-          if (heights && heights.length > 0) {
-            for (let i = 0; i < index; i++) {
-              exactOffset += heights[i] ? heights[i] : rowHeight;
-            }
-          } else {
-            exactOffset = index * rowHeight;
-          }
-
-          const viewportTop = this.savedScrollPositions[segment];
-          const viewportBottom = viewportTop + el.offsetHeight;
-
-          // Do not aggressively force an element to the uppermost viewport bounds if it is reasonably contained on-screen!
-          if (
-            exactOffset >= viewportTop &&
-            exactOffset < viewportBottom - rowHeight
-          ) {
-            targetScrollTop = viewportTop;
-          } else {
-            targetScrollTop = exactOffset;
-          }
-        }
-        this.lastInteractedBeanId = null;
-      }
-
-      if (targetScrollTop === -1 && this.savedScrollPositions[segment] > 0) {
-        targetScrollTop = this.savedScrollPositions[segment];
-      }
-
-      if (targetScrollTop >= 0) {
-        const contentHeightEl = scrollComponent.el.querySelector(
-          '.content-height',
-        ) as HTMLElement;
-        if (contentHeightEl) {
-          const h = (scrollComponent as any).previousItemsHeight;
-          const rH = this.isCollapseActive() ? 60 : 210;
-          let cHeight = 0;
-          if (h && h.length > 0) {
-            cHeight = h.reduce((sum, val) => sum + (val ? val : rH), 0);
-          } else {
-            cHeight =
-              ((scrollComponent as any).originalItems?.length || 0) * rH;
-          }
-          contentHeightEl.style.height = cHeight + 'px';
-        }
-        scrollComponent.el.scrollTop = targetScrollTop;
-      }
-
-      setTimeout(() => {
-        const elScroll = scrollComponent.el;
-        elScroll.dispatchEvent(new Event('scroll'));
-
-        // Target the absolute DOM element coordinates
-        if (snapToDomId) {
-          setTimeout(() => {
-            const domNode = document.getElementById(snapToDomId);
-            if (domNode) {
-              domNode.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-          }, 50);
-        }
-      }, 15);
-    }, 250);
   }
 
   private async __saveBeanFilter() {

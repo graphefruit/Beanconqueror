@@ -3,11 +3,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import { axe } from './support/axe';
 import { BEANS } from './support/bean-data';
-import {
-  LIST_HEIGHT_ERROR,
-  showBeanSegment,
-  startWithBeans,
-} from './support/beans';
+import { showBeanSegment, startWithBeans } from './support/beans';
 import {
   headingOutline,
   headingsInButtons,
@@ -443,8 +439,6 @@ async function addNamed(
 }
 
 test.describe('bean groups', () => {
-  test.use({ allowedConsoleErrors: [LIST_HEIGHT_ERROR] });
-
   test('the beans of a group are level-3 headings below the group card', async ({
     page,
   }) => {

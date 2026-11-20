@@ -4,7 +4,7 @@ import { expect, test } from './fixtures';
 import { openFromProfile } from './support/profile';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
-import { isUncovered, scrollToEnd } from './support/virtual-list';
+import { isUncovered, scrollToEnd, VIRTUAL_LIST } from './support/virtual-list';
 
 /**
  * Every list adds its entries from a floating button at the bottom right, as
@@ -84,11 +84,11 @@ function tabBar(page: Page) {
   });
 }
 
-/** The list scrolls itself and renders only the cards in view. */
+/** The list renders only the cards in view. */
 function listOf(page: Page, list: List): Locator {
   return page
     .locator(list.card.split(' ')[0])
-    .locator('ag-virtual-scroll')
+    .locator(`ag-virtual-scroll, ${VIRTUAL_LIST}`)
     .first();
 }
 

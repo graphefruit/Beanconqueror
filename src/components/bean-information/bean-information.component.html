@@ -420,11 +420,11 @@
     }
     @if (beanGroup()) {
     <div class="ion-text-center">
-      <ion-button fill="clear" size="small" [attr.aria-label]="'A11Y.BEANS_OF_GROUP' | translate: { name: bean.name }" [attr.aria-expanded]="beanGroup().expanded" (click)="toggleGroupExpansion($event)">
-        <ion-icon aria-hidden="true" [name]="beanGroup().expanded ? 'chevron-up-outline' : 'chevron-down-outline'" />
+      <ion-button fill="clear" size="small" [attr.aria-label]="'A11Y.BEANS_OF_GROUP' | translate: { name: bean.name }" [attr.aria-expanded]="groupExpanded()" (click)="toggleGroupExpansion($event)">
+        <ion-icon aria-hidden="true" [name]="groupExpanded() ? 'chevron-up-outline' : 'chevron-down-outline'" />
       </ion-button>
     </div>
-    @if (beanGroup().expanded) {
+    @if (groupExpanded()) {
     <div class="group-children">
       @for (childBean of beanGroup().beans; track childBean; let i = $index) {
       @if (i > 0) {

@@ -6,119 +6,59 @@
     </ion-button>
   </app-header>
 </ion-header>
-<ion-content #beanContent>
-
-  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
-    <ion-segment-button value="open">
-      <ion-label>
-        <app-segment-label [label]="'PAGE_BEANS_LIST_OBTAINABLE' | translate" [shown]="rows.open().length" [total]="beanCount().open" />
-      </ion-label>
-    </ion-segment-button>
-    @if (showFrozen()) {
-    <ion-segment-button value="frozen">
-      <ion-label>
-        <app-segment-label [label]="'FROZEN_BEANS' | translate" [shown]="rows.frozen().length" [total]="beanCount().frozen" />
-      </ion-label>
-    </ion-segment-button>
-    }
-    @if (showArchive()) {
-    <ion-segment-button value="archive">
-      <ion-label>
-        <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="rows.archive().length" [total]="beanCount().archive" />
-      </ion-label>
-    </ion-segment-button>
-    }
-  </ion-segment>
-  @switch (segment()) {
-  @case ('open') {
-  @if (showToolbar()) {
-  <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-    <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
-  </div>
-  }
-  @if (rows.open().length == 0) {
-  <div class="ion-padding ion-text-center">
-    <div>
-      <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-beans" size="large" />
+<ion-content>
+  <app-virtual-list [items]="shownRows()" [itemKey]="rowKey" [estimateSize]="isCollapseActive() ? 60 : 210">
+    <div virtualListHead>
+      <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
+        <ion-segment-button value="open">
+          <ion-label>
+            <app-segment-label [label]="'PAGE_BEANS_LIST_OBTAINABLE' | translate" [shown]="rows.open().length" [total]="beanCount().open" />
+          </ion-label>
+        </ion-segment-button>
+        @if (showFrozen()) {
+        <ion-segment-button value="frozen">
+          <ion-label>
+            <app-segment-label [label]="'FROZEN_BEANS' | translate" [shown]="rows.frozen().length" [total]="beanCount().frozen" />
+          </ion-label>
+        </ion-segment-button>
+        }
+        @if (showArchive()) {
+        <ion-segment-button value="archive">
+          <ion-label>
+            <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="rows.archive().length" [total]="beanCount().archive" />
+          </ion-label>
+        </ion-segment-button>
+        }
+      </ion-segment>
+      @if (segmentShown() && showToolbar()) {
+      <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+        <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
+      </div>
+      }
     </div>
-    <div class="text-color-inactive ion-margin-top">
-      {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
+    @if (segmentShown() && shownRows().length === 0) {
+    <div class="ion-padding ion-text-center">
+      <div>
+        <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-beans" size="large" />
+      </div>
+      <div class="text-color-inactive ion-margin-top">
+        @switch (segment()) {
+        @case ('open') { {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}} }
+        @case ('frozen') { {{"PAGE_BEANS_LIST_YOU_GOT_NO_FROZEN_BEANS" | translate}} }
+        @case ('archive') { {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}} }
+        }
+      </div>
     </div>
-  </div>
-  }
-  <ag-virtual-scroll #openScroll [items]="rows.open()" [height]="'100vh'" class="clear-of-fab" [min-row-height]="isCollapseActive()?60:210"
-    (onItemsRender)="renderedRows.open.set($event.items)">
-    @for (item of renderedRows.open(); track item) {
-    @if ('beans' in item) {
-    <bean-information [id]="'bean-group-' + item.frozenGroupId" [collapsed]='isCollapseActive()' (beanAction)="beanAction($event)" [bean]="item.beans[0]"
-      [beanGroup]="item" />
-    } @else {
-    <bean-information [id]="'bean-' + item.config.uuid" [collapsed]='isCollapseActive()' (beanAction)="beanAction($event)" [bean]="item" />
     }
-    }
-  </ag-virtual-scroll>
-  }
-  @case ('frozen') {
-  @if (showFrozen()) {
-  @if (showToolbar()) {
-  <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-    <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
-  </div>
-  }
-  @if (rows.frozen().length == 0) {
-  <div class="ion-padding ion-text-center">
-    <div>
-      <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-beans" size="large" />
-    </div>
-    <div class="text-color-inactive ion-margin-top">
-      {{"PAGE_BEANS_LIST_YOU_GOT_NO_FROZEN_BEANS" | translate}}
-    </div>
-  </div>
-  }
-  <ag-virtual-scroll #frozenScroll [items]="rows.frozen()" [height]="'100vh'" class="clear-of-fab"
-    [min-row-height]="isCollapseActive()?60:210" (onItemsRender)="renderedRows.frozen.set($event.items)">
-    @for (item of renderedRows.frozen(); track item) {
-    @if ('beans' in item) {
-    <bean-information [id]="'bean-group-' + item.frozenGroupId" [collapsed]='isCollapseActive()' (beanAction)="beanAction($event)" [bean]="item.beans[0]"
-      [beanGroup]="item" />
-    } @else {
-    <bean-information [id]="'bean-' + item.config.uuid" [collapsed]='isCollapseActive()' (beanAction)="beanAction($event)" [bean]="item" />
-    }
-    }
-  </ag-virtual-scroll>
-  }
-  }
-  @case ('archive') {
-  @if (showArchive()) {
-  @if (showToolbar()) {
-  <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-    <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
-  </div>
-  }
-  @if (rows.archive().length == 0) {
-  <div class="ion-padding ion-text-center">
-    <div>
-      <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-beans" size="large" />
-    </div>
-    <div class="text-color-inactive ion-margin-top">
-      {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
-    </div>
-  </div>
-  }
-  <ag-virtual-scroll #archivedScroll [items]="rows.archive()" [height]="'100vh'" class="clear-of-fab"
-    [min-row-height]="isCollapseActive()?60:210" (onItemsRender)="renderedRows.archive.set($event.items)">
-    @for (item of renderedRows.archive(); track item) {
-    @if ('beans' in item) {
-    <bean-information [id]="'bean-group-' + item.frozenGroupId" [collapsed]='isCollapseActive()' (beanAction)="beanAction($event)" [bean]="item.beans[0]"
-      [beanGroup]="item" />
-    } @else {
-    <bean-information [id]="'bean-' + item.config.uuid" [collapsed]='isCollapseActive()' (beanAction)="beanAction($event)" [bean]="item" />
-    }
-    }
-  </ag-virtual-scroll>
-  }
-  }
-  }
+    <ng-template [appVirtualRow]="shownRows()" let-item>
+      @if ('beans' in item) {
+      <bean-information [id]="'bean-group-' + item.frozenGroupId" [collapsed]="isCollapseActive()" (beanAction)="beanAction($event)" [bean]="item.beans[0]"
+        [beanGroup]="item" [groupExpanded]="openGroups().has(item.frozenGroupId)" (groupToggled)="toggleGroup(item.frozenGroupId)" />
+      } @else {
+      <bean-information [id]="'bean-' + item.config.uuid" [collapsed]="isCollapseActive()" (beanAction)="beanAction($event)" [bean]="item" />
+      }
+    </ng-template>
+  </app-virtual-list>
   <!-- Last in the page: it floats over the bottom right corner of the list. -->
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button color="accent" [attr.aria-label]="'ADD_BEAN' | translate" (click)="add()">

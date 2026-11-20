@@ -6,7 +6,6 @@ import {
   beanCards,
   beanSegment,
   dialogsClosed,
-  LIST_HEIGHT_ERROR,
   NO_BEAN_FILTER,
   openBeansTab,
   showBeanSegment,
@@ -22,8 +21,6 @@ import { toast } from './support/toast';
  * Characterization of archiving a bean and bringing it back as it works
  * today, including what happens to the filters of the bean list.
  */
-
-test.use({ allowedConsoleErrors: [LIST_HEIGHT_ERROR] });
 
 const NO_FILTERS = {
   OPEN: NO_BEAN_FILTER,

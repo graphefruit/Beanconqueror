@@ -311,19 +311,8 @@
       "count": 1
     }
   },
-  "src/app/beans/beans.page.html": {
-    "@angular-eslint/template/eqeqeq": {
-      "count": 3
-    }
-  },
   "src/app/beans/beans.page.ts": {
     "@typescript-eslint/no-floating-promises": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-return": {
       "count": 1
     },
     "no-empty": {

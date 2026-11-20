@@ -1,14 +1,16 @@
 import { expect, test } from './fixtures';
-import { BEANS } from './support/bean-data';
+import { BEANS, type BeanTestSettings } from './support/bean-data';
 import {
   beanAction,
   beanCard,
   beanCards,
   beanCardValue,
+  beanField,
   beanNames,
   beanSegment,
-  LIST_HEIGHT_ERROR,
+  dialogsClosed,
   openBeansTab,
+  saveBean,
   showBeanSegment,
   startWithBeans,
   storedBean,
@@ -16,7 +18,7 @@ import {
 } from './support/beans';
 import { completeFirstRun } from './support/first-run';
 import { readStoredValue } from './support/stored-values';
-import { scrollToEnd } from './support/virtual-list';
+import { isUncovered, scrollToEnd, VIRTUAL_LIST } from './support/virtual-list';
 
 /**
  * Characterization of the bean list as it works today: the three segments
@@ -24,8 +26,6 @@ import { scrollToEnd } from './support/virtual-list';
  * frozen portions and collapsing. The list only renders the cards near the
  * screen, so the order is read from the collapsed list.
  */
-
-test.use({ allowedConsoleErrors: [LIST_HEIGHT_ERROR] });
 
 // One toggle button: pressed while the cards are collapsed.
 const collapse = { name: 'Collapse bean list items', pressed: false };
@@ -166,15 +166,20 @@ test('frozen portions of one bag share a card that opens to show them', async ({
     group.getByRole('button', { name: /^Options for / }),
   ).toHaveCount(3);
 
-  // Any action on a card loads the list again, which closes the group.
+  // An action on a card loads the list again; the group stays open.
   await beanAction(page, BEANS.frozen, 'Favourite');
-  await expect(
-    page.getByRole('button', { name: /^Beans in the group / }),
-  ).toHaveAttribute('aria-expanded', 'false');
   await expect(
     beanCard(page, BEANS.frozen).getByRole('img', { name: 'Favourite' }),
   ).toBeVisible();
-  await expect(beanCards(page)).toHaveCount(2);
+  await expect(
+    page.getByRole('button', { name: /^Beans in the group / }),
+  ).toHaveAttribute('aria-expanded', 'true');
+  await expect(beanCards(page)).toHaveCount(4);
+
+  // So it does in another segment and back.
+  await showBeanSegment(page, 'Available');
+  await showBeanSegment(page, 'Frozen');
+  await expect(beanCards(page)).toHaveCount(4);
 });
 
 test('archived beans are listed in the archive only', async ({ page }) => {
@@ -253,9 +258,7 @@ test('the list stays where it is after a card action and returns to the top for 
 
   // The last card; the list only renders the cards near the screen.
   const last = beanCard(page, BEANS.portionSource);
-  await scrollToEnd(
-    page.locator('ag-virtual-scroll').filter({ visible: true }),
-  );
+  await scrollToEnd(page.locator(VIRTUAL_LIST).filter({ visible: true }));
   await expect(last).toBeInViewport();
   await expect(beanCard(page, BEANS.alpha)).toHaveCount(0);
 
@@ -267,4 +270,161 @@ test('the list stays where it is after a card action and returns to the top for 
 
   await page.getByRole('searchbox').fill('a');
   await expect(beanCard(page, BEANS.alpha)).toBeInViewport();
+});
+
+test('the list stays with the bean after it was edited, frozen or archived', async ({
+  page,
+}) => {
+  await startWithBeans(page, { extraBeans: 30 });
+  await scrollToEnd(page.locator(VIRTUAL_LIST).filter({ visible: true }));
+  // Third from the end, just above the screen.
+  const blend = beanCard(page, BEANS.blend);
+  await blend.scrollIntoViewIfNeeded();
+  await expect(blend).toBeInViewport();
+
+  await beanAction(page, BEANS.blend, 'Edit');
+  await beanField(page, 'Weight').fill('900');
+  await beanField(page, 'Weight').blur();
+  await saveBean(page);
+  await expect(beanCardValue(blend, 'Consumed')).toHaveText(/of 900g/);
+  await expect(blend).toBeInViewport();
+  await expect(beanCard(page, BEANS.alpha)).toHaveCount(0);
+
+  await beanAction(page, BEANS.blend, 'Freeze coffee bean');
+  await beanField(page, 'Edit freeze date').click();
+  await expect(beanField(page, 'Edit freeze date')).toHaveValue('01.03.2026');
+  await beanField(page, 'Freeze partial bag (g)').fill('100');
+  await beanField(page, 'Freeze partial bag (g)').blur();
+  await page.getByRole('button', { name: 'Add single frozen bag' }).click();
+  await page.getByRole('button', { name: 'Create beans' }).click();
+  await page.getByRole('button', { name: 'Back' }).click();
+  await dialogsClosed(page);
+  await expect(beanSegment(page, 'Frozen')).toHaveAccessibleName(
+    tabName('Frozen ( 3 / 5 )'),
+  );
+  await expect(blend).toBeInViewport();
+  await expect(beanCard(page, BEANS.alpha)).toHaveCount(0);
+
+  // A bean that leaves the list leaves its neighbours on the screen.
+  await beanAction(page, BEANS.thawed, 'Archive');
+  await page.getByRole('button', { name: 'Archive', exact: true }).click();
+  await dialogsClosed(page);
+  await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
+    tabName('Available ( 36 )'),
+  );
+  await expect(beanCard(page, BEANS.thawed)).toHaveCount(0);
+  await expect(beanCard(page, BEANS.portionSource)).toBeInViewport();
+  await expect(beanCard(page, BEANS.alpha)).toHaveCount(0);
+});
+
+test('each segment is shown where it was left', async ({ page }) => {
+  await startWithBeans(page, { extraBeans: 30 });
+  await scrollToEnd(page.locator(VIRTUAL_LIST).filter({ visible: true }));
+  await expect(beanCard(page, BEANS.portionSource)).toBeInViewport();
+
+  await showBeanSegment(page, 'Archive');
+  await expect(beanCard(page, BEANS.archived)).toBeInViewport();
+  await showBeanSegment(page, 'Available');
+  await expect(beanCard(page, BEANS.portionSource)).toBeInViewport();
+  await expect(beanCard(page, BEANS.alpha)).toHaveCount(0);
+
+  // So is the list after another tab.
+  await page.getByRole('tab', { name: 'Home', exact: true }).click();
+  await openBeansTab(page);
+  await expect(beanCard(page, BEANS.portionSource)).toBeInViewport();
+});
+
+test('with all fields on the cards the last bean can be reached and tapped, collapsed or not', async ({
+  page,
+}) => {
+  const allFields = Object.fromEntries(
+    [
+      'buyDate',
+      'roast_range',
+      'url',
+      'ean_article_number',
+      'cupping_points',
+      'decaffeinated',
+      'bean_information',
+      'country',
+      'region',
+      'farm',
+      'farmer',
+      'elevation',
+      'harvest_time',
+      'variety',
+      'processing',
+      'certification',
+      'percentage',
+      'purchasing_price',
+      'fob_price',
+      'bestDate',
+      'openDate',
+      'co2e_kg',
+    ].map((field) => [field, true]),
+  ) as BeanTestSettings['bean_visible_list_view_parameters'];
+  await startWithBeans(page, {
+    extraBeans: 30,
+    settings: { bean_visible_list_view_parameters: allFields },
+  });
+  const list = page.locator(VIRTUAL_LIST).filter({ visible: true });
+  const last = beanCard(page, BEANS.portionSource);
+  const add = page.getByRole('button', { name: 'Add bean' }).filter({
+    visible: true,
+  });
+  const options = last.getByRole('button', { name: /^Options for / }).first();
+
+  for (const toggle of [collapse, expand]) {
+    await scrollToEnd(list);
+    await expect(last).toBeInViewport();
+    await expect.poll(() => isUncovered(options)).toBe(true);
+    await expect(async () => {
+      const button = (await add.boundingBox())!;
+      const card = (await last.boundingBox())!;
+      expect(card.y + card.height).toBeLessThanOrEqual(button.y);
+    }).toPass();
+
+    await page.getByRole('button', toggle).click();
+    // Collapsing starts the list from the top.
+    await expect(beanCard(page, BEANS.alpha)).toBeInViewport();
+  }
+  await scrollToEnd(list);
+  await expect(last).toBeInViewport();
+  await expect.poll(() => isUncovered(options)).toBe(true);
+});
+
+test('a photo that loads late moves the cards below it', async ({
+  page,
+  baseURL,
+}) => {
+  const photoUrl = `${baseURL}/assets/img/empirical_water_spring.png`;
+  await page.route(photoUrl, async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await route.continue();
+  });
+  await startWithBeans(page, { photoUrl });
+  const blend = beanCard(page, BEANS.blend);
+  // The list renders the card once it is near the screen.
+  await expect(async () => {
+    await page
+      .locator(VIRTUAL_LIST)
+      .filter({ visible: true })
+      .evaluate((list) => {
+        list
+          .closest('ion-content')
+          ?.shadowRoot?.querySelector('.inner-scroll')
+          ?.scrollBy(0, 300);
+      });
+    await expect(blend).toHaveCount(1, { timeout: 200 });
+  }).toPass();
+  await expect(blend.locator('async-image').getByRole('img')).toBeVisible();
+
+  // The card after it, in the order by name.
+  const next = beanCard(page, BEANS.thawed);
+  await blend.evaluate((card) => card.scrollIntoView());
+  await expect(async () => {
+    const above = (await blend.boundingBox())!;
+    const below = (await next.boundingBox())!;
+    expect(below.y).toBeGreaterThanOrEqual(above.y + above.height);
+  }).toPass();
 });
