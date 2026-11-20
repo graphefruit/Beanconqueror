@@ -408,8 +408,12 @@ for (const language of ['en', 'de'] as const) {
       await expect(steps).toHaveAccessibleName(
         t('A11Y.STEP_OF', { step: '2', count: '5' }),
       );
+      // The focused heading says the position: phones do not say the group.
       await expect(
-        steps.getByRole('heading', { name: t('WELCOME_PAGE_BEAN_TITLE') }),
+        steps.getByRole('heading', {
+          name: `${t('A11Y.STEP_OF', { step: '2', count: '5' })}, ${t('WELCOME_PAGE_BEAN_TITLE')}`,
+          exact: true,
+        }),
       ).toBeFocused();
 
       await steps.getByRole('button', { name: t('SKIP') }).focus();
