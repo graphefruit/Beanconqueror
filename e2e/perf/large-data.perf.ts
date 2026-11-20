@@ -113,7 +113,7 @@ async function startWithData(
   await page.goto('/');
   const start = await waitUntilSettled(
     page,
-    { selector: 'ion-card-title', text: String(tier) },
+    { selector: '.card-title-text', text: String(tier) },
     'navigation',
   );
   return { data, start };
@@ -395,7 +395,7 @@ for (const tier of TIERS) {
       // Bean and brews are gone after a restart as well.
       await page.goto('/');
       await expect(
-        page.locator('ion-card-title', {
+        page.locator('.card-title-text', {
           hasText: String(tier - BREWS_OF_DELETED_BEAN),
         }),
       ).toBeVisible({ timeout: 120_000 });
@@ -443,7 +443,7 @@ for (const tier of TIERS) {
       // Grinder and brews are gone after a restart as well.
       await page.goto('/');
       await expect(
-        page.locator('ion-card-title', { hasText: String(tier - brews) }),
+        page.locator('.card-title-text', { hasText: String(tier - brews) }),
       ).toBeVisible({ timeout: 120_000 });
     });
 
@@ -500,7 +500,7 @@ for (const tier of TIERS) {
       // After a restart all brews are still there and the water is gone.
       await page.goto('/');
       await expect(
-        page.locator('ion-card-title', { hasText: String(tier) }),
+        page.locator('.card-title-text', { hasText: String(tier) }),
       ).toBeVisible({ timeout: 120_000 });
       const waters = await readStoredValue<{ config: { uuid: string } }[]>(
         page,
@@ -651,7 +651,7 @@ for (const tier of TIERS) {
       // The imported brews are there after a restart.
       await page.goto('/');
       await expect(
-        page.locator('ion-card-title', { hasText: String(tier) }),
+        page.locator('.card-title-text', { hasText: String(tier) }),
       ).toBeVisible({ timeout: 120_000 });
     });
   });

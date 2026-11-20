@@ -311,7 +311,7 @@ export interface StartTiming {
   shownOnConnect: boolean;
 }
 
-/** Waits until an `ion-card-title` reads exactly `text` (the brew count on the home screen). */
+/** Waits until a `.card-title-text` reads exactly `text` (the brew count on the home screen). */
 export async function waitForStart(
   page: Page,
   text: string,
@@ -321,7 +321,7 @@ export async function waitForStart(
     async ({ text, launchedAt }) => {
       const perf = (window as unknown as PerfWindow).__perf;
       const shown = () =>
-        [...document.querySelectorAll('ion-card-title')].some((element) => {
+        [...document.querySelectorAll('.card-title-text')].some((element) => {
           const box = element.getBoundingClientRect();
           return (
             box.width > 0 &&
