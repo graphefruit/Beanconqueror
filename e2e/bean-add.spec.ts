@@ -33,16 +33,17 @@ test('a bean cannot be saved without a name', async ({ page }) => {
   // The dialog is named after its title.
   await expect(page.getByRole('dialog', { name: 'Add bean' })).toBeVisible();
 
-  // Known defect: without a name "Save" does nothing and says nothing; the
-  // name is not marked as missing either.
+  // Without a name "Save" keeps the dialog open and marks the name as missing.
   await suggestionField(page, 'Roaster').fill('Nameless');
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
-  await expect(page.getByRole('status')).toHaveCount(0);
-  await expect(beanField(page, /^Name/)).not.toHaveAttribute(
+  await expect(beanField(page, /^Name/)).toHaveAttribute(
     'aria-invalid',
     'true',
   );
+  await expect(
+    page.getByText('Please enter a name for these beans.'),
+  ).toBeVisible();
 
   await page.getByRole('button', { name: 'Cancel' }).click();
   await dialogsClosed(page);

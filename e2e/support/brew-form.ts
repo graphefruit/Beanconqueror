@@ -121,8 +121,7 @@ export async function brewAction(
 
 /**
  * Adds a preparation method from the built-in list ("Espresso Machine",
- * "French Press", …). The list entries have no button role yet, so they are
- * picked by their text.
+ * "French Press", …), each a button named after the method.
  */
 export async function addPreparationMethod(
   page: Page,
@@ -131,7 +130,7 @@ export async function addPreparationMethod(
   await page.getByRole('tab', { name: 'Profile' }).click();
   await page.getByRole('link', { name: /^Preparation methods/ }).click();
   await page.getByRole('button', { name: 'Add preparation method' }).click();
-  await page.getByText(type, { exact: true }).click();
+  await page.getByRole('button', { name: type, exact: true }).click();
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await showBrewsTab(page);

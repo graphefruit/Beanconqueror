@@ -389,7 +389,7 @@ test('three dialogs stacked at first start are peeled off one by one', async ({
 }) => {
   await page.goto('/');
   await page.getByRole('button', { name: "Don't activate" }).click();
-  const welcome = page.getByRole('group', { name: '2 / 5' });
+  const welcome = page.getByRole('group', { name: 'Step 2 of 5' });
   const addBean = welcome.getByRole('button', { name: 'Add bean' });
   await addBean.focus();
   await page.keyboard.press('Enter');

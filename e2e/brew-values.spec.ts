@@ -90,12 +90,17 @@ test('the brew ratio follows dose and water live and ignores the water unit', as
   );
 
   // Switching the water unit to ml keeps the ratio as it is.
-  await page.getByRole('button', { name: 'gr', exact: true }).first().focus();
+  await page
+    .getByRole('button', { name: 'Unit of Amount of water, gr', exact: true })
+    .focus();
   await page.keyboard.press('Enter');
   await page.getByRole('radio', { name: 'ml', exact: true }).click();
   await page.getByRole('button', { name: 'Choose', exact: true }).click();
   await expect(
-    page.getByRole('button', { name: 'ml', exact: true }),
+    page.getByRole('button', {
+      name: 'Unit of Amount of water, ml',
+      exact: true,
+    }),
   ).toBeVisible();
   await expect(water).toHaveAccessibleName(
     'Amount of water (1 / 15.15 , 66 g/l)',

@@ -7,8 +7,8 @@ import { expect, type Page } from '@playwright/test';
 export async function completeFirstRun(page: Page): Promise<void> {
   await page.getByRole('button', { name: "Don't activate" }).click();
 
-  // All welcome steps stay in the accessibility tree, so scope to the step being shown.
-  for (const step of ['2 / 5', '3 / 5', '4 / 5']) {
+  // Only the step being shown is in the accessibility tree; its name says which.
+  for (const step of ['Step 2 of 5', 'Step 3 of 5', 'Step 4 of 5']) {
     await page
       .getByRole('group', { name: step })
       .getByRole('button', { name: 'Skip' })
@@ -16,7 +16,7 @@ export async function completeFirstRun(page: Page): Promise<void> {
   }
 
   await page
-    .getByRole('group', { name: '5 / 5' })
+    .getByRole('group', { name: 'Step 5 of 5' })
     .getByRole('button', { name: 'Next' })
     .click();
 

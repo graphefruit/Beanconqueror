@@ -288,7 +288,7 @@ for (const language of ['en', 'de'] as const) {
       );
     });
 
-    test('Save keeps the focus while it ignores a second tap', async ({
+    test('Save ignores a second tap without becoming disabled', async ({
       page,
     }) => {
       await start(page, language);
@@ -300,7 +300,8 @@ for (const language of ['en', 'de'] as const) {
         page.getByRole('button', { name: t('SAVE'), exact: true }),
       );
 
-      // Without a name, the bean is not saved and the dialog stays open.
+      // Without a name, the bean is not saved, the dialog stays open and the
+      // focus moves to the name, which says why.
       await save.press('Enter');
 
       // Read at once, while further taps are ignored (half a second).
@@ -309,17 +310,12 @@ for (const language of ['en', 'de'] as const) {
         return {
           disabled: host.hasAttribute('disabled'),
           unavailable: button.getAttribute('aria-disabled'),
-          focused:
-            document.activeElement === host &&
-            host.shadowRoot?.activeElement === button,
         };
       });
-      expect(state).toEqual({
-        disabled: false,
-        unavailable: 'true',
-        focused: true,
-      });
-      await expect(save).toBeFocused();
+      expect(state).toEqual({ disabled: false, unavailable: 'true' });
+      await expect(
+        page.getByRole('textbox', { name: startsWith(t('BEAN_DATA_NAME')) }),
+      ).toBeFocused();
     });
   });
 }

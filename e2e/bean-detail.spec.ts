@@ -40,7 +40,7 @@ test('a tap on a card shows the details of the bean on three tabs', async ({
         - tab "Variety information"
       - tabpanel "General":
         - text: "Name: Gamma Blend Roaster: Rösterei Süd Roast date: Roast type: Filter Rating 5"
-        - 'slider "5 Rating: 5 out of 5 stars" [disabled]'
+        - slider "Rating" [disabled]
         - 'img "Rating: 5 out of 5 stars"'
         - text: "Blend: Blend"
         - heading "More information" [level=2]

@@ -10,7 +10,7 @@ export async function completeFirstRunWithBrew(page: Page): Promise<void> {
   await page.getByRole('button', { name: "Don't activate" }).click();
 
   await page
-    .getByRole('group', { name: '2 / 5' })
+    .getByRole('group', { name: 'Step 2 of 5' })
     .getByRole('button', { name: 'Add bean' })
     .click();
   await page
@@ -19,21 +19,21 @@ export async function completeFirstRunWithBrew(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Save' }).click();
 
   await page
-    .getByRole('group', { name: '3 / 5' })
+    .getByRole('group', { name: 'Step 3 of 5' })
     .getByRole('button', { name: 'Add Preparation method' })
     .click();
   await page.getByText('V60', { exact: true }).click();
   await page.getByRole('button', { name: 'Save' }).click();
 
   await page
-    .getByRole('group', { name: '4 / 5' })
+    .getByRole('group', { name: 'Step 4 of 5' })
     .getByRole('button', { name: 'Add grinder' })
     .click();
   await page.getByRole('textbox', { name: /^Name/ }).fill('Comandante C40');
   await page.getByRole('button', { name: 'Save' }).click();
 
   await page
-    .getByRole('group', { name: '5 / 5' })
+    .getByRole('group', { name: 'Step 5 of 5' })
     .getByRole('button', { name: 'Next' })
     .click();
   await page.getByRole('button', { name: 'Understood' }).click();
