@@ -1,9 +1,7 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  HostListener,
   inject,
   Input,
   OnInit,
@@ -28,13 +26,16 @@ import {
 } from '@ionic/angular';
 
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
 import { GaggimateDevice } from '../../../classes/preparationDevice/gaggimate/gaggimateDevice';
 import { GaggimateShotData } from '../../../classes/preparationDevice/gaggimate/gaggimateShotData';
 import { GraphDisplayCardComponent } from '../../../components/graph-display-card/graph-display-card.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import {
+  VirtualListComponent,
+  VirtualRowDirective,
+} from '../../../components/virtual-list/virtual-list.component';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIHelper } from '../../../services/uiHelper';
 
@@ -45,7 +46,8 @@ import { UIHelper } from '../../../services/uiHelper';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
-    AgVirtualScrollComponent,
+    VirtualListComponent,
+    VirtualRowDirective,
     GraphDisplayCardComponent,
     TranslatePipe,
     IonHeader,
@@ -83,6 +85,7 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
   @Input() public importedShotTimestamp = 0;
   public radioSelection: number;
   public history: Array<GaggimateShotData> = [];
+  public readonly entryKey = (entry: GaggimateShotData): number => entry.id;
 
   public loading = true;
   public loadingCurrent = 0;
@@ -92,18 +95,6 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
 
   @ViewChild('ionItemEl', { read: ElementRef, static: false })
   public ionItemEl: ElementRef;
-
-  @ViewChild('historyShotContent', { read: ElementRef })
-  public historyShotContent: ElementRef;
-
-  @ViewChild('gaggimateShotDataScroll', {
-    read: AgVirtualScrollComponent,
-    static: false,
-  })
-  public gaggimateShotDataScroll: AgVirtualScrollComponent;
-
-  @ViewChild('footerContent', { read: ElementRef })
-  public footerContent: ElementRef;
 
   public ngOnInit() {
     this.readHistory();
@@ -118,8 +109,6 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
     } finally {
       this.loading = false;
     }
-
-    this.retriggerScroll();
   }
 
   public async fetchShotDetails() {
@@ -276,36 +265,6 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
     if (importedShot) {
       shotsToFetch.unshift(importedShot);
     }
-  }
-
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    this.retriggerScroll();
-  }
-
-  private retriggerScroll() {
-    setTimeout(() => {
-      const el = this.historyShotContent.nativeElement;
-      const scrollComponent: AgVirtualScrollComponent =
-        this.gaggimateShotDataScroll;
-
-      if (!scrollComponent) {
-        return;
-      }
-
-      scrollComponent.el.style.height = el.offsetHeight - 20 + 'px';
-
-      // HACK: Manually trigger component refresh to work around initialization
-      //       bug. For some reason the scroll component sees its own height as
-      //       0 during initialization, which causes it to render 0 items. As
-      //       no changes to the component occur after initialization, no
-      //       re-render ever occurs. This forces one. The root cause for
-      //       this issue is currently unknown.
-      if (scrollComponent.items.length === 0) {
-        scrollComponent.refreshData();
-      }
-    }, 150);
   }
 
   public getElementOffsetWidth() {

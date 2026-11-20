@@ -3,12 +3,12 @@
     <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
   </app-header>
 </ion-header>
-<ion-content #historyShotContent>
+<ion-content>
   @if(history) {
   <ion-radio-group [(ngModel)]="radioSelection">
     <ion-card>
-        <ag-virtual-scroll #shotDataScroll [items]="history" [height]="'100vh'" [min-row-height]="300">
-          @for(entry of shotDataScroll.items; track entry.id) {
+        <app-virtual-list [items]="history" [itemKey]="entryKey" [estimateSize]="300" [clearOfAddButton]="false">
+          <ng-template [appVirtualRow]="history" let-entry>
             <ion-item #ionItemEl tappable lines='full'>
               <ion-radio justify="start" label-placement="end" [value]='entry.id'>
                 <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
@@ -18,13 +18,13 @@
                 <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggiuinoHistoryData]='entry.brewFlow' />
               </ion-radio>
             </ion-item>
-          }
-        </ag-virtual-scroll>
+          </ng-template>
+        </app-virtual-list>
       </ion-card>
     </ion-radio-group>
   }
 </ion-content>
-<ion-footer #footerContent class="ion-no-border">
+<ion-footer class="ion-no-border">
   <ion-row>
     <ion-col size="6">
       <ion-button (click)="dismiss()" color="danger" expand="block" fill="outline"

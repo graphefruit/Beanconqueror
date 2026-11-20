@@ -1,12 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  HostListener,
   inject,
   Input,
   OnInit,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -29,7 +27,6 @@ import {
 } from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
 import { Brew } from '../../../classes/brew/brew';
 import { Graph } from '../../../classes/graph/graph';
@@ -38,6 +35,10 @@ import { BrewGraphReferenceCardComponent } from '../../../components/brew-graph-
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import {
+  VirtualListComponent,
+  VirtualRowDirective,
+} from '../../../components/virtual-list/virtual-list.component';
 import { SearchbarNameDirective } from '../../../directive/searchbar-name.directive';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
 import { UIAlert } from '../../../services/uiAlert';
@@ -56,7 +57,8 @@ import { BrewFilterComponent } from '../brew-filter/brew-filter.component';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
-    AgVirtualScrollComponent,
+    VirtualListComponent,
+    VirtualRowDirective,
     BrewGraphReferenceCardComponent,
     TranslatePipe,
     HeaderComponent,
@@ -95,6 +97,11 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   public graphOpenView: Array<Graph> = [];
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
+  public readonly entryKey = (entry: Brew | Graph): string => entry.config.uuid;
+
+  private readonly content = viewChild.required(IonContent);
+  private readonly list =
+    viewChild<VirtualListComponent<Brew | Graph>>(VirtualListComponent);
 
   public graphsOpen: Array<Graph> = [];
   public brewsOpen: Array<Brew> = [];
@@ -113,26 +120,6 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   @Input() public brew: Brew;
 
   public settings: Settings = undefined;
-  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
-  public openScroll: AgVirtualScrollComponent;
-  @ViewChild('archivedScroll', {
-    read: AgVirtualScrollComponent,
-    static: false,
-  })
-  public archivedScroll: AgVirtualScrollComponent;
-  @ViewChild('graphOpenScroll', {
-    read: AgVirtualScrollComponent,
-    static: false,
-  })
-  public graphOpenScroll: AgVirtualScrollComponent;
-
-  @ViewChild('brewContent', { read: ElementRef })
-  public brewContent: ElementRef;
-
-  @ViewChild('footerContent', { read: ElementRef })
-  public footerContent: ElementRef;
-
-  public segmentScrollHeight: string = undefined;
 
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -154,12 +141,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   }
 
   public segmentChanged() {
-    this.retriggerScroll();
-  }
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    this.retriggerScroll();
+    void this.content().scrollToTop();
   }
 
   public async addOwnGraph() {
@@ -186,44 +168,6 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     this.__initializeBrews();
   }
 
-  private retriggerScroll() {
-    setTimeout(() => {
-      const el = this.brewContent.nativeElement;
-
-      const footerEl = this.footerContent.nativeElement;
-
-      let scrollComponent: AgVirtualScrollComponent;
-      if (this.openScroll !== undefined) {
-        scrollComponent = this.openScroll;
-      } else if (this.archivedScroll !== undefined) {
-        scrollComponent = this.archivedScroll;
-      } else if (this.graphOpenScroll !== undefined) {
-        scrollComponent = this.graphOpenScroll;
-      }
-      if (!scrollComponent) {
-        return;
-      }
-
-      scrollComponent.el.style.height =
-        el.offsetHeight -
-        footerEl.offsetHeight -
-        15 -
-        scrollComponent.el.offsetTop +
-        'px';
-      this.segmentScrollHeight = scrollComponent.el.style.height;
-
-      // HACK: Manually trigger component refresh to work around initialization
-      //       bug. For some reason the scroll component sees its own height as
-      //       0 during initialization, which causes it to render 0 items. As
-      //       no changes to the component occur after initialization, no
-      //       re-render ever occurs. This forces one. The root cause for
-      //       this issue is currently unknown.
-      if (scrollComponent.items.length === 0) {
-        scrollComponent.refreshData();
-      }
-    }, 150);
-  }
-
   public ionViewDidEnter() {
     this.__initializeBrews();
   }
@@ -237,14 +181,12 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     this.__initializeBrewView('brews-open');
     this.__initializeBrewView('brews-archiv');
     this.__initializeGraphView('graphs-open');
-
-    this.retriggerScroll();
   }
   public research() {
     this.__initializeBrewView('brews-open');
     this.__initializeBrewView('brews-archiv');
     this.__initializeGraphView('graphs-open');
-    this.retriggerScroll();
+    this.list()?.scrollToTop();
   }
 
   public async showFilter(_type: string) {

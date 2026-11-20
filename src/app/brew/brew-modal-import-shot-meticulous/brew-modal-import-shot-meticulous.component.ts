@@ -1,13 +1,14 @@
 import {
+  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
   inject,
   Input,
-  OnDestroy,
   OnInit,
-  ViewChild,
+  signal,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -27,12 +28,15 @@ import {
 } from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { GraphDisplayCardComponent } from '../../../components/graph-display-card/graph-display-card.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import {
+  VirtualListComponent,
+  VirtualRowDirective,
+} from '../../../components/virtual-list/virtual-list.component';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIHelper } from '../../../services/uiHelper';
 
@@ -43,7 +47,8 @@ import { UIHelper } from '../../../services/uiHelper';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
-    AgVirtualScrollComponent,
+    VirtualListComponent,
+    VirtualRowDirective,
     GraphDisplayCardComponent,
     TranslatePipe,
     IonHeader,
@@ -61,9 +66,7 @@ import { UIHelper } from '../../../services/uiHelper';
     IonCol,
   ],
 })
-export class BrewModalImportShotMeticulousComponent
-  implements OnInit, OnDestroy
-{
+export class BrewModalImportShotMeticulousComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   readonly uiHelper = inject(UIHelper);
   private readonly uiAlert = inject(UIAlert);
@@ -73,41 +76,20 @@ export class BrewModalImportShotMeticulousComponent
   @Input() public meticulousDevice: MeticulousDevice;
   public radioSelection: string;
   public history: any[] = [];
-  public chartWidth = 0;
+  public readonly entryKey = (entry: { id: string }): string => entry.id;
+  public readonly chartWidth = signal(0);
   public hasMore = true;
   public isLoadingMore = false;
-  private isDestroyed = false;
   private lastEntryTime: number | undefined;
-  private boundScrollHandler: ((event: Event) => void) | undefined;
 
-  @ViewChild('ionItemEl', { read: ElementRef, static: false })
-  public ionItemEl: ElementRef;
+  private readonly ionItemEl = viewChild('ionItemEl', { read: ElementRef });
 
-  @ViewChild('historyShotContent', { read: ElementRef })
-  public historyShotContent: ElementRef;
-
-  @ViewChild('shotDataScroll', {
-    read: AgVirtualScrollComponent,
-    static: false,
-  })
-  public shotDataScroll: AgVirtualScrollComponent;
-
-  @ViewChild('footerContent', { read: ElementRef })
-  public footerContent: ElementRef;
-  public segmentScrollHeight: string = undefined;
+  public constructor() {
+    afterRenderEffect(() => this.updateChartWidth());
+  }
 
   public ngOnInit() {
     void this.readHistory();
-  }
-
-  public ngOnDestroy() {
-    this.isDestroyed = true;
-    if (this.shotDataScroll && this.boundScrollHandler) {
-      this.shotDataScroll.el.removeEventListener(
-        'scroll',
-        this.boundScrollHandler,
-      );
-    }
   }
 
   private async readHistory() {
@@ -126,7 +108,6 @@ export class BrewModalImportShotMeticulousComponent
       );
     }
     await this.uiAlert.hideLoadingSpinner();
-    this.retriggerScroll();
   }
 
   public async loadMoreHistory() {
@@ -152,88 +133,18 @@ export class BrewModalImportShotMeticulousComponent
         allResults.length >= MeticulousDevice.PAGE_SIZE &&
         newEntries.length > 0;
     } catch (ex) {
-      // silently fail — scroll triggers a retry naturally
+      // silently fail — scrolling to the end again retries
     }
     this.isLoadingMore = false;
   }
 
+  // The width is read after rendering: read during change detection it
+  // differs before and after layout (ExpressionChangedAfterItHasBeenChecked).
   @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    this.retriggerScroll();
-  }
-
-  private retriggerScroll() {
-    setTimeout(() => {
-      const el = this.historyShotContent.nativeElement;
-      const scrollComponent: AgVirtualScrollComponent = this.shotDataScroll;
-
-      if (!scrollComponent) {
-        return;
-      }
-
-      scrollComponent.el.style.height = el.offsetHeight - 20 + 'px';
-      this.segmentScrollHeight = scrollComponent.el.style.height;
-
-      // HACK: Manually trigger component refresh to work around initialization
-      //       bug. For some reason the scroll component sees its own height as
-      //       0 during initialization, which causes it to render 0 items. As
-      //       no changes to the component occur after initialization, no
-      //       re-render ever occurs. This forces one. The root cause for
-      //       this issue is currently unknown.
-      if (scrollComponent.items.length === 0) {
-        scrollComponent.refreshData();
-      }
-
-      this.updateChartWidth();
-      this.attachScrollListener();
-      this.checkAndLoadMoreIfNeeded();
-    }, 150);
-  }
-
-  private attachScrollListener() {
-    if (this.boundScrollHandler || !this.shotDataScroll) {
-      return;
-    }
-    this.boundScrollHandler = (event: Event) => {
-      const target = event.target as HTMLElement;
-      if (target.scrollHeight - target.scrollTop - target.clientHeight < 100) {
-        void this.loadMoreHistory();
-      }
-    };
-    this.shotDataScroll.el.addEventListener('scroll', this.boundScrollHandler);
-  }
-
-  private checkAndLoadMoreIfNeeded() {
-    setTimeout(() => {
-      void this.doCheckAndLoadMoreIfNeeded();
-    }, 150);
-  }
-
-  private async doCheckAndLoadMoreIfNeeded() {
-    if (
-      this.isDestroyed ||
-      !this.shotDataScroll ||
-      !this.hasMore ||
-      this.isLoadingMore
-    ) {
-      return;
-    }
-    const target = this.shotDataScroll.el;
-    if (target && target.scrollHeight - target.clientHeight < 100) {
-      await this.loadMoreHistory();
-      this.checkAndLoadMoreIfNeeded();
-    }
-  }
-
-  // Cache the chart width into a property rather than binding a layout-reading
-  // method in the template. Reading offsetWidth during change detection returns
-  // different values before and after layout, which triggers
-  // ExpressionChangedAfterItHasBeenCheckedError. This runs inside the
-  // retriggerScroll/resize timeouts, i.e. its own change detection cycle.
-  private updateChartWidth() {
-    const offsetWidth = this.ionItemEl?.nativeElement?.offsetWidth;
-    this.chartWidth = offsetWidth ? offsetWidth - 50 : 0;
+  public updateChartWidth() {
+    const offsetWidth = (this.ionItemEl()?.nativeElement as HTMLElement)
+      ?.offsetWidth;
+    this.chartWidth.set(offsetWidth ? offsetWidth - 50 : 0);
   }
 
   public dismiss(): void {

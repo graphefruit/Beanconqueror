@@ -3,14 +3,10 @@
     <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
   </app-header>
 </ion-header>
-<ion-content #beanContent>
-
-  <ag-virtual-scroll #openScroll [items]="beansList" [height]="'100vh'" [min-row-height]="210">
-    @for (bean of openScroll.items; track bean) {
-      <bean-information [disabled]='true' [showActions]='false'
-      [bean]="bean" />
-    }
-
-  </ag-virtual-scroll>
-
+<ion-content>
+  <app-virtual-list [items]="beansList" [itemKey]="beanKey" [estimateSize]="210" [clearOfAddButton]="false">
+    <ng-template [appVirtualRow]="beansList" let-bean>
+      <bean-information [disabled]='true' [showActions]='false' [bean]="bean" />
+    </ng-template>
+  </app-virtual-list>
 </ion-content>

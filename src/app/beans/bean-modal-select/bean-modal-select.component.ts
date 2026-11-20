@@ -2,12 +2,10 @@ import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  HostListener,
   inject,
   Input,
   OnInit,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -35,7 +33,6 @@ import { addIcons } from 'ionicons';
 import { snowOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import _ from 'lodash';
 
 import { Bean } from '../../../classes/bean/bean';
@@ -44,6 +41,10 @@ import { AsyncImageComponent } from '../../../components/async-image/async-image
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import {
+  VirtualListComponent,
+  VirtualRowDirective,
+} from '../../../components/virtual-list/virtual-list.component';
 import { SearchbarNameDirective } from '../../../directive/searchbar-name.directive';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
@@ -68,7 +69,8 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   imports: [
     FormsModule,
     NgTemplateOutlet,
-    AgVirtualScrollComponent,
+    VirtualListComponent,
+    VirtualRowDirective,
     AsyncImageComponent,
     DecimalPipe,
     TranslatePipe,
@@ -117,6 +119,11 @@ export class BeanModalSelectComponent implements OnInit {
   public openBeans: Array<Bean> = [];
   public finishedBeans: Array<Bean> = [];
   public frozenBeans: Array<Bean> = [];
+  public readonly beanKey = (bean: Bean): string => bean.config.uuid;
+
+  private readonly content = viewChild.required(IonContent);
+  private readonly list =
+    viewChild<VirtualListComponent<Bean>>(VirtualListComponent);
 
   public archivedBeansFilter: IBeanPageFilter;
   public openBeansFilter: IBeanPageFilter;
@@ -133,22 +140,6 @@ export class BeanModalSelectComponent implements OnInit {
     archived: false,
     frozen: false,
   };
-
-  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
-  public openScroll: AgVirtualScrollComponent;
-  @ViewChild('frozenScroll', { read: AgVirtualScrollComponent, static: false })
-  public frozenScroll: AgVirtualScrollComponent;
-
-  @ViewChild('archivedScroll', {
-    read: AgVirtualScrollComponent,
-    static: false,
-  })
-  public archivedScroll: AgVirtualScrollComponent;
-  @ViewChild('beanContent', { read: ElementRef })
-  public beanContent: ElementRef;
-
-  @ViewChild('footerContent', { read: ElementRef })
-  public footerContent: ElementRef;
 
   public beanFreezingStorageTypeEnum = BEAN_FREEZING_STORAGE_ENUM;
 
@@ -169,8 +160,6 @@ export class BeanModalSelectComponent implements OnInit {
   public finishedBeansLength: number = 0;
   public openBeansLength: number = 0;
   public frozenBeansLength: number = 0;
-
-  public segmentScrollHeight: string = undefined;
 
   public uiUsedWeightCountCache: any = {};
   public uiIsSortActive: boolean = false;
@@ -245,56 +234,15 @@ export class BeanModalSelectComponent implements OnInit {
     await this.uiSettingsStorage.saveSettings(settings);
   }
 
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    this.retriggerScroll();
-  }
   public segmentChanged() {
     this.uiSearchText = this.manageSearchTextScope(this.bean_segment, false);
-    this.retriggerScroll();
     this.setUIParams();
+    void this.content().scrollToTop();
   }
 
   private setUIParams() {
     this.uiIsSortActive = this.isSortActive();
     this.uiIsFilterActive = this.isFilterActive();
-  }
-
-  private retriggerScroll() {
-    setTimeout(() => {
-      const el = this.beanContent.nativeElement;
-      let scrollComponent: AgVirtualScrollComponent;
-      if (this.openScroll !== undefined) {
-        scrollComponent = this.openScroll;
-      } else if (this.archivedScroll !== undefined) {
-        scrollComponent = this.archivedScroll;
-      } else if (this.frozenScroll !== undefined) {
-        scrollComponent = this.frozenScroll;
-      }
-      if (!scrollComponent) {
-        return;
-      }
-      const footerEl = this.footerContent.nativeElement;
-      // right bracing
-      scrollComponent.el.style.height =
-        el.offsetHeight -
-        footerEl.offsetHeight -
-        10 -
-        scrollComponent.el.offsetTop +
-        'px';
-      this.segmentScrollHeight = scrollComponent.el.style.height;
-
-      // HACK: Manually trigger component refresh to work around initialization
-      //       bug. For some reason the scroll component sees its own height as
-      //       0 during initialization, which causes it to render 0 items. As
-      //       no changes to the component occur after initialization, no
-      //       re-render ever occurs. This forces one. The root cause for
-      //       this issue is currently unknown.
-      if (scrollComponent.items.length === 0) {
-        scrollComponent.refreshData();
-      }
-    }, 250);
   }
 
   public ionViewDidEnter(): void {
@@ -371,7 +319,7 @@ export class BeanModalSelectComponent implements OnInit {
   public research() {
     this.setSearchTextScope(this.bean_segment, this.uiSearchText);
     this.__initializeBeansView(this.bean_segment);
-    this.retriggerScroll();
+    this.list()?.scrollToTop();
   }
   private __initializeBeansView(_type: string) {
     const searchText = this.manageSearchTextScope(_type);
@@ -392,7 +340,6 @@ export class BeanModalSelectComponent implements OnInit {
     } else if (_type === 'frozen') {
       this.frozenBeans = filteredBeans;
     }
-    this.retriggerScroll();
   }
 
   private manageFilterScope(_type: string): IBeanPageFilter {

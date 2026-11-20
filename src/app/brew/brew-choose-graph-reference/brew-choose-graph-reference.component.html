@@ -4,7 +4,7 @@
     <app-header-button header-slot="end" icon="beanconqueror-add" [ariaLabel]="'A11Y.ADD_REFERENCE_GRAPH' | translate" (clicked)="addOwnGraph()" />
   </app-header>
 </ion-header>
-<ion-content #brewContent>
+<ion-content>
   <ion-segment scrollable="true" (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">
     @if (graphOpenView?.length > 0) {
       <ion-segment-button value="graphs-open">
@@ -24,11 +24,11 @@
         <ion-radio-group [(ngModel)]="radioSelection">
           <ion-card>
             <ion-radio-group [(ngModel)]="radioSelection">
-              <ag-virtual-scroll #graphOpenScroll [items]="graphOpenView" [height]="'100vh'" [min-row-height]="180">
-                @for (graph of graphOpenScroll.items; track graph.config.uuid) {
+              <app-virtual-list [items]="graphOpenView" [itemKey]="entryKey" [estimateSize]="180" [clearOfAddButton]="false">
+                <ng-template [appVirtualRow]="graphOpenView" let-graph>
                   <brew-graph-reference-card [graph]="graph" />
-                }
-              </ag-virtual-scroll>
+                </ng-template>
+              </app-virtual-list>
             </ion-radio-group>
           </ion-card>
         </ion-radio-group>
@@ -54,11 +54,11 @@
           }
           @if (openBrewsView?.length > 0) {
             <ion-radio-group [(ngModel)]="radioSelection">
-              <ag-virtual-scroll #openScroll [items]="openBrewsView" [height]="'100vh'" [min-row-height]="180">
-                @for (brew of openScroll.items; track brew.config.uuid) {
+              <app-virtual-list [items]="openBrewsView" [itemKey]="entryKey" [estimateSize]="180" [clearOfAddButton]="false">
+                <ng-template [appVirtualRow]="openBrewsView" let-brew>
                   <brew-graph-reference-card [brew]="brew" />
-                }
-              </ag-virtual-scroll>
+                </ng-template>
+              </app-virtual-list>
             </ion-radio-group>
           } @else {
             <div class="ion-padding ion-text-center">
@@ -94,11 +94,11 @@
           }
           @if (archiveBrewsView?.length > 0) {
             <ion-radio-group [(ngModel)]="radioSelection">
-              <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" [height]="'100vh'" [min-row-height]="385">
-                @for (brew of archivedScroll.items; track brew.config.uuid) {
+              <app-virtual-list [items]="archiveBrewsView" [itemKey]="entryKey" [estimateSize]="385" [clearOfAddButton]="false">
+                <ng-template [appVirtualRow]="archiveBrewsView" let-brew>
                   <brew-graph-reference-card [brew]="brew" />
-                }
-              </ag-virtual-scroll>
+                </ng-template>
+              </app-virtual-list>
             </ion-radio-group>
           } @else {
             <div class="ion-padding ion-text-center">
@@ -115,7 +115,7 @@
     }
   }
 </ion-content>
-<ion-footer #footerContent class="ion-no-border">
+<ion-footer class="ion-no-border">
   <ion-row>
     <ion-col size="6">
       <ion-button (click)="reset()" color="danger" expand="block" fill="outline"

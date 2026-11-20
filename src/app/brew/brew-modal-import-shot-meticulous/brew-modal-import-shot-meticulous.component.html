@@ -3,28 +3,28 @@
     <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
   </app-header>
 </ion-header>
-<ion-content #historyShotContent>
+<ion-content>
   <ion-radio-group [(ngModel)]="radioSelection">
     <ion-card>
-      <ag-virtual-scroll #shotDataScroll [items]="history" [height]="'100vh'" [min-row-height]="240">
-        @for(entry of shotDataScroll.items; track entry.id) {
+      <app-virtual-list [items]="history" [itemKey]="entryKey" [estimateSize]="240" [clearOfAddButton]="false" (endReached)="loadMoreHistory()">
+        <ng-template [appVirtualRow]="history" let-entry>
           <ion-item #ionItemEl tappable lines='full'>
             <ion-radio justify="start" label-placement="end" value='{{entry.id}}'>
               <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
               <h2>{{entry.profile.name}}</h2>
               <div class='font-size-16'>{{this.uiHelper.formatTimeNumber(entry.time * 1000)}}</div>
               </ion-grid>
-              <graph-display-card [chartWidth]='chartWidth' [meticulousHistoryData]='entry' [meticulousDevice]='meticulousDevice' />
+              <graph-display-card [chartWidth]='chartWidth()' [meticulousHistoryData]='entry' [meticulousDevice]='meticulousDevice' />
             </ion-radio>
           </ion-item>
-        }
-      </ag-virtual-scroll>
+        </ng-template>
+      </app-virtual-list>
     </ion-card>
 
 
   </ion-radio-group>
 </ion-content>
-<ion-footer #footerContent class="ion-no-border">
+<ion-footer class="ion-no-border">
   <ion-row>
     <ion-col size="6">
       <ion-button (click)="dismiss()" color="danger" expand="block" fill="outline"

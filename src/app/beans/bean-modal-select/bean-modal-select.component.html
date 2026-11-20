@@ -4,7 +4,7 @@
     <app-header-button header-slot="end" icon="beanconqueror-add" [ariaLabel]="'ADD_BEAN' | translate" (clicked)="add()" />
   </app-header>
 </ion-header>
-<ion-content #beanContent>
+<ion-content>
 
   <ion-segment (ionChange)="segmentChanged()" [(ngModel)]='bean_segment'>
     <ion-segment-button value='open'>
@@ -32,8 +32,8 @@
         <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
           @if (openBeans.length > 0) {
-            <ag-virtual-scroll #openScroll [items]='openBeans' [height]="'100vh'" [min-row-height]="60">
-              @for (bean of openScroll.items; track bean.config.uuid) {
+            <app-virtual-list [items]="openBeans" [itemKey]="beanKey" [estimateSize]="60" [clearOfAddButton]="false">
+              <ng-template [appVirtualRow]="openBeans" let-bean>
                 <ion-item lines='none' tappable>
                   @if (multiple) {
                     <ion-checkbox justify='start' label-placement='end'
@@ -50,8 +50,8 @@
                   <ng-container [ngTemplateOutlet]="beanThumbnailCard"
                                 [ngTemplateOutletContext]="{bean:bean}" />
                 </ion-item>
-              }
-            </ag-virtual-scroll>
+              </ng-template>
+            </app-virtual-list>
 
           } @else {
             <div class='ion-padding ion-text-center'>
@@ -71,8 +71,8 @@
         <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
           @if (frozenBeans.length > 0) {
-            <ag-virtual-scroll #frozenScroll [items]='frozenBeans' [height]="'100vh'" [min-row-height]="60">
-              @for (bean of frozenScroll.items; track bean.config.uuid) {
+            <app-virtual-list [items]="frozenBeans" [itemKey]="beanKey" [estimateSize]="60" [clearOfAddButton]="false">
+              <ng-template [appVirtualRow]="frozenBeans" let-bean>
                 <ion-item lines='none' tappable>
                   @if (multiple) {
                     <ion-checkbox justify='start' label-placement='end'
@@ -90,8 +90,8 @@
                   <ng-container [ngTemplateOutlet]="beanThumbnailCard"
                                 [ngTemplateOutletContext]="{bean:bean}" />
                 </ion-item>
-              }
-            </ag-virtual-scroll>
+              </ng-template>
+            </app-virtual-list>
           } @else {
             <div class='ion-padding ion-text-center'>
               <div>
@@ -110,8 +110,8 @@
         <ion-card>
           <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
           @if (finishedBeans.length > 0) {
-            <ag-virtual-scroll #archivedScroll [items]='finishedBeans' [height]="'100vh'" [min-row-height]="60">
-              @for (bean of archivedScroll.items; track bean.config.uuid) {
+            <app-virtual-list [items]="finishedBeans" [itemKey]="beanKey" [estimateSize]="60" [clearOfAddButton]="false">
+              <ng-template [appVirtualRow]="finishedBeans" let-bean>
                 <ion-item lines='none' tappable>
                   @if (multiple) {
 
@@ -130,8 +130,8 @@
                   <ng-container [ngTemplateOutlet]="beanThumbnailCard"
                                 [ngTemplateOutletContext]="{bean:bean}" />
                 </ion-item>
-              }
-            </ag-virtual-scroll>
+              </ng-template>
+            </app-virtual-list>
           } @else {
             <div class='ion-padding ion-text-center'>
               <div>
@@ -148,7 +148,7 @@
     }
 
 </ion-content>
-<ion-footer #footerContent class='ion-no-border'>
+<ion-footer class='ion-no-border'>
   <ion-row>
     <ion-col size='6'>
       <ion-button (click)='dismiss()' color='accent' expand='block' fill='outline'
