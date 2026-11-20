@@ -23,7 +23,7 @@
       @if (openBeans?.length > 0 || isFilterActive()) {
         <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
-          <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
+          <ion-searchbar [searchName]="'A11Y.SEARCH_GREEN_BEANS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
           <ion-button (click)="showFilter()" [attr.aria-label]="(isFilterActive() ? 'A11Y.SORT_GREEN_BEANS_ACTIVE' : 'A11Y.SORT_GREEN_BEANS') | translate" fill="clear" size="small" tappable>
             @if (isFilterActive()) {
               <ion-icon aria-hidden="true" name="beanconqueror-sort-active" slot="icon-only" />
@@ -54,7 +54,7 @@
         @if (finishedBeans?.length > 0 || isFilterActive()) {
           <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
-            <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
+            <ion-searchbar [searchName]="'A11Y.SEARCH_GREEN_BEANS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
             <ion-button (click)="showFilter()" [attr.aria-label]="(isFilterActive() ? 'A11Y.SORT_GREEN_BEANS_ACTIVE' : 'A11Y.SORT_GREEN_BEANS') | translate" fill="clear" size="small" tappable>
               @if (isFilterActive()) {
                 <ion-icon aria-hidden="true" name="beanconqueror-sort-active" slot="icon-only" />

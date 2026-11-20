@@ -95,13 +95,13 @@
   }
   <!-- Last in the page: it floats over the bottom right corner of the list. -->
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button color="accent" [attr.aria-label]="'ADD_BREW' | translate" (short-press)="add()" (long-press)="longPressAdd($event)">
+    <ion-fab-button color="accent" [attr.aria-label]="'ADD_BREW' | translate" (click)="add()" (long-press)="longPressAdd($event)">
       <ion-icon name="add" aria-hidden="true" />
     </ion-fab-button>
   </ion-fab>
 </ion-content>
 <ng-template #brewSearchToolbar>
-  <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="uiSearchText"
+  <ion-searchbar [searchName]="'A11Y.SEARCH_BREWS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="uiSearchText"
                  class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
                  search-icon="beanconqueror-detail" showCancelButton="never" />
   <ion-button (click)="showFilter()" [attr.aria-label]="(uiIsFilterActive ? 'A11Y.FILTER_BREWS_ACTIVE' : 'A11Y.FILTER_BREWS') | translate" fill="clear" size="small" tappable>

@@ -1223,7 +1223,8 @@ $bq-focus-double-ring:
   ion-select.ion-focused,
   ion-input.has-focus,
   ion-textarea.has-focus,
-  ion-chip:focus-visible {
+  ion-chip:focus-visible,
+  ion-icon[role='button']:focus-visible {
     @include bq-focus-outline;
   }
 

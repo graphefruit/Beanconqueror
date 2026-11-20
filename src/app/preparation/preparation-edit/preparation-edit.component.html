@@ -38,7 +38,8 @@
           <ion-icon aria-hidden="true" class="font-size-24" color="accent" name="swap-vertical-outline" slot="icon-only" />
         </ion-button>
         <ion-icon name="information-outline" slot="end"
-        tooltip='{{"PREPARATION_TOOLS_INFORMATION" | translate}}' />
+        tooltip='{{"PREPARATION_TOOLS_INFORMATION" | translate}}'
+        [tooltipTopic]="'PREPARATION_TOOLS' | translate" />
       </ion-item>
       <ion-item style="margin-top: -10px;">
         <ion-input aria-labelledby='preparationTools' (keyup.enter)="addTool()" [(ngModel)]="nextToolName" name="nextToolName" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text" />

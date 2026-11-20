@@ -1072,6 +1072,7 @@
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
+        "SHOT_START_FAILED": "The shot could not be started.",
         "CONNECTION": {
             "UNSUCCESFULLY": "Connection could not be established to machine",
             "SUCCESFULLY": "Connection to machine was successful"
@@ -1090,7 +1091,12 @@
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the xenia espresso machine could not be established. Please make sure you're on the right network (LAN), if you entered the right IP address, etc.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "Connection to Xenia is being checked",
             "GRABING_SCRIPTS": "Loading scripts from Xenia",
-            "BREW_BY_WEIGHT_ACTIVE": "Brew by weight active"
+            "BREW_BY_WEIGHT_ACTIVE": "Brew by weight active",
+            "SCRIPT_START_FAILED": "The script could not be started.",
+            "SCRIPT_START_RETRY": "The script did not start, trying again.",
+            "SCRIPT_STOP_FAILED": "The script could not be stopped.",
+            "SCRIPTS_COULD_NOT_BE_LOADED": "The scripts could not be loaded from the Xenia.",
+            "LOGS_COULD_NOT_BE_LOADED": "The logs could not be loaded from the Xenia."
         },
         "API_VERSION": "Api Version",
         "RESIDUAL_LAG_TIME": "Residual lag time",
@@ -1101,7 +1107,8 @@
             "CHOOSE_PROFILE": "Choose profile",
             "SHOT_STARTED": "Shot started",
             "SHOT_ENDED": "Shot ended",
-            "DATA_COULD_NOT_BE_LOADED": "Data could not be loaded, this can have multiple issues"
+            "DATA_COULD_NOT_BE_LOADED": "Data could not be loaded, this can have multiple issues",
+            "PROFILE_LOADED_SHOT_STARTING": "Profile loaded, the shot starts soon"
         },
         "TYPE_SANREMO_YOU": {
             "TITLE": "Sanremo YOU Machine",
@@ -1129,7 +1136,8 @@
             "BREW_BY_WEIGHT_HINT": "The programmed volume in mL must be higher than the target weight in grams for the shot to stop at the set weight. If its not the case, please adjust the volume in mL."
         },
         "TYPE_GAGGIUINO": {
-            "TITLE": "Gaggiuino Machine"
+            "TITLE": "Gaggiuino Machine",
+            "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the Gaggiuino machine could not be established. Please make sure you're on the right network (LAN), if you entered the right address, etc."
         },
         "TYPE_MOVE2": {
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Connection could not be established to Move 2, please make sure you're close enough to the machine and that bluetooth is activated",
@@ -1270,6 +1278,7 @@
     },
     "SMART_SCALE_AUTO_START_LISTENING": "Start timer automatically?",
     "SMART_SCALE_AUTO_START_LISTENING_DESCRIPTION": "Start timer automatically when reaching the following weight value",
+    "SMART_SCALE_LISTENING_STARTED": "Now listening to the scale",
     "CHOOSE_REFERENCE_GRAPH": "Select reference graph",
     "RESET": "Reset",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS": "Define the starting axes of the graph",
@@ -2042,6 +2051,21 @@
         "TARE_SCALE": "Tare scale",
         "TOGGLE_CAMERA": "Toggle camera",
         "BEAN_GROUP_BEANS": "Beans in this group",
-        "BARISTA_GRAPH": "Barista graph"
+        "BARISTA_GRAPH": "Barista graph",
+        "RESIZE_DIALOG": "Resize dialog",
+        "CLEAR_SEARCH": "Clear search",
+        "SEARCH_BREWS": "Search brews",
+        "SEARCH_BEANS": "Search beans",
+        "SEARCH_GREEN_BEANS": "Search green beans",
+        "SEARCH_PREPARATIONS": "Search preparation methods",
+        "SEARCH_PREPARATION_TOOLS": "Search tools",
+        "SEARCH_FLAVORS": "Search flavors",
+        "PREVIOUS_MONTH": "Previous month",
+        "NEXT_MONTH": "Next month",
+        "SHOW_YEAR_PICKER": "Show month and year selection",
+        "HIDE_YEAR_PICKER": "Hide month and year selection",
+        "SELECT_MONTH": "Select a month",
+        "SELECT_YEAR": "Select a year",
+        "MORE_INFORMATION_ABOUT": "More information: {{topic}}"
     }
 }

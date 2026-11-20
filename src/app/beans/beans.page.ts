@@ -51,6 +51,7 @@ import {
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
+import { SearchbarNameDirective } from '../../directive/searchbar-name.directive';
 import { BEAN_IMPORT_ACTION } from '../../enums/beans/beanImportAction';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
@@ -149,6 +150,7 @@ function groupFrozenPortions(beans: Bean[]): (Bean | BeanGroup)[] {
     IonSegmentButton,
     IonLabel,
     IonSearchbar,
+    SearchbarNameDirective,
     IonIcon,
     IonButton,
     IonFab,

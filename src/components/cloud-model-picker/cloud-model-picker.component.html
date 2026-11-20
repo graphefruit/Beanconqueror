@@ -10,7 +10,7 @@
     <ion-title>{{ 'CLOUD_AI_SELECT_MODEL' | translate }}</ion-title>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-searchbar [(ngModel)]="searchTerm"
+    <ion-searchbar [searchName]="'CLOUD_AI_SEARCH_MODELS' | translate" [(ngModel)]="searchTerm"
       (ionInput)="filterModels()"
       [placeholder]="'CLOUD_AI_SEARCH_MODELS' | translate" />
   </ion-toolbar>

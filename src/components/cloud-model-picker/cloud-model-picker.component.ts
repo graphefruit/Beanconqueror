@@ -27,6 +27,7 @@ import { close } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { SearchbarNameDirective } from '../../directive/searchbar-name.directive';
 import { AI_PROVIDER_ENUM } from '../../enums/settings/aiProvider';
 import {
   CloudModel,
@@ -47,6 +48,7 @@ import {
     IonButton,
     IonIcon,
     IonSearchbar,
+    SearchbarNameDirective,
     IonContent,
     IonSpinner,
     IonList,

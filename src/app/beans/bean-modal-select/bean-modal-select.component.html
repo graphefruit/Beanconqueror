@@ -234,7 +234,7 @@
 
 <ng-template #beanSearchToolbar>
   <div class='ion-justify-content-end container'>
-    <ion-searchbar (ionChange)='research()' (ionInput)='research()' [(ngModel)]='uiSearchText'
+    <ion-searchbar [searchName]="'A11Y.SEARCH_BEANS' | translate" (ionChange)='research()' (ionInput)='research()' [(ngModel)]='uiSearchText'
                    class='ion-no-padding ion-no-margin' debounce='750' placeholder="{{'SEARCH' | translate}}"
                    search-icon='beanconqueror-detail' showCancelButton='never' />
     <ion-button (click)="showFilter()" [attr.aria-label]="(uiIsFilterActive ? 'A11Y.FILTER_BEANS_ACTIVE' : 'A11Y.FILTER_BEANS') | translate" fill='clear' size='small' tappable>

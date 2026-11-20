@@ -36,6 +36,7 @@ import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { SearchbarNameDirective } from '../../../directive/searchbar-name.directive';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 
 @Component({
@@ -56,6 +57,7 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
     IonLabel,
     IonCard,
     IonSearchbar,
+    SearchbarNameDirective,
     IonItem,
     IonCheckbox,
     IonRadioGroup,

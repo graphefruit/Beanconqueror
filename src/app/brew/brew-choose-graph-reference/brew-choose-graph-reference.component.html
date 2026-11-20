@@ -39,7 +39,7 @@
         <ion-card>
           @if (brewsOpen?.length > 0) {
             <div class="ion-justify-content-end container">
-              <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText"
+              <ion-searchbar [searchName]="'A11Y.SEARCH_BREWS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText"
                              class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
                              search-icon="beanconqueror-detail" showCancelButton="never" />
               <ion-button class="margin-right-5" (click)="showFilter('brews-open')" [attr.aria-label]="(isFilterActive('brews-open') ? 'A11Y.FILTER_BREWS_ACTIVE' : 'A11Y.FILTER_BREWS') | translate" fill="clear" size="small" tappable>
@@ -78,7 +78,7 @@
         <ion-card>
           @if (brewsArchived.length > 0) {
             <div class="ion-justify-content-end container">
-              <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText"
+              <ion-searchbar [searchName]="'A11Y.SEARCH_BREWS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText"
                              class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
                              search-icon="beanconqueror-detail" showCancelButton="never" />
               <ion-button class="margin-right-5" (click)="showFilter('brews-archive')" [attr.aria-label]="(isFilterActive('brews-archive') ? 'A11Y.FILTER_BREWS_ACTIVE' : 'A11Y.FILTER_BREWS') | translate" fill="clear" size="small"

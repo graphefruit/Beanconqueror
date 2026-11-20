@@ -1764,8 +1764,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         ?.brewBrewingPreparationDeviceEl?.preparationDevice as XeniaDevice;
       prepDeviceCall.stopScript().catch((_msg) => {
         this.uiToast.showInfoToast(
-          'We could not stop script - manual triggered: ' + _msg,
-          false,
+          'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_STOP_FAILED',
         );
         this.uiLog.log('We could not stop script - manual triggered: ' + _msg);
       });
@@ -2087,8 +2086,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     prepDeviceCall.connectToSocket().then(
       (_connected) => {
         if (_connected) {
-          this.uiAlert.showLoadingSpinner(
-            'Profile is loaded, shot is starting soon',
+          void this.uiAlert.showLoadingSpinner(
+            'PREPARATION_DEVICE.TYPE_METICULOUS.PROFILE_LOADED_SHOT_STARTING',
           );
           let lastState = '';
           this.meticulousInterval = setInterval(() => {
@@ -2518,8 +2517,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           .catch((_msg) => {
             this.uiLog.log('We could not start script: ' + _msg);
             this.uiToast.showInfoToast(
-              'We could not start script: ' + _msg,
-              false,
+              'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_START_FAILED',
             );
           });
 
@@ -2535,7 +2533,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               } else {
                 //Oh no... lets try it again
                 this.uiToast.showInfoToast(
-                  'We tried to start the xenia script again',
+                  'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_START_RETRY',
                 );
                 prepDeviceCall
                   .startScript(
@@ -2544,8 +2542,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
                   .catch((_msg) => {
                     this.uiLog.log('We could not start script: ' + _msg);
                     this.uiToast.showInfoToast(
-                      'We could not start script - second try: ' + _msg,
-                      false,
+                      'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_START_FAILED',
                     );
                   });
                 try {
@@ -2622,10 +2619,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           .startShot(this.data.preparationDeviceBrew?.params.selectedMode)
           .catch((_msg) => {
             this.uiLog.log('We could not start shot on sanremo: ' + _msg);
-            this.uiToast.showInfoToast(
-              'We could not start shot on sanremo: ' + _msg,
-              false,
-            );
+            this.uiToast.showInfoToast('PREPARATION_DEVICE.SHOT_START_FAILED');
           });
       }
 
@@ -2652,10 +2646,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         .startShot(this.data.preparationDeviceBrew.params as Move2Params)
         .catch((_msg) => {
           this.uiLog.log('We could not start shot on move2: ' + _msg);
-          this.uiToast.showInfoToast(
-            'We could not start shot on move2: ' + _msg,
-            false,
-          );
+          this.uiToast.showInfoToast('PREPARATION_DEVICE.SHOT_START_FAILED');
         });
 
       if (
@@ -2714,7 +2705,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
       await this.uiAlert.hideLoadingSpinner();
 
-      this.uiToast.showInfoToast('We started now listening to scale changes');
+      this.uiToast.showInfoToast('SMART_SCALE_LISTENING_STARTED');
       this.scaleListeningSubscription = scale.flowChange.subscribe((_val) => {
         const weight: number = this.uiHelper.toFixedIfNecessary(_val.actual, 1);
 
@@ -3270,8 +3261,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         )
         .catch((_msg) => {
           this.uiToast.showInfoToast(
-            'We could not start script at weight: ' + _msg,
-            false,
+            'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_START_FAILED',
           );
           this.uiLog.log('We could not start script at weight: ' + _msg);
         });
@@ -3286,8 +3276,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.uiLog.log(`Xenia Script - Weight Reached - Trigger stop script`);
       prepDeviceCall.stopScript().catch((_msg) => {
         this.uiToast.showInfoToast(
-          'We could not stop script at weight: ' + _msg,
-          false,
+          'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_STOP_FAILED',
         );
         this.uiLog.log('We could not stop script at weight: ' + _msg);
       });
@@ -4911,8 +4900,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           )
           .catch((_msg) => {
             this.uiToast.showInfoToast(
-              'We could not start script at first drip: ' + _msg,
-              false,
+              'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_START_FAILED',
             );
             this.uiLog.log('We could not start script at first drip: ' + _msg);
           });
@@ -4948,9 +4936,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
             )
             .catch((_msg) => {
               this.uiToast.showInfoToast(
-                'We could not start script at first drip - manual  triggered: ' +
-                  _msg,
-                false,
+                'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_START_FAILED',
               );
               this.uiLog.log(
                 'We could not start script at first drip - manual  triggered: ' +

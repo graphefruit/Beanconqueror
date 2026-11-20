@@ -16,7 +16,7 @@
   <ion-list-header>
     {{"PREDEFINED_FLAVORS_AROMAS" | translate }}
   </ion-list-header>
-  <ion-searchbar [(ngModel)]="searchFlavorText" debounce="500" (ionInput)='searchFlavors()' (ionChange)="searchFlavors()" (ionClear)="resetFlavors()" />
+  <ion-searchbar [searchName]="'A11Y.SEARCH_FLAVORS' | translate" [(ngModel)]="searchFlavorText" debounce="500" (ionInput)='searchFlavors()' (ionChange)="searchFlavors()" (ionClear)="resetFlavors()" />
   @for (flavor of displayingFlavors; track flavor) {
     <div class="ion-margin-horizontal">
       @if (flavor.display) {

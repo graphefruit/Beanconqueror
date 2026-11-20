@@ -46,7 +46,7 @@ export class UIMillStorage extends StorageClass {
       }
     }
 
-    return this.translate.instant('NO_COFFEE_DRUNK');
+    return this.translate.instant('NOT_FOUND');
   }
 
   public async initializeStorage() {

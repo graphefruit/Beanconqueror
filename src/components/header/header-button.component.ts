@@ -8,11 +8,10 @@ import {
 import { IonButton, IonIcon } from '@ionic/angular';
 
 import { LongPressDirective } from '../../directive/long-press.directive';
-import { ShortPressDirective } from '../../directive/short-press.directive';
 
 @Component({
   selector: 'app-header-button',
-  imports: [IonButton, IonIcon, LongPressDirective, ShortPressDirective],
+  imports: [IonButton, IonIcon, LongPressDirective],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @if (longPressEnabled()) {
@@ -21,7 +20,7 @@ import { ShortPressDirective } from '../../directive/short-press.directive';
         [class]="buttonClass()"
         [attr.aria-label]="ariaLabel() || null"
         fill="clear"
-        (short-press)="clicked.emit($event)"
+        (click)="clicked.emit($event)"
         (long-press)="longPressed.emit($event)"
       >
         <ion-icon

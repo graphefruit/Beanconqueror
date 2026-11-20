@@ -5,7 +5,7 @@ import {
   tick,
 } from '@angular/core/testing';
 
-import { ToastController } from '@ionic/angular';
+import { ToastButton, ToastController } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -22,6 +22,7 @@ const TRANSLATIONS: Record<string, string> = {
   SAVING_BREW_COUNTDOWN: 'Saving brew in {{time}}',
   CANCEL: 'Cancel',
   SAVE_NOW: 'Save now',
+  CLOSE: 'Schließen',
 };
 
 class FakeLiveRegion implements LiveRegion {
@@ -38,6 +39,7 @@ class FakeLiveRegion implements LiveRegion {
 /** An ion-toast as far as the service sees it, with Ionic's live region. */
 interface FakeToast extends HTMLElement {
   message: string;
+  buttons?: ToastButton[];
   present: jasmine.Spy<() => Promise<void>>;
   onDidDismiss: () => Promise<{ role?: string }>;
   /** aria-live of the toast's own live region when present() was called. */
@@ -92,9 +94,10 @@ describe('UIToast', () => {
         {
           provide: ToastController,
           useValue: {
-            create: (options: { message: string }) => {
+            create: (options: { message: string; buttons?: ToastButton[] }) => {
               const toast = createToast(withShadowRoot);
               toast.message = options.message;
+              toast.buttons = options.buttons;
               toasts.push(toast);
               return Promise.resolve(toast);
             },
@@ -149,6 +152,24 @@ describe('UIToast', () => {
     expect(liveRegion.heard).toEqual([
       { message: 'Connected to Visualizer', politeness: 'polite' },
     ]);
+  }));
+
+  it('names the close button of info toasts in the app language', fakeAsync(() => {
+    const uiToast = createService();
+
+    void uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
+    void uiToast.showInfoToastBottom('VISUALIZER.CONNECTION.SUCCESSFULLY');
+    flushMicrotasks();
+
+    for (const toast of toasts) {
+      expect(toast.buttons).toEqual([
+        jasmine.objectContaining({
+          text: 'X',
+          role: 'cancel',
+          htmlAttributes: { 'aria-label': 'Schließen' },
+        }),
+      ]);
+    }
   }));
 
   it('still announces a toast that has no shadow root', fakeAsync(() => {

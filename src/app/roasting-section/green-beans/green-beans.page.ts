@@ -31,6 +31,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { GreenBeanInformationComponent } from '../../../components/green-bean-information/green-bean-information.component';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { SearchbarNameDirective } from '../../../directive/searchbar-name.directive';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
 import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
@@ -62,6 +63,7 @@ import { GreenBeanSortComponent } from './green-bean-sort/green-bean-sort.compon
     IonSegmentButton,
     IonLabel,
     IonSearchbar,
+    SearchbarNameDirective,
     IonIcon,
     IonButton,
   ],

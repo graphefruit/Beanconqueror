@@ -265,9 +265,13 @@ test('a half-height sheet keeps the page and its tab bar out of reach', async ({
   await expect(page.getByRole('tab', { name: 'Beans' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Add bean' })).toHaveCount(0);
   // Ionic would pull focus to one of the two actions, so the drag handle
-  // of the sheet is the probe.
+  // of the sheet is the probe. With one sheet size it does nothing and is
+  // hidden from screen readers, so it is found by its class.
+  await expect(
+    page.getByRole('button', { name: 'Resize dialog', exact: true }),
+  ).toHaveCount(0);
   await expectFocusStaysOn(
-    page.getByRole('button', { name: /^Activate to adjust the size/ }),
+    page.locator('ion-modal .modal-handle'),
     behind(page, 'button', 'Import beans'),
   );
   await expect(behind(page, 'button', 'Import beans')).not.toBeFocused();

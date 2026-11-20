@@ -1,6 +1,6 @@
 import { inject, Service } from '@angular/core';
 
-import { ToastController } from '@ionic/angular';
+import { ToastButton, ToastController } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -104,14 +104,7 @@ export class UIToast {
       duration: 2000,
       position: 'top',
       animated: false,
-      buttons: [
-        {
-          side: 'end',
-          text: 'X',
-          role: 'cancel',
-          handler: () => {},
-        },
-      ],
+      buttons: [this.closeButton()],
     });
     void this.present(toast, message);
   }
@@ -123,16 +116,19 @@ export class UIToast {
       duration: 2000,
       position: 'bottom',
       animated: false,
-      buttons: [
-        {
-          side: 'end',
-          text: 'X',
-          role: 'cancel',
-          handler: () => {},
-        },
-      ],
+      buttons: [this.closeButton()],
     });
     void this.present(toast, message);
+  }
+
+  /** Shows "X"; screen readers say what it does, in the app language. */
+  private closeButton(): ToastButton {
+    return {
+      side: 'end',
+      text: 'X',
+      role: 'cancel',
+      htmlAttributes: { 'aria-label': this.translate.instant('CLOSE') },
+    };
   }
 
   private present(toast: HTMLIonToastElement, message: string): Promise<void> {

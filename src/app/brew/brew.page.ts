@@ -38,7 +38,7 @@ import { BrewInformationComponent } from '../../components/brew-information/brew
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { LongPressDirective } from '../../directive/long-press.directive';
-import { ShortPressDirective } from '../../directive/short-press.directive';
+import { SearchbarNameDirective } from '../../directive/searchbar-name.directive';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
@@ -69,12 +69,12 @@ import { BrewFilterComponent } from './brew-filter/brew-filter.component';
     IonSegmentButton,
     IonLabel,
     IonSearchbar,
+    SearchbarNameDirective,
     IonIcon,
     IonButton,
     IonFab,
     IonFabButton,
     LongPressDirective,
-    ShortPressDirective,
   ],
 })
 export class BrewPage implements OnInit {

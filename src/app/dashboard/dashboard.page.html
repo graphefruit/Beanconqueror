@@ -2,6 +2,12 @@
   <app-header [title]="'OVERVIEW' | translate">
     <app-header-button
       header-slot="end"
+      icon="beanconqueror-list-add"
+      [ariaLabel]="'A11Y.IMPORT_BREW' | translate"
+      (clicked)="longPressAdd($event)"
+    />
+    <app-header-button
+      header-slot="end"
       icon="beanconqueror-add"
       [ariaLabel]="'ADD_BREW' | translate"
       [longPressEnabled]="true"

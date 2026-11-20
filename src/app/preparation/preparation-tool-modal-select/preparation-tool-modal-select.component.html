@@ -25,7 +25,7 @@
               <div>
                 <ion-card>
                   <div class="ion-justify-content-end container">
-                    <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="activePreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
+                    <ion-searchbar [searchName]="'A11Y.SEARCH_PREPARATION_TOOLS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="activePreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
                   </div>
                   <hr />
                   @if (openTools.length > 0) {
@@ -52,7 +52,7 @@
               <div>
                 <ion-card>
                   <div class="ion-justify-content-end container">
-                    <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedPreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
+                    <ion-searchbar [searchName]="'A11Y.SEARCH_PREPARATION_TOOLS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedPreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
                   </div>
                   <hr />
                   @for (prep of archivedTools; track prep) {
@@ -86,7 +86,7 @@
                 <div>
                   <ion-card>
                     <div class="ion-justify-content-end container">
-                      <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="activePreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
+                      <ion-searchbar [searchName]="'A11Y.SEARCH_PREPARATION_TOOLS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="activePreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
                     </div>
                     <hr />
                     @if (openTools.length > 0) {
@@ -115,7 +115,7 @@
                 <div>
                   <ion-card>
                     <div class="ion-justify-content-end container">
-                      <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedPreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
+                      <ion-searchbar [searchName]="'A11Y.SEARCH_PREPARATION_TOOLS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedPreparationToolsText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
                     </div>
                     <hr />
                     @for (prep of archivedTools; track prep) {

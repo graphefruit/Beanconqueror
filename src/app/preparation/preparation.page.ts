@@ -36,6 +36,7 @@ import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
 import { HeaderComponent } from '../../components/header/header.component';
 import { PreparationInformationCardComponent } from '../../components/preparation-information-card/preparation-information-card.component';
+import { SearchbarNameDirective } from '../../directive/searchbar-name.directive';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 import { PREPARATION_SEGMENT } from '../../enums/preparations/preparationSegment';
 import { PREPARATION_SORT_AFTER } from '../../enums/preparations/preparationSortAfter';
@@ -68,6 +69,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
     IonLabel,
     IonIcon,
     IonSearchbar,
+    SearchbarNameDirective,
     IonButton,
     NgTemplateOutlet,
   ],

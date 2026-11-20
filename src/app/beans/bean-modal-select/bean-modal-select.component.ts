@@ -44,6 +44,7 @@ import { AsyncImageComponent } from '../../../components/async-image/async-image
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { SearchbarNameDirective } from '../../../directive/searchbar-name.directive';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
@@ -93,6 +94,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonCol,
     IonThumbnail,
     IonSearchbar,
+    SearchbarNameDirective,
   ],
 })
 export class BeanModalSelectComponent implements OnInit {

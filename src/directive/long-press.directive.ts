@@ -21,19 +21,42 @@ export class LongPressDirective implements OnInit {
   @Output('long-press') public longPress: EventEmitter<any> =
     new EventEmitter();
 
+  /**
+   * The press that ended a long press may still end in a click on the host.
+   * Its click handler (the short tap action) must not run as well. Keyboard
+   * and screen reader activation is a click only and always gets through.
+   */
+  private clickEndsLongPress = false;
+
+  constructor() {
+    // Capture: before the click handlers of the host.
+    this.elementRef.nativeElement.addEventListener(
+      'click',
+      (ev) => {
+        if (this.clickEndsLongPress) {
+          this.clickEndsLongPress = false;
+          ev.stopImmediatePropagation();
+          ev.preventDefault();
+        }
+      },
+      true,
+    );
+  }
+
   public ngOnInit() {
     const isTouch = 'ontouchstart' in document.documentElement;
     const element = this.elementRef.nativeElement;
     if (element.onpointerdown) {
       element.onpointerdown = (ev) => {
         this.timerSub = timer(this.delay).subscribe(() => {
-          this.longPress.emit(ev);
+          this.emitLongPress(ev);
           /* Best hack in my entire life. Thanks android
            * Prevent the ghostclick in the next page when the long-press is fired
            * */
           const bodyEl = window.document.querySelector('body');
           bodyEl.classList.add('disablePointerEvents');
           setTimeout(() => {
+            this.clickEndsLongPress = false;
             bodyEl.classList.remove('disablePointerEvents');
             setTimeout(() => {
               // you can use scale(1) or translate(0, 0), etc
@@ -52,13 +75,14 @@ export class LongPressDirective implements OnInit {
         'touchstart',
         (ev) => {
           this.timerSub = timer(this.delay).subscribe(() => {
-            this.longPress.emit(ev);
+            this.emitLongPress(ev);
             /* Best hack in my entire life. Thanks android
              * Prevent the ghostclick in the next page when the long-press is fired
              * */
             const bodyEl = window.document.querySelector('body');
             bodyEl.classList.add('disablePointerEvents');
             setTimeout(() => {
+              this.clickEndsLongPress = false;
               bodyEl.classList.remove('disablePointerEvents');
               setTimeout(() => {
                 // you can use scale(1) or translate(0, 0), etc
@@ -108,6 +132,11 @@ export class LongPressDirective implements OnInit {
         this.unsub();
       };
     }
+  }
+
+  private emitLongPress(ev: Event) {
+    this.clickEndsLongPress = true;
+    this.longPress.emit(ev);
   }
 
   private unsub() {

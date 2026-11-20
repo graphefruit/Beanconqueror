@@ -38,6 +38,7 @@ import { BrewGraphReferenceCardComponent } from '../../../components/brew-graph-
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { SearchbarNameDirective } from '../../../directive/searchbar-name.directive';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
@@ -71,6 +72,7 @@ import { BrewFilterComponent } from '../brew-filter/brew-filter.component';
     IonRadioGroup,
     IonCard,
     IonSearchbar,
+    SearchbarNameDirective,
     IonFooter,
     IonRow,
     IonCol,

@@ -91,6 +91,7 @@ import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIHelper } from '../../../services/uiHelper';
+import { UILog } from '../../../services/uiLog';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -131,6 +132,7 @@ export class BrewBrewingPreparationDeviceComponent
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiToast = inject(UIToast);
+  private readonly uiLog = inject(UILog);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
@@ -414,9 +416,9 @@ export class BrewBrewingPreparationDeviceComponent
         const xeniaScripts = await this.preparationDevice.getScripts();
         this.preparationDevice.mapScriptsAndSaveTemp(xeniaScripts);
       } catch (ex) {
+        this.uiLog.warn('Xenia - could not load scripts', ex);
         this.uiToast.showInfoToast(
-          'We could not get scripts from xenia: ' + JSON.stringify(ex),
-          false,
+          'PREPARATION_DEVICE.TYPE_XENIA.SCRIPTS_COULD_NOT_BE_LOADED',
         );
       }
       // We didn't set any data yet
@@ -782,7 +784,7 @@ export class BrewBrewingPreparationDeviceComponent
         await this.uiAlert.hideLoadingSpinner();
         //Not connected
         this.uiAlert.showMessage(
-          'PREPARATION_DEVICE.TYPE_GAGGIUINO_YOU.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
+          'PREPARATION_DEVICE.TYPE_GAGGIUINO.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
           'CARE',
           'OK',
           true,

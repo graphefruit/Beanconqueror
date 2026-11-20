@@ -2583,7 +2583,7 @@
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 63
+      "count": 62
     },
     "@typescript-eslint/no-misused-promises": {
       "count": 2
@@ -2982,11 +2982,6 @@
       "count": 1
     }
   },
-  "src/directive/disable-double-click.directive.ts": {
-    "@typescript-eslint/no-empty-function": {
-      "count": 1
-    }
-  },
   "src/directive/long-press.directive.ts": {
     "@angular-eslint/no-input-rename": {
       "count": 1
@@ -3032,28 +3027,6 @@
       "count": 2
     },
     "no-empty": {
-      "count": 1
-    }
-  },
-  "src/directive/short-press.directive.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
-    "@angular-eslint/no-input-rename": {
-      "count": 1
-    },
-    "@typescript-eslint/consistent-generic-constructors": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
-      "count": 1
-    }
-  },
-  "src/directive/tooltip.directive.ts": {
-    "@angular-eslint/no-input-rename": {
-      "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
       "count": 1
     }
   },
@@ -3715,7 +3688,7 @@
   },
   "src/services/uiStatistic.ts": {
     "@typescript-eslint/no-unsafe-return": {
-      "count": 7
+      "count": 6
     }
   },
   "src/services/uiStorage.ts": {
@@ -3727,9 +3700,6 @@
     }
   },
   "src/services/uiToast.ts": {
-    "@typescript-eslint/no-empty-function": {
-      "count": 2
-    },
     "prefer-const": {
       "count": 1
     }

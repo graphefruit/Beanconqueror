@@ -38,6 +38,7 @@ import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { BrewView } from '../../classes/brew/brewView';
 import { HeaderComponent } from '../../components/header/header.component';
+import { DatetimeLanguageDirective } from '../../directive/datetime-language.directive';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import {
@@ -81,6 +82,7 @@ import { UIStatistic } from '../../services/uiStatistic';
     IonDatetime,
     IonDatetimeButton,
     IonPopover,
+    DatetimeLanguageDirective,
   ],
 })
 export class StatisticPage implements OnInit {

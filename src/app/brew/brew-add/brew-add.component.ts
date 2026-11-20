@@ -595,8 +595,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
           } catch (ex) {
             this.uiLog.log('We could not get the logs from xenia', ex);
             this.uiToast.showInfoToast(
-              'We could not get the logs from xenia: ' + JSON.stringify(ex),
-              false,
+              'PREPARATION_DEVICE.TYPE_XENIA.LOGS_COULD_NOT_BE_LOADED',
             );
           }
         }

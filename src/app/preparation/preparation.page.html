@@ -101,7 +101,7 @@
 </ion-content>
 
 <ng-template #preparationSearchToolbar>
-  <ion-searchbar (ionChange)="research()" (ionInput)='research()' [(ngModel)]="uiSearchText"
+  <ion-searchbar [searchName]="'A11Y.SEARCH_PREPARATIONS' | translate" (ionChange)="research()" (ionInput)='research()' [(ngModel)]="uiSearchText"
     class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
     search-icon="beanconqueror-detail" showCancelButton="never" />
   <ion-button (click)="showSort()" [attr.aria-label]="(uiIsSortActive ? 'A11Y.SORT_PREPARATIONS_ACTIVE' : 'A11Y.SORT_PREPARATIONS') | translate" fill="clear" size="small" tappable>

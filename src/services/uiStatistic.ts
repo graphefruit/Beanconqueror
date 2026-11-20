@@ -184,17 +184,6 @@ export class UIStatistic {
     return '0';
   }
 
-  public getSloganTimePassedSinceLastBrew(): string {
-    const timePassed = this.getTimePassedSinceLastBrew();
-    if (timePassed !== '') {
-      return `${this.getTimePassedSinceLastBrewMessage()} ${this.translate.instant(
-        'WITHOUT_COFFEE',
-      )}`;
-    }
-
-    return this.translate.instant('NO_COFFEE_DRUNK');
-  }
-
   public getLastBeanUsed(): string {
     const lastBrew: IBrew = this.getLastBrew();
     if (lastBrew !== undefined) {
