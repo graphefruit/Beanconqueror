@@ -2,11 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
-  HostListener,
   inject,
   OnInit,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -26,12 +24,15 @@ import { addIcons } from 'ionicons';
 import { add, waterOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
 import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { Settings } from '../../../classes/settings/settings';
 import { Water } from '../../../classes/water/water';
 import { HeaderComponent } from '../../../components/header/header.component';
+import {
+  VirtualListComponent,
+  VirtualRowDirective,
+} from '../../../components/virtual-list/virtual-list.component';
 import { WaterInformationCardComponent } from '../../../components/water-information-card/water-information-card.component';
 import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
 import { UIAlert } from '../../../services/uiAlert';
@@ -48,7 +49,8 @@ import { UIWaterStorage } from '../../../services/uiWaterStorage';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
-    AgVirtualScrollComponent,
+    VirtualListComponent,
+    VirtualRowDirective,
     WaterInformationCardComponent,
     TranslatePipe,
     HeaderComponent,
@@ -78,21 +80,13 @@ export class WaterPage implements OnInit {
   public openWaters: Water[] = [];
   public finishedWaters: Water[] = [];
 
-  @ViewChild('waterContent', { read: ElementRef })
-  public waterContent: ElementRef;
-
-  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
-  public openScroll: AgVirtualScrollComponent;
-  @ViewChild('archivedScroll', {
-    read: AgVirtualScrollComponent,
-    static: false,
-  })
-  public archivedScroll: AgVirtualScrollComponent;
   public segment = 'open';
+  private readonly list =
+    viewChild<VirtualListComponent<Water>>(VirtualListComponent);
+  public readonly waterKey = (water: Water): string => water.config.uuid;
 
   public settings: Settings;
 
-  public segmentScrollHeight: string = undefined;
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     addIcons({ add, waterOutline });
@@ -105,42 +99,10 @@ export class WaterPage implements OnInit {
   public load(): void {
     this.__initialize();
     this.changeDetectorRef.detectChanges();
-    this.retriggerScroll();
   }
 
   public segmentChanged() {
-    this.retriggerScroll();
-  }
-
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    this.retriggerScroll();
-  }
-  private retriggerScroll() {
-    setTimeout(() => {
-      const el = this.waterContent.nativeElement;
-      let scrollComponent: AgVirtualScrollComponent;
-      if (this.openScroll !== undefined) {
-        scrollComponent = this.openScroll;
-      } else {
-        scrollComponent = this.archivedScroll;
-      }
-
-      scrollComponent.el.style.height =
-        el.offsetHeight - scrollComponent.el.offsetTop + 'px';
-      this.segmentScrollHeight = scrollComponent.el.style.height;
-
-      // HACK: Manually trigger component refresh to work around initialization
-      //       bug. For some reason the scroll component sees its own height as
-      //       0 during initialization, which causes it to render 0 items. As
-      //       no changes to the component occur after initialization, no
-      //       re-render ever occurs. This forces one. The root cause for
-      //       this issue is currently unknown.
-      if (scrollComponent.items.length === 0) {
-        scrollComponent.refreshData();
-      }
-    }, 250);
+    this.list()?.scrollToTop();
   }
 
   public async triggerAction(
@@ -170,7 +132,6 @@ export class WaterPage implements OnInit {
     } else {
       this.finishedWaters = sortedBeans;
     }
-    this.retriggerScroll();
   }
 
   public ngOnInit() {}

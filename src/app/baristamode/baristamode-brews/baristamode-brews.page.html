@@ -3,22 +3,20 @@
     <ion-back-button header-slot="start" icon="beanconqueror-back" [attr.aria-label]="'BACK' | translate" defaultHref="/home/profile" />
   </app-header>
 </ion-header>
-<ion-content #brewContent>
-  @if (brews?.length == 0) {
-    <div class="ion-padding ion-text-center">
-      <div>
-        <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-cup" size="large" />
+<ion-content>
+  <app-virtual-list [items]="brews" [itemKey]="brewKey" [estimateSize]="180" [clearOfAddButton]="false">
+    @if (brews.length === 0) {
+      <div class="ion-padding ion-text-center">
+        <div>
+          <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-cup" size="large" />
+        </div>
+        <div class="text-color-inactive ion-margin-top">
+          {{ "PAGE_BREWS_NO_ENTRIES" | translate }}
+        </div>
       </div>
-      <div class="text-color-inactive ion-margin-top">
-        {{ "PAGE_BREWS_NO_ENTRIES" | translate }}
-      </div>
-    </div>
-  }
-
-  <ag-virtual-scroll #brewsScroll [items]="brews" [height]="'100vh'"
-                     [min-row-height]="180">
-    @for (brew of brewsScroll.items; track brew) {
-      <baristamode-brew-information [brew]="brew" />
     }
-  </ag-virtual-scroll>
+    <ng-template [appVirtualRow]="brews" let-brew>
+      <baristamode-brew-information [brew]="brew" />
+    </ng-template>
+  </app-virtual-list>
 </ion-content>

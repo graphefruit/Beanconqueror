@@ -45,11 +45,6 @@
       "count": 2
     }
   },
-  "src/app/baristamode/baristamode-brews/baristamode-brews.page.html": {
-    "@angular-eslint/template/eqeqeq": {
-      "count": 1
-    }
-  },
   "src/app/baristamode/baristamode-brews/baristamode-brews.page.ts": {
     "@angular-eslint/no-empty-lifecycle-method": {
       "count": 1
@@ -744,11 +739,6 @@
       "count": 3
     }
   },
-  "src/app/graph-section/graph/graph.page.html": {
-    "@angular-eslint/template/eqeqeq": {
-      "count": 2
-    }
-  },
   "src/app/graph-section/graph/graph.page.ts": {
     "@angular-eslint/no-empty-lifecycle-method": {
       "count": 1
@@ -978,11 +968,6 @@
       "count": 3
     }
   },
-  "src/app/mill/mill.page.html": {
-    "@angular-eslint/template/eqeqeq": {
-      "count": 2
-    }
-  },
   "src/app/mill/mill.page.ts": {
     "@angular-eslint/no-empty-lifecycle-method": {
       "count": 1
@@ -1146,11 +1131,6 @@
       "count": 2
     }
   },
-  "src/app/preparation/preparation.page.html": {
-    "@angular-eslint/template/eqeqeq": {
-      "count": 2
-    }
-  },
   "src/app/preparation/preparation.page.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
       "count": 1
@@ -1212,11 +1192,6 @@
     },
     "@typescript-eslint/no-floating-promises": {
       "count": 3
-    }
-  },
-  "src/app/roasting-section/green-beans/green-beans.page.html": {
-    "@angular-eslint/template/eqeqeq": {
-      "count": 2
     }
   },
   "src/app/roasting-section/green-beans/green-beans.page.ts": {
@@ -1455,11 +1430,6 @@
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 2
-    }
-  },
-  "src/app/water-section/water/water.page.html": {
-    "@angular-eslint/template/eqeqeq": {
       "count": 2
     }
   },

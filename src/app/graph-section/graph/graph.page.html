@@ -5,55 +5,37 @@
   </app-header>
 </ion-header>
 
-<ion-content #graphContent>
-  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
-    <ion-segment-button value="open">
-      <ion-label>{{"CURRENT" | translate}}
-      </ion-label>
-    </ion-segment-button>
-    @if (settings?.show_archived_graphs) {
-      <ion-segment-button value="archiv">
-        <ion-label>{{"TAB_ARCHIVE" | translate}}
+<ion-content>
+  @let graphs = segment === 'open' ? openGraphs : settings?.show_archived_beans ? finishedGraphs : [];
+  <app-virtual-list [items]="graphs" [itemKey]="graphKey" [estimateSize]="165" [clearOfAddButton]="false">
+    <ion-segment virtualListHead (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
+      <ion-segment-button value="open">
+        <ion-label>{{"CURRENT" | translate}}
         </ion-label>
       </ion-segment-button>
-    }
-  </ion-segment>
-  @switch (segment) {
-    @case ('open') {
-      @if (openGraphs.length == 0) {
-        <div class="ion-padding ion-text-center">
-          <div>
-            <ion-icon aria-hidden="true" color="inactive" name="analytics-outline" size="large" />
-          </div>
-          <div class="text-color-inactive ion-margin-top">
-            {{"GRAPH_SECTION.NO_ENTRIES" | translate}}
-          </div>
+      @if (settings?.show_archived_graphs) {
+        <ion-segment-button value="archiv">
+          <ion-label>{{"TAB_ARCHIVE" | translate}}
+          </ion-label>
+        </ion-segment-button>
+      }
+    </ion-segment>
+    @if (graphs.length === 0 && (segment === 'open' || settings?.show_archived_beans)) {
+      <div class="ion-padding ion-text-center">
+        <div>
+          <ion-icon aria-hidden="true" color="inactive" name="analytics-outline" size="large" />
         </div>
-      }
-      <ag-virtual-scroll #openScroll [items]="openGraphs" [height]="'100vh'" [min-row-height]="165">
-        @for (graph of openScroll.items; track graph) {
-          <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" [graph]="graph" />
-        }
-      </ag-virtual-scroll>
-    }
-    @case ('archiv') {
-      @if (settings?.show_archived_beans) {
-        @if (finishedGraphs.length == 0) {
-          <div class="ion-padding ion-text-center">
-            <div>
-              <ion-icon aria-hidden="true" color="inactive" name="analytics-outline" size="large" />
-            </div>
-            <div class="text-color-inactive ion-margin-top">
-              {{"GRAPH_SECTION.NO_ARCHIVED_ENTRIES" | translate}}
-            </div>
-          </div>
-        }
-        <ag-virtual-scroll #archivedScroll [items]="finishedGraphs" [height]="'100vh'" [min-row-height]="165">
-          @for (graph of archivedScroll.items; track graph) {
-            <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" [graph]="graph" />
+        <div class="text-color-inactive ion-margin-top">
+          @if (segment === 'open') {
+            {{"GRAPH_SECTION.NO_ENTRIES" | translate}}
+          } @else {
+            {{"GRAPH_SECTION.NO_ARCHIVED_ENTRIES" | translate}}
           }
-        </ag-virtual-scroll>
-      }
+        </div>
+      </div>
     }
-  }
+    <ng-template [appVirtualRow]="graphs" let-graph>
+      <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" [graph]="graph" />
+    </ng-template>
+  </app-virtual-list>
 </ion-content>

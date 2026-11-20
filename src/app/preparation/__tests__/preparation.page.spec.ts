@@ -58,10 +58,6 @@ describe('PreparationPage - changes of the brews and the methods', () => {
 
   it('builds the list once per change, however often the page was entered', () => {
     const page = TestBed.runInInjectionContext(() => new PreparationPage());
-    spyOn(
-      page as unknown as { retriggerScroll(): void },
-      'retriggerScroll',
-    ).and.stub();
     const load = spyOn(page, 'loadPreparations').and.stub();
 
     page.ionViewWillEnter();

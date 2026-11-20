@@ -86,10 +86,7 @@ function tabBar(page: Page) {
 
 /** The list renders only the cards in view. */
 function listOf(page: Page, list: List): Locator {
-  return page
-    .locator(list.card.split(' ')[0])
-    .locator(`ag-virtual-scroll, ${VIRTUAL_LIST}`)
-    .first();
+  return page.locator(list.card.split(' ')[0]).locator(VIRTUAL_LIST).first();
 }
 
 function addButton(page: Page, name: string) {

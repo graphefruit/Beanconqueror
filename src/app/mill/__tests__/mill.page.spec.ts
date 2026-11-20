@@ -49,10 +49,6 @@ describe('MillPage - changes of the brews', () => {
 
   it('builds the list once per change, however often the page was entered', () => {
     const page = TestBed.runInInjectionContext(() => new MillPage());
-    spyOn(
-      page as unknown as { retriggerScroll(): void },
-      'retriggerScroll',
-    ).and.stub();
     const load = spyOn(page, 'loadMills').and.stub();
 
     page.ionViewWillEnter();

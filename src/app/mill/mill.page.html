@@ -4,61 +4,42 @@
   </app-header>
 </ion-header>
 
-<ion-content #millContent>
-  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
-    <ion-segment-button value="open">
-      <ion-label>
-        {{"CURRENT" | translate }}
-      </ion-label>
-    </ion-segment-button>
-    @if (settings?.show_archived_mills) {
-<ion-segment-button value="archive">
-      <ion-label>
-        {{"TAB_ARCHIVE" | translate }}
-      </ion-label>
-    </ion-segment-button>
-}
-  </ion-segment>
-
-  @switch (segment) {
-    @case ('open') {
-      @if (openMillsView?.length == 0) {
-<div class="ion-padding ion-text-center">
+<ion-content>
+  @let mills = segment === 'open' ? openMillsView : archiveMillsView;
+  <app-virtual-list [items]="mills" [itemKey]="millKey" [estimateSize]="263">
+    <ion-segment virtualListHead (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
+      <ion-segment-button value="open">
+        <ion-label>
+          {{"CURRENT" | translate }}
+        </ion-label>
+      </ion-segment-button>
+      @if (settings?.show_archived_mills) {
+        <ion-segment-button value="archive">
+          <ion-label>
+            {{"TAB_ARCHIVE" | translate }}
+          </ion-label>
+        </ion-segment-button>
+      }
+    </ion-segment>
+    @if (mills.length === 0) {
+      <div class="ion-padding ion-text-center">
         <div>
           <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large" aria-hidden="true" />
         </div>
         <div class="text-color-inactive ion-margin-top">
-          {{"PAGE_MILL_LIST_NO_MILL_EXISTING" | translate}}
+          @if (segment === 'open') {
+            {{"PAGE_MILL_LIST_NO_MILL_EXISTING" | translate}}
+          } @else {
+            {{"PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING" | translate}}
+          }
         </div>
       </div>
-}
-      <ag-virtual-scroll #openScroll [items]="openMillsView" [height]="'100vh'" class="clear-of-fab" [min-row-height]="263">
-        @for (mill of openScroll.items; track mill) {
-<mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill" />
-}
-      </ag-virtual-scroll>
     }
-    @case ('archive') {
-      @if (archiveMillsView?.length == 0) {
-<div class="ion-padding ion-text-center">
-        <div>
-          <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large" aria-hidden="true" />
-        </div>
-        <div class="text-color-inactive ion-margin-top">
-          {{"PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING" | translate}}
-        </div>
-      </div>
-}
-
-      <ag-virtual-scroll #archivedScroll [items]="archiveMillsView" [height]="'100vh'" class="clear-of-fab" [min-row-height]="263">
-        @for (mill of archivedScroll.items; track mill) {
-<mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill" />
-}
-      </ag-virtual-scroll>
-    }
-  }
-
-
+    <ng-template [appVirtualRow]="mills" let-mill>
+      <mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill" />
+    </ng-template>
+  </app-virtual-list>
+  <!-- Last in the page: it floats over the bottom right corner of the list. -->
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button color="accent" [attr.aria-label]="'ADD_MILL' | translate" (click)="add()">
       <ion-icon name="add" aria-hidden="true" />

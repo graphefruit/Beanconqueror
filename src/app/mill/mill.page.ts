@@ -2,11 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
-  HostListener,
   inject,
   OnInit,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -27,12 +25,15 @@ import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
 import { Mill } from '../../classes/mill/mill';
 import { Settings } from '../../classes/settings/settings';
 import { HeaderComponent } from '../../components/header/header.component';
 import { MillInformationCardComponent } from '../../components/mill-information-card/mill-information-card.component';
+import {
+  VirtualListComponent,
+  VirtualRowDirective,
+} from '../../components/virtual-list/virtual-list.component';
 import { MILL_ACTION } from '../../enums/mills/millActions';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
@@ -48,7 +49,8 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
-    AgVirtualScrollComponent,
+    VirtualListComponent,
+    VirtualRowDirective,
     MillInformationCardComponent,
     TranslatePipe,
     HeaderComponent,
@@ -78,19 +80,12 @@ export class MillPage implements OnInit {
   public openMillsView: Mill[] = [];
   public archiveMillsView: Mill[] = [];
 
-  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
-  public openScroll: AgVirtualScrollComponent;
-  @ViewChild('archivedScroll', {
-    read: AgVirtualScrollComponent,
-    static: false,
-  })
-  public archivedScroll: AgVirtualScrollComponent;
-  @ViewChild('millContent', { read: ElementRef })
-  public millContent: ElementRef;
+  private readonly list =
+    viewChild<VirtualListComponent<Mill>>(VirtualListComponent);
+  public readonly millKey = (mill: Mill): string => mill.config.uuid;
 
   public settings: Settings;
   public segment = 'open';
-  public segmentScrollHeight: string = undefined;
 
   public constructor() {
     addIcons({ add });
@@ -103,44 +98,12 @@ export class MillPage implements OnInit {
   public ngOnInit(): void {}
 
   public segmentChanged() {
-    this.retriggerScroll();
-  }
-
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    this.retriggerScroll();
-  }
-  private retriggerScroll() {
-    setTimeout(() => {
-      const el = this.millContent.nativeElement;
-      let scrollComponent: AgVirtualScrollComponent;
-      if (this.openScroll !== undefined) {
-        scrollComponent = this.openScroll;
-      } else {
-        scrollComponent = this.archivedScroll;
-      }
-
-      scrollComponent.el.style.height =
-        el.offsetHeight - scrollComponent.el.offsetTop + 'px';
-      this.segmentScrollHeight = scrollComponent.el.style.height;
-
-      // HACK: Manually trigger component refresh to work around initialization
-      //       bug. For some reason the scroll component sees its own height as
-      //       0 during initialization, which causes it to render 0 items. As
-      //       no changes to the component occur after initialization, no
-      //       re-render ever occurs. This forces one. The root cause for
-      //       this issue is currently unknown.
-      if (scrollComponent.items.length === 0) {
-        scrollComponent.refreshData();
-      }
-    }, 150);
+    this.list()?.scrollToTop();
   }
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
     this.__initializeMills();
-    this.retriggerScroll();
   }
 
   public getActiveMills(): Mill[] {

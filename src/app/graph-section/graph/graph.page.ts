@@ -2,11 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
-  HostListener,
   inject,
   OnInit,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -24,7 +22,6 @@ import { addIcons } from 'ionicons';
 import { analyticsOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
 import { Graph } from '../../../classes/graph/graph';
 import { GreenBean } from '../../../classes/green-bean/green-bean';
@@ -32,6 +29,10 @@ import { Settings } from '../../../classes/settings/settings';
 import { GraphInformationCardComponent } from '../../../components/graph-information-card/graph-information-card.component';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import {
+  VirtualListComponent,
+  VirtualRowDirective,
+} from '../../../components/virtual-list/virtual-list.component';
 import { GREEN_BEAN_ACTION } from '../../../enums/green-beans/greenBeanAction';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -47,7 +48,8 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
-    AgVirtualScrollComponent,
+    VirtualListComponent,
+    VirtualRowDirective,
     GraphInformationCardComponent,
     TranslatePipe,
     HeaderComponent,
@@ -76,20 +78,12 @@ export class GraphPage implements OnInit {
   public openGraphs: Graph[] = [];
   public finishedGraphs: Graph[] = [];
 
-  @ViewChild('graphContent', { read: ElementRef })
-  public graphContent: ElementRef;
-
-  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
-  public openScroll: AgVirtualScrollComponent;
-  @ViewChild('archivedScroll', {
-    read: AgVirtualScrollComponent,
-    static: false,
-  })
-  public archivedScroll: AgVirtualScrollComponent;
   public segment = 'open';
+  private readonly list =
+    viewChild<VirtualListComponent<Graph>>(VirtualListComponent);
+  public readonly graphKey = (graph: Graph): string => graph.config.uuid;
 
   public settings: Settings;
-  public segmentScrollHeight: string = undefined;
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
     addIcons({ analyticsOutline });
@@ -102,43 +96,10 @@ export class GraphPage implements OnInit {
   public load(): void {
     this.__initialize();
     this.changeDetectorRef.detectChanges();
-    this.retriggerScroll();
   }
 
   public segmentChanged() {
-    this.retriggerScroll();
-  }
-
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    this.retriggerScroll();
-  }
-  private retriggerScroll() {
-    setTimeout(() => {
-      const el = this.graphContent.nativeElement;
-      let scrollComponent: AgVirtualScrollComponent;
-      if (this.openScroll !== undefined) {
-        scrollComponent = this.openScroll;
-      } else {
-        scrollComponent = this.archivedScroll;
-      }
-
-      scrollComponent.el.style.height =
-        el.offsetHeight - scrollComponent.el.offsetTop + 'px';
-
-      this.segmentScrollHeight = scrollComponent.el.style.height;
-
-      // HACK: Manually trigger component refresh to work around initialization
-      //       bug. For some reason the scroll component sees its own height as
-      //       0 during initialization, which causes it to render 0 items. As
-      //       no changes to the component occur after initialization, no
-      //       re-render ever occurs. This forces one. The root cause for
-      //       this issue is currently unknown.
-      if (scrollComponent.items.length === 0) {
-        scrollComponent.refreshData();
-      }
-    }, 250);
+    this.list()?.scrollToTop();
   }
 
   public async triggerAction(
@@ -168,7 +129,6 @@ export class GraphPage implements OnInit {
     } else {
       this.finishedGraphs = sortedBeans;
     }
-    this.retriggerScroll();
   }
 
   public ngOnInit() {}

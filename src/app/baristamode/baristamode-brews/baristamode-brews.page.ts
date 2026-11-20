@@ -2,23 +2,23 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
-  HostListener,
   inject,
   OnDestroy,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 
 import { IonBackButton, IonContent, IonHeader, IonIcon } from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { Subscription } from 'rxjs';
 
 import BaristamodeBrew from '../../../classes/brew/baristamodeBrew';
 import { BaristamodeBrewInformationComponent } from '../../../components/baristamode-brew-information/baristamode-brew-information.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import {
+  VirtualListComponent,
+  VirtualRowDirective,
+} from '../../../components/virtual-list/virtual-list.component';
 import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewStorage';
 
 @Component({
@@ -27,7 +27,8 @@ import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewSto
   styleUrls: ['./baristamode-brews.page.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    AgVirtualScrollComponent,
+    VirtualListComponent,
+    VirtualRowDirective,
     BaristamodeBrewInformationComponent,
     TranslatePipe,
     IonHeader,
@@ -42,12 +43,7 @@ export class BaristamodeBrewsPage implements OnInit, OnDestroy {
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
   public brews: BaristamodeBrew[] = [];
-
-  @ViewChild('brewsScroll', { read: AgVirtualScrollComponent, static: false })
-  public brewsScroll: AgVirtualScrollComponent;
-
-  @ViewChild('brewContent', { read: ElementRef })
-  public brewContent: ElementRef;
+  public readonly brewKey = (brew: BaristamodeBrew): string => brew.config.uuid;
 
   private brewStorageChangeSubscription: Subscription;
 
@@ -68,37 +64,7 @@ export class BaristamodeBrewsPage implements OnInit, OnDestroy {
     this.brews = allBrews.sort(
       (a, b) => b.config.unix_timestamp - a.config.unix_timestamp,
     );
-    this.retriggerScroll();
     this.changeDetectorRef.detectChanges();
-  }
-
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    this.retriggerScroll();
-  }
-
-  private retriggerScroll() {
-    setTimeout(() => {
-      if (!this.brewsScroll || !this.brewContent) {
-        return;
-      }
-      const el = this.brewContent.nativeElement;
-      if (!el || el.offsetHeight === 0) {
-        return;
-      }
-      this.brewsScroll.el.style.height =
-        el.offsetHeight - this.brewsScroll.el.offsetTop + 'px';
-
-      if (this.brewsScroll.items.length === 0) {
-        this.brewsScroll.refreshData();
-      }
-
-      setTimeout(() => {
-        const elScroll = this.brewsScroll.el;
-        elScroll.dispatchEvent(new Event('scroll'));
-      }, 15);
-    }, 150);
   }
 
   public ngOnInit() {}

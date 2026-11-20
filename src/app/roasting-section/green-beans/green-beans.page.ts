@@ -2,11 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
-  HostListener,
   inject,
   OnInit,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -24,13 +22,16 @@ import {
 } from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
 import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { Settings } from '../../../classes/settings/settings';
 import { GreenBeanInformationComponent } from '../../../components/green-bean-information/green-bean-information.component';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import {
+  VirtualListComponent,
+  VirtualRowDirective,
+} from '../../../components/virtual-list/virtual-list.component';
 import { SearchbarNameDirective } from '../../../directive/searchbar-name.directive';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
@@ -51,7 +52,8 @@ import { GreenBeanSortComponent } from './green-bean-sort/green-bean-sort.compon
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
-    AgVirtualScrollComponent,
+    VirtualListComponent,
+    VirtualRowDirective,
     GreenBeanInformationComponent,
     TranslatePipe,
     HeaderComponent,
@@ -88,17 +90,11 @@ export class GreenBeansPage implements OnInit {
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
-  @ViewChild('greenBeanContent', { read: ElementRef })
-  public greenBeanContent: ElementRef;
-
-  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
-  public openScroll: AgVirtualScrollComponent;
-  @ViewChild('archivedScroll', {
-    read: AgVirtualScrollComponent,
-    static: false,
-  })
-  public archivedScroll: AgVirtualScrollComponent;
   public bean_segment = 'open';
+  private readonly list =
+    viewChild<VirtualListComponent<GreenBean>>(VirtualListComponent);
+  public readonly greenBeanKey = (greenBean: GreenBean): string =>
+    greenBean.config.uuid;
   public archivedBeansFilter: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
@@ -108,7 +104,6 @@ export class GreenBeansPage implements OnInit {
   public openBeansFilterText = '';
 
   public settings: Settings;
-  public segmentScrollHeight: string = undefined;
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -123,43 +118,10 @@ export class GreenBeansPage implements OnInit {
   public loadBeans(): void {
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
-    this.retriggerScroll();
   }
 
   public segmentChanged() {
-    this.retriggerScroll();
-  }
-
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    this.retriggerScroll();
-  }
-  private retriggerScroll() {
-    setTimeout(() => {
-      const el = this.greenBeanContent.nativeElement;
-      let scrollComponent: AgVirtualScrollComponent;
-      if (this.openScroll !== undefined) {
-        scrollComponent = this.openScroll;
-      } else {
-        scrollComponent = this.archivedScroll;
-      }
-
-      scrollComponent.el.style.height =
-        el.offsetHeight - scrollComponent.el.offsetTop + 'px';
-
-      this.segmentScrollHeight = scrollComponent.el.style.height;
-
-      // HACK: Manually trigger component refresh to work around initialization
-      //       bug. For some reason the scroll component sees its own height as
-      //       0 during initialization, which causes it to render 0 items. As
-      //       no changes to the component occur after initialization, no
-      //       re-render ever occurs. This forces one. The root cause for
-      //       this issue is currently unknown.
-      if (scrollComponent.items.length === 0) {
-        scrollComponent.refreshData();
-      }
-    }, 250);
+    this.list()?.scrollToTop();
   }
 
   public async beanAction(
@@ -203,6 +165,7 @@ export class GreenBeansPage implements OnInit {
     await this.__saveBeanFilter();
 
     this.loadBeans();
+    this.list()?.scrollToTop();
   }
 
   public isFilterActive(): boolean {
@@ -223,6 +186,7 @@ export class GreenBeansPage implements OnInit {
 
   public research() {
     this.__initializeBeansView(this.bean_segment);
+    this.list()?.scrollToTop();
   }
 
   private async __saveBeanFilter() {
@@ -315,7 +279,6 @@ export class GreenBeansPage implements OnInit {
     } else {
       this.finishedBeans = sortedBeans;
     }
-    this.retriggerScroll();
   }
 
   public ngOnInit() {}

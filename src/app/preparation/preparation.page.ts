@@ -3,10 +3,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
-  HostListener,
   inject,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +27,6 @@ import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 import { merge } from 'rxjs';
 
 import { Preparation } from '../../classes/preparation/preparation';
@@ -37,6 +34,10 @@ import { Settings } from '../../classes/settings/settings';
 import { HeaderComponent } from '../../components/header/header.component';
 import { PreparationInformationCardComponent } from '../../components/preparation-information-card/preparation-information-card.component';
 import { SegmentLabelComponent } from '../../components/segment-label/segment-label.component';
+import {
+  VirtualListComponent,
+  VirtualRowDirective,
+} from '../../components/virtual-list/virtual-list.component';
 import { SearchbarNameDirective } from '../../directive/searchbar-name.directive';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 import { PREPARATION_SEGMENT } from '../../enums/preparations/preparationSegment';
@@ -57,7 +58,8 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   imports: [
     FormsModule,
     SegmentLabelComponent,
-    AgVirtualScrollComponent,
+    VirtualListComponent,
+    VirtualRowDirective,
     PreparationInformationCardComponent,
     TranslatePipe,
     HeaderComponent,
@@ -114,16 +116,10 @@ export class PreparationPage {
   public uiIsTextSearchActive = false;
   public uiSearchText = '';
 
-  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
-  public openScroll: AgVirtualScrollComponent;
-  @ViewChild('archivedScroll', {
-    read: AgVirtualScrollComponent,
-    static: false,
-  })
-  public archivedScroll: AgVirtualScrollComponent;
-  @ViewChild('preparationContent', { read: ElementRef })
-  public preparationContent: ElementRef;
-  public segmentScrollHeight: string = undefined;
+  private readonly list =
+    viewChild<VirtualListComponent<Preparation>>(VirtualListComponent);
+  public readonly preparationKey = (preparation: Preparation): string =>
+    preparation.config.uuid;
 
   public constructor() {
     addIcons({ add });
@@ -144,7 +140,6 @@ export class PreparationPage {
     this.archivedPreparationsSort = this.settings.preparation_sort.ARCHIVED;
 
     this.__initializePreparations();
-    this.retriggerScroll();
     this.setUIParams();
   }
 
@@ -162,40 +157,8 @@ export class PreparationPage {
 
   public segmentChanged() {
     this.uiSearchText = this.manageSearchTextScope(this.segment, false);
-    this.retriggerScroll();
     this.setUIParams();
-  }
-
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    this.retriggerScroll();
-  }
-  private retriggerScroll() {
-    setTimeout(() => {
-      const el = this.preparationContent.nativeElement;
-      let scrollComponent: AgVirtualScrollComponent;
-      if (this.openScroll !== undefined) {
-        scrollComponent = this.openScroll;
-      } else {
-        scrollComponent = this.archivedScroll;
-      }
-
-      scrollComponent.el.style.height =
-        el.offsetHeight - scrollComponent.el.offsetTop + 'px';
-
-      this.segmentScrollHeight = scrollComponent.el.style.height;
-
-      // HACK: Manually trigger component refresh to work around initialization
-      //       bug. For some reason the scroll component sees its own height as
-      //       0 during initialization, which causes it to render 0 items. As
-      //       no changes to the component occur after initialization, no
-      //       re-render ever occurs. This forces one. The root cause for
-      //       this issue is currently unknown.
-      if (scrollComponent.items.length === 0) {
-        scrollComponent.refreshData();
-      }
-    }, 150);
+    this.list()?.scrollToTop();
   }
 
   public async showSort() {
@@ -212,6 +175,7 @@ export class PreparationPage {
       await this.__savePreparationSort();
 
       this.loadPreparations();
+      this.list()?.scrollToTop();
     }
   }
 
@@ -244,6 +208,7 @@ export class PreparationPage {
     this.setSearchTextScope(this.segment, this.uiSearchText);
     this.__initializePreparationsView(this.segment);
     this.setUIParams();
+    this.list()?.scrollToTop();
   }
 
   public async add() {
@@ -299,7 +264,6 @@ export class PreparationPage {
     } else if (_type === PREPARATION_SEGMENT.ARCHIVE) {
       this.archivePreparationsView = filteredPreparations;
     }
-    this.retriggerScroll();
   }
 
   private manageSortScope(_type: PREPARATION_SEGMENT): IPreparationPageSort {

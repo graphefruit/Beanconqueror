@@ -5,25 +5,30 @@
   </app-header>
 </ion-header>
 
-<ion-content #greenBeanContent>
-  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
-    <ion-segment-button value="open">
-      <ion-label>{{"ROASTING_SECTION.GREEN_BEAN.ROASTABLE" | translate}}
-      </ion-label>
-    </ion-segment-button>
-    @if (settings?.show_archived_green_beans) {
-      <ion-segment-button value="archiv">
-        <ion-label>{{"TAB_ARCHIVE" | translate}}
-        </ion-label>
-      </ion-segment-button>
-    }
-  </ion-segment>
-  @switch (bean_segment) {
-    @case ('open') {
-      @if (openBeans?.length > 0 || isFilterActive()) {
+<ion-content>
+  @let shown = bean_segment === 'open' || settings?.show_archived_beans;
+  @let beans = bean_segment === 'open' ? openBeans : shown ? finishedBeans : [];
+  <app-virtual-list [items]="beans" [itemKey]="greenBeanKey" [estimateSize]="165" [clearOfAddButton]="false">
+    <div virtualListHead>
+      <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
+        <ion-segment-button value="open">
+          <ion-label>{{"ROASTING_SECTION.GREEN_BEAN.ROASTABLE" | translate}}
+          </ion-label>
+        </ion-segment-button>
+        @if (settings?.show_archived_green_beans) {
+          <ion-segment-button value="archiv">
+            <ion-label>{{"TAB_ARCHIVE" | translate}}
+            </ion-label>
+          </ion-segment-button>
+        }
+      </ion-segment>
+      @if (shown && (beans.length > 0 || isFilterActive())) {
         <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-
-          <ion-searchbar [searchName]="'A11Y.SEARCH_GREEN_BEANS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
+          @if (bean_segment === 'open') {
+            <ion-searchbar [searchName]="'A11Y.SEARCH_GREEN_BEANS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
+          } @else {
+            <ion-searchbar [searchName]="'A11Y.SEARCH_GREEN_BEANS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
+          }
           <ion-button (click)="showFilter()" [attr.aria-label]="(isFilterActive() ? 'A11Y.SORT_GREEN_BEANS_ACTIVE' : 'A11Y.SORT_GREEN_BEANS') | translate" fill="clear" size="small" tappable>
             @if (isFilterActive()) {
               <ion-icon aria-hidden="true" name="beanconqueror-sort-active" slot="icon-only" />
@@ -33,54 +38,23 @@
           </ion-button>
         </div>
       }
-      @if (openBeans.length == 0) {
-        <div class="ion-padding ion-text-center">
-          <div>
-            <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-beans" size="large" />
-          </div>
-          <div class="text-color-inactive ion-margin-top">
-            {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
-          </div>
+    </div>
+    @if (shown && beans.length === 0) {
+      <div class="ion-padding ion-text-center">
+        <div>
+          <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-beans" size="large" />
         </div>
-      }
-      <ag-virtual-scroll #openScroll [items]="openBeans" [height]="'100vh'" [min-row-height]="165">
-        @for (bean of openScroll.items; track bean) {
-          <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" [greenBean]="bean" />
-        }
-      </ag-virtual-scroll>
-    }
-    @case ('archiv') {
-      @if (settings?.show_archived_beans) {
-        @if (finishedBeans?.length > 0 || isFilterActive()) {
-          <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-
-            <ion-searchbar [searchName]="'A11Y.SEARCH_GREEN_BEANS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
-            <ion-button (click)="showFilter()" [attr.aria-label]="(isFilterActive() ? 'A11Y.SORT_GREEN_BEANS_ACTIVE' : 'A11Y.SORT_GREEN_BEANS') | translate" fill="clear" size="small" tappable>
-              @if (isFilterActive()) {
-                <ion-icon aria-hidden="true" name="beanconqueror-sort-active" slot="icon-only" />
-              } @else {
-                <ion-icon aria-hidden="true" name="beanconqueror-sort-inactive" slot="icon-only" />
-              }
-            </ion-button>
-          </div>
-        }
-        @if (finishedBeans.length == 0) {
-          <div class="ion-padding ion-text-center">
-            <div>
-              <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-beans" size="large" />
-            </div>
-            <div class="text-color-inactive ion-margin-top">
-              {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
-            </div>
-          </div>
-        }
-
-        <ag-virtual-scroll #archivedScroll [items]="finishedBeans" [height]="'100vh'" [min-row-height]="165">
-          @for (bean of archivedScroll.items; track bean) {
-            <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" [greenBean]="bean" />
+        <div class="text-color-inactive ion-margin-top">
+          @if (bean_segment === 'open') {
+            {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
+          } @else {
+            {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
           }
-        </ag-virtual-scroll>
-      }
+        </div>
+      </div>
     }
-  }
+    <ng-template [appVirtualRow]="beans" let-bean>
+      <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" [greenBean]="bean" />
+    </ng-template>
+  </app-virtual-list>
 </ion-content>
