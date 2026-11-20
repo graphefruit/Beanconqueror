@@ -5,6 +5,7 @@ import { BlobReader, configure, TextWriter, ZipReader } from '@zip.js/zip.js';
 
 import { expect, test } from '../fixtures';
 import { buildBackupZip } from '../support/backup-zip';
+import { tabName } from '../support/beans';
 import { completeFirstRun } from '../support/first-run';
 import { readStoredValue } from '../support/stored-values';
 import {
@@ -222,7 +223,7 @@ for (const tier of TIERS) {
         'input',
       );
       await expect(
-        page.getByRole('tab', { name: `Current ( ${open.length} )` }),
+        page.getByRole('tab', { name: tabName(`Current ( ${open.length} )`) }),
       ).toBeVisible();
       const scroll = await scrollListToEnd(
         page,
@@ -261,7 +262,7 @@ for (const tier of TIERS) {
 
       await tabBar(page).getByRole('tab', { name: 'Brews' }).click();
       await expect(
-        page.getByRole('tab', { name: `Current ( ${open.length} )` }),
+        page.getByRole('tab', { name: tabName(`Current ( ${open.length} )`) }),
       ).toBeVisible();
       const searchField = page.getByRole('searchbox', { name: 'Search' });
       // The budget starts after the field's debounce, so FIXED_DELAYS has to match it.
@@ -300,7 +301,7 @@ for (const tier of TIERS) {
         'input',
       );
       await expect(
-        page.getByRole('tab', { name: new RegExp(`\\( ${available} \\)`) }),
+        page.getByRole('tab', { name: new RegExp(`, ${available} in total$`) }),
       ).toBeVisible();
       await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'bean list', { ...beans });

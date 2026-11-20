@@ -282,17 +282,20 @@ for (const language of ['en', 'de'] as const) {
       await start(page, language);
       const optionsFor = startsWith(t('A11Y.OPTIONS_FOR', { name: '' }));
       const brewOptions = startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' }));
-      for (const [route, name] of [
-        ['/home/dashboard', brewOptions],
-        ['/home/brews', brewOptions],
-        ['/home/beans', optionsFor],
-        ['/home/profile/preparations', optionsFor],
-        ['/home/profile/mills', optionsFor],
-        ['/home/profile/water', optionsFor],
-        ['/home/profile/graph', optionsFor],
+      // Scoped to the screen: the one left may still be on show for a moment.
+      for (const [route, screen, name] of [
+        ['/home/dashboard', 'dashboard', brewOptions],
+        ['/home/brews', 'brew', brewOptions],
+        ['/home/beans', 'beans', optionsFor],
+        ['/home/profile/preparations', 'preparation', optionsFor],
+        ['/home/profile/mills', 'mill', optionsFor],
+        ['/home/profile/water', 'app-water', optionsFor],
+        ['/home/profile/graph', 'app-graph', optionsFor],
       ] as const) {
         await show(page, route);
-        const buttons = visible(page.getByRole('button', { name }));
+        const buttons = visible(
+          page.locator(screen).getByRole('button', { name }),
+        );
         await expect(buttons.first()).toBeVisible();
         const names = await buttons.evaluateAll((all) =>
           all.map((each) => each.getAttribute('aria-label')),

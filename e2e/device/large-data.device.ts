@@ -142,7 +142,7 @@ async function measure(series: Series, data: SyntheticDataSet): Promise<void> {
     'input',
   );
   await expect(
-    page.getByRole('tab', { name: new RegExp(`\\( ${available} \\)`) }),
+    page.getByRole('tab', { name: new RegExp(`, ${available} in total$`) }),
   ).toBeVisible();
   report(series, 'bean list', { ...beans });
 
