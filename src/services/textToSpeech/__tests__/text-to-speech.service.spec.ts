@@ -115,6 +115,73 @@ describe('TextToSpeechService', () => {
       .map(([utterance]) => utterance as SpeechSynthesisUtterance);
   }
 
+  describe('values coming faster than the voice speaks them', () => {
+    /** Like the plugin: a value is done once it has been said, here after 1 s. */
+    const slowVoice = () => new Promise<void>((done) => setTimeout(done, 1000));
+
+    for (const platform of ['ios', 'android']) {
+      it(`says each value in full, then the newest one, on ${platform}`, fakeAsync(() => {
+        const service = create({ platform, nativeSpeak: slowVoice });
+        for (const value of ['182.5', '28', '1072', '1.2', '0.1', '203.5']) {
+          service.speak(value);
+          tick(250);
+        }
+        tick(5000);
+
+        // 182.5 is done after 1 s, when 1.2 is the newest; then 203.5.
+        expect(spokenNatively()).toEqual(['182.5', '1.2', '203.5']);
+      }));
+    }
+
+    it('keeps the order when the voice of the language is slow to answer', fakeAsync(() => {
+      const service = create({
+        nativeSpeak: slowVoice,
+        languageSupported: () =>
+          new Promise((done) =>
+            setTimeout(() => done({ supported: true }), 900),
+          ),
+      });
+      for (const value of ['182.5', '28', '0.1', '203.5']) {
+        service.speak(value);
+        tick(250);
+      }
+      tick(5000);
+
+      expect(spokenNatively()).toEqual(['182.5', '203.5']);
+    }));
+
+    it('does not repeat an unchanged value', fakeAsync(() => {
+      const service = create({ nativeSpeak: slowVoice });
+      service.speak('18');
+      tick(1100);
+      service.speak('18');
+      tick(1100);
+      service.speak('19');
+      tick(1100);
+
+      expect(spokenNatively()).toEqual(['18', '19']);
+    }));
+
+    it('says the time in full before the next weight', fakeAsync(() => {
+      const service = create({ nativeSpeak: slowVoice });
+      service.speak('20');
+      tick(100);
+      service.speakInFull('Time 5');
+      service.speak('21');
+      tick(5000);
+
+      expect(spokenNatively()).toEqual(['20', 'Time 5', '21']);
+    }));
+
+    it('says every test number in order', fakeAsync(() => {
+      const service = create({ nativeSpeak: slowVoice });
+      service.speakInFull('182.5', '28', '0.1');
+      tick(5000);
+
+      expect(spokenNatively()).toEqual(['182.5', '28', '0.1']);
+    }));
+  });
+
   describe('while no screen reader is on', () => {
     it('speaks natively on iOS in the app language, as loud and fast as before', fakeAsync(() => {
       const service = create();

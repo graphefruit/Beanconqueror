@@ -30,6 +30,15 @@ import {
  */
 export const SCREEN_READER_HOLD_MS = 1500;
 
+/**
+ * A screen reader does not tell when it has finished, so a value holds back
+ * the next one for about as long as it takes to say: a new announcement would
+ * cut it off, and a weight cut off every half second is never heard.
+ */
+export function screenReaderSpeakingMs(_text: string): number {
+  return 500 + 70 * _text.length;
+}
+
 export type NativeSpeech = Pick<
   TextToSpeechPlugin,
   'speak' | 'stop' | 'isLanguageSupported'
@@ -70,13 +79,31 @@ export class TextToSpeechService {
   private supportedLanguage: string | undefined;
   private failureLogged = false;
 
+  /** The value spoken last, so an unchanged weight is not repeated. */
+  private lastSpoken: string | undefined;
+  /** Whether the native voice is still saying a value. */
+  private nativeBusy = false;
+  /** Said next, in this order, each in full (the time, the test numbers). */
+  private nextInFull: string[] = [];
+  /** The newest value that came while the native voice was busy. */
+  private nextLatest: string | undefined;
+
+  /**
+   * Says a value that changes (the weight). Every value is said to its end:
+   * values that come meanwhile are dropped except the newest, which follows,
+   * so what is heard is current and never cut off. An unchanged value is not
+   * said again. `_end` stops whatever is said and says this at once.
+   */
   public speak(_text: string, _end = false) {
     if (!this.available) {
       return;
     }
+    if (!_end && _text === this.lastSpoken) {
+      return;
+    }
     if (this.screenReaderState.on()) {
-      if (Date.now() >= this.screenReaderHeldUntil) {
-        this.speakThroughScreenReader(_text);
+      if (_end || Date.now() >= this.screenReaderHeldUntil) {
+        this.speakThroughScreenReader(_text, screenReaderSpeakingMs(_text));
       }
       return;
     }
@@ -84,18 +111,37 @@ export class TextToSpeechService {
       this.end();
     }
     this.ownVoiceMaySpeak = true;
-    if (this.nativeSpeech) {
-      void this.speakNatively(this.nativeSpeech, _text);
-    } else {
+    if (!this.nativeSpeech) {
+      this.lastSpoken = _text;
       this.speakInBrowser(_text);
+    } else if (this.nativeBusy) {
+      this.nextLatest = _text;
+    } else {
+      void this.speakNatively(this.nativeSpeech, _text);
     }
   }
 
-  /** Like speak, but a screen reader gets to finish it before the next value. */
-  public speakInFull(_text: string) {
-    this.speak(_text);
-    if (this.available && this.screenReaderState.on()) {
-      this.screenReaderHeldUntil = Date.now() + SCREEN_READER_HOLD_MS;
+  /** Says each text in full, in order, before the next changing value. */
+  public speakInFull(..._texts: string[]) {
+    if (!this.available || _texts.length === 0) {
+      return;
+    }
+    if (this.screenReaderState.on()) {
+      const text = _texts.join(', ');
+      this.speakThroughScreenReader(
+        text,
+        Math.max(SCREEN_READER_HOLD_MS, screenReaderSpeakingMs(text)),
+      );
+      return;
+    }
+    this.ownVoiceMaySpeak = true;
+    if (!this.nativeSpeech) {
+      _texts.forEach((text) => this.speakInBrowser(text));
+      return;
+    }
+    this.nextInFull.push(..._texts);
+    if (!this.nativeBusy) {
+      void this.speakNatively(this.nativeSpeech, this.nextInFull.shift());
     }
   }
 
@@ -105,6 +151,10 @@ export class TextToSpeechService {
     }
     this.ended++;
     this.ownVoiceMaySpeak = false;
+    this.nativeBusy = false;
+    this.nextInFull = [];
+    this.nextLatest = undefined;
+    this.lastSpoken = undefined;
     try {
       if (this.nativeSpeech) {
         this.nativeSpeech.stop().catch(() => undefined);
@@ -125,10 +175,12 @@ export class TextToSpeechService {
    * instead, assertive so the latest value wins. A failed announcement is
    * skipped: the next follows within a second.
    */
-  private speakThroughScreenReader(_text: string) {
+  private speakThroughScreenReader(_text: string, _holdMs: number) {
     if (this.ownVoiceMaySpeak) {
       this.end();
     }
+    this.lastSpoken = _text;
+    this.screenReaderHeldUntil = Date.now() + _holdMs;
     if (this.ios) {
       this.screenReader?.speak({ value: _text }).catch(() => undefined);
     } else {
@@ -138,8 +190,15 @@ export class TextToSpeechService {
     }
   }
 
+  /**
+   * Says one value and then the next one waiting: first what is to be said in
+   * full, then the newest changing value. The plugin resolves when the value
+   * has been said.
+   */
   private async speakNatively(speech: NativeSpeech, _text: string) {
     const ended = this.ended;
+    this.nativeBusy = true;
+    this.lastSpoken = _text;
     try {
       const lang = await this.language(speech);
       if (ended !== this.ended) {
@@ -158,6 +217,18 @@ export class TextToSpeechService {
         this.failureLogged = true;
         this.uiLog.warn('Text to speech failed', error);
       }
+    }
+    if (ended !== this.ended) {
+      return;
+    }
+    this.nativeBusy = false;
+    let next = this.nextInFull.shift();
+    if (next === undefined) {
+      next = this.nextLatest !== this.lastSpoken ? this.nextLatest : undefined;
+      this.nextLatest = undefined;
+    }
+    if (next !== undefined) {
+      void this.speakNatively(speech, next);
     }
   }
 
