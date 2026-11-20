@@ -1,8 +1,14 @@
-import { fakeAsync, flushMicrotasks, TestBed } from '@angular/core/testing';
+import {
+  fakeAsync,
+  flushMicrotasks,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 
 import { Platform } from '@ionic/angular';
 
 import { StateChangeListener } from '@capacitor/screen-reader';
+import { Subject } from 'rxjs';
 
 import { Settings } from '../../../classes/settings/settings';
 import {
@@ -10,7 +16,10 @@ import {
   ScreenReaderSource,
 } from '../../a11y/screen-reader-state.service';
 import { UISettingsStorage } from '../../uiSettingsStorage';
-import { TextToSpeechService } from '../text-to-speech.service';
+import {
+  TextToSpeechService,
+  VOICE_OVER_HOLD_MS,
+} from '../text-to-speech.service';
 
 describe('TextToSpeechService', () => {
   let stateChange: StateChangeListener | undefined;
@@ -51,7 +60,10 @@ describe('TextToSpeechService', () => {
         { provide: SCREEN_READER, useValue: plugin },
         {
           provide: Platform,
-          useValue: { is: (name: string) => name === platform },
+          useValue: {
+            is: (name: string) => name === platform,
+            resume: new Subject<void>(),
+          },
         },
       ],
     });
@@ -91,6 +103,33 @@ describe('TextToSpeechService', () => {
       [{ value: 'Brew end' }],
     ]);
     expect(speakSynthesis).not.toHaveBeenCalled();
+  }));
+
+  it('lets VoiceOver finish the time before the next weight interrupts it', fakeAsync(() => {
+    const service = create(true);
+
+    service.speakInFull('Time 83');
+    service.speak('18.5');
+    tick(VOICE_OVER_HOLD_MS - 1);
+    service.speak('18.6');
+    tick(1);
+    service.speak('18.7');
+    flushMicrotasks();
+
+    expect(plugin.speak.calls.allArgs()).toEqual([
+      [{ value: 'Time 83' }],
+      [{ value: '18.7' }],
+    ]);
+  }));
+
+  it('speaks the time with its own voice while VoiceOver is off', fakeAsync(() => {
+    const service = create(false);
+
+    service.speakInFull('Time 83');
+    service.speak('18.5');
+
+    expect(plugin.speak).not.toHaveBeenCalled();
+    expect(spokenBySynthesis().length).toBe(2);
   }));
 
   it('stays silent when VoiceOver cannot speak', fakeAsync(() => {

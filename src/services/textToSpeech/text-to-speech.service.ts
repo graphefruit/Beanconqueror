@@ -9,6 +9,13 @@ import {
 } from '../a11y/screen-reader-state.service';
 import { UISettingsStorage } from '../uiSettingsStorage';
 
+/**
+ * How long a VoiceOver announcement that has to be heard in full (the brew
+ * time) holds back the weight. A new announcement cuts off the one VoiceOver
+ * is still speaking; "Time 83" takes about a second at VoiceOver's default rate.
+ */
+export const VOICE_OVER_HOLD_MS = 1500;
+
 declare var TTS;
 declare var window;
 @Service()
@@ -25,6 +32,7 @@ export class TextToSpeechService {
   private selectedVoice;
 
   private ttsEnabled = false;
+  private voiceOverHeldUntil = 0;
 
   constructor() {
     this.settings = UISettingsStorage.getInstance().getSettings();
@@ -49,7 +57,9 @@ export class TextToSpeechService {
       return;
     }
     if (this.screenReaderState.on()) {
-      this.speakThroughVoiceOver(_text);
+      if (Date.now() >= this.voiceOverHeldUntil) {
+        this.speakThroughVoiceOver(_text);
+      }
       return;
     }
     try {
@@ -63,9 +73,9 @@ export class TextToSpeechService {
 
   /**
    * A VoiceOver announcement uses the voice and rate the user set in VoiceOver,
-   * and a new one replaces the one still being spoken, so the weight heard is
-   * the current one. Speech synthesis would talk over VoiceOver. A failed
-   * announcement is skipped: the next value follows within a second.
+   * and a new one cuts off whatever VoiceOver is still speaking, so the weight
+   * heard is the current one. Speech synthesis would talk over VoiceOver. A
+   * failed announcement is skipped: the next value follows within a second.
    */
   private speakThroughVoiceOver(_text: string) {
     if (
@@ -75,6 +85,14 @@ export class TextToSpeechService {
       this.textToSpeechInstance.cancel();
     }
     this.screenReader?.speak({ value: _text }).catch(() => undefined);
+  }
+
+  /** Like speak, but VoiceOver gets to finish it before the next value. */
+  public speakInFull(_text: string) {
+    this.speak(_text);
+    if (this.ttsEnabled && this.screenReaderState.on()) {
+      this.voiceOverHeldUntil = Date.now() + VOICE_OVER_HOLD_MS;
+    }
   }
 
   public end() {

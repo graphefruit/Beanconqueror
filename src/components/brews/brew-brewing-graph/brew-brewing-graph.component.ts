@@ -2485,7 +2485,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.attachToTextToSpeechChange();
 
         if (this.settings.text_to_speech_active) {
-          this.textToSpeech.speak(
+          this.textToSpeech.speakInFull(
             this.translate.instant('TEXT_TO_SPEECH.BREW_STARTED'),
           );
         }
@@ -2887,7 +2887,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           }
         }, this.settings.text_to_speech_interval_rate);
         this.textToSpeechTimerInterval = setInterval(() => {
-          this.textToSpeech.speak(
+          this.textToSpeech.speakInFull(
             this.translate.instant('TEXT_TO_SPEECH.TIME') +
               ' ' +
               this.data.brew_time,

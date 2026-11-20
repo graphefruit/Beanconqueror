@@ -151,10 +151,24 @@ once at start and kept current through its `stateChange` event by `ScreenReaderS
 own keep it.
 
 The spoken brew values (text to speech, iOS only: weight every `text_to_speech_interval_rate` ms,
-time every 5 s) go to VoiceOver as announcements while it is on, so its voice and rate apply and
-a new announcement replaces the one still being spoken; otherwise `speechSynthesis` speaks them
-with the rate and pitch from the settings (`src/services/textToSpeech/text-to-speech.service.ts`).
-Android never calls the plugin's `speak`, which starts a new TTS engine on every call.
+time every 5 s) go to VoiceOver as announcements while it is on, so its voice and rate apply;
+otherwise `speechSynthesis` speaks them with the rate and pitch from the settings
+(`src/services/textToSpeech/text-to-speech.service.ts`). Android never calls the plugin's `speak`,
+which starts a new TTS engine on every call.
+
+The plugin posts announcements without the queue attribute; by Apple's default a new one then cuts
+off what VoiceOver is still speaking. That keeps the weight current, but has two costs:
+
+- The time and "brew started" go through `speakInFull`, which holds back the weight for
+  `VOICE_OVER_HOLD_MS` (1.5 s) so they are heard in full. At a slow VoiceOver rate they can still be
+  cut off.
+- During a brew, an announcement every 250–1000 ms also cuts off what VoiceOver reads while the
+  user navigates (the focused element, the stop button) and messages from `Announcer`. Before,
+  speech synthesis talked over VoiceOver instead. Turning text to speech off ends both.
+
+`ScreenReaderState` reads the state again on every return to the foreground, as `stateChange` can
+get lost while VoiceOver is switched in the Settings app. Whether announcements are cut off or
+dropped, and whether the time is heard in full, has to be checked on a device.
 
 #### Native plugins
 

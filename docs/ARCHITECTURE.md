@@ -998,7 +998,9 @@ file maps them onto Ionic's variables at the end.
   `src/services/a11y/screen-reader-state.service.ts`).
 - Spoken brew values: `TextToSpeechService` (iOS only) hands them to VoiceOver
   while it is on, so its voice and rate apply and only one voice speaks;
-  otherwise `speechSynthesis` with the rate and pitch from the settings.
+  otherwise `speechSynthesis` with the rate and pitch from the settings. Each
+  announcement cuts off what VoiceOver is still reading, including the user's
+  navigation; the time holds back the weight briefly (`DEVELOPING.md`).
 - axe baseline: `e2e/accessibility.spec.ts` scans the main areas in light and
   dark against WCAG 2.2 AA; known violations live in
   `e2e/accessibility-baseline.json`, which may only shrink (`DEVELOPING.md`).

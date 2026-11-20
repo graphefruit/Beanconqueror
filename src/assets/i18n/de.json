@@ -1383,7 +1383,7 @@
         "TEST_SPEAK": "Sprachtest starten",
         "PITCH": "Tonhöhe",
         "RATE": "Sprechgeschwindigkeit",
-        "VOICEOVER_HINT": "Solange VoiceOver an ist, spricht es die Ansagen mit seiner eigenen Stimme und Sprechgeschwindigkeit. Tonhöhe und Sprechgeschwindigkeit von hier wirken dann nicht."
+        "VOICEOVER_HINT": "Solange VoiceOver an ist, spricht es die Ansagen mit seiner eigenen Stimme und Sprechgeschwindigkeit. Tonhöhe und Sprechgeschwindigkeit von hier wirken dann nicht. Jede Ansage unterbricht, was VoiceOver gerade vorliest."
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptisches Feedback",
     "HAPTIC_FEEDBACK": {
