@@ -112,7 +112,7 @@ async function measure(series: Series, data: SyntheticDataSet): Promise<void> {
     app.page,
     open.length > 0
       ? {
-          selector: `ag-virtual-scroll [id="brew-${open[open.length - 1].config.uuid}"]`,
+          selector: `${VIRTUAL_LIST} [id="brew-${open[open.length - 1].config.uuid}"]`,
         }
       : { selector: 'ion-segment-button', text: '( 0 )' },
     'input',

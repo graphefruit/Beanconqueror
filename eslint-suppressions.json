@@ -663,11 +663,6 @@
       "count": 2
     }
   },
-  "src/app/brew/brew.page.html": {
-    "@angular-eslint/template/eqeqeq": {
-      "count": 2
-    }
-  },
   "src/app/brew/brew.page.ts": {
     "@angular-eslint/no-empty-lifecycle-method": {
       "count": 1
@@ -680,12 +675,6 @@
     },
     "@typescript-eslint/no-floating-promises": {
       "count": 2
-    },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 1
     }
   },
   "src/app/dashboard/__tests__/dashboard.page.spec.ts": {

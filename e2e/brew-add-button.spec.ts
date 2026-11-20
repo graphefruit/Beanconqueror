@@ -4,7 +4,7 @@ import { expect, test } from './fixtures';
 import { completeFirstRunWithBrew } from './support/first-brew';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
-import { isUncovered, scrollToEnd } from './support/virtual-list';
+import { isUncovered, scrollToEnd, VIRTUAL_LIST } from './support/virtual-list';
 
 /**
  * On the Brews tab a new brew starts from a floating button at the bottom
@@ -81,9 +81,9 @@ async function showLongBrewList(page: Page) {
   await expect(page.locator('brew brew-information').first()).toBeVisible();
 }
 
-/** The list scrolls itself and renders only the cards in view. */
+/** The list renders only the cards in view. */
 function brewList(page: Page) {
-  return page.locator('brew ag-virtual-scroll').first();
+  return page.locator(`brew ${VIRTUAL_LIST}`).first();
 }
 
 test('the last brew of a long list scrolls clear of the add button', async ({

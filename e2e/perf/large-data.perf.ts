@@ -220,7 +220,7 @@ for (const tier of TIERS) {
       await tabBar(page).getByRole('tab', { name: 'Brews' }).click();
       const list = await waitUntilSettled(
         page,
-        { selector: `ag-virtual-scroll [id="brew-${newest.config.uuid}"]` },
+        { selector: `${VIRTUAL_LIST} [id="brew-${newest.config.uuid}"]` },
         'input',
       );
       await expect(

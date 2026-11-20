@@ -6,77 +6,48 @@
     </ion-button>
   </app-header>
 </ion-header>
-<ion-content #brewContent>
-  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical tabs">
-    <ion-segment-button value="open">
-      <ion-label>
-        <app-segment-label [label]="'CURRENT' | translate" [shown]="openBrewsView?.length" [total]="openBrewsLength" />
-      </ion-label>
-    </ion-segment-button>
-    @if (settings?.show_archived_brews) {
-      <ion-segment-button value="archive">
-        <ion-label>
-          <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="archiveBrewsView?.length" [total]="archiveBrewsLength" />
-        </ion-label>
-      </ion-segment-button>
-    }
-  </ion-segment>
-  @switch (brew_segment) {
-    @case ('open') {
-      @if (openBrewsView?.length > 0 || uiShallBarBeDisplayed || uiIsFilterActive === true) {
+<ion-content>
+  <app-virtual-list [items]="shownBrews" [itemKey]="brewKey" [estimateSize]="uiIsCollapseActive ? 86 : 180">
+    <div virtualListHead>
+      <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical tabs">
+        <ion-segment-button value="open">
+          <ion-label>
+            <app-segment-label [label]="'CURRENT' | translate" [shown]="openBrewsView?.length" [total]="openBrewsLength" />
+          </ion-label>
+        </ion-segment-button>
+        @if (settings?.show_archived_brews) {
+          <ion-segment-button value="archive">
+            <ion-label>
+              <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="archiveBrewsView?.length" [total]="archiveBrewsLength" />
+            </ion-label>
+          </ion-segment-button>
+        }
+      </ion-segment>
+      @if (uiSegmentShown && (shownBrews.length > 0 || uiShallBarBeDisplayed || uiIsFilterActive === true)) {
         <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
           <ng-container [ngTemplateOutlet]="brewSearchToolbar" />
-
         </div>
       }
-      @if (openBrewsView?.length == 0) {
-        <div class="ion-padding ion-text-center">
-          <div>
-            <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-cup" size="large" />
-          </div>
-          <div class="text-color-inactive ion-margin-top">
+    </div>
+    @if (uiSegmentShown && shownBrews.length === 0) {
+      <div class="ion-padding ion-text-center">
+        <div>
+          <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-cup" size="large" />
+        </div>
+        <div class="text-color-inactive ion-margin-top">
+          @if (brew_segment === 'open') {
             {{ "PAGE_BREWS_NO_ENTRIES" | translate }}
-          </div>
+          } @else {
+            {{ "PAGE_BREWS_NO_ARCHIVED_ENTRIES" | translate }}
+          }
         </div>
-      }
-
-        <ag-virtual-scroll #openScroll [items]="openBrewsView" [height]="'100vh'" class="clear-of-fab"
-                           [min-row-height]="uiIsCollapseActive?86:180">
-          @for (brew of openScroll.items; track brew) {
-            <brew-information [id]="'brew-' + brew.config.uuid" [collapsed]='uiIsCollapseActive' (brewAction)="brewAction($event)"
-                              [brew]="brew" />
-          }
-      </ag-virtual-scroll>
-
+      </div>
     }
-    @case ('archive') {
-      @if (settings?.show_archived_brews) {
-        @if (archiveBrewsView?.length > 0 || uiShallBarBeDisplayed || uiIsFilterActive === true) {
-          <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-            <ng-container [ngTemplateOutlet]="brewSearchToolbar" />
-          </div>
-        }
-        @if (archiveBrewsView?.length == 0) {
-          <div class="ion-padding ion-text-center">
-            <div>
-              <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-cup" size="large" />
-            </div>
-            <div class="text-color-inactive ion-margin-top">
-              {{ "PAGE_BREWS_NO_ARCHIVED_ENTRIES" | translate }}
-            </div>
-          </div>
-        }
-
-        <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" [height]="'100vh'" class="clear-of-fab"
-                           [min-row-height]="uiIsCollapseActive?86:180">
-          @for (brew of archivedScroll.items; track brew) {
-            <brew-information [id]="'brew-' + brew.config.uuid" [collapsed]='uiIsCollapseActive' (brewAction)="brewAction($event)"
-                              [brew]="brew" />
-          }
-        </ag-virtual-scroll>
-      }
-    }
-  }
+    <ng-template [appVirtualRow]="shownBrews" let-brew>
+      <brew-information [id]="'brew-' + brew.config.uuid" [collapsed]="uiIsCollapseActive" (brewAction)="brewAction($event)"
+                        [brew]="brew" />
+    </ng-template>
+  </app-virtual-list>
   <!-- Last in the page: it floats over the bottom right corner of the list. -->
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button color="accent" [attr.aria-label]="'ADD_BREW' | translate" (click)="add()" (long-press)="longPressAdd($event)">

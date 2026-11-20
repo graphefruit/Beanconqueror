@@ -3,11 +3,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
-  HostListener,
   inject,
   OnInit,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -30,7 +28,6 @@ import { addIcons } from 'ionicons';
 import { add, settingsOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { AgVirtualScrollComponent } from 'ag-virtual-scroll';
 
 import { Brew } from '../../classes/brew/brew';
 import { Settings } from '../../classes/settings/settings';
@@ -38,8 +35,14 @@ import { BrewInformationComponent } from '../../components/brew-information/brew
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { SegmentLabelComponent } from '../../components/segment-label/segment-label.component';
+import { ListAnchor } from '../../components/virtual-list/virtual-list-anchor';
+import {
+  VirtualListComponent,
+  VirtualRowDirective,
+} from '../../components/virtual-list/virtual-list.component';
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { SearchbarNameDirective } from '../../directive/searchbar-name.directive';
+import { BREW_ACTION } from '../../enums/brews/brewAction';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
 import { BREW_SORT_ORDER } from '../../enums/brews/brewSortOrder';
 import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
@@ -49,6 +52,8 @@ import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIHelper } from '../../services/uiHelper';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { BrewFilterComponent } from './brew-filter/brew-filter.component';
+
+type BrewSegment = 'open' | 'archive';
 
 @Component({
   selector: 'brew',
@@ -60,7 +65,8 @@ import { BrewFilterComponent } from './brew-filter/brew-filter.component';
     SegmentLabelComponent,
     RouterLink,
     NgTemplateOutlet,
-    AgVirtualScrollComponent,
+    VirtualListComponent,
+    VirtualRowDirective,
     BrewInformationComponent,
     TranslatePipe,
     IonHeader,
@@ -94,18 +100,13 @@ export class BrewPage implements OnInit {
   public openBrewsLength = 0;
   public archiveBrewsLength = 0;
 
-  public brew_segment: 'open' | 'archive' = 'open';
-  public segmentScrollHeight: string = undefined;
+  public brew_segment: BrewSegment = 'open';
+  /** The brews of the segment shown. */
+  public shownBrews: Brew[] = [];
 
-  @ViewChild('openScroll', { read: AgVirtualScrollComponent, static: false })
-  public openScroll: AgVirtualScrollComponent;
-  @ViewChild('archivedScroll', {
-    read: AgVirtualScrollComponent,
-    static: false,
-  })
-  public archivedScroll: AgVirtualScrollComponent;
-  @ViewChild('brewContent', { read: ElementRef })
-  public brewContent: ElementRef;
+  private readonly list =
+    viewChild<VirtualListComponent<Brew>>(VirtualListComponent);
+  public readonly brewKey = (brew: Brew): string => brew.config.uuid;
 
   public openBrewFilterText = '';
   public archivedBrewFilterText = '';
@@ -132,15 +133,16 @@ export class BrewPage implements OnInit {
   public uiIsCollapseActive = false;
   public uiShallBarBeDisplayed = false;
   public uiSearchText = '';
+  public uiSegmentShown = true;
 
-  private savedScrollPositions: {
-    open: number;
-    archive: number;
-    openHeights: number[];
-    archiveHeights: number[];
-  } = { open: 0, archive: 0, openHeights: [], archiveHeights: [] };
-
-  private forceScrollToTop = false;
+  /** Where each segment was left, to return to it. */
+  private readonly anchors: Record<BrewSegment, ListAnchor | null> = {
+    open: null,
+    archive: null,
+  };
+  private shownSegment: BrewSegment = 'open';
+  /** The brew the list brings on the screen after the next load. */
+  private lastInteractedBrewId: string = null;
 
   constructor() {
     addIcons({ add, settingsOutline });
@@ -179,9 +181,13 @@ export class BrewPage implements OnInit {
     } else {
       this.uiSearchText = this.archivedBrewFilterText;
     }
-    this.saveScrollPositions();
-    this.retriggerScroll();
+    const list = this.list();
+    if (list) {
+      this.anchors[this.shownSegment] = list.anchor();
+    }
+    this.shownSegment = this.brew_segment;
     this.setUIParams();
+    list?.restore(this.anchors[this.shownSegment]);
   }
 
   private setUIParams() {
@@ -189,158 +195,13 @@ export class BrewPage implements OnInit {
     this.uiIsFilterActive = this.isFilterActive();
     this.uiIsCollapseActive = this.isCollapseActive();
     this.uiShallBarBeDisplayed = this.shallBarBeDisplayed();
-  }
-
-  private retriggerScrollTimeout: any;
-
-  private retriggerScroll() {
-    if (this.retriggerScrollTimeout) {
-      clearTimeout(this.retriggerScrollTimeout);
-    }
-    this.retriggerScrollTimeout = setTimeout(() => {
-      const el = this.brewContent.nativeElement;
-
-      if (!el || el.offsetHeight === 0) {
-        return; // Page is hidden, avoid clearing state
-      }
-
-      let scrollComponent: AgVirtualScrollComponent;
-      if (this.brew_segment === 'open') {
-        scrollComponent = this.openScroll;
-        if (this.savedScrollPositions.openHeights?.length) {
-          (scrollComponent as any).previousItemsHeight = [
-            ...this.savedScrollPositions.openHeights,
-          ];
-        }
-      } else {
-        scrollComponent = this.archivedScroll;
-        if (this.savedScrollPositions.archiveHeights?.length) {
-          (scrollComponent as any).previousItemsHeight = [
-            ...this.savedScrollPositions.archiveHeights,
-          ];
-        }
-      }
-
-      if (!scrollComponent) {
-        return;
-      }
-
-      scrollComponent.el.style.height =
-        el.offsetHeight - scrollComponent.el.offsetTop + 'px';
-
-      this.segmentScrollHeight = scrollComponent.el.style.height;
-
-      // HACK: Manually trigger component refresh to work around initialization
-      //       bug. For some reason the scroll component sees its own height as
-      //       0 during initialization, which causes it to render 0 items. As
-      //       no changes to the component occur after initialization, no
-      //       re-render ever occurs. This forces one. The root cause for
-      //       this issue is currently unknown.
-      if (scrollComponent.items.length === 0) {
-        scrollComponent.refreshData();
-      }
-
-      let targetScrollTop = -1;
-
-      if (this.forceScrollToTop) {
-        targetScrollTop = 0;
-        this.forceScrollToTop = false;
-        this.lastInteractedBrewId = null;
-      } else if (this.lastInteractedBrewId) {
-        let index = -1;
-        if (this.brew_segment === 'open') {
-          index = this.openBrewsView.findIndex(
-            (b) => b.config.uuid === this.lastInteractedBrewId,
-          );
-        } else {
-          index = this.archiveBrewsView.findIndex(
-            (b) => b.config.uuid === this.lastInteractedBrewId,
-          );
-        }
-
-        if (index > -1) {
-          const rowHeight = this.uiIsCollapseActive ? 86 : 180;
-          const heights = (scrollComponent as any).previousItemsHeight;
-
-          let exactOffset = 0;
-          if (heights && heights.length > 0) {
-            for (let i = 0; i < index; i++) {
-              exactOffset += heights[i] ? heights[i] : rowHeight;
-            }
-          } else {
-            exactOffset = index * rowHeight;
-          }
-
-          const viewportTop = this.savedScrollPositions[this.brew_segment];
-          const viewportBottom = viewportTop + el.offsetHeight;
-
-          // If the element is already comfortably on-screen, DO NOT force it to the top! Preserve original scroll!
-          if (
-            exactOffset >= viewportTop &&
-            exactOffset < viewportBottom - rowHeight
-          ) {
-            targetScrollTop = viewportTop;
-          } else {
-            targetScrollTop = exactOffset;
-          }
-        }
-      }
-
-      if (
-        targetScrollTop === -1 &&
-        this.savedScrollPositions[this.brew_segment] > 0
-      ) {
-        targetScrollTop = this.savedScrollPositions[this.brew_segment];
-      }
-
-      if (targetScrollTop >= 0) {
-        const contentHeightEl = scrollComponent.el.querySelector(
-          '.content-height',
-        ) as HTMLElement;
-        if (contentHeightEl) {
-          const h = (scrollComponent as any).previousItemsHeight;
-          const rH = this.uiIsCollapseActive ? 86 : 180;
-          let cHeight = 0;
-          if (h && h.length > 0) {
-            cHeight = h.reduce((sum, val) => sum + (val ? val : rH), 0);
-          } else {
-            cHeight =
-              ((scrollComponent as any).originalItems?.length || 0) * rH;
-          }
-          contentHeightEl.style.height = cHeight + 'px';
-        }
-        scrollComponent.el.scrollTop = targetScrollTop;
-      }
-
-      // Preserve UUID to pass into trailing block
-      const snapToId = this.lastInteractedBrewId;
-      if (snapToId) {
-        this.lastInteractedBrewId = null;
-      }
-
-      setTimeout(() => {
-        /** If we wouldn't do it, and the tiles are collapsed, the next once just exist when the user starts scrolling**/
-        const elScroll = scrollComponent.el;
-        elScroll.dispatchEvent(new Event('scroll'));
-
-        // Target the absolute DOM element coordinates if virtual-scroll calculation drifted slightly
-        if (snapToId) {
-          setTimeout(() => {
-            const domNode = document.getElementById('brew-' + snapToId);
-            if (domNode) {
-              // Nearest block to avoid aggressive snapping if item is already in view
-              domNode.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-          }, 50);
-        }
-      }, 15);
-    }, 150);
-  }
-
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    this.retriggerScroll();
+    this.uiSegmentShown =
+      this.brew_segment === 'open' || !!this.settings?.show_archived_brews;
+    this.shownBrews = !this.uiSegmentShown
+      ? []
+      : this.brew_segment === 'open'
+        ? this.openBrewsView
+        : this.archiveBrewsView;
   }
 
   public async add() {
@@ -348,52 +209,23 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 
-  private lastInteractedBrewId: string = null;
-
-  public async brewAction(event?: any): Promise<void> {
-    if (event && event.length > 1) {
-      const action = event[0];
-      const brew = event[1];
-      if (brew && brew.config && brew.config.uuid) {
-        this.lastInteractedBrewId = brew.config.uuid;
-      }
+  /** After an action on a card the list stays with its brew. */
+  public brewAction(event?: [BREW_ACTION, Brew]): void {
+    const uuid = event?.[1]?.config?.uuid;
+    if (uuid) {
+      this.lastInteractedBrewId = uuid;
     }
     this.loadBrews();
   }
 
-  public loadBrews(resetScroll: boolean = false): void {
-    if (resetScroll) {
-      this.forceScrollToTop = true;
-      this.savedScrollPositions[this.brew_segment] = 0;
-      if (this.brew_segment === 'open') {
-        this.savedScrollPositions.openHeights = [];
-      } else {
-        this.savedScrollPositions.archiveHeights = [];
-      }
-    } else {
-      this.saveScrollPositions();
-    }
-
+  public loadBrews(): void {
     this.__initializeBrews();
-    this.retriggerScroll();
     this.setUIParams();
     this.changeDetectorRef.detectChanges();
-  }
-
-  private saveScrollPositions(): void {
-    if (this.openScroll) {
-      this.savedScrollPositions.open = this.openScroll.currentScroll;
-      const hOpen = (this.openScroll as any).previousItemsHeight;
-      if (hOpen && hOpen.length > 0 && hOpen.some((h) => h !== null)) {
-        this.savedScrollPositions.openHeights = [...hOpen];
-      }
-    }
-    if (this.archivedScroll) {
-      this.savedScrollPositions.archive = this.archivedScroll.currentScroll;
-      const hArc = (this.archivedScroll as any).previousItemsHeight;
-      if (hArc && hArc.length > 0 && hArc.some((h) => h !== null)) {
-        this.savedScrollPositions.archiveHeights = [...hArc];
-      }
+    const uuid = this.lastInteractedBrewId;
+    this.lastInteractedBrewId = null;
+    if (uuid && this.shownBrews.some((brew) => brew.config.uuid === uuid)) {
+      this.list()?.scrollToKey(uuid);
     }
   }
 
@@ -423,6 +255,7 @@ export class BrewPage implements OnInit {
       this.archivedBrewsCollapsed = !this.archivedBrewsCollapsed;
     }
     this.__saveCollapseFilter();
+    this.list()?.measure();
     this.research();
   }
 
@@ -525,7 +358,8 @@ export class BrewPage implements OnInit {
 
       await this.__saveBrewFilter();
 
-      this.loadBrews(true);
+      this.loadBrews();
+      this.list()?.scrollToTop();
     }
   }
 
@@ -556,7 +390,8 @@ export class BrewPage implements OnInit {
     }
     this.__saveBrewFilter();
 
-    this.loadBrews(true);
+    this.loadBrews();
+    this.list()?.scrollToTop();
   }
 
   private async __saveBrewFilter() {
@@ -580,17 +415,9 @@ export class BrewPage implements OnInit {
       this.archivedBrewFilterText = this.uiSearchText;
     }
 
-    this.forceScrollToTop = true;
-    this.savedScrollPositions[this.brew_segment] = 0;
-    if (this.brew_segment === 'open') {
-      this.savedScrollPositions.openHeights = [];
-    } else {
-      this.savedScrollPositions.archiveHeights = [];
-    }
-
     this.__initializeBrewView(this.brew_segment);
-    this.retriggerScroll();
     this.setUIParams();
+    this.list()?.scrollToTop();
   }
 
   private __initializeBrewView(_type: string): void {
