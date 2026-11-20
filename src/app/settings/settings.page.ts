@@ -643,16 +643,7 @@ export class SettingsPage {
   }
 
   public testSpeak() {
-    let speakTestCount = 0;
-    const testSpeakArray = ['182.5', '28', '1072', '1.2', '0.1', '203.5'];
-    const speakTestIntv = setInterval(() => {
-      this.textToSpeech.speak(testSpeakArray[speakTestCount]);
-
-      speakTestCount = speakTestCount + 1;
-      if (speakTestCount > 5) {
-        clearInterval(speakTestIntv);
-      }
-    }, this.settings.text_to_speech_interval_rate);
+    this.textToSpeech.speakInFull('182.5', '28', '1072', '1.2', '0.1', '203.5');
   }
 
   public async uploadBrewsToVisualizer() {

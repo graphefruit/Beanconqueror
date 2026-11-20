@@ -21,6 +21,7 @@ import { UILog } from '../../uiLog';
 import { UISettingsStorage } from '../../uiSettingsStorage';
 import {
   NATIVE_SPEECH,
+  nativeSpeakingLimitMs,
   NativeSpeech,
   SCREEN_READER_HOLD_MS,
   TextToSpeechService,
@@ -180,6 +181,29 @@ describe('TextToSpeechService', () => {
 
       expect(spokenNatively()).toEqual(['182.5', '28', '0.1']);
     }));
+
+    it('speaks on when the plugin never says it is done', fakeAsync(() => {
+      const service = create({
+        nativeSpeak: () => new Promise<void>(() => undefined),
+      });
+      service.speak('18');
+      tick(100);
+      service.speak('19');
+      tick(nativeSpeakingLimitMs('18', 1.5) - 101);
+
+      expect(spokenNatively()).toEqual(['18']);
+
+      tick(1);
+      expect(spokenNatively()).toEqual(['18', '19']);
+      expect(uiLog.warn.calls.count()).toBe(1);
+      tick(nativeSpeakingLimitMs('19', 1.5));
+    }));
+  });
+
+  it('allows a slow voice longer for a value', () => {
+    expect(nativeSpeakingLimitMs('Time 83', 1)).toBe(3700);
+    expect(nativeSpeakingLimitMs('Time 83', 0.1)).toBe(10000);
+    expect(nativeSpeakingLimitMs('Time 83', 3.5)).toBe(3700);
   });
 
   describe('while no screen reader is on', () => {

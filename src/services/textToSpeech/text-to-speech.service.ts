@@ -39,6 +39,15 @@ export function screenReaderSpeakingMs(_text: string): number {
   return 500 + 70 * _text.length;
 }
 
+/**
+ * How long the native voice may take for a value before the next one is said
+ * anyway: the plugin may never say it is done, for example when the Android
+ * engine restarts or a call interrupts iOS, and the voice would stay silent.
+ */
+export function nativeSpeakingLimitMs(_text: string, _rate: number): number {
+  return 3000 + (100 * _text.length) / Math.min(1, _rate);
+}
+
 export type NativeSpeech = Pick<
   TextToSpeechPlugin,
   'speak' | 'stop' | 'isLanguageSupported'
@@ -199,24 +208,39 @@ export class TextToSpeechService {
     const ended = this.ended;
     this.nativeBusy = true;
     this.lastSpoken = _text;
+    let limit: ReturnType<typeof setTimeout> | undefined;
     try {
       const lang = await this.language(speech);
       if (ended !== this.ended) {
         return;
       }
-      await speech.speak({
-        text: _text,
-        lang,
-        rate: pluginSpeechRate(this.settings.text_to_speech_rate, this.ios),
-        pitch: pluginSpeechPitch(this.settings.text_to_speech_pitch),
-        queueStrategy: QueueStrategy.Flush,
-      });
+      const rate = pluginSpeechRate(
+        this.settings.text_to_speech_rate,
+        this.ios,
+      );
+      await Promise.race([
+        speech.speak({
+          text: _text,
+          lang,
+          rate,
+          pitch: pluginSpeechPitch(this.settings.text_to_speech_pitch),
+          queueStrategy: QueueStrategy.Flush,
+        }),
+        new Promise<never>((_resolve, reject) => {
+          limit = setTimeout(
+            () => reject(new Error('Text to speech did not finish')),
+            nativeSpeakingLimitMs(_text, rate),
+          );
+        }),
+      ]);
     } catch (error) {
       // Once is enough: the same failure would repeat for every value.
       if (!this.failureLogged) {
         this.failureLogged = true;
         this.uiLog.warn('Text to speech failed', error);
       }
+    } finally {
+      clearTimeout(limit);
     }
     if (ended !== this.ended) {
       return;
