@@ -8,12 +8,15 @@ import {
   contentChild,
   DestroyRef,
   Directive,
+  effect,
   ElementRef,
   inject,
   Injector,
   input,
+  output,
   signal,
   TemplateRef,
+  untracked,
   viewChild,
   viewChildren,
 } from '@angular/core';
@@ -150,6 +153,11 @@ export class VirtualListComponent<T> {
   public readonly estimateSize = input.required<number>();
   /** Whether a floating add button lies over the end of the list. */
   public readonly clearOfAddButton = input(true);
+  /**
+   * The last row has been rendered: to load more items. Once per number of
+   * items, and again after the list was scrolled away from its end.
+   */
+  public readonly endReached = output<void>();
 
   protected readonly rowTemplate =
     contentChild.required<VirtualRowDirective<T>>(VirtualRowDirective);
@@ -220,6 +228,12 @@ export class VirtualListComponent<T> {
         item: items[row.index],
       }));
   });
+  /** The number of items while the last row is rendered, else 0. */
+  private readonly endShown = computed(() => {
+    const count = this.items().length;
+    const last = this.virtualizer.getVirtualItems().at(-1);
+    return last && last.index >= count - 1 ? count : 0;
+  });
   protected readonly totalSize = computed(() =>
     this.virtualizer.getTotalSize(),
   );
@@ -240,6 +254,12 @@ export class VirtualListComponent<T> {
     afterRenderEffect(() => {
       for (const row of this.rowElements()) {
         this.virtualizer.measureElement(row.nativeElement);
+      }
+    });
+
+    effect(() => {
+      if (this.endShown() > 0) {
+        untracked(() => this.endReached.emit());
       }
     });
 

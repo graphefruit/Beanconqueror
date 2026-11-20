@@ -42,6 +42,7 @@ function items(count: number, height = 100): Item[] {
         [itemKey]="key"
         [estimateSize]="estimate()"
         [clearOfAddButton]="clearOfAddButton()"
+        (endReached)="ends = ends + 1"
       >
         <div virtualListHead style="height: ${HEAD}px">Head</div>
         <ng-template [appVirtualRow]="items()" let-item>
@@ -66,6 +67,7 @@ class HostComponent {
   public readonly items = signal(items(100));
   public readonly estimate = signal(100);
   public readonly clearOfAddButton = signal(true);
+  public ends = 0;
   public readonly key = (item: Item) => item.id;
   public readonly list =
     viewChild.required<VirtualListComponent<Item>>(VirtualListComponent);
@@ -117,6 +119,26 @@ describe('VirtualListComponent', () => {
     expect(top('item-0')).toBe(HEAD);
     // The list ends with room for the add button.
     expect(scroller().scrollHeight).toBe(HEAD + 100 * 100 + 56 + 2 * 16);
+  });
+
+  it('tells when the last row is rendered, to load more', async () => {
+    expect(host.ends).toBe(0);
+
+    await scrollTo(100 * 100);
+    expect(host.ends).toBe(1);
+    // Scrolling at the end does not ask again.
+    await scrollTo(100 * 100 - 50);
+    expect(host.ends).toBe(1);
+
+    // More items, still shown to their end.
+    host.items.set(items(101));
+    await scrollTo(101 * 100);
+    expect(host.ends).toBe(2);
+
+    // Away from the end and back.
+    await scrollTo(0);
+    await scrollTo(101 * 100);
+    expect(host.ends).toBe(3);
   });
 
   it('ends with the last row on a page without add button', async () => {
