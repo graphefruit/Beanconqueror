@@ -1141,8 +1141,11 @@ customizing) and its height is kept per key (`itemKey`) while the items are
 rebuilt, so a reload leaves the list where it is. Content marked
 `virtualListHead` (segments, search) stays at the top; the list ends with room
 for the floating add button. `scrollToKey`, `scrollToTop` and
-`anchor()`/`restore()` (pure functions in `virtual-list-anchor.ts`) move it; the
-host is marked `data-virtual-list` for the tests (`e2e/support/virtual-list.ts`).
+`anchor()`/`restore()` (pure functions in `virtual-list-anchor.ts`) move it;
+`scrollToKey` leaves a row that is shown and brings one cut off clear of the
+head and the add button. A changed `estimateSize` keeps the measured heights
+(each segment its own); `measure()` forgets them when all rows change height,
+as on collapsing. The host is marked `data-virtual-list` for the tests (`e2e/support/virtual-list.ts`).
 
 The other lists (brews, preparations, grinders, water, green beans, graphs,
 barista mode brews and several selection modals) still use the third-party

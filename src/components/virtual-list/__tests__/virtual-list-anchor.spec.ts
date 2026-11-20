@@ -1,4 +1,9 @@
-import { anchorAt, anchorOffset, ListAnchor } from '../virtual-list-anchor';
+import {
+  anchorAt,
+  anchorOffset,
+  ListAnchor,
+  reveal,
+} from '../virtual-list-anchor';
 
 // Three rows below a toolbar of 50 px.
 const rows = [
@@ -63,6 +68,33 @@ describe('virtual list anchor', () => {
 
     it('goes to the top without an anchor', () => {
       expect(anchorOffset(null, 400, 1000)).toBe(0);
+    });
+  });
+
+  describe('reveal', () => {
+    // The screen between the head and the add button.
+    const view = { start: 1050, end: 1500 };
+
+    it('leaves a row that is in the view', () => {
+      expect(reveal({ start: 1050, end: 1260 }, view)).toBeNull();
+      expect(reveal({ start: 1290, end: 1500 }, view)).toBeNull();
+    });
+
+    it('moves a row cut off by the add button or the head into the view', () => {
+      expect(reveal({ start: 1400, end: 1610 }, view)).toBe(110);
+      expect(reveal({ start: 1000, end: 1210 }, view)).toBe(-50);
+    });
+
+    it('leaves a row higher than the view while part of it is shown', () => {
+      expect(reveal({ start: 1300, end: 2000 }, view)).toBeNull();
+      expect(reveal({ start: 600, end: 1100 }, view)).toBeNull();
+      expect(reveal({ start: 900, end: 1800 }, view)).toBeNull();
+    });
+
+    it('goes to the start of a row that is not in the view', () => {
+      expect(reveal({ start: 1500, end: 1710 }, view)).toBe('start');
+      expect(reveal({ start: 840, end: 1050 }, view)).toBe('start');
+      expect(reveal({ start: 3000, end: 4000 }, view)).toBe('start');
     });
   });
 });

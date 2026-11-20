@@ -356,6 +356,7 @@ export class BeansPage {
     this.__saveCollapseFilter();
 
     this.reloads.update((count) => count + 1);
+    this.list()?.measure();
     this.list()?.scrollToTop();
   }
 

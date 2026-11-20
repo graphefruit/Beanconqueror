@@ -144,11 +144,37 @@ describe('VirtualListComponent', () => {
     expect(top('item-50')).toBeGreaterThanOrEqual(HEAD);
     expect(top('item-50')).toBeLessThan(SCREEN);
 
-    host.list().scrollToKey('item-49');
+    host.list().scrollToKey('item-51');
     host.list().scrollToKey('unknown');
     await settle();
 
     expect(scroller().scrollTop).toBe(offset);
+  });
+
+  it('brings a row cut off by the add button above it', async () => {
+    // The add button and its margins cover the bottom of the screen.
+    const clear = SCREEN - (56 + 2 * 16);
+    host.list().scrollToKey('item-2');
+    await settle();
+    expect(top('item-2') + 100).toBe(clear);
+
+    // Wholly under the button: shown from its start.
+    host.list().scrollToKey('item-3');
+    await settle();
+    expect(top('item-3')).toBe(HEAD);
+  });
+
+  it('leaves a row higher than the screen that is shown', async () => {
+    const tall = items(100);
+    tall[1] = { id: 'item-1', height: 1000 };
+    host.items.set(tall);
+    await settle();
+    await scrollTo(300);
+
+    host.list().scrollToKey('item-1');
+    await settle();
+
+    expect(scroller().scrollTop).toBe(300);
   });
 
   it('goes back to the top', async () => {
@@ -180,13 +206,34 @@ describe('VirtualListComponent', () => {
     expect(top('item-30')).toBe(-20 + HEAD);
   });
 
-  it('measures the rows again when the estimate changes', async () => {
+  it('measures the rows again when asked to', async () => {
     host.items.set(items(100, 40));
     host.estimate.set(40);
+    host.list().measure();
     await settle();
 
     expect(top('item-1')).toBe(HEAD + 40);
     expect(scroller().scrollHeight).toBeLessThan(HEAD + 100 * 100);
+  });
+
+  it('keeps the heights of other items when the estimate changes', async () => {
+    host.items.set(items(100, 150));
+    await settle();
+    await scrollTo(3000);
+    const anchor = host.list().anchor();
+    const before = top(String(anchor?.key));
+
+    // Another segment, collapsed, and back.
+    host.items.set(items(100, 40).map((i) => ({ ...i, id: `other-${i.id}` })));
+    host.estimate.set(40);
+    host.list().restore(null);
+    await settle();
+    host.items.set(items(100, 150));
+    host.estimate.set(100);
+    host.list().restore(anchor);
+    await settle();
+
+    expect(top(String(anchor?.key))).toBe(before);
   });
 
   it('moves a focused row from under the head', async () => {

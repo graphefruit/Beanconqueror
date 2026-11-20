@@ -288,6 +288,11 @@ test('the list stays with the bean after it was edited, frozen or archived', asy
   await saveBean(page);
   await expect(beanCardValue(blend, 'Consumed')).toHaveText(/of 900g/);
   await expect(blend).toBeInViewport();
+  // Clear of the add button, so that the next action can be tapped.
+  const blendOptions = blend
+    .getByRole('button', { name: /^Options for / })
+    .first();
+  await expect.poll(() => isUncovered(blendOptions)).toBe(true);
   await expect(beanCard(page, BEANS.alpha)).toHaveCount(0);
 
   await beanAction(page, BEANS.blend, 'Freeze coffee bean');
@@ -322,8 +327,10 @@ test('each segment is shown where it was left', async ({ page }) => {
   await scrollToEnd(page.locator(VIRTUAL_LIST).filter({ visible: true }));
   await expect(beanCard(page, BEANS.portionSource)).toBeInViewport();
 
+  // The archive collapsed: its cards have another height.
   await showBeanSegment(page, 'Archive');
   await expect(beanCard(page, BEANS.archived)).toBeInViewport();
+  await page.getByRole('button', collapse).click();
   await showBeanSegment(page, 'Available');
   await expect(beanCard(page, BEANS.portionSource)).toBeInViewport();
   await expect(beanCard(page, BEANS.alpha)).toHaveCount(0);

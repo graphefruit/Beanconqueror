@@ -8,14 +8,12 @@ import {
   contentChild,
   DestroyRef,
   Directive,
-  effect,
   ElementRef,
   inject,
   Injector,
   input,
   signal,
   TemplateRef,
-  untracked,
   viewChild,
   viewChildren,
 } from '@angular/core';
@@ -34,6 +32,7 @@ import {
   anchorAt,
   anchorOffset,
   ListAnchor,
+  reveal,
   RowKey,
 } from './virtual-list-anchor';
 
@@ -123,11 +122,15 @@ export class VirtualRowDirective<T> {
 })
 export class VirtualListComponent<T> {
   private readonly injector = inject(Injector);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly uiLog = inject(UILog);
 
   public readonly items = input.required<readonly T[]>();
   public readonly itemKey = input.required<(item: T) => RowKey>();
-  /** The height of a row before it is measured. */
+  /**
+   * The height of a row before it is measured. Measured rows keep their
+   * height when it changes; `measure` forgets them.
+   */
   public readonly estimateSize = input.required<number>();
 
   protected readonly rowTemplate =
@@ -250,15 +253,6 @@ export class VirtualListComponent<T> {
         ),
       );
     });
-
-    let estimate: number | undefined;
-    effect(() => {
-      const size = this.estimateSize();
-      if (estimate !== undefined && estimate !== size) {
-        untracked(() => this.measure());
-      }
-      estimate = size;
-    });
   }
 
   /** Moves a focused element that the head covers below it. */
@@ -312,13 +306,29 @@ export class VirtualListComponent<T> {
 
   /**
    * Brings the row with `key` on the screen once the list shows its current
-   * items; a row that is already there stays where it is.
+   * items, clear of the head and the add button; a row that is already there
+   * stays where it is (see `reveal`).
    */
   public scrollToKey(key: RowKey): void {
     this.afterRender(() => {
+      const scroller = this.scroller();
       const index = this.indexOf(key);
-      if (index >= 0) {
-        this.virtualizer.scrollToIndex(index, { align: 'auto' });
+      const row = this.virtualizer().measurementsCache[index];
+      if (!scroller || !row) {
+        return;
+      }
+      const top = scroller.scrollTop;
+      const addButtonRoom = parseFloat(
+        getComputedStyle(this.host.nativeElement).paddingBottom,
+      );
+      const move = reveal(row, {
+        start: top + this.headHeight(),
+        end: top + scroller.clientHeight - addButtonRoom,
+      });
+      if (move === 'start') {
+        this.virtualizer.scrollToIndex(index, { align: 'start' });
+      } else if (move !== null) {
+        this.virtualizer.scrollToOffset(top + move);
       }
     });
   }
@@ -328,8 +338,9 @@ export class VirtualListComponent<T> {
   }
 
   /**
-   * Forgets the heights, for when all rows change theirs: the rows on the
-   * screen are measured again, the others count with the estimate.
+   * Forgets the heights, for when all rows change theirs (cards collapsed):
+   * the rows on the screen are measured again, the others count with the
+   * estimate.
    */
   public measure(): void {
     this.afterRender(() => {
