@@ -250,6 +250,7 @@ export class MillInformationCardComponent {
     );
     const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'mill-popover-actions',
+      openedBy: event,
       items: this.buildMillActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,

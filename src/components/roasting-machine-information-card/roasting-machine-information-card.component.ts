@@ -97,6 +97,7 @@ export class RoastingMachineInformationCardComponent {
     );
     const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'roasting-machine-popover-actions',
+      openedBy: event,
       items: this.buildRoastingMachineActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,

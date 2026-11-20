@@ -10,29 +10,13 @@
   <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical tabs">
     <ion-segment-button value="open">
       <ion-label>
-        {{ "CURRENT" | translate }}
-        <br/>
-        @if (openBrewsView?.length !== openBrewsLength) {
-          <span class="value">
-            ( {{ openBrewsView?.length }} / {{ openBrewsLength }} )
-          </span>
-        } @else {
-          <span class="value">( {{ openBrewsLength }} )</span>
-        }
+        <app-segment-label [label]="'CURRENT' | translate" [shown]="openBrewsView?.length" [total]="openBrewsLength" />
       </ion-label>
     </ion-segment-button>
     @if (settings?.show_archived_brews) {
       <ion-segment-button value="archive">
         <ion-label>
-          {{ "TAB_ARCHIVE" | translate }}
-          <br/>
-          @if (archiveBrewsView?.length !== archiveBrewsLength) {
-            <span class="value">
-            ( {{ archiveBrewsView?.length }} / {{ archiveBrewsLength }} )
-          </span>
-          } @else {
-            <span class="value">( {{ archiveBrewsLength }} )</span>
-          }
+          <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="archiveBrewsView?.length" [total]="archiveBrewsLength" />
         </ion-label>
       </ion-segment-button>
     }

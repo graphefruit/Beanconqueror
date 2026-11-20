@@ -15,6 +15,7 @@ import {
   showBeanSegment,
   startWithBeans,
   storedBeanFilters,
+  tabName,
 } from './support/beans';
 import { readStoredValue } from './support/stored-values';
 
@@ -38,7 +39,7 @@ const BY_NAME = [
 
 async function available(page: Page, counter: string): Promise<void> {
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    `Available ${counter}`,
+    tabName(`Available ${counter}`),
   );
 }
 
@@ -96,7 +97,7 @@ test('each segment has its own search text, which is not stored', async ({
   // The frozen beans are searched by the id of their bag as well.
   await searchBeans(page, 'zp2');
   await expect(beanSegment(page, 'Frozen')).toHaveAccessibleName(
-    'Frozen ( 1 / 4 )',
+    tabName('Frozen ( 1 / 4 )'),
   );
 
   await showBeanSegment(page, 'Available');
@@ -128,7 +129,7 @@ test('a filter applies to its segment, is stored and can be reset', async ({
   expect(await beanNames(page)).toEqual([BEANS.alpha]);
   await expect(activeFilter).toBeVisible();
   await expect(beanSegment(page, 'Archive')).toHaveAccessibleName(
-    'Archive ( 3 )',
+    tabName('Archive ( 3 )'),
   );
   await expect
     .poll(() => storedBeanFilters(page))

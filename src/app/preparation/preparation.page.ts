@@ -36,6 +36,7 @@ import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
 import { HeaderComponent } from '../../components/header/header.component';
 import { PreparationInformationCardComponent } from '../../components/preparation-information-card/preparation-information-card.component';
+import { SegmentLabelComponent } from '../../components/segment-label/segment-label.component';
 import { SearchbarNameDirective } from '../../directive/searchbar-name.directive';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 import { PREPARATION_SEGMENT } from '../../enums/preparations/preparationSegment';
@@ -55,6 +56,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
+    SegmentLabelComponent,
     AgVirtualScrollComponent,
     PreparationInformationCardComponent,
     TranslatePipe,

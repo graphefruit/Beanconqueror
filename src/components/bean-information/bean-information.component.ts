@@ -186,6 +186,10 @@ export class BeanInformationComponent {
   protected readonly usage = computed(
     () => this.beanUsageStore.usage().get(this.shown().config.uuid) ?? NO_USAGE,
   );
+  /** Names the bean in its buttons; the bags of a frozen group by their id. */
+  protected readonly entryName = computed(() =>
+    [this.shown().name, this.shown().frozenId].filter(Boolean).join(', '),
+  );
   protected readonly frozen = computed(() => isFrozen(this.shown()));
   protected readonly frozenInformation = computed(() =>
     hasFrozenInformation(this.shown()),
@@ -282,6 +286,7 @@ export class BeanInformationComponent {
     );
     const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'bean-popover-actions',
+      openedBy: event,
       items: beanActions(this.actionBean, {
         freezeEnabled: this.settings.freeze_coffee_beans === true,
         hasActiveBrews: this.hasActiveBrews(),

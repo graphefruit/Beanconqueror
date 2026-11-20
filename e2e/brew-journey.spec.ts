@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures';
+import { tabName } from './support/beans';
 import {
   BREW_TEST_START,
   brewAction,
@@ -58,7 +59,9 @@ test('a new brew shows its entered values in the list and in the details', async
   await saveBrew(page);
 
   await expect(toast(page, 'Brew added successfully')).toBeVisible();
-  await expect(page.getByRole('tab', { name: 'Current ( 2 )' })).toBeVisible();
+  await expect(
+    page.getByRole('tab', { name: tabName('Current ( 2 )') }),
+  ).toBeVisible();
   // Newest brew first; the card shows dose, water and brew ratio, grind
   // setting and temperature, and the rating as stars.
   await expect(brewList(page)).toContainText(
@@ -100,7 +103,9 @@ test('editing a brew opens it with its values and saves the change', async ({
   await saveBrew(page);
 
   await expect(toast(page, 'Brew has been edited')).toBeVisible();
-  await expect(page.getByRole('tab', { name: 'Current ( 1 )' })).toBeVisible();
+  await expect(
+    page.getByRole('tab', { name: tabName('Current ( 1 )') }),
+  ).toBeVisible();
   await expect(brewList(page)).toContainText(/20gr \/ 300gr\s*\(1 \/ 15\.00\)/);
 });
 
@@ -116,7 +121,9 @@ test('repeating a brew opens a new brew pre-filled from it', async ({
   ).toBeVisible();
 
   await saveBrew(page);
-  await expect(page.getByRole('tab', { name: 'Current ( 2 )' })).toBeVisible();
+  await expect(
+    page.getByRole('tab', { name: tabName('Current ( 2 )') }),
+  ).toBeVisible();
   await expect(brewList(page)).toContainText(
     /18gr \/ 300gr\s*\(1 \/ 16\.67\)[^]*18gr \/ 300gr\s*\(1 \/ 16\.67\)/,
   );
@@ -140,7 +147,9 @@ test('cancelling a new brew discards it without asking', async ({ page }) => {
   // "Ask before leaving" is off by default, so no confirmation is shown.
   await page.getByRole('button', { name: 'Cancel' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page.getByRole('tab', { name: 'Current ( 1 )' })).toBeVisible();
+  await expect(
+    page.getByRole('tab', { name: tabName('Current ( 1 )') }),
+  ).toBeVisible();
 });
 
 test('deleting a brew asks first and removes it', async ({ page }) => {

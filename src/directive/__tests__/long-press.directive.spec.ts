@@ -66,4 +66,30 @@ describe('LongPressDirective', () => {
     expect(fixture.componentInstance.longPresses).toBe(0);
     expect(fixture.componentInstance.taps).toBe(1);
   }));
+
+  for (const end of [
+    'touchmove',
+    'touchcancel',
+    'pointerup',
+    'pointercancel',
+  ]) {
+    it(`gives up the long press on ${end}`, fakeAsync(() => {
+      button.dispatchEvent(new Event('touchstart'));
+      tick(100);
+      button.dispatchEvent(new Event(end));
+      tick(600);
+
+      expect(fixture.componentInstance.longPresses).toBe(0);
+    }));
+  }
+
+  it('blocks taps on the page only until the long press is over', fakeAsync(() => {
+    holdAndRelease(600);
+    expect(document.body.classList).toContain('disablePointerEvents');
+
+    tick(750);
+    expect(document.body.classList).not.toContain('disablePointerEvents');
+    tick(25 + 16);
+    discardPeriodicTasks();
+  }));
 });

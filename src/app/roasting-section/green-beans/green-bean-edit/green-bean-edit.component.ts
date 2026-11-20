@@ -30,6 +30,7 @@ import { HeaderDismissButtonComponent } from '../../../../components/header/head
 import { HeaderComponent } from '../../../../components/header/header.component';
 import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
 import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
+import { TabPanelDirective } from '../../../../directive/tab-panel.directive';
 import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
 import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -45,6 +46,7 @@ import { UIToast } from '../../../../services/uiToast';
   styleUrls: ['./green-bean-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     GreenBeanGeneralInformationComponent,
     BeanSortInformationComponent,

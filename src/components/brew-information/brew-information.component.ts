@@ -310,6 +310,7 @@ export class BrewInformationComponent implements OnInit, OnChanges {
     );
     const role = await ActionsPopoverComponent.pick(this.modalCtrl, {
       id: 'brew-popover-actions',
+      openedBy: event,
       items: this.buildBrewActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,

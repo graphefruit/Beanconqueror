@@ -104,6 +104,7 @@ export class GraphInformationCardComponent implements OnInit {
     );
     const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'graph-popover-actions',
+      openedBy: event,
       items: this.buildGraphActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,

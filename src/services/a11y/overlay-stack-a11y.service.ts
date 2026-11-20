@@ -88,20 +88,23 @@ function childOfRootHolding(root: Element, element: Element): Element | null {
 }
 
 /**
- * Names the dialog of a modal after the title in its header, so a screen
- * reader says which dialog opened. The dialog role sits on a wrapper inside
- * the modal's shadow root, out of reach of `aria-labelledby` from the title,
- * and Ionic reads `aria-label` of the host only before the content exists.
- * A name given at creation (`htmlAttributes`) is kept.
+ * Names the dialog of a modal after its level-1 heading, the title in its
+ * header, so a screen reader says which dialog opened; a subtitle below the
+ * title is no part of the name. The dialog role sits on a wrapper inside the
+ * modal's shadow root, out of reach of `aria-labelledby` from the title, and
+ * Ionic reads `aria-label` of the host only before the content exists. A
+ * name given at creation (`htmlAttributes`) is kept.
  */
 function nameDialogAfterTitle(modal: HTMLElement): void {
   const dialog = modal.shadowRoot?.querySelector('[role="dialog"]');
   if (!dialog || dialog.hasAttribute('aria-label')) {
     return;
   }
-  const title = modal
-    .querySelector('ion-title')
-    ?.textContent?.replace(/\s+/g, ' ')
+  const title = (
+    modal.querySelector('h1, [role="heading"][aria-level="1"]') ??
+    modal.querySelector('ion-title')
+  )?.textContent
+    ?.replace(/\s+/g, ' ')
     .trim();
   if (title) {
     dialog.setAttribute('aria-label', title);

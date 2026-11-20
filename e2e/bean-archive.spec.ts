@@ -13,6 +13,7 @@ import {
   startWithBeans,
   storedBean,
   storedBeanFilters,
+  tabName,
 } from './support/beans';
 import { topDialog } from './support/brew-form';
 import { toast } from './support/toast';
@@ -55,10 +56,10 @@ test('a bean is archived with a rating and a note and can be brought back', asyn
   await expect(toast(page, 'Bean has been archived')).toBeVisible();
   await dialogsClosed(page);
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 6 )',
+    tabName('Available ( 6 )'),
   );
   await expect(beanSegment(page, 'Archive')).toHaveAccessibleName(
-    'Archive ( 4 )',
+    tabName('Archive ( 4 )'),
   );
   expect(await storedBean(page, BEANS.alpha)).toMatchObject({
     finished: true,
@@ -68,7 +69,7 @@ test('a bean is archived with a rating and a note and can be brought back', asyn
 
   await showBeanSegment(page, 'Archive');
   await beanCard(page, BEANS.alpha)
-    .getByRole('button', { name: 'Bean options' })
+    .getByRole('button', { name: /^Options for / })
     .click();
   await expect(
     page.getByRole('button', { name: 'Archive', exact: true }),
@@ -77,10 +78,10 @@ test('a bean is archived with a rating and a note and can be brought back', asyn
 
   await expect(toast(page, 'Bean has been unarchived')).toBeVisible();
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 7 )',
+    tabName('Available ( 7 )'),
   );
   await expect(beanSegment(page, 'Archive')).toHaveAccessibleName(
-    'Archive ( 3 )',
+    tabName('Archive ( 3 )'),
   );
   // The rating and the note of the archiving stay.
   expect(await storedBean(page, BEANS.alpha)).toMatchObject({
@@ -110,7 +111,7 @@ test('opening the archive dialog resets the filters of all segments, even when i
   });
   // No frozen bean is a favourite.
   await expect(beanSegment(page, 'Frozen')).toHaveAccessibleName(
-    'Frozen ( 0 / 4 )',
+    tabName('Frozen ( 0 / 4 )'),
   );
 
   await beanAction(page, BEANS.alpha, 'Archive');
@@ -126,7 +127,7 @@ test('opening the archive dialog resets the filters of all segments, even when i
   // tab was opened, although nothing is stored any more.
   await showBeanSegment(page, 'Frozen');
   await expect(beanSegment(page, 'Frozen')).toHaveAccessibleName(
-    'Frozen ( 0 / 4 )',
+    tabName('Frozen ( 0 / 4 )'),
   );
   await expect(
     page.getByRole('button', { name: 'Filter beans (active)' }),
@@ -137,7 +138,7 @@ test('opening the archive dialog resets the filters of all segments, even when i
   await page.getByRole('tab', { name: 'Home', exact: true }).click();
   await openBeansTab(page);
   await expect(beanSegment(page, 'Frozen')).toHaveAccessibleName(
-    'Frozen ( 2 / 4 )',
+    tabName('Frozen ( 2 / 4 )'),
   );
   await expect(beanCards(page)).toHaveCount(2);
   await expect.poll(() => storedBeanFilters(page)).toEqual(NO_FILTERS);

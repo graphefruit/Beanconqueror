@@ -20,6 +20,7 @@ import {
   storedBeanFilters,
   storedBeans,
   storedBeansNamed,
+  tabName,
 } from './support/beans';
 import { toast } from './support/toast';
 
@@ -67,7 +68,7 @@ test('freezing a part of a bag creates a frozen bean and reduces the bag', async
   await expect(listed).toHaveCount(1);
   await expect(listed).toContainText(BEANS.alpha);
   await expect(
-    listed.getByRole('button', { name: 'Bean options' }),
+    listed.getByRole('button', { name: /^Options for / }),
   ).toHaveCount(0);
   await page.getByRole('button', { name: 'Back' }).click();
   await dialogsClosed(page);
@@ -100,15 +101,15 @@ test('freezing a part of a bag creates a frozen bean and reduces the bag', async
   expect(sinceTestStart(frozen.frozenDate)).toBeLessThan(60_000);
 
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 7 )',
+    tabName('Available ( 7 )'),
   );
   await expect(beanSegment(page, 'Frozen')).toHaveAccessibleName(
-    'Frozen ( 3 / 5 )',
+    tabName('Frozen ( 3 / 5 )'),
   );
   await page.reload();
   await openBeansTab(page);
   await expect(beanSegment(page, 'Frozen')).toHaveAccessibleName(
-    'Frozen ( 3 / 5 )',
+    tabName('Frozen ( 3 / 5 )'),
   );
   await showBeanSegment(page, 'Frozen');
   await expect(beanCard(page, BEANS.alpha)).toContainText(frozen.frozenId);
@@ -121,7 +122,7 @@ test('freezing a whole bag keeps the bean and marks it as frozen', async ({
   const before = seededBean(data, BEANS.small);
   const card = await findBean(page, BEANS.small);
 
-  await card.getByRole('button', { name: 'Bean options' }).click();
+  await card.getByRole('button', { name: /^Options for / }).click();
   await page.getByRole('button', { name: 'Freeze coffee bean' }).click();
   await expect(page.getByText('Left unfrozen: 20g / 0g')).toBeVisible();
   await beanField(page, 'Edit freeze date').click();
@@ -147,10 +148,10 @@ test('freezing a whole bag keeps the bean and marks it as frozen', async ({
 
   // The search for the bean is still active: none of the six beans left.
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 0 / 6 )',
+    tabName('Available ( 0 / 6 )'),
   );
   await expect(beanSegment(page, 'Frozen')).toHaveAccessibleName(
-    'Frozen ( 3 / 5 )',
+    tabName('Frozen ( 3 / 5 )'),
   );
 });
 
@@ -196,10 +197,10 @@ test('thawing a whole frozen bean makes it available again', async ({
   expect(sinceTestStart(thawed.unfrozenDate)).toBeLessThan(60_000);
 
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 8 )',
+    tabName('Available ( 8 )'),
   );
   await expect(beanSegment(page, 'Frozen')).toHaveAccessibleName(
-    'Frozen ( 1 / 3 )',
+    tabName('Frozen ( 1 / 3 )'),
   );
   // Known defect: thawing resets the filters of all segments.
   await expect
@@ -253,15 +254,15 @@ test('thawing a part of a frozen bean splits it', async ({ page }) => {
   // The thawed part joins what was left of the original bag in one group:
   // seven entries for eight available beans.
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 7 / 8 )',
+    tabName('Available ( 7 / 8 )'),
   );
   await expect(beanSegment(page, 'Frozen')).toHaveAccessibleName(
-    'Frozen ( 2 / 4 )',
+    tabName('Frozen ( 2 / 4 )'),
   );
   await showBeanSegment(page, 'Available');
   await searchBeans(page, 'Zeta');
   await expect(beanCards(page)).toHaveCount(1);
   await expect(
-    page.getByRole('button', { name: 'Beans in this group' }),
+    page.getByRole('button', { name: /^Beans in the group / }),
   ).toHaveAttribute('aria-expanded', 'false');
 });

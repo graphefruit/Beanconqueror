@@ -1,7 +1,7 @@
 import { devices, type Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
-import { beanAction, openBeansTab } from './support/beans';
+import { beanAction, openBeansTab, tabName } from './support/beans';
 import {
   brewField,
   fillBrewField,
@@ -47,7 +47,9 @@ test('the Brew quick action during a brew keeps the open brew form', async ({
   await expect(brewField(page, 'Ground Coffee (gr)')).toHaveValue('17');
 
   await saveBrew(page);
-  await expect(page.getByRole('tab', { name: 'Current ( 2 )' })).toBeVisible();
+  await expect(
+    page.getByRole('tab', { name: tabName('Current ( 2 )') }),
+  ).toBeVisible();
 });
 
 test('the Brew quick action during a brew leaves the user on the tab they were on', async ({

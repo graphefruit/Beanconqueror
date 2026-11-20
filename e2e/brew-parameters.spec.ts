@@ -260,7 +260,10 @@ test('custom parameters of a method replace the global ones for that method only
 }) => {
   await page.getByRole('tab', { name: 'Profile' }).click();
   await page.getByRole('link', { name: /^Preparation methods/ }).click();
-  await page.getByRole('button', { name: 'Preparation options' }).click();
+  await page
+    .locator('preparation')
+    .getByRole('button', { name: /^Options for / })
+    .click();
   await page.getByRole('button', { name: 'Customize parameters' }).click();
   // Ionic projects modal content into the dialog through a slot, so locators
   // cannot be chained below the dialog; the page behind it is hidden anyway.

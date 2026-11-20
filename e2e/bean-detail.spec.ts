@@ -38,16 +38,17 @@ test('a tap on a card shows the details of the bean on three tabs', async ({
         - tab "General" [selected]
         - tab "Frozen information"
         - tab "Variety information"
-      - text: "Name: Gamma Blend Roaster: Rösterei Süd Roast date: Roast type: Filter Rating 5"
-      - 'slider "5 Rating: 5 out of 5 stars" [disabled]'
-      - 'img "Rating: 5 out of 5 stars"'
-      - text: "Blend: Blend"
-      - heading "More information" [level=2]
-      - text: "Weight: 1000 Cost: 30 Flavour profile:"
-      - checkbox "Decaffeinated:" [disabled]
-      - button "Website:"
-      - checkbox "Archive?:" [disabled]
-      - text: "Notes:"
+      - tabpanel "General":
+        - text: "Name: Gamma Blend Roaster: Rösterei Süd Roast date: Roast type: Filter Rating 5"
+        - 'slider "5 Rating: 5 out of 5 stars" [disabled]'
+        - 'img "Rating: 5 out of 5 stars"'
+        - text: "Blend: Blend"
+        - heading "More information" [level=2]
+        - text: "Weight: 1000 Cost: 30 Flavour profile:"
+        - checkbox "Decaffeinated:" [disabled]
+        - button "Website:"
+        - checkbox "Archive?:" [disabled]
+        - text: "Notes:"
       - contentinfo:
         - button "Cancel"
   `);
@@ -59,7 +60,7 @@ test('a tap on a card shows the details of the bean on three tabs', async ({
     - dialog:
       - banner
       - tablist
-      - text: "Frozen date: Unfrozen date: Freezing storage type: Unknown Frozen notes:"
+      - tabpanel "Frozen information": "Frozen date: Unfrozen date: Freezing storage type: Unknown Frozen notes:"
       - contentinfo:
         - button "Cancel"
   `);
@@ -102,7 +103,7 @@ test('the details of a frozen bean show when it was frozen', async ({
     - dialog:
       - banner
       - tablist
-      - text: "Frozen date: 21.11.2025 Unfrozen date: 24.02.2026 Freezing storage type: Unknown Frozen notes:"
+      - tabpanel "Frozen information": "Frozen date: 21.11.2025 Unfrozen date: 24.02.2026 Freezing storage type: Unknown Frozen notes:"
       - contentinfo:
         - button "Cancel"
   `);

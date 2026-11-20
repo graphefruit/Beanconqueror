@@ -37,7 +37,10 @@ const toolsField = (page: Page) =>
 
 /** Opens the edit dialog of the V60 on the preparation methods page. */
 async function editPreparationMethod(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Preparation options' }).click();
+  await page
+    .locator('preparation')
+    .getByRole('button', { name: /^Options for / })
+    .click();
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
   await expect(toolsField(page)).toBeVisible();
 }

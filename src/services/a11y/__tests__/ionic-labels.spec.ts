@@ -6,6 +6,9 @@ const GERMAN: Record<string, string> = {
   'A11Y.PREVIOUS_MONTH': 'Vorheriger Monat',
   'A11Y.SHOW_YEAR_PICKER': 'Monats- und Jahresauswahl anzeigen',
   'A11Y.HIDE_YEAR_PICKER': 'Monats- und Jahresauswahl ausblenden',
+  'A11Y.SELECT_DAY': 'Tag auswählen',
+  'A11Y.SELECT_HOUR': 'Stunde auswählen',
+  'A11Y.SELECT_MINUTE': 'Minute auswählen',
   TODAY: 'Heute',
 };
 const ENGLISH: Record<string, string> = {
@@ -67,6 +70,20 @@ describe('translateIonicLabels', () => {
     expect(toggle.getAttribute('aria-label')).toBe(
       'Monats- und Jahresauswahl ausblenden',
     );
+  });
+
+  it('names the wheel columns of the date and time picker', () => {
+    const columns = ['Select a day', 'Select an hour', 'Select a minute'].map(
+      (label) => button(root, label),
+    );
+
+    translateIonicLabels(root, translator(GERMAN));
+
+    expect(columns.map((column) => column.getAttribute('aria-label'))).toEqual([
+      'Tag auswählen',
+      'Stunde auswählen',
+      'Minute auswählen',
+    ]);
   });
 
   it('says "today" in the app language before the date of today', () => {

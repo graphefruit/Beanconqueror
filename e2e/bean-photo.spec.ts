@@ -73,7 +73,7 @@ test.describe('a bean with a photo', () => {
     page.getByRole('group', { name: /^\d+ \/ \d+$/ });
 
   async function deletePhotoInForm(page: Page, card: Locator): Promise<void> {
-    await card.getByRole('button', { name: 'Bean options' }).click();
+    await card.getByRole('button', { name: /^Options for / }).click();
     await page.getByRole('button', { name: 'Edit', exact: true }).click();
     await expect(beanField(page, /^Name/)).toHaveValue(BEANS.blend);
     await expect(slides(page)).toHaveCount(1);
@@ -102,7 +102,7 @@ test.describe('a bean with a photo', () => {
     await page.getByRole('button', { name: 'Back' }).click();
     await dialogsClosed(page);
 
-    await card.getByRole('button', { name: 'Bean options' }).click();
+    await card.getByRole('button', { name: /^Options for / }).click();
     await page.getByRole('button', { name: 'Photo Gallery' }).click();
     await expect(slides(page)).toHaveCount(1);
   });
@@ -113,7 +113,7 @@ test.describe('a bean with a photo', () => {
     await startWithBeans(page);
 
     await beanCard(page, BEANS.alpha)
-      .getByRole('button', { name: 'Bean options' })
+      .getByRole('button', { name: /^Options for / })
       .click();
     await expect(
       page.getByRole('button', { name: 'Details', exact: true }),

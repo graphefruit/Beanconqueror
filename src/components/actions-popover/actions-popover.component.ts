@@ -80,17 +80,38 @@ export function popoverDivider(
   return { itemType: 'divider', ...config };
 }
 
+/**
+ * The name of a button. Ionic moves it from ion-button to the button in its
+ * shadow root.
+ */
+function buttonName(button: Element): string | null {
+  return (
+    button.getAttribute('aria-label') ??
+    button.shadowRoot
+      ?.querySelector('[aria-label]')
+      ?.getAttribute('aria-label') ??
+    null
+  );
+}
+
 interface ActionsPopoverOptions {
   id: string;
   items: PopoverItem[];
   breakpoints: number[];
   initialBreakpoint: number;
+  /**
+   * The click on the button that opens the menu. The menu has no visible
+   * title and takes the button's name, e.g. "Options for Alpha Filter", so a
+   * screen reader says which entry it belongs to.
+   */
+  openedBy?: Event;
 }
 
 @Component({
   selector: 'actions-popover',
   template: `
-    <ion-header translucent />
+    <!-- Room for the grip only: no banner landmark without content. -->
+    <ion-header translucent aria-hidden="true" />
     <ion-content>
       <ion-list lines="full">
         @for (item of visibleItems(); track $index) {
@@ -103,6 +124,7 @@ interface ActionsPopoverOptions {
                 tappable
               >
                 <ion-icon
+                  aria-hidden="true"
                   [name]="item.icon"
                   [style.color]="item.iconColor"
                   slot="start"
@@ -194,7 +216,14 @@ export class ActionsPopoverComponent {
     modalController: ModalController,
     opts: ActionsPopoverOptions,
   ): Promise<string | undefined> {
-    const popover = await ActionsPopoverComponent.create(modalController, opts);
+    // Read at once: the event loses its target once it has been handled.
+    const opener = opts.openedBy?.currentTarget;
+    const label = opener instanceof Element ? buttonName(opener) : null;
+    const popover = await ActionsPopoverComponent.create(
+      modalController,
+      opts,
+      label,
+    );
     await popover.present();
     const { role } = await popover.onWillDismiss();
     return opts.items.some(
@@ -207,11 +236,13 @@ export class ActionsPopoverComponent {
   private static create(
     modalController: ModalController,
     opts: ActionsPopoverOptions,
+    label: string | null,
   ): Promise<HTMLIonModalElement> {
     return modalController.create({
       component: ActionsPopoverComponent,
       componentProps: { componentId: opts.id, items: opts.items },
       id: opts.id,
+      htmlAttributes: label ? { 'aria-label': label } : undefined,
       cssClass: 'popover-actions',
       breakpoints: opts.breakpoints,
       initialBreakpoint: opts.initialBreakpoint,

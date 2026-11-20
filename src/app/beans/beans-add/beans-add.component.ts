@@ -37,6 +37,7 @@ import { HeaderComponent } from '../../../components/header/header.component';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 import { ServerBean } from '../../../models/bean/serverBean';
@@ -55,6 +56,7 @@ import { UIToast } from '../../../services/uiToast';
   styleUrls: ['./beans-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,

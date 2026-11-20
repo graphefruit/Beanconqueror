@@ -12,6 +12,7 @@ import {
   showBeanSegment,
   startWithBeans,
   storedBean,
+  tabName,
 } from './support/beans';
 import { completeFirstRun } from './support/first-run';
 import { readStoredValue } from './support/stored-values';
@@ -36,15 +37,15 @@ test('the segments count the available, frozen and archived beans', async ({
   await startWithBeans(page);
 
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 7 )',
+    tabName('Available ( 7 )'),
   );
   // Known defect: the three frozen portions are one entry, so the counter
   // reads "shown / all" as if a filter hid two of four beans.
   await expect(beanSegment(page, 'Frozen')).toHaveAccessibleName(
-    'Frozen ( 2 / 4 )',
+    tabName('Frozen ( 2 / 4 )'),
   );
   await expect(beanSegment(page, 'Archive')).toHaveAccessibleName(
-    'Archive ( 3 )',
+    tabName('Archive ( 3 )'),
   );
 });
 
@@ -153,7 +154,7 @@ test('frozen portions of one bag share a card that opens to show them', async ({
   await expect(group).toContainText('ZP1');
   await expect(group.getByRole('img', { name: 'Bean group' })).toBeVisible();
   const groupToggle = group.getByRole('button', {
-    name: 'Beans in this group',
+    name: /^Beans in the group /,
   });
   await expect(groupToggle).toHaveAttribute('aria-expanded', 'false');
   await groupToggle.click();
@@ -161,14 +162,14 @@ test('frozen portions of one bag share a card that opens to show them', async ({
   await expect(beanCards(page)).toHaveCount(4);
   await expect(group).toContainText('ZP2');
   await expect(group).toContainText('ZP3');
-  await expect(group.getByRole('button', { name: 'Bean options' })).toHaveCount(
-    3,
-  );
+  await expect(
+    group.getByRole('button', { name: /^Options for / }),
+  ).toHaveCount(3);
 
   // Any action on a card loads the list again, which closes the group.
   await beanAction(page, BEANS.frozen, 'Favourite');
   await expect(
-    page.getByRole('button', { name: 'Beans in this group' }),
+    page.getByRole('button', { name: /^Beans in the group / }),
   ).toHaveAttribute('aria-expanded', 'false');
   await expect(
     beanCard(page, BEANS.frozen).getByRole('img', { name: 'Favourite' }),
@@ -228,7 +229,7 @@ test('a fresh install has no frozen segment and an empty list without a toolbar'
   await openBeansTab(page);
 
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 0 )',
+    tabName('Available ( 0 )'),
   );
   await expect(beanSegment(page, 'Frozen')).toHaveCount(0);
   await expect(page.getByText("You're out of fresh beans!")).toBeVisible();
@@ -247,7 +248,7 @@ test('the list stays where it is after a card action and returns to the top for 
 }) => {
   await startWithBeans(page, { extraBeans: 30 });
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 37 )',
+    tabName('Available ( 37 )'),
   );
 
   // The last card; the list only renders the cards near the screen.

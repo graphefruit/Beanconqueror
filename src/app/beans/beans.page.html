@@ -1,6 +1,6 @@
 <ion-header>
   <app-header [title]="'NAV_BEANS' | translate">
-    <app-header-button header-slot="end" icon="beanconqueror-list-add" [ariaLabel]="'A11Y.IMPORT_BEANS' | translate" (clicked)="openImportMenu()" />
+    <app-header-button header-slot="end" icon="beanconqueror-list-add" [ariaLabel]="'A11Y.IMPORT_BEANS' | translate" (clicked)="openImportMenu($event)" />
     <ion-button header-slot="end" fill="clear" [routerLink]="['/home/beans/bean-parameter']" [attr.aria-label]="'NAV_BEAN_PARAMS' | translate">
       <ion-icon class="ion-color-accent" name="settings-outline" slot="icon-only" aria-hidden="true" />
     </ion-button>
@@ -11,44 +11,20 @@
   <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
     <ion-segment-button value="open">
       <ion-label>
-        {{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
-        <br />
-        @if (rows.open().length !== beanCount().open) {
-        <span class="value">
-          ( {{ rows.open().length }} / {{ beanCount().open }} )
-        </span>
-        } @else {
-        <span class="value">( {{ beanCount().open }} )</span>
-        }
+        <app-segment-label [label]="'PAGE_BEANS_LIST_OBTAINABLE' | translate" [shown]="rows.open().length" [total]="beanCount().open" />
       </ion-label>
     </ion-segment-button>
     @if (showFrozen()) {
     <ion-segment-button value="frozen">
       <ion-label>
-        {{"FROZEN_BEANS" | translate}}
-        <br />
-        @if (rows.frozen().length !== beanCount().frozen) {
-        <span class="value">
-          ( {{ rows.frozen().length }} / {{ beanCount().frozen }} )
-        </span>
-        } @else {
-        <span class="value">( {{ beanCount().frozen }} )</span>
-        }
+        <app-segment-label [label]="'FROZEN_BEANS' | translate" [shown]="rows.frozen().length" [total]="beanCount().frozen" />
       </ion-label>
     </ion-segment-button>
     }
     @if (showArchive()) {
     <ion-segment-button value="archive">
       <ion-label>
-        {{"TAB_ARCHIVE" | translate}}
-        <br />
-        @if (rows.archive().length !== beanCount().archive) {
-        <span class="value">
-          ( {{ rows.archive().length }} / {{ beanCount().archive }} )
-        </span>
-        } @else {
-        <span class="value">( {{ beanCount().archive }} )</span>
-        }
+        <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="rows.archive().length" [total]="beanCount().archive" />
       </ion-label>
     </ion-segment-button>
     }

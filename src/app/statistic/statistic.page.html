@@ -4,24 +4,24 @@
   </app-header>
 </ion-header>
 <ion-content>
-  <ion-segment scrollable="true" [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
+  <ion-segment scrollable="true" [(ngModel)]="segment" (ionChange)="reloadActiveSegmentCharts()" class="ion-padding-vertical" style="padding-top:0px;">
     <ion-segment-button value="GENERAL">
       <ion-label>{{"STATISTIC_TAB_GENERAL" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button value="BREWS" (click)="loadBrewCharts()">
+    <ion-segment-button value="BREWS">
       <ion-label>{{"STATISTIC_TAB_BREWS" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button value="BEANS" (click)="loadBeanCharts()">
+    <ion-segment-button value="BEANS">
       <ion-label>{{"STATISTIC_TAB_BEANS" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button value="PREPARATIONS" (click)="loadPreparationCharts()">
+    <ion-segment-button value="PREPARATIONS">
       <ion-label>{{"STATISTIC_TAB_PREPARATIONS" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button value="GRINDERS" (click)="loadGrinderCharts()">
+    <ion-segment-button value="GRINDERS">
       <ion-label>{{"STATISTIC_TAB_GRINDERS" | translate }}
       </ion-label>
     </ion-segment-button>
@@ -75,7 +75,7 @@
     }
   </div>
 
-  <div>
+  <div appTabPanel>
     @switch (segment) {
       @case ('GENERAL') {
         <div>

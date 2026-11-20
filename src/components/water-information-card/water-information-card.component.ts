@@ -111,6 +111,7 @@ export class WaterInformationCardComponent implements OnInit {
     );
     const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'water-popover-actions',
+      openedBy: event,
       items: this.buildWaterActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,

@@ -178,6 +178,7 @@ export class PreparationInformationCardComponent {
     void this.retrieveMachineState().then((s) => machineState.set(s));
     const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'preparation-popover-actions',
+      openedBy: event,
       items: this.buildPreparationActions(machineState),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 0.75,

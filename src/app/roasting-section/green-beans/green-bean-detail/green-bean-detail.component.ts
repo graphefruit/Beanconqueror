@@ -33,6 +33,7 @@ import { BeanDetailSortInformationComponent } from '../../../../components/beans
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../../components/header/header.component';
 import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
+import { TabPanelDirective } from '../../../../directive/tab-panel.directive';
 import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
 import { FormatDatePipe } from '../../../../pipes/formatDate';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -45,6 +46,7 @@ import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
   styleUrls: ['./green-bean-detail.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     BeanDetailSortInformationComponent,
     BeanInformationComponent,

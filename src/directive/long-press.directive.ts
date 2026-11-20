@@ -46,8 +46,9 @@ export class LongPressDirective implements OnInit {
   public ngOnInit() {
     const isTouch = 'ontouchstart' in document.documentElement;
     const element = this.elementRef.nativeElement;
-    if (element.onpointerdown) {
-      element.onpointerdown = (ev) => {
+    element.addEventListener(
+      'touchstart',
+      (ev) => {
         this.timerSub = timer(this.delay).subscribe(() => {
           this.emitLongPress(ev);
           /* Best hack in my entire life. Thanks android
@@ -68,57 +69,12 @@ export class LongPressDirective implements OnInit {
             }, 25);
           }, 750);
         });
-      };
-    } else {
-      // Every device which does not support onpointerdown, we implement touchstart
-      element.addEventListener(
-        'touchstart',
-        (ev) => {
-          this.timerSub = timer(this.delay).subscribe(() => {
-            this.emitLongPress(ev);
-            /* Best hack in my entire life. Thanks android
-             * Prevent the ghostclick in the next page when the long-press is fired
-             * */
-            const bodyEl = window.document.querySelector('body');
-            bodyEl.classList.add('disablePointerEvents');
-            setTimeout(() => {
-              this.clickEndsLongPress = false;
-              bodyEl.classList.remove('disablePointerEvents');
-              setTimeout(() => {
-                // you can use scale(1) or translate(0, 0), etc
-                bodyEl.style.setProperty('transform', 'translateZ(0)');
-                // this will remove the property 1 frame later
-                requestAnimationFrame(() => {
-                  bodyEl.style.removeProperty('transform');
-                });
-              }, 25);
-            }, 750);
-          });
-        },
-        { passive: true },
-      );
+      },
+      { passive: true },
+    );
 
-      element.addEventListener(
-        'touchmove',
-        (ev) => {
-          this.unsub();
-        },
-        { passive: true },
-      );
-      element.addEventListener(
-        'touchend',
-        (ev) => {
-          this.unsub();
-        },
-        { passive: true },
-      );
-      element.addEventListener(
-        'touchcancel',
-        (ev) => {
-          this.unsub();
-        },
-        { passive: true },
-      );
+    for (const type of ['touchmove', 'touchend', 'touchcancel']) {
+      element.addEventListener(type, () => this.unsub(), { passive: true });
     }
 
     element.onpointerup = () => {

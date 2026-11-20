@@ -30,7 +30,10 @@ test('deleting a brew removes it at once and keeps a local note of it', async ({
   }
   expect(await readStoredValue(page, 'DELETION_JOURNAL')).toBeNull();
 
-  await page.getByRole('button', { name: 'Brew options' }).first().click();
+  await page
+    .getByRole('button', { name: /^Options for the brew of / })
+    .first()
+    .click();
   await page.getByRole('button', { name: 'Delete' }).click();
   const confirm = page.getByRole('alertdialog');
   await confirm.getByRole('button', { name: 'Yes' }).click();
@@ -40,9 +43,9 @@ test('deleting a brew removes it at once and keeps a local note of it', async ({
   // visible again, not while the dialog hides it.
   await expect(confirm).toBeHidden();
   await expect(toast(page, 'Brew has been deleted')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Brew options' })).toHaveCount(
-    0,
-  );
+  await expect(
+    page.getByRole('button', { name: /^Options for the brew of / }),
+  ).toHaveCount(0);
   await expect
     .poll(() => readStoredValue<StoredEntry[]>(page, 'BREWS'))
     .toEqual([]);

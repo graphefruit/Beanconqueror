@@ -14,6 +14,7 @@ import {
   storedBean,
   storedBeans,
   suggestionField,
+  tabName,
 } from './support/beans';
 import { chooseInBrewSelect, openAddBrew } from './support/brew-form';
 import { tabOrder } from './support/layout';
@@ -81,7 +82,7 @@ test('a new bean is stored with its values and can be brewed', async ({
   await saveBean(page);
   await expect(toast(page, 'Bean added successfully')).toBeVisible();
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 8 )',
+    tabName('Available ( 8 )'),
   );
   await searchBeans(page, 'Kenia');
   const card = beanCard(page, 'Test Kenia');

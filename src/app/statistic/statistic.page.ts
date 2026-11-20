@@ -39,6 +39,7 @@ import { Brew } from '../../classes/brew/brew';
 import { BrewView } from '../../classes/brew/brewView';
 import { HeaderComponent } from '../../components/header/header.component';
 import { DatetimeLanguageDirective } from '../../directive/datetime-language.directive';
+import { TabPanelDirective } from '../../directive/tab-panel.directive';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import {
@@ -64,6 +65,7 @@ import { UIStatistic } from '../../services/uiStatistic';
   styleUrls: ['./statistic.page.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     DecimalPipe,
     TranslatePipe,
@@ -243,11 +245,12 @@ export class StatisticPage implements OnInit {
   private __applyDateRange(): void {
     this.uiStatistic.setDateRange(this.dateRange);
     this.__loadGeneralNumbers();
-    this.__reloadActiveSegmentCharts();
+    this.reloadActiveSegmentCharts();
     this.changeDetectorRef?.markForCheck();
   }
 
-  private __reloadActiveSegmentCharts(): void {
+  /** On every change of tab: Ionic selects a tab by keyboard without a click. */
+  public reloadActiveSegmentCharts(): void {
     switch (this.segment) {
       case 'BREWS':
         this.loadBrewCharts();

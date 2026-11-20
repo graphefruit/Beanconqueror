@@ -15,7 +15,7 @@ import {
 } from './support/headings';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
-import { text, type Language } from './support/texts';
+import { startsWith, text, type Language } from './support/texts';
 
 /**
  * Screen reader users move through a screen from heading to heading. Every
@@ -23,6 +23,9 @@ import { text, type Language } from './support/texts';
  * cards of a list are level 2, and labels, values and figures are no headings.
  * Checked in English and German, by the outline and by axe.
  */
+
+/** The app's text for a key, in the language under test. */
+type Texts = (key: string, params?: Record<string, string>) => string;
 
 /** Every screen of the app that can be reached without a device. */
 const ROUTES = [
@@ -73,6 +76,7 @@ const LIST_CARDS: Record<string, string> = {
   '/home/profile/preparations': 'preparation-information-card',
   '/home/profile/mills': 'mill-information-card',
   '/home/profile/water': 'water-information-card',
+  '/home/profile/graph': 'graph-information-card',
   '/home/profile/info/licences': 'licences ion-card',
   '/roasting-section/dashboard': 'green-bean-information',
   '/roasting-section/roasting-machine': 'roasting-machine-information-card',
@@ -91,7 +95,15 @@ async function start(
   });
   data.SETTINGS[0].language = language;
   data.SETTINGS[0].welcome_page_showed = !welcome;
-  await seedDatabase(page, data);
+  // The data set has no graphs; the list of graphs needs some.
+  const graphs = ['Blooming', 'Turbo'].map((name, index) => ({
+    name,
+    note: '',
+    flow_profile: '',
+    finished: false,
+    config: { uuid: `graph-${index}`, unix_timestamp: 1_761_000_000 + index },
+  }));
+  await seedDatabase(page, { ...data, GRAPH: graphs });
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('lang', language);
   if (!welcome) {
@@ -147,7 +159,7 @@ test.use({ allowedConsoleErrors: [/Wake Lock permission request denied/] });
 
 for (const language of ['en', 'de'] as const) {
   test.describe(language, () => {
-    const t = (key: string) => text(language, key);
+    const t: Texts = (key, params) => text(language, key, params);
 
     test('every screen has its title as the one level-1 heading', async ({
       page,
@@ -169,10 +181,12 @@ for (const language of ['en', 'de'] as const) {
         if (card) {
           const cards = visible(page.locator(card));
           await expect(cards.first()).toBeVisible();
-          await expect(
-            cards.getByRole('heading', { level: 2 }),
-            `each card on ${route} has its title as a level-2 heading`,
-          ).toHaveCount(await cards.count());
+          for (const each of await cards.all()) {
+            await expect(
+              each.getByRole('heading', { level: 2 }),
+              `each card on ${route} has its title as the one level-2 heading`,
+            ).toHaveCount(1);
+          }
         }
       }
     });
@@ -199,7 +213,7 @@ for (const language of ['en', 'de'] as const) {
     const dialogs: {
       name: string;
       route: string;
-      open: (page: Page, t: (key: string) => string) => Promise<void>;
+      open: (page: Page, t: Texts) => Promise<void>;
       sections?: string[];
     }[] = [
       {
@@ -210,7 +224,12 @@ for (const language of ['en', 'de'] as const) {
       {
         name: 'bean details',
         route: '/home/beans',
-        open: (page, t) => details(page, t('A11Y.BEAN_OPTIONS'), t('DETAIL')),
+        open: (page, t) =>
+          details(
+            page,
+            startsWith(t('A11Y.OPTIONS_FOR', { name: '' })),
+            t('DETAIL'),
+          ),
       },
       {
         name: 'add brew',
@@ -223,7 +242,7 @@ for (const language of ['en', 'de'] as const) {
         open: (page, t) =>
           details(
             page,
-            t('A11Y.BREW_OPTIONS'),
+            startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' })),
             t('POPOVER_BREWS_OPTION_DETAIL'),
           ),
       },
@@ -257,7 +276,11 @@ for (const language of ['en', 'de'] as const) {
         name: 'preparation method details',
         route: '/home/profile/preparations',
         open: (page, t) =>
-          details(page, t('A11Y.PREPARATION_OPTIONS'), t('DETAIL')),
+          details(
+            page,
+            startsWith(t('A11Y.OPTIONS_FOR', { name: '' })),
+            t('DETAIL'),
+          ),
       },
       {
         name: 'sort preparation methods',
@@ -268,12 +291,21 @@ for (const language of ['en', 'de'] as const) {
         name: 'grinder details',
         route: '/home/profile/mills',
         open: (page, t) =>
-          details(page, t('A11Y.GRINDER_OPTIONS'), t('DETAIL')),
+          details(
+            page,
+            startsWith(t('A11Y.OPTIONS_FOR', { name: '' })),
+            t('DETAIL'),
+          ),
       },
       {
         name: 'water details',
         route: '/home/profile/water',
-        open: (page, t) => details(page, t('A11Y.WATER_OPTIONS'), t('DETAIL')),
+        open: (page, t) =>
+          details(
+            page,
+            startsWith(t('A11Y.OPTIONS_FOR', { name: '' })),
+            t('DETAIL'),
+          ),
       },
       {
         name: 'grinder choice in the brew form',
@@ -305,7 +337,7 @@ for (const language of ['en', 'de'] as const) {
           const outline = await headingOutline(page);
           expect(
             outline.filter(({ level }) => level === 2).map(({ name }) => name),
-          ).toEqual(dialog.sections.map(t));
+          ).toEqual(dialog.sections.map((key) => t(key)));
         }
       });
     }
@@ -324,7 +356,7 @@ for (const language of ['en', 'de'] as const) {
 
 async function details(
   page: Page,
-  options: string,
+  options: RegExp,
   action: string,
 ): Promise<void> {
   await visible(page.getByRole('button', { name: options }))
@@ -353,7 +385,7 @@ test.describe('bean groups', () => {
   }) => {
     await startWithBeans(page);
     await showBeanSegment(page, 'Frozen');
-    await visible(page.getByRole('button', { name: 'Beans in this group' }))
+    await visible(page.getByRole('button', { name: /^Beans in the group / }))
       .first()
       .click();
 

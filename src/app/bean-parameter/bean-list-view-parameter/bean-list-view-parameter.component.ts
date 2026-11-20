@@ -26,6 +26,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { Settings } from '../../../classes/settings/settings';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
@@ -34,6 +35,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   styleUrls: ['./bean-list-view-parameter.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     TranslatePipe,
     IonHeader,

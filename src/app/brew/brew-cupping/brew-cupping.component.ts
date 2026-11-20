@@ -36,6 +36,7 @@ import { HeaderDismissButtonComponent } from '../../../components/header/header-
 import { HeaderComponent } from '../../../components/header/header.component';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { IBrew } from '../../../interfaces/brew/iBrew';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -52,6 +53,7 @@ import { BrewFlavorPickerComponent } from '../brew-flavor-picker/brew-flavor-pic
   styleUrls: ['./brew-cupping.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     CuppingRadarComponent,
     KeyValuePipe,

@@ -112,7 +112,10 @@ export async function brewAction(
   action: string,
   index = 0,
 ): Promise<void> {
-  await page.getByRole('button', { name: 'Brew options' }).nth(index).click();
+  await page
+    .getByRole('button', { name: /^Options for the brew of / })
+    .nth(index)
+    .click();
   await page.getByRole('button', { name: action, exact: true }).click();
 }
 

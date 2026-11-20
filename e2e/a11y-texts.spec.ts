@@ -144,7 +144,9 @@ for (const language of ['en', 'de'] as const) {
       await start(page, language);
       await openTab(page, language, 'NAV_BREWS');
       await visible(
-        page.getByRole('button', { name: t('A11Y.BREW_OPTIONS'), exact: true }),
+        page.getByRole('button', {
+          name: startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' })),
+        }),
       )
         .first()
         .click();

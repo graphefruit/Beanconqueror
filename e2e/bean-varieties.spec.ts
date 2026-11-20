@@ -151,7 +151,10 @@ test('a blend keeps its varieties when its mix is looked at but not changed', as
   await countries.nth(1).fill('Brazil');
   await saveBean(page);
 
-  await page.getByRole('button', { name: 'Bean options' }).click();
+  await page
+    .locator('beans')
+    .getByRole('button', { name: /^Options for / })
+    .click();
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await openMix(page);

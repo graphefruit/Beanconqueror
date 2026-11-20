@@ -135,6 +135,7 @@ export class BaristamodeBrewInformationComponent implements OnInit {
     event.stopImmediatePropagation();
     const role = await ActionsPopoverComponent.pick(this.modalCtrl, {
       id: 'baristamode-brew-popover-actions',
+      openedBy: event,
       items: this.buildBrewActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,

@@ -31,6 +31,7 @@ import { ListViewCustomParameterComponent } from '../../../components/parameter/
 import { ManageCustomParameterComponent } from '../../../components/parameter/manage-custom-parameter/manage-custom-parameter.component';
 import { RepeatCustomParameterComponent } from '../../../components/parameter/repeat-custom-parameter/repeat-custom-parameter.component';
 import { SortCustomParameterComponent } from '../../../components/parameter/sort-custom-parameter/sort-custom-parameter.component';
+import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
@@ -42,6 +43,7 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
   styleUrls: ['./preparation-custom-parameters.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     ManageCustomParameterComponent,
     DefaultCustomParameterComponent,

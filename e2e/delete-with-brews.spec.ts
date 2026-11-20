@@ -42,7 +42,7 @@ async function deleteAndCheck(
   page: Page,
   flow: {
     card: string;
-    options: string;
+    options: RegExp;
     question: string;
     toast: string;
     /** What is stored afterwards, per collection. */
@@ -110,7 +110,7 @@ const WITH_BREWS = [
     field: 'mill',
     entry: 'Grinders',
     card: 'mill-information-card',
-    options: 'Grinder options',
+    options: /^Options for /,
     question: 'Delete grinder? All associated brews will be deleted as well!',
     toast: 'Grinder has been deleted',
   },
@@ -120,7 +120,7 @@ const WITH_BREWS = [
     field: 'method_of_preparation',
     entry: 'Preparation methods',
     card: 'preparation-information-card',
-    options: 'Preparation options',
+    options: /^Options for /,
     question:
       'Delete preparation method? All associated brews will be deleted as well!',
     toast: 'Preparation method has been deleted',
@@ -228,7 +228,7 @@ test('deleting a green bean removes it, the beans roasted from it and their brew
 
   await deleteAndCheck(page, {
     card: 'green-bean-information',
-    options: 'Green bean options',
+    options: /^Options for /,
     question:
       'Delete green bean? All associated roasted beans, as well as brews will be deleted!',
     toast: 'Green bean has been deleted',

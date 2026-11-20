@@ -32,6 +32,7 @@ import { Subscription } from 'rxjs';
 
 import BaristamodeBrew from '../../../classes/brew/baristamodeBrew';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewStorage';
 
 @Component({
@@ -40,6 +41,7 @@ import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewSto
   styleUrls: ['./baristamode-statistics.page.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     DecimalPipe,
     TranslatePipe,

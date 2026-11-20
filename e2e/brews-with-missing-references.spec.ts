@@ -39,7 +39,7 @@ for (const { what, reference, collection } of MISSING) {
     await page.getByRole('tab', { name: 'Brews', exact: true }).click();
 
     await expect(
-      page.getByRole('tab', { name: /^Current \( [1-9]\d* \)$/ }),
+      page.getByRole('tab', { name: /^Current, [1-9]\d* in total$/ }),
     ).toBeVisible();
     const newest = page.locator('brew-information:visible').first();
     await expect(newest).toBeVisible();

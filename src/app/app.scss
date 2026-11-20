@@ -354,14 +354,6 @@ ion-alert {
     --border-color-checked: var(--ion-color-accent);
     --checkmark-color: var(--ion-color-accent-contrast);
     .ion-label {
-      h2 {
-        margin-left: 0;
-        margin-right: 0;
-        margin-top: 2px;
-        margin-bottom: 2px;
-        font-size: var(--bq-type-body);
-        font-weight: normal;
-      }
       p {
         white-space: normal;
         margin-left: 0;
@@ -1292,6 +1284,13 @@ $bq-focus-double-ring:
   ion-tab-button.ion-focused,
   ion-segment-button.ion-focused {
     @include bq-focus-outline-inset;
+  }
+
+  // A screen title takes focus after navigation so screen readers read it;
+  // it cannot be operated and gets no ring.
+  [role='heading'][tabindex='-1']:focus,
+  h1[tabindex='-1']:focus {
+    outline: none;
   }
 
   // The tab's focus tint is a positioned layer inside its shadow root that

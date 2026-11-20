@@ -593,9 +593,9 @@
             "GREEN_BEAN_WEIGHT": "Rohbohnengewicht",
             "OUTSIDE_TEMPERATURE": "Wettertemperatur",
             "HUMIDITY": "Feuchtigkeit",
-            "FIRST_CRACK_MINUTE": "First crack Minute",
+            "FIRST_CRACK_MINUTE": "First-Crack-Minute",
             "FIRST_CRACK_TEMPERATURE": "First crack Temperatur",
-            "SECOND_CRACK_MINUTE": "Second crack Minute",
+            "SECOND_CRACK_MINUTE": "Second-Crack-Minute",
             "SECOND_CRACK_TEMPERATURE": "Second crack Temperatur",
             "PLACE_HOLDER": {
                 "DROP_TEMPERATURE": "Endtemperatur der Röstung",
@@ -604,10 +604,10 @@
                 "GREEN_BEAN_WEIGHT": "Rohbohnengewicht",
                 "OUTSIDE_TEMPERATURE": "Wettertemperatur",
                 "HUMIDITY": "Feuchtigkeit",
-                "FIRST_CRACK_MINUTE": "First crack Minute",
+                "FIRST_CRACK_MINUTE": "First-Crack-Minute",
                 "FIRST_CRACK_TEMPERATURE": "First crack Temperatur",
                 "SECOND_CRACK_TEMPERATURE": "Second Crack Temperatur",
-                "SECOND_CRACK_MINUTE": "Second crack Minute"
+                "SECOND_CRACK_MINUTE": "Second-Crack-Minute"
             },
             "WEIGHT_LOSS": "Einbrand (Gewichtsverlust)"
         }
@@ -1262,14 +1262,14 @@
             "SUCCESSFULLY": "Verbindung konnte hergestellt werden"
         },
         "SERVER": {
-            "VISUALIZER": "Visualizer Server",
+            "VISUALIZER": "Visualizer-Server",
             "CUSTOM": "Eigener Server"
         },
         "SHOT": {
             "UPLOAD_SUCCESSFULLY": "Brühung zu Visualizer hochgeladen",
             "UPLOAD_UNSUCCESSFULLY": "Brühung konnte nicht zu Visualizer hochgeladen werden"
         },
-        "URL": "Server Url",
+        "URL": "Server-URL",
         "USERNAME": "Benutzername",
         "PASSWORD": "Passwort",
         "UPLOAD_AUTOMATIC": "Jede Brühung automatisch hochladen?",
@@ -1959,7 +1959,7 @@
         "CUSTOM_HEADER_NAME_PLACEHOLDER": "z.B. X-API-Key",
         "CUSTOM_HEADER_VALUE": "Header-Wert",
         "HTTP_AUTH_WARNING": "Warnung: Die Übermittlung von Anmeldeinformationen über http:\/\/ kann abgefangen werden. Verwende https:\/\/ oder stellen sicher, dass du dich in einem vertrauenswürdigen lokalen Netzwerk befinden.",
-        "TEST": "Test webhook",
+        "TEST": "Webhook testen",
         "TEST_SUCCESS": "Webhook wurde erfolgreich ausgelöst.",
         "TEST_FAILED": "Der Webhook konnte nicht erreicht werden. Überprüfen Sie die URL und Ihr Netzwerk.",
         "DEFAULT_TARGET_WEIGHT": "Standardzielgewicht (g)",
@@ -1982,9 +1982,6 @@
         "SORT_PREPARATIONS_ACTIVE": "Zubereitungsmethoden sortieren (aktiv)",
         "SORT_GREEN_BEANS": "Rohkaffee sortieren",
         "SORT_GREEN_BEANS_ACTIVE": "Rohkaffee sortieren (aktiv)",
-        "GRAPH_OPTIONS": "Optionen des Grafen",
-        "ROASTING_MACHINE_OPTIONS": "Optionen des Rösters",
-        "WATER_OPTIONS": "Optionen des Wassers",
         "CHECK_CONNECTION": "Verbindung prüfen",
         "RESET_GRAPH_COLORS": "Farben zurücksetzen: {{graph}}",
         "MOVE_PHOTO_LEFT": "Foto nach links verschieben",
@@ -2011,7 +2008,6 @@
         "ADD_ROASTING_MACHINE": "Röstmaschine hinzufügen",
         "ADD_TOOL": "Tool hinzufügen",
         "ARCHIVED_BREW": "Archivierte Brühung",
-        "BEAN_OPTIONS": "Optionen der Bohne",
         "BREW_OPTIONS": "Optionen der Brühung",
         "BREW_RATIO_CALCULATOR": "Brührate berechnen",
         "CALCULATE_BEVERAGE_QUANTITY": "Getränkemenge berechnen",
@@ -2025,15 +2021,12 @@
         "DELETE_BAG": "Packung löschen",
         "DELETE_VARIETY": "Sorte löschen",
         "DOWNLOAD_FLOW_PROFILE": "Flussprofil herunterladen",
-        "GREEN_BEAN_OPTIONS": "Optionen des Rohkaffees",
-        "GRINDER_OPTIONS": "Optionen der Mühle",
         "IGNORE_SCALE_WEIGHT": "Gewicht der Waage ignorieren",
         "IMPORT_BEANS": "Bohnen importieren",
         "IMPORT_BREW": "Brühung importieren",
         "MAXIMIZE_CONTROLS": "Steuerung maximieren",
         "MAXIMIZE_FLOW_GRAPH": "Flussgraph maximieren",
         "OPEN_PRESSURE_PROFILE_URL": "URL des Druckprofils öffnen",
-        "PREPARATION_OPTIONS": "Optionen der Zubereitungsmethode",
         "READ_FROM_REFRACTOMETER": "Vom Refraktometer lesen",
         "REPEAT_BREW": "Brühung wiederholen",
         "RESUME_SCALE_WEIGHT": "Gewicht der Waage wieder übernehmen",
@@ -2052,7 +2045,6 @@
         "START_LISTENING_TO_SCALE": "Auf die Waage warten",
         "TARE_SCALE": "Waage tarieren",
         "TOGGLE_CAMERA": "Kamera ein- oder ausschalten",
-        "BEAN_GROUP_BEANS": "Bohnen dieser Gruppe",
         "BARISTA_GRAPH": "Barista-Graph",
         "RESIZE_DIALOG": "Dialoggröße ändern",
         "CLEAR_SEARCH": "Suche leeren",
@@ -2068,6 +2060,16 @@
         "HIDE_YEAR_PICKER": "Monats- und Jahresauswahl ausblenden",
         "SELECT_MONTH": "Monat auswählen",
         "SELECT_YEAR": "Jahr auswählen",
-        "MORE_INFORMATION_ABOUT": "Mehr Infos: {{topic}}"
+        "MORE_INFORMATION_ABOUT": "Mehr Infos: {{topic}}",
+        "OPTIONS_FOR": "Optionen für {{name}}",
+        "BREW_OPTIONS_FOR": "Optionen für die Brühung vom {{date}}",
+        "BEANS_OF_GROUP": "Bohnen der Gruppe {{name}}",
+        "COUNT_TOTAL": "{{total}} insgesamt",
+        "COUNT_SHOWN": "{{shown}} von {{total}} angezeigt",
+        "SELECT_DATE": "Datum auswählen",
+        "SELECT_DAY": "Tag auswählen",
+        "SELECT_DAY_PERIOD": "Vormittag oder Nachmittag auswählen",
+        "SELECT_HOUR": "Stunde auswählen",
+        "SELECT_MINUTE": "Minute auswählen"
     }
 }

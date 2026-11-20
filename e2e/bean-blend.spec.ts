@@ -53,7 +53,7 @@ async function storedVarieties(page: Page, name: string) {
 
 async function editBean(page: Page, name: string): Promise<void> {
   const card = await findBean(page, name);
-  await card.getByRole('button', { name: 'Bean options' }).click();
+  await card.getByRole('button', { name: /^Options for / }).click();
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
   await expect(beanField(page, /^Name/)).toHaveValue(name);
 }

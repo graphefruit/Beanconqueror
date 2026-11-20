@@ -34,6 +34,7 @@ import { BeanSortInformationComponent } from '../../../components/beans/bean-sor
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { UIAlert } from '../../../services/uiAlert';
@@ -50,6 +51,7 @@ import { UIToast } from '../../../services/uiToast';
   styleUrls: ['./beans-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,

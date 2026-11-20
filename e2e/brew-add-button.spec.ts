@@ -113,7 +113,7 @@ test('the options of the last brew can be tapped past the add button', async ({
   const options = page
     .locator('brew brew-information')
     .last()
-    .getByRole('button', { name: 'Brew options', exact: true });
+    .getByRole('button', { name: /^Options for the brew of / });
   await scrollToEnd(brewList(page));
   await expect(options).toBeInViewport();
   await expect.poll(() => isUncovered(options)).toBe(true);

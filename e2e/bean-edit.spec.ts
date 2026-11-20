@@ -17,6 +17,7 @@ import {
   startWithBeans,
   storedBean,
   storedBeans,
+  tabName,
 } from './support/beans';
 import { readStoredValue } from './support/stored-values';
 import { toast } from './support/toast';
@@ -158,10 +159,10 @@ test('ticking "Archive?" in the dialog archives the bean without a rating questi
   await expect(toast(page, 'Bean has been edited')).toBeVisible();
   await dialogsClosed(page);
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 6 )',
+    tabName('Available ( 6 )'),
   );
   await expect(beanSegment(page, 'Archive')).toHaveAccessibleName(
-    'Archive ( 4 )',
+    tabName('Archive ( 4 )'),
   );
   expect(await storedBean(page, BEANS.ethiopia)).toMatchObject({
     finished: true,

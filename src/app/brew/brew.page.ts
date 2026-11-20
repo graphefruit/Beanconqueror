@@ -37,6 +37,7 @@ import { Settings } from '../../classes/settings/settings';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
+import { SegmentLabelComponent } from '../../components/segment-label/segment-label.component';
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { SearchbarNameDirective } from '../../directive/searchbar-name.directive';
 import { BREW_SORT_AFTER } from '../../enums/brews/brewSortAfter';
@@ -56,6 +57,7 @@ import { BrewFilterComponent } from './brew-filter/brew-filter.component';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FormsModule,
+    SegmentLabelComponent,
     RouterLink,
     NgTemplateOutlet,
     AgVirtualScrollComponent,

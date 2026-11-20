@@ -50,6 +50,7 @@ import {
 } from '../../components/bean-information/bean-information.component';
 import { HeaderButtonComponent } from '../../components/header/header-button.component';
 import { HeaderComponent } from '../../components/header/header.component';
+import { SegmentLabelComponent } from '../../components/segment-label/segment-label.component';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import { SearchbarNameDirective } from '../../directive/searchbar-name.directive';
 import { BEAN_IMPORT_ACTION } from '../../enums/beans/beanImportAction';
@@ -137,6 +138,7 @@ function groupFrozenPortions(beans: Bean[]): (Bean | BeanGroup)[] {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
+    SegmentLabelComponent,
     RouterLink,
     NgTemplateOutlet,
     AgVirtualScrollComponent,
@@ -510,13 +512,14 @@ export class BeansPage {
     this.loadBeans();
   }
 
-  public async openImportMenu() {
+  public async openImportMenu(event: Event) {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.IMPORT_MENU_OPENED,
     );
     const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'bean-import-popover',
+      openedBy: event,
       items: this.buildImportActions(),
       breakpoints: [0, 0.45],
       initialBreakpoint: 0.45,

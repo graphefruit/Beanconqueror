@@ -18,7 +18,7 @@ interface List {
   add: string;
   card: string;
   /** The button of a card that opens its actions. */
-  options: string;
+  options: RegExp;
   /** The button that collapses the cards, if the list has one. */
   collapse?: string;
   /** A field of the form the button opens. */
@@ -34,7 +34,7 @@ const LISTS: List[] = [
     },
     add: 'Add bean',
     card: 'beans bean-information',
-    options: 'Bean options',
+    options: /^Options for /,
     collapse: 'Collapse bean list items',
     opens: (page) => page.getByRole('textbox', { name: /^Name/ }),
   },
@@ -43,7 +43,7 @@ const LISTS: List[] = [
     open: (page) => openFromProfile(page, 'Grinders'),
     add: 'Add grinder',
     card: 'mill mill-information-card',
-    options: 'Grinder options',
+    options: /^Options for /,
     opens: (page) => page.getByRole('textbox', { name: /^Name/ }),
   },
   {
@@ -51,7 +51,7 @@ const LISTS: List[] = [
     open: (page) => openFromProfile(page, 'Preparation methods'),
     add: 'Add preparation method',
     card: 'preparation preparation-information-card',
-    options: 'Preparation options',
+    options: /^Options for /,
     opens: (page) =>
       page.locator('ion-modal').getByText('V60', { exact: true }),
   },
@@ -60,7 +60,7 @@ const LISTS: List[] = [
     open: (page) => openFromProfile(page, 'Water'),
     add: 'Add water recipe',
     card: 'app-water water-information-card',
-    options: 'Water options',
+    options: /^Options for /,
     opens: (page) =>
       page.locator('ion-modal').getByText('Pure Coffee Water', { exact: true }),
   },

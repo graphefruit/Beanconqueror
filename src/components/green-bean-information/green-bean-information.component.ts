@@ -131,6 +131,7 @@ export class GreenBeanInformationComponent implements OnInit {
     );
     const role = await ActionsPopoverComponent.pick(this.modalController, {
       id: 'green-bean-popover-actions',
+      openedBy: event,
       items: this.buildGreenBeanActions(),
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,

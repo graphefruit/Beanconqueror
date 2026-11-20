@@ -20,6 +20,12 @@ const IONIC_LABELS: ReadonlyMap<string, string> = new Map([
   ['Hide year picker', 'A11Y.HIDE_YEAR_PICKER'],
   ['Select a month', 'A11Y.SELECT_MONTH'],
   ['Select a year', 'A11Y.SELECT_YEAR'],
+  // Wheel columns of ion-datetime.
+  ['Select a date', 'A11Y.SELECT_DATE'],
+  ['Select a day', 'A11Y.SELECT_DAY'],
+  ['Select an hour', 'A11Y.SELECT_HOUR'],
+  ['Select a minute', 'A11Y.SELECT_MINUTE'],
+  ['Select a day period', 'A11Y.SELECT_DAY_PERIOD'],
 ]);
 
 /**

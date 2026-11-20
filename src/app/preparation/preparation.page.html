@@ -7,29 +7,13 @@
   <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
     <ion-segment-button value="open">
       <ion-label>
-        {{"CURRENT" | translate }}
-        <br />
-        @if (openPreparationsView?.length !== openPreparationsLength) {
-        <span class="value">
-          ( {{ openPreparationsView?.length }} / {{ openPreparationsLength }} )
-        </span>
-        } @else {
-        <span class="value">( {{ openPreparationsLength }} )</span>
-        }
+        <app-segment-label [label]="'CURRENT' | translate" [shown]="openPreparationsView?.length" [total]="openPreparationsLength" />
       </ion-label>
     </ion-segment-button>
     @if (settings?.show_archived_preparations) {
       <ion-segment-button value="archive">
         <ion-label>
-          {{"TAB_ARCHIVE" | translate }}
-          <br />
-          @if (archivePreparationsView?.length !== archivePreparationsLength) {
-          <span class="value">
-            ( {{ archivePreparationsView?.length }} / {{ archivePreparationsLength }} )
-          </span>
-          } @else {
-          <span class="value">( {{ archivePreparationsLength }} )</span>
-          }
+          <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="archivePreparationsView?.length" [total]="archivePreparationsLength" />
         </ion-label>
       </ion-segment-button>
     }

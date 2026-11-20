@@ -79,6 +79,7 @@ import { CloudModelPickerComponent } from '../../components/cloud-model-picker/c
 import { HeaderComponent } from '../../components/header/header.component';
 import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
+import { TabPanelDirective } from '../../directive/tab-panel.directive';
 import { TooltipDirective } from '../../directive/tooltip.directive';
 import { AppEventType } from '../../enums/appEvent/appEvent';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
@@ -149,6 +150,7 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
   styleUrls: ['./settings.page.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     TooltipDirective,
     DecimalPipe,

@@ -80,14 +80,29 @@ export async function openBeansTab(page: Page): Promise<void> {
 }
 
 /**
- * One of the tabs "Available", "Frozen" and "Archive" above the list. Its name ends with the
- * number of entries, "( 7 )", or with "( shown / all )".
+ * One of the tabs "Available", "Frozen" and "Archive" above the list. Its name goes on with the
+ * number of entries in words, see `tabName`.
  */
 export function beanSegment(
   page: Page,
   name: 'Available' | 'Frozen' | 'Archive',
 ): Locator {
-  return page.getByRole('tab', { name: new RegExp(`^${name} \\(`) });
+  return page.getByRole('tab', { name: new RegExp(`^${name},`) });
+}
+
+/**
+ * The name screen readers get for a tab shown as "Frozen ( 3 / 5 )": the
+ * count in words instead of brackets and slash.
+ */
+export function tabName(shown: string): string {
+  const match = /^(.*) \( (\d+)(?: \/ (\d+))? \)$/.exec(shown);
+  if (!match) {
+    throw new Error(`No tab with a count: ${shown}`);
+  }
+  const [, label, count, total] = match;
+  return total === undefined
+    ? `${label}, ${count} in total`
+    : `${label}, ${count} of ${total} shown`;
 }
 
 export async function showBeanSegment(
@@ -191,7 +206,7 @@ export async function beanAction(
 ): Promise<void> {
   await beanCard(page, name)
     .first()
-    .getByRole('button', { name: 'Bean options' })
+    .getByRole('button', { name: /^Options for / })
     .first()
     .click();
   await page.getByRole('button', { name: action, exact: true }).click();

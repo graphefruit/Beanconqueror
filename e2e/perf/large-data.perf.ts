@@ -373,7 +373,7 @@ for (const tier of TIERS) {
       await searchField.blur();
       const card = page.locator('bean-information').filter({ visible: true });
       await expect(card).toHaveCount(1);
-      await card.getByRole('button', { name: 'Bean options' }).click();
+      await card.getByRole('button', { name: /^Options for / }).click();
       await page.getByRole('button', { name: 'Delete', exact: true }).click();
       await page
         .getByRole('alertdialog')
@@ -417,7 +417,7 @@ for (const tier of TIERS) {
       const card = page
         .locator('mill-information-card')
         .filter({ hasText: mill.name });
-      await card.getByRole('button', { name: 'Grinder options' }).click();
+      await card.getByRole('button', { name: /^Options for / }).click();
       await page.getByRole('button', { name: 'Delete', exact: true }).click();
       await page
         .getByRole('alertdialog')

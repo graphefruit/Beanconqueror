@@ -11,6 +11,7 @@ import {
   startWithBeans,
   storedBeanFilters,
   storedBeans,
+  tabName,
 } from './support/beans';
 import { readStoredValue } from './support/stored-values';
 import { toast } from './support/toast';
@@ -58,7 +59,7 @@ test('deleting a bean removes it and its brews after a question', async ({
   await dialogsClosed(page);
   await expect(beanCard(page, BEANS.overused)).toHaveCount(0);
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 6 )',
+    tabName('Available ( 6 )'),
   );
 
   const device = await readStoredValue<{ device_id: string }>(page, 'DEVICE');
@@ -103,13 +104,13 @@ test('deleting a bean removes it and its brews after a question', async ({
   await page.getByRole('tab', { name: 'Brews', exact: true }).click();
   await expect(
     page.getByRole('tab', { name: /^Current/ }),
-  ).toHaveAccessibleName('Current ( 2 )');
+  ).toHaveAccessibleName(tabName('Current ( 2 )'));
 
   // Bean, brews and notes are the same after a restart.
   await page.goto('/');
   await openBeansTab(page);
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    'Available ( 6 )',
+    tabName('Available ( 6 )'),
   );
   await expect(beanCard(page, BEANS.overused)).toHaveCount(0);
   expect(await storedBeans(page)).toHaveLength(13);

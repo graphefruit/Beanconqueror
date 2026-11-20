@@ -49,7 +49,7 @@ async function archiveGrinder(page: Page, name: string): Promise<void> {
   await page
     .locator('mill-information-card')
     .filter({ hasText: name })
-    .getByRole('button', { name: 'Grinder options' })
+    .getByRole('button', { name: /^Options for / })
     .click();
   await page.getByRole('button', { name: 'Archive', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
