@@ -706,7 +706,7 @@ flowchart LR
 ### Start migrations
 
 `UIUpdate.checkUpdate()` (`src/services/uiUpdate.ts`) runs the data migrations
-`UPDATE_1` … `UPDATE_18` in order. A migration that succeeds is recorded in the
+`UPDATE_1` … `UPDATE_19` in order. A migration that succeeds is recorded in the
 `VERSION` entry (`Version.pushUpdatedDataVersion`) and does not run again. If
 `__updateDataVersion()` returns `false` or throws, nothing is recorded and the
 migration runs again on the next start (`__checkUpdateForDataVersion`); the
@@ -812,6 +812,37 @@ gets (`StorageAddOptions.uuid`). When the grinder is not stored there is still
 no grinder, and the next run points the brews at a new one; a grinder stored
 first would end every later run before the brews point at it. It only runs
 when brews and grinders are read.
+
+`UPDATE_19` repairs what the old code left
+(`BrewReferencesService.repairStandardMill()`, rules in
+`src/services/brewReferences/standard-mill.ts`). A brew is pointed at the
+grinder "Standard" when there is exactly one grinder with that name, the brew
+has an empty grinder (`''`), was created (`config.unix_timestamp`) no later
+than that grinder, was not added later (`config.created_at`, set by the app
+since change tracking and filled in from `unix_timestamp` for older brews)
+and was not handed over from another app (`customInformation.imported`,
+stored without a grinder when none matches). The brew form offers no empty
+grinder. One other brew can have one: a quick repeat of a brew whose grinder
+is archived. When its date was then set back to before the grinder
+"Standard" was added, its `created_at` leaves it out; added before change
+tracking it has none of its own, and it is pointed at "Standard" as well.
+That is accepted: the user can choose another grinder for it. With no or
+several grinders "Standard" (renamed, or one of the user's own), nothing
+changes. The brews are stored with one save (`backfillWithoutTouch()`) and
+keep their change info; it only runs when brews and grinders are read, and
+is not recorded when the save failed. A second run finds nothing more to
+change. The log line carries numbers only (brews, repaired, grinders named
+"Standard").
+
+Before the brews are stored, and only when there are brews to repair, the
+current data is written into a backup file
+(`UIExportImportHelper.writeBackupBeforeMigration()`): the same file as
+before an import (`PreImportBackupService`, folder `pre-import`), so it is
+listed with the backups to import. When it cannot be written, nothing is
+changed and `UPDATE_19` is not recorded; it runs again at the next start.
+In the browser no file is written and the repair runs (as an import does).
+No older backup is removed for it; the next completed import keeps the
+newest ones (`removeOldBackups`).
 
 At every start, after the migrations, `logMissingReferences()` of the same
 service writes one log line with the number of brews that refer to a bean, a

@@ -387,6 +387,36 @@ export class UIExportImportHelper {
   }
 
   /**
+   * Writes the current data into a backup file before a start migration
+   * changes entries: the same file as before an import
+   * (PreImportBackupService), listed with the backups to import. Resolves
+   * false when the data could not be read or the file not written; the
+   * caller then changes nothing. True in the browser, where no file can be
+   * written (see importBackup()).
+   */
+  public async writeBackupBeforeMigration(): Promise<boolean> {
+    if (!this.preImportBackup.isAvailable()) {
+      this.uiLog.info(
+        'Backup before migration - skipped, there is no file system in the browser',
+      );
+      return true;
+    }
+    try {
+      const written = await this.preImportBackup.write(
+        await this.buildExportZIP((await this.uiStorage.readValues()).values),
+      );
+      this.uiLog.log(`Backup before migration - written to ${written}`);
+      return true;
+    } catch (ex) {
+      this.uiLog.error(
+        'Backup before migration - could not be written, nothing is changed',
+        ex,
+      );
+      return false;
+    }
+  }
+
+  /**
    * `_stored` are the values of UIStorage.export() when the caller already
    * read them; otherwise they are read here.
    */

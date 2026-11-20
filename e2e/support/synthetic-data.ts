@@ -324,7 +324,7 @@ export interface SyntheticDataSet {
  * app gets a migration that is missing here.
  */
 export const APPLIED_DATA_VERSIONS = Array.from(
-  { length: 18 },
+  { length: 19 },
   (_, i) => `UPDATE_${i + 1}`,
 );
 
@@ -415,6 +415,43 @@ export function generateDataSet(options: DataSetOptions): SyntheticDataSet {
     ROASTING_MACHINES: [],
     GRAPH: [],
     BARISTAMODE_BREWS: [],
+  };
+}
+
+/**
+ * The data as the app left it when it added the grinder "Standard" for brews from before there
+ * were grinders: the first grinder is that one, added after the newest brew, and every brew has an
+ * empty grinder. `UPDATE_19`, which points them at it, has not run.
+ */
+export function withBrewsLeftWithoutStandardMill(
+  data: SyntheticDataSet,
+): SyntheticDataSet {
+  let newest = 0;
+  for (const brew of data.BREWS) {
+    newest = Math.max(newest, brew.config.unix_timestamp);
+  }
+  const [standard, ...others] = data.MILL;
+  const [version] = data.VERSION;
+  return {
+    ...data,
+    MILL: [
+      {
+        ...standard,
+        name: 'Standard',
+        finished: false,
+        config: { ...standard.config, unix_timestamp: newest + 1 },
+      },
+      ...others,
+    ],
+    BREWS: data.BREWS.map((b) => ({ ...b, mill: '' })),
+    VERSION: [
+      {
+        ...version,
+        updatedDataVersions: version.updatedDataVersions.filter(
+          (update) => update !== 'UPDATE_19',
+        ),
+      },
+    ],
   };
 }
 

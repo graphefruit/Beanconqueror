@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
+import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
 import { Version } from '../../classes/version/iVersion';
@@ -17,6 +18,7 @@ import { DuplicateEntriesMigrationService } from '../changeTracking/duplicate-en
 import { UIAlert } from '../uiAlert';
 import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
+import { UIExportImportHelper } from '../uiExportImportHelper';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
@@ -840,6 +842,7 @@ interface StoredEntry {
 describe('UIUpdate standard grinder', () => {
   let database: MemoryDatabase;
   let uiUpdate: UIUpdate;
+  let backup: jasmine.Spy;
 
   /** A brew as it was stored before there were grinders. */
   function brewBefore(_uuid: string, _mill: string, _created: number) {
@@ -860,6 +863,9 @@ describe('UIUpdate standard grinder', () => {
 
   beforeEach(() => {
     database = new MemoryDatabase();
+    backup = jasmine
+      .createSpy('writeBackupBeforeMigration')
+      .and.resolveTo(true);
     const settings = new Settings();
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
@@ -881,6 +887,10 @@ describe('UIUpdate standard grinder', () => {
         { provide: UIFileHelper, useValue: {} },
         { provide: UIAlert, useValue: {} },
         { provide: UIHelper, useValue: {} },
+        {
+          provide: UIExportImportHelper,
+          useValue: { writeBackupBeforeMigration: backup },
+        },
       ],
     });
     uiUpdate = TestBed.inject(UIUpdate);
@@ -938,5 +948,62 @@ describe('UIUpdate standard grinder', () => {
 
     const [mill] = stored('MILL');
     expect(stored('BREWS')[0].mill).toBe(mill.config.uuid);
+  });
+
+  it('UPDATE_19 points the brews left with an empty grinder at the grinder Standard', async () => {
+    const mill = {
+      ...(JSON.parse(JSON.stringify(new Mill())) as object),
+      name: 'Standard',
+      config: { uuid: 'standard', unix_timestamp: 10 },
+    };
+    await start([brewBefore('old', '', 5), brewBefore('new', '', 20)], [mill]);
+
+    expect(await runUpdate(uiUpdate, 'UPDATE_19')).toBeTrue();
+
+    expect(stored('BREWS').map((_brew) => _brew.mill)).toEqual([
+      'standard',
+      '',
+    ]);
+    expect(backup).toHaveBeenCalledTimes(1);
+  });
+
+  it('UPDATE_19 stays open and changes nothing when the backup could not be written', async () => {
+    const mill = {
+      ...(JSON.parse(JSON.stringify(new Mill())) as object),
+      name: 'Standard',
+      config: { uuid: 'standard', unix_timestamp: 10 },
+    };
+    const brews = [brewBefore('old', '', 5)];
+    await start(brews, [mill]);
+    backup.and.resolveTo(false);
+
+    expect(await runUpdate(uiUpdate, 'UPDATE_19')).toBeFalse();
+
+    expect(stored('BREWS')).toEqual(brews);
+  });
+
+  it('UPDATE_19 writes no backup when no brew is to be repaired', async () => {
+    const mill = {
+      ...(JSON.parse(JSON.stringify(new Mill())) as object),
+      name: 'Standard',
+      config: { uuid: 'standard', unix_timestamp: 10 },
+    };
+    await start([brewBefore('new', '', 20)], [mill]);
+
+    expect(await runUpdate(uiUpdate, 'UPDATE_19')).toBeTrue();
+
+    expect(backup).not.toHaveBeenCalled();
+  });
+
+  it('UPDATE_19 stays open when the brews could not be stored', async () => {
+    const mill = {
+      ...(JSON.parse(JSON.stringify(new Mill())) as object),
+      name: 'Standard',
+      config: { uuid: 'standard', unix_timestamp: 10 },
+    };
+    await start([brewBefore('old', '', 5)], [mill]);
+    database.failingWrites.add('BREWS');
+
+    expect(await runUpdate(uiUpdate, 'UPDATE_19')).toBeFalse();
   });
 });

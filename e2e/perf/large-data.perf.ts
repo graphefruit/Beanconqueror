@@ -11,6 +11,7 @@ import {
   generateDataSet,
   isOpenBrew,
   NOTE_SEARCH_TERM,
+  withBrewsLeftWithoutStandardMill,
   type SyntheticDataSet,
 } from '../support/synthetic-data';
 import { BUDGETS, FIXED_DELAYS, type Budget, type PerfTier } from './budgets';
@@ -170,6 +171,36 @@ for (const tier of TIERS) {
       const { start } = await startWithData(page, tier, testInfo);
       await measureMachineLoad(testInfo, 'after');
       report(testInfo, tier, 'start', { ...start });
+      if (checkBudgets) {
+        checkBudget('startVisible', start.visible, budget, testInfo);
+        checkBudget('startInteractive', start.settled, budget, testInfo);
+      }
+    });
+
+    // UPDATE_19 points every brew at the grinder Standard: the most it can have to do.
+    test('start that points all brews at the grinder Standard', async ({
+      page,
+    }, testInfo) => {
+      const data = withBrewsLeftWithoutStandardMill(dataSet(tier).data);
+      const { start } = await startWithData(page, tier, testInfo, {
+        data,
+        json: JSON.stringify(data),
+      });
+      await measureMachineLoad(testInfo, 'after');
+      report(testInfo, tier, 'start-standard-grinder', { ...start });
+      // Reading all brews takes longer than a poll may; the version entry is small.
+      await expect
+        .poll(async () =>
+          (
+            await readStoredValue<typeof data.VERSION>(page, 'VERSION')
+          )?.[0].updatedDataVersions.includes('UPDATE_19'),
+        )
+        .toBe(true);
+      const brews = await readStoredValue<{ mill: string }[]>(page, 'BREWS');
+      expect(brews?.length).toBe(data.BREWS.length);
+      expect(brews?.every((b) => b.mill === data.MILL[0].config.uuid)).toBe(
+        true,
+      );
       if (checkBudgets) {
         checkBudget('startVisible', start.visible, budget, testInfo);
         checkBudget('startInteractive', start.settled, budget, testInfo);

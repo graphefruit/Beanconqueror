@@ -1917,3 +1917,46 @@ describe('The check of the internal backup at start-up', () => {
     expect(popover).not.toHaveBeenCalled();
   });
 });
+
+describe('The backup before a start migration', () => {
+  it('writes the current data into a backup file', async () => {
+    const before = storedData('own');
+    const device = await startDevice(before);
+
+    expect(await device.helper.writeBackupBeforeMigration()).toBeTrue();
+
+    const [file] = writtenBackups(device);
+    expect(file).toMatch(BACKUP_FILE_PATTERN);
+    const saved = await readBackupFile(device, file);
+    expect(saved.BREWS).toEqual(before.BREWS);
+    expect(saved.BEANS).toEqual(before.BEANS);
+    expect(Object.fromEntries(device.data)).toEqual(before);
+  });
+
+  it('resolves false when the file cannot be written', async () => {
+    const device = await startDevice(storedData('own'));
+    device.directory.failing.write = true;
+
+    expect(await device.helper.writeBackupBeforeMigration()).toBeFalse();
+
+    expect(writtenBackups(device)).toEqual([]);
+    expect(device.uiLog.error).toHaveBeenCalled();
+  });
+
+  it('resolves false when the data cannot be read', async () => {
+    const device = await startDevice(storedData('own'));
+    device.failingReads.count = 1;
+
+    expect(await device.helper.writeBackupBeforeMigration()).toBeFalse();
+
+    expect(device.directory.files.write).not.toHaveBeenCalled();
+  });
+
+  it('writes no file in the browser and lets the migration run', async () => {
+    const device = await startDevice(storedData('own'), { fileSystem: false });
+
+    expect(await device.helper.writeBackupBeforeMigration()).toBeTrue();
+
+    expect(device.directory.files.write).not.toHaveBeenCalled();
+  });
+});

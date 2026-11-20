@@ -18,6 +18,7 @@ import { EventQueueService } from '../queueService/queue-service.service';
 import { UIAlert } from '../uiAlert';
 import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
+import { UIExportImportHelper } from '../uiExportImportHelper';
 import { UILog } from '../uiLog';
 import { UIMillStorage } from '../uiMillStorage';
 import { UIPreparationStorage } from '../uiPreparationStorage';
@@ -126,6 +127,9 @@ const ALL = [
 /** Starts the storages on the device; those in `_notRead` are left unread. */
 async function startApp(_device: Device, _notRead: unknown[] = []) {
   const info = jasmine.createSpy('info');
+  const backup = jasmine
+    .createSpy('writeBackupBeforeMigration')
+    .and.resolveTo(true);
   // No alert of a running app for the collections to report a failed save.
   spyOn(UIAlert, 'getInstance').and.returnValue(undefined);
   TestBed.resetTestingModule();
@@ -144,6 +148,10 @@ async function startApp(_device: Device, _notRead: unknown[] = []) {
       {
         provide: DeletionJournalService,
         useValue: { forgetExistingEntries: () => Promise.resolve() },
+      },
+      {
+        provide: UIExportImportHelper,
+        useValue: { writeBackupBeforeMigration: backup },
       },
       {
         provide: UILog,
@@ -180,6 +188,7 @@ async function startApp(_device: Device, _notRead: unknown[] = []) {
     failWritesOf,
     writesReachDevice: () => set.and.callThrough(),
     info,
+    backup,
     brewStorage: TestBed.inject(UIBrewStorage),
     settingsStorage: TestBed.inject(UISettingsStorage),
     service: TestBed.inject(BrewReferencesService),
@@ -561,6 +570,131 @@ describe('BrewReferencesService', () => {
       failWritesOf('MILL');
 
       expect(await service.addStandardMill()).toBeFalse();
+    });
+  });
+
+  describe('repairStandardMill', () => {
+    /**
+     * The grinder Standard added at 1_700_000_000 and brews as the update
+     * left them: brew-own and brew-foreign with an empty grinder, brew-gone
+     * handed over from another app, brew-lost created later, brew-none with
+     * a grinder.
+     */
+    function leftByTheUpdate(): StoredData {
+      const data = createData();
+      data.MILL.push({
+        ...stored(new Mill(), 'standard'),
+        name: 'Standard',
+      });
+      data.MILL[1].config.unix_timestamp = 1_700_000_000;
+      for (const entry of data.BREWS.slice(0, 4)) {
+        entry.mill = '';
+      }
+      data.BREWS[2].customInformation = { imported: { source: 'other app' } };
+      data.BREWS[3].config.unix_timestamp = 1_700_000_001;
+      return data;
+    }
+
+    it('points the brews left with an empty grinder at the grinder Standard and touches nothing else', async () => {
+      const data = leftByTheUpdate();
+      const device = createDeviceDatabase(data);
+      const { service, info, set } = await startApp(device);
+
+      expect(await service.repairStandardMill()).toBeTrue();
+
+      const brews = device.data.get('BREWS') as StoredEntry[];
+      expect(brews[0]).toEqual({ ...data.BREWS[0], mill: 'standard' });
+      expect(brews[1]).toEqual({ ...data.BREWS[1], mill: 'standard' });
+      expect(brews.slice(2)).toEqual(data.BREWS.slice(2));
+      expect(writtenKeys(set)).toEqual(['BREWS']);
+      expect(info.calls.mostRecent().args[1]).toEqual({
+        brews: 5,
+        repaired: 2,
+        standard_grinders: 1,
+      });
+      expect(JSON.stringify(info.calls.allArgs())).not.toContain('standard"');
+    });
+
+    it('writes the backup before it changes the brews', async () => {
+      const data = leftByTheUpdate();
+      const device = createDeviceDatabase(data);
+      const { service, set, backup } = await startApp(device);
+      backup.and.callFake(() => {
+        expect(set).not.toHaveBeenCalled();
+        expect(device.data.get('BREWS')).toEqual(data.BREWS);
+        return Promise.resolve(true);
+      });
+
+      expect(await service.repairStandardMill()).toBeTrue();
+
+      expect(backup).toHaveBeenCalledTimes(1);
+      expect(writtenKeys(set)).toEqual(['BREWS']);
+    });
+
+    it('changes nothing when the backup could not be written', async () => {
+      const data = leftByTheUpdate();
+      const device = createDeviceDatabase(data);
+      const { service, set, backup, info } = await startApp(device);
+      backup.and.resolveTo(false);
+
+      expect(await service.repairStandardMill()).toBeFalse();
+
+      expect(set).not.toHaveBeenCalled();
+      expect(device.data.get('BREWS')).toEqual(data.BREWS);
+      expect(info.calls.mostRecent().args[0]).toContain('no backup');
+      expect(info.calls.mostRecent().args[1].repaired).toBe(0);
+    });
+
+    it('writes nothing, also no backup, when it has run already', async () => {
+      const device = createDeviceDatabase(leftByTheUpdate());
+      const { service, set, backup } = await startApp(device);
+      await service.repairStandardMill();
+      set.calls.reset();
+
+      expect(await service.repairStandardMill()).toBeTrue();
+
+      expect(set).not.toHaveBeenCalled();
+      expect(backup).toHaveBeenCalledTimes(1);
+    });
+
+    it('writes nothing when several grinders are named Standard', async () => {
+      const data = leftByTheUpdate();
+      data.MILL[0].name = 'Standard';
+      const device = createDeviceDatabase(data);
+      const { service, set, info, backup } = await startApp(device);
+
+      expect(await service.repairStandardMill()).toBeTrue();
+
+      expect(set).not.toHaveBeenCalled();
+      expect(backup).not.toHaveBeenCalled();
+      expect(info.calls.mostRecent().args[1]).toEqual({
+        brews: 5,
+        repaired: 0,
+        standard_grinders: 2,
+      });
+    });
+
+    for (const notRead of [UIBrewStorage, UIMillStorage]) {
+      it(`changes nothing while ${notRead.name} is not read`, async () => {
+        const device = createDeviceDatabase(leftByTheUpdate());
+        const { service, set } = await startApp(device, [notRead]);
+
+        expect(await service.repairStandardMill()).toBeFalse();
+
+        expect(set).not.toHaveBeenCalled();
+      });
+    }
+
+    it('resolves false when the brews could not be stored', async () => {
+      const data = leftByTheUpdate();
+      const device = createDeviceDatabase(data);
+      const { service, failWritesOf, info } = await startApp(device);
+      failWritesOf('BREWS');
+
+      expect(await service.repairStandardMill()).toBeFalse();
+
+      expect(device.data.get('BREWS')).toEqual(data.BREWS);
+      expect(info.calls.mostRecent().args[1].repaired).toBe(0);
     });
   });
 

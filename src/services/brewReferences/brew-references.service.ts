@@ -4,10 +4,16 @@ import { Mill } from '../../classes/mill/mill';
 import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
 import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
+import { UIExportImportHelper } from '../uiExportImportHelper';
 import { UILog } from '../uiLog';
 import { UIMillStorage } from '../uiMillStorage';
 import { UIPreparationStorage } from '../uiPreparationStorage';
 import { UISettingsStorage } from '../uiSettingsStorage';
+import {
+  brewsLeftWithoutStandardMill,
+  STANDARD_MILL_NAME,
+  StandardMillBrew,
+} from './standard-mill';
 
 interface StoredEntry {
   config?: { uuid?: unknown };
@@ -36,6 +42,7 @@ export class BrewReferencesService {
   private readonly uiMillStorage = inject(UIMillStorage);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly uiLog = inject(UILog);
+  private readonly uiExportImportHelper = inject(UIExportImportHelper);
 
   /**
    * A preparation tool belongs to one preparation. Takes every tool out of
@@ -147,7 +154,7 @@ export class BrewReferencesService {
       return true;
     }
     const mill = new Mill();
-    mill.name = 'Standard';
+    mill.name = STANDARD_MILL_NAME;
     const uuid = crypto.randomUUID();
     const brewsSaved = await this.uiBrewStorage.backfillWithoutTouch(
       (_brews: StoredBrew[]) => {
@@ -161,6 +168,60 @@ export class BrewReferencesService {
       brewsSaved &&
       (await this.uiMillStorage.addAndConfirm(mill, { uuid })).saved
     );
+  }
+
+  /**
+   * Points the brews that addStandardMill() left with an empty grinder
+   * before it was fixed at the grinder "Standard" (rules in
+   * standard-mill.ts). They are stored with one save and keep their change
+   * info. When there are such brews, the current data is written into a
+   * backup file first (UIExportImportHelper.writeBackupBeforeMigration).
+   *
+   * Resolves true when everything is stored or nothing had to be; false
+   * when the brews or the grinders are not read, the backup could not be
+   * written or the save failed. Nothing is changed then but what the save
+   * stored.
+   */
+  public async repairStandardMill(): Promise<boolean> {
+    const start = performance.now();
+    if (!this.uiBrewStorage.isRead() || !this.uiMillStorage.isRead()) {
+      this.uiLog.info(
+        'Standard grinder - brews or grinders are not read, nothing was changed',
+      );
+      return false;
+    }
+    let repair = brewsLeftWithoutStandardMill(
+      this.uiBrewStorage.getRawEntries(),
+      this.uiMillStorage.getRawEntries(),
+    );
+    const backedUp =
+      repair.brews.length === 0 ||
+      (await this.uiExportImportHelper.writeBackupBeforeMigration());
+    const saved =
+      backedUp &&
+      (await this.uiBrewStorage.backfillWithoutTouch(
+        (_brews: StandardMillBrew[]) => {
+          // Chosen again: the brews can have changed while the file was written.
+          repair = brewsLeftWithoutStandardMill(
+            _brews,
+            this.uiMillStorage.getRawEntries(),
+          );
+          for (const brew of repair.brews) {
+            brew.mill = repair.mill;
+          }
+          return repair.brews.length;
+        },
+      ));
+    // Numbers only: uuids and names stay out of the log.
+    this.uiLog.info(
+      `Standard grinder - ${saved ? 'done' : backedUp ? 'not finished' : 'no backup, nothing was changed'} in ${Math.round(performance.now() - start)} ms`,
+      {
+        brews: this.uiBrewStorage.getRawEntries().length,
+        repaired: saved ? repair.brews.length : 0,
+        standard_grinders: repair.standardMills,
+      },
+    );
+    return saved;
   }
 
   /**

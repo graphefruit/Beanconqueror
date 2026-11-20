@@ -90,6 +90,7 @@ export class UIUpdate {
         'UPDATE_16',
         'UPDATE_17',
         'UPDATE_18',
+        'UPDATE_19',
       ];
       const version: Version = this.uiVersionStorage.getVersion();
       const _silentUpdate = hasData;
@@ -728,6 +729,14 @@ export class UIUpdate {
             // could not be stored it is not marked as done, so the next
             // start runs it again.
             if (!(await this.brewReferences.removeForeignTools())) {
+              resolve(false);
+              return;
+            }
+            break;
+          case 'UPDATE_19':
+            // Points the brews that the grinder "Standard" was added for at
+            // it; up to now they were stored with an empty grinder.
+            if (!(await this.brewReferences.repairStandardMill())) {
               resolve(false);
               return;
             }
