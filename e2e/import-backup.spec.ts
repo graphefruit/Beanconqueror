@@ -143,3 +143,34 @@ test('in the browser the import runs without a backup file', async ({
   );
   expect(fileCalls).toEqual([]);
 });
+
+test.describe('a file that cannot be read', () => {
+  // The cause is logged as well.
+  test.use({ allowedConsoleErrors: [/^Error while importing ZIP on web:/] });
+
+  test('is reported with its cause set apart below', async ({ page }) => {
+    const beansBefore = await readStoredValue<StoredEntry[]>(page, 'BEANS');
+
+    await chooseFileToImport(page, Buffer.from('no zip'));
+
+    const alert = page
+      .getByRole('alertdialog')
+      .filter({ hasText: 'Error while reading file data' });
+    await expect(alert).toBeVisible();
+    const details = alert.locator('.alert-details');
+    await expect(details.locator('p')).toHaveText(['Technical details:', /\S/]);
+    // Screen readers hear the message first, then the details.
+    await expect(alert).toHaveAccessibleDescription(
+      /^Error while reading file data\s*Technical details:\s*\S/,
+    );
+    // Set apart: below the message, with a line above it.
+    const message = await alert.locator('.alert-message').boundingBox();
+    const section = await details.boundingBox();
+    expect(section!.y).toBeGreaterThan(message!.y);
+    await expect(details).not.toHaveCSS('border-top-style', 'none');
+
+    await alert.getByRole('button', { name: 'Ok' }).click();
+    await expect(alert).toBeHidden();
+    expect(await readStoredValue(page, 'BEANS')).toEqual(beansBefore);
+  });
+});

@@ -338,3 +338,119 @@ describe('UIAlert database dialog', () => {
     expect(resolved).toBeTrue();
   }));
 });
+
+describe('UIAlert message with technical details', () => {
+  let alerts: { options: Record<string, any>; element: HTMLElement }[];
+  let dismiss: () => void;
+  let uiAlert: UIAlert;
+
+  beforeEach(() => {
+    alerts = [];
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: LIVE_REGION, useValue: new FakeLiveRegion() },
+        {
+          provide: TranslateService,
+          useValue: createMockTranslateService({
+            ERROR_ON_FILE_READING: 'Error while reading file data',
+            TECHNICAL_DETAILS: 'Technical details:',
+            OK: 'Ok',
+          }),
+        },
+        { provide: ModalController, useValue: {} },
+        {
+          provide: AlertController,
+          useValue: {
+            // As ion-alert renders it once created: the message as text.
+            create: (options: Record<string, any>) => {
+              const element = document.createElement('div');
+              const message = document.createElement('div');
+              message.className = 'alert-message';
+              message.textContent = options.message;
+              element.append(message);
+              alerts.push({ options, element });
+              const dismissed = new Promise<void>((_resolve) => {
+                dismiss = _resolve;
+              });
+              return Promise.resolve(
+                Object.assign(element, {
+                  present: () => Promise.resolve(),
+                  onDidDismiss: () => dismissed,
+                }),
+              );
+            },
+          },
+        },
+      ],
+    });
+    uiAlert = TestBed.inject(UIAlert);
+  });
+
+  /** The texts of the message, in reading order, one per element. */
+  function texts(): string[] {
+    const message = alerts[0].element.querySelector('.alert-message');
+    return [
+      message.firstChild.textContent,
+      ...Array.from(message.querySelectorAll('p'), (_p) => _p.textContent),
+    ];
+  }
+
+  it('shows the message first and the technical cause apart below it', fakeAsync(() => {
+    void uiAlert.showMessageWithDetails(
+      'ERROR_ON_FILE_READING',
+      new TypeError('x is null'),
+    );
+    flushMicrotasks();
+
+    expect(alerts.length).toBe(1);
+    expect(alerts[0].options.message).toBe('Error while reading file data');
+    expect(alerts[0].options.header).toBeUndefined();
+    expect(alerts[0].options.buttons).toEqual([{ text: 'Ok' }]);
+    expect(texts()).toEqual([
+      'Error while reading file data',
+      'Technical details:',
+      'TypeError: x is null',
+    ]);
+    const details = alerts[0].element.querySelector('.alert-details');
+    expect(details.querySelector('.alert-details-label').textContent).toBe(
+      'Technical details:',
+    );
+  }));
+
+  it('shows a cause that is no error as its content, and markup as text', fakeAsync(() => {
+    void uiAlert.showMessageWithDetails('ERROR_ON_FILE_READING', {
+      code: 'OS-PLUG-FILE-0008',
+      message: '<b>gone</b>',
+    });
+    flushMicrotasks();
+
+    expect(texts()[2]).toBe(
+      '{"code":"OS-PLUG-FILE-0008","message":"<b>gone</b>"}',
+    );
+    expect(alerts[0].element.querySelector('b')).toBeNull();
+  }));
+
+  it('shows the kind of a cause that refers to itself', fakeAsync(() => {
+    const cause: Record<string, unknown> = {};
+    cause['self'] = cause;
+    void uiAlert.showMessageWithDetails('ERROR_ON_FILE_READING', cause);
+    flushMicrotasks();
+
+    expect(texts()[2]).toBe('object');
+  }));
+
+  it('resolves once the alert was closed', fakeAsync(() => {
+    let resolved = false;
+    void uiAlert
+      .showMessageWithDetails('ERROR_ON_FILE_READING', 'not a zip')
+      .then(() => (resolved = true));
+    flushMicrotasks();
+    expect(texts()[2]).toBe('not a zip');
+    expect(resolved).toBeFalse();
+
+    dismiss();
+    flushMicrotasks();
+
+    expect(resolved).toBeTrue();
+  }));
+});

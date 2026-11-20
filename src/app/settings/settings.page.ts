@@ -809,8 +809,9 @@ export class SettingsPage {
           } catch (error) {
             this.uiLog.error('Error while importing ZIP on web:', error);
             await this.uiAlert.hideLoadingSpinner();
-            await this.uiAlert.showMessage(
-              this.translate.instant('ERROR_ON_FILE_READING') + ` (${error})`,
+            await this.uiAlert.showMessageWithDetails(
+              'ERROR_ON_FILE_READING',
+              error,
             );
           }
         };
@@ -892,9 +893,7 @@ export class SettingsPage {
         '; Error',
         error,
       );
-      await this.uiAlert.showMessage(
-        this.translate.instant('ERROR_ON_FILE_READING') + ` (${error})`,
-      );
+      await this.uiAlert.showMessageWithDetails('ERROR_ON_FILE_READING', error);
     }
   }
 
@@ -1805,9 +1804,8 @@ export class SettingsPage {
         await this.uiAlert.showMessage(this.translate.instant(message));
       }
     } catch (ex) {
-      await this.uiAlert.showMessage(
-        this.translate.instant('INVALID_FILE_DATA') + ' ' + JSON.stringify(ex),
-      );
+      this.uiLog.error('Import - invalid file data', ex);
+      await this.uiAlert.showMessageWithDetails('INVALID_FILE_DATA', ex);
     }
   }
 

@@ -1210,6 +1210,24 @@ Somehow i've found out that ionic is rendering this media-tags and setting box-s
     color: var(--bq-text-secondary);
   }
 
+  // The technical cause of an error, set apart below the message
+  // (UIAlert.showMessageWithDetails).
+  .alert-details {
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid var(--bq-overlay-border);
+    font-size: 0.875em;
+    overflow-wrap: anywhere;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .alert-details-label {
+    font-weight: 600;
+  }
+
   // Text buttons, so the main action takes the text accent: coral fill would
   // be 3.02:1 as text on dark cards. Cancel steps back to secondary text.
   .alert-button {

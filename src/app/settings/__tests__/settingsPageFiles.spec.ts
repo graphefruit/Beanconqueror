@@ -163,6 +163,7 @@ describe('SettingsPage files of an export and an import', () => {
   let page: PageUnderTest;
   let log: { error: jasmine.Spy; info: jasmine.Spy; log: jasmine.Spy };
   let showMessage: jasmine.Spy;
+  let showMessageWithDetails: jasmine.Spy;
   let hideLoadingSpinner: jasmine.Spy;
   let showLoadingSpinner: jasmine.Spy;
   let share: jasmine.Spy;
@@ -246,6 +247,7 @@ describe('SettingsPage files of an export and an import', () => {
     };
     const alert = {
       showMessage,
+      showMessageWithDetails,
       showLoadingSpinner,
       hideLoadingSpinner,
       withLoadingSpinner: <T>(_work: () => Promise<T>) => _work(),
@@ -325,6 +327,9 @@ describe('SettingsPage files of an export and an import', () => {
       StorageClass as unknown as { refusedWriteReported: boolean }
     ).refusedWriteReported = false;
     showMessage = jasmine.createSpy('showMessage').and.resolveTo();
+    showMessageWithDetails = jasmine
+      .createSpy('showMessageWithDetails')
+      .and.resolveTo();
     showLoadingSpinner = jasmine
       .createSpy('showLoadingSpinner')
       .and.resolveTo();
@@ -793,6 +798,7 @@ describe('SettingsPage files of an export and an import', () => {
         settings: new Settings(),
         uiAlert: {
           showMessage,
+          showMessageWithDetails,
           showLoadingSpinner,
           hideLoadingSpinner,
           showConfirm: () => Promise.resolve('YES'),
@@ -1013,7 +1019,12 @@ describe('SettingsPage files of an export and an import', () => {
         await page.__importJSON(content, IMPORT_DIR, 'Beanconqueror.zip');
 
         expect(importBackup).not.toHaveBeenCalled();
-        expect(showMessage.calls.allArgs()).toEqual([['INVALID_FILE_DATA {}']]);
+        expect(showMessage).not.toHaveBeenCalled();
+        // The settings of the file are missing: the reason is shown apart.
+        expect(showMessageWithDetails).toHaveBeenCalledOnceWith(
+          'INVALID_FILE_DATA',
+          jasmine.any(TypeError),
+        );
         expect(await filesIn('', Directory.Data)).toEqual([]);
       });
     }
@@ -1030,9 +1041,10 @@ describe('SettingsPage files of an export and an import', () => {
         'gone.zip',
       );
 
-      expect(showMessage).toHaveBeenCalledTimes(1);
-      expect(showMessage.calls.argsFor(0)[0]).toMatch(
-        /^ERROR_ON_FILE_READING \(Error: .*\)$/,
+      expect(showMessage).not.toHaveBeenCalled();
+      expect(showMessageWithDetails).toHaveBeenCalledOnceWith(
+        'ERROR_ON_FILE_READING',
+        jasmine.any(Error),
       );
     });
 
@@ -1064,8 +1076,9 @@ describe('SettingsPage files of an export and an import', () => {
         'Beanconqueror.json',
       );
 
-      expect(showMessage.calls.argsFor(0)[0]).toMatch(
-        /^ERROR_ON_FILE_READING \(SyntaxError: /,
+      expect(showMessageWithDetails).toHaveBeenCalledOnceWith(
+        'ERROR_ON_FILE_READING',
+        jasmine.any(SyntaxError),
       );
     });
   });
@@ -1190,10 +1203,12 @@ describe('SettingsPage files of an export and an import', () => {
         finished();
         return Promise.resolve();
       });
-      showMessage.and.callFake(() => {
-        finished();
-        return Promise.resolve();
-      });
+      for (const message of [showMessage, showMessageWithDetails]) {
+        message.and.callFake(() => {
+          finished();
+          return Promise.resolve();
+        });
+      }
       Object.assign(page, {
         uiExportImportHelper: { getJSONFromZIPArrayBufferContent: parse },
       });
@@ -1248,8 +1263,9 @@ describe('SettingsPage files of an export and an import', () => {
       parse.and.rejectWith(new Error('not a zip'));
       await done;
 
-      expect(showMessage.calls.allArgs()).toEqual([
-        ['ERROR_ON_FILE_READING (Error: not a zip)'],
+      expect(showMessage).not.toHaveBeenCalled();
+      expect(showMessageWithDetails.calls.allArgs()).toEqual([
+        ['ERROR_ON_FILE_READING', new Error('not a zip')],
       ]);
       expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);
       expect(importJSON).not.toHaveBeenCalled();

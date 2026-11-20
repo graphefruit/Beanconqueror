@@ -14,6 +14,22 @@ import { EventQueueService } from './queueService/queue-service.service';
 
 export type ConfirmationDialogResult = 'YES' | 'NO';
 
+/** The technical cause of an error as text, e.g. "TypeError: x is null". */
+function describeError(_error: unknown): string {
+  if (_error instanceof Error) {
+    return _error.toString();
+  }
+  if (typeof _error === 'string') {
+    return _error;
+  }
+  try {
+    return JSON.stringify(_error) ?? typeof _error;
+  } catch {
+    // A structure that refers to itself.
+    return typeof _error;
+  }
+}
+
 @Service()
 export class UIAlert {
   private readonly alertController = inject(AlertController);
@@ -162,6 +178,36 @@ export class UIAlert {
       message: _message,
       buttons: [{ text: okText }],
     });
+    await alert.present();
+    await alert.onDidDismiss();
+  }
+
+  /**
+   * Shows `_message`, a key, with the technical cause of the error below it,
+   * set apart under "Technical details:", for users to pass on to support.
+   * Ionic shows the message of an alert as text only, so the details are
+   * added as elements of their own, after the message in reading order.
+   * Resolves after the alert was dismissed.
+   */
+  public async showMessageWithDetails(
+    _message: string,
+    _details: unknown,
+  ): Promise<void> {
+    const alert = await this.alertController.create({
+      message: this.translate.instant(_message),
+      cssClass: 'alert-with-details',
+      buttons: [{ text: this.translate.instant('OK') }],
+    });
+    const doc = alert.ownerDocument;
+    const details = doc.createElement('div');
+    details.className = 'alert-details';
+    const label = doc.createElement('p');
+    label.className = 'alert-details-label';
+    label.textContent = this.translate.instant('TECHNICAL_DETAILS');
+    const cause = doc.createElement('p');
+    cause.textContent = describeError(_details);
+    details.append(label, cause);
+    alert.querySelector('.alert-message').append(details);
     await alert.present();
     await alert.onDidDismiss();
   }

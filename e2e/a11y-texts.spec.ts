@@ -352,7 +352,7 @@ const KEY = /^[A-Z0-9_]+(\.[A-Z0-9_]+)*$/;
 
 /** Calls that show or speak their first argument, translated as a key. */
 const MESSAGE_CALL =
-  /\.(?:showInfoToast|showInfoToastBottom|showMessage|showLoadingSpinner|setLoadingSpinnerMessage|showLoadingMessage|showConfirm)\(\s*(['`])([^'`]*)\1/g;
+  /\.(?:showInfoToast|showInfoToastBottom|showMessage|showMessageWithDetails|showLoadingSpinner|setLoadingSpinnerMessage|showLoadingMessage|showConfirm)\(\s*(['`])([^'`]*)\1/g;
 
 /** The start of every call that shows or speaks a message. */
 const MESSAGE_CALL_START =
@@ -396,17 +396,6 @@ const TECHNICAL_ERROR =
 
 /** A method of the class that is given the error chooses a key from it. */
 const KEY_FROM_ERROR = /this\.\w+\(\s*_?\w+\s*\)/g;
-
-/**
- * Messages that still show the technical cause. Importing a backup reports
- * it on purpose (settingsPageFiles.spec.ts); whether it stays is for the
- * maintainer to decide.
- */
-const KNOWN_TECHNICAL_MESSAGES = [
-  'src/app/settings/settings.page.ts: this.translate.instant() + error , )',
-  'src/app/settings/settings.page.ts: this.translate.instant() + error , )',
-  'src/app/settings/settings.page.ts: this.translate.instant() + + JSON.stringify(ex), )',
-];
 
 const LITERAL_KEY_USES = [
   /(['"])([^'"\n{}]+?)\1\s*\|\s*translate/g,
@@ -460,6 +449,9 @@ base.describe('texts in the source', () => {
     expect(fixed).toEqual([]);
   });
 
+  // A message that names the cause, e.g. of a failed backup import, shows
+  // it apart under "Technical details:" (UIAlert.showMessageWithDetails),
+  // which these calls are not.
   base(
     'messages for users leave the technical cause of an error to the log',
     () => {
@@ -474,7 +466,7 @@ base.describe('texts in the source', () => {
           }
         }
       }
-      expect(technical).toEqual(KNOWN_TECHNICAL_MESSAGES);
+      expect(technical).toEqual([]);
     },
   );
 
