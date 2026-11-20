@@ -51,6 +51,9 @@ importers:
       '@capacitor-community/keep-awake':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.6.2)
+      '@capacitor-community/text-to-speech':
+        specifier: 8.0.2
+        version: 8.0.2(@capacitor/core@8.6.2)
       '@capacitor/android':
         specifier: ^8.6.2
         version: 8.6.2(@capacitor/core@8.6.2)
@@ -689,6 +692,11 @@ packages:
 
   '@capacitor-community/keep-awake@8.0.1':
     resolution: {integrity: sha512-wTI5A6FWl5gWoMduzJ5euuJ1P73SO+rea0jV6vNdmz5TLbwIDhufelFe/GowNvU9gog6kDYbFhJ2pOp9ua1f3w==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+
+  '@capacitor-community/text-to-speech@8.0.2':
+    resolution: {integrity: sha512-SbpBMzcmzdTiN8jQDme/yUYHEJISZA+IiaRn5zT14k3UKpjaA7eYBnSm9h76rJHRV/y6DVZVhT1J0SaK5JTKtA==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -5652,6 +5660,10 @@ snapshots:
   '@bufbuild/protobuf@2.17.0': {}
 
   '@capacitor-community/keep-awake@8.0.1(@capacitor/core@8.6.2)':
+    dependencies:
+      '@capacitor/core': 8.6.2
+
+  '@capacitor-community/text-to-speech@8.0.2(@capacitor/core@8.6.2)':
     dependencies:
       '@capacitor/core': 8.6.2
 
