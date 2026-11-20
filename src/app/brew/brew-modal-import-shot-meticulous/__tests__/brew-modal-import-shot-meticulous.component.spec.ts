@@ -50,6 +50,9 @@ describe('BrewModalImportShotMeticulousComponent', () => {
   let fixture: ComponentFixture<BrewModalImportShotMeticulousComponent>;
   let component: BrewModalImportShotMeticulousComponent;
   let getHistory: jasmine.Spy<(endDate?: number) => Promise<Entry[]>>;
+  let getHistoryEntryDetails: jasmine.Spy;
+  let dismiss: jasmine.Spy;
+  let showMessage: jasmine.Spy;
 
   /** Lets the list render, measure, load and render again. */
   async function settle(): Promise<void> {
@@ -76,7 +79,10 @@ describe('BrewModalImportShotMeticulousComponent', () => {
   async function open(height = 600): Promise<void> {
     fixture = TestBed.createComponent(BrewModalImportShotMeticulousComponent);
     component = fixture.componentInstance;
-    component.meticulousDevice = { getHistory } as unknown as MeticulousDevice;
+    component.meticulousDevice = {
+      getHistory,
+      getHistoryEntryDetails,
+    } as unknown as MeticulousDevice;
     const element = fixture.nativeElement as HTMLElement;
     element.style.cssText = `display: flex; flex-direction: column; height: ${height}px; width: 400px`;
     document.body.appendChild(element);
@@ -86,6 +92,9 @@ describe('BrewModalImportShotMeticulousComponent', () => {
 
   beforeEach(() => {
     getHistory = jasmine.createSpy('getHistory');
+    getHistoryEntryDetails = jasmine.createSpy('getHistoryEntryDetails');
+    dismiss = jasmine.createSpy('dismiss');
+    showMessage = jasmine.createSpy('showMessage').and.resolveTo();
     TestBed.overrideComponent(BrewModalImportShotMeticulousComponent, {
       remove: { imports: [GraphDisplayCardComponent] },
       add: { imports: [GraphStubComponent] },
@@ -96,13 +105,13 @@ describe('BrewModalImportShotMeticulousComponent', () => {
         provideZoneChangeDetection(),
         provideIonicAngular(),
         provideTranslateService(),
-        { provide: ModalController, useValue: { dismiss: () => undefined } },
+        { provide: ModalController, useValue: { dismiss } },
         {
           provide: UIAlert,
           useValue: {
             showLoadingSpinner: () => Promise.resolve(),
             hideLoadingSpinner: () => Promise.resolve(),
-            showMessage: () => Promise.resolve(),
+            showMessage,
           },
         },
         { provide: UIHelper, useValue: { formatTimeNumber: () => '' } },
@@ -178,5 +187,55 @@ describe('BrewModalImportShotMeticulousComponent', () => {
     const item = fixture.nativeElement.querySelector('ion-item') as HTMLElement;
     expect(item.offsetWidth).toBeGreaterThan(50);
     expect(component.chartWidth()).toBe(item.offsetWidth - 50);
+  });
+
+  it('tells when the shots cannot be read', async () => {
+    getHistory.and.callFake(() =>
+      answer<Entry[]>(new Error('Device not reachable')),
+    );
+    await open();
+
+    expect(showMessage).toHaveBeenCalledOnceWith(
+      'PREPARATION_DEVICE.TYPE_METICULOUS.DATA_COULD_NOT_BE_LOADED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    );
+    expect(component.history).toEqual([]);
+  });
+
+  it('hands back the chosen shot with its data', async () => {
+    getHistory.and.callFake(() => answer(page(2)));
+    getHistoryEntryDetails.and.callFake(() => answer({ data: { weight: 36 } }));
+    await open();
+
+    component.radioSelection = 'shot-999998';
+    await component.choose();
+
+    expect(getHistoryEntryDetails).toHaveBeenCalledOnceWith('shot-999998');
+    expect(dismiss).toHaveBeenCalledOnceWith(
+      {
+        choosenHistory: jasmine.objectContaining({
+          id: 'shot-999998',
+          data: { weight: 36 },
+        }),
+        dismissed: true,
+      },
+      undefined,
+      BrewModalImportShotMeticulousComponent.COMPONENT_ID,
+    );
+  });
+
+  it('closes without a shot', async () => {
+    getHistory.and.callFake(() => answer(page(2)));
+    await open();
+
+    component.dismiss();
+
+    expect(dismiss).toHaveBeenCalledOnceWith(
+      { dismissed: true },
+      undefined,
+      BrewModalImportShotMeticulousComponent.COMPONENT_ID,
+    );
   });
 });
