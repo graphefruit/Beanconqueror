@@ -145,6 +145,10 @@ go through `Announcer` (`src/services/a11y/announcer.service.ts`), not through l
 their own. A second live region makes screen readers speak a message twice, and VoiceOver ignores
 live regions outside an open dialog unless they are stacked above it.
 
+Info toasts stay 2 s, or 7 s while VoiceOver or TalkBack is on (`@capacitor/screen-reader`, read
+once at start and kept current through its `stateChange` event; native only). Toasts with a
+duration of their own keep it.
+
 #### Native plugins
 
 The app runs as the `web` platform, so Capacitor plugins use their web implementations and

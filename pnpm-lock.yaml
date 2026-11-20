@@ -90,6 +90,9 @@ importers:
       '@capacitor/keyboard':
         specifier: 8.0.6
         version: 8.0.6(@capacitor/core@8.6.2)
+      '@capacitor/screen-reader':
+        specifier: 8.0.1
+        version: 8.0.1(@capacitor/core@8.6.2)
       '@capacitor/share':
         specifier: ^8.0.3
         version: 8.0.3(@capacitor/core@8.6.2)
@@ -759,6 +762,11 @@ packages:
 
   '@capacitor/keyboard@8.0.6':
     resolution: {integrity: sha512-Bbe+9V0qaT6dzEFJEK7BUWR01l2+vZE8FM5ITF/WgKtx+G6eGZ6d5+YiSMRJBAK0VGjdO59v8yiQ10Doa5KyvQ==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+
+  '@capacitor/screen-reader@8.0.1':
+    resolution: {integrity: sha512-r7tS7pjWawaBPbda0rSJsi1/4/5voaeGw18Txt8UyRo5e0YBkscxfPb+29Io0/CDc+fmE73cVhKl/PVUxwFwtQ==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -5741,6 +5749,10 @@ snapshots:
       '@capacitor/core': 8.6.2
 
   '@capacitor/keyboard@8.0.6(@capacitor/core@8.6.2)':
+    dependencies:
+      '@capacitor/core': 8.6.2
+
+  '@capacitor/screen-reader@8.0.1(@capacitor/core@8.6.2)':
     dependencies:
       '@capacitor/core': 8.6.2
 

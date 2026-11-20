@@ -38,6 +38,9 @@ project(':capacitor-haptics').projectDir = new File('../node_modules/.pnpm/@capa
 include ':capacitor-keyboard'
 project(':capacitor-keyboard').projectDir = new File('../node_modules/.pnpm/@capacitor+keyboard@8.0.6_@capacitor+core@8.6.2/node_modules/@capacitor/keyboard/android')
 
+include ':capacitor-screen-reader'
+project(':capacitor-screen-reader').projectDir = new File('../node_modules/.pnpm/@capacitor+screen-reader@8.0.1_@capacitor+core@8.6.2/node_modules/@capacitor/screen-reader/android')
+
 include ':capacitor-share'
 project(':capacitor-share').projectDir = new File('../node_modules/.pnpm/@capacitor+share@8.0.3_@capacitor+core@8.6.2/node_modules/@capacitor/share/android')
 
