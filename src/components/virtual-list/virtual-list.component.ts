@@ -103,13 +103,23 @@ export class VirtualRowDirective<T> {
     <div #head class="head"><ng-content select="[virtualListHead]" /></div>
     <ng-content />
     <div #sizer class="sizer" [style.height.px]="totalSize()">
+      <!-- Only some rows are rendered: each tells screen readers its place
+           in the whole list. -->
       <div
         class="rows"
+        role="list"
         [style.transform]="rowsOffset()"
         (focusin)="revealFocus($event)"
       >
         @for (row of rows(); track row.key) {
-          <div #row class="row" [attr.data-index]="row.index">
+          <div
+            #row
+            class="row"
+            role="listitem"
+            [attr.data-index]="row.index"
+            [attr.aria-setsize]="items().length"
+            [attr.aria-posinset]="row.index + 1"
+          >
             <ng-container
               [ngTemplateOutlet]="rowTemplate().template"
               [ngTemplateOutletContext]="{ $implicit: row.item }"

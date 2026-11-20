@@ -117,6 +117,21 @@ describe('VirtualListComponent', () => {
     expect(scroller().scrollHeight).toBe(HEAD + 100 * 100 + 56 + 2 * 16);
   });
 
+  it('tells screen readers the size of the whole list', async () => {
+    await scrollTo(3000);
+
+    const list = fixture.nativeElement.querySelector('[role="list"]');
+    const rows = [...list.children].filter(
+      (element: Element) => element.getAttribute('role') === 'listitem',
+    );
+    expect(rows.length).toBe(shown().length);
+    const first = rows[0] as Element;
+    expect(first.getAttribute('aria-setsize')).toBe('100');
+    expect(first.getAttribute('aria-posinset')).toBe(
+      String(Number(first.querySelector('.item').id.slice(5)) + 1),
+    );
+  });
+
   it('measures the rows and moves the next ones', async () => {
     host.items.set([{ id: 'item-0', height: 250 }, ...items(100).slice(1)]);
     await settle();
