@@ -1,9 +1,8 @@
 import {
-  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
+  effect,
   ElementRef,
-  HostListener,
   inject,
   Input,
   OnInit,
@@ -85,7 +84,19 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
   private readonly ionItemEl = viewChild('ionItemEl', { read: ElementRef });
 
   public constructor() {
-    afterRenderEffect(() => this.updateChartWidth());
+    // Measured when the entry is laid out: the chart width follows the
+    // entry's, also after a rotation or resize.
+    effect((onCleanup) => {
+      const item = this.ionItemEl()?.nativeElement as HTMLElement | undefined;
+      if (!item) {
+        return;
+      }
+      const observer = new ResizeObserver(() =>
+        this.chartWidth.set(item.offsetWidth ? item.offsetWidth - 50 : 0),
+      );
+      observer.observe(item);
+      onCleanup(() => observer.disconnect());
+    });
   }
 
   public ngOnInit() {
@@ -136,15 +147,6 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
       // silently fail — scrolling to the end again retries
     }
     this.isLoadingMore = false;
-  }
-
-  // The width is read after rendering: read during change detection it
-  // differs before and after layout (ExpressionChangedAfterItHasBeenChecked).
-  @HostListener('window:resize')
-  public updateChartWidth() {
-    const offsetWidth = (this.ionItemEl()?.nativeElement as HTMLElement)
-      ?.offsetWidth;
-    this.chartWidth.set(offsetWidth ? offsetWidth - 50 : 0);
   }
 
   public dismiss(): void {
