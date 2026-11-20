@@ -7,7 +7,7 @@
   </app-header>
 </ion-header>
 <ion-content>
-  <app-virtual-list [items]="shownBrews" [itemKey]="brewKey" [estimateSize]="uiIsCollapseActive ? 86 : 180">
+  <app-virtual-list [items]="shownBrews" [itemKey]="brewKey" [estimateSize]="uiIsCollapseActive ? 98 : 280">
     <div virtualListHead>
       <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical tabs">
         <ion-segment-button value="open">
