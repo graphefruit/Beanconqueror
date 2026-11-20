@@ -96,7 +96,7 @@ export class RoastingMachineEditComponent implements OnInit {
     if (form.valid) {
       await this.__edit();
     } else {
-      this.requiredFields.report(this.host);
+      await this.requiredFields.report(this.host);
     }
   }
 

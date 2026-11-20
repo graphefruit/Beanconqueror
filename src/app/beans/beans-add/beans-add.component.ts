@@ -222,7 +222,10 @@ export class BeansAddComponent implements OnInit {
     if (this.__formValid()) {
       await this.__addBean();
     } else {
-      this.requiredFields.report(this.host);
+      await this.requiredFields.report(
+        this.host,
+        () => (this.bean_segment = 'general'),
+      );
     }
   }
 

@@ -20,7 +20,7 @@ type Texts = (key: string, params?: Record<string, string>) => string;
 async function start(
   page: Page,
   language: Language,
-  { welcome = false } = {},
+  { welcome = false, freeze = false } = {},
 ): Promise<void> {
   const data = generateDataSet({
     brews: 20,
@@ -30,6 +30,7 @@ async function start(
   });
   data.SETTINGS[0].language = language;
   data.SETTINGS[0].welcome_page_showed = !welcome;
+  data.SETTINGS[0].freeze_coffee_beans = freeze;
   await seedDatabase(page, data);
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('lang', language);
@@ -213,7 +214,7 @@ for (const language of ['en', 'de'] as const) {
     test('a save without a name says why and marks the field', async ({
       page,
     }) => {
-      await start(page, language);
+      await start(page, language, { freeze: true });
       await show(page, '/home/beans');
       await click(page, t('ADD_BEAN'));
       const form = openModal(page);
@@ -221,8 +222,20 @@ for (const language of ['en', 'de'] as const) {
         name: startsWith(t('BEAN_DATA_NAME')),
       });
       await expect(name).toHaveAttribute('required', '');
+      // Saved from another tab, the form goes back to the tab with the name.
+      const general = form.getByRole('tab', {
+        name: startsWith(t('BEAN_TAB_GENERAL_INFORMATION')),
+      });
+      const frozen = form.getByRole('tab', {
+        name: startsWith(t('BEAN_TAB_FROZEN_INFORMATION')),
+      });
+      await frozen.focus();
+      await page.keyboard.press('Enter');
+      await expect(frozen).toHaveAttribute('aria-selected', 'true');
+      await expect(name).toHaveCount(0);
       await click(page, t('SAVE'));
 
+      await expect(general).toHaveAttribute('aria-selected', 'true');
       await expect(name).toHaveAttribute('aria-invalid', 'true');
       await expect(name).toBeFocused();
       await expect(name).toHaveAccessibleDescription(

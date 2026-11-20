@@ -71,7 +71,7 @@ export class RoastingMachineAddComponent implements OnInit {
     if (this.data.name) {
       await this.__add();
     } else {
-      this.requiredFields.report(this.host);
+      await this.requiredFields.report(this.host);
     }
   }
 

@@ -95,7 +95,7 @@ export class MillEditComponent implements OnInit {
     if (form.valid) {
       await this.__editMill();
     } else {
-      this.requiredFields.report(this.host);
+      await this.requiredFields.report(this.host);
     }
   }
 

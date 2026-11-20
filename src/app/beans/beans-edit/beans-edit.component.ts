@@ -109,7 +109,10 @@ export class BeansEditComponent implements OnInit {
     if (this.__formValid()) {
       await this.__editBean();
     } else {
-      this.requiredFields.report(this.host);
+      await this.requiredFields.report(
+        this.host,
+        () => (this.bean_segment = 'general'),
+      );
     }
   }
 

@@ -74,7 +74,7 @@ export class MillAddComponent implements OnInit {
     if (this.data.name) {
       await this.__addMill();
     } else {
-      this.requiredFields.report(this.host);
+      await this.requiredFields.report(this.host);
     }
   }
 

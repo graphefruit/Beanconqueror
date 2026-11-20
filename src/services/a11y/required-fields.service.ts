@@ -1,4 +1,4 @@
-import { inject, Service } from '@angular/core';
+import { afterNextRender, inject, Injector, Service } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -9,6 +9,7 @@ type RequiredField = HTMLElement & {
   value?: unknown;
   errorText?: string;
   setFocus?: () => Promise<void>;
+  componentOnReady?: () => Promise<unknown>;
 };
 
 /** A value that counts as not filled in: nothing, or only spaces. */
@@ -29,18 +30,33 @@ export function isBlank(value: unknown): boolean {
 export class RequiredFields {
   private readonly announcer = inject(Announcer);
   private readonly translate = inject(TranslateService);
+  private readonly injector = inject(Injector);
 
   /**
    * Marks the blank required fields in `form` and announces the error of the
-   * first one. A field the form does not show at the moment, e.g. on another
-   * tab, cannot be marked; the error is announced all the same.
+   * first one. A form whose fields are on tabs passes `showFields`, which
+   * switches to the tab with the required fields; they are marked once it is
+   * shown. A field the form does not show cannot be marked; the error is
+   * announced all the same.
    */
-  public report(form: Element): void {
-    const blank = [
+  public async report(form: Element, showFields?: () => void): Promise<void> {
+    if (showFields) {
+      showFields();
+      await new Promise<void>((shown) =>
+        afterNextRender(shown, { injector: this.injector }),
+      );
+      // Ionic sets the classes of a field shown just now from Angular forms
+      // in the next frame; marked before, the field would lose them again.
+      await new Promise((frame) => requestAnimationFrame(frame));
+    }
+    const fields = [
       ...form.querySelectorAll<RequiredField>(
         'ion-input[required], ion-textarea[required]',
       ),
-    ].filter((field) => isBlank(field.value));
+    ];
+    // A field shown just now has no error text and nothing to focus before.
+    await Promise.all(fields.map((field) => field.componentOnReady?.()));
+    const blank = fields.filter((field) => isBlank(field.value));
     for (const field of blank) {
       // Ionic makes its error text a second live region; the announcement
       // below is the one that is spoken.

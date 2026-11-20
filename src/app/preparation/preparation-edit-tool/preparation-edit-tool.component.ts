@@ -187,7 +187,7 @@ export class PreparationEditToolComponent {
     if (this.data.name.trim() !== '') {
       await this._editTool();
     } else {
-      this.requiredFields.report(this.host);
+      await this.requiredFields.report(this.host);
     }
   }
 

@@ -628,13 +628,7 @@
     }
   },
   "src/app/brew/brew-popover-extraction/brew-popover-extraction.component.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
     "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
@@ -1412,14 +1406,6 @@
     },
     "no-prototype-builtins": {
       "count": 2
-    }
-  },
-  "src/app/unwrapped/unwrapped-modal.component.html": {
-    "@angular-eslint/template/click-events-have-key-events": {
-      "count": 1
-    },
-    "@angular-eslint/template/interactive-supports-focus": {
-      "count": 1
     }
   },
   "src/app/unwrapped/unwrapped-modal.component.ts": {

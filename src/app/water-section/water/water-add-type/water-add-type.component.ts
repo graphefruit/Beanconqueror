@@ -81,7 +81,7 @@ export class WaterAddTypeComponent implements OnInit {
       this.addWaterIngredientsInformation();
       await this.__add();
     } else {
-      this.requiredFields.report(this.host);
+      await this.requiredFields.report(this.host);
     }
   }
   private addWaterIngredientsInformation() {

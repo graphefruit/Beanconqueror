@@ -282,6 +282,8 @@ export interface SyntheticSettings {
   brew_view: '0';
   /** Shows the waters in the profile; the app leaves them out by default. */
   show_water_section?: boolean;
+  /** Shows the frozen beans, and the tab for them in the bean form. */
+  freeze_coffee_beans?: boolean;
   /** The profile the change info migration stores for an existing installation. */
   user: {
     experience_mode: 'advanced';

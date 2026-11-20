@@ -1,3 +1,4 @@
+import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -30,8 +31,8 @@ describe('RequiredFields', () => {
   let heard: string[];
   let form: HTMLElement;
 
-  function report(): void {
-    TestBed.inject(RequiredFields).report(form);
+  function report(): Promise<void> {
+    return TestBed.inject(RequiredFields).report(form);
   }
 
   beforeEach(() => {
@@ -53,14 +54,14 @@ describe('RequiredFields', () => {
     form = document.createElement('form');
   });
 
-  it('marks the blank required fields, focuses the first and announces its error', () => {
+  it('marks the blank required fields, focuses the first and announces its error', async () => {
     const name = field('  ', 'Bitte gib einen Namen für die Bohnen ein.');
     const roaster = field('', 'Röster fehlt');
     const filled = field('Alpha');
     const optional = field('', undefined, false);
     form.append(name, filled, roaster, optional);
 
-    report();
+    await report();
 
     for (const blank of [name, roaster]) {
       expect(blank.classList).toContain('ion-touched');
@@ -77,8 +78,21 @@ describe('RequiredFields', () => {
     expect(heard).toEqual(['Bitte gib einen Namen für die Bohnen ein.']);
   });
 
-  it('announces the error also when the field is not shown', () => {
-    report();
+  it('shows the tab with the fields first and marks them once it is shown', async () => {
+    const name = field('', 'Bitte gib einen Namen für die Bohnen ein.');
+    const reported = TestBed.inject(RequiredFields).report(form, () =>
+      form.append(name),
+    );
+    TestBed.inject(ApplicationRef).tick();
+    await reported;
+
+    expect(name.classList).toContain('ion-invalid');
+    expect(name.setFocus).toHaveBeenCalled();
+    expect(heard).toEqual(['Bitte gib einen Namen für die Bohnen ein.']);
+  });
+
+  it('announces the error also when the field is not shown', async () => {
+    await report();
 
     expect(heard).toEqual(['Bitte gib einen Namen ein.']);
   });

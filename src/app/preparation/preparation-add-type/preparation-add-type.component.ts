@@ -112,7 +112,7 @@ export class PreparationAddTypeComponent implements OnInit {
     if (this.preparationForm.valid) {
       await this.__addPreparation();
     } else {
-      this.requiredFields.report(this.host);
+      await this.requiredFields.report(this.host);
     }
   }
 
