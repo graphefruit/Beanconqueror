@@ -1931,6 +1931,7 @@ describe('The backup before a start migration', () => {
     expect(saved.BREWS).toEqual(before.BREWS);
     expect(saved.BEANS).toEqual(before.BEANS);
     expect(Object.fromEntries(device.data)).toEqual(before);
+    expect(device.uiAlert.showMessage).not.toHaveBeenCalled();
   });
 
   it('resolves false when the file cannot be written', async () => {
@@ -1941,6 +1942,12 @@ describe('The backup before a start migration', () => {
 
     expect(writtenBackups(device)).toEqual([]);
     expect(device.uiLog.error).toHaveBeenCalled();
+    expect(device.uiAlert.showMessage).toHaveBeenCalledOnceWith(
+      'MIGRATION_BACKUP_FAILED',
+      undefined,
+      undefined,
+      true,
+    );
   });
 
   it('resolves false when the data cannot be read', async () => {
@@ -1950,6 +1957,20 @@ describe('The backup before a start migration', () => {
     expect(await device.helper.writeBackupBeforeMigration()).toBeFalse();
 
     expect(device.directory.files.write).not.toHaveBeenCalled();
+    expect(device.uiAlert.showMessage).toHaveBeenCalledOnceWith(
+      'MIGRATION_BACKUP_FAILED',
+      undefined,
+      undefined,
+      true,
+    );
+  });
+
+  it('resolves false also when the message cannot be shown', async () => {
+    const device = await startDevice(storedData('own'));
+    device.directory.failing.write = true;
+    device.uiAlert.showMessage.and.rejectWith(new Error('no alert'));
+
+    expect(await device.helper.writeBackupBeforeMigration()).toBeFalse();
   });
 
   it('writes no file in the browser and lets the migration run', async () => {

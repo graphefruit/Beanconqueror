@@ -839,10 +839,21 @@ current data is written into a backup file
 (`UIExportImportHelper.writeBackupBeforeMigration()`): the same file as
 before an import (`PreImportBackupService`, folder `pre-import`), so it is
 listed with the backups to import. When it cannot be written, nothing is
-changed and `UPDATE_19` is not recorded; it runs again at the next start.
-In the browser no file is written and the repair runs (as an import does).
-No older backup is removed for it; the next completed import keeps the
-newest ones (`removeOldBackups`).
+changed, an alert says so and asks to check the free storage
+(`MIGRATION_BACKUP_FAILED`), and `UPDATE_19` is not recorded; it runs again,
+with the backup, at the next start. In the browser no file is written and
+the repair runs (as an import does). No older backup is removed for it; the
+next completed import keeps the newest ones (`removeOldBackups`). When the
+brews then cannot be saved, the save alert (`STORAGE_SAVE_FAILED`) shows and
+every start writes another backup until a save works: while the database
+does not store, those files can be the only copy of the data, so none is
+deleted.
+
+The backup runs during the start, before the home screen. On a Pixel 2 XL
+(debug build, 30,000 brews, three cold starts each) the home screen showed
+after about 6.4 s with the repair and the backup (2.7 MB) and after about
+2.5 s on the starts after it. That is paid once per installation with such
+brews, and on every start while the backup cannot be written.
 
 At every start, after the migrations, `logMissingReferences()` of the same
 service writes one log line with the number of brews that refer to a bean, a

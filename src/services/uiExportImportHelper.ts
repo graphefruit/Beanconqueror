@@ -390,9 +390,9 @@ export class UIExportImportHelper {
    * Writes the current data into a backup file before a start migration
    * changes entries: the same file as before an import
    * (PreImportBackupService), listed with the backups to import. Resolves
-   * false when the data could not be read or the file not written; the
-   * caller then changes nothing. True in the browser, where no file can be
-   * written (see importBackup()).
+   * false when the data could not be read or the file not written, after
+   * telling the user; the caller then changes nothing. True in the browser,
+   * where no file can be written (see importBackup()).
    */
   public async writeBackupBeforeMigration(): Promise<boolean> {
     if (!this.preImportBackup.isAvailable()) {
@@ -412,6 +412,7 @@ export class UIExportImportHelper {
         'Backup before migration - could not be written, nothing is changed',
         ex,
       );
+      await this.__sayBackupNotRestored('MIGRATION_BACKUP_FAILED');
       return false;
     }
   }
@@ -918,8 +919,8 @@ export class UIExportImportHelper {
   }
 
   /**
-   * Says that restoring a backup at start-up did not happen.
-   * Otherwise the user would only see the restore offered again at the next
+   * Says that restoring a backup or a data update at start-up did not
+   * happen. Otherwise the user would only see it tried again at the next
    * start. Never rejects.
    */
   private async __sayBackupNotRestored(_message: string): Promise<void> {
