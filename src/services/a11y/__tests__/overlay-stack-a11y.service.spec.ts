@@ -1,4 +1,4 @@
-import { DOCUMENT, EnvironmentInjector } from '@angular/core';
+import { DOCUMENT } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { OverlayStackA11yService } from '../overlay-stack-a11y.service';
@@ -755,7 +755,7 @@ describe('OverlayStackA11yService', () => {
     expect(state(form)).toEqual(CONCEALED);
     expect(focusGuards().length).toBe(2);
 
-    TestBed.inject(EnvironmentInjector).destroy();
+    TestBed.resetTestingModule();
     expect(state(form)).toEqual(UNTOUCHED);
     expect(state(page)).toEqual(UNTOUCHED);
     expect(focusGuards()).toEqual([]);

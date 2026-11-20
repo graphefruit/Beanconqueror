@@ -1,4 +1,4 @@
-import { DOCUMENT, EnvironmentInjector } from '@angular/core';
+import { DOCUMENT } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
@@ -79,7 +79,7 @@ describe('IonicLabelsService', () => {
   });
 
   it('stops listening when the app is destroyed', () => {
-    TestBed.inject(EnvironmentInjector).destroy();
+    TestBed.resetTestingModule();
 
     const handle = openModal();
 

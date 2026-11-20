@@ -12,7 +12,7 @@ import {
 getTestBed().initTestEnvironment(
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting(),
-  {
-    teardown: { destroyAfterEach: false },
-  },
+  // Components and services of a test are destroyed after it, so it leaves
+  // no element and no listener in the page for the tests after it.
+  { teardown: { destroyAfterEach: true } },
 );

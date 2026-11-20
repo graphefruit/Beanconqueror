@@ -1,4 +1,3 @@
-import { EnvironmentInjector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { PageFocusService } from '../page-focus.service';
@@ -82,8 +81,6 @@ describe('PageFocusService', () => {
   });
 
   afterEach(() => {
-    // Tests keep their modules; this one's listeners must not outlive it.
-    TestBed.inject(EnvironmentInjector).destroy();
     root.remove();
   });
 
