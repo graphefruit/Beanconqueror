@@ -8,6 +8,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { IonContent } from '@ionic/angular';
 
+import { _resetIOSDetectionForTests } from '@tanstack/angular-virtual';
+
 import { UILog } from '../../../services/uiLog';
 import {
   VirtualListComponent,
@@ -17,10 +19,13 @@ import {
 interface Item {
   id: string;
   height: number;
+  /** Width to height: the row is as high as its width allows. */
+  ratio?: number;
 }
 
 const HEAD = 50;
 const SCREEN = 400;
+const WIDTH = 400;
 
 function items(count: number, height = 100): Item[] {
   return Array.from({ length: count }, (_, i) => ({
@@ -35,7 +40,7 @@ function items(count: number, height = 100): Item[] {
   template: `
     <div
       id="scroller"
-      style="height: ${SCREEN}px; overflow: auto; --bq-space-4: 16px"
+      style="height: ${SCREEN}px; width: ${WIDTH}px; overflow: auto; --bq-space-4: 16px"
     >
       <app-virtual-list
         [items]="items()"
@@ -46,7 +51,13 @@ function items(count: number, height = 100): Item[] {
       >
         <div virtualListHead style="height: ${HEAD}px">Head</div>
         <ng-template [appVirtualRow]="items()" let-item>
-          <button class="item" [id]="item.id" [style.height.px]="item.height">
+          <button
+            class="item"
+            style="display: block; width: 100%"
+            [id]="item.id"
+            [style.height.px]="item.ratio ? null : item.height"
+            [style.aspect-ratio]="item.ratio ?? null"
+          >
             {{ item.id }}
           </button>
         </ng-template>
@@ -92,6 +103,22 @@ describe('VirtualListComponent', () => {
       await new Promise((resolve) => requestAnimationFrame(resolve));
       await fixture.whenStable();
     }
+  }
+
+  const frame = () =>
+    new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+  /**
+   * The top of `id` in each of the next `count` frames, read at their start:
+   * what the frame before was painted with.
+   */
+  async function paintedTops(id: string, count: number): Promise<number[]> {
+    const tops: number[] = [];
+    for (let i = 0; i < count; i++) {
+      await frame();
+      tops.push(top(id));
+    }
+    return tops;
   }
 
   async function scrollTo(offset: number): Promise<void> {
@@ -304,5 +331,164 @@ describe('VirtualListComponent', () => {
     await settle();
 
     expect(top(covered)).toBe(HEAD);
+  });
+  it('keeps the rows on the screen in place in the frame a row above grows', async () => {
+    await scrollTo(3000);
+    expect(top('item-30')).toBe(HEAD);
+
+    await frame();
+    document.getElementById('item-28').style.height = '200px';
+
+    expect(await paintedTops('item-30', 3)).toEqual([HEAD, HEAD, HEAD]);
+    expect(scroller().scrollTop).toBe(3100);
+  });
+
+  describe('turned or resized', () => {
+    // Rows a quarter as high as they are wide: 100px on the 400px screen.
+    const estimate = 130;
+    const roomForAddButton = 56 + 2 * 16;
+
+    beforeEach(async () => {
+      host.items.set(items(100).map((item) => ({ ...item, ratio: 4 })));
+      host.estimate.set(estimate);
+      await settle();
+      await scrollTo(3000);
+      await settle();
+    });
+
+    /**
+     * Rows measured before the width changed count with the estimate again:
+     * the list is as long as if each row were the estimate or, measured
+     * since, 200px.
+     */
+    function expectOnlyNewHeights(): void {
+      const measured =
+        (scroller().scrollHeight - HEAD - roomForAddButton - 100 * estimate) /
+        (200 - estimate);
+      expect(Number.isInteger(measured)).toBe(true);
+      expect(measured).toBeGreaterThanOrEqual(shown().length);
+    }
+
+    it('keeps the top row in place and measures the rows again', async () => {
+      const anchor = host.list().anchor();
+      const before = top(String(anchor?.key));
+
+      scroller().style.width = `${2 * WIDTH}px`;
+      await settle();
+
+      expect(top(String(anchor?.key))).toBe(before);
+      expectOnlyNewHeights();
+    });
+
+    it('does so when a hidden list is shown at another width', async () => {
+      const anchor = host.list().anchor();
+      const before = top(String(anchor?.key));
+
+      scroller().style.display = 'none';
+      await settle();
+      scroller().style.width = `${2 * WIDTH}px`;
+      await settle();
+      scroller().style.display = '';
+      await settle();
+
+      expect(top(String(anchor?.key))).toBe(before);
+      expectOnlyNewHeights();
+    });
+
+    it('keeps the height of a row that is as high at the new width', async () => {
+      host.items.set(items(100));
+      await settle();
+      const anchor = host.list().anchor();
+      const before = top(String(anchor?.key));
+
+      scroller().style.width = `${2 * WIDTH}px`;
+      await settle();
+
+      expect(top(String(anchor?.key))).toBe(before);
+      // Each row counts with the estimate, or 100 when measured.
+      const measured =
+        (scroller().scrollHeight - HEAD - roomForAddButton - 100 * estimate) /
+        (100 - estimate);
+      expect(measured).toBeGreaterThanOrEqual(shown().length);
+    });
+
+    it('keeps the heights when only the height changes (keyboard)', async () => {
+      const height = scroller().scrollHeight;
+      const anchor = host.list().anchor();
+      const before = top(String(anchor?.key));
+
+      scroller().style.height = `${SCREEN - 150}px`;
+      await settle();
+
+      expect(scroller().scrollHeight).toBe(height);
+      expect(top(String(anchor?.key))).toBe(before);
+    });
+  });
+
+  describe('on iOS', () => {
+    // iPadOS reports a Mac with touch.
+    beforeEach(() => {
+      Object.defineProperty(navigator, 'platform', {
+        value: 'MacIntel',
+        configurable: true,
+      });
+      Object.defineProperty(navigator, 'maxTouchPoints', {
+        value: 5,
+        configurable: true,
+      });
+      _resetIOSDetectionForTests();
+    });
+
+    afterEach(() => {
+      delete (navigator as { platform?: string }).platform;
+      delete (navigator as { maxTouchPoints?: number }).maxTouchPoints;
+      _resetIOSDetectionForTests();
+    });
+
+    const touch = (type: 'touchstart' | 'touchend') =>
+      scroller().dispatchEvent(new Event(type));
+
+    it('keeps the rows on the screen in place while a correction waits for the touch', async () => {
+      await scrollTo(3000);
+      touch('touchstart');
+      await frame();
+      document.getElementById('item-28').style.height = '200px';
+      const held = await paintedTops('item-30', 3);
+      touch('touchend');
+      // The correction is written once the touch has ended (150ms).
+      const released = await paintedTops('item-30', 30);
+
+      expect(held).toEqual([HEAD, HEAD, HEAD]);
+      expect(released).toEqual(released.map(() => HEAD));
+      expect(scroller().scrollTop).toBe(3100);
+    });
+
+    it('draws no row above the list while a correction waits at the top', async () => {
+      await scrollTo(150);
+      touch('touchstart');
+      await frame();
+      // The first row, above the screen, turns out higher than measured;
+      // then the finger reaches the top before the touch ends.
+      host.items.set([{ id: 'item-0', height: 300 }, ...items(100).slice(1)]);
+      await settle();
+      await scrollTo(0);
+
+      // Nothing but the head lies at the top of the list.
+      const head = fixture.nativeElement.querySelector('.head');
+      head.style.visibility = 'hidden';
+      const { left, right } = scroller().getBoundingClientRect();
+      const hit = document.elementFromPoint(
+        (left + right) / 2,
+        scroller().getBoundingClientRect().top + HEAD / 2,
+      );
+      head.style.visibility = '';
+      expect(hit?.closest('.item')).toBeNull();
+
+      touch('touchend');
+      await paintedTops('item-1', 30);
+      await scrollTo(0);
+      expect(top('item-0')).toBe(HEAD);
+      expect(top('item-1')).toBe(HEAD + 300);
+    });
   });
 });

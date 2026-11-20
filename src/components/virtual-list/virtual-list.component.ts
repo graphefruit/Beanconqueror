@@ -2,6 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import {
   afterNextRender,
   afterRenderEffect,
+  ApplicationRef,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -65,7 +66,9 @@ export class VirtualRowDirective<T> {
  * A list inside an `ion-content` that renders only the rows near the screen.
  * The content scrolls; each row is measured as it is rendered and again
  * whenever its height changes (photos, groups opened, larger text), and the
- * heights are kept per key while the items are rebuilt. On a page with a
+ * heights are kept per key while the items are rebuilt. When the list gets
+ * wider or narrower (device turned, split view), the heights are measured
+ * anew and the row at the top stays there. On a page with a
  * floating add button the list ends with room for it, so the last row can be
  * read and tapped.
  *
@@ -83,6 +86,10 @@ export class VirtualRowDirective<T> {
   styles: `
     :host {
       display: block;
+      /* The list keeps its place itself when a row above the screen changes
+         its height; a browser that did so as well (Chrome, Safari from iOS
+         27) would move the rows twice. */
+      overflow-anchor: none;
     }
     :host(.clear-of-add-button) {
       /* 56px is the size of Ionic's floating button. */
@@ -96,6 +103,10 @@ export class VirtualRowDirective<T> {
     }
     .sizer {
       position: relative;
+      /* On iOS a correction waits while a finger or momentum moves the list,
+         and the rows are drawn shifted by it meanwhile: at the top, the
+         first rows lie above the list and would show over the head. */
+      overflow-y: clip;
     }
     .rows {
       position: absolute;
@@ -141,6 +152,7 @@ export class VirtualRowDirective<T> {
 })
 export class VirtualListComponent<T> {
   private readonly injector = inject(Injector);
+  private readonly appRef = inject(ApplicationRef);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly uiLog = inject(UILog);
 
@@ -172,6 +184,10 @@ export class VirtualListComponent<T> {
   private readonly headHeight = signal(0);
   /** The row `scrollToKey` brings on the screen once the list is shown. */
   private keyToReveal: RowKey | null = null;
+  /** The width of the scroller the rows were measured at; 0 before. */
+  private measuredWidth = 0;
+  /** Set while the ResizeObserver of the rows tells their new heights. */
+  private observingRows = false;
 
   private readonly virtualizer = injectVirtualizer<HTMLElement, HTMLElement>(
     () => {
@@ -183,11 +199,14 @@ export class VirtualListComponent<T> {
         count: items.length,
         getItemKey: (index) => key(items[index]),
         estimateSize: () => size,
-        // Only the ResizeObserver measures, a frame after a row appeared:
-        // when it is rendered, its Ionic elements are not drawn yet and
-        // the row is far too low, so many more rows would be rendered. A
-        // hidden page reports its rows without height; they keep theirs.
+        // Only the ResizeObserver measures a row: when it is rendered, its
+        // Ionic elements are not drawn yet and the row is far too low, so
+        // many more rows would be rendered. A hidden page reports its rows
+        // without height; they keep theirs.
         measureElement: (element, entry, instance) => {
+          if (entry) {
+            this.observeRows();
+          }
           const measured = entry ? measureElement(element, entry, instance) : 0;
           return measured > 0
             ? measured
@@ -195,13 +214,18 @@ export class VirtualListComponent<T> {
                 instance.options.getItemKey(instance.indexFromElement(element)),
               ) ?? size);
         },
-        useAnimationFrameWithResizeObserver: true,
         // A hidden page (another tab) has no height and reads as scrolled to
         // the top. The list keeps its rows and position meanwhile, so that
         // they need not be built and measured again when it is shown.
         observeElementRect: (instance, report) =>
           observeElementRect(instance, (rect) => {
             if (rect.height > 0) {
+              // Rows change their height with the width; the keyboard
+              // changes only the height of the screen.
+              if (this.measuredWidth > 0 && rect.width !== this.measuredWidth) {
+                this.measureAtNewWidth();
+              }
+              this.measuredWidth = rect.width;
               report(rect);
               if (this.keyToReveal !== null) {
                 this.afterRender(() => this.revealKey());
@@ -216,8 +240,17 @@ export class VirtualListComponent<T> {
           }),
         scrollMargin: this.scrollMargin(),
         scrollPaddingStart: this.headHeight(),
-        // The rows are signals; Angular renders them when they change.
-        useApplicationRefTick: false,
+        // The measuring, the correction of the scroll position it causes
+        // and the rendering of the rows all happen before the browser
+        // paints; a frame between them shows the rows jump. Angular renders
+        // in a microtask, or at once while the observer of the rows reports:
+        // rows that appear then are observed from the next frame, rows that
+        // appear in a microtask after it would be too late for this one.
+        onChange: () => {
+          if (this.observingRows) {
+            this.appRef.tick();
+          }
+        },
       };
     },
   );
@@ -260,6 +293,9 @@ export class VirtualListComponent<T> {
       for (const row of this.rowElements()) {
         this.virtualizer.measureElement(row.nativeElement);
       }
+      // Rows taken off the screen are no longer observed: their size turns
+      // to 0, which the observer could only report in the next frame.
+      this.virtualizer.measureElement(null);
     });
 
     effect(() => {
@@ -270,13 +306,7 @@ export class VirtualListComponent<T> {
 
     const destroyRef = inject(DestroyRef);
     afterNextRender(() => {
-      const observer = new ResizeObserver(() => {
-        const height = this.head().nativeElement.offsetHeight;
-        // A hidden page has no layout to measure.
-        if (height > 0) {
-          this.headHeight.set(height);
-        }
-      });
+      const observer = new ResizeObserver(() => this.measureHead());
       observer.observe(this.head().nativeElement);
       destroyRef.onDestroy(() => observer.disconnect());
     });
@@ -285,17 +315,29 @@ export class VirtualListComponent<T> {
       this.items();
       this.headHeight();
       this.virtualizer.scrollRect();
-      const scroller = this.scroller();
-      if (!scroller || scroller.clientHeight === 0) {
-        return;
-      }
-      const top = this.sizer().nativeElement.getBoundingClientRect().top;
-      this.scrollMargin.set(
-        Math.round(
-          top - scroller.getBoundingClientRect().top + scroller.scrollTop,
-        ),
-      );
+      this.measureScrollMargin();
     });
+  }
+
+  private measureHead(): void {
+    const height = this.head().nativeElement.offsetHeight;
+    // A hidden page has no layout to measure.
+    if (height > 0) {
+      this.headHeight.set(height);
+    }
+  }
+
+  private measureScrollMargin(): void {
+    const scroller = this.scroller();
+    if (!scroller || scroller.clientHeight === 0) {
+      return;
+    }
+    const top = this.sizer().nativeElement.getBoundingClientRect().top;
+    this.scrollMargin.set(
+      Math.round(
+        top - scroller.getBoundingClientRect().top + scroller.scrollTop,
+      ),
+    );
   }
 
   /** Moves a focused element that the head covers below it. */
@@ -328,23 +370,10 @@ export class VirtualListComponent<T> {
   public restore(anchor: ListAnchor | null): void {
     this.keyToReveal = null;
     this.afterRender(() => {
-      const scroller = this.scroller();
-      if (!scroller) {
-        return;
+      const offset = this.offsetOf(anchor);
+      if (offset !== null) {
+        this.virtualizer.scrollToOffset(offset);
       }
-      const index = anchor ? this.indexOf(anchor.key) : -1;
-      const start =
-        index < 0
-          ? undefined
-          : this.virtualizer().measurementsCache[index]?.start;
-      const head = this.headHeight();
-      this.virtualizer.scrollToOffset(
-        anchorOffset(
-          anchor,
-          start,
-          scroller.scrollHeight - scroller.clientHeight + head,
-        ) - head,
-      );
     });
   }
 
@@ -370,17 +399,65 @@ export class VirtualListComponent<T> {
    * estimate.
    */
   public measure(): void {
-    this.afterRender(() => {
-      this.virtualizer.measure();
-      for (const { nativeElement } of this.rowElements()) {
-        if (nativeElement.offsetParent !== null) {
-          this.virtualizer.resizeItem(
-            this.virtualizer.indexFromElement(nativeElement),
-            nativeElement.offsetHeight,
-          );
-        }
+    this.afterRender(() => this.measureShown());
+  }
+
+  private measureShown(): void {
+    this.virtualizer.measure();
+    // Lays the rows out anew, with the estimate: a row as high as before
+    // is only taken when compared with that.
+    this.virtualizer.getVirtualItems();
+    for (const { nativeElement } of this.rowElements()) {
+      if (nativeElement.offsetParent !== null) {
+        this.virtualizer.resizeItem(
+          this.virtualizer.indexFromElement(nativeElement),
+          nativeElement.getBoundingClientRect().height,
+        );
       }
-    });
+    }
+  }
+
+  /**
+   * Called before the browser paints the new width: the rows on the screen
+   * have their new height already, the others will have theirs once shown.
+   */
+  private measureAtNewWidth(): void {
+    const anchor = this.anchor();
+    // The head and the content above the rows can wrap anew.
+    this.measureHead();
+    this.measureScrollMargin();
+    this.measureShown();
+    const scroller = this.scroller();
+    const offset = this.offsetOf(anchor);
+    if (scroller && offset !== null) {
+      // Not as a scroll command: rows measured before the browser reports
+      // the new position would not move it then, and the anchor would slip.
+      scroller.scrollTop = offset;
+      this.virtualizer().scrollOffset = scroller.scrollTop;
+    }
+  }
+
+  /** The scroll position that brings `anchor` back below the head. */
+  private offsetOf(anchor: ListAnchor | null): number | null {
+    const scroller = this.scroller();
+    if (!scroller) {
+      return null;
+    }
+    // Lays the rows out with the heights measured last.
+    this.virtualizer.getVirtualItems();
+    const index = anchor ? this.indexOf(anchor.key) : -1;
+    const start =
+      index < 0
+        ? undefined
+        : this.virtualizer().measurementsCache[index]?.start;
+    const head = this.headHeight();
+    return (
+      anchorOffset(
+        anchor,
+        start,
+        scroller.scrollHeight - scroller.clientHeight + head,
+      ) - head
+    );
   }
 
   private revealKey(): void {
@@ -406,6 +483,13 @@ export class VirtualListComponent<T> {
       this.virtualizer.scrollToIndex(index, { align: 'start' });
     } else if (move !== null) {
       this.virtualizer.scrollToOffset(top + move);
+    }
+  }
+
+  private observeRows(): void {
+    if (!this.observingRows) {
+      this.observingRows = true;
+      queueMicrotask(() => (this.observingRows = false));
     }
   }
 
