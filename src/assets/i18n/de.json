@@ -595,9 +595,9 @@
             "OUTSIDE_TEMPERATURE": "Wettertemperatur",
             "HUMIDITY": "Feuchtigkeit",
             "FIRST_CRACK_MINUTE": "First-Crack-Minute",
-            "FIRST_CRACK_TEMPERATURE": "First crack Temperatur",
+            "FIRST_CRACK_TEMPERATURE": "First-Crack-Temperatur",
             "SECOND_CRACK_MINUTE": "Second-Crack-Minute",
-            "SECOND_CRACK_TEMPERATURE": "Second crack Temperatur",
+            "SECOND_CRACK_TEMPERATURE": "Second-Crack-Temperatur",
             "PLACE_HOLDER": {
                 "DROP_TEMPERATURE": "Endtemperatur der Röstung",
                 "ROAST_LENGTH": "Röstlänge",
@@ -606,8 +606,8 @@
                 "OUTSIDE_TEMPERATURE": "Wettertemperatur",
                 "HUMIDITY": "Feuchtigkeit",
                 "FIRST_CRACK_MINUTE": "First-Crack-Minute",
-                "FIRST_CRACK_TEMPERATURE": "First crack Temperatur",
-                "SECOND_CRACK_TEMPERATURE": "Second Crack Temperatur",
+                "FIRST_CRACK_TEMPERATURE": "First-Crack-Temperatur",
+                "SECOND_CRACK_TEMPERATURE": "Second-Crack-Temperatur",
                 "SECOND_CRACK_MINUTE": "Second-Crack-Minute"
             },
             "WEIGHT_LOSS": "Einbrand (Gewichtsverlust)"
