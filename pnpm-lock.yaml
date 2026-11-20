@@ -141,6 +141,9 @@ importers:
       '@pantrist/capacitor-plugin-ml-kit-text-recognition':
         specifier: ^8.1.1
         version: 8.1.1(@capacitor/core@8.6.0)
+      '@tanstack/angular-virtual':
+        specifier: 6.1.12
+        version: 6.1.12(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))
       '@zip.js/zip.js':
         specifier: ~2.25.0
         version: 2.25.0
@@ -2296,6 +2299,14 @@ packages:
     resolution: {integrity: sha512-CNkPVZsqyNMjFMX9bEkMJsvBbQxjLw480OaoamoqiLPdQCFjJQReeOjnWX1A5ivSn3UYEIJ6MoN5VXDkaHGt8Q==}
     engines: {node: '>=16.0.0', npm: '>=7.10.0'}
     hasBin: true
+
+  '@tanstack/angular-virtual@6.1.12':
+    resolution: {integrity: sha512-Udga32sGZ9lSlAesEmvf7V5F4XTtS40f5aZosiK1y06qVEL9dc6VkmqQhU5HngTVSCZaadPFEygBKqaTxzZUqA==}
+    peerDependencies:
+      '@angular/core': '>=20.0.0'
+
+  '@tanstack/virtual-core@3.19.11':
+    resolution: {integrity: sha512-/5iHb0RHBvj8Di59FDs4ESNm45jls33aZAi4zccVXZjc/6ZvwQP6nzEYeT6weXjTf9E6/vrp2JhYWRyO+ZP13A==}
 
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
@@ -6962,6 +6973,13 @@ snapshots:
       '@rollup/rollup-linux-x64-musl': 4.44.0
       '@rollup/rollup-win32-arm64-msvc': 4.44.0
       '@rollup/rollup-win32-x64-msvc': 4.44.0
+
+  '@tanstack/angular-virtual@6.1.12(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))':
+    dependencies:
+      '@angular/core': 22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3)
+      '@tanstack/virtual-core': 3.19.11
+
+  '@tanstack/virtual-core@3.19.11': {}
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 
