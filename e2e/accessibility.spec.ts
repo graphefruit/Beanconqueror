@@ -1,10 +1,10 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import AxeBuilder from '@axe-core/playwright';
 import type { Page, TestInfo } from '@playwright/test';
 
 import { expect, test } from './fixtures';
+import { axe } from './support/axe';
 import { completeFirstRun } from './support/first-run';
 import { openFromProfile } from './support/profile';
 
@@ -100,7 +100,7 @@ async function settle(page: Page): Promise<void> {
 
 async function scan(page: Page): Promise<string[]> {
   await settle(page);
-  const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
+  const results = await axe(page).withTags(WCAG_TAGS).analyze();
   const keys = results.violations.flatMap((violation) =>
     violation.nodes.map(
       (node) =>
