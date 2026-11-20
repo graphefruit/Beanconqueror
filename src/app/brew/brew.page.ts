@@ -153,10 +153,11 @@ export class BrewPage implements OnInit {
     this.uiBrewStorage
       .attachOnEvent()
       .pipe(takeUntilDestroyed())
-      .subscribe((val?: { obj?: { config?: { uuid?: string } } }) => {
-        // Find if this change emitted a brew we can focus
-        if (val?.obj?.config?.uuid) {
-          this.lastInteractedBrewId = val.obj.config.uuid;
+      .subscribe((change?: { uuid?: string }) => {
+        // A brew added or changed, also on another tab, is brought on the
+        // screen.
+        if (change?.uuid) {
+          this.lastInteractedBrewId = change.uuid;
         }
         // If an bean is added/deleted/changed we trigger this here, why we do this? Because when we import from the Beanconqueror website an bean, and we're actually on this page, this won't get shown.
         this.loadBrews();

@@ -49,7 +49,8 @@ describe('BrewPage - changes of the brews', () => {
     page.ionViewWillEnter();
     page.ionViewWillEnter();
     load.calls.reset();
-    brewEvents.next({ type: 'UPDATE', obj: { config: { uuid: 'changed' } } });
+    // As the storage sends it (StorageClass.__sendEvent).
+    brewEvents.next({ type: 'UPDATE', uuid: 'changed' });
 
     expect(load).toHaveBeenCalledTimes(1);
     expect(

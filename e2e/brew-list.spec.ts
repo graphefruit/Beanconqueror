@@ -82,6 +82,48 @@ test('the list stays with the brew after a card action and returns to the top fo
   await expect(cards(page).first()).toBeInViewport();
 });
 
+test('a brew added on Home is on the screen when the list is shown again', async ({
+  page,
+}) => {
+  await showBrews(page);
+  await scrollToEnd(list(page));
+  const before = await readStoredValue<{ config: { uuid: string } }[]>(
+    page,
+    'BREWS',
+  );
+  const known = new Set(before?.map((brew) => brew.config.uuid));
+
+  await page.getByRole('tab', { name: 'Home', exact: true }).click();
+  await expect(
+    page.getByRole('tab', { name: 'Home', selected: true }),
+  ).toBeVisible();
+  await page
+    .getByRole('banner')
+    .getByRole('button', { name: 'Add brew' })
+    .filter({ visible: true })
+    .click();
+  await page.getByRole('textbox', { name: 'Ground Coffee (gr)' }).fill('18');
+  await page.getByRole('textbox', { name: /^Amount of water/ }).fill('300');
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(
+    page.getByRole('tab', { name: 'Brews', selected: true }),
+  ).toBeVisible();
+
+  let added: string | undefined;
+  await expect
+    .poll(async () => {
+      const brews = await readStoredValue<{ config: { uuid: string } }[]>(
+        page,
+        'BREWS',
+      );
+      added = brews?.find((brew) => !known.has(brew.config.uuid))?.config.uuid;
+      return added;
+    })
+    .toBeDefined();
+  await expect(page.locator(`[id="brew-${added}"]`)).toBeInViewport();
+});
+
 test('the list announces how many brews it holds', async ({ page }) => {
   await showBrews(page);
   const brews = list(page).getByRole('list');
