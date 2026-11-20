@@ -29,6 +29,7 @@ import { PhotoPopoverComponent } from '../popover/photo-popover/photo-popover.co
 import { UIAlert } from './uiAlert';
 import { UIFileHelper } from './uiFileHelper';
 import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
 import { UISettingsStorage } from './uiSettingsStorage';
 
 @Service()
@@ -41,6 +42,7 @@ export class UIImage {
   private readonly uiAlert = inject(UIAlert);
   private readonly modalCtrl = inject(ModalController);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiLog = inject(UILog);
 
   /**
    * Photos the user took off a stored entry in its form, by entry. The
@@ -106,6 +108,28 @@ export class UIImage {
 
     const fileUri = await this.saveBase64Photo(imageData.base64String);
     return fileUri;
+  }
+
+  /**
+   * Tells the user why a photo from `takePhoto` or `choosePhoto` was not
+   * added. Closing the camera or the photo picker without a photo is no
+   * error: the camera plugin rejects with "User cancelled photos app" then.
+   */
+  public reportPhotoNotAdded(_error: unknown): void {
+    const message = (_error as { message?: unknown } | undefined)?.message;
+    if (typeof message === 'string' && /cancel/i.test(message)) {
+      this.uiLog.debug('Photo not added: camera or photo picker closed');
+      return;
+    }
+    this.uiLog.warn('Photo could not be added', _error);
+    // The camera plugin rejects with "User denied access to camera/photos".
+    const denied = typeof message === 'string' && /denied/i.test(message);
+    void this.uiAlert.showMessage(
+      denied ? 'PHOTO_ACCESS_DENIED' : 'PHOTO_COULD_NOT_BE_ADDED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    );
   }
 
   public async choosePhoto(): Promise<any> {

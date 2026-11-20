@@ -28,7 +28,6 @@ import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine
 import { UIAlert } from '../../services/uiAlert';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIImage } from '../../services/uiImage';
-import { UILog } from '../../services/uiLog';
 import { UIToast } from '../../services/uiToast';
 import { AsyncImageComponent } from '../async-image/async-image.component';
 
@@ -46,7 +45,6 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
   private readonly uiToast = inject(UIToast);
   private readonly uiAlert = inject(UIAlert);
   private readonly translate = inject(TranslateService);
-  private readonly uiLog = inject(UILog);
 
   @Input() public data:
     Brew | Bean | GreenBean | Mill | Preparation | RoastingMachine;
@@ -98,20 +96,6 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
     this.addedPaths.add(fileUri.path);
     this.attachmentsToChange().push(fileUri.path);
   }
-  private reportPhotoNotAdded(_error: unknown): void {
-    // Mostly a refused permission or a closed picker, not a fault of the app.
-    this.uiLog.warn('Photo could not be added', _error);
-    // The camera plugin rejects with "User denied access to camera/photos".
-    const message = (_error as { message?: unknown } | undefined)?.message;
-    const denied = typeof message === 'string' && /denied/i.test(message);
-    void this.uiAlert.showMessage(
-      denied ? 'PHOTO_ACCESS_DENIED' : 'PHOTO_COULD_NOT_BE_ADDED',
-      'ERROR_OCCURED',
-      undefined,
-      true,
-    );
-  }
-
   public addImage(): void {
     this.uiImage.showOptionChooser().then((_option) => {
       if (_option === 'CHOOSE') {
@@ -128,7 +112,7 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
               this.emitChanges();
             }
           },
-          (_error) => this.reportPhotoNotAdded(_error),
+          (_error) => this.uiImage.reportPhotoNotAdded(_error),
         );
       } else if (_option === 'CLIPBOARD') {
         this.addBase64ImageFromClipboard();
@@ -140,7 +124,7 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
             this.attachmentsToChange().push(_path);
             this.emitChanges();
           },
-          (_error) => this.reportPhotoNotAdded(_error),
+          (_error) => this.uiImage.reportPhotoNotAdded(_error),
         );
       }
     });

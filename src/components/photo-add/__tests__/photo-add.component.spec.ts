@@ -13,13 +13,8 @@ import { Bean } from '../../../classes/bean/bean';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIImage } from '../../../services/uiImage';
-import { UILog } from '../../../services/uiLog';
 import { UIToast } from '../../../services/uiToast';
-import {
-  createMockUIAlert,
-  createMockUIFileHelper,
-  createMockUILog,
-} from '../../../test-utils';
+import { createMockUIAlert, createMockUIFileHelper } from '../../../test-utils';
 import { AsyncImageComponent } from '../../async-image/async-image.component';
 import { PhotoAddComponent } from '../photo-add.component';
 
@@ -33,7 +28,6 @@ describe('PhotoAddComponent', () => {
   let uiFileHelper: jasmine.SpyObj<any>;
   let uiAlert: jasmine.SpyObj<any>;
   let uiToast: jasmine.SpyObj<any>;
-  let uiLog: jasmine.SpyObj<any>;
   let swiper: jasmine.SpyObj<any>;
   let emitted: unknown[];
   /** Ends the deletion of a file; one entry per file that is being deleted. */
@@ -45,6 +39,7 @@ describe('PhotoAddComponent', () => {
       'choosePhoto',
       'takePhoto',
       'removePhotoOnSave',
+      'reportPhotoNotAdded',
     ]);
     uiFileHelper = createMockUIFileHelper();
     fileDeletions = [];
@@ -56,9 +51,6 @@ describe('PhotoAddComponent', () => {
     );
     uiAlert = createMockUIAlert();
     uiToast = jasmine.createSpyObj('UIToast', ['showInfoToast']);
-    uiLog = Object.assign(createMockUILog(), {
-      warn: jasmine.createSpy('warn'),
-    });
     swiper = jasmine.createSpyObj('Swiper', ['update', 'slideTo']);
 
     TestBed.configureTestingModule({
@@ -68,7 +60,6 @@ describe('PhotoAddComponent', () => {
         { provide: UIFileHelper, useValue: uiFileHelper },
         { provide: UIAlert, useValue: uiAlert },
         { provide: UIToast, useValue: uiToast },
-        { provide: UILog, useValue: uiLog },
       ],
     })
       // Showing a photo needs the file system and plays no part here.
@@ -423,7 +414,7 @@ describe('PhotoAddComponent', () => {
       ).toBe(1);
     }));
 
-    it('tells when the camera may not be used', fakeAsync(() => {
+    it('leaves telling why the camera took no photo to the photo service', fakeAsync(() => {
       const cause = new Error('User denied access');
       uiImage.takePhoto.and.rejectWith(cause);
       open([]);
@@ -431,16 +422,7 @@ describe('PhotoAddComponent', () => {
 
       choose('TAKE');
 
-      expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
-        'PHOTO_ACCESS_DENIED',
-        'ERROR_OCCURED',
-        undefined,
-        true,
-      );
-      expect(uiLog.warn).toHaveBeenCalledOnceWith(
-        'Photo could not be added',
-        cause,
-      );
+      expect(uiImage.reportPhotoNotAdded).toHaveBeenCalledOnceWith(cause);
       expect(component.data.attachments).toEqual([]);
       expect(emitted).toEqual([]);
     }));
@@ -473,24 +455,15 @@ describe('PhotoAddComponent', () => {
       expect(emitted).toEqual([]);
     }));
 
-    it('tells when the library fails', fakeAsync(() => {
-      const cause = { message: 'cancelled' };
+    it('leaves telling why the library gave no photo to the photo service', fakeAsync(() => {
+      const cause = 'We found no file urls';
       uiImage.choosePhoto.and.rejectWith(cause);
       open([]);
       settle();
 
       choose('CHOOSE');
 
-      expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
-        'PHOTO_COULD_NOT_BE_ADDED',
-        'ERROR_OCCURED',
-        undefined,
-        true,
-      );
-      expect(uiLog.warn).toHaveBeenCalledOnceWith(
-        'Photo could not be added',
-        cause,
-      );
+      expect(uiImage.reportPhotoNotAdded).toHaveBeenCalledOnceWith(cause);
       expect(emitted).toEqual([]);
     }));
 

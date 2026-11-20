@@ -5,10 +5,15 @@ import { AlertController, ModalController, Platform } from '@ionic/angular';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { TranslateService } from '@ngx-translate/core';
 
-import { createMockUIFileHelper } from '../../test-utils';
+import {
+  createMockUIAlert,
+  createMockUIFileHelper,
+  createMockUILog,
+} from '../../test-utils';
 import { UIAlert } from '../uiAlert';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIImage } from '../uiImage';
+import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 
 describe('UIImage photos removed in a form', () => {
@@ -27,6 +32,7 @@ describe('UIImage photos removed in a form', () => {
         { provide: AndroidPermissions, useValue: {} },
         { provide: TranslateService, useValue: {} },
         { provide: UIAlert, useValue: {} },
+        { provide: UILog, useValue: createMockUILog() },
         { provide: UISettingsStorage, useValue: {} },
       ],
     });
@@ -85,5 +91,89 @@ describe('UIImage photos removed in a form', () => {
     await expectAsync(uiImage.deleteRemovedPhotos(entry)).toBeResolved();
 
     expect(uiFileHelper.deleteInternalFile).toHaveBeenCalledWith('b.jpg');
+  });
+});
+
+describe('UIImage telling why a photo was not added', () => {
+  let uiImage: UIImage;
+  let uiAlert: jasmine.SpyObj<any>;
+  let uiLog: jasmine.SpyObj<any>;
+
+  beforeEach(() => {
+    uiAlert = createMockUIAlert();
+    uiLog = Object.assign(createMockUILog(), {
+      warn: jasmine.createSpy('warn'),
+    });
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: UIFileHelper, useValue: createMockUIFileHelper() },
+        { provide: AlertController, useValue: {} },
+        { provide: ModalController, useValue: {} },
+        { provide: Platform, useValue: {} },
+        { provide: AndroidPermissions, useValue: {} },
+        { provide: TranslateService, useValue: {} },
+        { provide: UIAlert, useValue: uiAlert },
+        { provide: UILog, useValue: uiLog },
+        { provide: UISettingsStorage, useValue: {} },
+      ],
+    });
+    uiImage = TestBed.inject(UIImage);
+  });
+
+  // What @capacitor/camera rejects with on iOS, Android and the web when the
+  // camera or the photo picker is closed without a photo.
+  it('shows nothing when the user closed the camera or the picker', () => {
+    uiImage.reportPhotoNotAdded(new Error('User cancelled photos app'));
+
+    expect(uiAlert.showMessage).not.toHaveBeenCalled();
+    expect(uiLog.warn).not.toHaveBeenCalled();
+    expect(uiLog.debugLogs).toEqual([
+      'Photo not added: camera or photo picker closed',
+    ]);
+  });
+
+  it('tells when the camera or the photos may not be used', () => {
+    const cause = new Error('User denied access to camera');
+
+    uiImage.reportPhotoNotAdded(cause);
+
+    expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
+      'PHOTO_ACCESS_DENIED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    );
+    expect(uiLog.warn).toHaveBeenCalledOnceWith(
+      'Photo could not be added',
+      cause,
+    );
+  });
+
+  it('tells when a photo could not be read', () => {
+    const cause = { message: 'File does not exist' };
+
+    uiImage.reportPhotoNotAdded(cause);
+
+    expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
+      'PHOTO_COULD_NOT_BE_ADDED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    );
+    expect(uiLog.warn).toHaveBeenCalledOnceWith(
+      'Photo could not be added',
+      cause,
+    );
+  });
+
+  it('tells when the picker returned no photo', () => {
+    uiImage.reportPhotoNotAdded('We found no file urls');
+
+    expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
+      'PHOTO_COULD_NOT_BE_ADDED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    );
   });
 });

@@ -50,6 +50,34 @@ test('a user is told when the camera refuses to take a bean photo', async ({
   });
 });
 
+test('closing the camera without a photo shows no error', async ({
+  page,
+  native,
+}) => {
+  // Message the Camera plugin rejects with on iOS and Android then.
+  await native.mockCapacitor<CameraPlugin>('Camera', {
+    getPhoto: () => {
+      throw new NativeError('User cancelled photos app');
+    },
+  });
+  await page.goto('/');
+  await completeFirstRun(page);
+
+  await page.getByRole('tab', { name: 'Beans' }).click();
+  await page.getByRole('button', { name: 'Add bean' }).click();
+  await page.getByRole('button', { name: 'Add Photo' }).click();
+  await page.getByRole('button', { name: 'Take photo' }).click();
+  await expect
+    .poll(() => native.calls())
+    .toContainEqual({ plugin: 'Camera', method: 'getPhoto', mocked: true });
+  // Open the choice again: an error shown for the closed camera is up by then.
+  await page.getByRole('button', { name: 'Add Photo' }).click();
+
+  await expect(page.getByRole('button', { name: 'Take photo' })).toBeVisible();
+  await expect(page.getByText('An error occurred')).toHaveCount(0);
+  await expect(page.getByText('The photo could not be added.')).toHaveCount(0);
+});
+
 /**
  * The tests below characterize how photos of a stored bean are shown and
  * removed today. The web build cannot read or delete photo files, so the
