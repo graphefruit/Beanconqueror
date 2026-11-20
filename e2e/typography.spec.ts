@@ -298,7 +298,7 @@ test.describe('screen text at 200 % text size', () => {
       page,
       page
         .locator('ion-card.dashboard')
-        .locator('ion-card-title, ion-card-subtitle'),
+        .locator('.card-title-text, .card-subtitle-text'),
       'overview card text',
     );
   });

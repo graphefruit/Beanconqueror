@@ -49,7 +49,7 @@
                   <ion-col class='margin-header' size='10'>
                     <ion-list lines='none' style='width:100%;'>
                       <ion-item>
-                        <ion-col class='ion-text-bold' size='12'>
+                        <ion-col role="heading" aria-level="3" class='ion-text-bold' size='12'>
                           @if (brew.best_brew) {
                             <ion-icon [attr.aria-label]="'POPOVER_BEST_BREW' | translate" name='trophy'
                             style='top: 3px;position: relative;margin-right:5px;' />
@@ -143,7 +143,7 @@
             <ion-grid class='ion-no-padding'>
               <ion-row class='ion-padding-bottom-half'>
                 <ion-col size='10'>
-                  <ion-title class='ion-no-padding font-size-18'>
+                  <ion-title role="heading" aria-level="2" class='ion-no-padding font-size-18'>
                     <!-- Ionic keeps a title on one line and cuts it off; the
                          date and time wrap instead when the text is large. -->
                     <span class='brew-date-time'>

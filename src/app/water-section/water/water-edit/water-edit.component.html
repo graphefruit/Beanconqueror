@@ -6,7 +6,7 @@
 <ion-content>
   <ion-card class="popover" style="display:flex; flex-direction: column;">
     <ion-item lines="none">
-      <span class="ion-title ion-padding-top ion-no-padding-bottom">{{"WATER_SECTION.CATEGORY_GENERAL" | translate }}</span>
+      <span role="heading" aria-level="2" class="ion-title ion-padding-top ion-no-padding-bottom">{{"WATER_SECTION.CATEGORY_GENERAL" | translate }}</span>
     </ion-item>
     <ion-item>
       <ion-input label-placement="stacked" label='{{"NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" name="name"
@@ -26,7 +26,7 @@
   </ion-card>
   <ion-card style="display:flex; flex-direction: column;">
     <ion-item lines="none">
-      <span class="ion-title ion-padding-top ion-no-padding-bottom">{{"WATER_SECTION.CATEGORY_INFORMATION" | translate }}</span>
+      <span role="heading" aria-level="2" class="ion-title ion-padding-top ion-no-padding-bottom">{{"WATER_SECTION.CATEGORY_INFORMATION" | translate }}</span>
     </ion-item>
     <ion-item lines="inset">
       <ion-row style="width:100%">
@@ -267,7 +267,7 @@
 
       <ion-icon aria-hidden="true" name="information-circle-outline" slot="start" />
       <ion-label class="break-whitespaces">
-        <h2>{{"WATER_SECTION.WATER_BOTTLE_EXPLANATION" | translate}}</h2>
+        <div class="field-label">{{"WATER_SECTION.WATER_BOTTLE_EXPLANATION" | translate}}</div>
       </ion-label>
 
     </ion-item>

@@ -90,13 +90,13 @@
 </ion-footer>
 
 <ng-template #preparationInformationCard let-prep='prep'>
-  <h6>
+  <div class="choice-label">
     @if ((prep | preparationFunctionPipe: PREPARATION_FUNCTION_PIPE_ENUM.HAS_DEVICE_CONNECTION)) {
       <ion-icon [attr.aria-label]="'PREPARATION_DEVICE_CONNECTION' | translate" style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
        />
     }
     {{ prep.name }}
-  </h6>
+  </div>
   <p>{{ "LAST_USE" | translate }}:
     @if (getBrewsCount(prep)> 0) {
       <span>{{ lastUsed(prep) | formatDate:[$safeNavigationMigration(settings?.date_format)] }}</span>

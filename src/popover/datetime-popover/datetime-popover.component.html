@@ -6,7 +6,7 @@
         <ion-item lines='none'>
           <ion-checkbox label-placement='start' (ngModelChange)='saveSettings()' [(ngModel)]='settings.brew_timer_show_hours'>
             <div class="ion-label">
-              <h2>{{"SHOW_HOURS" | translate}}</h2>
+              <div class="field-label">{{"SHOW_HOURS" | translate}}</div>
             </div>
           </ion-checkbox>
         </ion-item>
@@ -15,7 +15,7 @@
         <ion-item lines='none'>
           <ion-checkbox label-placement='start' (ngModelChange)='saveSettings()' [(ngModel)]='settings.brew_timer_show_minutes'>
             <div class="ion-label">
-              <h2>{{"SHOW_MINUTES" | translate}}</h2>
+              <div class="field-label">{{"SHOW_MINUTES" | translate}}</div>
             </div>
           </ion-checkbox>
         </ion-item>

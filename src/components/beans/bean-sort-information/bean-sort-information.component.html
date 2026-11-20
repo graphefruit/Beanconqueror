@@ -2,10 +2,10 @@
   <ion-card  style="padding-bottom:6px; display:flex; flex-direction: column;">
     <ion-item  class="ion-padding-top" lines="none" tappable="">
       @if ((data | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_BLEND)) {
-        <span class="ion-title ion-no-padding-bottom" slot="start">{{i+1}}.&nbsp;{{"BEAN_SORT" | translate}}</span>
+        <span role="heading" aria-level="2" class="ion-title ion-no-padding-bottom" slot="start">{{i+1}}.&nbsp;{{"BEAN_SORT" | translate}}</span>
       }
       @if (!(data | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_BLEND)) {
-        <span class="ion-title ion-no-padding-bottom" slot="start">{{"BEAN_SORT_INFORMATION" | translate}}</span>
+        <span role="heading" aria-level="2" class="ion-title ion-no-padding-bottom" slot="start">{{"BEAN_SORT_INFORMATION" | translate}}</span>
       }
       @if ((data | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_BLEND)) {
         <ion-button (click)="copyInformation(i);$event.stopPropagation()" [attr.aria-label]="'A11Y.COPY_VARIETY_INFORMATION' | translate" fill="clear" slot="end" tappable>

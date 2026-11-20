@@ -71,30 +71,13 @@ test('a new brew shows its entered values in the list and in the details', async
   await brewAction(page, 'Details');
   // Read in the default sort order, as shown on screen.
   await expect(topDialog(page)).toMatchAriaSnapshot(`
-    - heading "Bean Type:" [level=2]
-    - heading "Ethiopia Yirgacheffe Natural" [level=3]
-    - heading "Brew Ratio:" [level=2]
-    - heading "1 / 16.13" [level=3]
-    - heading "Ground Coffee (gr):" [level=2]
-    - heading "15.5" [level=3]
-    - heading "Grinder:" [level=2]
-    - heading "Comandante C40" [level=3]
-    - heading "Grind Setting:" [level=2]
-    - heading "14 clicks" [level=3]
-    - heading "Preparation method:" [level=2]
-    - heading "V60" [level=3]
-    - heading "Brew Temperature:" [level=2]
-    - heading "94" [level=3]
-    - heading "Time:" [level=2]
-    - heading "00:00:00" [level=3]
-    - heading "Amount of water:" [level=2]
-    - heading "250 (gr)" [level=3]
-    - heading "Rating:" [level=2]
-    - heading "3" [level=3]
-    - heading "Notes:" [level=2]
-    - text: Juicy, bright
-    - heading "Creation Date" [level=2]
-    - heading "01.03.2026 09:00" [level=3]
+    - heading "Before brewing" [level=2]
+    - text: "Bean Type: Ethiopia Yirgacheffe Natural Brew Ratio: 1 / 16.13 Ground Coffee (gr): 15.5 Grinder: Comandante C40 Grind Setting: 14 clicks Preparation method: V60 Brew Temperature: 94"
+    - heading "While brewing" [level=2]
+    - text: "/^Time: 00:00:00 /"
+    - heading "After brewing" [level=2]
+    - text: "Amount of water: 250 (gr) Beverage quantity: 0 (gr) Rating: 3 Notes: Juicy, bright"
+    - text: Creation Date 01.03.2026 09:00
   `);
 });
 

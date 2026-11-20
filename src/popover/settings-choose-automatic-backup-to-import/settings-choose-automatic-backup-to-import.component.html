@@ -17,7 +17,7 @@
           <ion-item tappable>
             <ion-radio [value]="file.uri" justify='start' label-placement='end'>
               <ion-label>
-                <h2>{{ file.name }}</h2>
+                <div class="field-label">{{ file.name }}</div>
                 <p>{{ fileSize(file.size) }} - {{ (file.mtime / 1000) | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</p>
               </ion-label>
             </ion-radio>

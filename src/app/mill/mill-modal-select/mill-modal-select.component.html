@@ -88,7 +88,7 @@
   </ion-row>
 </ion-footer>
 <ng-template #millInformationCard let-mill='mill'>
-  <h6>{{ mill.name }}</h6>
+  <div class="choice-label">{{ mill.name }}</div>
   <p>{{ "LAST_USE" | translate }}:
     @if (getBrewsCount(mill) > 0) {
       <span>{{ lastUsed(mill) | formatDate:[$safeNavigationMigration(settings?.date_format)] }}</span>

@@ -41,8 +41,8 @@
         </ion-item>
         <ion-item lines='none'>
           <ion-label position="stacked" style="min-height:30px;">
-            <h2>{{"PREPARATION_DEVICE.RESIDUAL_LAG_TIME" | translate }}&nbsp;<ion-badge
-            style="vertical-align: top;">{{data.connectedPreparationDevice.customParams.residualLagTime| toFixed: 2}}</ion-badge></h2>
+            <div class="field-label">{{"PREPARATION_DEVICE.RESIDUAL_LAG_TIME" | translate }}&nbsp;<ion-badge
+            style="vertical-align: top;">{{data.connectedPreparationDevice.customParams.residualLagTime| toFixed: 2}}</ion-badge></div>
           </ion-label>
         </ion-item>
         <ion-item lines='none'>
@@ -82,8 +82,8 @@
         </ion-item>
         <ion-item lines='none'>
           <ion-label position="stacked" style="min-height:30px;">
-            <h2>{{"PREPARATION_DEVICE.RESIDUAL_LAG_TIME" | translate }}&nbsp;<ion-badge
-            style="vertical-align: top;">{{data.connectedPreparationDevice.customParams.residualLagTime| toFixed: 2}}</ion-badge></h2>
+            <div class="field-label">{{"PREPARATION_DEVICE.RESIDUAL_LAG_TIME" | translate }}&nbsp;<ion-badge
+            style="vertical-align: top;">{{data.connectedPreparationDevice.customParams.residualLagTime| toFixed: 2}}</ion-badge></div>
           </ion-label>
         </ion-item>
         <ion-item lines='none'>
@@ -98,10 +98,10 @@
         <!--<hr>
         <ion-item lines='none'>
           <ion-label position="stacked" style="min-height:30px;">
-            <h2>{{ "PREPARATION_DEVICE.SANREMO_YOU.RESIDUAL_LAG_TIME_P1" | translate }}&nbsp;<ion-badge
+            <div class="field-label">{{ "PREPARATION_DEVICE.SANREMO_YOU.RESIDUAL_LAG_TIME_P1" | translate }}&nbsp;<ion-badge
               style="vertical-align: top;">{{ data.connectedPreparationDevice.customParams.residualLagTimeP1| toFixed: 2 }}
             </ion-badge>
-            </h2>
+            </div>
           </ion-label>
         </ion-item>
         <ion-item lines='inset'>
@@ -114,10 +114,10 @@
         </ion-item>
         <ion-item lines='none'>
           <ion-label position="stacked" style="min-height:30px;">
-            <h2>{{ "PREPARATION_DEVICE.SANREMO_YOU.RESIDUAL_LAG_TIME_P2" | translate }}&nbsp;<ion-badge
+            <div class="field-label">{{ "PREPARATION_DEVICE.SANREMO_YOU.RESIDUAL_LAG_TIME_P2" | translate }}&nbsp;<ion-badge
               style="vertical-align: top;">{{ data.connectedPreparationDevice.customParams.residualLagTimeP2| toFixed: 2 }}
             </ion-badge>
-            </h2>
+            </div>
           </ion-label>
         </ion-item>
         <ion-item lines='inset'>
@@ -130,10 +130,10 @@
         </ion-item>
         <ion-item lines='none'>
           <ion-label position="stacked" style="min-height:30px;">
-            <h2>{{ "PREPARATION_DEVICE.SANREMO_YOU.RESIDUAL_LAG_TIME_P3" | translate }}&nbsp;<ion-badge
+            <div class="field-label">{{ "PREPARATION_DEVICE.SANREMO_YOU.RESIDUAL_LAG_TIME_P3" | translate }}&nbsp;<ion-badge
               style="vertical-align: top;">{{ data.connectedPreparationDevice.customParams.residualLagTimeP3| toFixed: 2 }}
             </ion-badge>
-            </h2>
+            </div>
           </ion-label>
         </ion-item>
         <ion-item lines='inset'>
@@ -146,10 +146,10 @@
         </ion-item>
         <ion-item lines='none'>
           <ion-label position="stacked" style="min-height:30px;">
-            <h2>{{ "PREPARATION_DEVICE.SANREMO_YOU.RESIDUAL_LAG_TIME_M" | translate }}&nbsp;<ion-badge
+            <div class="field-label">{{ "PREPARATION_DEVICE.SANREMO_YOU.RESIDUAL_LAG_TIME_M" | translate }}&nbsp;<ion-badge
               style="vertical-align: top;">{{ data.connectedPreparationDevice.customParams.residualLagTimeM| toFixed: 2 }}
             </ion-badge>
-            </h2>
+            </div>
           </ion-label>
         </ion-item>
         <ion-item lines='inset'>
@@ -184,8 +184,8 @@
         </ion-item>
         <ion-item lines='none'>
           <ion-label position="stacked" style="min-height:30px;">
-            <h2>{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.LATEST_SHOTS" | translate }}&nbsp;<ion-badge
-              style="vertical-align: top;">{{data.connectedPreparationDevice.customParams.latestShotsToImport ?? 1| toFixed: 2}}</ion-badge></h2>
+            <div class="field-label">{{"PREPARATION_DEVICE.TYPE_GAGGIMATE.LATEST_SHOTS" | translate }}&nbsp;<ion-badge
+              style="vertical-align: top;">{{data.connectedPreparationDevice.customParams.latestShotsToImport ?? 1| toFixed: 2}}</ion-badge></div>
           </ion-label>
         </ion-item>
         <ion-item lines='none'>
@@ -225,7 +225,7 @@
             <ion-button (click)="searchMachineDevice()" fill="outline" color="accent" expand="block" style="width: 100%;">{{"SEARCH_BLUETOOTH_DEVICES" | translate}}</ion-button>
           } @else {
             <ion-label>
-              <h2>{{ data.connectedPreparationDevice.bluetoothName || 'MOVE2' }}</h2>
+              <div class="field-label">{{ data.connectedPreparationDevice.bluetoothName || 'MOVE2' }}</div>
               <p>{{ data.connectedPreparationDevice.bluetoothId }}</p>
             </ion-label>
             <ion-button (click)="disconnectMachineDevice()" slot="end" color="danger" fill="outline">{{"DISCONNECT" | translate}}</ion-button>
@@ -233,10 +233,10 @@
         </ion-item>
         <ion-item lines="none">
           <ion-label position="stacked" style="min-height:30px;">
-            <h2>{{ "PREPARATION_DEVICE.RESIDUAL_LAG_TIME" | translate }}&nbsp;<ion-badge
+            <div class="field-label">{{ "PREPARATION_DEVICE.RESIDUAL_LAG_TIME" | translate }}&nbsp;<ion-badge
               style="vertical-align: top;">{{ $safeNavigationMigration(data.connectedPreparationDevice.customParams?.residualLagTime)| toFixed: 2 }}
             </ion-badge>
-            </h2>
+            </div>
           </ion-label>
         </ion-item>
         <ion-item lines='inset'>

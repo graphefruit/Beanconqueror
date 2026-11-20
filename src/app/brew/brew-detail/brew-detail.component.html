@@ -12,47 +12,47 @@
     <ion-card class="popover"
               style="display:flex; flex-direction: column;">
       <ion-item lines="none">
-        <span class="ion-title ion-padding-top">{{"BREW_HEADER_BEFORE_BREW" | translate }}</span>
+        <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{"BREW_HEADER_BEFORE_BREW" | translate }}</span>
       </ion-item>
       @for(field of brewFields().before; track field) {
         @switch(field) {
           @case ('grind_size') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_GRIND_SIZE" | translate}}:</h2>
-                <h3>{{data.grind_size}}</h3>
+                <div class="field-label">{{"BREW_DATA_GRIND_SIZE" | translate}}:</div>
+                <div class="field-value">{{data.grind_size}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('grind_weight') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_GRIND_WEIGHT" | translate}}:</h2>
-                <h3>{{data.grind_weight}}</h3>
+                <div class="field-label">{{"BREW_DATA_GRIND_WEIGHT" | translate}}:</div>
+                <div class="field-value">{{data.grind_weight}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('brew_temperature') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}:</h2>
-                <h3>{{data.brew_temperature}}</h3>
+                <div class="field-label">{{"BREW_DATA_BREW_TEMPERATURE" | translate}}:</div>
+                <div class="field-value">{{data.brew_temperature}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('method_of_preparation') {
             <ion-item detail="true" (click)="detailPreparation()">
               <ion-label>
-                <h2>{{"BREW_DATA_PREPARATION_METHOD" | translate}}:</h2>
-                <h3>{{choosenPreparation.name}}</h3>
+                <div class="field-label">{{"BREW_DATA_PREPARATION_METHOD" | translate}}:</div>
+                <div class="field-value">{{choosenPreparation.name}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('bean_type') {
             <ion-item detail="true" (click)="detailBean()">
               <ion-label>
-                <h2>{{"BREW_DATA_BEAN_TYPE" | translate}}:</h2>
-                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BEAN_NAME}}</h3>
+                <div class="field-label">{{"BREW_DATA_BEAN_TYPE" | translate}}:</div>
+                <div class="field-value">{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BEAN_NAME}}</div>
               </ion-label>
             </ion-item>
           }
@@ -60,8 +60,8 @@
             @if((data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_CALCULATED_BEAN_AGE)>-1) {
               <ion-item>
                 <ion-label>
-                  <h2>{{"BREW_INFORMATION_BEAN_AGE" | translate}}:</h2>
-                  <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_CALCULATED_BEAN_AGE}}</h3>
+                  <div class="field-label">{{"BREW_INFORMATION_BEAN_AGE" | translate}}:</div>
+                  <div class="field-value">{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_CALCULATED_BEAN_AGE}}</div>
                 </ion-label>
               </ion-item>
             }
@@ -69,16 +69,16 @@
           @case ('brew_ratio') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_INFORMATION_BREW_RATIO" | translate}}:</h2>
-                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}}</h3>
+                <div class="field-label">{{"BREW_INFORMATION_BREW_RATIO" | translate}}:</div>
+                <div class="field-value">{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('mill') {
             <ion-item detail="true" (click)="detailMill()">
               <ion-label>
-                <h2>{{"BREW_DATA_MILL" | translate}}:</h2>
-                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_MILL_NAME}}</h3>
+                <div class="field-label">{{"BREW_DATA_MILL" | translate}}:</div>
+                <div class="field-value">{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_MILL_NAME}}</div>
               </ion-label>
             </ion-item>
           }
@@ -86,8 +86,8 @@
             @if(!(mill) || (mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_ADJUSTABLE_SPEED)) {
               <ion-item>
                 <ion-label>
-                  <h2>{{"BREW_DATA_MILL_SPEED" | translate}}:</h2>
-                  <h3>{{data.mill_speed}}</h3>
+                  <div class="field-label">{{"BREW_DATA_MILL_SPEED" | translate}}:</div>
+                  <div class="field-value">{{data.mill_speed}}</div>
                 </ion-label>
               </ion-item>
             }
@@ -96,8 +96,8 @@
             @if(!(mill) || (mill | millFunctionPipe: MILL_FUNCTION_PIPE_ENUM.HAS_TIMER)) {
               <ion-item>
                 <ion-label>
-                  <h2>{{"BREW_DATA_MILL_TIMER" | translate}}:</h2>
-                  <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_MILL_TIME}}</h3>
+                  <div class="field-label">{{"BREW_DATA_MILL_TIMER" | translate}}:</div>
+                  <div class="field-value">{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_MILL_TIME}}</div>
                 </ion-label>
               </ion-item>
             }
@@ -105,8 +105,8 @@
           @case ('pressure_profile') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}:</h2>
-                <h3>{{data.pressure_profile}}</h3>
+                <div class="field-label">{{"BREW_DATA_PRESSURE_PROFILE" | translate}}:</div>
+                <div class="field-value">{{data.pressure_profile}}</div>
               </ion-label>
               @if((data | brewFunctionPipe : BREW_FUNCTION_PIPE_ENUM.IS_PRESSURE_PARAMETER_URL)) {
                 <ion-button style="margin-left:0px;" (click)="openURL(data.pressure_profile)"
@@ -120,7 +120,7 @@
           @case ('method_of_preparation_tool') {
             <ion-item lines="inset">
               <ion-label>
-                <h2>{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}:</h2>
+                <div class="field-label">{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}:</div>
                 <div class="break-whitespaces">
                   @for(uuid of data.method_of_preparation_tools; track uuid) {
                     <ion-chip>{{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_PREPARATION_TOOL_NAME,uuid] }}</ion-chip>
@@ -132,32 +132,32 @@
           @case ('bean_weight_in') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}:</h2>
-                <h3>{{data.bean_weight_in}}</h3>
+                <div class="field-label">{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}:</div>
+                <div class="field-value">{{data.bean_weight_in}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('vessel') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_VESSEL_NAME" | translate}}:</h2>
+                <div class="field-label">{{"BREW_DATA_VESSEL_NAME" | translate}}:</div>
                 @if(data.vessel_name !== '') {
-                  <h3>{{data.vessel_name}}</h3>
+                  <div class="field-value">{{data.vessel_name}}</div>
                 } @else {
-                  <h3>-</h3>
+                  <div class="field-value">-</div>
                 }
               </ion-label>
               <ion-label>
-                <h2>{{"BREW_DATA_VESSEL_WEIGHT" | translate}}:</h2>
-                <h3>{{data.vessel_weight}}</h3>
+                <div class="field-label">{{"BREW_DATA_VESSEL_WEIGHT" | translate}}:</div>
+                <div class="field-value">{{data.vessel_weight}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('water') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_WATER" | translate}}:</h2>
-                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_WATER_NAME}}</h3>
+                <div class="field-label">{{"BREW_DATA_WATER" | translate}}:</div>
+                <div class="field-value">{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.GET_WATER_NAME}}</div>
               </ion-label>
             </ion-item>
           }
@@ -169,11 +169,11 @@
   @if(data?.preparationDeviceBrew?.type === PreparationDeviceType.SANREMO_YOU) {
     <ion-card class="popover" style="display:flex; flex-direction: column;">
       <ion-item lines="none">
-        <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.TITLE" | translate }}</span>
+        <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.TITLE" | translate }}</span>
       </ion-item>
       <ion-item>
         <ion-label>
-          <h3>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.SELECT_MODE" | translate}}</h3>
+          <div class="field-value">{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.SELECT_MODE" | translate}}</div>
           @switch($safeNavigationMigration(data?.preparationDeviceBrew?.params.selectedMode)) {
             @case (SanremoYOUMode.LISTENING) {
               <span>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MODE_LISTENING" | translate}}</span>
@@ -196,7 +196,7 @@
       @if(data?.preparationDeviceBrew?.params.selectedMode !== SanremoYOUMode.LISTENING) {
         <ion-item lines="none">
           <ion-label>
-            <h3>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_AT_WEIGHT" | translate}}</h3>
+            <div class="field-value">{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_AT_WEIGHT" | translate}}</div>
             <span>{{data?.preparationDeviceBrew?.params.stopAtWeight}}</span>
           </ion-label>
         </ion-item>
@@ -207,15 +207,15 @@
     <ion-card class="popover"
               style="display:flex; flex-direction: column;">
       <ion-item lines="none">
-        <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
+        <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
       </ion-item>
       @for(field of brewFields().while; track field) {
         @switch(field) {
           @case ('brew_temperature_time') {
             <ion-item>
               <ion-label>
-                <h2>{{'BREW_DATA_TEMPERATURE_TIME' | translate}} / {{'BREW_DATA_SURF_TIME' | translate}}:</h2>
-                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_TEMPERATURE_TIME}}</h3>
+                <div class="field-label">{{'BREW_DATA_TEMPERATURE_TIME' | translate}} / {{'BREW_DATA_SURF_TIME' | translate}}:</div>
+                <div class="field-value">{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_TEMPERATURE_TIME}}</div>
               </ion-label>
             </ion-item>
           }
@@ -286,32 +286,32 @@
           @case ('brew_time') {
             <ion-item>
               <ion-label>
-                <h2>{{'BREW_DATA_TIME' | translate}}:</h2>
-                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_BREW_TIME}}</h3>
+                <div class="field-label">{{'BREW_DATA_TIME' | translate}}:</div>
+                <div class="field-value">{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_BREW_TIME}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('calculated_coffee_brew_time') {
             <ion-item lines="full">
               <ion-label>
-                <h2>{{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}:</h2>
-                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_COFFEE_BREW_TIME}}</h3>
+                <div class="field-label">{{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}:</div>
+                <div class="field-value">{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_COFFEE_BREW_TIME}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('coffee_blooming_time') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}:</h2>
-                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_BLOOMING_TIME}}</h3>
+                <div class="field-label">{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}:</div>
+                <div class="field-value">{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_BLOOMING_TIME}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('coffee_first_drip_time') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}:</h2>
-                <h3>{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_FIRST_DRIP_TIME}}</h3>
+                <div class="field-label">{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}:</div>
+                <div class="field-value">{{data | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_FIRST_DRIP_TIME}}</div>
               </ion-label>
             </ion-item>
           }
@@ -324,64 +324,64 @@
     <ion-card class="popover"
               style="display:flex; flex-direction: column;">
       <ion-item lines="none">
-        <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
+        <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
       </ion-item>
       @for(field of brewFields().after; track field) {
         @switch(field) {
           @case ('brew_quantity') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}:</h2>
-                <h3>{{data.brew_quantity}} ({{data.getBrewQuantityTypeName()}})</h3>
+                <div class="field-label">{{"BREW_DATA_BREW_QUANTITY" | translate}}:</div>
+                <div class="field-value">{{data.brew_quantity}} ({{data.getBrewQuantityTypeName()}})</div>
               </ion-label>
             </ion-item>
           }
           @case ('coffee_type') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_COFFEE_TYPE" | translate}}
-                </h2>
-                <h3>{{data.coffee_type}}</h3>
+                <div class="field-label">{{"BREW_DATA_COFFEE_TYPE" | translate}}
+                </div>
+                <div class="field-value">{{data.coffee_type}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('coffee_concentration') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}:</h2>
-                <h3>{{data.coffee_concentration}}</h3>
+                <div class="field-label">{{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}:</div>
+                <div class="field-value">{{data.coffee_concentration}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('rating') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_RATING" | translate }}:</h2>
-                <h3>{{data.rating | number : '.0-2'}}</h3>
+                <div class="field-label">{{"BREW_DATA_RATING" | translate }}:</div>
+                <div class="field-value">{{data.rating | number : '.0-2'}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('brew_beverage_quantity') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate }}:</h2>
-                <h3>{{data.brew_beverage_quantity}}&nbsp;({{data.getBrewBeverageQuantityTypeName()}})</h3>
+                <div class="field-label">{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate }}:</div>
+                <div class="field-value">{{data.brew_beverage_quantity}}&nbsp;({{data.getBrewBeverageQuantityTypeName()}})</div>
               </ion-label>
             </ion-item>
           }
           @case ('tds') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_TDS" | translate }}:</h2>
-                <h3>{{data.tds}}</h3>
+                <div class="field-label">{{"BREW_DATA_TDS" | translate }}:</div>
+                <div class="field-value">{{data.tds}}</div>
               </ion-label>
             </ion-item>
           }
           @case ('calculated_extraction_yield') {
             <ion-item lines="inset">
               <ion-label>
-                <h2>{{"BREW_DATA_CALCULATED_EXTRACTION_YIELD" | translate }}:</h2>
-                <h3>{{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds,data.grind_weight,data.brew_beverage_quantity,data.brew_quantity]}}</h3>
+                <div class="field-label">{{"BREW_DATA_CALCULATED_EXTRACTION_YIELD" | translate }}:</div>
+                <div class="field-value">{{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds,data.grind_weight,data.brew_beverage_quantity,data.brew_quantity]}}</div>
               </ion-label>
               @if((data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_EXTRACTION_YIELD,data.tds,data.grind_weight,data.brew_beverage_quantity,data.brew_quantity])) {
                 <ion-button style="margin-left:0px;"
@@ -395,7 +395,7 @@
           @case ('note') {
             <ion-item>
               <ion-label>
-                <h2>{{"BREW_DATA_NOTES" | translate }}:</h2>
+                <div class="field-label">{{"BREW_DATA_NOTES" | translate }}:</div>
                 <pre>{{data.note}}</pre>
               </ion-label>
               @if(data.note) {
@@ -418,7 +418,7 @@
       }
       <!-- The creation date has no sort order of its own and always comes last. -->
       <ion-item lines="none">
-        <ion-label><h2>{{"BREW_CREATION_DATE" | translate}}</h2><h3>{{ brew.config.unix_timestamp | formatDate:[$safeNavigationMigration(settings?.date_format)] }}&nbsp;{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</h3></ion-label>
+        <ion-label><div class="field-label">{{"BREW_CREATION_DATE" | translate}}</div><div class="field-value">{{ brew.config.unix_timestamp | formatDate:[$safeNavigationMigration(settings?.date_format)] }}&nbsp;{{ brew.config.unix_timestamp | formatDate:["HH:mm"] }}</div></ion-label>
       </ion-item>
       <div class="last-item"></div>
     </ion-card>
@@ -426,7 +426,7 @@
   @if(uiShowCupping) {
     <ion-card class="popover" style="display:flex; flex-direction: column;">
       <ion-item lines="none">
-        <span class="ion-title ion-padding-top">{{"BREW_HEADER_CUPPING" | translate }}</span>
+        <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{"BREW_HEADER_CUPPING" | translate }}</span>
       </ion-item>
       <div class="ion-margin-horizontal" style="display: block">
         <canvas #cuppingChart></canvas>
@@ -444,7 +444,7 @@
     <ion-card class="ion-margin-horizontal popover"
               style="display:flex; flex-direction: column;">
       <ion-item lines="none">
-        <span class="ion-title ion-padding-top">{{"CUSTOM_FLAVORS_AROMAS" | translate }}</span>
+        <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{"CUSTOM_FLAVORS_AROMAS" | translate }}</span>
       </ion-item>
       @for(customFlavor of this.data.cupped_flavor.custom_flavors; track customFlavor; let i = $index; let last = $last) {
         <ion-item
@@ -458,7 +458,7 @@
     <ion-card class="ion-margin-horizontal popover"
               style="display:flex; flex-direction: column;">
       <ion-item lines="none">
-        <span class="ion-title ion-padding-top">{{"PREDEFINED_FLAVORS_AROMAS" | translate }}</span>
+        <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{"PREDEFINED_FLAVORS_AROMAS" | translate }}</span>
       </ion-item>
       @for(item of this.data.cupped_flavor.predefined_flavors | keyvalue; track item.key; let last = $last) {
         <ion-item

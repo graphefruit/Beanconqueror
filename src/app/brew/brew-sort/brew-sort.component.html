@@ -1,7 +1,8 @@
 <ion-header translucent />
 <ion-content>
+  <h1 class="visually-hidden">{{ "A11Y.SORT_BREWS" | translate }}</h1>
   <ion-list class="ion-no-padding">
-    <ion-list-header>
+    <ion-list-header role="heading" aria-level="2">
       <ion-item  style="width: 100%;margin-left: 0px;--background: var(--ion-color-light);border:0;" class="ion-margin-top" lines="none" tappable>
         {{"SORT_ORDER" | translate}}
       </ion-item>
@@ -24,7 +25,7 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-    <ion-list-header>
+    <ion-list-header role="heading" aria-level="2">
       <ion-item  style="width: 100%;margin-left: 0px;--background:  var(--ion-color-light);border:0;" class="ion-margin-top" lines="none" tappable>
         {{"SORT_AFTER" | translate}}
       </ion-item>
@@ -51,7 +52,7 @@
     </ion-item>
 
     @if (false) {
-<ion-list-header>
+<ion-list-header role="heading" aria-level="2">
       <ion-item  style="width: 100%;margin-left: 0px;--background: #ffffff;" (click)="toggleExtendSort()" class="ion-margin-top" lines="none" tappable>
         {{"EXTEND_SORT_AFTER" | translate}}
         @if (extendedSortActive) {

@@ -115,7 +115,7 @@ async function rowsOf(card: Locator): Promise<Row[]> {
         );
         const text =
           control?.label ||
-          row.querySelector('h2')?.textContent ||
+          row.querySelector('.field-label')?.textContent ||
           row.querySelector('ion-label')?.textContent ||
           row.textContent ||
           row.tagName.toLowerCase();

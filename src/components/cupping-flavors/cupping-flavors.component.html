@@ -1,5 +1,5 @@
 <ion-list>
-  <ion-list-header>
+  <ion-list-header role="heading" aria-level="2">
     {{"CUSTOM_FLAVORS_AROMAS" | translate}}
 
   </ion-list-header>
@@ -13,7 +13,7 @@
       <ion-chip (click)="removeCustomFlavor(i)">{{flavor}} <ion-icon aria-hidden="true" name="close" /></ion-chip>
     }
   </div>
-  <ion-list-header>
+  <ion-list-header role="heading" aria-level="2">
     {{"PREDEFINED_FLAVORS_AROMAS" | translate }}
   </ion-list-header>
   <ion-searchbar [searchName]="'A11Y.SEARCH_FLAVORS' | translate" [(ngModel)]="searchFlavorText" debounce="500" (ionInput)='searchFlavors()' (ionChange)="searchFlavors()" (ionClear)="resetFlavors()" />

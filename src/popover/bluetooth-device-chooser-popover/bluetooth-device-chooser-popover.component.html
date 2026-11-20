@@ -9,7 +9,7 @@
     <ion-card-content>
 
       @if(foundDevices.length <=0 && searchRunning === false) {
-        <h2>{{'NO_DEVICES_FOUND_PLEASE_TRY_AGAIN' |translate}}</h2>
+        <div class="field-label">{{'NO_DEVICES_FOUND_PLEASE_TRY_AGAIN' |translate}}</div>
       }
       @if(foundDevices.length > 0) {
         <ion-radio-group [(ngModel)]="deviceSelection" (ngModelChange)='checkChanges()'>

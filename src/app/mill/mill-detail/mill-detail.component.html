@@ -7,13 +7,13 @@
   <ion-card class="popover" style="display:flex; flex-direction: column;">
     <ion-item  class="ion-margin-bottom">
       <ion-label>
-        <h2>{{"NAME" | translate}}:</h2>
-        <h3>{{data.name}}</h3>
+        <div class="field-label">{{"NAME" | translate}}:</div>
+        <div class="field-value">{{data.name}}</div>
       </ion-label>
     </ion-item>
     <ion-item  class="ion-margin-bottom">
       <ion-label>
-        <h2>{{"NOTES" | translate}}:</h2>
+        <div class="field-label">{{"NOTES" | translate}}:</div>
         <pre>{{data.note}}</pre>
       </ion-label>
     </ion-item>

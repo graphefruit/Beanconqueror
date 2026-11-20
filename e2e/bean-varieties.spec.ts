@@ -175,9 +175,9 @@ test('a blend keeps its varieties when its mix is looked at but not changed', as
   await expect(page.getByText('Bean details')).toBeVisible();
   await showTab(page, 'Variety information');
   await expect(page.getByText(/^1\.\sBean Type$/)).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Ethiopia' })).toBeVisible();
+  await expect(page.getByText('Ethiopia', { exact: true })).toBeVisible();
   await expect(page.getByText(/^2\.\sBean Type$/)).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Brazil' })).toBeVisible();
+  await expect(page.getByText('Brazil', { exact: true })).toBeVisible();
 });
 
 for (const dark of [false, true]) {

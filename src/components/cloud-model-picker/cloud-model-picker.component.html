@@ -7,7 +7,7 @@
         <ion-icon aria-hidden="true" name="close" slot="icon-only" />
       </ion-button>
     </ion-buttons>
-    <ion-title>{{ 'CLOUD_AI_SELECT_MODEL' | translate }}</ion-title>
+    <ion-title role="heading" aria-level="1">{{ 'CLOUD_AI_SELECT_MODEL' | translate }}</ion-title>
   </ion-toolbar>
   <ion-toolbar>
     <ion-searchbar [searchName]="'CLOUD_AI_SEARCH_MODELS' | translate" [(ngModel)]="searchTerm"
@@ -35,7 +35,7 @@
       @for (model of filteredModels; track model.id) {
         <ion-item button (click)="selectModel(model)" style="--padding-start: 16px; --inner-padding-top: 2px; --inner-padding-bottom: 2px">
           <ion-label>
-            <h2>{{ model.name }}</h2>
+            <div class="field-label">{{ model.name }}</div>
             <p>{{ model.id }}</p>
           </ion-label>
         </ion-item>

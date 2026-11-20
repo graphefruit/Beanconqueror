@@ -6,7 +6,7 @@
     <ion-grid class="no-padding-bottom no-padding-top">
       <ion-row>
         <ion-col class="expand-fill-space" style="margin: auto 0;">
-          <div class="ion-no-padding font-size-20 ion-title no-overflow-ellipsis center-icons-to-text add-child-margin">
+          <div role="heading" [attr.aria-level]="isGroupChild() ? 3 : 2" class="ion-no-padding font-size-20 ion-title no-overflow-ellipsis center-icons-to-text add-child-margin">
             @if(beanGroup()) {
             <ion-icon [attr.aria-label]="'A11Y.BEAN_GROUP' | translate" name="file-tray-full-outline" />
             }

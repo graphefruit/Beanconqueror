@@ -41,11 +41,7 @@ test('a bean is archived with a rating and a note and can be brought back', asyn
   // the bean, which has none yet.
   await expect(topDialog(page)).toMatchAriaSnapshot(`
     - dialog:
-      - heading "Name:" [level=2]
-      - heading "Alpha Filter" [level=3]
-      - heading "Average Brew Rating" [level=2]
-      - heading "3" [level=3]
-      - text: Rating 3
+      - text: "Name: Alpha Filter Average Brew Rating 3 Rating 3"
       - 'slider "3 Rating: 3 out of 5 stars"'
       - 'img "Rating: 3 out of 5 stars"'
       - text: Notes

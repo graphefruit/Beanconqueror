@@ -37,7 +37,7 @@
                 <ion-card>
                   @for (data of getOpenEntries(); track data) {
                     <ion-item lines="none" tappable>
-                      <ion-checkbox [(ngModel)]="multipleSelection[data.config.uuid]" justify="start" label-placement="end"><h6>{{data.name}}</h6></ion-checkbox>
+                      <ion-checkbox [(ngModel)]="multipleSelection[data.config.uuid]" justify="start" label-placement="end"><div class="choice-label">{{data.name}}</div></ion-checkbox>
                     </ion-item>
                   }
                 </ion-card>
@@ -60,7 +60,7 @@
                 <ion-card>
                   @for (data of getArchivedEntries(); track data) {
                     <ion-item lines="none" tappable>
-                      <ion-checkbox [(ngModel)]="multipleSelection[data.config.uuid]" justify="start" label-placement="end"><h6>{{data.name}}</h6></ion-checkbox>
+                      <ion-checkbox [(ngModel)]="multipleSelection[data.config.uuid]" justify="start" label-placement="end"><div class="choice-label">{{data.name}}</div></ion-checkbox>
                     </ion-item>
                   }
                 </ion-card>
@@ -92,7 +92,7 @@
                   <ion-card>
                     @for (data of getOpenEntries(); track data) {
                       <ion-item lines="none" tappable>
-                        <ion-radio justify="start" label-placement="end" value="{{data.config.uuid}}"><h6>{{data.name}}</h6></ion-radio>
+                        <ion-radio justify="start" label-placement="end" value="{{data.config.uuid}}"><div class="choice-label">{{data.name}}</div></ion-radio>
                       </ion-item>
                     }
                   </ion-card>
@@ -117,7 +117,7 @@
                   <ion-card>
                     @for (data of getArchivedEntries(); track data) {
                       <ion-item lines="none" tappable>
-                        <ion-radio justify="start" label-placement="end" value="{{data.config.uuid}}"><h6>{{data.name}}</h6></ion-radio>
+                        <ion-radio justify="start" label-placement="end" value="{{data.config.uuid}}"><div class="choice-label">{{data.name}}</div></ion-radio>
                       </ion-item>
                     }
                   </ion-card>

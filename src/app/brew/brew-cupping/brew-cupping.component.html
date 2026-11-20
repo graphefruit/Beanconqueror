@@ -21,7 +21,7 @@
       </ion-button>
       <ion-card>
         <ion-item lines="none">
-          <span class="ion-title ion-padding-top">{{"CUSTOM_FLAVORS_AROMAS" | translate }}</span>
+          <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{"CUSTOM_FLAVORS_AROMAS" | translate }}</span>
         </ion-item>
         @for (customFlavor of this.data?.cupped_flavor.custom_flavors; track customFlavor; let i = $index; let last = $last) {
           <ion-item lines="{{last?'none':'inset'}}">
@@ -32,7 +32,7 @@
       </ion-card>
       <ion-card>
         <ion-item lines="none">
-          <span class="ion-title ion-padding-top">{{"PREDEFINED_FLAVORS_AROMAS" | translate }}</span>
+          <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{"PREDEFINED_FLAVORS_AROMAS" | translate }}</span>
         </ion-item>
         @for (item of $safeNavigationMigration(this.data?.cupped_flavor.predefined_flavors) | keyvalue; track item.key; let last = $last) {
           <ion-item lines="{{last?'none':'inset'}}">

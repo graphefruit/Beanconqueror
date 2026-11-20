@@ -2,15 +2,15 @@
 <ion-content>
   <ion-item>
     <ion-label>
-      <h2>{{"BEAN_DATA_NAME" | translate}}:</h2>
-      <h3>{{data.name}}</h3>
+      <div class="field-label">{{"BEAN_DATA_NAME" | translate}}:</div>
+      <div class="field-value">{{data.name}}</div>
     </ion-label>
   </ion-item>
   @if (averageBrewRating !== undefined) {
     <ion-item>
       <ion-label>
-        <h2>{{"BEAN_DATA_AVERAGE_BREW_RATING" | translate}}</h2>
-        <h3>{{averageBrewRating}}</h3>
+        <div class="field-label">{{"BEAN_DATA_AVERAGE_BREW_RATING" | translate}}</div>
+        <div class="field-value">{{averageBrewRating}}</div>
       </ion-label>
     </ion-item>
   }

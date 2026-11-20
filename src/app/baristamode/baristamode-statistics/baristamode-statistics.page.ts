@@ -15,8 +15,6 @@ import {
   IonCard,
   IonCardContent,
   IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
   IonCol,
   IonContent,
   IonGrid,
@@ -57,8 +55,6 @@ import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewSto
     IonCard,
     IonCardHeader,
     IonCardContent,
-    IonCardTitle,
-    IonCardSubtitle,
     IonGrid,
   ],
 })

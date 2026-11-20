@@ -3,7 +3,7 @@
   <!--Div element is needed, else you can't scroll -->
   <div>
   <ion-item lines="none" class="ion-no-margin">
-    <span class="ion-title ion-padding-top">{{"PRESET_BREW_TITLE" | translate }}</span>
+    <span role="heading" aria-level="1" class="ion-title ion-padding-top">{{"PRESET_BREW_TITLE" | translate }}</span>
   </ion-item>
 
   @for(prep of preparationMethods; track prep.config.uuid; let last = $last) {

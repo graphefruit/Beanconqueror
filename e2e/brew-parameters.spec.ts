@@ -182,15 +182,13 @@ test('managed parameters hide and show fields in the brew form', async ({
   await page.getByRole('button', { name: 'Cancel' }).click();
   await brewAction(page, 'Details');
   // Unlike its neighbours, this label has no colon.
+  await expect(page.getByText('Coffee Type', { exact: true })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Coffee Type', exact: true }),
+    page.getByText('Total dissolved solids %:', { exact: true }),
   ).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: 'Total dissolved solids %:' }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: 'Grind Setting:' }),
-  ).toHaveCount(0);
+  await expect(page.getByText('Grind Setting:', { exact: true })).toHaveCount(
+    0,
+  );
 });
 
 test('the first drip time of the global parameters only appears for espresso methods', async ({

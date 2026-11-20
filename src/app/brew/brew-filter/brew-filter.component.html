@@ -1,5 +1,6 @@
 <ion-header translucent />
 <ion-content>
+  <h1 class="visually-hidden">{{ "A11Y.FILTER_BREWS" | translate }}</h1>
   <ion-item>
     <ion-select label-placement="stacked" label='{{"BREW_DATA_PREPARATION_METHOD" | translate}}' [(ngModel)]="filter.method_of_preparation"
                 [show-finished]="segment !== 'open'"

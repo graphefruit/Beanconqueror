@@ -265,7 +265,7 @@ describe('BrewDetailComponent field order', () => {
   function labels(_title: string): string[] {
     return rows(_title).map(
       (row) =>
-        row.querySelector('h2')?.textContent.trim() ??
+        row.querySelector('.field-label')?.textContent.trim() ??
         row.tagName.toLowerCase(),
     );
   }

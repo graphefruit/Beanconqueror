@@ -8,7 +8,7 @@
   @for (key of licences | keys; track key) {
     <ion-card>
       <ion-item (click)="openLink($event,licences[key].LINK)" button tappable>
-        <ion-title>{{ licences[key].TITLE }}</ion-title>
+        <ion-title role="heading" aria-level="2">{{ licences[key].TITLE }}</ion-title>
         <ion-icon aria-hidden="true" name="chevron-forward-outline" slot="end" />
       </ion-item>
       <ion-item (click)="licences[key].ACTIVE = !licences[key].ACTIVE" button lines="none" tappable>

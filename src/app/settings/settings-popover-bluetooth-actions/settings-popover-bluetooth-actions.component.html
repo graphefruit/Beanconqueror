@@ -4,7 +4,7 @@
     @if (settings.scale_id) {
 <ion-item (click)="disconnectDevice(BluetoothTypes.SCALE)" tappable button>
       <ion-label>
-        <h2>{{"DISCONNECT_SCALE" | translate}}</h2>
+        <div class="field-label">{{"DISCONNECT_SCALE" | translate}}</div>
       </ion-label>
       <ion-icon aria-hidden="true" name="beanconqueror-bluetooth-off" slot="end" />
     </ion-item>
@@ -12,7 +12,7 @@
     @if (settings.pressure_id) {
 <ion-item (click)="disconnectDevice(BluetoothTypes.PRESSURE)" tappable button>
       <ion-label>
-        <h2>{{"DISCONNECT_PRESSURE" | translate}}</h2>
+        <div class="field-label">{{"DISCONNECT_PRESSURE" | translate}}</div>
       </ion-label>
       <ion-icon aria-hidden="true" name="beanconqueror-bluetooth-off" slot="end" />
     </ion-item>
@@ -20,7 +20,7 @@
     @if (settings.temperature_id) {
 <ion-item (click)="disconnectDevice(BluetoothTypes.TEMPERATURE)" tappable button>
       <ion-label>
-        <h2>{{"DISCONNECT_TEMPERATURE" | translate}}</h2>
+        <div class="field-label">{{"DISCONNECT_TEMPERATURE" | translate}}</div>
       </ion-label>
       <ion-icon aria-hidden="true" name="beanconqueror-bluetooth-off" slot="end" />
     </ion-item>
@@ -28,7 +28,7 @@
     @if (settings.refractometer_id) {
 <ion-item (click)="disconnectDevice(BluetoothTypes.TDS)" tappable button>
       <ion-label>
-        <h2>{{"DISCONNECT_REFRACTOMETER" | translate}}</h2>
+        <div class="field-label">{{"DISCONNECT_REFRACTOMETER" | translate}}</div>
       </ion-label>
       <ion-icon aria-hidden="true" name="beanconqueror-bluetooth-off" slot="end" />
     </ion-item>
@@ -55,7 +55,7 @@
     @if (settings.scale_id === '') {
 <ion-item lines="full" (click)="connectDevice(BluetoothTypes.SCALE)" tappable button>
       <ion-label>
-        <h2>{{"CONNECT_SCALE" | translate}}</h2>
+        <div class="field-label">{{"CONNECT_SCALE" | translate}}</div>
       </ion-label>
       <ion-icon aria-hidden="true" name="bluetooth-outline" slot="end" />
     </ion-item>
@@ -63,7 +63,7 @@
     @if (settings.pressure_id === '') {
 <ion-item lines="full" (click)="connectDevice(BluetoothTypes.PRESSURE)" tappable button>
       <ion-label>
-        <h2>{{"CONNECT_PRESSURE" | translate}}</h2>
+        <div class="field-label">{{"CONNECT_PRESSURE" | translate}}</div>
       </ion-label>
       <ion-icon aria-hidden="true" name="bluetooth-outline" slot="end" />
     </ion-item>
@@ -71,7 +71,7 @@
     @if (settings.temperature_id === '') {
 <ion-item lines="full" (click)="connectDevice(BluetoothTypes.TEMPERATURE)" tappable button>
       <ion-label>
-        <h2>{{"CONNECT_TEMPERATURE" | translate}}</h2>
+        <div class="field-label">{{"CONNECT_TEMPERATURE" | translate}}</div>
       </ion-label>
       <ion-icon aria-hidden="true" name="bluetooth-outline" slot="end" />
     </ion-item>
@@ -79,7 +79,7 @@
     @if (settings.refractometer_id === '') {
 <ion-item lines="full" (click)="connectDevice(BluetoothTypes.TDS)" tappable button>
       <ion-label>
-        <h2>{{"CONNECT_REFRACTOMETER" | translate}}</h2>
+        <div class="field-label">{{"CONNECT_REFRACTOMETER" | translate}}</div>
       </ion-label>
       <ion-icon aria-hidden="true" name="bluetooth-outline" slot="end" />
     </ion-item>

@@ -1011,10 +1011,60 @@ ion-select::part(label) {
   transform: none;
 }
 
-h6 {
-  margin-top: 10px;
+// Text that keeps the look of Ionic's heading styles without being a heading:
+// labels and values of fields (an h2 and h3 in a label), the names in choice
+// lists (h6) and the figures of tiles (card title and subtitle). As headings, a
+// screen reader would list every field and figure as a section.
+.field-label,
+.field-value {
+  display: block;
+  margin: 2px 0;
+  font-weight: normal;
+  text-overflow: inherit;
+  overflow: inherit;
+}
+.field-label {
   font-size: var(--bq-type-body);
+  line-height: 1.2;
+}
+.field-value {
+  font-size: var(--bq-type-caption);
+  line-height: normal;
+}
+.choice-label {
+  margin: 10px 0;
+  font-size: var(--bq-type-body);
+  font-weight: 500;
   line-height: var(--bq-leading-heading);
+}
+.card-title-text,
+.card-subtitle-text {
+  display: block;
+  position: relative;
+  margin: 0;
+  font-weight: 500;
+}
+.card-title-text {
+  color: var(--ion-color-step-850, var(--ion-text-color-step-150, #262626));
+  font-size: 1.25rem;
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+}
+.card-subtitle-text {
+  color: var(--ion-color-step-550, var(--ion-text-color-step-450, #737373));
+  font-size: var(--bq-type-caption);
+}
+ion-card-header > :is(.card-title-text, .card-subtitle-text):not(:first-child) {
+  margin-top: 8px;
+}
+// For screen readers only, e.g. the title of a dialog that shows none.
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 ion-modal.loading-modal {

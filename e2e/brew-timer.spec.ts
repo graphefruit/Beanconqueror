@@ -126,10 +126,8 @@ test('the timer runs, marks the bloom time, pauses, resumes and is saved with th
   await brewAction(page, 'Details');
   // Details show the brew time with hours.
   await expect(topDialog(page)).toMatchAriaSnapshot(`
-    - heading "Time:" [level=2]
-    - heading "00:${total}" [level=3]
-    - heading "Bloom Time / Pre-infusion:" [level=2]
-    - heading "${bloom}" [level=3]
+    - heading "While brewing" [level=2]
+    - text: "Time: 00:${total} Bloom Time / Pre-infusion: ${bloom}"
   `);
 });
 

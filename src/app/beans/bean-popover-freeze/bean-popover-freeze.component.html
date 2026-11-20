@@ -1,5 +1,6 @@
 <ion-header translucent />
 <ion-content>
+  <h1 class="visually-hidden">{{ "POPOVER_FREEZE_COFFEE_BEAN" | translate }}</h1>
   <ion-card>
     <ion-item>
       <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_EDIT_FREEZE_DATE" | translate}}' readonly (click)="chooseDate($event);" [(data)]="frozenDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN_POPOVER_EDIT_FREEZE_DATE' | translate}}" />
@@ -14,7 +15,7 @@
     @if(copyAttachments) {
       <ion-item lines="none">
         <ion-label>
-          <h2>{{"BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE" | translate}}</h2>
+          <div class="field-label">{{"BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_PERCENTAGE" | translate}}</div>
         </ion-label>
       </ion-item>
       <ion-item style="top:-10px;">
@@ -25,7 +26,7 @@
       </ion-item>
       <ion-item lines="none">
         <ion-label>
-          <h2>{{"BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB" | translate}}</h2>
+          <div class="field-label">{{"BEAN_POPOVER_COPY_ATTACHMENTS_QUALITY_MB" | translate}}</div>
         </ion-label>
       </ion-item>
       <ion-item style="top:-10px;">
@@ -84,7 +85,7 @@
     @if (addedBags?.length > 0) {
       <ion-list>
         <ion-list-header>
-          <h4>{{"BEAN_POPOVER_FROZEN_BAGS" | translate}}</h4>
+          <div role="heading" aria-level="2"><h4 role="none">{{"BEAN_POPOVER_FROZEN_BAGS" | translate}}</h4></div>
         </ion-list-header>
         @for (bag of addedBags; track bag; let i = $index) {
           <ion-item>

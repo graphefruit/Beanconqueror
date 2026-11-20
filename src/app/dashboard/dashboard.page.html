@@ -21,7 +21,7 @@
               <ion-icon aria-hidden="true" color='accent' name="gift-outline" />
               {{ 'UNWRAPPED.BUTTON.TITLE' | translate }}
             </ion-card-title>
-            <ion-card-subtitle>{{ 'UNWRAPPED.BUTTON.SUBTITLE' | translate }}</ion-card-subtitle>
+            <div class="card-subtitle-text">{{ 'UNWRAPPED.BUTTON.SUBTITLE' | translate }}</div>
           </ion-card-header>
         </ion-card>
       </ion-col>
@@ -31,24 +31,24 @@
       <ion-col size="6">
         <ion-card [routerLink]="['/home/brews']" class="dashboard ion-no-margin" tappable>
           <ion-card-header class="ion-no-padding ion-no-margin">
-            <ion-card-title>{{getBrewsDrunk}}</ion-card-title>
-            <ion-card-subtitle>
+            <div class="card-title-text">{{getBrewsDrunk}}</div>
+            <div class="card-subtitle-text">
               @if(getBrewsDrunk === 1) {
               <span>{{"PAGE_HOME_TOTAL_BREW" | translate}}</span>
               } @else {
               <span>{{"PAGE_HOME_TOTAL_BREWS" | translate}}</span>
               }
-            </ion-card-subtitle>
+            </div>
           </ion-card-header>
         </ion-card>
       </ion-col>
       <ion-col size="6">
         <ion-card [routerLink]="['/home/dashboard/statistic']" class="dashboard ion-no-margin" tappable>
           <ion-card-header class="ion-no-padding ion-no-margin">
-            <ion-card-title>{{getTimePassedSinceLastBrew}}</ion-card-title>
-            <ion-card-subtitle>
+            <div class="card-title-text">{{getTimePassedSinceLastBrew}}</div>
+            <div class="card-subtitle-text">
               {{getTimePassedSinceLastBrewMessage}} {{"WITHOUT_COFFEE" | translate}}
-            </ion-card-subtitle>
+            </div>
           </ion-card-header>
         </ion-card>
       </ion-col>
@@ -57,21 +57,21 @@
       <ion-col size="6">
         <ion-card [routerLink]="['/home/beans']" class="dashboard ion-no-margin" tappable>
           <ion-card-header class="ion-no-padding ion-no-margin">
-            <ion-card-title>{{getBeansCount}}</ion-card-title>
-            <ion-card-subtitle>
+            <div class="card-title-text">{{getBeansCount}}</div>
+            <div class="card-subtitle-text">
               @if(getBeansCount === 1) {
               <span>{{"PAGE_HOME_BEAN_EXPLORED" | translate}}</span>
               } @else {
               <span>{{"PAGE_HOME_BEANS_EXPLORED" | translate}}</span>
               }
-            </ion-card-subtitle>
+            </div>
           </ion-card-header>
         </ion-card>
       </ion-col>
       <ion-col size="6">
         <ion-card [routerLink]="['/home/beans']" class="dashboard ion-no-margin" tappable>
           <ion-card-header class="ion-no-padding ion-no-margin">
-            <ion-card-title>
+            <div class="card-title-text">
               @if(settings.freeze_coffee_beans) {
               <ion-icon [attr.aria-label]="'A11Y.NOT_FROZEN' | translate" color='accent-secondary' style="top: 3px;position: relative;"
                 name="thermometer-outline" />&nbsp;{{leftOverBeansWeight}}<br /><ion-icon [attr.aria-label]="'FROZEN_BEANS' | translate" color='accent-secondary' style="top: 3px;position: relative;"
@@ -79,10 +79,10 @@
               } @else {
               {{leftOverBeansWeight}}
               }
-            </ion-card-title>
-            <ion-card-subtitle>
+            </div>
+            <div class="card-subtitle-text">
               {{"BEANS_WEIGHT_AVAILABLE" | translate}}
-            </ion-card-subtitle>
+            </div>
           </ion-card-header>
         </ion-card>
       </ion-col>
@@ -90,7 +90,7 @@
   </ion-grid>
 
   <div class="ion-padding-horizontal ion-padding-top">
-    <h4 class="ion-no-margin">{{"PAGE_HOME_LAST_BREWS" | translate}}</h4>
+    <div role="heading" aria-level="2"><h4 role="none" class="ion-no-margin">{{"PAGE_HOME_LAST_BREWS" | translate}}</h4></div>
   </div>
   @if (brews?.length > 0) {
   @for(brew of brews; track brew.config.uuid) {

@@ -136,10 +136,10 @@ test('TDS gives the extraction yield from dose and beverage quantity', async ({
 
   await brewAction(page, 'Details');
   await expect(
-    page.getByRole('heading', { name: 'Extraction Yield %:' }),
+    page.getByText('Extraction Yield %:', { exact: true }),
   ).toBeVisible();
-  await expect(page.getByRole('heading', { name: '20.25' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: '1.35' })).toBeVisible();
+  await expect(page.getByText('20.25', { exact: true })).toBeVisible();
+  await expect(page.getByText('1.35', { exact: true })).toBeVisible();
 });
 
 test('a user is told when the camera refuses to take a brew photo', async ({

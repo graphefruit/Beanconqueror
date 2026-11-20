@@ -10,7 +10,7 @@
 }
 @if (data.repeat_coffee_parameters.repeat_coffee_active==true) {
   <ion-card class='ion-padding' style='margin-top:30px;'>
-    <ion-title class='ion-no-padding'>{{"SORT_PARAMETERS_BEFORE" | translate  }}</ion-title>
+    <ion-title role="heading" aria-level="2" class='ion-no-padding'>{{"SORT_PARAMETERS_BEFORE" | translate  }}</ion-title>
     <ion-item tappable>
       <ion-checkbox label-placement='start' (ngModelChange)='save()'
         [(ngModel)]='data.repeat_coffee_parameters.bean_type'>
@@ -21,7 +21,7 @@
       <ion-checkbox label-placement='start' (ngModelChange)='save()'
         [(ngModel)]='data.repeat_coffee_parameters.bean_weight_in'>
         <div class='ion-label'>
-          <h2>{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}</h2>
+          <div class="field-label">{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}</div>
           <p>{{"BEAN_WEIGHT_IN_PLACEHOLDER" | translate}}</p>
         </div>
       </ion-checkbox>
@@ -30,7 +30,7 @@
       <ion-checkbox label-placement='start' (ngModelChange)='save()'
         [(ngModel)]='data.repeat_coffee_parameters.grind_weight'>
         <div class='ion-label'>
-          <h2>{{"BREW_DATA_GRIND_WEIGHT" | translate}}</h2>
+          <div class="field-label">{{"BREW_DATA_GRIND_WEIGHT" | translate}}</div>
           <p>{{"GRIND_WEIGHT_PLACEHOLDER" | translate}}</p>
         </div>
       </ion-checkbox>
@@ -63,7 +63,7 @@
       <ion-checkbox label-placement='start' (ngModelChange)='save()'
         [(ngModel)]='data.repeat_coffee_parameters.method_of_preparation'>
         <div class='ion-label'>
-          <h2>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</h2>
+          <div class="field-label">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</div>
         </div>
       </ion-checkbox>
     </ion-item>
@@ -71,7 +71,7 @@
       <ion-checkbox label-placement='start' (ngModelChange)='save()'
         [(ngModel)]='data.repeat_coffee_parameters.method_of_preparation_tool'>
         <div class='ion-label'>
-          <h2>{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</h2>
+          <div class="field-label">{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</div>
           <p>{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}</p>
         </div>
       </ion-checkbox>
@@ -86,7 +86,7 @@
       <ion-checkbox label-placement='start' (ngModelChange)='save()'
         [(ngModel)]='data.repeat_coffee_parameters.water'>
         <div class='ion-label'>
-          <h2>{{"BREW_DATA_WATER" | translate}}</h2>
+          <div class="field-label">{{"BREW_DATA_WATER" | translate}}</div>
           <p>{{"WATER_PLACEHOLDER" | translate}}</p>
         </div>
       </ion-checkbox>
@@ -95,7 +95,7 @@
       <ion-checkbox label-placement='start' (ngModelChange)='save()'
         [(ngModel)]='data.repeat_coffee_parameters.vessel'>
         <div class='ion-label'>
-          <h2>{{"BREW_DATA_VESSEL" | translate}}</h2>
+          <div class="field-label">{{"BREW_DATA_VESSEL" | translate}}</div>
           <p>{{"VESSEL_PLACEHOLDER" | translate}}</p>
         </div>
       </ion-checkbox>
@@ -110,7 +110,7 @@
 }
 @if (data.repeat_coffee_parameters.repeat_coffee_active==true) {
   <ion-card class='ion-padding' style='margin-top:30px;'>
-    <ion-title class='ion-no-padding'>{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
+    <ion-title role="heading" aria-level="2" class='ion-no-padding'>{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
     <ion-item tappable>
       <ion-checkbox label-placement='start' (ngModelChange)='save()'
         [(ngModel)]='data.repeat_coffee_parameters.brew_temperature_time'>
@@ -127,7 +127,7 @@
       <ion-checkbox label-placement='start' (ngModelChange)='save()'
         [(ngModel)]='data.repeat_coffee_parameters.coffee_first_drip_time'>
         <div class='ion-label'>
-          <h2>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</h2>
+          <div class="field-label">{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</div>
           <p>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP" | translate}}</p>
         </div>
       </ion-checkbox>
@@ -142,7 +142,7 @@
 }
 @if (data.repeat_coffee_parameters.repeat_coffee_active==true) {
   <ion-card class='ion-padding' style='margin-top:30px;'>
-    <ion-title class='ion-no-padding'>{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
+    <ion-title role="heading" aria-level="2" class='ion-no-padding'>{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
     <ion-item tappable>
       <ion-checkbox label-placement='start' (ngModelChange)='save()'
         [(ngModel)]='data.repeat_coffee_parameters.coffee_type'>
@@ -159,7 +159,7 @@
       <ion-checkbox label-placement='start' (ngModelChange)='save()'
         [(ngModel)]='data.repeat_coffee_parameters.brew_quantity'>
         <div class='ion-label'>
-          <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}</h2>
+          <div class="field-label">{{"BREW_DATA_BREW_QUANTITY" | translate}}</div>
           <p>{{"BREW_DATA_BREW_QUANTITY_TOOLTIP" | translate}}</p>
         </div>
       </ion-checkbox>

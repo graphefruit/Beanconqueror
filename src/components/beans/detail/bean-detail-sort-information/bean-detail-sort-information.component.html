@@ -2,106 +2,106 @@
   <ion-card style="padding-bottom:6px; display:flex; flex-direction: column;">
     <ion-item  class="ion-padding-top" lines="none" tappable>
       @if ((data | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_BLEND)) {
-        <span class="ion-title ion-no-padding-bottom" slot="start">{{i+1}}.&nbsp;{{"BEAN_SORT" | translate}}</span>
+        <span role="heading" aria-level="2" class="ion-title ion-no-padding-bottom" slot="start">{{i+1}}.&nbsp;{{"BEAN_SORT" | translate}}</span>
       }
       @else {
-        <span class="ion-title ion-no-padding-bottom" slot="start">{{"BEAN_SORT_INFORMATION" | translate}}</span>
+        <span role="heading" aria-level="2" class="ion-title ion-no-padding-bottom" slot="start">{{"BEAN_SORT_INFORMATION" | translate}}</span>
       }
     </ion-item>
     <div>
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.country)) {
         <ion-item>
           <ion-label>
-            <h2>{{"BEAN_DATA_COUNTRY" | translate}}:</h2>
-            <h3>{{beanInformation.country}}</h3>
+            <div class="field-label">{{"BEAN_DATA_COUNTRY" | translate}}:</div>
+            <div class="field-value">{{beanInformation.country}}</div>
           </ion-label>
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.region)) {
         <ion-item>
           <ion-label>
-            <h2>{{"BEAN_DATA_REGION" | translate}}:</h2>
-            <h3>{{beanInformation.region}}</h3>
+            <div class="field-label">{{"BEAN_DATA_REGION" | translate}}:</div>
+            <div class="field-value">{{beanInformation.region}}</div>
           </ion-label>
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.farm)) {
         <ion-item>
           <ion-label>
-            <h2>{{"BEAN_DATA_FARM" | translate}}:</h2>
-            <h3>{{beanInformation.farm}}</h3>
+            <div class="field-label">{{"BEAN_DATA_FARM" | translate}}:</div>
+            <div class="field-value">{{beanInformation.farm}}</div>
           </ion-label>
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.farmer)) {
         <ion-item>
           <ion-label>
-            <h2>{{"BEAN_DATA_FARMER" | translate}}:</h2>
-            <h3>{{beanInformation.farmer}}</h3>
+            <div class="field-label">{{"BEAN_DATA_FARMER" | translate}}:</div>
+            <div class="field-value">{{beanInformation.farmer}}</div>
           </ion-label>
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.elevation)) {
         <ion-item>
           <ion-label>
-            <h2>{{"BEAN_DATA_ELEVATION" | translate}}:</h2>
-            <h3>{{beanInformation.elevation}}</h3>
+            <div class="field-label">{{"BEAN_DATA_ELEVATION" | translate}}:</div>
+            <div class="field-value">{{beanInformation.elevation}}</div>
           </ion-label>
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.variety)) {
         <ion-item>
           <ion-label>
-            <h2>{{"BEAN_DATA_VARIETY" | translate}}:</h2>
-            <h3>{{beanInformation.variety}}</h3>
+            <div class="field-label">{{"BEAN_DATA_VARIETY" | translate}}:</div>
+            <div class="field-value">{{beanInformation.variety}}</div>
           </ion-label>
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.processing)) {
         <ion-item>
           <ion-label>
-            <h2>{{"BEAN_DATA_PROCESSING" | translate}}:</h2>
-            <h3>{{beanInformation.processing}}</h3>
+            <div class="field-label">{{"BEAN_DATA_PROCESSING" | translate}}:</div>
+            <div class="field-value">{{beanInformation.processing}}</div>
           </ion-label>
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.harvest_time)) {
         <ion-item>
           <ion-label>
-            <h2>{{"BEAN_DATA_HARVEST_TIME" | translate}}:</h2>
-            <h3>{{beanInformation.harvest_time}}</h3>
+            <div class="field-label">{{"BEAN_DATA_HARVEST_TIME" | translate}}:</div>
+            <div class="field-value">{{beanInformation.harvest_time}}</div>
           </ion-label>
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.percentage) && (data | beanFunctionPipe: BEAN_FUNCTION_PIPE_ENUM.IS_BLEND)) {
         <ion-item>
           <ion-label>
-            <h2>{{"BEAN_DATA_PERCENTAGE" | translate}}:</h2>
-            <h3>{{beanInformation.percentage}}</h3>
+            <div class="field-label">{{"BEAN_DATA_PERCENTAGE" | translate}}:</div>
+            <div class="field-value">{{beanInformation.percentage}}</div>
           </ion-label>
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.certification)) {
         <ion-item>
           <ion-label>
-            <h2>{{"BEAN_DATA_CERTIFICATION" | translate}}:</h2>
-            <h3>{{beanInformation.certification}}</h3>
+            <div class="field-label">{{"BEAN_DATA_CERTIFICATION" | translate}}:</div>
+            <div class="field-value">{{beanInformation.certification}}</div>
           </ion-label>
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.purchasing_price)) {
         <ion-item>
           <ion-label>
-            <h2>{{"BEAN_DATA_PURCHASING_PRICE" | translate}}:</h2>
-            <h3>{{beanInformation.purchasing_price}}</h3>
+            <div class="field-label">{{"BEAN_DATA_PURCHASING_PRICE" | translate}}:</div>
+            <div class="field-value">{{beanInformation.purchasing_price}}</div>
           </ion-label>
         </ion-item>
       }
       @if (uiBeanHelper.fieldVisible(settings.bean_manage_parameters.fob_price)) {
         <ion-item  class="ion-margin-bottom">
           <ion-label>
-            <h2>{{"BEAN_DATA_FOB_PRICE" | translate}}:</h2>
-            <h3>{{beanInformation.fob_price}}</h3>
+            <div class="field-label">{{"BEAN_DATA_FOB_PRICE" | translate}}:</div>
+            <div class="field-value">{{beanInformation.fob_price}}</div>
           </ion-label>
         </ion-item>
       }

@@ -10,7 +10,6 @@ import { Router, RouterLink } from '@angular/router';
 import {
   IonCard,
   IonCardHeader,
-  IonCardSubtitle,
   IonCardTitle,
   IonCol,
   IonContent,
@@ -64,7 +63,6 @@ import { UnwrappedModalComponent } from '../unwrapped/unwrapped-modal.component'
     IonCard,
     IonCardHeader,
     IonCardTitle,
-    IonCardSubtitle,
     IonIcon,
   ],
 })

@@ -1,21 +1,21 @@
 <ion-header>
   @if (slide ===1) {
-    <ion-title class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_TITLE" | translate}}</ion-title>
+    <ion-title role="heading" aria-level="1" class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_TITLE" | translate}}</ion-title>
   }
   @if (slide ===2) {
-    <ion-title
+    <ion-title role="heading" aria-level="1"
     class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_BEAN_HEADLINE" | translate}}</ion-title>
   }
   @if (slide ===3) {
-    <ion-title
+    <ion-title role="heading" aria-level="1"
     class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_PREPARATION_HEADLINE" | translate}}</ion-title>
   }
   @if (slide === 4) {
-    <ion-title
+    <ion-title role="heading" aria-level="1"
     class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_MILL_HEADLINE" | translate}}</ion-title>
   }
   @if (slide === 5) {
-    <ion-title
+    <ion-title role="heading" aria-level="1"
     class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_LETS_START_HEADLINE" | translate}}</ion-title>
   }
 
@@ -55,7 +55,7 @@
       <!--Hide the long text, because else the slide would have a scrollable context -->
       <div [hidden]="slide!=1"  class="ion-padding-top ion-margin-horizontal">
         <div class="welcome-content-text">
-          <ion-title>
+          <ion-title role="heading" aria-level="2">
             {{"WELCOME_PAGE_ACTIVATE_ANALYTICS_TITLE" | translate}}
           </ion-title>
           <div [innerHTML]="'WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION' | translate">
@@ -75,7 +75,7 @@
     <swiper-slide>
       <div class="ion-padding-top ion-margin-horizontal">
         <div class="welcome-content-text">
-          <ion-title>
+          <ion-title role="heading" aria-level="2">
             {{"WELCOME_PAGE_BEAN_TITLE" | translate}}
           </ion-title>
           <div>
@@ -99,7 +99,7 @@
     <swiper-slide>
       <div class="ion-padding-top ion-margin-horizontal">
         <div class="welcome-content-text">
-          <ion-title>
+          <ion-title role="heading" aria-level="2">
             {{"WELCOME_PAGE_PREPARATION_TITLE" | translate}}
           </ion-title>
           <div>
@@ -123,7 +123,7 @@
     <swiper-slide>
       <div class="ion-padding-top ion-margin-horizontal">
         <div class="welcome-content-text">
-          <ion-title>
+          <ion-title role="heading" aria-level="2">
             {{"WELCOME_PAGE_MILL_TITLE" | translate}}
           </ion-title>
           <div>
@@ -147,7 +147,7 @@
     <swiper-slide>
       <div class="ion-padding-top ion-margin-horizontal">
         <div class="welcome-content-text">
-          <ion-title>
+          <ion-title role="heading" aria-level="2">
             {{"WELCOME_PAGE_LETS_START_TITLE" | translate}}
           </ion-title>
           <div>

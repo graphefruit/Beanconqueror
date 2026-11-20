@@ -2,7 +2,7 @@
   @if (isXeniaDevice(preparationDevice)) {
       <ion-card class="popover" style="display:flex; flex-direction: column;">
         <ion-item lines="none">
-    <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_XENIA.TITLE" | translate }}&nbsp;-&nbsp;{{
+    <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_XENIA.TITLE" | translate }}&nbsp;-&nbsp;{{
         "PREPARATION_DEVICE.API_VERSION" | translate
       }}:&nbsp;{{
         this.brewComponent.choosenPreparation.connectedPreparationDevice.customParams.apiVersion
@@ -93,7 +93,7 @@
   } @else if (isMeticulousDevice(preparationDevice)) {
       <ion-card class="popover" style="display:flex; flex-direction: column;">
         <ion-item lines="none">
-          <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_METICULOUS.TITLE" | translate }}</span>
+          <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_METICULOUS.TITLE" | translate }}</span>
         </ion-item>
         <ion-item (click)="importShotFromMeticulous()" button tappable lines="none">
           <ion-icon aria-hidden="true" name="cloud-download-outline" slot='start' />
@@ -122,7 +122,7 @@
   } @else if (isSanremoYOUDevice(preparationDevice)) {
       <ion-card class="popover" style="display:flex; flex-direction: column;" [style.border]="baristamode?'0px!important':''">
         <ion-item lines="none">
-          <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_SANREMO_YOU.TITLE" | translate }}</span>
+          <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_SANREMO_YOU.TITLE" | translate }}</span>
         </ion-item>
         @if (baristamode) {
           <ion-item lines="none" style="margin-top:-30px;">
@@ -279,7 +279,7 @@
   } @else if (isGaggiuinoDevice(preparationDevice)) {
       <ion-card class="popover" style="display:flex; flex-direction: column;">
         <ion-item lines="none">
-          <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_GAGGIUINO.TITLE" | translate }}</span>
+          <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_GAGGIUINO.TITLE" | translate }}</span>
         </ion-item>
         <ion-item (click)="importShotFromGaggiuino()" button tappable>
           <ion-icon aria-hidden="true" name="cloud-download-outline" slot='start' />
@@ -289,7 +289,7 @@
   } @else if (isGaggimateDevice(preparationDevice)) {
     <ion-card class="popover" style="display:flex; flex-direction: column;">
       <ion-item lines="none">
-        <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_GAGGIMATE.TITLE" | translate }}</span>
+        <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_GAGGIMATE.TITLE" | translate }}</span>
       </ion-item>
       <ion-item (click)="importShotFromGaggimate()" button tappable>
         <ion-icon aria-hidden="true" name="cloud-download-outline" slot='start' />
@@ -299,7 +299,7 @@
   } @else if (isMove2Device(preparationDevice)) {
       <ion-card class="popover" style="display:flex; flex-direction: column;">
         <ion-item lines="none">
-          <span class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_MOVE2.TITLE" | translate }}</span>
+          <span role="heading" aria-level="2" class="ion-title ion-padding-top">{{ "PREPARATION_DEVICE.TYPE_MOVE2.TITLE" | translate }}</span>
         </ion-item>
         <ion-item lines="{{data.preparationDeviceBrew.params.remotePreinfusionEnable ? 'inset' : 'none'}}">
           <ion-checkbox [(ngModel)]="data.preparationDeviceBrew.params.remotePreinfusionEnable">{{

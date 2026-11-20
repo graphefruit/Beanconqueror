@@ -27,7 +27,7 @@
                 <ion-card>
                   @for (water of getOpen(); track water) {
                     <ion-item lines="none" tappable>
-                      <ion-checkbox [(ngModel)]="multipleSelection[water.config.uuid]" justify="start" label-placement="end"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-checkbox>
+                      <ion-checkbox [(ngModel)]="multipleSelection[water.config.uuid]" justify="start" label-placement="end"><div class="choice-label no-overflow-ellipsis">{{water.name}}</div></ion-checkbox>
                     </ion-item>
                   }
                 </ion-card>
@@ -39,7 +39,7 @@
               <ion-card>
                 @for (water of getFinished(); track water) {
                   <ion-item lines="none" tappable>
-                    <ion-checkbox [(ngModel)]="multipleSelection[water.config.uuid]" justify="start" label-placement="end"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-checkbox>
+                    <ion-checkbox [(ngModel)]="multipleSelection[water.config.uuid]" justify="start" label-placement="end"><div class="choice-label no-overflow-ellipsis">{{water.name}}</div></ion-checkbox>
                   </ion-item>
                 }
               </ion-card>
@@ -61,7 +61,7 @@
                   <ion-card>
                     @for (water of getOpen(); track water) {
                       <ion-item lines="none" tappable>
-                        <ion-radio justify="start" label-placement="end" value="{{water.config.uuid}}"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-radio>
+                        <ion-radio justify="start" label-placement="end" value="{{water.config.uuid}}"><div class="choice-label no-overflow-ellipsis">{{water.name}}</div></ion-radio>
                       </ion-item>
                     }
                   </ion-card>
@@ -75,7 +75,7 @@
                 <ion-card>
                   @for (water of getFinished(); track water) {
                     <ion-item lines="none" tappable>
-                      <ion-radio justify="start" label-placement="end" value="{{water.config.uuid}}"><h6 class="no-overflow-ellipsis">{{water.name}}</h6></ion-radio>
+                      <ion-radio justify="start" label-placement="end" value="{{water.config.uuid}}"><div class="choice-label no-overflow-ellipsis">{{water.name}}</div></ion-radio>
                     </ion-item>
                   }
                 </ion-card>

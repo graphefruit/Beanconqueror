@@ -14,7 +14,7 @@
   @for (key of credits | keys; track key) {
     <ion-card>
       <ion-item (click)="openLink($event,credits[key].LINK)" button tappable>
-        <ion-title>{{ credits[key].TITLE }}</ion-title>
+        <ion-title role="heading" aria-level="2">{{ credits[key].TITLE }}</ion-title>
         <ion-icon aria-hidden="true" name="chevron-forward-outline" slot="end" />
       </ion-item>
       <ion-item (click)="credits[key].ACTIVE = !credits[key].ACTIVE" button lines="none" tappable>

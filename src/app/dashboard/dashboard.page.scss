@@ -4,13 +4,13 @@
     padding: 12px;
     height: 100%;
 
-    ion-card-title {
+    .card-title-text {
       color: var(--ion-color-accent-secondary);
       font-size: var(--bq-type-headline);
       font-weight: bold;
     }
 
-    ion-card-subtitle {
+    .card-subtitle-text {
       color: var(--ion-text-color);
       font-size: var(--bq-type-caption);
       margin-top: 0px;

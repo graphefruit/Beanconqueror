@@ -22,11 +22,7 @@ import { IonButtons, IonTitle, IonToolbar } from '@ionic/angular';
         <ng-content select="[header-slot=end]" />
       </ion-buttons>
       <ion-title>
-        <span
-          [attr.role]="heading() ? 'heading' : null"
-          [attr.aria-level]="heading() ? 1 : null"
-          >{{ title() }}</span
-        >
+        <span role="heading" aria-level="1">{{ title() }}</span>
         @if (subtitle()) {
           <p class="subtitle">
             <span>{{ subtitle() }}</span>
@@ -39,9 +35,4 @@ import { IonButtons, IonTitle, IonToolbar } from '@ionic/angular';
 export class HeaderComponent {
   title = input.required<string>();
   subtitle = input<string>();
-  /**
-   * Exposes the title as the page's level-1 heading, for screens whose content
-   * is structured by headings below it.
-   */
-  heading = input(false);
 }

@@ -164,7 +164,7 @@
   </ion-row>
 </ion-footer>
 <ng-template #beanInformationCard let-bean='bean'>
-  <h6 class="no-overflow-ellipsis">
+  <div class="choice-label no-overflow-ellipsis">
     @if (bean.frozenId) {
       @if (bean?.frozenDate && bean?.unfrozenDate) {
         (
@@ -174,7 +174,7 @@
         )
       }&nbsp;
     }{{ bean.name }}
-  </h6>
+  </div>
   @if (bean?.frozenId) {
     <p>{{ "BEAN_DATA_FROZEN_ID" | translate }}: {{ bean.frozenId }}</p>
   }
