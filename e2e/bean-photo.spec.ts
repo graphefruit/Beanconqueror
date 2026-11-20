@@ -36,7 +36,13 @@ test('a user is told when the camera refuses to take a bean photo', async ({
   await page.getByRole('button', { name: 'Take photo' }).click();
 
   await expect(page.getByText('An error occurred')).toBeVisible();
-  await expect(page.getByText(/User denied access to camera/)).toBeVisible();
+  await expect(
+    page.getByText(
+      'Beanconqueror is not allowed to use the camera or your photos. You can allow access in the settings of your device.',
+    ),
+  ).toBeVisible();
+  // The technical cause is for the log only.
+  await expect(page.getByText(/User denied access to camera/)).toHaveCount(0);
   expect(await native.calls()).toContainEqual({
     plugin: 'Camera',
     method: 'getPhoto',

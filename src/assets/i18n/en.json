@@ -223,6 +223,8 @@
     "APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM": "App could not start correctly because of missing file system",
     "CARE": "Care",
     "ERROR_OCCURED": "An error occurred",
+    "PHOTO_COULD_NOT_BE_ADDED": "The photo could not be added.",
+    "PHOTO_ACCESS_DENIED": "Beanconqueror is not allowed to use the camera or your photos. You can allow access in the settings of your device.",
     "CSV_FILE_NOT_DOWNLOADED": "CSV file could not be downloaded!",
     "CSV_FILE_DOWNLOADED_SUCCESSFULLY": "CSV file '{{fileName}}' was successfully downloaded to your download folder!",
     "ADD_BREW": "Add brew",

@@ -932,11 +932,11 @@ export class UIExcel {
   ): Promise<void> {
     try {
       if (_read === 0) {
-        this.uiAlert.showMessage(
+        await this.uiAlert.showMessage(
           'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
           'IMPORT_UNSUCCESSFULLY',
-          'OK',
-          false,
+          undefined,
+          true,
         );
       } else if (_stored === 0) {
         if (!_storageReported) {
@@ -1170,11 +1170,12 @@ export class UIExcel {
         storageReported,
       );
     } catch (ex) {
-      this.uiAlert.showMessage(
-        ex.message,
-        this.translate.instant('IMPORT_UNSUCCESSFULLY'),
-        this.translate.instant('OK'),
-        false,
+      this.uiLog.error(`Excel import - Failed: ${ex?.message}`);
+      void this.uiAlert.showMessage(
+        'ERROR_OCCURED',
+        'IMPORT_UNSUCCESSFULLY',
+        undefined,
+        true,
       );
     }
   }
@@ -1453,11 +1454,12 @@ export class UIExcel {
         this.uiBeanHelper.showBeans(addedBeans);
       }
     } catch (ex) {
-      this.uiAlert.showMessage(
-        ex.message,
-        this.translate.instant('IMPORT_UNSUCCESSFULLY'),
-        this.translate.instant('OK'),
-        false,
+      this.uiLog.error(`Excel import - Failed: ${ex?.message}`);
+      void this.uiAlert.showMessage(
+        'ERROR_OCCURED',
+        'IMPORT_UNSUCCESSFULLY',
+        undefined,
+        true,
       );
     }
   }

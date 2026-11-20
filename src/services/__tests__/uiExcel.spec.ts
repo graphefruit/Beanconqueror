@@ -223,8 +223,16 @@ describe('UIExcel', () => {
   const importFailedMessage = [
     'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
     'IMPORT_UNSUCCESSFULLY',
-    'OK',
-    false,
+    undefined,
+    true,
+  ];
+
+  // The technical cause goes to the log only.
+  const unreadableFileMessage = [
+    'ERROR_OCCURED',
+    'IMPORT_UNSUCCESSFULLY',
+    undefined,
+    true,
   ];
 
   describe('importing roasted beans', () => {
@@ -724,11 +732,7 @@ describe('UIExcel', () => {
         expect(beanStorage.addMany).not.toHaveBeenCalled();
         expect(showBeans).not.toHaveBeenCalled();
         expect(showMessage).toHaveBeenCalledTimes(1);
-        expect(showMessage.calls.mostRecent().args.slice(1)).toEqual([
-          'IMPORT_UNSUCCESSFULLY',
-          'OK',
-          false,
-        ]);
+        expect(showMessage.calls.allArgs()).toEqual([importFailedMessage]);
       });
 
       it('reports a failure and stores nothing for a file that is not a workbook', async () => {
@@ -741,11 +745,7 @@ describe('UIExcel', () => {
         expect(saveSettings).not.toHaveBeenCalled();
         expect(showBeans).not.toHaveBeenCalled();
         expect(showMessage).toHaveBeenCalledTimes(1);
-        expect(showMessage.calls.mostRecent().args.slice(1)).toEqual([
-          'IMPORT_UNSUCCESSFULLY',
-          'OK',
-          false,
-        ]);
+        expect(showMessage.calls.allArgs()).toEqual([unreadableFileMessage]);
       });
 
       it('reports a failure and stores nothing without a file', async () => {
@@ -765,9 +765,8 @@ describe('UIExcel', () => {
 
         expect(beanStorage.addMany).not.toHaveBeenCalled();
         expect(saveSettings).not.toHaveBeenCalled();
-        expect(showMessage.calls.allArgs()).toEqual([
-          ['no id', 'IMPORT_UNSUCCESSFULLY', 'OK', false],
-        ]);
+        expect(showMessage.calls.allArgs()).toEqual([unreadableFileMessage]);
+        expect(uiLog.errors).toEqual(['Excel import - Failed: no id']);
       });
 
       it('keeps and reports the imported beans when the settings cannot be saved', async () => {
@@ -998,11 +997,21 @@ describe('UIExcel', () => {
 
       expect(greenBeanStorage.addMany).not.toHaveBeenCalled();
       expect(showMessage).toHaveBeenCalledTimes(1);
-      expect(showMessage.calls.mostRecent().args.slice(1)).toEqual([
-        'IMPORT_UNSUCCESSFULLY',
-        'OK',
-        false,
-      ]);
+      expect(showMessage.calls.allArgs()).toEqual([importFailedMessage]);
+    });
+
+    it('reports a file that is not a workbook and leaves the cause to the log', async () => {
+      const brokenZip = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 1, 2, 3, 4])
+        .buffer;
+
+      await expectAsync(
+        excel.importGreenBeansByExcel(brokenZip),
+      ).toBeResolved();
+
+      expect(greenBeanStorage.addMany).not.toHaveBeenCalled();
+      expect(showMessage.calls.allArgs()).toEqual([unreadableFileMessage]);
+      expect(uiLog.errors.length).toBe(1);
+      expect(uiLog.errors[0]).toMatch(/^Excel import - Failed: ./);
     });
 
     it('keeps and reports the imported green beans when the settings cannot be saved', async () => {

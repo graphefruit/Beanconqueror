@@ -12,6 +12,7 @@ import { Brew } from '../classes/brew/brew';
 import { Graph } from '../classes/graph/graph';
 import { UIAlert } from './uiAlert';
 import { UIFileHelper } from './uiFileHelper';
+import { UILog } from './uiLog';
 
 /**
  * Handles every helping functionalities
@@ -24,6 +25,7 @@ export class UIGraphHelper {
   private readonly uiAlert = inject(UIAlert);
   private readonly translate = inject(TranslateService);
   private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiLog = inject(UILog);
 
   public async addGraph() {
     const modal = await this.modalController.create({
@@ -85,8 +87,9 @@ export class UIGraphHelper {
       const data = await this.uiFileHelper.readJSONFile(uri);
       return data;
     } catch (error) {
-      this.uiAlert.showMessage(
-        this.translate.instant('ERROR_ON_FILE_READING') + error,
+      this.uiLog.error('Graph file could not be read', error);
+      void this.uiAlert.showMessage(
+        this.translate.instant('ERROR_ON_FILE_READING'),
       );
     }
   }

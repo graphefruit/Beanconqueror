@@ -396,6 +396,60 @@ const KEY = /^[A-Z0-9_]+(\.[A-Z0-9_]+)*$/;
 const MESSAGE_CALL =
   /\.(?:showInfoToast|showInfoToastBottom|showMessage|showLoadingSpinner|setLoadingSpinnerMessage|showLoadingMessage|showConfirm)\(\s*(['`])([^'`]*)\1/g;
 
+/** The start of every call that shows or speaks a message. */
+const MESSAGE_CALL_START =
+  /\.(?:showInfoToast|showInfoToastBottom|showMessage|showLoadingSpinner|setLoadingSpinnerMessage|showLoadingMessage|showConfirm)\(/g;
+
+/** The index of the quote that ends the text starting at `start`. */
+function endOfText(source: string, start: number): number {
+  let i = start + 1;
+  while (i < source.length && source[i] !== source[start]) {
+    i += source[i] === '\\' ? 2 : 1;
+  }
+  return i;
+}
+
+/**
+ * The code of the arguments of the call whose "(" ends at `start`: the
+ * contents of quoted texts are left out, the expressions in templates kept.
+ */
+function argumentCode(source: string, start: number): string {
+  let code = '';
+  let depth = 1;
+  for (let i = start; i < source.length && depth > 0; i++) {
+    const char = source[i];
+    if (char === "'" || char === '"' || char === '`') {
+      const end = endOfText(source, i);
+      for (const part of source.slice(i, end).matchAll(/\$\{([^}]*)\}/g)) {
+        code += char === '`' ? ` ${part[1]} ` : '';
+      }
+      i = end;
+    } else {
+      depth += char === '(' ? 1 : char === ')' ? -1 : 0;
+      code += char;
+    }
+  }
+  return code;
+}
+
+/** Caught errors and what is made of them for a message. */
+const TECHNICAL_ERROR =
+  /JSON\.stringify\(|(?<![\w.])_?(?:e|ex|err|error|exception)\b/;
+
+/** A method of the class that is given the error chooses a key from it. */
+const KEY_FROM_ERROR = /this\.\w+\(\s*_?\w+\s*\)/g;
+
+/**
+ * Messages that still show the technical cause. Importing a backup reports
+ * it on purpose (settingsPageFiles.spec.ts); whether it stays is for the
+ * maintainer to decide.
+ */
+const KNOWN_TECHNICAL_MESSAGES = [
+  'src/app/settings/settings.page.ts: this.translate.instant() + error , )',
+  'src/app/settings/settings.page.ts: this.translate.instant() + error , )',
+  'src/app/settings/settings.page.ts: this.translate.instant() + + JSON.stringify(ex), )',
+];
+
 const LITERAL_KEY_USES = [
   /(['"])([^'"\n{}]+?)\1\s*\|\s*translate/g,
   /translate\.(?:instant|get)\(\s*(['`])([^'`\n]+?)\1/g,
@@ -447,6 +501,24 @@ base.describe('texts in the source', () => {
     }
     expect(fixed).toEqual([]);
   });
+
+  base(
+    'messages for users leave the technical cause of an error to the log',
+    () => {
+      const technical: string[] = [];
+      for (const { path, text: source } of sources(/\.ts$/)) {
+        const code = withoutComments(source);
+        for (const match of code.matchAll(MESSAGE_CALL_START)) {
+          const start = match.index + match[0].length;
+          const args = argumentCode(code, start);
+          if (TECHNICAL_ERROR.test(args.replace(KEY_FROM_ERROR, ''))) {
+            technical.push(`${path}: ${args.replace(/\s+/g, ' ').trim()}`);
+          }
+        }
+      }
+      expect(technical).toEqual(KNOWN_TECHNICAL_MESSAGES);
+    },
+  );
 
   base('choices in a dialog name their buttons in the app language', () => {
     const untranslated: string[] = [];

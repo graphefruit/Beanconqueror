@@ -223,6 +223,8 @@
     "APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM": "Die App konnte nicht korrekt gestartet werden, da das Dateisystem nicht verfügbar ist",
     "CARE": "Achtung",
     "ERROR_OCCURED": "Fehler aufgetreten",
+    "PHOTO_COULD_NOT_BE_ADDED": "Das Foto konnte nicht hinzugefügt werden.",
+    "PHOTO_ACCESS_DENIED": "Beanconqueror darf die Kamera oder deine Fotos nicht verwenden. Du kannst den Zugriff in den Einstellungen deines Geräts erlauben.",
     "CSV_FILE_NOT_DOWNLOADED": "CSV-Datei kann leider nicht heruntergeladen werden!",
     "CSV_FILE_DOWNLOADED_SUCCESSFULLY": "CSV-Datei '{{fileName}}' wurde erfolgreich in den Download-Ordner heruntergeladen!",
     "ADD_BREW": "Bezug hinzufügen",
