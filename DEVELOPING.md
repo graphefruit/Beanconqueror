@@ -146,8 +146,15 @@ their own. A second live region makes screen readers speak a message twice, and 
 live regions outside an open dialog unless they are stacked above it.
 
 Info toasts stay 2 s, or 7 s while VoiceOver or TalkBack is on (`@capacitor/screen-reader`, read
-once at start and kept current through its `stateChange` event; native only). Toasts with a
-duration of their own keep it.
+once at start and kept current through its `stateChange` event by `ScreenReaderState`,
+`src/services/a11y/screen-reader-state.service.ts`; native only). Toasts with a duration of their
+own keep it.
+
+The spoken brew values (text to speech, iOS only: weight every `text_to_speech_interval_rate` ms,
+time every 5 s) go to VoiceOver as announcements while it is on, so its voice and rate apply and
+a new announcement replaces the one still being spoken; otherwise `speechSynthesis` speaks them
+with the rate and pitch from the settings (`src/services/textToSpeech/text-to-speech.service.ts`).
+Android never calls the plugin's `speak`, which starts a new TTS engine on every call.
 
 #### Native plugins
 
