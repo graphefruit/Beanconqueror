@@ -1,7 +1,10 @@
 import { fakeAsync, flushMicrotasks, TestBed } from '@angular/core/testing';
 
+import { Platform } from '@ionic/angular';
+
 import { Capacitor } from '@capacitor/core';
 import { ScreenReader, StateChangeListener } from '@capacitor/screen-reader';
+import { Subject } from 'rxjs';
 
 import { UILog } from '../../uiLog';
 import {
@@ -12,6 +15,7 @@ import {
 
 describe('ScreenReaderState', () => {
   let stateChange: StateChangeListener | undefined;
+  let resume: Subject<void>;
 
   function plugin(enabled: Promise<{ value: boolean }>) {
     stateChange = undefined;
@@ -28,8 +32,12 @@ describe('ScreenReaderState', () => {
   }
 
   function create(screenReader: ScreenReaderSource | null): ScreenReaderState {
+    resume = new Subject<void>();
     TestBed.configureTestingModule({
-      providers: [{ provide: SCREEN_READER, useValue: screenReader }],
+      providers: [
+        { provide: SCREEN_READER, useValue: screenReader },
+        { provide: Platform, useValue: { resume } },
+      ],
     });
     return TestBed.inject(ScreenReaderState);
   }
@@ -57,6 +65,23 @@ describe('ScreenReaderState', () => {
     expect(state.on()).toBeTrue();
 
     stateChange({ value: false });
+    expect(state.on()).toBeFalse();
+  }));
+
+  it('reads the state again when the app comes back to the foreground', fakeAsync(() => {
+    const screenReader = plugin(Promise.resolve({ value: false }));
+    const state = create(screenReader);
+    flushMicrotasks();
+
+    // VoiceOver switched on in the Settings app; the event got lost meanwhile.
+    screenReader.isEnabled.and.resolveTo({ value: true });
+    resume.next();
+    flushMicrotasks();
+    expect(state.on()).toBeTrue();
+
+    screenReader.isEnabled.and.resolveTo({ value: false });
+    resume.next();
+    flushMicrotasks();
     expect(state.on()).toBeFalse();
   }));
 
