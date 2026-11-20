@@ -1,13 +1,11 @@
-import { inject, InjectionToken, Service } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
 import { ToastButton, ToastController } from '@ionic/angular';
 
-import { Capacitor } from '@capacitor/core';
-import { ScreenReader, ScreenReaderPlugin } from '@capacitor/screen-reader';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Announcer } from './a11y/announcer.service';
-import { UILog } from './uiLog';
+import { ScreenReaderState } from './a11y/screen-reader-state.service';
 
 export const INFO_TOAST_DURATION_MS = 2000;
 
@@ -18,23 +16,6 @@ export const INFO_TOAST_DURATION_MS = 2000;
  * to swipe to the toast or its close button (WCAG 2.2.1).
  */
 export const INFO_TOAST_DURATION_SCREEN_READER_MS = 7000;
-
-export type ScreenReaderSource = Pick<
-  ScreenReaderPlugin,
-  'isEnabled' | 'addListener'
->;
-
-/**
- * The screen reader plugin, or null where it cannot tell (the web build).
- * Capacitor plugin proxies cannot be spied on; unit tests replace this token.
- */
-export const SCREEN_READER = new InjectionToken<ScreenReaderSource | null>(
-  'SCREEN_READER',
-  {
-    providedIn: 'root',
-    factory: () => (Capacitor.isNativePlatform() ? ScreenReader : null),
-  },
-);
 
 /**
  * Live regions in the shadow root of an Ionic toast. Ionic 9 renders one, the
@@ -73,14 +54,7 @@ export class UIToast {
   private readonly translate = inject(TranslateService);
   private readonly toastController = inject(ToastController);
   private readonly announcer = inject(Announcer);
-  private readonly uiLog = inject(UILog);
-
-  /** Read once and then kept current, so a toast never waits for the plugin. */
-  private screenReaderOn = false;
-
-  constructor() {
-    void this.followScreenReader(inject(SCREEN_READER));
-  }
+  private readonly screenReader = inject(ScreenReaderState);
 
   /**
    * Only the first message is announced: one announcement per second of the
@@ -170,25 +144,9 @@ export class UIToast {
   }
 
   private infoToastDuration(): number {
-    return this.screenReaderOn
+    return this.screenReader.on()
       ? INFO_TOAST_DURATION_SCREEN_READER_MS
       : INFO_TOAST_DURATION_MS;
-  }
-
-  private async followScreenReader(
-    screenReader: ScreenReaderSource | null,
-  ): Promise<void> {
-    if (screenReader === null) {
-      return;
-    }
-    try {
-      await screenReader.addListener('stateChange', ({ value }) => {
-        this.screenReaderOn = value;
-      });
-      this.screenReaderOn = (await screenReader.isEnabled()).value;
-    } catch (error) {
-      this.uiLog.warn('Screen reader state unavailable', error);
-    }
   }
 
   private present(toast: HTMLIonToastElement, message: string): Promise<void> {

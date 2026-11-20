@@ -7,8 +7,7 @@ import {
 
 import { ToastButton, ToastController } from '@ionic/angular';
 
-import { Capacitor } from '@capacitor/core';
-import { ScreenReader, StateChangeListener } from '@capacitor/screen-reader';
+import { StateChangeListener } from '@capacitor/screen-reader';
 import { TranslateService } from '@ngx-translate/core';
 
 import {
@@ -16,12 +15,13 @@ import {
   LIVE_REGION,
   LiveRegion,
 } from '../a11y/live-region';
-import { UILog } from '../uiLog';
+import {
+  SCREEN_READER,
+  ScreenReaderSource,
+} from '../a11y/screen-reader-state.service';
 import {
   INFO_TOAST_DURATION_MS,
   INFO_TOAST_DURATION_SCREEN_READER_MS,
-  SCREEN_READER,
-  ScreenReaderSource,
   UIToast,
 } from '../uiToast';
 
@@ -226,9 +226,12 @@ describe('UIToast', () => {
   describe('with a screen reader', () => {
     let stateChange: StateChangeListener | undefined;
 
-    function screenReader(enabled: Promise<{ value: boolean }>) {
+    function screenReader(
+      enabled: Promise<{ value: boolean }>,
+    ): ScreenReaderSource {
       stateChange = undefined;
       return {
+        speak: jasmine.createSpy('speak'),
         isEnabled: jasmine.createSpy('isEnabled').and.returnValue(enabled),
         addListener: jasmine
           .createSpy('addListener')
@@ -255,17 +258,16 @@ describe('UIToast', () => {
       ]);
     }));
 
-    it('shows info toasts longer while it is on, reading its state once', fakeAsync(() => {
-      const plugin = screenReader(Promise.resolve({ value: true }));
-      const uiToast = createService(plugin);
+    it('shows info toasts longer while it is on', fakeAsync(() => {
+      const uiToast = createService(
+        screenReader(Promise.resolve({ value: true })),
+      );
       flushMicrotasks();
 
       expect(durationsOfInfoToasts(uiToast)).toEqual([
         INFO_TOAST_DURATION_SCREEN_READER_MS,
         INFO_TOAST_DURATION_SCREEN_READER_MS,
       ]);
-      durationsOfInfoToasts(uiToast);
-      expect(plugin.isEnabled).toHaveBeenCalledTimes(1);
     }));
 
     it('follows the screen reader being turned on and off', fakeAsync(() => {
@@ -291,21 +293,6 @@ describe('UIToast', () => {
       ]);
     }));
 
-    it('keeps the short duration when the state cannot be read', fakeAsync(() => {
-      const uiToast = createService(
-        screenReader(Promise.reject(new Error('unavailable'))),
-      );
-      const warn = spyOn(TestBed.inject(UILog), 'warn');
-      flushMicrotasks();
-
-      expect(warn).toHaveBeenCalledTimes(1);
-
-      expect(durationsOfInfoToasts(uiToast)).toEqual([
-        INFO_TOAST_DURATION_MS,
-        INFO_TOAST_DURATION_MS,
-      ]);
-    }));
-
     it('does not change the duration of the automatic save countdown', fakeAsync(() => {
       const uiToast = createService(
         screenReader(Promise.resolve({ value: true })),
@@ -319,20 +306,5 @@ describe('UIToast', () => {
       toasts[0].close('cancel');
       tick(3000);
     }));
-  });
-});
-
-describe('SCREEN_READER', () => {
-  it('is not used on the web', () => {
-    spyOn(Capacitor, 'isNativePlatform').and.returnValue(false);
-
-    expect(TestBed.inject(SCREEN_READER)).toBeNull();
-  });
-
-  it('is the screen reader plugin on a device', () => {
-    spyOn(Capacitor, 'isNativePlatform').and.returnValue(true);
-
-    // Plugin proxies answer every property, so Jasmine cannot print them.
-    expect(TestBed.inject(SCREEN_READER) === ScreenReader).toBeTrue();
   });
 });
