@@ -25,6 +25,7 @@ import {
 import { IonContent } from '@ionic/angular';
 
 import {
+  elementScroll,
   injectVirtualizer,
   measureElement,
   observeElementOffset,
@@ -238,6 +239,19 @@ export class VirtualListComponent<T> {
               report(offset, isScrolling);
             }
           }),
+        // A correction for a row measured above the screen moves the
+        // content by the change of its height. The virtualizer adds it to the
+        // position of the last scroll event; a position written since (by
+        // `revealFocus`, a width change or anyone else in this frame) would
+        // be undone, so it is added to the current one.
+        scrollToFn: (offset, options, instance) =>
+          elementScroll(
+            options.adjustments && instance.scrollElement
+              ? instance.scrollElement.scrollTop
+              : offset,
+            options,
+            instance,
+          ),
         scrollMargin: this.scrollMargin(),
         scrollPaddingStart: this.headHeight(),
         // The measuring, the correction of the scroll position it causes

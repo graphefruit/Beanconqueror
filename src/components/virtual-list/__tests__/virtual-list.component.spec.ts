@@ -343,6 +343,18 @@ describe('VirtualListComponent', () => {
     expect(scroller().scrollTop).toBe(3100);
   });
 
+  it('keeps a position written in the frame a row above grows', async () => {
+    await scrollTo(3000);
+
+    // Written before the browser reports it: the correction adds to it.
+    await frame();
+    document.getElementById('item-28').style.height = '200px';
+    scroller().scrollTop = 3500;
+    await settle();
+
+    expect(scroller().scrollTop).toBe(3600);
+  });
+
   describe('turned or resized', () => {
     // Rows a quarter as high as they are wide: 100px on the 400px screen.
     const estimate = 130;
