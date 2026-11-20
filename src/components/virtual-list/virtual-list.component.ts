@@ -170,6 +170,8 @@ export class VirtualListComponent<T> {
   private readonly scrollMargin = signal(0);
   /** The height of the head, which covers the top of the scroller. */
   private readonly headHeight = signal(0);
+  /** The row `scrollToKey` brings on the screen once the list is shown. */
+  private keyToReveal: RowKey | null = null;
 
   private readonly virtualizer = injectVirtualizer<HTMLElement, HTMLElement>(
     () => {
@@ -201,6 +203,9 @@ export class VirtualListComponent<T> {
           observeElementRect(instance, (rect) => {
             if (rect.height > 0) {
               report(rect);
+              if (this.keyToReveal !== null) {
+                this.afterRender(() => this.revealKey());
+              }
             }
           }),
         observeElementOffset: (instance, report) =>
@@ -321,6 +326,7 @@ export class VirtualListComponent<T> {
 
   /** Goes back to `anchor` once the list shows its current items. */
   public restore(anchor: ListAnchor | null): void {
+    this.keyToReveal = null;
     this.afterRender(() => {
       const scroller = this.scroller();
       if (!scroller) {
@@ -345,33 +351,16 @@ export class VirtualListComponent<T> {
   /**
    * Brings the row with `key` on the screen once the list shows its current
    * items, clear of the head and the add button; a row that is already there
-   * stays where it is (see `reveal`).
+   * stays where it is (see `reveal`). A hidden list (another tab) does so
+   * when it is shown again.
    */
   public scrollToKey(key: RowKey): void {
-    this.afterRender(() => {
-      const scroller = this.scroller();
-      const index = this.indexOf(key);
-      const row = this.virtualizer().measurementsCache[index];
-      if (!scroller || !row) {
-        return;
-      }
-      const top = scroller.scrollTop;
-      const addButtonRoom = parseFloat(
-        getComputedStyle(this.host.nativeElement).paddingBottom,
-      );
-      const move = reveal(row, {
-        start: top + this.headHeight(),
-        end: top + scroller.clientHeight - addButtonRoom,
-      });
-      if (move === 'start') {
-        this.virtualizer.scrollToIndex(index, { align: 'start' });
-      } else if (move !== null) {
-        this.virtualizer.scrollToOffset(top + move);
-      }
-    });
+    this.keyToReveal = key;
+    this.afterRender(() => this.revealKey());
   }
 
   public scrollToTop(): void {
+    this.keyToReveal = null;
     this.afterRender(() => this.virtualizer.scrollToOffset(0));
   }
 
@@ -392,6 +381,32 @@ export class VirtualListComponent<T> {
         }
       }
     });
+  }
+
+  private revealKey(): void {
+    const scroller = this.scroller();
+    if (this.keyToReveal === null || !scroller || scroller.clientHeight === 0) {
+      return;
+    }
+    const index = this.indexOf(this.keyToReveal);
+    this.keyToReveal = null;
+    const row = this.virtualizer().measurementsCache[index];
+    if (!row) {
+      return;
+    }
+    const top = scroller.scrollTop;
+    const addButtonRoom = parseFloat(
+      getComputedStyle(this.host.nativeElement).paddingBottom,
+    );
+    const move = reveal(row, {
+      start: top + this.headHeight(),
+      end: top + scroller.clientHeight - addButtonRoom,
+    });
+    if (move === 'start') {
+      this.virtualizer.scrollToIndex(index, { align: 'start' });
+    } else if (move !== null) {
+      this.virtualizer.scrollToOffset(top + move);
+    }
   }
 
   private indexOf(key: RowKey): number {

@@ -197,6 +197,19 @@ describe('VirtualListComponent', () => {
     expect(scroller().scrollTop).toBe(offset);
   });
 
+  it('brings a row on the screen that was asked for while hidden', async () => {
+    scroller().style.display = 'none';
+    await settle();
+    host.list().scrollToKey('item-50');
+    await settle();
+    scroller().style.display = '';
+    await settle();
+
+    expect(shown()).toContain('item-50');
+    expect(top('item-50')).toBeGreaterThanOrEqual(HEAD);
+    expect(top('item-50')).toBeLessThan(SCREEN);
+  });
+
   it('brings a row cut off by the add button above it', async () => {
     // The add button and its margins cover the bottom of the screen.
     const clear = SCREEN - (56 + 2 * 16);
