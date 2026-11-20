@@ -41,6 +41,7 @@ function items(count: number, height = 100): Item[] {
         [items]="items()"
         [itemKey]="key"
         [estimateSize]="estimate()"
+        [clearOfAddButton]="clearOfAddButton()"
       >
         <div virtualListHead style="height: ${HEAD}px">Head</div>
         <ng-template [appVirtualRow]="items()" let-item>
@@ -64,6 +65,7 @@ function items(count: number, height = 100): Item[] {
 class HostComponent {
   public readonly items = signal(items(100));
   public readonly estimate = signal(100);
+  public readonly clearOfAddButton = signal(true);
   public readonly key = (item: Item) => item.id;
   public readonly list =
     viewChild.required<VirtualListComponent<Item>>(VirtualListComponent);
@@ -115,6 +117,13 @@ describe('VirtualListComponent', () => {
     expect(top('item-0')).toBe(HEAD);
     // The list ends with room for the add button.
     expect(scroller().scrollHeight).toBe(HEAD + 100 * 100 + 56 + 2 * 16);
+  });
+
+  it('ends with the last row on a page without add button', async () => {
+    host.clearOfAddButton.set(false);
+    await settle();
+
+    expect(scroller().scrollHeight).toBe(HEAD + 100 * 100);
   });
 
   it('tells screen readers the size of the whole list', async () => {

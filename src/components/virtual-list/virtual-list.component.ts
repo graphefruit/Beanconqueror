@@ -62,8 +62,9 @@ export class VirtualRowDirective<T> {
  * A list inside an `ion-content` that renders only the rows near the screen.
  * The content scrolls; each row is measured as it is rendered and again
  * whenever its height changes (photos, groups opened, larger text), and the
- * heights are kept per key while the items are rebuilt. The list ends with
- * room for the floating add button, so the last row can be read and tapped.
+ * heights are kept per key while the items are rebuilt. On a page with a
+ * floating add button the list ends with room for it, so the last row can be
+ * read and tapped.
  *
  * Content marked `virtualListHead` (segments, search) stays at the top while
  * the rows scroll under it; other content is shown between it and the rows.
@@ -72,10 +73,15 @@ export class VirtualRowDirective<T> {
   selector: 'app-virtual-list',
   imports: [NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { 'data-virtual-list': '' },
+  host: {
+    'data-virtual-list': '',
+    '[class.clear-of-add-button]': 'clearOfAddButton()',
+  },
   styles: `
     :host {
       display: block;
+    }
+    :host(.clear-of-add-button) {
       /* 56px is the size of Ionic's floating button. */
       padding-bottom: calc(56px + 2 * var(--bq-space-4));
     }
@@ -142,6 +148,8 @@ export class VirtualListComponent<T> {
    * height when it changes; `measure` forgets them.
    */
   public readonly estimateSize = input.required<number>();
+  /** Whether a floating add button lies over the end of the list. */
+  public readonly clearOfAddButton = input(true);
 
   protected readonly rowTemplate =
     contentChild.required<VirtualRowDirective<T>>(VirtualRowDirective);
