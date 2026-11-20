@@ -25,6 +25,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { RoastingMachineInformationCardComponent } from '../../../components/roasting-machine-information-card/roasting-machine-information-card.component';
+import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { ROASTING_MACHINE_ACTION } from '../../../enums/roasting-machine/roastingMachineAction';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -39,6 +40,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   styleUrls: ['./roasting-machine.page.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     RoastingMachineInformationCardComponent,
     TranslatePipe,

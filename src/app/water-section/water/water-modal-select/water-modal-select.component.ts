@@ -30,6 +30,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Water } from '../../../../classes/water/water';
 import { HeaderDismissButtonComponent } from '../../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../../components/header/header.component';
+import { TabPanelDirective } from '../../../../directive/tab-panel.directive';
 import { UIWaterStorage } from '../../../../services/uiWaterStorage';
 
 @Component({
@@ -38,6 +39,7 @@ import { UIWaterStorage } from '../../../../services/uiWaterStorage';
   styleUrls: ['./water-modal-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     TranslatePipe,
     IonHeader,

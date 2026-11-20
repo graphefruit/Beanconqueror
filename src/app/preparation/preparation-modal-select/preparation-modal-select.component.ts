@@ -38,6 +38,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { PREPARATION_FUNCTION_PIPE_ENUM } from '../../../enums/preparations/preparationFunctionPipe';
 import { PREPARATION_SEGMENT } from '../../../enums/preparations/preparationSegment';
 import { FormatDatePipe } from '../../../pipes/formatDate';
@@ -54,6 +55,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   styleUrls: ['./preparation-modal-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     NgTemplateOutlet,
     AsyncImageComponent,

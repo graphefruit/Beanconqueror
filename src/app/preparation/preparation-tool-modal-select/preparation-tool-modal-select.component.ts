@@ -37,6 +37,7 @@ import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { SearchbarNameDirective } from '../../../directive/searchbar-name.directive';
+import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 
 @Component({
@@ -45,6 +46,7 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
   styleUrls: ['./preparation-tool-modal-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     TranslatePipe,
     IonHeader,

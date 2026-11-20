@@ -138,6 +138,35 @@ for (const language of ['en', 'de'] as const) {
           (tab) => tab.ariaControlsElements?.[0]?.getAttribute('role') ?? null,
         ),
       ).toBe('tabpanel');
+
+      await show(page, '/roasting-section/roasting-machine');
+      await expect(
+        page
+          .locator('app-roasting-machine')
+          .getByRole('tabpanel', { name: t('CURRENT') }),
+      ).toBeVisible();
+
+      await show(page, '/home/brews');
+      await visible(page.getByRole('button', { name: t('ADD_BREW') })).click();
+      for (const [field, title] of [
+        ['BREW_DATA_MILL', 'CHOOSE_MILL'],
+        ['BREW_DATA_PREPARATION_METHOD', 'CHOOSE_PREPARATION'],
+      ]) {
+        await visible(page.locator('ion-select').filter({ hasText: t(field) }))
+          .first()
+          .click();
+        const chooser = openModal(page).last();
+        await expect(
+          chooser.getByRole('heading', { level: 1, name: t(title) }),
+        ).toBeVisible();
+        await expect(
+          chooser.getByRole('tabpanel', { name: t('CURRENT') }),
+        ).toBeVisible();
+        await page.keyboard.press('Escape');
+        await expect(
+          chooser.getByRole('heading', { level: 1, name: t(title) }),
+        ).toBeHidden();
+      }
     });
 
     test('the tab bars name and select their tabs and are reachable by keyboard', async ({
@@ -221,6 +250,20 @@ for (const language of ['en', 'de'] as const) {
       await expect(visible(page.getByRole('dialog'))).toHaveCount(1);
       await page.keyboard.press('Escape');
       await expect(page.getByRole('dialog')).toHaveCount(0);
+      await expect(options).toBeFocused();
+
+      // A tap in WebKit, or VoiceOver activating the button, clicks without
+      // focusing; Ionic then has no control to give focus back to.
+      await options.blur();
+      await options.dispatchEvent('click');
+      await page
+        .getByRole('button', { name: t('DELETE'), exact: true })
+        .dispatchEvent('click');
+      await page
+        .getByRole('alertdialog')
+        .getByRole('button', { name: t('NO'), exact: true })
+        .dispatchEvent('click');
+      await expect(page.getByRole('alertdialog')).toHaveCount(0);
       await expect(options).toBeFocused();
 
       await options.click();

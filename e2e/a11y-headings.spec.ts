@@ -181,12 +181,15 @@ for (const language of ['en', 'de'] as const) {
         if (card) {
           const cards = visible(page.locator(card));
           await expect(cards.first()).toBeVisible();
-          for (const each of await cards.all()) {
-            await expect(
-              each.getByRole('heading', { level: 2 }),
-              `each card on ${route} has its title as the one level-2 heading`,
-            ).toHaveCount(1);
-          }
+          // The virtual scroll may recycle a card while the loop runs.
+          await expect(async () => {
+            for (const each of await cards.all()) {
+              await expect(
+                each.getByRole('heading', { level: 2 }),
+                `each card on ${route} has its title as the one level-2 heading`,
+              ).toHaveCount(1, { timeout: 1000 });
+            }
+          }).toPass();
         }
       }
     });

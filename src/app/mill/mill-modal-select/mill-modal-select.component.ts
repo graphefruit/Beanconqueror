@@ -35,6 +35,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { MILL_FUNCTION_PIPE_ENUM } from '../../../enums/mills/millFunctionPipe';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { MillFunction } from '../../../pipes/mill/millFunction';
@@ -49,6 +50,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   styleUrls: ['./mill-modal-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    TabPanelDirective,
     FormsModule,
     NgTemplateOutlet,
     AsyncImageComponent,
