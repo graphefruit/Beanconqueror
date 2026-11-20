@@ -1133,27 +1133,32 @@ into pure pipes.
 
 ### Virtual lists
 
-Long lists render only the rows near the screen. The bean list uses the
-building block `app-virtual-list` (`src/components/virtual-list/`) on
-`@tanstack/angular-virtual`: the page's `ion-content` scrolls, every row is
-measured by a `ResizeObserver` (photos, opened groups, larger text, the
-customizing) and its height is kept per key (`itemKey`) while the items are
-rebuilt, so a reload leaves the list where it is. Content marked
-`virtualListHead` (segments, search) stays at the top; the list ends with room
-for the floating add button. `scrollToKey`, `scrollToTop` and
-`anchor()`/`restore()` (pure functions in `virtual-list-anchor.ts`) move it;
-`scrollToKey` leaves a row that is shown and brings one cut off clear of the
-head and the add button. A changed `estimateSize` keeps the measured heights
-(each segment its own); `measure()` forgets them when all rows change height,
-as on collapsing. The host is marked `data-virtual-list` for the tests (`e2e/support/virtual-list.ts`).
+Long lists render only the rows near the screen. Every list (beans, brews,
+the profile lists, barista mode brews and the lists in dialogs: bean chooser,
+bean lists of a group and of frozen beans, brews of an entry, reference graph
+chooser, shot imports) uses the building block `app-virtual-list`
+(`src/components/virtual-list/`) on `@tanstack/angular-virtual`: the nearest
+`ion-content` scrolls (in a dialog the dialog's), every row is measured by a
+`ResizeObserver` (photos, flow graphs drawn later, opened groups, larger text,
+the customizing) and its height is kept per key (`itemKey`) while the items
+are rebuilt, so a reload leaves the list where it is. Content marked
+`virtualListHead` (segments, search) stays at the top; a list on a page with
+a floating add button ends with room for it (`clearOfAddButton`, on by
+default). `scrollToKey`, `scrollToTop` and `anchor()`/`restore()` (pure
+functions in `virtual-list-anchor.ts`) move it; `scrollToKey` leaves a row
+that is shown and brings one cut off clear of the head and the add button. A
+changed `estimateSize` keeps the measured heights (each segment its own);
+`measure()` forgets them when all rows change height, as on collapsing.
+`endReached` reports that the last row is rendered, for lists that load in
+pages (Meticulous shot import). The rows form a list for screen readers
+(`role="list"`, each row `listitem` with `aria-setsize`/`aria-posinset` of all
+items). The host is marked `data-virtual-list` for the tests
+(`e2e/support/virtual-list.ts`).
 
-The other lists (brews, preparations, grinders, water, green beans, graphs,
-barista mode brews and several selection modals) still use the third-party
-`ag-virtual-scroll` (`~1.22.1`, `package.json`) until they move to the building
-block. It updates its rows on scroll events of its own and measures a row only
-on the scroll after the one that rendered it, so list tests must scroll to
-reach entries, and its behaviour with dynamic row heights (larger text,
-tablets) has to be checked when a list changes.
+Bean and brew list keep each segment's place in memory and bring the card of
+an action, edit or new entry on the screen; search, filter, sort and
+collapsing start from the top. The other lists start from the top on a
+segment change, a search or a sort.
 
 ## 6. Target picture for new code
 

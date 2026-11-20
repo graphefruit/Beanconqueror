@@ -106,6 +106,10 @@ pnpm exec playwright show-report      # inspect traces and screenshots of failur
 - Toasts and loading messages are announced from a visually hidden live region
   (`.cdk-live-announcer-element`), which holds their text for a while, so `getByText` finds a
   toast's text twice. Use `toast()` from `e2e/support/toast.ts`.
+- Lists render only the rows near the screen (`app-virtual-list`, see `docs/ARCHITECTURE.md`):
+  a row out of sight is not in the page. Find a list by `VIRTUAL_LIST` and scroll it with
+  `scrollToEnd()` from `e2e/support/virtual-list.ts`; the scroller is the `ion-content` around
+  it. Each row is a `listitem` with `aria-setsize` and `aria-posinset` of the whole list.
 - Use synthetic data only; never real user exports. Traces and screenshots are uploaded as CI
   artifacts.
 - Browser emulation does not replace testing on a real device (BLE, NFC, camera, filesystem).

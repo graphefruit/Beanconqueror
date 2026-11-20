@@ -366,8 +366,8 @@ export interface ScrollResult {
 
 /**
  * Scrolls the virtual list that contains `firstItemId` down by `stepScreens` screen heights per
- * frame until the element `lastItemId` is rendered at the bottom, like a fast fling. The list
- * scrolls itself (`ag-virtual-scroll`) or is the building block, whose `ion-content` scrolls.
+ * frame until the element `lastItemId` is rendered at the bottom, like a fast fling. The list is
+ * the building block `app-virtual-list`, whose `ion-content` scrolls.
  */
 export async function scrollListToEnd(
   page: Page,
@@ -378,15 +378,11 @@ export async function scrollListToEnd(
   return page.evaluate(
     async ({ firstItemId, lastItemId, stepScreens }) => {
       const perf = (window as unknown as PerfWindow).__perf;
-      const list = document
+      const scroller = document
         .getElementById(firstItemId)
-        ?.closest('ag-virtual-scroll, [data-virtual-list]');
-      const scroller =
-        list?.localName === 'ag-virtual-scroll'
-          ? list
-          : list
-              ?.closest('ion-content')
-              ?.shadowRoot?.querySelector<HTMLElement>('.inner-scroll');
+        ?.closest('[data-virtual-list]')
+        ?.closest('ion-content')
+        ?.shadowRoot?.querySelector<HTMLElement>('.inner-scroll');
       if (!scroller) {
         throw new Error(`No virtual list around #${firstItemId}`);
       }

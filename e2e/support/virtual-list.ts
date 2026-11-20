@@ -7,34 +7,18 @@ import { expect, type Locator } from '@playwright/test';
 export const VIRTUAL_LIST = '[data-virtual-list]';
 
 /**
- * Scrolls a list to its end and waits until it stays there: the building block (`VIRTUAL_LIST`),
- * whose `ion-content` scrolls, or a list of `ag-virtual-scroll`, which scrolls itself. A list
- * counts the rows it has not rendered yet with an estimated height and measures them once they
- * are rendered, so its end moves after the last rows appeared; scrolled until the length no
- * longer changes.
- *
- * `ag-virtual-scroll` is as high as the screen until its page, shortly after it opened, fits it
- * to the space below the toolbar in pixels, and measures a row on the scroll after the one that
- * rendered it.
+ * Scrolls a list (`VIRTUAL_LIST`) to its end, by its `ion-content`, and waits until it stays
+ * there. The list counts the rows it has not rendered yet with an estimated height and measures
+ * them once they are rendered, so its end moves after the last rows appeared; scrolled until the
+ * length no longer changes.
  */
 export async function scrollToEnd(list: Locator): Promise<void> {
-  const ownScroller = await list.evaluate(
-    (element) => element.localName === 'ag-virtual-scroll',
-  );
-  if (ownScroller) {
-    await expect
-      .poll(() => list.evaluate((element) => element.style.height))
-      .toMatch(/px$/);
-  }
   let previousHeight = -1;
   await expect(async () => {
     const { height, atEnd } = await list.evaluate((element) => {
-      const scroller =
-        element.localName === 'ag-virtual-scroll'
-          ? element
-          : element
-              .closest('ion-content')
-              ?.shadowRoot?.querySelector<HTMLElement>('.inner-scroll');
+      const scroller = element
+        .closest('ion-content')
+        ?.shadowRoot?.querySelector<HTMLElement>('.inner-scroll');
       if (!scroller) {
         throw new Error('The list is not inside an ion-content');
       }
