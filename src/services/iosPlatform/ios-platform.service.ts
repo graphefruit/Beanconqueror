@@ -13,6 +13,7 @@ import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIStorage } from '../uiStorage';
+import { WidgetSnapshotService } from '../widgetSnapshot/widget-snapshot.service';
 
 @Service()
 export class IosPlatformService {
@@ -20,6 +21,7 @@ export class IosPlatformService {
   private readonly uiLog = inject(UILog);
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly automaticBackup = inject(AutomaticBackupService);
+  private readonly widgetSnapshot = inject(WidgetSnapshotService);
   private readonly platform = inject(Platform);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
@@ -45,6 +47,7 @@ export class IosPlatformService {
           () => {},
         ),
       );
+      this.widgetSnapshot.start();
     }
   }
 }

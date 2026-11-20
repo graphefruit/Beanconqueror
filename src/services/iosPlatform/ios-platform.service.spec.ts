@@ -11,6 +11,7 @@ import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIStorage } from '../uiStorage';
+import { WidgetSnapshotService } from '../widgetSnapshot/widget-snapshot.service';
 import { IosPlatformService } from './ios-platform.service';
 
 describe('IosPlatformService', () => {
@@ -18,6 +19,7 @@ describe('IosPlatformService', () => {
   let saveAutomaticBackups: jasmine.Spy;
   let readMills: jasmine.Spy;
   let start: jasmine.Spy;
+  let startWidgetSnapshot: jasmine.Spy;
 
   /** What the service hands to the automatic backups to write them. */
   function save(): Promise<unknown> {
@@ -39,6 +41,7 @@ describe('IosPlatformService', () => {
       );
     readMills = jasmine.createSpy('get').and.resolveTo([]);
     start = jasmine.createSpy('start');
+    startWidgetSnapshot = jasmine.createSpy('startWidgetSnapshot');
     TestBed.configureTestingModule({
       providers: [
         IosPlatformService,
@@ -63,6 +66,10 @@ describe('IosPlatformService', () => {
         { provide: UIBrewStorage, useValue: {} },
         { provide: UIAlert, useValue: {} },
         { provide: UIExportImportHelper, useValue: { saveAutomaticBackups } },
+        {
+          provide: WidgetSnapshotService,
+          useValue: { start: startWidgetSnapshot },
+        },
       ],
     });
     TestBed.inject(IosPlatformService);
@@ -83,6 +90,10 @@ describe('IosPlatformService', () => {
     finishWriting();
     await settle();
     expect(done).toBeTrue();
+  });
+
+  it('starts the widget snapshot', () => {
+    expect(startWidgetSnapshot).toHaveBeenCalledTimes(1);
   });
 
   it('writes nothing and ends the run when the database cannot be read', async () => {
