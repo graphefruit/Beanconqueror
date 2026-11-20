@@ -195,7 +195,6 @@ export class UIAlert {
   ): Promise<void> {
     const alert = await this.alertController.create({
       message: this.translate.instant(_message),
-      cssClass: 'alert-with-details',
       buttons: [{ text: this.translate.instant('OK') }],
     });
     const doc = alert.ownerDocument;
@@ -207,7 +206,8 @@ export class UIAlert {
     const cause = doc.createElement('p');
     cause.textContent = describeError(_details);
     details.append(label, cause);
-    alert.querySelector('.alert-message').append(details);
+    // Without the element (a changed Ionic) the message alone is still shown.
+    alert.querySelector('.alert-message')?.append(details);
     await alert.present();
     await alert.onDidDismiss();
   }
