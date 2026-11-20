@@ -801,6 +801,18 @@ stored. Barista mode brews carry no tools.
 - Its log line carries numbers only (brews, changed, without preparation,
   left because they share a uuid, tools removed from the filters).
 
+`UPDATE_1` adds the grinder "Standard" when there are brews but no grinder
+and points every brew at it (`BrewReferencesService.addStandardMill()`); an
+import in the settings does the same afterwards
+(`SettingsPage.__addStandardMillAfterImport`). Up to now both stored the brews
+with an empty grinder instead of its uuid: `add()` stores a copy, and the uuid
+was read from the object passed in. The brews are now written first, in one
+save and without touching their change info, with the uuid the grinder then
+gets (`StorageAddOptions.uuid`). When the grinder is not stored there is still
+no grinder, and the next run points the brews at a new one; a grinder stored
+first would end every later run before the brews point at it. It only runs
+when brews and grinders are read.
+
 At every start, after the migrations, `logMissingReferences()` of the same
 service writes one log line with the number of brews that refer to a bean, a
 grinder or a preparation that is not stored. It changes nothing, reads the

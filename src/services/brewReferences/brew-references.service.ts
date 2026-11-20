@@ -1,5 +1,6 @@
 import { inject, Service } from '@angular/core';
 
+import { Mill } from '../../classes/mill/mill';
 import { IBrewPageFilter } from '../../interfaces/brew/iBrewPageFilter';
 import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
@@ -120,6 +121,46 @@ export class BrewReferencesService {
       this.uiLog.error('Foreign brew tools - Unsuccessfully', ex);
       return false;
     }
+  }
+
+  /**
+   * Brews from before there were grinders: when there are brews and no
+   * grinder, adds the grinder "Standard" and points every brew at it. Their
+   * change info is kept.
+   *
+   * The brews are written first, with the uuid the grinder gets. When the
+   * grinder is then not stored there is still no grinder, and the next run
+   * points the brews at a new one; a grinder stored first would end every
+   * later run before the brews point at it.
+   *
+   * Resolves true when everything is stored or nothing had to be; false
+   * when the brews or the grinders are not read or a write failed.
+   */
+  public async addStandardMill(): Promise<boolean> {
+    if (!this.uiBrewStorage.isRead() || !this.uiMillStorage.isRead()) {
+      return false;
+    }
+    if (
+      this.uiBrewStorage.getRawEntries().length === 0 ||
+      this.uiMillStorage.getRawEntries().length > 0
+    ) {
+      return true;
+    }
+    const mill = new Mill();
+    mill.name = 'Standard';
+    const uuid = crypto.randomUUID();
+    const brewsSaved = await this.uiBrewStorage.backfillWithoutTouch(
+      (_brews: StoredBrew[]) => {
+        for (const brew of _brews) {
+          brew.mill = uuid;
+        }
+        return _brews.length;
+      },
+    );
+    return (
+      brewsSaved &&
+      (await this.uiMillStorage.addAndConfirm(mill, { uuid })).saved
+    );
   }
 
   /**

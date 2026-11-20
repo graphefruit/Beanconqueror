@@ -127,25 +127,7 @@ export class UIUpdate {
       try {
         switch (_version) {
           case 'UPDATE_1':
-            if (
-              this.uiBrewStorage.getAllEntries().length > 0 &&
-              this.uiMillStorage.getAllEntries().length <= 0
-            ) {
-              // We got an update and we got no mills yet, therefore we add a Standard mill.
-              const data: Mill = new Mill();
-              data.name = 'Standard';
-              this.__stored(
-                (await this.uiMillStorage.addAndConfirm(data)).saved,
-              );
-
-              const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-              for (const brew of brews) {
-                brew.mill = data.config.uuid;
-                this.__stored(
-                  await this.uiBrewStorage.update(brew, { touch: false }),
-                );
-              }
-            }
+            this.__stored(await this.brewReferences.addStandardMill());
             // We made an update, filePath just could storage one image, but we want to storage multiple ones.
             if (this.uiBeanStorage.getAllEntries().length > 0) {
               const beans: Array<any> = this.uiBeanStorage.getAllEntries();

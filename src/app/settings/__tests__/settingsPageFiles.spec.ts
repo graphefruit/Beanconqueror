@@ -291,6 +291,8 @@ describe('SettingsPage files of an export and an import', () => {
       uiFileHelper: TestBed.inject(UIFileHelper),
       uiExportImportHelper: { buildExportZIP },
       uiExcel: { exportBrewByWeightsSmall },
+      // The standard grinder after an import has tests of its own.
+      brewReferences: { addStandardMill: () => Promise.resolve(true) },
       uiBeanStorage: storages.beans,
       uiBrewStorage: storages.brews,
       uiPreparationStorage: storages.preparations,

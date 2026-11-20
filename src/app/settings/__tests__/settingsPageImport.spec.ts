@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 
 import de from '../../../assets/i18n/de.json';
 import en from '../../../assets/i18n/en.json';
-import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
 import { StorageClass } from '../../../classes/storageClass';
 import { PreImportBackupError } from '../../../services/preImportBackup/pre-import-backup.service';
@@ -13,76 +12,34 @@ import { UIStorage } from '../../../services/uiStorage';
 import { SettingsPage } from '../settings.page';
 
 describe('SettingsPage standard mill after an import', () => {
-  function pageWith(brews: Brew[], mills: unknown[]) {
-    const uiBrewStorage = {
-      getAllEntries: () => brews,
-      update: jasmine.createSpy('update').and.resolveTo(true),
-    };
-    const uiMillStorage = {
-      getAllEntries: () => mills,
-      addAndConfirm: jasmine
-        .createSpy('addAndConfirm')
-        .and.callFake(async (entry: unknown) => ({
-          entry: structuredClone(entry),
-          saved: true,
-        })),
+  function pageWith(_done: boolean) {
+    const brewReferences = {
+      addStandardMill: jasmine
+        .createSpy('addStandardMill')
+        .and.resolveTo(_done),
     };
     const uiLog = jasmine.createSpyObj('UILog', ['error']);
-    // Only the two storages are needed; the page itself is not rendered.
+    // Only the service is needed; the page itself is not rendered.
     const page = Object.create(SettingsPage.prototype);
-    page.uiBrewStorage = uiBrewStorage;
-    page.uiMillStorage = uiMillStorage;
+    page.brewReferences = brewReferences;
     page.uiLog = uiLog;
-    return { page, uiBrewStorage, uiMillStorage, uiLog };
+    return { page, brewReferences, uiLog };
   }
 
-  it('points imported brews at the mill without touching their change info', async () => {
-    const brews = [new Brew(), new Brew()];
-    const { page, uiBrewStorage, uiMillStorage } = pageWith(brews, []);
+  it('points imported brews at the standard mill', async () => {
+    const { page, brewReferences, uiLog } = pageWith(true);
 
     await page.__addStandardMillAfterImport();
 
-    expect(uiMillStorage.addAndConfirm).toHaveBeenCalledTimes(1);
-    expect(uiBrewStorage.update).toHaveBeenCalledTimes(2);
-    for (const args of uiBrewStorage.update.calls.allArgs()) {
-      expect(args[1]).toEqual({ touch: false });
-    }
+    expect(brewReferences.addStandardMill).toHaveBeenCalledTimes(1);
+    expect(uiLog.error).not.toHaveBeenCalled();
   });
 
-  it('leaves brews alone when mills already exist', async () => {
-    const { page, uiBrewStorage, uiMillStorage } = pageWith([new Brew()], [{}]);
+  it('logs when the brews or the mill were not stored', async () => {
+    const { page, uiLog } = pageWith(false);
 
     await page.__addStandardMillAfterImport();
 
-    expect(uiMillStorage.addAndConfirm).not.toHaveBeenCalled();
-    expect(uiBrewStorage.update).not.toHaveBeenCalled();
-  });
-
-  it('leaves the brews alone when the mill was not stored', async () => {
-    const { page, uiBrewStorage, uiMillStorage, uiLog } = pageWith(
-      [new Brew()],
-      [],
-    );
-    uiMillStorage.addAndConfirm.and.resolveTo({ entry: {}, saved: false });
-
-    await page.__addStandardMillAfterImport();
-
-    expect(uiBrewStorage.update).not.toHaveBeenCalled();
-    expect(uiLog.error).toHaveBeenCalledOnceWith(
-      'Import - standard mill not stored',
-    );
-  });
-
-  it('stops at the first brew that was not stored', async () => {
-    const { page, uiBrewStorage, uiLog } = pageWith(
-      [new Brew(), new Brew()],
-      [],
-    );
-    uiBrewStorage.update.and.resolveTo(false);
-
-    await page.__addStandardMillAfterImport();
-
-    expect(uiBrewStorage.update).toHaveBeenCalledTimes(1);
     expect(uiLog.error).toHaveBeenCalledOnceWith(
       'Import - brews not pointed at the standard mill',
     );

@@ -106,6 +106,7 @@ import { ToFixedPipe } from '../../pipes/toFixed';
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import { BrewReferencesService } from '../../services/brewReferences/brew-references.service';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import { PreImportBackupError } from '../../services/preImportBackup/pre-import-backup.service';
@@ -199,6 +200,7 @@ export class SettingsPage {
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly androidPermissions = inject(AndroidPermissions);
   private readonly uiUpdate = inject(UIUpdate);
+  private readonly brewReferences = inject(BrewReferencesService);
   private readonly uiVersionStorage = inject(UiVersionStorage);
   private readonly uiExcel = inject(UIExcel);
   private readonly uiHealthKit = inject(UIHealthKit);
@@ -1826,30 +1828,11 @@ export class SettingsPage {
   /**
    * Imported brews need a mill. Pointing them at the standard mill is a
    * correction made by the app, not a user change, so the imported entries
-   * keep the change info they came with. Stops at the first write that was
-   * not stored; the collection reports it.
+   * keep the change info they came with.
    */
   private async __addStandardMillAfterImport(): Promise<void> {
-    if (
-      this.uiBrewStorage.getAllEntries().length > 0 &&
-      this.uiMillStorage.getAllEntries().length <= 0
-    ) {
-      // We got an update and we got no mills yet, therefore we add a Standard mill.
-      const data: Mill = new Mill();
-      data.name = 'Standard';
-      if (!(await this.uiMillStorage.addAndConfirm(data)).saved) {
-        this.uiLog.error('Import - standard mill not stored');
-        return;
-      }
-
-      const brews: Brew[] = this.uiBrewStorage.getAllEntries();
-      for (const brew of brews) {
-        brew.mill = data.config.uuid;
-        if (!(await this.uiBrewStorage.update(brew, { touch: false }))) {
-          this.uiLog.error('Import - brews not pointed at the standard mill');
-          return;
-        }
-      }
+    if (!(await this.brewReferences.addStandardMill())) {
+      this.uiLog.error('Import - brews not pointed at the standard mill');
     }
   }
 

@@ -53,6 +53,20 @@ function collectionStorage(
 ) {
   return {
     getAllEntries: () => entries,
+    getRawEntries: () => entries,
+    isRead: () => true,
+    backfillWithoutTouch: jasmine
+      .createSpy(`${name}.backfillWithoutTouch`)
+      .and.callFake(async (fill: (entries: unknown[]) => number) => {
+        fill(entries);
+        // Keeps the change info, as update() with { touch: false }.
+        recorded.push({
+          version: currentVersion(),
+          storage: name,
+          options: { touch: false },
+        });
+        return stored();
+      }),
     addAndConfirm: jasmine
       .createSpy(`${name}.addAndConfirm`)
       .and.callFake(async (entry: unknown) => ({
@@ -322,7 +336,10 @@ describe('UIUpdate running a data update again at the next start', () => {
         { provide: UiVersionStorage, useValue: {} },
         { provide: ChangeTrackingMigrationService, useValue: {} },
         { provide: DuplicateEntriesMigrationService, useValue: {} },
-        { provide: BrewReferencesService, useValue: {} },
+        {
+          provide: BrewReferencesService,
+          useValue: { addStandardMill: () => Promise.resolve(true) },
+        },
         { provide: Platform, useValue: { is: () => false } },
         { provide: ModalController, useValue: {} },
         { provide: UIFileHelper, useValue: {} },
@@ -811,5 +828,115 @@ describe('UIUpdate foreign brew tools update', () => {
 
     expect(removeForeignTools).toHaveBeenCalledTimes(1);
     expect(savedVersions.map((_v) => _v.includes('UPDATE_18'))).toEqual([true]);
+  });
+});
+
+interface StoredEntry {
+  mill?: unknown;
+  name?: unknown;
+  config: Record<string, unknown>;
+}
+
+describe('UIUpdate standard grinder', () => {
+  let database: MemoryDatabase;
+  let uiUpdate: UIUpdate;
+
+  /** A brew as it was stored before there were grinders. */
+  function brewBefore(_uuid: string, _mill: string, _created: number) {
+    return {
+      ...(JSON.parse(JSON.stringify(new Brew())) as object),
+      mill: _mill,
+      config: {
+        uuid: _uuid,
+        unix_timestamp: _created,
+        // Filled in from unix_timestamp when change tracking began.
+        created_at: _created * 1000,
+        updated_at: 1_600_000_000_000,
+        rev: 2,
+        updated_by: 'device-b',
+      },
+    };
+  }
+
+  beforeEach(() => {
+    database = new MemoryDatabase();
+    const settings = new Settings();
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        ...database.providers(),
+        UIUpdate,
+        {
+          provide: UISettingsStorage,
+          useValue: {
+            getSettings: () => settings,
+            saveSettings: () => Promise.resolve(true),
+          },
+        },
+        { provide: UiVersionStorage, useValue: {} },
+        { provide: ChangeTrackingMigrationService, useValue: {} },
+        { provide: DuplicateEntriesMigrationService, useValue: {} },
+        { provide: Platform, useValue: { is: () => false } },
+        { provide: ModalController, useValue: {} },
+        { provide: UIFileHelper, useValue: {} },
+        { provide: UIAlert, useValue: {} },
+        { provide: UIHelper, useValue: {} },
+      ],
+    });
+    uiUpdate = TestBed.inject(UIUpdate);
+  });
+
+  /** Stores the entries and reads them as a start does. */
+  async function start(_brews: unknown[], _mills: unknown[]): Promise<void> {
+    database.values.set('BREWS', structuredClone(_brews));
+    database.values.set('MILL', structuredClone(_mills));
+    for (const storage of [
+      UIBrewStorage,
+      UIMillStorage,
+      UIBeanStorage,
+      UIPreparationStorage,
+    ]) {
+      await TestBed.inject<{ initializeStorage(): Promise<void> }>(
+        storage,
+      ).initializeStorage();
+    }
+  }
+
+  function stored(_key: string): StoredEntry[] {
+    return database.values.get(_key) as StoredEntry[];
+  }
+
+  it('UPDATE_1 points every brew at the grinder it adds and keeps their change info', async () => {
+    const before = [brewBefore('a', '', 1), brewBefore('b', 'gone', 2)];
+    await start(before, []);
+
+    expect(await runUpdate(uiUpdate, 'UPDATE_1')).toBeTrue();
+
+    const [mill] = stored('MILL');
+    expect(stored('MILL').length).toBe(1);
+    expect(mill.name).toBe('Standard');
+    expect(mill.config.uuid).not.toBe('');
+    expect(stored('BREWS').map((_brew) => _brew.mill)).toEqual([
+      mill.config.uuid,
+      mill.config.uuid,
+    ]);
+    for (const [i, brew] of stored('BREWS').entries()) {
+      expect(brew.config).toEqual(before[i].config);
+    }
+  });
+
+  it('UPDATE_1 runs again when the grinder was not stored and points the brews at the one stored then', async () => {
+    await start([brewBefore('a', '', 1)], []);
+    database.failingWrites.add('MILL');
+
+    expect(await runUpdate(uiUpdate, 'UPDATE_1')).toBeFalse();
+    expect(database.values.get('MILL')).toEqual([]);
+
+    database.failingWrites.delete('MILL');
+    await start(stored('BREWS'), []);
+    expect(await runUpdate(uiUpdate, 'UPDATE_1')).toBeTrue();
+
+    const [mill] = stored('MILL');
+    expect(stored('BREWS')[0].mill).toBe(mill.config.uuid);
   });
 });

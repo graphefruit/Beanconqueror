@@ -496,6 +496,74 @@ describe('BrewReferencesService', () => {
     });
   });
 
+  describe('addStandardMill', () => {
+    function withoutMills(): StoredData {
+      const data = createData();
+      data.MILL = [];
+      return data;
+    }
+
+    it('adds the grinder Standard and points every brew at it, keeping their change info', async () => {
+      const data = withoutMills();
+      const device = createDeviceDatabase(data);
+      const { service } = await startApp(device);
+
+      expect(await service.addStandardMill()).toBeTrue();
+
+      const mills = device.data.get('MILL') as StoredEntry[];
+      expect(mills.length).toBe(1);
+      expect(mills[0].name).toBe('Standard');
+      for (const [i, entry] of (
+        device.data.get('BREWS') as StoredEntry[]
+      ).entries()) {
+        expect(entry).toEqual({ ...data.BREWS[i], mill: mills[0].config.uuid });
+      }
+    });
+
+    for (const [name, data] of [
+      ['there is a grinder', createData()],
+      ['there is no brew', { ...withoutMills(), BREWS: [] }],
+    ] as [string, StoredData][]) {
+      it(`changes nothing when ${name}`, async () => {
+        const device = createDeviceDatabase(data);
+        const { service, set } = await startApp(device);
+
+        expect(await service.addStandardMill()).toBeTrue();
+
+        expect(set).not.toHaveBeenCalled();
+      });
+    }
+
+    for (const notRead of [UIBrewStorage, UIMillStorage]) {
+      it(`changes nothing while ${notRead.name} is not read`, async () => {
+        const device = createDeviceDatabase(withoutMills());
+        const { service, set } = await startApp(device, [notRead]);
+
+        expect(await service.addStandardMill()).toBeFalse();
+
+        expect(set).not.toHaveBeenCalled();
+      });
+    }
+
+    it('adds no grinder when the brews could not be stored', async () => {
+      const device = createDeviceDatabase(withoutMills());
+      const { service, failWritesOf } = await startApp(device);
+      failWritesOf('BREWS');
+
+      expect(await service.addStandardMill()).toBeFalse();
+
+      expect(device.data.get('MILL')).toEqual([]);
+    });
+
+    it('resolves false when the grinder could not be stored', async () => {
+      const device = createDeviceDatabase(withoutMills());
+      const { service, failWritesOf } = await startApp(device);
+      failWritesOf('MILL');
+
+      expect(await service.addStandardMill()).toBeFalse();
+    });
+  });
+
   describe('logMissingReferences', () => {
     function withMissingReferences(): StoredData {
       const data = createData();
