@@ -113,7 +113,8 @@ export class UIImage {
   /**
    * Tells the user why a photo from `takePhoto` or `choosePhoto` was not
    * added. Closing the camera or the photo picker without a photo is no
-   * error: the camera plugin rejects with "User cancelled photos app" then.
+   * error: the camera plugin rejects with "User cancelled photos app" then,
+   * the file picker of `choosePhoto` with "pickFiles canceled.".
    */
   public reportPhotoNotAdded(_error: unknown): void {
     const message = (_error as { message?: unknown } | undefined)?.message;
@@ -187,6 +188,8 @@ export class UIImage {
         }
       } catch (ex) {
         this.uiAlert.hideLoadingSpinner();
+        // Only the picker and the spinner throw here, both with an Error.
+        reject(ex as Error);
       }
     });
 

@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { AlertController, ModalController, Platform } from '@ionic/angular';
 
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { FilePickerWeb } from '@capawesome/capacitor-file-picker/dist/esm/web';
 import { TranslateService } from '@ngx-translate/core';
 
 import {
@@ -175,5 +176,56 @@ describe('UIImage telling why a photo was not added', () => {
       undefined,
       true,
     );
+  });
+});
+
+describe('UIImage choosing a photo', () => {
+  let uiImage: UIImage;
+  let uiAlert: jasmine.SpyObj<any>;
+  let uiLog: jasmine.SpyObj<any>;
+
+  beforeEach(() => {
+    uiAlert = createMockUIAlert();
+    uiLog = Object.assign(createMockUILog(), {
+      warn: jasmine.createSpy('warn'),
+    });
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: UIFileHelper, useValue: createMockUIFileHelper() },
+        { provide: AlertController, useValue: {} },
+        { provide: ModalController, useValue: {} },
+        { provide: Platform, useValue: { is: () => false } },
+        { provide: AndroidPermissions, useValue: {} },
+        { provide: TranslateService, useValue: {} },
+        { provide: UIAlert, useValue: uiAlert },
+        { provide: UILog, useValue: uiLog },
+        { provide: UISettingsStorage, useValue: {} },
+      ],
+    });
+    uiImage = TestBed.inject(UIImage);
+  });
+
+  // What @capawesome/capacitor-file-picker rejects with on iOS, Android and
+  // the web when the picker is closed without a photo.
+  it('gives up quietly when the picker was closed', async () => {
+    const cause = new Error('pickFiles canceled.');
+    spyOn(FilePickerWeb.prototype, 'pickFiles').and.rejectWith(cause);
+
+    await expectAsync(uiImage.choosePhoto()).toBeRejectedWith(cause);
+    uiImage.reportPhotoNotAdded(cause);
+
+    expect(uiAlert.showMessage).not.toHaveBeenCalled();
+    expect(uiLog.warn).not.toHaveBeenCalled();
+    expect(uiLog.debugLogs).toEqual([
+      'Photo not added: camera or photo picker closed',
+    ]);
+  });
+
+  it('passes on when the picker failed', async () => {
+    const cause = new Error('Permission denial');
+    spyOn(FilePickerWeb.prototype, 'pickFiles').and.rejectWith(cause);
+
+    await expectAsync(uiImage.choosePhoto()).toBeRejectedWith(cause);
+    expect(uiAlert.showLoadingSpinner).not.toHaveBeenCalled();
   });
 });

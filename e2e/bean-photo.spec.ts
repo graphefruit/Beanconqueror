@@ -1,4 +1,5 @@
 import type { CameraPlugin } from '@capacitor/camera';
+import type { FilePickerPlugin } from '@capawesome/capacitor-file-picker';
 import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
@@ -76,6 +77,58 @@ test('closing the camera without a photo shows no error', async ({
   await expect(page.getByRole('button', { name: 'Take photo' })).toBeVisible();
   await expect(page.getByText('An error occurred')).toHaveCount(0);
   await expect(page.getByText('The photo could not be added.')).toHaveCount(0);
+});
+
+test('closing the photo picker without a photo shows no error', async ({
+  page,
+  native,
+}) => {
+  // Message the FilePicker plugin rejects with on iOS, Android and the web then.
+  await native.mockCapacitor<FilePickerPlugin>('FilePicker', {
+    pickFiles: () => {
+      throw new NativeError('pickFiles canceled.');
+    },
+  });
+  await page.goto('/');
+  await completeFirstRun(page);
+
+  await page.getByRole('tab', { name: 'Beans' }).click();
+  await page.getByRole('button', { name: 'Add bean' }).click();
+  await page.getByRole('button', { name: 'Add Photo' }).click();
+  await page.getByRole('button', { name: 'Choose' }).click();
+  await expect
+    .poll(() => native.calls())
+    .toContainEqual({
+      plugin: 'FilePicker',
+      method: 'pickFiles',
+      mocked: true,
+    });
+  // Open the choice again: an error shown for the closed picker is up by then.
+  await page.getByRole('button', { name: 'Add Photo' }).click();
+
+  await expect(page.getByRole('button', { name: 'Choose' })).toBeVisible();
+  await expect(page.getByText('An error occurred')).toHaveCount(0);
+  await expect(page.getByText('The photo could not be added.')).toHaveCount(0);
+});
+
+test('a user is told when the photo picker fails', async ({ page, native }) => {
+  await native.mockCapacitor<FilePickerPlugin>('FilePicker', {
+    pickFiles: () => {
+      throw new NativeError('Failed to open the photo library');
+    },
+  });
+  await page.goto('/');
+  await completeFirstRun(page);
+
+  await page.getByRole('tab', { name: 'Beans' }).click();
+  await page.getByRole('button', { name: 'Add bean' }).click();
+  await page.getByRole('button', { name: 'Add Photo' }).click();
+  await page.getByRole('button', { name: 'Choose' }).click();
+
+  await expect(page.getByText('An error occurred')).toBeVisible();
+  await expect(page.getByText('The photo could not be added.')).toBeVisible();
+  // The technical cause is for the log only.
+  await expect(page.getByText(/Failed to open/)).toHaveCount(0);
 });
 
 /**
