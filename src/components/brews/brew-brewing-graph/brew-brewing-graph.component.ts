@@ -324,9 +324,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.data.brew_beverage_quantity = cfg.defaultTargetWeight;
     }
 
-    if (this.settings.text_to_speech_active) {
-      this.textToSpeech.readAndSetTTLSettings();
-    }
     this.graph_threshold_frequency_update_active =
       this.settings.graph_threshold_frequency_update;
     this.graph_frequency_update_interval =

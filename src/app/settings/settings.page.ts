@@ -234,7 +234,7 @@ export class SettingsPage {
   public THEME_MODE = THEME_MODE_ENUM;
 
   public isHealthSectionAvailable = false;
-  public isTextToSpeechSectionAvailable = false;
+  public readonly isTextToSpeechSectionAvailable = this.textToSpeech.available;
 
   public currencies = {};
 
@@ -296,12 +296,6 @@ export class SettingsPage {
         this.isHealthSectionAvailable = false;
       },
     );
-
-    if (this.platform.is('ios')) {
-      this.isTextToSpeechSectionAvailable = true;
-    } else {
-      this.isTextToSpeechSectionAvailable = false;
-    }
 
     this.isAndroid =
       this.platform.is('capacitor') && this.platform.is('android');
@@ -649,7 +643,6 @@ export class SettingsPage {
   }
 
   public testSpeak() {
-    this.textToSpeech.readAndSetTTLSettings();
     let speakTestCount = 0;
     const testSpeakArray = ['182.5', '28', '1072', '1.2', '0.1', '203.5'];
     const speakTestIntv = setInterval(() => {

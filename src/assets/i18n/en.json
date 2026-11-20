@@ -1383,7 +1383,7 @@
         "TEST_SPEAK": "Start test speak",
         "PITCH": "Pitch",
         "RATE": "Rate",
-        "VOICEOVER_HINT": "While VoiceOver is on, it speaks the announcements in its own voice and speaking rate. Pitch and rate set here then have no effect. Each announcement interrupts what VoiceOver is reading."
+        "SCREEN_READER_HINT": "While a screen reader such as VoiceOver or TalkBack is on, it speaks the announcements in its own voice and speaking rate. Pitch and rate set here then have no effect. Each announcement interrupts what the screen reader is reading."
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptic feedback",
     "HAPTIC_FEEDBACK": {
