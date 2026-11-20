@@ -310,10 +310,11 @@ for (const language of ['en', 'de'] as const) {
       });
     }
 
-    test('Home offers what a long press on its add button does as a button of its own', async ({
+    test('the brews tab offers what a long press on an add button does as a button of its own', async ({
       page,
     }) => {
       await start(page, language);
+      await openTab(page, language, 'NAV_BREWS');
 
       await visible(
         page.getByRole('button', { name: t('A11Y.IMPORT_BREW'), exact: true }),
