@@ -4,13 +4,20 @@ import { DestroyRef, DOCUMENT, inject, NgZone, Service } from '@angular/core';
 const OVERLAYS =
   'ion-modal, ion-popover, ion-alert, ion-action-sheet, ion-loading';
 
-const DISMISS_EVENTS = [
-  'ionModalDidDismiss',
-  'ionPopoverDidDismiss',
-  'ionAlertDidDismiss',
-  'ionActionSheetDidDismiss',
-  'ionLoadingDidDismiss',
+const OVERLAY_EVENT_PREFIXES = [
+  'ionModal',
+  'ionPopover',
+  'ionAlert',
+  'ionActionSheet',
+  'ionLoading',
 ];
+
+const PRESENT_EVENTS = OVERLAY_EVENT_PREFIXES.map((p) => `${p}WillPresent`);
+const DISMISS_EVENTS = OVERLAY_EVENT_PREFIXES.map((p) => `${p}DidDismiss`);
+
+/** What can take focus, also when it is not in the tab order. */
+const FOCUSABLE =
+  'a[href], button, input, select, textarea, [tabindex], .ion-focusable';
 
 const LEVEL_1_HEADING = 'h1, [role="heading"][aria-level="1"]';
 
@@ -70,6 +77,16 @@ function moveFocus(element: HTMLElement, document: Document): boolean {
   return host.contains(document.activeElement);
 }
 
+/** The control a click went to: the first one on its path that takes focus. */
+function clickedControl(event: Event): HTMLElement | undefined {
+  return event
+    .composedPath()
+    .find(
+      (node): node is HTMLElement =>
+        node instanceof HTMLElement && node.matches(FOCUSABLE),
+    );
+}
+
 function focusHeading(heading: HTMLElement, document: Document): void {
   if (!heading.hasAttribute('tabindex')) {
     heading.tabIndex = -1;
@@ -85,9 +102,13 @@ function focusHeading(heading: HTMLElement, document: Document): void {
  * - A new screen: its title, the level-1 heading, so its name is read out.
  * - Back on a screen: the control that led away from it, e.g. the list entry.
  * - A tab of the tab bar: the tab keeps focus, as in the tabs pattern.
- * - A dialog closed: Ionic gives focus back to the control that opened it.
- *   If that control is gone, e.g. the card of an entry just deleted, the
- *   title of the screen takes it.
+ * - A dialog closed: Ionic gives focus back to the control that had focus
+ *   when it opened. WebKit does not focus a button that is tapped, nor does
+ *   VoiceOver on iOS when it activates one, so there Ionic has nothing to
+ *   give it back to: the control last clicked or focused before the dialog
+ *   opened takes it then. If that control is gone with a menu that opened
+ *   the dialog, the control that opened the menu does; if that is gone too,
+ *   e.g. the card of an entry just deleted, the title of the screen.
  *
  * Nothing is announced through the live region: moving focus makes the
  * screen reader read the title, and an announcement would repeat it.
@@ -102,11 +123,21 @@ export class PageFocusService {
   private readonly lastFocus = new WeakMap<Element, HTMLElement>();
   /** A screen was left and the one entered still needs focus. */
   private navigating = false;
+  /** The control last clicked or focused. */
+  private lastControl: HTMLElement | undefined;
+  /** Per overlay, the control that opened it. */
+  private readonly openedBy = new WeakMap<Element, HTMLElement>();
 
   public start(): void {
     const listeners: [string, (event: Event) => void][] = [
       ['ionViewWillLeave', this.onViewWillLeave],
       ['ionViewDidEnter', this.onViewDidEnter],
+      ['click', this.onClick],
+      ['focusin', this.onFocusIn],
+      ...PRESENT_EVENTS.map((type): [string, (event: Event) => void] => [
+        type,
+        this.onPresent,
+      ]),
       ...DISMISS_EVENTS.map((type): [string, (event: Event) => void] => [
         type,
         this.onDismissed,
@@ -167,13 +198,38 @@ export class PageFocusService {
     }
   };
 
+  private readonly onClick = (event: Event): void => {
+    this.lastControl = clickedControl(event);
+  };
+
+  private readonly onFocusIn = (event: Event): void => {
+    const target = event.composedPath()[0];
+    if (target instanceof HTMLElement) {
+      this.lastControl = target;
+    }
+  };
+
+  private readonly onPresent = (event: Event): void => {
+    const overlay = event.target;
+    const control = this.lastControl;
+    if (
+      overlay instanceof Element &&
+      control &&
+      !overlay.contains(inPage(control))
+    ) {
+      this.openedBy.set(overlay, control);
+    }
+  };
+
   /** After Ionic has given focus back, which it does once closed. */
-  private readonly onDismissed = (): void => {
+  private readonly onDismissed = (event: Event): void => {
+    const overlay = event.target;
     setTimeout(() => {
       const active = this.document.activeElement;
       if (
-        hasOpenOverlay(this.document) ||
-        (active && active !== this.document.body && isShown(active))
+        (active && active !== this.document.body && isShown(active)) ||
+        (overlay instanceof Element && this.focusOpener(overlay)) ||
+        hasOpenOverlay(this.document)
       ) {
         return;
       }
@@ -183,4 +239,26 @@ export class PageFocusService {
       }
     });
   };
+
+  /**
+   * Focuses the control that opened `overlay`, or, when that control was in a
+   * menu that is gone now, the control that opened the menu.
+   */
+  private focusOpener(overlay: Element): boolean {
+    // An inline overlay opened again could otherwise lead in a circle.
+    const seen = new Set<Element>();
+    let current: Element | null = overlay;
+    while (current && !seen.has(current)) {
+      seen.add(current);
+      const control = this.openedBy.get(current);
+      if (!control) {
+        return false;
+      }
+      if (moveFocus(control, this.document)) {
+        return true;
+      }
+      current = inPage(control).closest(OVERLAYS);
+    }
+    return false;
+  }
 }

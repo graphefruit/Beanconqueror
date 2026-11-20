@@ -56,6 +56,12 @@ describe('PageFocusService', () => {
     return overlay;
   }
 
+  /** Ionic fires the event, then takes the overlay out of the page. */
+  function dismissed(overlay: HTMLElement, type: string): void {
+    fire(overlay, type);
+    overlay.remove();
+  }
+
   /** After the timer that waits for Ionic to give focus back. */
   function afterDismiss(): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve));
@@ -172,6 +178,47 @@ describe('PageFocusService', () => {
       settingsLink.remove();
 
       fire(document.body, 'ionAlertDidDismiss');
+      await afterDismiss();
+
+      expect(document.activeElement).toBe(heading(profile));
+    });
+
+    it('puts focus on the control tapped to open it, which WebKit does not focus', async () => {
+      // A tap in WebKit, or VoiceOver activating the button: a click, no focus.
+      settingsLink.click();
+      const sheet = await presented('ion-action-sheet');
+      fire(sheet, 'ionActionSheetWillPresent');
+
+      dismissed(sheet, 'ionActionSheetDidDismiss');
+      await afterDismiss();
+
+      expect(document.activeElement).toBe(settingsLink);
+    });
+
+    it('puts focus on the control that opened the menu the dialog came from', async () => {
+      settingsLink.click();
+      const sheet = await presented('ion-action-sheet');
+      fire(sheet, 'ionActionSheetWillPresent');
+      const edit = document.createElement('button');
+      sheet.append(edit);
+      edit.click();
+      const modal = await presented('ion-modal');
+      fire(modal, 'ionModalWillPresent');
+      dismissed(sheet, 'ionActionSheetDidDismiss');
+
+      dismissed(modal, 'ionModalDidDismiss');
+      await afterDismiss();
+
+      expect(document.activeElement).toBe(settingsLink);
+    });
+
+    it('takes the title when the control tapped to open it is gone', async () => {
+      settingsLink.click();
+      const alert = await presented('ion-alert');
+      fire(alert, 'ionAlertWillPresent');
+      settingsLink.remove();
+
+      dismissed(alert, 'ionAlertDidDismiss');
       await afterDismiss();
 
       expect(document.activeElement).toBe(heading(profile));
