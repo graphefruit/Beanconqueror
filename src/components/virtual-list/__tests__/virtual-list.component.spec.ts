@@ -79,7 +79,11 @@ class HostComponent {
   public readonly estimate = signal(100);
   public readonly clearOfAddButton = signal(true);
   public ends = 0;
-  public readonly key = (item: Item) => item.id;
+  public keysRead = 0;
+  public readonly key = (item: Item) => {
+    this.keysRead++;
+    return item.id;
+  };
   public readonly list =
     viewChild.required<VirtualListComponent<Item>>(VirtualListComponent);
 }
@@ -195,6 +199,20 @@ describe('VirtualListComponent', () => {
     await settle();
 
     expect(top('item-1')).toBe(HEAD + 250);
+  });
+
+  it('lays out the rows after the screen once when it jumps to rows not measured yet', async () => {
+    const count = 2000;
+    host.items.set(items(count, 130));
+    await settle();
+    host.keysRead = 0;
+
+    await scrollTo(100_000);
+
+    const after = count - Number(shown()[0].slice(5));
+    // Rows above the screen are among them, which move the content.
+    expect(shown().length).toBeGreaterThan(4);
+    expect(host.keysRead).toBeLessThan(2 * after);
   });
 
   it('keeps a hidden row at its height', async () => {

@@ -304,7 +304,11 @@ export class VirtualListComponent<T> {
       );
 
     afterRenderEffect(() => {
-      for (const row of this.rowElements()) {
+      // From the bottom up, as the observer reports new rows in the order
+      // they are observed: once a row above the screen has moved the
+      // content, each further row lays out all rows after it again first,
+      // and the rows above the screen are the fewest.
+      for (const row of [...this.rowElements()].reverse()) {
         this.virtualizer.measureElement(row.nativeElement);
       }
       // Rows taken off the screen are no longer observed: their size turns
