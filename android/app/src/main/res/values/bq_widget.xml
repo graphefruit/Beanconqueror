@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Same values as the light tokens in src/theme/bq-tokens.scss -->
+  <color name="bq_widget_background">#EAD9C4</color>
+  <color name="bq_widget_text">#211914</color>
+  <color name="bq_widget_text_secondary">#4A382C</color>
+  <color name="bq_widget_action">#C73545</color>
+  <color name="bq_widget_on_action">#FFFFFF</color>
+
+  <string name="widget_description">Brews today and this week, open beans and your last brew</string>
+  <string name="widget_today">Today</string>
+  <string name="widget_week">This week</string>
+  <string name="widget_beans">Open beans</string>
+  <string name="widget_start_brew">Start brew</string>
+  <string name="widget_last_brew">Last brew %1$s</string>
+  <string name="widget_no_brew">No brew yet</string>
+  <string name="widget_empty">Save a brew in Beanconqueror to fill the widget.</string>
+  <plurals name="widget_today_description">
+    <item quantity="one">%1$d brew today</item>
+    <item quantity="other">%1$d brews today</item>
+  </plurals>
+  <plurals name="widget_week_description">
+    <item quantity="one">%1$d brew this week</item>
+    <item quantity="other">%1$d brews this week</item>
+  </plurals>
+  <plurals name="widget_beans_description">
+    <item quantity="one">%1$d open bean</item>
+    <item quantity="other">%1$d open beans</item>
+  </plurals>
+</resources>

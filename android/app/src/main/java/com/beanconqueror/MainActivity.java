@@ -18,6 +18,7 @@ public class MainActivity extends BridgeActivity {
     // Cordova plugins (BLE) log through LOG, which drops everything below ERROR by default.
     LOG.setLogLevel(Log.DEBUG);
     registerPlugin(BCAndroidNativeCallsPlugin.class);
+    registerPlugin(WidgetPlugin.class);
 
     super.onCreate(savedInstanceState);
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Same values as the dark tokens in src/theme/bq-tokens.scss -->
+  <color name="bq_widget_background">#211914</color>
+  <color name="bq_widget_text">#FFFFFF</color>
+  <color name="bq_widget_text_secondary">#E1D1BF</color>
+</resources>
