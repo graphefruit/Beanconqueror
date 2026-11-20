@@ -12,14 +12,18 @@ class WidgetPlugin: CAPPlugin, CAPBridgedPlugin {
     ]
 
     /// Same app group and key as BrewWidget.swift in the extension.
-    private let defaults = UserDefaults(suiteName: "group.com.beanconqueror.app")
+    private let appGroup = "group.com.beanconqueror.app"
 
     @objc func setSnapshot(_ call: CAPPluginCall) {
         guard let snapshot = call.getString("snapshot") else {
             call.reject("No snapshot")
             return
         }
-        guard let defaults else {
+        // Without the app group entitlement UserDefaults(suiteName:) still
+        // returns an object, but one the extension never reads; only the
+        // container lookup tells.
+        guard FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup) != nil,
+              let defaults = UserDefaults(suiteName: appGroup) else {
             call.reject("No app group")
             return
         }
