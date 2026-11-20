@@ -1,4 +1,5 @@
 import { inject, NgZone, Service } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { TranslateService } from '@ngx-translate/core';
@@ -75,6 +76,7 @@ export class IntentHandlerService {
   private readonly visualizerService = inject(VisualizerService);
   private readonly brewImportService = inject(BrewImportService);
   private readonly zone = inject(NgZone);
+  private readonly router = inject(Router);
 
   public static SUPPORTED_INTENTS = {
     ADD_BEAN_ONLINE: 'ADD_BEAN_ONLINE',
@@ -188,6 +190,12 @@ export class IntentHandlerService {
             await this.addBrewsFromHandoff(url);
           } else if (this.matchesIntent(url, 'ADD_BREW')) {
             await this.addBrewFromHandoff(url);
+          } else if (this.matchesIntent(url, 'START_BREW')) {
+            // As the quick action: the tab only changes when the form opens,
+            // not under a brew form that is already open.
+            if (await this.uiBrewHelper.addBrew()) {
+              await this.router.navigate(['/home/brews'], { replaceUrl: true });
+            }
           } else if (
             url
               .toLowerCase()

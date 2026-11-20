@@ -1,5 +1,6 @@
 import { NgZone } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 
 import { ModalController } from '@ionic/angular';
 
@@ -332,6 +333,44 @@ describe('IntentHandlerService', () => {
     service = TestBed.inject(IntentHandlerService);
     envelope = validEnvelope();
     url = handoffUrl(await gzipBase64Url(envelope));
+  });
+
+  describe('the link that starts a brew', () => {
+    let addBrew: jasmine.Spy;
+    let navigate: jasmine.Spy;
+
+    beforeEach(() => {
+      addBrew = spyOn(TestBed.inject(UIBrewHelper), 'addBrew');
+      navigate = spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
+    });
+
+    it('opens the brew form above the brews', async () => {
+      addBrew.and.resolveTo(true);
+
+      await service.handleDeepLink('beanconqueror://START_BREW');
+
+      expect(addBrew).toHaveBeenCalledOnceWith();
+      expect(navigate).toHaveBeenCalledOnceWith(['/home/brews'], {
+        replaceUrl: true,
+      });
+      expect(uiAlert.showMessage.calls.count()).toBe(0);
+    });
+
+    it('also takes a trailing slash', async () => {
+      addBrew.and.resolveTo(true);
+
+      await service.handleDeepLink('beanconqueror://start_brew/');
+
+      expect(addBrew).toHaveBeenCalledOnceWith();
+    });
+
+    it('keeps the tab when no form opens', async () => {
+      addBrew.and.resolveTo(false);
+
+      await service.handleDeepLink('beanconqueror://START_BREW');
+
+      expect(navigate).not.toHaveBeenCalled();
+    });
   });
 
   it('imports a brew handoff when the user has no mill', async () => {
