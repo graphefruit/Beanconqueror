@@ -10,7 +10,7 @@
       @for (key of preparation_types_enum | keys; track key) {
         @if (individualPreparationVisible(key)) {
           <ion-col size="6">
-            <ion-card (click)="choosePreparation(key)" class="preparation-add-card" tappable>
+            <ion-card button (click)="choosePreparation(key)" class="preparation-add-card" tappable>
               @if (key !== 'CUSTOM_PREPARATION') {
                 <ion-card-content>
                   <div class="ion-text-center">

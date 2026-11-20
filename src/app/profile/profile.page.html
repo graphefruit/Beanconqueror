@@ -7,7 +7,7 @@
     <ion-list class="group-card" lines="full">
       <ion-item [routerLink]="['/home/profile/preparations']" detail="true">
         <span class="entry-icon" slot="start" aria-hidden="true">
-          <ion-icon name="beanconqueror-preparation" />
+          <ion-icon aria-hidden="true" name="beanconqueror-preparation" />
         </span>
         <ion-label>
           {{ "PROFILE_PREPARATION_METHODS" | translate }}
@@ -22,7 +22,7 @@
       </ion-item>
       <ion-item [routerLink]="['/home/profile/mills']" detail="true">
         <span class="entry-icon" slot="start" aria-hidden="true">
-          <ion-icon name="beanconqueror-pepper-mill" />
+          <ion-icon aria-hidden="true" name="beanconqueror-pepper-mill" />
         </span>
         <ion-label>
           {{ "NAV_MILL" | translate }}
@@ -38,7 +38,7 @@
       @if (waterSectionVisible) {
         <ion-item [routerLink]="['/home/profile/water']" detail="true">
           <span class="entry-icon" slot="start" aria-hidden="true">
-            <ion-icon name="water-outline" />
+            <ion-icon aria-hidden="true" name="water-outline" />
           </span>
           <ion-label>
             {{ "NAV_WATER_SECTION" | translate }}
@@ -80,7 +80,7 @@
 <ng-template #hubEntry let-entry>
   <ion-item [routerLink]="[entry.link]" detail="true">
     <span class="entry-icon" slot="start" aria-hidden="true">
-      <ion-icon [name]="entry.icon" />
+      <ion-icon aria-hidden="true" [name]="entry.icon" />
     </span>
     <ion-label>
       {{ entry.title | translate }}

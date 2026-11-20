@@ -32,9 +32,11 @@ import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
 import { BeanOverlayDirective } from '../../../directive/bean-overlay.directive';
+import { ControlDescriptionDirective } from '../../../directive/control-description.directive';
 import { MillOverlayDirective } from '../../../directive/mill-overlay.directive';
 import { PreparationOverlayDirective } from '../../../directive/preparation-overlay.directive';
 import { PreparationToolOverlayDirective } from '../../../directive/preparation-tool-overlay.directive';
+import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { WaterOverlayDirective } from '../../../directive/water-overlay.directive';
 import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
@@ -53,6 +55,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   styleUrls: ['./brew-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    ControlDescriptionDirective,
     FormsModule,
     PreparationOverlayDirective,
     PreparationToolOverlayDirective,
@@ -69,6 +72,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonLabel,
     IonBadge,
     IonRange,
+    RangeNameDirective,
     IonIcon,
     IonSelectOption,
     IonList,

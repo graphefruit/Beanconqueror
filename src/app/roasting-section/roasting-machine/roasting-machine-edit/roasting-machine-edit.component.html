@@ -9,7 +9,7 @@
       <ion-item>
         <ion-input label-placement="stacked" label='{{"NAME" | translate}}*' aria-labelledby='roastMachineName' #name="ngModel" [(ngModel)]="data.name" name="name"
                    placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
-                   autocapitalize="sentences" required />
+                   autocapitalize="sentences" errorText="{{'NAME_REQUIRED' | translate}}" required />
       </ion-item>
       <ion-item>
         <ion-checkbox label-placement='start' #finished="ngModel" [(ngModel)]="data.finished" name="finished">

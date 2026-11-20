@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   Input,
 } from '@angular/core';
@@ -27,6 +28,7 @@ import { StorageClass } from '../../../classes/storageClass';
 import { storedOrReported } from '../../../classes/storedOrReported';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { RequiredFields } from '../../../services/a11y/required-fields.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
@@ -55,6 +57,9 @@ import { UIToast } from '../../../services/uiToast';
   ],
 })
 export class PreparationEditToolComponent {
+  private readonly requiredFields = inject(RequiredFields);
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly modalController = inject(ModalController);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiToast = inject(UIToast);
@@ -181,6 +186,8 @@ export class PreparationEditToolComponent {
   public async editTool() {
     if (this.data.name.trim() !== '') {
       await this._editTool();
+    } else {
+      this.requiredFields.report(this.host);
     }
   }
 

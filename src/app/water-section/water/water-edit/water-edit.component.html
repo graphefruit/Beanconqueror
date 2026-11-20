@@ -11,7 +11,7 @@
     <ion-item>
       <ion-input label-placement="stacked" label='{{"NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" name="name"
         placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
-        autocapitalize="sentences" required />
+        autocapitalize="sentences" errorText="{{'NAME_REQUIRED' | translate}}" required />
     </ion-item>
     <ion-item>
       <ion-checkbox justify="start" label-placement="start" #finished="ngModel" [(ngModel)]="data.finished" name="finished">{{"ARCHIVED"|translate}}?</ion-checkbox>
@@ -40,7 +40,7 @@
         </ion-col>
         <ion-col class="ion-no-padding ion-align-self-end" size="4">
           <ion-item class="ion-no-margin-important">
-            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.general_hardness_type"
+            <ion-select [attr.aria-label]="'A11Y.UNIT_OF' | translate: { field: ('WATER_SECTION.WATER.GENERAL_HARDNESS' | translate) }" #brewQuantityType="ngModel" [(ngModel)]="data.general_hardness_type"
               cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
               okText="{{'CHOOSE'| translate }}"
               style="max-width:100%;">
@@ -66,7 +66,7 @@
         </ion-col>
         <ion-col class="ion-no-padding ion-align-self-end" size="4">
           <ion-item class="ion-no-margin-important">
-            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.total_alkalinity_type"
+            <ion-select [attr.aria-label]="'A11Y.UNIT_OF' | translate: { field: ('WATER_SECTION.WATER.TOTAL_ALKALINITY' | translate) }" #brewQuantityType="ngModel" [(ngModel)]="data.total_alkalinity_type"
               cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
               okText="{{'CHOOSE'| translate }}"
               style="max-width:100%;">
@@ -92,7 +92,7 @@
         </ion-col>
         <ion-col class="ion-no-padding ion-align-self-end" size="4">
           <ion-item class="ion-no-margin-important">
-            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.calcium_type"
+            <ion-select [attr.aria-label]="'A11Y.UNIT_OF' | translate: { field: ('WATER_SECTION.WATER.CALCIUM' | translate) }" #brewQuantityType="ngModel" [(ngModel)]="data.calcium_type"
               cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
               okText="{{'CHOOSE'| translate }}"
               style="max-width:100%;">
@@ -118,7 +118,7 @@
         </ion-col>
         <ion-col class="ion-no-padding ion-align-self-end" size="4">
           <ion-item class="ion-no-margin-important">
-            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.magnesium_type"
+            <ion-select [attr.aria-label]="'A11Y.UNIT_OF' | translate: { field: ('WATER_SECTION.WATER.MAGNESIUM' | translate) }" #brewQuantityType="ngModel" [(ngModel)]="data.magnesium_type"
               cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
               okText="{{'CHOOSE'| translate }}"
               style="max-width:100%;">
@@ -144,7 +144,7 @@
         </ion-col>
         <ion-col class="ion-no-padding ion-align-self-end" size="4">
           <ion-item class="ion-no-margin-important">
-            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.sodium_type"
+            <ion-select [attr.aria-label]="'A11Y.UNIT_OF' | translate: { field: ('WATER_SECTION.WATER.SODIUM' | translate) }" #brewQuantityType="ngModel" [(ngModel)]="data.sodium_type"
               cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
               okText="{{'CHOOSE'| translate }}"
               style="max-width:100%;">
@@ -170,7 +170,7 @@
         </ion-col>
         <ion-col class="ion-no-padding ion-align-self-end" size="4">
           <ion-item class="ion-no-margin-important">
-            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.potassium_type"
+            <ion-select [attr.aria-label]="'A11Y.UNIT_OF' | translate: { field: ('WATER_SECTION.WATER.POTASSIUM' | translate) }" #brewQuantityType="ngModel" [(ngModel)]="data.potassium_type"
               cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
               okText="{{'CHOOSE'| translate }}"
               style="max-width:100%;">
@@ -196,7 +196,7 @@
         </ion-col>
         <ion-col class="ion-no-padding ion-align-self-end" size="4">
           <ion-item class="ion-no-margin-important">
-            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.sulfate_type"
+            <ion-select [attr.aria-label]="'A11Y.UNIT_OF' | translate: { field: ('WATER_SECTION.WATER.SULFATE' | translate) }" #brewQuantityType="ngModel" [(ngModel)]="data.sulfate_type"
               cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
               okText="{{'CHOOSE'| translate }}"
               style="max-width:100%;">
@@ -222,7 +222,7 @@
         </ion-col>
         <ion-col class="ion-no-padding ion-align-self-end" size="4">
           <ion-item class="ion-no-margin-important">
-            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.chloride_type"
+            <ion-select [attr.aria-label]="'A11Y.UNIT_OF' | translate: { field: ('WATER_SECTION.WATER.CHLORIDE' | translate) }" #brewQuantityType="ngModel" [(ngModel)]="data.chloride_type"
               cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
               okText="{{'CHOOSE'| translate }}"
               style="max-width:100%;">
@@ -248,7 +248,7 @@
         </ion-col>
         <ion-col class="ion-no-padding ion-align-self-end" size="4">
           <ion-item class="ion-no-margin-important">
-            <ion-select disabled="true" #brewQuantityType="ngModel" [(ngModel)]="data.tds_type"
+            <ion-select [attr.aria-label]="'A11Y.UNIT_OF' | translate: { field: ('WATER_SECTION.WATER.TDS' | translate) }" disabled="true" #brewQuantityType="ngModel" [(ngModel)]="data.tds_type"
               cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
               okText="{{'CHOOSE'| translate }}"
               style="max-width:100%;">

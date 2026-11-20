@@ -25,6 +25,10 @@ import SETTINGS_TRACKING from '../../../data/tracking/settingsTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import {
+  ReorderButtonsComponent,
+  ReorderMove,
+} from '../../reorder-buttons/reorder-buttons.component';
 
 @Component({
   selector: 'sort-custom-parameter',
@@ -32,6 +36,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   styleUrls: ['./sort-custom-parameter.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    ReorderButtonsComponent,
     TranslatePipe,
     IonCard,
     IonTitle,
@@ -117,6 +122,14 @@ export class SortCustomParameterComponent implements OnInit {
     // by the reorder group
     ev.detail.complete();
     this.save();
+  }
+
+  /** The same move as a drag, made with the buttons of an entry. */
+  public moveBrew(move: ReorderMove, _type: string) {
+    this.reorder_brew(
+      { detail: { ...move, complete: () => undefined } },
+      _type,
+    );
   }
 
   private __initializeData(): void {

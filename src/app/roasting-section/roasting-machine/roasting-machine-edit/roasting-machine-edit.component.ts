@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   Input,
   OnInit,
@@ -32,6 +33,7 @@ import { HeaderComponent } from '../../../../components/header/header.component'
 import { PhotoAddComponent } from '../../../../components/photo-add/photo-add.component';
 import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
 import { IRoastingMachine } from '../../../../interfaces/roasting-machine/iRoastingMachine';
+import { RequiredFields } from '../../../../services/a11y/required-fields.service';
 import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIHelper } from '../../../../services/uiHelper';
@@ -65,6 +67,9 @@ import { UIToast } from '../../../../services/uiToast';
   ],
 })
 export class RoastingMachineEditComponent implements OnInit {
+  private readonly requiredFields = inject(RequiredFields);
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly modalController = inject(ModalController);
   private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
   private readonly uiImage = inject(UIImage);
@@ -90,6 +95,8 @@ export class RoastingMachineEditComponent implements OnInit {
   public async edit(form) {
     if (form.valid) {
       await this.__edit();
+    } else {
+      this.requiredFields.report(this.host);
     }
   }
 

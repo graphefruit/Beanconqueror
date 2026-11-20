@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   Input,
   OnInit,
@@ -41,6 +42,7 @@ import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 import { ServerBean } from '../../../models/bean/serverBean';
+import { RequiredFields } from '../../../services/a11y/required-fields.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
@@ -78,6 +80,9 @@ import { UIToast } from '../../../services/uiToast';
   ],
 })
 export class BeansAddComponent implements OnInit {
+  private readonly requiredFields = inject(RequiredFields);
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly modalController = inject(ModalController);
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiHelper = inject(UIHelper);
@@ -216,6 +221,8 @@ export class BeansAddComponent implements OnInit {
   public async addBean() {
     if (this.__formValid()) {
       await this.__addBean();
+    } else {
+      this.requiredFields.report(this.host);
     }
   }
 

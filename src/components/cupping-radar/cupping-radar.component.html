@@ -19,7 +19,7 @@
               [tooltipTopic]="'CUPPING_SCORE_DRY_FRAGRANCE' | translate" />
   </ion-item>
   <ion-item>
-    <ion-range style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.dry_fragrance" max="10" min="0" step="0.1" />
+    <ion-range [rangeLabel]="'CUPPING_SCORE_DRY_FRAGRANCE' | translate" style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.dry_fragrance" max="10" min="0" step="0.1" />
   </ion-item>
   <ion-item class="label-item" lines="none">
     <ion-label>{{"CUPPING_SCORE_WET_AROMA" | translate}}</ion-label>
@@ -29,7 +29,7 @@
               [tooltipTopic]="'CUPPING_SCORE_WET_AROMA' | translate" />
   </ion-item>
   <ion-item>
-    <ion-range style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.wet_aroma" max="10" min="0" step="0.1" />
+    <ion-range [rangeLabel]="'CUPPING_SCORE_WET_AROMA' | translate" style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.wet_aroma" max="10" min="0" step="0.1" />
   </ion-item>
 
   <ion-item class="label-item" lines="none">
@@ -40,7 +40,7 @@
               [tooltipTopic]="'CUPPING_SCORE_BRIGHTNESS' | translate" />
   </ion-item>
   <ion-item>
-    <ion-range style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.brightness" max="10" min="0" step="0.1" />
+    <ion-range [rangeLabel]="'CUPPING_SCORE_BRIGHTNESS' | translate" style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.brightness" max="10" min="0" step="0.1" />
   </ion-item>
 
   <ion-item class="label-item" lines="none">
@@ -51,7 +51,7 @@
               [tooltipTopic]="'CUPPING_SCORE_FLAVOR' | translate" />
   </ion-item>
   <ion-item>
-    <ion-range style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.flavor" max="10" min="0" step="0.1" />
+    <ion-range [rangeLabel]="'CUPPING_SCORE_FLAVOR' | translate" style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.flavor" max="10" min="0" step="0.1" />
   </ion-item>
 
   <ion-item class="label-item" lines="none">
@@ -62,7 +62,7 @@
               [tooltipTopic]="'CUPPING_SCORE_BODY' | translate" />
   </ion-item>
   <ion-item>
-    <ion-range style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.body" max="10" min="0" step="0.1" />
+    <ion-range [rangeLabel]="'CUPPING_SCORE_BODY' | translate" style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.body" max="10" min="0" step="0.1" />
   </ion-item>
 
   <ion-item class="label-item" lines="none">
@@ -73,7 +73,7 @@
               [tooltipTopic]="'CUPPING_SCORE_FINISH' | translate" />
   </ion-item>
   <ion-item>
-    <ion-range style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.finish" max="10" min="0" step="0.1" />
+    <ion-range [rangeLabel]="'CUPPING_SCORE_FINISH' | translate" style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.finish" max="10" min="0" step="0.1" />
   </ion-item>
 
   <ion-item class="label-item" lines="none">
@@ -84,7 +84,7 @@
               [tooltipTopic]="'CUPPING_SCORE_SWEETNESS' | translate" />
   </ion-item>
   <ion-item>
-    <ion-range style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.sweetness" max="10" min="0" step="0.1" />
+    <ion-range [rangeLabel]="'CUPPING_SCORE_SWEETNESS' | translate" style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.sweetness" max="10" min="0" step="0.1" />
   </ion-item>
 
   <ion-item class="label-item" lines="none">
@@ -95,7 +95,7 @@
               [tooltipTopic]="'CUPPING_SCORE_CLEAN_CUP' | translate" />
   </ion-item>
   <ion-item>
-    <ion-range style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.clean_cup" max="10" min="0" step="0.1" />
+    <ion-range [rangeLabel]="'CUPPING_SCORE_CLEAN_CUP' | translate" style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.clean_cup" max="10" min="0" step="0.1" />
   </ion-item>
 
   <ion-item class="label-item" lines="none">
@@ -106,7 +106,7 @@
               [tooltipTopic]="'CUPPING_SCORE_COMPLEXITY' | translate" />
   </ion-item>
   <ion-item>
-    <ion-range style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.complexity" max="10" min="0" step="0.1" />
+    <ion-range [rangeLabel]="'CUPPING_SCORE_COMPLEXITY' | translate" style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.complexity" max="10" min="0" step="0.1" />
   </ion-item>
 
   <ion-item class="label-item" lines="none">
@@ -117,7 +117,7 @@
               [tooltipTopic]="'CUPPING_SCORE_UNIFORMITY' | translate" />
   </ion-item>
   <ion-item>
-    <ion-range style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.uniformity" max="10" min="0" step="0.1" />
+    <ion-range [rangeLabel]="'CUPPING_SCORE_UNIFORMITY' | translate" style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.uniformity" max="10" min="0" step="0.1" />
   </ion-item>
 
   <ion-item class="label-item" lines="none">
@@ -128,7 +128,7 @@
               [tooltipTopic]="'CUPPING_SCORE_CUPPERS_CORRECTION' | translate" />
   </ion-item>
   <ion-item>
-    <ion-range style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.cuppers_correction" max="10" min="0"
+    <ion-range [rangeLabel]="'CUPPING_SCORE_CUPPERS_CORRECTION' | translate" style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.cuppers_correction" max="10" min="0"
                step="0.1" />
   </ion-item>
 

@@ -9,7 +9,7 @@
       <ion-item>
         <ion-input label-placement="stacked" label='{{"NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" name="name"
           placeholder="{{'GRAPH.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
-          autocapitalize="sentences" required />
+          autocapitalize="sentences" errorText="{{'NAME_REQUIRED' | translate}}" required />
       </ion-item>
       @if (flowData === undefined) {
         <ion-item tappable [button]="true" (click)='uploadGraph()'>

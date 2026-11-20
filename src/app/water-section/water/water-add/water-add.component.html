@@ -8,7 +8,7 @@
     <ion-row>
       @for (key of water_type_enums | keys; track key) {
         <ion-col size="6">
-          <ion-card (click)="chooseWater(key)" class="water-add-card" tappable>
+          <ion-card button (click)="chooseWater(key)" class="water-add-card" tappable>
             @if (key !== 'CUSTOM_WATER') {
               <ion-card-content>
                 <div class="ion-text-center">

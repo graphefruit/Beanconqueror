@@ -38,6 +38,7 @@ import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
 import { BrewView } from '../../classes/brew/brewView';
 import { HeaderComponent } from '../../components/header/header.component';
+import { DatetimeButtonLabelDirective } from '../../directive/datetime-button-label.directive';
 import { DatetimeLanguageDirective } from '../../directive/datetime-language.directive';
 import { TabPanelDirective } from '../../directive/tab-panel.directive';
 import { IBrew } from '../../interfaces/brew/iBrew';
@@ -83,6 +84,7 @@ import { UIStatistic } from '../../services/uiStatistic';
     IonCardContent,
     IonDatetime,
     IonDatetimeButton,
+    DatetimeButtonLabelDirective,
     IonPopover,
     DatetimeLanguageDirective,
   ],

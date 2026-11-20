@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   Input,
   OnInit,
@@ -32,6 +33,7 @@ import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
 import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
 import { TabPanelDirective } from '../../../../directive/tab-panel.directive';
 import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
+import { RequiredFields } from '../../../../services/a11y/required-fields.service';
 import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIFileHelper } from '../../../../services/uiFileHelper';
@@ -66,6 +68,9 @@ import { UIToast } from '../../../../services/uiToast';
   ],
 })
 export class GreenBeanEditComponent implements OnInit {
+  private readonly requiredFields = inject(RequiredFields);
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly modalController = inject(ModalController);
   private readonly uiGreenBeanStorage = inject(UIGreenBeanStorage);
   private readonly uiImage = inject(UIImage);
@@ -94,6 +99,8 @@ export class GreenBeanEditComponent implements OnInit {
   public async editBean() {
     if (this.__formValid()) {
       await this.__editBean();
+    } else {
+      this.requiredFields.report(this.host);
     }
   }
 

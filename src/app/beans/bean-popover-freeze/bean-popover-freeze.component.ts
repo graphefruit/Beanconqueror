@@ -39,7 +39,9 @@ import moment from 'moment/moment';
 import { Bean } from '../../../classes/bean/bean';
 import { Config } from '../../../classes/objectConfig/objectConfig';
 import { Settings } from '../../../classes/settings/settings';
+import { PickerFieldDirective } from '../../../directive/picker-field.directive';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
@@ -75,9 +77,11 @@ declare var cordova;
     IonCard,
     IonItem,
     IonInput,
+    PickerFieldDirective,
     IonCheckbox,
     IonLabel,
     IonRange,
+    RangeNameDirective,
     IonSelect,
     IonSelectOption,
     IonTextarea,

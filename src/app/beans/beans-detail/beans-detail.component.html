@@ -191,7 +191,7 @@
             }
             @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roast_range])) {
               <ion-item style='margin-top:-10px;'>
-                <ion-range  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" disabled="true" [(ngModel)]="data.roast_range" snaps="true" max="5" min="0" step="0.5">
+                <ion-range [rangeLabel]="'BEAN_DATA_ROAST_NAME' | translate"  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" disabled="true" [(ngModel)]="data.roast_range" snaps="true" max="5" min="0" step="0.5">
                   <div slot="end">
                     <ngx-stars #beanStars [readonly]="true" [initialStars]="data.roast_range"  class="bean-display ion-margin-top" />
                   </div>
@@ -228,7 +228,7 @@
           }
           @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.rating])) {
             <ion-item style='margin-top:-10px;'>
-              <ion-range  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" [(ngModel)]="data.rating" [max]="maxBeanRating" [step]="$safeNavigationMigration(settings?.bean_rating_steps)" debounce="500s"  disabled="true" min="0" snaps="true">
+              <ion-range [rangeLabel]="'BREW_DATA_RATING' | translate"  style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" [(ngModel)]="data.rating" [max]="maxBeanRating" [step]="$safeNavigationMigration(settings?.bean_rating_steps)" debounce="500s"  disabled="true" min="0" snaps="true">
                 <div slot="end">
                   @if (bean?.rating !== 0 && hasCustomRatingRange() === false) {
                     <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars"  />

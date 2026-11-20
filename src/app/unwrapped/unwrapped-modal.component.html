@@ -1,6 +1,6 @@
 <ion-content class="unwrapped-content">
-  <div class="close-button" (click)="close()">
-    <ion-icon name="close-outline" />
+  <div class="close-button" role="button" tabindex="0" [attr.aria-label]="'CLOSE' | translate" (click)="close()" (keydown.enter)="close()" (keydown.space)="$event.preventDefault(); close()">
+    <ion-icon aria-hidden="true" name="close-outline" />
   </div>
 
   <swiper-container #swiper class="unwrapped-swiper" pagination="true" pagination-clickable="true">

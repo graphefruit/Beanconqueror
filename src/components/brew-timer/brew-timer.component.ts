@@ -28,6 +28,7 @@ import { Subscription } from 'rxjs';
 
 import { BluetoothScale } from '../../classes/devices';
 import { Settings } from '../../classes/settings/settings';
+import { PickerFieldDirective } from '../../directive/picker-field.directive';
 import { ITimer } from '../../interfaces/timer/iTimer';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
@@ -38,7 +39,14 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
   templateUrl: './brew-timer.component.html',
   styleUrls: ['./brew-timer.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [IonItem, IonInput, IonButton, IonIcon, TranslatePipe],
+  imports: [
+    IonItem,
+    IonInput,
+    PickerFieldDirective,
+    IonButton,
+    IonIcon,
+    TranslatePipe,
+  ],
 })
 export class BrewTimerComponent implements OnInit, OnDestroy {
   private readonly modalCtrl = inject(ModalController);

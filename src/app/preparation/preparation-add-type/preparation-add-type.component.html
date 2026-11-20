@@ -5,7 +5,7 @@
   <form #addPreparationForm="ngForm" novalidate>
     <ion-item class="ion-margin-top">
       <ion-input label-placement="stacked" label='{{"PREPARATION_TYPE_NAME" | translate}}*' aria-labelledby='name' #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
-        placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required
+        placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" errorText="{{'NAME_REQUIRED' | translate}}" required
         spellcheck="false" type="text" />
     </ion-item>
     <ion-item>
@@ -33,7 +33,7 @@
     </ion-item>
     <div class="ion-padding-horizontal">
       @for (tool of data.tools; track tool; let i = $index) {
-        <ion-chip (click)="deleteTool(tool)">{{tool.name}} <ion-icon aria-hidden="true" name="close" /></ion-chip>
+        <ion-chip [chipButton]="'A11Y.REMOVE_TOOL' | translate: { tool: tool.name }" (click)="deleteTool(tool)">{{tool.name}} <ion-icon aria-hidden="true" name="close" /></ion-chip>
       }
     </div>
   </form>

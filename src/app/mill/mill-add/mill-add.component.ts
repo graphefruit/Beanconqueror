@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   Input,
   OnInit,
@@ -26,6 +27,7 @@ import { storedOrReported } from '../../../classes/storedOrReported';
 import MILL_TRACKING from '../../../data/tracking/millTracking';
 import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { RequiredFields } from '../../../services/a11y/required-fields.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIMillStorage } from '../../../services/uiMillStorage';
@@ -51,6 +53,9 @@ import { UIToast } from '../../../services/uiToast';
   ],
 })
 export class MillAddComponent implements OnInit {
+  private readonly requiredFields = inject(RequiredFields);
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly modalController = inject(ModalController);
   private readonly uiMillStorage = inject(UIMillStorage);
   private readonly uiToast = inject(UIToast);
@@ -68,6 +73,8 @@ export class MillAddComponent implements OnInit {
   public async addMill() {
     if (this.data.name) {
       await this.__addMill();
+    } else {
+      this.requiredFields.report(this.host);
     }
   }
 

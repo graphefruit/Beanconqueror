@@ -25,6 +25,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { Settings } from '../../../classes/settings/settings';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { ControlDescriptionDirective } from '../../../directive/control-description.directive';
 import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
@@ -45,6 +46,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonCard,
     IonItem,
     IonCheckbox,
+    ControlDescriptionDirective,
     IonCardContent,
     HeaderComponent,
     IonTitle,

@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   Input,
   OnInit,
@@ -34,10 +35,12 @@ import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import { storedOrReported } from '../../../classes/storedOrReported';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
+import { ChipButtonDirective } from '../../../directive/chip-button.directive';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
 import { TooltipDirective } from '../../../directive/tooltip.directive';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { RequiredFields } from '../../../services/a11y/required-fields.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
@@ -65,11 +68,15 @@ import { UIToast } from '../../../services/uiToast';
     IonIcon,
     IonButton,
     IonChip,
+    ChipButtonDirective,
     IonRow,
     IonCol,
   ],
 })
 export class PreparationAddTypeComponent implements OnInit {
+  private readonly requiredFields = inject(RequiredFields);
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly modalController = inject(ModalController);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiToast = inject(UIToast);
@@ -104,6 +111,8 @@ export class PreparationAddTypeComponent implements OnInit {
   public async addPreparation() {
     if (this.preparationForm.valid) {
       await this.__addPreparation();
+    } else {
+      this.requiredFields.report(this.host);
     }
   }
 

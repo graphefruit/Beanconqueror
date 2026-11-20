@@ -54,6 +54,7 @@ import { AnalyticsPopoverComponent } from '../popover/analytics-popover/analytic
 import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
 import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
 import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popover.component';
+import { ChartTextAlternative } from '../services/a11y/chart-text-alternative.service';
 import { IonicLabelsService } from '../services/a11y/ionic-labels.service';
 import { OverlayStackA11yService } from '../services/a11y/overlay-stack-a11y.service';
 import { PageFocusService } from '../services/a11y/page-focus.service';
@@ -122,6 +123,7 @@ export class AppComponent implements AfterViewInit {
   private readonly tabletLayout = inject(TabletLayoutService);
   private readonly overlayStackA11y = inject(OverlayStackA11yService);
   private readonly ionicLabels = inject(IonicLabelsService);
+  private readonly chartTextAlternative = inject(ChartTextAlternative);
   private readonly pageFocus = inject(PageFocusService);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly navCtrl = inject(NavController);
@@ -155,6 +157,7 @@ export class AppComponent implements AfterViewInit {
     this.tabletLayout.start();
     this.overlayStackA11y.start();
     this.ionicLabels.start();
+    this.chartTextAlternative.start();
     this.pageFocus.start();
     // Dont remove androidPlatformService && iosPlatformservice, we need to initialize it via constructor
     try {

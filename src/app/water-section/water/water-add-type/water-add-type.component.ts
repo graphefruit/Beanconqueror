@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   Input,
   OnInit,
@@ -28,6 +29,7 @@ import { DisableDoubleClickDirective } from '../../../../directive/disable-doubl
 import { WATER_TYPES } from '../../../../enums/water/waterTypes';
 import { WATER_UNIT } from '../../../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
+import { RequiredFields } from '../../../../services/a11y/required-fields.service';
 import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIToast } from '../../../../services/uiToast';
@@ -52,6 +54,9 @@ import { UIWaterStorage } from '../../../../services/uiWaterStorage';
   ],
 })
 export class WaterAddTypeComponent implements OnInit {
+  private readonly requiredFields = inject(RequiredFields);
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly modalController = inject(ModalController);
   private readonly uiWaterStorage = inject(UIWaterStorage);
   private readonly uiToast = inject(UIToast);
@@ -75,6 +80,8 @@ export class WaterAddTypeComponent implements OnInit {
     if (this.data.name) {
       this.addWaterIngredientsInformation();
       await this.__add();
+    } else {
+      this.requiredFields.report(this.host);
     }
   }
   private addWaterIngredientsInformation() {

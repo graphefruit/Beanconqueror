@@ -1,7 +1,7 @@
 
 <ion-item class="no-bottom-border item" lines="none">
 
-  <ion-input label-placement="stacked" label='{{label}}' readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{returnWantedDisplayFormat()}}" />
+  <ion-input pickerField label-placement="stacked" label='{{label}}' readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{returnWantedDisplayFormat()}}" />
 
   <!-- A page can hold several timers: the label tells their buttons apart. -->
   @let nameSuffix = label ? ': ' + label : '';

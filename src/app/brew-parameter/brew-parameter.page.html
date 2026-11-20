@@ -4,32 +4,32 @@
   </app-header>
 </ion-header>
 <ion-content>
-  <ion-card (click)="openManageParameters()" tappable>
+  <ion-card button (click)="openManageParameters()" tappable>
     <ion-item class="ion-padding-horizontal" lines="none">
       <ion-icon aria-hidden="true" name="beanconqueror-manage-parameter" slot="start" />
       {{"NAV_MANAGE_PARAMETERS" | translate}}
     </ion-item>
   </ion-card>
-  <ion-card (click)="openSortParameters()" tappable>
+  <ion-card button (click)="openSortParameters()" tappable>
     <ion-item class="ion-padding-horizontal" lines="none">
       <ion-icon aria-hidden="true" name="beanconqueror-sort-parameter" slot="start" />
       {{"NAV_SORT_PARAMETERS" | translate}}
     </ion-item>
   </ion-card>
-  <ion-card (click)="openDefaultParameters()" tappable>
+  <ion-card button (click)="openDefaultParameters()" tappable>
     <ion-item class="ion-padding-horizontal" lines="none">
       <ion-icon aria-hidden="true" name="beanconqueror-default-parameter" slot="start" />
       {{"NAV_DEFAULT_PARAMETERS" | translate}}
     </ion-item>
   </ion-card>
-  <ion-card (click)="openRepeatParameters()" tappable>
+  <ion-card button (click)="openRepeatParameters()" tappable>
     <ion-item class="ion-padding-horizontal" lines="none">
       <ion-icon aria-hidden="true" name="beanconqueror-repeat-round" slot="start" />
       {{"NAV_REPEAT_PARAMETERS" | translate}}
     </ion-item>
   </ion-card>
 
-  <ion-card (click)="openListViewParameters()" tappable>
+  <ion-card button (click)="openListViewParameters()" tappable>
     <ion-item class="ion-padding-horizontal" lines="none">
       <ion-icon aria-hidden="true" name="beanconqueror-list-view-parameter" slot="start" />
       {{"NAV_LIST_VIEW_CUSTOM_PARAMETERS" | translate}}

@@ -1,4 +1,5 @@
 import { HttpClient } from '@angular/common/http';
+import { ElementRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { ModalController } from '@ionic/angular';
@@ -174,6 +175,11 @@ async function startApp(_device: Device) {
       },
       { provide: UISettingsStorage, useValue: uiSettingsStorage },
       { provide: HttpClient, useValue: {} },
+      // The dialog is used as a service here, without its element.
+      {
+        provide: ElementRef,
+        useValue: new ElementRef(document.createElement('div')),
+      },
     ],
   });
   const brewStorage = TestBed.inject(UIBrewStorage);

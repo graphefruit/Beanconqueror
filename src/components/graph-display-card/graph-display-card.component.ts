@@ -15,6 +15,7 @@ import {
 import { Platform } from '@ionic/angular';
 
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { MeticulousDevice } from '../../classes/preparationDevice/meticulous/meticulousDevice';
@@ -31,7 +32,7 @@ declare var Plotly;
   templateUrl: './graph-display-card.component.html',
   styleUrls: ['./graph-display-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [],
+  imports: [TranslatePipe],
 })
 export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
   private readonly uiHelper = inject(UIHelper);

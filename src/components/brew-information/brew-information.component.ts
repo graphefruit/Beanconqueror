@@ -53,6 +53,7 @@ import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
 import { StorageClass } from '../../classes/storageClass';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
+import { ChipButtonDirective } from '../../directive/chip-button.directive';
 import { LongPressDirective } from '../../directive/long-press.directive';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 import { BREW_ACTION } from '../../enums/brews/brewAction';
@@ -131,6 +132,7 @@ declare let window;
     IonRow,
     IonCol,
     IonChip,
+    ChipButtonDirective,
   ],
   changeDetection: ChangeDetectionStrategy.Eager,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

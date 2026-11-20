@@ -147,7 +147,13 @@ export class DatetimePopoverComponent implements OnInit, OnDestroy {
   public async dismissKeyboard(): Promise<void> {
     try {
       const activeElement = document.activeElement as HTMLElement;
-      if (activeElement && typeof activeElement.blur === 'function') {
+      // Only a field of this dialog brings up the keyboard. Once the dialog
+      // is closed, focus is back on the field that opened it and stays there.
+      if (
+        activeElement &&
+        typeof activeElement.blur === 'function' &&
+        this.elementRef.nativeElement.contains(activeElement)
+      ) {
         activeElement.blur();
       }
       await Keyboard.hide();

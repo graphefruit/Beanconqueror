@@ -201,7 +201,7 @@
                     <ion-card-content>
 
                       <ion-item  style="padding:0px;margin:0px;" lines="none">
-                        <ion-input (ionBlur)="baristaModeWeightChanged('P1')"
+                        <ion-input (ionBlur)="baristaModeWeightChanged('P1')" [attr.aria-label]="'A11Y.STOP_AT_WEIGHT_FOR' | translate: { profile: 'P1' }"
                                    [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightP1" inputmode="decimal"
                                    prevent-characters
                                    remove-empty-number type="text" class="sanremo-input">
@@ -221,7 +221,7 @@
                     <ion-card-content>
 
                       <ion-item  style="padding:0px;margin:0px;" lines="none">
-                        <ion-input (ionBlur)="baristaModeWeightChanged('P3')"
+                        <ion-input (ionBlur)="baristaModeWeightChanged('P3')" [attr.aria-label]="'A11Y.STOP_AT_WEIGHT_FOR' | translate: { profile: 'P3' }"
                                    [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightP3" inputmode="decimal"
                                    prevent-characters
                                    remove-empty-number type="text" class="sanremo-input">
@@ -240,7 +240,7 @@
                     <ion-card-content>
 
                       <ion-item style="padding:0px;margin:0px;" lines="none">
-                        <ion-input (ionBlur)="baristaModeWeightChanged('P2')"
+                        <ion-input (ionBlur)="baristaModeWeightChanged('P2')" [attr.aria-label]="'A11Y.STOP_AT_WEIGHT_FOR' | translate: { profile: 'P2' }"
                                    [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightP2" inputmode="decimal"
                                    prevent-characters
                                    remove-empty-number type="text" class="sanremo-input">
@@ -260,7 +260,7 @@
                     <ion-card-content>
 
                       <ion-item style="padding:0px;margin:0px;" lines="none">
-                        <ion-input (ionBlur)="baristaModeWeightChanged('M')"
+                        <ion-input (ionBlur)="baristaModeWeightChanged('M')" [attr.aria-label]="'A11Y.STOP_AT_WEIGHT_FOR' | translate: { profile: 'M' }"
                                    [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeightM" inputmode="decimal"
                                    prevent-characters
                                    remove-empty-number type="text" class="sanremo-input">

@@ -50,8 +50,8 @@
     @if (rangeMode === 'CUSTOM') {
       <ion-row class="ion-align-items-center">
         <ion-col size="6" class="ion-text-center">
-          <ion-label>{{"STATISTIC_RANGE_FROM" | translate}}</ion-label>
-          <ion-datetime-button datetime="statisticRangeStart" />
+          <ion-label id="statisticRangeFromLabel">{{"STATISTIC_RANGE_FROM" | translate}}</ion-label>
+          <ion-datetime-button datetime="statisticRangeStart" datetimeLabel="statisticRangeFromLabel" />
           <ion-popover #startDatePopover [keepContentsMounted]="true" side="bottom" alignment="start" (didDismiss)="__applyCustomRange()">
             <ng-template>
               <ion-datetime id="statisticRangeStart" presentation="date"
@@ -61,8 +61,8 @@
           </ion-popover>
         </ion-col>
         <ion-col size="6" class="ion-text-center">
-          <ion-label>{{"STATISTIC_RANGE_TO" | translate}}</ion-label>
-          <ion-datetime-button datetime="statisticRangeEnd" />
+          <ion-label id="statisticRangeToLabel">{{"STATISTIC_RANGE_TO" | translate}}</ion-label>
+          <ion-datetime-button datetime="statisticRangeEnd" datetimeLabel="statisticRangeToLabel" />
           <ion-popover #endDatePopover [keepContentsMounted]="true" side="bottom" alignment="start" (didDismiss)="__applyCustomRange()">
             <ng-template>
               <ion-datetime id="statisticRangeEnd" presentation="date"

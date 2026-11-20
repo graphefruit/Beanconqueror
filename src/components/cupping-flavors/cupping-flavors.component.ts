@@ -26,6 +26,8 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { Brew } from '../../classes/brew/brew';
 import CuppingFlavors from '../../data/cupping-flavors/cupping-flavors.json';
+import { ChipButtonDirective } from '../../directive/chip-button.directive';
+import { IconButtonDirective } from '../../directive/icon-button.directive';
 import { SearchbarNameDirective } from '../../directive/searchbar-name.directive';
 import { IFlavor } from '../../interfaces/flavor/iFlavor';
 import { UIHelper } from '../../services/uiHelper';
@@ -43,7 +45,9 @@ import { UIHelper } from '../../services/uiHelper';
     IonItem,
     IonInput,
     IonIcon,
+    IconButtonDirective,
     IonChip,
+    ChipButtonDirective,
     IonSearchbar,
     SearchbarNameDirective,
     IonCheckbox,

@@ -80,6 +80,7 @@ import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/san
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { triggerBrewByWeightWebhook } from '../../../classes/settings/brewByWeightWebhook';
 import { Settings } from '../../../classes/settings/settings';
+import { ChipButtonDirective } from '../../../directive/chip-button.directive';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { BREW_GRAPH_TYPE } from '../../../enums/brews/brewGraphType';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
@@ -132,6 +133,7 @@ declare let Plotly;
     IonCard,
     IonCheckbox,
     IonChip,
+    ChipButtonDirective,
   ],
 })
 export class BrewBrewingGraphComponent implements OnInit, OnDestroy {

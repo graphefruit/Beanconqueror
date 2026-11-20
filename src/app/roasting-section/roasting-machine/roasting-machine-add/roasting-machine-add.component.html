@@ -3,7 +3,7 @@
   <ion-item class="ion-margin-top">
     <ion-input label-placement="stacked" label='{{"NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" name="name"
                placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
-               autocapitalize="sentences" required />
+               autocapitalize="sentences" errorText="{{'NAME_REQUIRED' | translate}}" required />
   </ion-item>
   <ion-row class="ion-margin-top">
     <ion-col>

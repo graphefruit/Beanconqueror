@@ -81,9 +81,11 @@ import { Settings } from '../../../classes/settings/settings';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { BeanOverlayDirective } from '../../../directive/bean-overlay.directive';
 import { MillOverlayDirective } from '../../../directive/mill-overlay.directive';
+import { PickerFieldDirective } from '../../../directive/picker-field.directive';
 import { PreparationOverlayDirective } from '../../../directive/preparation-overlay.directive';
 import { PreparationToolOverlayDirective } from '../../../directive/preparation-tool-overlay.directive';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { WaterOverlayDirective } from '../../../directive/water-overlay.directive';
@@ -160,6 +162,7 @@ declare var cordova;
     IonCard,
     IonItem,
     IonInput,
+    PickerFieldDirective,
     IonButton,
     IonIcon,
     IonSelect,
@@ -170,6 +173,7 @@ declare var cordova;
     IonSelectOption,
     IonBadge,
     IonRange,
+    RangeNameDirective,
     IonTextarea,
     IonGrid,
   ],

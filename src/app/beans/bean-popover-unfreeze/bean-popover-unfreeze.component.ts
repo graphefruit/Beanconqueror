@@ -33,6 +33,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { storedOrReported } from '../../../classes/storedOrReported';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -62,6 +63,7 @@ import { UIToast } from '../../../services/uiToast';
     IonLabel,
     IonInput,
     IonRange,
+    RangeNameDirective,
     IonCheckbox,
   ],
 })

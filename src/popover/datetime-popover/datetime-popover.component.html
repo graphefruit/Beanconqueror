@@ -25,7 +25,8 @@
 
 
   <ion-grid class="ion-no-padding ion-margin-top">
-    <ion-row>
+    <!-- Each field is named after its column. -->
+    <ion-row aria-hidden="true">
       @if (settings?.brew_timer_show_hours) {
         <ion-col  size="{{colSize}}">{{"TIMER_HOUR" | translate}}</ion-col>
       }
@@ -39,14 +40,14 @@
     </ion-row>
     <ion-row>
       @if (settings?.brew_timer_show_hours) {
-        <ion-col size="{{colSize}}"><ion-input #hourInput maxlength="2" [(ngModel)]="timer.HOURS" (keydown)="onInputKeydown($event, 'HOURS')" [max-number-value]="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal" /></ion-col>
+        <ion-col size="{{colSize}}"><ion-input #hourInput [attr.aria-label]="'TIMER_HOUR' | translate" maxlength="2" [(ngModel)]="timer.HOURS" (keydown)="onInputKeydown($event, 'HOURS')" [max-number-value]="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal" /></ion-col>
       }
       @if (settings?.brew_timer_show_minutes) {
-        <ion-col  size="{{colSize}}"><ion-input #minuteInput maxlength="2" [(ngModel)]="timer.MINUTES" (keydown)="onInputKeydown($event, 'MINUTES')" [max-number-value]="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal" /></ion-col>
+        <ion-col  size="{{colSize}}"><ion-input #minuteInput [attr.aria-label]="'TIMER_MINUTES' | translate" maxlength="2" [(ngModel)]="timer.MINUTES" (keydown)="onInputKeydown($event, 'MINUTES')" [max-number-value]="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal" /></ion-col>
       }
-      <ion-col size="{{colSize}}"><ion-input #secondInput maxlength="2" [(ngModel)]="timer.SECONDS" (keydown)="onInputKeydown($event, 'SECONDS')" [max-number-value]="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal" /></ion-col>
+      <ion-col size="{{colSize}}"><ion-input #secondInput [attr.aria-label]="'TIMER_SECONDS' | translate" maxlength="2" [(ngModel)]="timer.SECONDS" (keydown)="onInputKeydown($event, 'SECONDS')" [max-number-value]="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal" /></ion-col>
       @if (settings?.brew_milliseconds) {
-        <ion-col  size="{{colSize}}"><ion-input #millisecondInput maxlength="3" [(ngModel)]="timer.MILLISECONDS" (keydown)="onInputKeydown($event, 'MILLISECONDS')" [max-number-value]="maxMilliSecond" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal" /></ion-col>
+        <ion-col  size="{{colSize}}"><ion-input #millisecondInput [attr.aria-label]="'TIMER_MILLISECONDS' | translate" maxlength="3" [(ngModel)]="timer.MILLISECONDS" (keydown)="onInputKeydown($event, 'MILLISECONDS')" [max-number-value]="maxMilliSecond" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal" /></ion-col>
       }
     </ion-row>
 

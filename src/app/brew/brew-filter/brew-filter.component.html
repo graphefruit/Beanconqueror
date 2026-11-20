@@ -66,7 +66,7 @@
       </ion-label>
     </ion-item>
   <ion-item style="top:-10px;">
-    <ion-range  min="-1" dualKnobs="true" [pinFormatter]='pinFormatter' pin='true' snaps="true" [max]="maxBrewRating" [step]="$safeNavigationMigration(settings?.brew_rating_steps)" [(ngModel)]="filter.rating">
+    <ion-range [rangeLabel]="'BREW_DATA_RATING' | translate"  min="-1" dualKnobs="true" [pinFormatter]='pinFormatter' pin='true' snaps="true" [max]="maxBrewRating" [step]="$safeNavigationMigration(settings?.brew_rating_steps)" [(ngModel)]="filter.rating">
       <ion-icon aria-hidden="true" size="small" slot="start" name="beanconqueror-brew-rating-empty" />
       <ion-icon aria-hidden="true" slot="end" name="beanconqueror-brew-rating-full" />
     </ion-range>

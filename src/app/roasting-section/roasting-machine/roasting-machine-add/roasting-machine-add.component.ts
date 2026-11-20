@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   OnInit,
 } from '@angular/core';
@@ -23,6 +24,7 @@ import { RoastingMachine } from '../../../../classes/roasting-machine/roasting-m
 import { storedOrReported } from '../../../../classes/storedOrReported';
 import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
 import { DisableDoubleClickDirective } from '../../../../directive/disable-double-click.directive';
+import { RequiredFields } from '../../../../services/a11y/required-fields.service';
 import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
@@ -47,6 +49,9 @@ import { UIToast } from '../../../../services/uiToast';
   ],
 })
 export class RoastingMachineAddComponent implements OnInit {
+  private readonly requiredFields = inject(RequiredFields);
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly modalController = inject(ModalController);
   private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
   private readonly uiToast = inject(UIToast);
@@ -65,6 +70,8 @@ export class RoastingMachineAddComponent implements OnInit {
   public async add() {
     if (this.data.name) {
       await this.__add();
+    } else {
+      this.requiredFields.report(this.host);
     }
   }
 

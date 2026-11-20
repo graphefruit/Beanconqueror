@@ -36,6 +36,7 @@ import { BrewFlow, IBrewWeightFlow } from 'src/classes/brew/brewFlow';
 import { PREPARATION_STYLE_TYPE } from 'src/enums/preparations/preparationStyleTypes';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
 import { loadPlotly } from '../../../services/graphHelper/load-plotly';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -60,6 +61,7 @@ declare var Plotly: any;
     IonItem,
     IonLabel,
     IonRange,
+    RangeNameDirective,
     HeaderComponent,
     HeaderDismissButtonComponent,
     IonCard,

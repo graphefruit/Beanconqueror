@@ -56,7 +56,20 @@ export class BrewPopoverExtractionComponent implements OnInit {
   protected heightInformationBlock: number = 50;
   protected widthInformationBlock: number = 50;
 
-  public ngOnInit() {}
+  /** The brew's point in the chart, for the text that replaces it. */
+  protected extractionValues: { tds: string; yield: string } = {
+    tds: '',
+    yield: '',
+  };
+
+  public ngOnInit() {
+    if (this.brew) {
+      this.extractionValues = {
+        tds: String(this.brew.tds),
+        yield: this.brew.getExtractionYield(),
+      };
+    }
+  }
   public ionViewDidEnter(): void {
     if (this.brew) {
       setTimeout(() => {

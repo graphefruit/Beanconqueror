@@ -34,6 +34,9 @@ import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
 import { ChooseDateOverlayDirective } from '../../../directive/choose-date.directive';
+import { ControlDescriptionDirective } from '../../../directive/control-description.directive';
+import { PickerFieldDirective } from '../../../directive/picker-field.directive';
+import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
 import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
@@ -51,6 +54,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   styleUrls: ['./bean-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    ControlDescriptionDirective,
     FormsModule,
     ChooseDateOverlayDirective,
     TransformDateDirective,
@@ -67,8 +71,10 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonRow,
     IonCol,
     IonInput,
+    PickerFieldDirective,
     IonLabel,
     IonRange,
+    RangeNameDirective,
     IonIcon,
     IonBadge,
     IonList,

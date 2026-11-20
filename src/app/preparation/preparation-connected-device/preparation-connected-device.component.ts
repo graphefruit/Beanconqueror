@@ -42,6 +42,7 @@ import { XeniaParams } from '../../../classes/preparationDevice/xenia/xeniaDevic
 import { Settings } from '../../../classes/settings/settings';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { environment } from '../../../environments/environment';
@@ -79,6 +80,7 @@ import { UIToast } from '../../../services/uiToast';
     IonLabel,
     IonBadge,
     IonRange,
+    RangeNameDirective,
     IonCheckbox,
     IonFooter,
     IonToggle,

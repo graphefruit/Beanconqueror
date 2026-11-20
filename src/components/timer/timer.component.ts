@@ -23,6 +23,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
 
 import { Settings } from '../../classes/settings/settings';
+import { PickerFieldDirective } from '../../directive/picker-field.directive';
 import { TransformDateDirective } from '../../directive/transform-date';
 import { ITimer } from '../../interfaces/timer/iTimer';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
@@ -39,6 +40,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
     TranslatePipe,
     IonItem,
     IonInput,
+    PickerFieldDirective,
     IonButton,
     IonIcon,
   ],

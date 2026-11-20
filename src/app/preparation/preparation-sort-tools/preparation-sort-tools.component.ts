@@ -24,6 +24,10 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import {
+  ReorderButtonsComponent,
+  ReorderMove,
+} from '../../../components/reorder-buttons/reorder-buttons.component';
 import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
@@ -32,6 +36,7 @@ import { UIHelper } from '../../../services/uiHelper';
   styleUrls: ['./preparation-sort-tools.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
+    ReorderButtonsComponent,
     TranslatePipe,
     IonHeader,
     IonContent,
@@ -88,6 +93,11 @@ export class PreparationSortToolsComponent implements OnInit {
     // by the reorder group
     ev.detail.complete();
     this.save();
+  }
+
+  /** The same move as a drag, made with the buttons of an entry. */
+  public moveTool(move: ReorderMove) {
+    this.reorder_tool({ detail: { ...move, complete: () => undefined } });
   }
 
   private __initializeData(): void {

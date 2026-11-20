@@ -15,12 +15,12 @@
     @if (showUnwrappedButton) {
     <ion-row>
       <ion-col size="12">
-        <ion-card class="ion-no-margin" (click)="openUnwrapped(2026)" tappable>
+        <ion-card button class="ion-no-margin" (click)="openUnwrapped(2026)" tappable>
           <ion-card-header>
-            <ion-card-title>
+            <div class="card-title-text">
               <ion-icon aria-hidden="true" color='accent' name="gift-outline" />
               {{ 'UNWRAPPED.BUTTON.TITLE' | translate }}
-            </ion-card-title>
+            </div>
             <div class="card-subtitle-text">{{ 'UNWRAPPED.BUTTON.SUBTITLE' | translate }}</div>
           </ion-card-header>
         </ion-card>

@@ -20,7 +20,7 @@
       </ion-item>
       <ion-item>
         <ion-input label-placement="stacked" label='{{"PREPARATION_TYPE_NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
-          placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required
+          placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" errorText="{{'NAME_REQUIRED' | translate}}" required
           spellcheck="false" type="text" />
       </ion-item>
       <ion-item>
@@ -49,7 +49,7 @@
       </ion-item>
       <div class="ion-padding-horizontal">
         @for (tool of getActiveTools(); track tool; let i = $index) {
-          <ion-chip (click)="editTool(tool)">{{tool.name}} <ion-icon aria-hidden="true" name="beanconqueror-edit" /></ion-chip>
+          <ion-chip [chipButton]="'A11Y.EDIT_TOOL' | translate: { tool: tool.name }" (click)="editTool(tool)">{{tool.name}} <ion-icon aria-hidden="true" name="beanconqueror-edit" /></ion-chip>
         }
       </div>
       @if (getArchivedTools().length > 0) {
@@ -60,7 +60,7 @@
       @if (getArchivedTools().length > 0) {
         <div class="ion-padding-horizontal">
           @for (tool of getArchivedTools(); track tool; let i = $index) {
-            <ion-chip (click)="editTool(tool)">{{tool.name}} <ion-icon aria-hidden="true" name="beanconqueror-edit" /></ion-chip>
+            <ion-chip [chipButton]="'A11Y.EDIT_TOOL' | translate: { tool: tool.name }" (click)="editTool(tool)">{{tool.name}} <ion-icon aria-hidden="true" name="beanconqueror-edit" /></ion-chip>
           }
         </div>
       }

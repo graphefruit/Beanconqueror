@@ -50,12 +50,14 @@
 </ion-content>
 <!--We just add 50% height for first slide of analytics, else the image wouldn't be displayed -->
 <ion-footer  class="ion-no-border" [style.maxHeight]="slide===1 ? '50%' : 'inherit'" style="overflow:auto;">
-  <swiper-container  class='swiper' #slider allow-touch-move='false' [pagination]="{ draggable: false, clickable: false }"  pager="true">
-    <swiper-slide>
+  <!-- Only the step being shown is there for screen readers and the keyboard;
+       the steps are named here instead of by Swiper, which names them in English. -->
+  <swiper-container  class='swiper' #slider allow-touch-move='false' a11y='false' [pagination]="{ draggable: false, clickable: false }"  pager="true">
+    <swiper-slide role="group" [attr.aria-label]="'A11Y.STEP_OF' | translate: { step: 1, count: 5 }" [inert]="slide !== 1" [attr.aria-hidden]="slide !== 1 ? 'true' : null">
       <!--Hide the long text, because else the slide would have a scrollable context -->
       <div [hidden]="slide!=1"  class="ion-padding-top ion-margin-horizontal">
         <div class="welcome-content-text">
-          <ion-title role="heading" aria-level="2">
+          <ion-title role="heading" aria-level="2" tabindex="-1">
             {{"WELCOME_PAGE_ACTIVATE_ANALYTICS_TITLE" | translate}}
           </ion-title>
           <div [innerHTML]="'WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION' | translate">
@@ -72,10 +74,10 @@
         </ion-row>
       </div>
     </swiper-slide>
-    <swiper-slide>
+    <swiper-slide role="group" [attr.aria-label]="'A11Y.STEP_OF' | translate: { step: 2, count: 5 }" [inert]="slide !== 2" [attr.aria-hidden]="slide !== 2 ? 'true' : null">
       <div class="ion-padding-top ion-margin-horizontal">
         <div class="welcome-content-text">
-          <ion-title role="heading" aria-level="2">
+          <ion-title role="heading" aria-level="2" tabindex="-1">
             {{"WELCOME_PAGE_BEAN_TITLE" | translate}}
           </ion-title>
           <div>
@@ -96,10 +98,10 @@
         </ion-row>
       </div>
     </swiper-slide>
-    <swiper-slide>
+    <swiper-slide role="group" [attr.aria-label]="'A11Y.STEP_OF' | translate: { step: 3, count: 5 }" [inert]="slide !== 3" [attr.aria-hidden]="slide !== 3 ? 'true' : null">
       <div class="ion-padding-top ion-margin-horizontal">
         <div class="welcome-content-text">
-          <ion-title role="heading" aria-level="2">
+          <ion-title role="heading" aria-level="2" tabindex="-1">
             {{"WELCOME_PAGE_PREPARATION_TITLE" | translate}}
           </ion-title>
           <div>
@@ -120,10 +122,10 @@
         </ion-row>
       </div>
     </swiper-slide>
-    <swiper-slide>
+    <swiper-slide role="group" [attr.aria-label]="'A11Y.STEP_OF' | translate: { step: 4, count: 5 }" [inert]="slide !== 4" [attr.aria-hidden]="slide !== 4 ? 'true' : null">
       <div class="ion-padding-top ion-margin-horizontal">
         <div class="welcome-content-text">
-          <ion-title role="heading" aria-level="2">
+          <ion-title role="heading" aria-level="2" tabindex="-1">
             {{"WELCOME_PAGE_MILL_TITLE" | translate}}
           </ion-title>
           <div>
@@ -144,10 +146,10 @@
         </ion-row>
       </div>
     </swiper-slide>
-    <swiper-slide>
+    <swiper-slide role="group" [attr.aria-label]="'A11Y.STEP_OF' | translate: { step: 5, count: 5 }" [inert]="slide !== 5" [attr.aria-hidden]="slide !== 5 ? 'true' : null">
       <div class="ion-padding-top ion-margin-horizontal">
         <div class="welcome-content-text">
-          <ion-title role="heading" aria-level="2">
+          <ion-title role="heading" aria-level="2" tabindex="-1">
             {{"WELCOME_PAGE_LETS_START_TITLE" | translate}}
           </ion-title>
           <div>

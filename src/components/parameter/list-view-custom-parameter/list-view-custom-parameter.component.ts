@@ -14,6 +14,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
+import { ControlDescriptionDirective } from '../../../directive/control-description.directive';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -31,6 +32,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonTitle,
     IonItem,
     IonCheckbox,
+    ControlDescriptionDirective,
   ],
 })
 export class ListViewCustomParameterComponent implements OnInit {

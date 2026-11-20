@@ -6,14 +6,15 @@
 <ion-content>
   <ion-card class="ion-padding" style="margin-top:30px;">
     <ion-reorder-group (ionReorderEnd)="reorder_tool($event)" disabled="false">
-      @for (index of toolsOrders; track index; let last = $last) {
+      @for (index of toolsOrders; track index; let last = $last, i = $index, count = $count) {
         <ion-item lines="{{last?'none':''}}" tappable>
           <ion-label>
             @if (index.archived) {
               <span><i>({{"ARCHIVED" | translate}})</i>&nbsp;-&nbsp;</span>
               }{{index.label}}
             </ion-label>
-            <ion-reorder slot="end" />
+            <app-reorder-buttons slot="end" [index]="i" [count]="count" [name]="index.label" (moved)="moveTool($event)" />
+            <ion-reorder aria-hidden="true" slot="end" />
           </ion-item>
         }
       </ion-reorder-group>

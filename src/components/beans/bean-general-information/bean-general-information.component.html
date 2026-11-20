@@ -16,22 +16,22 @@
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.buyDate])) {
     <ion-item>
-      <ion-input label-placement="stacked" label='{{"BEAN_DATA_BUY_DATE" | translate}}' readonly (click)="chooseDate($event,'buyDate');" [(data)]="data.buyDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BUY_DATE' | translate}}" />
+      <ion-input pickerField label-placement="stacked" label='{{"BEAN_DATA_BUY_DATE" | translate}}' readonly (click)="chooseDate($event,'buyDate');" [(data)]="data.buyDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BUY_DATE' | translate}}" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.bestDate])) {
     <ion-item>
-      <ion-input label-placement="stacked" label='{{"BEAN_DATA_BEST_DATE" | translate}}' readonly (click)="chooseDate($event,'bestDate');" [(data)]="data.bestDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BEST_DATE' | translate}}" />
+      <ion-input pickerField label-placement="stacked" label='{{"BEAN_DATA_BEST_DATE" | translate}}' readonly (click)="chooseDate($event,'bestDate');" [(data)]="data.bestDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BEST_DATE' | translate}}" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.openDate])) {
     <ion-item>
-      <ion-input label-placement="stacked" label='{{"BEAN_DATA_OPEN_DATE" | translate}}' readonly (click)="chooseDate($event,'openDate');" [(data)]="data.openDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_OPEN_DATE' | translate}}" />
+      <ion-input pickerField label-placement="stacked" label='{{"BEAN_DATA_OPEN_DATE" | translate}}' readonly (click)="chooseDate($event,'openDate');" [(data)]="data.openDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_OPEN_DATE' | translate}}" />
     </ion-item>
   }
   @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roastingDate])) {
     <ion-item>
-      <ion-input label-placement="stacked" label='{{"BEAN_DATA_ROASTING_DATE" | translate}}' readonly (click)="chooseDate($event,'roastingDate');" [(data)]="data.roastingDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}" />
+      <ion-input pickerField label-placement="stacked" label='{{"BEAN_DATA_ROASTING_DATE" | translate}}' readonly (click)="chooseDate($event,'roastingDate');" [(data)]="data.roastingDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}" />
     </ion-item>
   }
 
@@ -56,7 +56,7 @@
 }
 @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.roast_range])) {
   <ion-item style="top:-10px;">
-    <ion-range style='padding-left:20px;padding-right:10px;' (ionChange)="onRoastRate($event)" [(ngModel)]="data.roast_range" snaps="true" max="5" min="0" step="0.5">
+    <ion-range [rangeLabel]="'BEAN_DATA_ROAST_NAME' | translate" style='padding-left:20px;padding-right:10px;' (ionChange)="onRoastRate($event)" [(ngModel)]="data.roast_range" snaps="true" max="5" min="0" step="0.5">
       <div slot="end">
         <ngx-stars #beanStars [readonly]="true" [initialStars]="data.roast_range"  class="bean-display ion-margin-top" />
       </div>
@@ -93,7 +93,7 @@
 }
 @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.rating])) {
   <ion-item style="top:-10px;">
-    <ion-range [pinFormatter]="pinFormatter" style="padding-left:20px;padding-bottom:0px;padding-right:10px;" [pin]="true" (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBeanRating" min="0" snaps="true" [step]="$safeNavigationMigration(settings?.bean_rating_steps)">
+    <ion-range [rangeLabel]="'BREW_DATA_RATING' | translate" [pinFormatter]="pinFormatter" style="padding-left:20px;padding-bottom:0px;padding-right:10px;" [pin]="true" (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBeanRating" min="0" snaps="true" [step]="$safeNavigationMigration(settings?.bean_rating_steps)">
       @if (maxBeanRating === 5 && settings?.bean_rating_steps === 1) {
         <div slot="end">
           <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars"  />

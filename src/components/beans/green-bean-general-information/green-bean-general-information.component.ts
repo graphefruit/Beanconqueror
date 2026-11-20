@@ -29,7 +29,9 @@ import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 
 import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { Settings } from '../../../classes/settings/settings';
+import { PickerFieldDirective } from '../../../directive/picker-field.directive';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -52,9 +54,11 @@ declare var cordova;
     IonCard,
     IonItem,
     IonInput,
+    PickerFieldDirective,
     IonLabel,
     IonBadge,
     IonRange,
+    RangeNameDirective,
     IonCheckbox,
     IonTextarea,
   ],

@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   Input,
 } from '@angular/core';
@@ -40,6 +41,7 @@ import { RemoveEmptyNumberDirective } from '../../../../directive/remove-empty-n
 import { WATER_UNIT } from '../../../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../../../enums/water/waterUnitTds';
 import { KeysPipe } from '../../../../pipes/keys';
+import { RequiredFields } from '../../../../services/a11y/required-fields.service';
 import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIHelper } from '../../../../services/uiHelper';
@@ -79,6 +81,9 @@ import { UIWaterStorage } from '../../../../services/uiWaterStorage';
   ],
 })
 export class WaterEditComponent {
+  private readonly requiredFields = inject(RequiredFields);
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly modalController = inject(ModalController);
   private readonly uiWaterStorage = inject(UIWaterStorage);
   private readonly uiImage = inject(UIImage);
@@ -109,6 +114,8 @@ export class WaterEditComponent {
   public async edit() {
     if (this.data.name !== '') {
       await this.__edit();
+    } else {
+      this.requiredFields.report(this.host);
     }
   }
 

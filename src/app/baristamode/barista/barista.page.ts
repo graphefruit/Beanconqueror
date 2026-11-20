@@ -59,6 +59,7 @@ import { HeaderButtonComponent } from '../../../components/header/header-button.
 import { HeaderComponent } from '../../../components/header/header.component';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { ChipButtonDirective } from '../../../directive/chip-button.directive';
 import { LongPressDirective } from '../../../directive/long-press.directive';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../../enums/brews/brewQuantityTypes';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
@@ -95,6 +96,7 @@ declare var Plotly;
     IonHeader,
     IonBackButton,
     IonChip,
+    ChipButtonDirective,
     IonIcon,
     IonButton,
     IonContent,

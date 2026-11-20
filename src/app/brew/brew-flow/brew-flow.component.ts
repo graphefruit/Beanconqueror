@@ -55,6 +55,8 @@ import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { Settings } from '../../../classes/settings/settings';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
+import { ChipButtonDirective } from '../../../directive/chip-button.directive';
+import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
@@ -76,6 +78,7 @@ declare var Plotly;
     IonRow,
     IonCol,
     IonChip,
+    ChipButtonDirective,
     IonButton,
     IonIcon,
     IonContent,
@@ -84,6 +87,7 @@ declare var Plotly;
     IonCardContent,
     IonFooter,
     IonRange,
+    RangeNameDirective,
     DecimalPipe,
     IonBadge,
     IonItem,

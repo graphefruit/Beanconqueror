@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   Input,
   OnInit,
@@ -38,12 +39,14 @@ import { HeaderDismissButtonComponent } from '../../../components/header/header-
 import { HeaderComponent } from '../../../components/header/header.component';
 import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import { ChipButtonDirective } from '../../../directive/chip-button.directive';
 import { TooltipDirective } from '../../../directive/tooltip.directive';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { environment } from '../../../environments/environment';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { KeysPipe } from '../../../pipes/keys';
+import { RequiredFields } from '../../../services/a11y/required-fields.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
@@ -77,6 +80,7 @@ import { UIToast } from '../../../services/uiToast';
     IonInput,
     IonLabel,
     IonChip,
+    ChipButtonDirective,
     IonCheckbox,
     IonTextarea,
     IonFooter,
@@ -85,6 +89,9 @@ import { UIToast } from '../../../services/uiToast';
   ],
 })
 export class PreparationEditComponent implements OnInit {
+  private readonly requiredFields = inject(RequiredFields);
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly modalController = inject(ModalController);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiImage = inject(UIImage);
@@ -142,6 +149,8 @@ export class PreparationEditComponent implements OnInit {
       // #196
       this.addTool();
       await this.__edit();
+    } else {
+      this.requiredFields.report(this.host);
     }
   }
 

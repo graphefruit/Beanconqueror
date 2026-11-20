@@ -1,9 +1,11 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   inject,
+  Injector,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -58,6 +60,9 @@ export class WelcomePopoverComponent implements OnInit {
   private readonly uiMillHelper = inject(UIMillHelper);
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly themeService = inject(ThemeService);
+  private readonly injector = inject(Injector);
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
   public slide: number = 1;
   @ViewChild('slider', { static: false }) public welcomeSlider:
@@ -93,28 +98,40 @@ export class WelcomePopoverComponent implements OnInit {
     this.settings.matomo_analytics = false;
     this.uiAnalytics.disableTracking();
     await this.uiSettingsStorage.saveSettings(this.settings);
-    this.slide++;
-    this.welcomeSlider?.nativeElement.swiper.slideNext();
+    this.showNextStep();
   }
 
   public async understoodAnalytics() {
     this.settings.matomo_analytics = true;
     this.uiAnalytics.enableTracking();
     await this.uiSettingsStorage.saveSettings(this.settings);
-    this.slide++;
-    this.welcomeSlider?.nativeElement.swiper.slideNext();
+    this.showNextStep();
   }
 
   public async skip() {
-    this.slide++;
-    this.welcomeSlider?.nativeElement.swiper.slideNext();
+    this.showNextStep();
   }
 
   public next() {
-    setTimeout(() => {
-      this.slide++;
-      this.welcomeSlider?.nativeElement.swiper.slideNext();
-    }, 500);
+    setTimeout(() => this.showNextStep(), 500);
+  }
+
+  /**
+   * The button that led on is in a step that is hidden now, so the focus
+   * moves to the heading of the next step.
+   */
+  private showNextStep(): void {
+    this.slide++;
+    this.welcomeSlider?.nativeElement.swiper.slideNext();
+    afterNextRender(
+      () =>
+        this.host
+          .querySelector<HTMLElement>(
+            'swiper-slide:not([inert]) [role="heading"]',
+          )
+          ?.focus({ preventScroll: true }),
+      { injector: this.injector },
+    );
   }
 
   public async addBean() {

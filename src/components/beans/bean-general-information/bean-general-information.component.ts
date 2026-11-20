@@ -34,7 +34,9 @@ import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 import { Bean } from '../../../classes/bean/bean';
 import { BluetoothScale } from '../../../classes/devices';
 import { Settings } from '../../../classes/settings/settings';
+import { PickerFieldDirective } from '../../../directive/picker-field.directive';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
+import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
@@ -73,11 +75,13 @@ declare var cordova;
     IonCard,
     IonItem,
     IonInput,
+    PickerFieldDirective,
     IonLabel,
     IonSelect,
     IonSelectOption,
     IonBadge,
     IonRange,
+    RangeNameDirective,
     IonButton,
     IonIcon,
     IonCheckbox,

@@ -79,6 +79,8 @@ import { CloudModelPickerComponent } from '../../components/cloud-model-picker/c
 import { HeaderComponent } from '../../components/header/header.component';
 import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
+import { ControlDescriptionDirective } from '../../directive/control-description.directive';
+import { RangeNameDirective } from '../../directive/range-name.directive';
 import { TabPanelDirective } from '../../directive/tab-panel.directive';
 import { TooltipDirective } from '../../directive/tooltip.directive';
 import { AppEventType } from '../../enums/appEvent/appEvent';
@@ -172,7 +174,9 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
     IonSelect,
     IonSelectOption,
     IonRange,
+    RangeNameDirective,
     IonCheckbox,
+    ControlDescriptionDirective,
     IonInput,
     IonTextarea,
     IonButton,

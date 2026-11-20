@@ -36,6 +36,7 @@ import { HeaderDismissButtonComponent } from '../../../components/header/header-
 import { HeaderComponent } from '../../../components/header/header.component';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import { IconButtonDirective } from '../../../directive/icon-button.directive';
 import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { IBrew } from '../../../interfaces/brew/iBrew';
@@ -62,6 +63,7 @@ import { BrewFlavorPickerComponent } from '../brew-flavor-picker/brew-flavor-pic
     IonContent,
     IonButton,
     IonIcon,
+    IconButtonDirective,
     HeaderComponent,
     HeaderDismissButtonComponent,
     IonSegment,

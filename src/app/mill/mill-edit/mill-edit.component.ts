@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   Input,
   OnInit,
@@ -32,6 +33,7 @@ import { HeaderComponent } from '../../../components/header/header.component';
 import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
 import MILL_TRACKING from '../../../data/tracking/millTracking';
 import { IMill } from '../../../interfaces/mill/iMill';
+import { RequiredFields } from '../../../services/a11y/required-fields.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIHelper } from '../../../services/uiHelper';
@@ -65,6 +67,9 @@ import { UIToast } from '../../../services/uiToast';
   ],
 })
 export class MillEditComponent implements OnInit {
+  private readonly requiredFields = inject(RequiredFields);
+  private readonly host =
+    inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly modalController = inject(ModalController);
   private readonly uiMillStorage = inject(UIMillStorage);
   private readonly uiImage = inject(UIImage);
@@ -89,6 +94,8 @@ export class MillEditComponent implements OnInit {
   public async editMill(form) {
     if (form.valid) {
       await this.__editMill();
+    } else {
+      this.requiredFields.report(this.host);
     }
   }
 

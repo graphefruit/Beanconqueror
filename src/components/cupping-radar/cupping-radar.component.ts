@@ -28,6 +28,7 @@ import { Chart } from 'chart.js';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
+import { RangeNameDirective } from '../../directive/range-name.directive';
 import { TooltipDirective } from '../../directive/tooltip.directive';
 import { ICupping } from '../../interfaces/cupping/iCupping';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
@@ -48,6 +49,7 @@ import { UIBrewHelper } from '../../services/uiBrewHelper';
     IonLabel,
     IonBadge,
     IonRange,
+    RangeNameDirective,
     IonTextarea,
   ],
 })

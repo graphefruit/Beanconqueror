@@ -2,12 +2,12 @@
   <app-header [title]="'NAV_BARISTAMODE_SECTION' | translate">
     <ion-back-button header-slot="start" icon="beanconqueror-back" [attr.aria-label]="'BACK' | translate" defaultHref="/home/profile" />
     @if (isWebSocketConnected() === true ) {
-      <ion-chip header-slot="end" role="button" [attr.aria-label]="('PREPARATION_DEVICE_CONNECTION' | translate) + ': ' + ('CONNECTED' | translate)" (click)="showPreparationEdit()" (long-press)="toggleDevInformation()" outline='true' class='machine-connected'>
+      <ion-chip header-slot="end" [chipButton]="('PREPARATION_DEVICE_CONNECTION' | translate) + ': ' + ('CONNECTED' | translate)" (click)="showPreparationEdit()" (long-press)="toggleDevInformation()" outline='true' class='machine-connected'>
         <ion-icon aria-hidden="true" name="beanconqueror-sanremo-you-logo" size='large' />
         <ion-icon aria-hidden="true" style='margin-left: 0px;' color="dark" name="beanconqueror-wifi" />
       </ion-chip>
     } @else {
-      <ion-chip header-slot="end" role="button" [attr.aria-label]="('PREPARATION_DEVICE_CONNECTION' | translate) + ': ' + ('DISCONNECTED' | translate)" (click)="showPreparationEdit()" (long-press)="toggleDevInformation()" outline='true' class='machine-disconnected'>
+      <ion-chip header-slot="end" [chipButton]="('PREPARATION_DEVICE_CONNECTION' | translate) + ': ' + ('DISCONNECTED' | translate)" (click)="showPreparationEdit()" (long-press)="toggleDevInformation()" outline='true' class='machine-disconnected'>
         <ion-icon aria-hidden="true" name="beanconqueror-sanremo-you-logo" size='large' />
         <ion-icon aria-hidden="true" style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi" />
       </ion-chip>

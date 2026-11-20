@@ -25,6 +25,7 @@ import moment from 'moment';
 
 import { Bean } from '../../../classes/bean/bean';
 import { BluetoothScale } from '../../../classes/devices';
+import { PickerFieldDirective } from '../../../directive/picker-field.directive';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { RoastingMachineOverlayDirective } from '../../../directive/roasting-machine-overlay.directive';
@@ -47,6 +48,7 @@ import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetooth
     IonCard,
     IonItem,
     IonInput,
+    PickerFieldDirective,
     IonSelect,
     IonButton,
     IonIcon,

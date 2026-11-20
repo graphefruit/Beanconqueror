@@ -5,7 +5,7 @@
 </ion-header>
 <ion-content #extractionChartContent>
   <ion-card style='padding:10px;'>
-      <div id="extractionChart"></div>
+      <div id="extractionChart" role="img" [attr.aria-label]="'A11Y.EXTRACTION_GRAPH' | translate: extractionValues"></div>
   </ion-card>
 </ion-content>
 <ion-footer />

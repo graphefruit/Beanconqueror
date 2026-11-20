@@ -38,6 +38,8 @@ import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import { Graph } from '../../../../classes/graph/graph';
 import { Settings } from '../../../../classes/settings/settings';
 import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
+import { ChipButtonDirective } from '../../../../directive/chip-button.directive';
+import { RangeNameDirective } from '../../../../directive/range-name.directive';
 import { BREW_GRAPH_TYPE } from '../../../../enums/brews/brewGraphType';
 import { REFERENCE_GRAPH_TYPE } from '../../../../enums/brews/referenceGraphType';
 import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
@@ -69,6 +71,7 @@ declare var Plotly;
     IonRow,
     IonCol,
     IonChip,
+    ChipButtonDirective,
     IonButton,
     IonIcon,
     IonContent,
@@ -78,6 +81,7 @@ declare var Plotly;
     IonLabel,
     IonBadge,
     IonRange,
+    RangeNameDirective,
   ],
 })
 export class GraphDetailComponent implements OnInit {
