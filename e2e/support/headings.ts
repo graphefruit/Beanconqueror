@@ -35,6 +35,34 @@ export async function headingOutline(page: Page): Promise<Heading[]> {
 }
 
 /**
+ * Headings inside a button. The content of a button has no roles of its own,
+ * so VoiceOver does not list such a heading; Chromium does, which hides the
+ * fault from the outline. A clickable `ion-item` is a button in its shadow DOM.
+ */
+export async function headingsInButtons(page: Page): Promise<string[]> {
+  return page.evaluate(() => {
+    const parentOf = (node: Element): Element | null =>
+      node.assignedSlot ??
+      node.parentElement ??
+      ((node.getRootNode() as ShadowRoot).host || null);
+    const shown = (node: Element) =>
+      !node.closest('.ion-page-hidden, [aria-hidden="true"]') &&
+      node.getClientRects().length > 0;
+    return [
+      ...document.querySelectorAll('h1, h2, h3, h4, h5, h6, [role="heading"]'),
+    ]
+      .filter((heading) => {
+        if (!shown(heading)) return false;
+        for (let n = parentOf(heading); n; n = parentOf(n)) {
+          if (n.matches('button, [role="button"]')) return true;
+        }
+        return false;
+      })
+      .map((heading) => heading.textContent?.trim() ?? '');
+  });
+}
+
+/**
  * Breaks of the agreed outline: one level-1 heading (the screen or dialog
  * title) that comes first, no skipped levels, and no heading that is empty, a
  * bare value or a field label ("Name:").

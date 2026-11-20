@@ -7,10 +7,13 @@
 
   @for (key of licences | keys; track key) {
     <ion-card>
-      <ion-item (click)="openLink($event,licences[key].LINK)" button tappable>
-        <ion-title role="heading" aria-level="2">{{ licences[key].TITLE }}</ion-title>
-        <ion-icon aria-hidden="true" name="chevron-forward-outline" slot="end" />
-      </ion-item>
+      <!-- The heading wraps the button: VoiceOver ignores headings inside a button. -->
+      <div role="heading" aria-level="2">
+        <ion-item (click)="openLink($event,licences[key].LINK)" button tappable>
+          <ion-title>{{ licences[key].TITLE }}</ion-title>
+          <ion-icon aria-hidden="true" name="chevron-forward-outline" slot="end" />
+        </ion-item>
+      </div>
       <ion-item (click)="licences[key].ACTIVE = !licences[key].ACTIVE" button lines="none" tappable>
         @if (licences[key].ACTIVE != true) {
           <ion-icon aria-hidden="true" name="chevron-down-outline" slot="start" />

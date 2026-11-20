@@ -8,7 +8,11 @@ import {
   showBeanSegment,
   startWithBeans,
 } from './support/beans';
-import { headingOutline, outlineProblems } from './support/headings';
+import {
+  headingOutline,
+  headingsInButtons,
+  outlineProblems,
+} from './support/headings';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
 import { text, type Language } from './support/texts';
@@ -69,6 +73,7 @@ const LIST_CARDS: Record<string, string> = {
   '/home/profile/preparations': 'preparation-information-card',
   '/home/profile/mills': 'mill-information-card',
   '/home/profile/water': 'water-information-card',
+  '/home/profile/info/licences': 'licences ion-card',
   '/roasting-section/dashboard': 'green-bean-information',
   '/roasting-section/roasting-machine': 'roasting-machine-information-card',
 };
@@ -112,6 +117,9 @@ async function expectOutline(page: Page, view: string): Promise<void> {
     .poll(async () => outlineProblems(await headingOutline(page)), {
       message: `heading outline of ${view}`,
     })
+    .toEqual([]);
+  expect
+    .soft(await headingsInButtons(page), `headings inside buttons on ${view}`)
     .toEqual([]);
   const results = await axe(page)
     .withRules(['page-has-heading-one', 'heading-order', 'empty-heading'])

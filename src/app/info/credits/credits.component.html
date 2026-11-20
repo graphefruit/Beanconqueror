@@ -13,10 +13,13 @@
   }
   @for (key of credits | keys; track key) {
     <ion-card>
-      <ion-item (click)="openLink($event,credits[key].LINK)" button tappable>
-        <ion-title role="heading" aria-level="2">{{ credits[key].TITLE }}</ion-title>
-        <ion-icon aria-hidden="true" name="chevron-forward-outline" slot="end" />
-      </ion-item>
+      <!-- The heading wraps the button: VoiceOver ignores headings inside a button. -->
+      <div role="heading" aria-level="2">
+        <ion-item (click)="openLink($event,credits[key].LINK)" button tappable>
+          <ion-title>{{ credits[key].TITLE }}</ion-title>
+          <ion-icon aria-hidden="true" name="chevron-forward-outline" slot="end" />
+        </ion-item>
+      </div>
       <ion-item (click)="credits[key].ACTIVE = !credits[key].ACTIVE" button lines="none" tappable>
         @if (credits[key].ACTIVE != true) {
           <ion-icon aria-hidden="true" name="chevron-down-outline" slot="start" />
