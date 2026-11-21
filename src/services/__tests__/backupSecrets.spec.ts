@@ -53,7 +53,9 @@ function withEmptySecrets(settings: ReturnType<typeof settingsWithSecrets>) {
     ...settings,
     visualizer_username: '',
     visualizer_password: '',
+    visualizer_url: '',
     cloud_ai_api_key: '',
+    cloud_ai_base_url: '',
     brew_by_weight_webhook: {
       ...settings.brew_by_weight_webhook,
       url: '',
@@ -145,7 +147,9 @@ describe('Backup and export without credentials', () => {
     const exported = restored.SETTINGS[0];
     expect(exported.visualizer_username).toBe('');
     expect(exported.visualizer_password).toBe('');
+    expect(exported.visualizer_url).toBe('');
     expect(exported.cloud_ai_api_key).toBe('');
+    expect(exported.cloud_ai_base_url).toBe('');
     expect(exported.brew_by_weight_webhook.url).toBe('');
     expect(exported.brew_by_weight_webhook.bearerToken).toBe('');
     expect(exported.brew_by_weight_webhook.basicUsername).toBe('');

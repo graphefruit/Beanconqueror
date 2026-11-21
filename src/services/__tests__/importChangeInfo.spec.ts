@@ -7,6 +7,7 @@ import { BlobReader, ZipReader } from '@zip.js/zip.js';
 
 import { CHANGE_TRACKED_COLLECTIONS } from '../../classes/changeTracking/changeTracking';
 import { withImportedUserProfile } from '../../classes/settings/importedUserProfile';
+import { withoutSettingsSecrets } from '../../classes/settings/settingsSecrets';
 import {
   createLegacyData,
   LEGACY_DUPLICATE_BREW_UUID,
@@ -160,7 +161,9 @@ describe('Importing a backup fills in missing change info', () => {
     expect(target.data.get('VERSION')).toEqual(legacy.VERSION);
     // Only the user profile the backup lacks is added.
     expect(target.data.get('SETTINGS')).toEqual(
-      legacy.SETTINGS.map(withImportedUserProfile),
+      legacy.SETTINGS.map((_settings: unknown) =>
+        withImportedUserProfile(withoutSettingsSecrets(_settings)),
+      ),
     );
   });
 

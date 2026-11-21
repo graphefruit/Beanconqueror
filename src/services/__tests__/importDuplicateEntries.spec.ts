@@ -6,6 +6,7 @@ import { Storage } from '@ionic/storage';
 import { fillMissingChangeInfo } from '../../classes/changeTracking/changeTracking';
 import { deriveNewUuids } from '../../classes/changeTracking/duplicateEntries';
 import { withImportedUserProfile } from '../../classes/settings/importedUserProfile';
+import { withoutSettingsSecrets } from '../../classes/settings/settingsSecrets';
 import {
   createLegacyData,
   LEGACY_DUPLICATE_BREW_UUID,
@@ -149,7 +150,9 @@ describe('Importing a backup cleans up entries that share a uuid', () => {
     // Not change tracked, so not cleaned; only the missing user profile is
     // added.
     expect(target.data.get('SETTINGS')).toEqual(
-      data.SETTINGS.map(withImportedUserProfile),
+      data.SETTINGS.map((_settings: unknown) =>
+        withImportedUserProfile(withoutSettingsSecrets(_settings)),
+      ),
     );
   });
 

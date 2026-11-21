@@ -674,7 +674,9 @@ describe('Importing a backup', () => {
           user: userProfile(),
           visualizer_username: 'secret-visualizer-user',
           visualizer_password: 'secret-visualizer-password',
+          visualizer_url: 'https://secret-user:pw@visualizer.example.com/',
           cloud_ai_api_key: 'secret-ai-key',
+          cloud_ai_base_url: 'https://llm.example.com/v1?key=secret-url-key',
           brew_by_weight_webhook: {
             url: 'https://webhook.example.com/stop',
             bearerToken: 'secret-bearer',
@@ -728,6 +730,8 @@ describe('Importing a backup', () => {
     expect(content).not.toContain('deleted-brew');
     expect(content).not.toContain('last_restore_at');
     expect(saved.SETTINGS[0].brew_by_weight_webhook.url).toBe('');
+    expect(saved.SETTINGS[0].visualizer_url).toBe('');
+    expect(saved.SETTINGS[0].cloud_ai_base_url).toBe('');
     expect(saved.BREWS).toEqual(before.BREWS);
     // The credentials stay on the device.
     expect(device.data.get('SETTINGS')).toEqual([
