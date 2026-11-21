@@ -2094,6 +2094,7 @@
         "MOVE_UP": "Move {{name}} up",
         "MOVE_DOWN": "Move {{name}} down",
         "MOVED_TO_POSITION": "{{name}}: position {{position}} of {{count}}",
-        "STEP_OF": "Step {{step}} of {{count}}"
+        "STEP_OF": "Step {{step}} of {{count}}",
+        "OPENS_QUESTION": "Opens a question"
     }
 }

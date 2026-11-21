@@ -404,9 +404,16 @@ for (const language of ['en', 'de'] as const) {
       await expect(
         settings.getByRole('button', { name: analytics }),
       ).toHaveCount(0);
-      await expect(
-        settings.getByRole('checkbox', { name: analytics, exact: true }),
-      ).toHaveAttribute('aria-haspopup', 'dialog');
+      // TalkBack and VoiceOver read a description; aria-haspopup is not allowed on a checkbox.
+      const checkbox = settings.getByRole('checkbox', {
+        name: analytics,
+        exact: true,
+      });
+      await expect(checkbox).toHaveAccessibleDescription(
+        t('A11Y.OPENS_QUESTION'),
+      );
+      await expect(checkbox).not.toHaveAttribute('aria-haspopup');
+      await expect(checkbox).toHaveAttribute('aria-checked', 'false');
 
       for (const key of [
         'PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS',
@@ -432,9 +439,11 @@ for (const language of ['en', 'de'] as const) {
       const settings = page.locator('settings');
       const name = t('PAGE_SETTINGS_ANALYTICS_INFORMATION');
       const checkbox = settings.getByRole('checkbox', { name, exact: true });
-      const row = settings
-        .locator('ion-item')
-        .filter({ hasText: new RegExp(`^\\s*${escape(name)}\\s*$`) });
+      const row = settings.locator('ion-item').filter({
+        has: page.locator('.field-label', {
+          hasText: new RegExp(`^\\s*${escape(name)}\\s*$`),
+        }),
+      });
       // Behind the open question the page is hidden from the AX tree.
       const state = row.locator('ion-checkbox');
       const stored = async () =>

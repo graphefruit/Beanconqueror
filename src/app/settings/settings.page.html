@@ -262,12 +262,14 @@
         </ion-select>
       </ion-item>
 
-      <!-- One control: the checkbox only opens the question; the choice made there is what is stored. -->
+      <!-- One control: the checkbox only opens the question; the choice made there is what is stored.
+        That it opens a question is its description: aria-haspopup is not allowed on a checkbox and TalkBack does not say it. -->
       <ion-item tappable>
-        <ion-checkbox label-placement='start' opensDialog [checked]="settings.matomo_analytics === true"
+        <ion-checkbox label-placement='start' [checked]="settings.matomo_analytics === true"
           (ionChange)="askAboutAnalytics($event)">
           <div class='ion-label'>
             <div class="field-label">{{ "PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate }}</div>
+            <p class="visually-hidden">{{ "A11Y.OPENS_QUESTION" | translate }}</p>
           </div>
         </ion-checkbox>
       </ion-item>

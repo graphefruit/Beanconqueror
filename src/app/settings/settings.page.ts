@@ -81,7 +81,6 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
 import { ControlDescriptionDirective } from '../../directive/control-description.directive';
-import { OpensDialogDirective } from '../../directive/opens-dialog.directive';
 import { RangeNameDirective } from '../../directive/range-name.directive';
 import { TabPanelDirective } from '../../directive/tab-panel.directive';
 import { TooltipDirective } from '../../directive/tooltip.directive';
@@ -179,7 +178,6 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
     RangeNameDirective,
     IonCheckbox,
     ControlDescriptionDirective,
-    OpensDialogDirective,
     IonInput,
     IonTextarea,
     IonButton,
