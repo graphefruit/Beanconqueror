@@ -88,6 +88,31 @@ function tabBar(page: Page): Locator {
   return visible(page.getByRole('navigation')).getByRole('tablist');
 }
 
+/**
+ * Drags a finger from the left edge to `farthest` and back to the edge before
+ * letting go: Ionic starts a swipe back and then cancels it.
+ */
+async function swipeBackAndCancel(page: Page, farthest: number): Promise<void> {
+  const cdp = await page.context().newCDPSession(page);
+  const touch = (
+    type: 'touchStart' | 'touchMove' | 'touchEnd',
+    x: number,
+  ): Promise<unknown> =>
+    cdp.send('Input.dispatchTouchEvent', {
+      type,
+      touchPoints: type === 'touchEnd' ? [] : [{ x, y: 400 }],
+    });
+  await touch('touchStart', 4);
+  for (let x = 4; x <= farthest; x += 8) {
+    await touch('touchMove', x);
+  }
+  for (let x = farthest; x >= 4; x -= 4) {
+    await touch('touchMove', x);
+  }
+  await touch('touchEnd', 4);
+  await cdp.detach();
+}
+
 // The barista mode keeps the screen on; the browser refuses that without a tap.
 test.use({ allowedConsoleErrors: [/Wake Lock permission request denied/] });
 
@@ -236,6 +261,49 @@ for (const language of ['en', 'de'] as const) {
       await page.keyboard.press('Enter');
       await expect(page).toHaveURL(/\/home\/profile$/);
       await expect(link).toBeFocused();
+    });
+
+    test('focus stays where it was when a swipe back is let go of early', async ({
+      page,
+    }) => {
+      await start(page, language);
+      await tabBar(page)
+        .getByRole('tab', { name: t('NAV_PROFILE') })
+        .click();
+      const link = page
+        .locator('app-profile')
+        .getByRole('link', { name: startsWith(t('NAV_SETTINGS')) });
+      await link.focus();
+      await page.keyboard.press('Enter');
+      const title = page.getByRole('heading', {
+        level: 1,
+        name: t('NAV_SETTINGS'),
+      });
+      await expect(title).toBeFocused();
+
+      await expect(page.locator('app-profile')).toBeHidden();
+
+      // The profile comes in while the finger is down and takes focus then.
+      await page.evaluate(() => {
+        document.addEventListener(
+          'ionViewWillEnter',
+          () =>
+            setTimeout(() => {
+              document.body.dataset['focusComingIn'] =
+                document.activeElement?.tagName ?? '';
+            }),
+          { capture: true, once: true },
+        );
+      });
+      await swipeBackAndCancel(page, 120);
+      await expect(page.locator('body')).toHaveAttribute(
+        'data-focus-coming-in',
+        'ION-ITEM',
+      );
+
+      await expect(page).toHaveURL(/\/settings$/);
+      await expect(page.locator('app-profile')).toBeHidden();
+      await expect(title).toBeFocused();
     });
 
     test('focus goes back to the control that opened a dialog, or to the title once it is gone', async ({

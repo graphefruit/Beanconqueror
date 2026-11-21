@@ -127,12 +127,24 @@ export class PageFocusService {
   private lastControl: HTMLElement | undefined;
   /** Per overlay, the control that opened it. */
   private readonly openedBy = new WeakMap<Element, HTMLElement>();
+  /**
+   * Focus moved to a screen that is still coming in: the screen, the element
+   * that had focus before and the one remembered for the screen.
+   */
+  private entering:
+    | {
+        page: HTMLElement;
+        before: Element | null;
+        remembered: HTMLElement | undefined;
+      }
+    | undefined;
 
   public start(): void {
     const listeners: [string, (event: Event) => void][] = [
       ['ionViewWillLeave', this.onViewWillLeave],
       ['ionViewWillEnter', this.onViewEnter],
       ['ionViewDidEnter', this.onViewEnter],
+      ['ionNavDidChange', this.onNavDidChange],
       ['click', this.onClick],
       ['focusin', this.onFocusIn],
       ...PRESENT_EVENTS.map((type): [string, (event: Event) => void] => [
@@ -179,6 +191,9 @@ export class PageFocusService {
    */
   private readonly onViewEnter = (event: Event): void => {
     const page = event.target;
+    if (event.type === 'ionViewDidEnter') {
+      this.entering = undefined;
+    }
     if (!this.navigating || !(page instanceof HTMLElement)) {
       return;
     }
@@ -191,17 +206,49 @@ export class PageFocusService {
       this.navigating = false;
       return;
     }
+    const before = focusedElement(this.document);
     const remembered = this.lastFocus.get(page);
     this.lastFocus.delete(page);
     if (remembered && moveFocus(remembered, this.document)) {
       this.navigating = false;
+    } else {
+      const heading = shownHeading(page);
+      // A screen that holds the screen entered next, e.g. the tabs, has no
+      // title of its own yet; the next one entered gets focus then.
+      if (!heading) {
+        return;
+      }
+      this.navigating = false;
+      focusHeading(heading, this.document);
+    }
+    if (event.type === 'ionViewWillEnter') {
+      this.entering = { page, before, remembered };
+    }
+  };
+
+  /**
+   * The end of a transition. A swipe back the user lets go of early fires
+   * `ionViewWillEnter` but no `ionViewDidEnter`, and Ionic hides the screen
+   * again that had focus already: focus goes back where it was.
+   */
+  private readonly onNavDidChange = (): void => {
+    const entering = this.entering;
+    this.entering = undefined;
+    if (!entering || isShown(entering.page)) {
       return;
     }
-    const heading = shownHeading(page);
-    // A screen that holds the screen entered next, e.g. the tabs, has no
-    // title of its own yet; the next one entered gets focus then.
+    if (entering.remembered) {
+      this.lastFocus.set(entering.page, entering.remembered);
+    }
+    if (
+      entering.before instanceof HTMLElement &&
+      entering.before !== this.document.body &&
+      moveFocus(entering.before, this.document)
+    ) {
+      return;
+    }
+    const heading = shownHeading(this.document);
     if (heading) {
-      this.navigating = false;
       focusHeading(heading, this.document);
     }
   };

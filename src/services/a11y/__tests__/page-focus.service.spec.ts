@@ -117,6 +117,56 @@ describe('PageFocusService', () => {
     expect(focus).not.toHaveBeenCalled();
   });
 
+  it('puts focus back where it was when a swipe back is let go of early', () => {
+    settingsLink.focus();
+    navigate(profile, settings);
+    const back = settings.querySelector('button');
+    back.focus();
+
+    // The swipe starts: Ionic fires the start of the transition only.
+    fire(settings, 'ionViewWillLeave');
+    show(profile, true);
+    fire(profile, 'ionViewWillEnter');
+    expect(document.activeElement).toBe(settingsLink);
+
+    // Let go of early: Ionic hides the screen again and ends the transition.
+    show(profile, false);
+    fire(root, 'ionNavDidChange');
+
+    expect(document.activeElement).toBe(back);
+
+    // The control remembered for the screen still gets focus on the way back.
+    navigate(settings, profile);
+
+    expect(document.activeElement).toBe(settingsLink);
+  });
+
+  it('puts focus on the title of the screen shown when a swipe back is let go of early with nothing focused before', () => {
+    navigate(profile, settings);
+    heading(settings).blur();
+
+    fire(settings, 'ionViewWillLeave');
+    show(profile, true);
+    fire(profile, 'ionViewWillEnter');
+    show(profile, false);
+    fire(root, 'ionNavDidChange');
+
+    expect(document.activeElement).toBe(heading(settings));
+  });
+
+  it('leaves focus on the new screen when its transition ends', () => {
+    settingsLink.focus();
+    fire(profile, 'ionViewWillLeave');
+    show(settings, true);
+    fire(settings, 'ionViewWillEnter');
+    show(profile, false);
+    fire(settings, 'ionViewDidEnter');
+
+    fire(root, 'ionNavDidChange');
+
+    expect(document.activeElement).toBe(heading(settings));
+  });
+
   it('puts focus back on the control that led away from a screen', () => {
     settingsLink.focus();
     navigate(profile, settings);
