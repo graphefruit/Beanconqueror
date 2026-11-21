@@ -234,3 +234,54 @@ test('after a fast scroll to the top the first brew starts below the head', asyn
 
   await expect.poll(() => start(page)).toEqual(atStart);
 });
+
+test('after a brew is deleted sideways the first brew starts below the head at the top', async ({
+  page,
+}) => {
+  // As an iPad reports itself: the list then holds its corrections while a
+  // finger is on it.
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'platform', { value: 'MacIntel' });
+  });
+  await page.setViewportSize(LANDSCAPE);
+  await showBrews(page);
+  const atStart = await start(page);
+  await jumpToMiddle(page);
+
+  // The next brew is brought right below the head, its options button on
+  // the screen.
+  const id = await list(page).evaluate((element) => {
+    const scroller = element
+      .closest('ion-content')!
+      .shadowRoot!.querySelector<HTMLElement>('.inner-scroll')!;
+    const below = element
+      .querySelector('.head')!
+      .getBoundingClientRect().bottom;
+    const card = [...element.querySelectorAll('brew-information')].find(
+      (candidate) => candidate.getBoundingClientRect().top > below,
+    )!;
+    scroller.scrollTop += card.getBoundingClientRect().top - below;
+    return card.getAttribute('id')!;
+  });
+  await expectStill(page);
+  const card = page.locator(`[id="${id}"]`);
+  await card.getByRole('button', { name: 'Brew options', exact: true }).tap();
+  await page.getByRole('button', { name: 'Delete', exact: true }).tap();
+  await page
+    .getByRole('alertdialog', { name: /Delete brew\?/ })
+    .getByRole('button', { name: 'Yes' })
+    .tap();
+  await expect(card).toHaveCount(0);
+
+  await list(page).evaluate(async (element) => {
+    const scroller = element
+      .closest('ion-content')!
+      .shadowRoot!.querySelector<HTMLElement>('.inner-scroll')!;
+    while (scroller.scrollTop > 0) {
+      scroller.scrollTop -= scroller.clientHeight;
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    }
+  });
+
+  await expect.poll(() => start(page)).toEqual(atStart);
+});

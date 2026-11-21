@@ -385,6 +385,19 @@ export class VirtualListComponent<T> {
       }
     });
 
+    effect((onCleanup) => {
+      const scroller = this.scroller();
+      if (!scroller) {
+        return;
+      }
+      const listen = (event: Event) => this.followTouch(scroller, event);
+      const options = { capture: true, passive: true };
+      scroller.addEventListener('touchstart', listen, options);
+      onCleanup(() =>
+        scroller.removeEventListener('touchstart', listen, options),
+      );
+    });
+
     const destroyRef = inject(DestroyRef);
     afterNextRender(() => {
       const observer = new ResizeObserver(() => this.measureHead());
@@ -398,6 +411,30 @@ export class VirtualListComponent<T> {
       this.virtualizer.scrollRect();
       this.measureScrollMargin();
     });
+  }
+
+  /**
+   * On iOS the virtualizer holds its scroll corrections while a finger is on
+   * the list, and draws the rows shifted by them. The end of a touch goes to
+   * the element it started on; a row taken off meanwhile (deleted) is no
+   * longer inside the list, the end would never reach the virtualizer, and
+   * the rows would stay shifted: a gap or an overlap at the top. Such an end
+   * is passed on to the list.
+   */
+  private followTouch(scroller: HTMLElement, event: Event): void {
+    const target = event.target;
+    if (!(target instanceof Node) || target === scroller) {
+      return;
+    }
+    const end = () => {
+      target.removeEventListener('touchend', end);
+      target.removeEventListener('touchcancel', end);
+      if (!target.isConnected) {
+        scroller.dispatchEvent(new Event('touchcancel'));
+      }
+    };
+    target.addEventListener('touchend', end, { passive: true });
+    target.addEventListener('touchcancel', end, { passive: true });
   }
 
   private measureHead(): void {

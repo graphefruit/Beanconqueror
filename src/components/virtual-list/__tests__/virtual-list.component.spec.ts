@@ -640,6 +640,34 @@ describe('VirtualListComponent', () => {
       expect(top('item-0')).toBe(HEAD);
       expect(top('item-1')).toBe(HEAD + 300);
     });
+
+    it('lets go of a touch on a row that was deleted, and shows the first row below the head', async () => {
+      // Turned sideways: the cards are lower than estimated, and those above
+      // the screen make the list shorter as they are measured.
+      scroller().style.width = `${2 * WIDTH}px`;
+      host.items.set(items(100, 150));
+      host.estimate.set(280);
+      host.list().measure();
+      await settle();
+      await scrollTo(5000);
+
+      // The finger is on a row that is deleted; its touch ends off the list.
+      const touched = shown().find((id) => top(id) >= HEAD);
+      const row = document.getElementById(touched);
+      row.dispatchEvent(new Event('touchstart', { bubbles: true }));
+      host.items.set(host.items().filter((item) => item.id !== touched));
+      await settle();
+      row.dispatchEvent(new Event('touchend', { bubbles: true }));
+
+      for (let offset = 4700; offset >= 0; offset -= 300) {
+        await scrollTo(offset);
+      }
+      await scrollAgainTo(0);
+
+      expect(scroller().scrollTop).toBe(0);
+      expect(top('item-0')).toBe(HEAD);
+      expect(top('item-1')).toBe(HEAD + 150);
+    });
   });
 });
 
