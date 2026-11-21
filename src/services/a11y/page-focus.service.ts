@@ -131,7 +131,8 @@ export class PageFocusService {
   public start(): void {
     const listeners: [string, (event: Event) => void][] = [
       ['ionViewWillLeave', this.onViewWillLeave],
-      ['ionViewDidEnter', this.onViewDidEnter],
+      ['ionViewWillEnter', this.onViewEnter],
+      ['ionViewDidEnter', this.onViewEnter],
       ['click', this.onClick],
       ['focusin', this.onFocusIn],
       ...PRESENT_EVENTS.map((type): [string, (event: Event) => void] => [
@@ -169,7 +170,14 @@ export class PageFocusService {
     }
   };
 
-  private readonly onViewDidEnter = (event: Event): void => {
+  /**
+   * Focus moves as the screen starts to come in, while the screen left is
+   * still shown. Moved once the transition is over, TalkBack on Android ends
+   * up on the whole screen: Ionic hides the screen left then, with the control
+   * TalkBack was on. A screen whose title is not there yet gets focus once it
+   * is in.
+   */
+  private readonly onViewEnter = (event: Event): void => {
     const page = event.target;
     if (!this.navigating || !(page instanceof HTMLElement)) {
       return;

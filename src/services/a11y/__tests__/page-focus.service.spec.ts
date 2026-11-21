@@ -99,6 +99,24 @@ describe('PageFocusService', () => {
     expect(heading(settings).tabIndex).toBe(-1);
   });
 
+  it('puts focus on the title as the new screen comes in, while the one left is still shown', () => {
+    settingsLink.focus();
+    fire(profile, 'ionViewWillLeave');
+    show(settings, true);
+
+    fire(settings, 'ionViewWillEnter');
+
+    expect(document.activeElement).toBe(heading(settings));
+    expect(profile.hidden).toBeFalse();
+
+    // Ionic hides the screen left and fires the end of the transition.
+    show(profile, false);
+    const focus = spyOn(heading(settings), 'focus');
+    fire(settings, 'ionViewDidEnter');
+
+    expect(focus).not.toHaveBeenCalled();
+  });
+
   it('puts focus back on the control that led away from a screen', () => {
     settingsLink.focus();
     navigate(profile, settings);
