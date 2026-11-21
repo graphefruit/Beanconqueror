@@ -28,11 +28,7 @@
     "dark": []
   },
   "settings": {
-    "light": [
-      "nested-interactive | .item-multiple-inputs,button[type=\"button\"]"
-    ],
-    "dark": [
-      "nested-interactive | .item-multiple-inputs,button[type=\"button\"]"
-    ]
+    "light": [],
+    "dark": []
   }
 }

@@ -329,6 +329,36 @@ for (const language of ['en', 'de'] as const) {
       await expect(openDialog(page)).toHaveCount(1);
     });
 
+    test('settings: analytics is one checkbox, the statistics name their checkboxes', async ({
+      page,
+    }) => {
+      await start(page, language);
+      await openFromProfile(page, language, 'NAV_SETTINGS');
+      const settings = page.locator('settings');
+      const analytics = t('PAGE_SETTINGS_ANALYTICS_INFORMATION');
+      await expect(
+        settings.getByRole('checkbox', { name: analytics, exact: true }),
+      ).toHaveCount(1);
+      await expect(
+        settings.getByRole('button', { name: analytics }),
+      ).toHaveCount(0);
+
+      for (const key of [
+        'PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS',
+        'PAGE_SETTINGS_SHOW_ARCHIVED_MILLS',
+      ]) {
+        await expect(
+          settings.getByRole('checkbox', { name: t(key), exact: true }),
+        ).toHaveCount(1);
+        await expect(
+          settings.getByRole('checkbox', {
+            name: `${t(key)}, ${t('PAGE_SETTINGS_MANAGE_STATISTICS')}`,
+            exact: true,
+          }),
+        ).toHaveCount(1);
+      }
+    });
+
     test('Save ignores a second tap without becoming disabled', async ({
       page,
     }) => {

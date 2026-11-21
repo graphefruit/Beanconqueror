@@ -262,7 +262,8 @@
         </ion-select>
       </ion-item>
 
-      <ion-item (click)="showAnalyticsInformation()" tappable button>
+      <!-- One control: the checkbox, which opens the question about analytics. -->
+      <ion-item (click)="showAnalyticsInformation()" tappable>
         <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.matomo_analytics">
           <div class='ion-label'>
             <div class="field-label">{{ "PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate }}</div>
@@ -514,6 +515,7 @@
   <ion-card class="margin-top-20">
     <ion-card-content>
       <ion-card-title>{{ "PAGE_SETTINGS_MANAGE_STATISTICS" | translate }}</ion-card-title>
+      <!-- The archive has checkboxes of the same title; these name the section. -->
       <ion-item>
         <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.statistics.bean_date_field"
           cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
@@ -531,13 +533,13 @@
       <ion-item>
         <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
           [(ngModel)]="settings.statistics.show_archived_preparations">
-          <div class='ion-label'>{{ "PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS" | translate }}</div>
+          <div class='ion-label'><span aria-hidden="true">{{ "PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS" | translate }}</span><span class="visually-hidden">{{ "PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS" | translate }}, {{ "PAGE_SETTINGS_MANAGE_STATISTICS" | translate }}</span></div>
         </ion-checkbox>
       </ion-item>
       <ion-item lines="none">
         <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
           [(ngModel)]="settings.statistics.show_archived_mills">
-          <div class='ion-label'>{{ "PAGE_SETTINGS_SHOW_ARCHIVED_MILLS" | translate }}</div>
+          <div class='ion-label'><span aria-hidden="true">{{ "PAGE_SETTINGS_SHOW_ARCHIVED_MILLS" | translate }}</span><span class="visually-hidden">{{ "PAGE_SETTINGS_SHOW_ARCHIVED_MILLS" | translate }}, {{ "PAGE_SETTINGS_MANAGE_STATISTICS" | translate }}</span></div>
         </ion-checkbox>
       </ion-item>
     </ion-card-content>
