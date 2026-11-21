@@ -41,8 +41,11 @@ test('a bean cannot be saved without a name', async ({ page }) => {
     'aria-invalid',
     'true',
   );
+  // Scoped to the form: the live announcer may say the same text at the time.
   await expect(
-    page.getByText('Please enter a name for these beans.'),
+    page
+      .getByRole('tabpanel', { name: 'General' })
+      .getByText('Please enter a name for these beans.'),
   ).toBeVisible();
 
   await page.getByRole('button', { name: 'Cancel' }).click();
