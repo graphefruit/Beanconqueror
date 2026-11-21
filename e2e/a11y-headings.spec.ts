@@ -117,11 +117,25 @@ async function start(
 
 /** Shows a screen the way the router does, without a reload. */
 async function show(page: Page, route: string): Promise<void> {
+  const shown = page.locator('[data-e2e-shown]');
+  await page
+    .getByRole('heading', { level: 1 })
+    .evaluateAll((headings) =>
+      headings
+        .filter((heading) => heading.checkVisibility())
+        .forEach((heading) => heading.setAttribute('data-e2e-shown', '')),
+    );
   await page.evaluate((path) => {
     history.pushState({}, '', path);
     dispatchEvent(new PopStateEvent('popstate'));
   }, route);
   await expect(page).toHaveURL(new RegExp(`${route}$`));
+  // The URL changes at once, the screen only after the router and the
+  // transition; until then the checks would see the screen before.
+  await expect(shown.filter({ visible: true })).toHaveCount(0);
+  await shown.evaluateAll((headings) =>
+    headings.forEach((heading) => heading.removeAttribute('data-e2e-shown')),
+  );
 }
 
 async function expectOutline(page: Page, view: string): Promise<void> {

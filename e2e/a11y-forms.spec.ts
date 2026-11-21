@@ -319,6 +319,7 @@ for (const language of ['en', 'de'] as const) {
       const moveDown = section.getByRole('button', {
         name: pattern(t, 'A11Y.MOVE_DOWN'),
       });
+      await expect(moveDown).not.toHaveCount(0);
       const count = await moveDown.count();
       const first = moveDown.first();
       const entry = pattern(t, 'A11Y.MOVE_DOWN').exec(
