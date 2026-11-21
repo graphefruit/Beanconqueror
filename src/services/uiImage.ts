@@ -140,7 +140,8 @@ export class UIImage {
 
         let result;
         if (this.platform.is('ios')) {
-          result = await FilePicker.pickImages();
+          // iOS keeps HEIC unless asked to transcode; photos are stored as .jpg.
+          result = await FilePicker.pickImages({ skipTranscoding: false });
         } else {
           result = await FilePicker.pickFiles({
             types: ['image/png', 'image/jpeg', 'image/heic'],
