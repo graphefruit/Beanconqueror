@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { ModalController } from '@ionic/angular';
 
+import de from '../../assets/i18n/de.json';
 import { Settings } from '../../classes/settings/settings';
 import { StorageClass } from '../../classes/storageClass';
 import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
@@ -401,3 +402,16 @@ for (const card of CARDS) {
     });
   });
 }
+
+describe('the German question before deleting an entry with dependents', () => {
+  // What goes along is what DeleteCommands deletes with the entry.
+  for (const [key, entry] of [
+    ['DELETE_MILL_QUESTION', 'Mühle'],
+    ['DELETE_GREEN_BEAN_QUESTION', 'Rohkaffee'],
+  ] as const) {
+    it(`names the ${entry} in ${key} and says that the dependents are deleted as well`, () => {
+      expect(de[key].startsWith(`${entry} löschen?`)).toBeTrue();
+      expect(de[key]).toContain('ebenfalls gelöscht');
+    });
+  }
+});
