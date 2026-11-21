@@ -33,6 +33,11 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # One runner takes longer than the timeout for all tests.
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
 
     steps:
       - uses: actions/checkout@v4
@@ -47,12 +52,12 @@ jobs:
       - run: pnpm install
       - run: pnpm exec tsc -p e2e/tsconfig.json
       - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm e2e
+      - run: pnpm e2e --shard=${{ matrix.shard }}/2
       # Traces and screenshots only contain synthetic test data; external requests are blocked.
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shard }}
           path: |
             playwright-report/
             test-results/
