@@ -25,6 +25,7 @@ import {
 import { IonContent } from '@ionic/angular';
 
 import {
+  defaultRangeExtractor,
   elementScroll,
   injectVirtualizer,
   measureElement,
@@ -40,6 +41,7 @@ import {
   ListAnchor,
   reveal,
   RowKey,
+  withIndex,
 } from './virtual-list-anchor';
 
 export interface VirtualRowContext<T> {
@@ -122,6 +124,11 @@ export class VirtualRowDirective<T> {
       /* Keeps the margins of a card inside the measured height. */
       display: flow-root;
     }
+    .row.apart {
+      position: absolute;
+      left: 0;
+      width: 100%;
+    }
   `,
   template: `
     <div #head class="head"><ng-content select="[virtualListHead]" /></div>
@@ -134,13 +141,16 @@ export class VirtualRowDirective<T> {
           class="rows"
           role="list"
           [style.transform]="rowsOffset()"
-          (focusin)="revealFocus($event)"
+          (focusin)="revealFocus($event); keepFocusedRow($event)"
+          (focusout)="focusedKey.set(null)"
         >
           @for (row of rows(); track row.key) {
             <div
               #row
               class="row"
               role="listitem"
+              [class.apart]="row.top !== null"
+              [style.top.px]="row.top"
               [attr.data-index]="row.index"
               [attr.aria-setsize]="items().length"
               [attr.aria-posinset]="row.index + 1"
@@ -194,17 +204,29 @@ export class VirtualListComponent<T> {
   private measuredWidth = 0;
   /** Set while the ResizeObserver of the rows tells their new heights. */
   private observingRows = false;
+  /** The row that holds the focus, null while the focus is elsewhere. */
+  protected readonly focusedKey = signal<RowKey | null>(null);
+  private readonly focusedIndex = computed(() => {
+    const key = this.focusedKey();
+    return key === null ? -1 : this.indexOf(key);
+  });
 
   private readonly virtualizer = injectVirtualizer<HTMLElement, HTMLElement>(
     () => {
       const items = this.items();
       const key = this.itemKey();
       const size = this.estimateSize();
+      const focused = this.focusedIndex();
       return {
         scrollElement: this.scroller(),
         count: items.length,
         getItemKey: (index) => key(items[index]),
         estimateSize: () => size,
+        // The row with the focus stays rendered when it leaves the screen:
+        // taken off, it would take the focus with it, and the next Tab or
+        // screen reader step would start again at the top of the page.
+        rangeExtractor: (range) =>
+          withIndex(defaultRangeExtractor(range), focused),
         // Only the ResizeObserver measures a row: when it is rendered, its
         // Ionic elements are not drawn yet and the row is far too low, so
         // many more rows would be rendered. A hidden page reports its rows
@@ -274,31 +296,48 @@ export class VirtualListComponent<T> {
     },
   );
 
+  /**
+   * The rows near the screen follow one another from `start`; the row with
+   * the focus lies `apart` from them once they have scrolled away from it.
+   */
+  private readonly layout = computed(() => {
+    const count = this.items().length;
+    const rows = this.virtualizer
+      .getVirtualItems()
+      .filter((row) => row.index < count);
+    const focused = this.focusedIndex();
+    const apart = rows.find(
+      (row, i) =>
+        row.index === focused &&
+        rows[i - 1]?.index !== focused - 1 &&
+        rows[i + 1]?.index !== focused + 1,
+    );
+    const near = apart ? rows.filter((row) => row !== apart) : rows;
+    const start = (near[0] ?? apart)?.start ?? this.scrollMargin();
+    return { rows, near, apart, start };
+  });
   protected readonly rows = computed(() => {
     const items = this.items();
-    return this.virtualizer
-      .getVirtualItems()
-      .filter((row) => row.index < items.length)
-      .map((row) => ({
-        key: row.key,
-        index: row.index,
-        item: items[row.index],
-      }));
+    const { rows, apart, start } = this.layout();
+    return rows.map((row) => ({
+      key: row.key,
+      index: row.index,
+      item: items[row.index],
+      top: row === apart ? row.start - start : null,
+    }));
   });
   /** The number of items while the last row is rendered, else 0. */
   private readonly endShown = computed(() => {
     const count = this.items().length;
-    const last = this.virtualizer.getVirtualItems().at(-1);
+    const last = this.layout().near.at(-1);
     return last && last.index >= count - 1 ? count : 0;
   });
   protected readonly totalSize = computed(() =>
     this.virtualizer.getTotalSize(),
   );
-  protected readonly rowsOffset = computed(() => {
-    const first = this.virtualizer.getVirtualItems()[0];
-    const offset = first ? first.start - this.scrollMargin() : 0;
-    return `translateY(${offset}px)`;
-  });
+  protected readonly rowsOffset = computed(
+    () => `translateY(${this.layout().start - this.scrollMargin()}px)`,
+  );
 
   public constructor() {
     inject(IonContent)
@@ -375,6 +414,16 @@ export class VirtualListComponent<T> {
     if (covered > 0) {
       scroller.scrollTop -= covered;
     }
+  }
+
+  protected keepFocusedRow(event: FocusEvent): void {
+    const index = Number(
+      event.target instanceof Element
+        ? event.target.closest('[data-index]')?.getAttribute('data-index')
+        : undefined,
+    );
+    const item = this.items()[index];
+    this.focusedKey.set(item === undefined ? null : this.itemKey()(item));
   }
 
   /** The place on the screen, to come back to with `restore`. */

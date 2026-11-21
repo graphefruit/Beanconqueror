@@ -45,6 +45,17 @@ export function reveal(row: Span, view: Span): number | 'start' | null {
   return row.end > view.end ? row.end - view.end : null;
 }
 
+/**
+ * The indexes of the rows to render, in order, with `index` among them
+ * unless it is below 0.
+ */
+export function withIndex(indexes: number[], index: number): number[] {
+  if (index < 0 || indexes.includes(index)) {
+    return indexes;
+  }
+  return [...indexes, index].sort((a, b) => a - b);
+}
+
 /** The anchor at `offset`, from the rows in order; null without rows. */
 export function anchorAt(
   rows: readonly RowPosition[],

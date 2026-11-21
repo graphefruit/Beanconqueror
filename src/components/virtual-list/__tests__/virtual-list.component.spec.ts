@@ -393,6 +393,46 @@ describe('VirtualListComponent', () => {
 
     expect(top(covered)).toBe(HEAD);
   });
+  it('keeps the row with the focus in its place while the list scrolls away', async () => {
+    document.getElementById('item-1').focus();
+    await settle();
+
+    await scrollTo(5000);
+    expect(document.activeElement?.id).toBe('item-1');
+    expect(top('item-1')).toBe(HEAD + 100 - 5000);
+    expect(top('item-50')).toBe(HEAD);
+    expect(shown()).not.toContain('item-2');
+
+    await scrollTo(0);
+    expect(top('item-1')).toBe(HEAD + 100);
+    expect(top('item-2')).toBe(HEAD + 200);
+  });
+
+  it('lets the row go once the focus has moved on', async () => {
+    document.getElementById('item-1').focus();
+    await settle();
+    document.getElementById('item-2').focus();
+    await settle();
+    await scrollTo(5000);
+    expect(shown()).not.toContain('item-1');
+    expect(shown()).toContain('item-2');
+
+    document.getElementById('item-2').blur();
+    await settle();
+    expect(shown()).not.toContain('item-2');
+  });
+
+  it('asks for more items only near the end, not for a last row with the focus', async () => {
+    await scrollTo(100 * 100);
+    expect(host.ends).toBe(1);
+    document.getElementById('item-99').focus();
+    await settle();
+
+    await scrollTo(0);
+    await scrollTo(100 * 100);
+    expect(host.ends).toBe(2);
+  });
+
   it('keeps the rows on the screen in place in the frame a row above grows', async () => {
     await scrollTo(3000);
     expect(top('item-30')).toBe(HEAD);

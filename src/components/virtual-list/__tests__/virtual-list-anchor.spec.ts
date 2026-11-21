@@ -3,6 +3,7 @@ import {
   anchorOffset,
   ListAnchor,
   reveal,
+  withIndex,
 } from '../virtual-list-anchor';
 
 // Three rows below a toolbar of 50 px.
@@ -68,6 +69,20 @@ describe('virtual list anchor', () => {
 
     it('goes to the top without an anchor', () => {
       expect(anchorOffset(null, 400, 1000)).toBe(0);
+    });
+  });
+
+  describe('withIndex', () => {
+    it('adds an index before, after or between the others in order', () => {
+      expect(withIndex([30, 31, 32], 5)).toEqual([5, 30, 31, 32]);
+      expect(withIndex([30, 31, 32], 90)).toEqual([30, 31, 32, 90]);
+      expect(withIndex([], 4)).toEqual([4]);
+    });
+
+    it('leaves the indexes as they are with the index among them or below 0', () => {
+      const indexes = [30, 31, 32];
+      expect(withIndex(indexes, 31)).toBe(indexes);
+      expect(withIndex(indexes, -1)).toBe(indexes);
     });
   });
 
