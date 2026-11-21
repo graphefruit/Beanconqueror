@@ -4,6 +4,7 @@ import { IBean } from '../../../interfaces/bean/iBean';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import {
   beanAgeInDays,
+  beanEntryName,
   hasFrozenInformation,
   hasPhotos,
   isFrozen,
@@ -317,6 +318,31 @@ describe('bean rules', () => {
           unix('2026-02-20T08:00:00.000Z'),
         ),
       ).toBe(10);
+    });
+  });
+
+  describe('beanEntryName', () => {
+    const bean = { name: 'Brazil Cerrado', roaster: 'Rösterei', frozenId: '' };
+
+    it('adds the roaster and the roasting date the card shows', () => {
+      expect(
+        beanEntryName(bean, { roaster: true, roastingDate: '12.10.2026' }),
+      ).toBe('Brazil Cerrado, Rösterei, 12.10.2026');
+    });
+
+    it('leaves out what the card does not show', () => {
+      expect(beanEntryName(bean, { roaster: false, roastingDate: false })).toBe(
+        'Brazil Cerrado',
+      );
+    });
+
+    it('leaves out an empty roaster and ends with the id of a frozen bag', () => {
+      expect(
+        beanEntryName(
+          { ...bean, roaster: '', frozenId: 'F1' },
+          { roaster: true, roastingDate: false },
+        ),
+      ).toBe('Brazil Cerrado, F1');
     });
   });
 });

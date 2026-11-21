@@ -310,6 +310,41 @@ describe('BeanInformationComponent', () => {
     ).not.toBeNull();
   });
 
+  it('names the options after the bean with the roaster and the roasting date it shows', async () => {
+    const translate = TestBed.inject(TranslateService);
+    translate.setTranslation('en', {
+      A11Y: { OPTIONS_FOR: 'Options for {{name}}' },
+    });
+    translate.use('en');
+    settings.date_format = 'DD.MM.YYYY';
+    const bean = storedBean('gamma', {
+      name: 'Brazil Cerrado',
+      roaster: 'Hill',
+      roastingDate: '2026-02-19T08:00:00.000Z',
+    });
+    // Ionic moves the name of ion-button to the button in its shadow root.
+    const options = async (
+      fixture: ComponentFixture<BeanInformationComponent>,
+    ) => {
+      const button = (fixture.nativeElement as HTMLElement)
+        .querySelector('ion-icon[name="beanconqueror-dots"]')
+        .closest('ion-button');
+      await new Promise((resolve) => setTimeout(resolve));
+      return (
+        button.shadowRoot
+          ?.querySelector('button')
+          ?.getAttribute('aria-label') ?? button.getAttribute('aria-label')
+      );
+    };
+
+    expect(await options(await render(bean))).toBe(
+      'Options for Brazil Cerrado, Hill, 19.02.2026',
+    );
+    expect(await options(await render(bean, { collapsed: true }))).toBe(
+      'Options for Brazil Cerrado',
+    );
+  });
+
   it('shows the QR symbol only for a bean with a code', async () => {
     const symbol = (fixture: ComponentFixture<BeanInformationComponent>) =>
       (fixture.nativeElement as HTMLElement).querySelector(

@@ -81,6 +81,7 @@ import {
 } from '../../stores/beans/bean-action-rules';
 import {
   beanAgeInDays,
+  beanEntryName,
   hasFrozenInformation,
   hasPhotos,
   isFrozen,
@@ -186,10 +187,20 @@ export class BeanInformationComponent {
   protected readonly usage = computed(
     () => this.beanUsageStore.usage().get(this.shown().config.uuid) ?? NO_USAGE,
   );
-  /** Names the bean in its buttons; the bags of a frozen group by their id. */
-  protected readonly entryName = computed(() =>
-    [this.shown().name, this.shown().frozenId].filter(Boolean).join(', '),
-  );
+  /** Names the bean in its buttons with what the card shows of it. */
+  protected readonly entryName = computed(() => {
+    const bean = this.shown();
+    const visible = this.settings.bean_visible_list_view_parameters;
+    const details = !this.collapsed();
+    return beanEntryName(bean, {
+      roaster: details && visible.roaster,
+      roastingDate:
+        details &&
+        visible.roastingDate &&
+        !!bean.roastingDate &&
+        moment(bean.roastingDate).format(this.settings.date_format),
+    });
+  });
   protected readonly frozen = computed(() => isFrozen(this.shown()));
   protected readonly frozenInformation = computed(() =>
     hasFrozenInformation(this.shown()),

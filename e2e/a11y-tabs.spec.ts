@@ -16,7 +16,13 @@ import { startsWith, text, type Language } from './support/texts';
 
 type Texts = (key: string, params?: Record<string, string>) => string;
 
-async function start(page: Page, language: Language): Promise<void> {
+type DataSet = ReturnType<typeof generateDataSet>;
+
+async function start(
+  page: Page,
+  language: Language,
+  adjust: (data: DataSet) => void = () => undefined,
+): Promise<void> {
   const data = generateDataSet({
     brews: 20,
     beans: 6,
@@ -24,6 +30,7 @@ async function start(page: Page, language: Language): Promise<void> {
     endDate: new Date('2026-11-01T18:00:00Z'),
   });
   data.SETTINGS[0].language = language;
+  adjust(data);
   const graphs = ['Blooming', 'Turbo'].map((name, index) => ({
     name,
     note: '',
@@ -322,7 +329,12 @@ for (const language of ['en', 'de'] as const) {
     });
 
     test('the buttons of a list entry name the entry', async ({ page }) => {
-      await start(page, language);
+      // Beans of the same name are told apart by what their cards show.
+      await start(page, language, (data) => {
+        const [first, second] = data.BEANS.filter((bean) => !bean.finished);
+        second.name = first.name;
+        second.roaster = first.roaster;
+      });
       const optionsFor = startsWith(t('A11Y.OPTIONS_FOR', { name: '' }));
       const brewOptions = startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' }));
       // Scoped to the screen: the one left may still be on show for a moment.

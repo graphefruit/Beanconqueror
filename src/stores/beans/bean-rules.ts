@@ -94,3 +94,22 @@ export function beanAgeInDays(
   }
   return days;
 }
+
+/**
+ * The name of a bean in the buttons of its card. Beans can share a name, so
+ * the roaster and the roasting date follow while the card shows them, and the
+ * id of a frozen bag; `roastingDate` is the date as the card writes it.
+ */
+export function beanEntryName(
+  bean: BeanFields<'name' | 'roaster' | 'frozenId'>,
+  shown: { roaster: boolean; roastingDate: string | false },
+): string {
+  return [
+    bean.name,
+    shown.roaster && bean.roaster,
+    shown.roastingDate,
+    bean.frozenId,
+  ]
+    .filter(Boolean)
+    .join(', ');
+}
