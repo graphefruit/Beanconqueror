@@ -327,12 +327,20 @@ export class UIBrewHelper {
   }
 
   public logUsedBrewParameters(_brew: Brew) {
-    const eventsToTrack: IEventPayload[] = [];
     const settingsObj: Settings = this.uiSettingsStorage.getSettings();
     let checkData: Settings | Preparation;
     const preparationName = _brew.getPreparation().name;
+    const customParameters =
+      _brew.getPreparation().use_custom_parameters === true;
+    const eventsToTrack: IEventPayload[] = [
+      {
+        category: BREW_TRACKING.TITLE,
+        action: BREW_TRACKING.ACTIONS.CUSTOM_PARAMETERS,
+        name: customParameters ? 'YES' : 'NO',
+      },
+    ];
 
-    if (_brew.getPreparation().use_custom_parameters === true) {
+    if (customParameters) {
       checkData = _brew.getPreparation();
     } else {
       checkData = settingsObj;
@@ -370,9 +378,7 @@ export class UIBrewHelper {
       }
     }
 
-    if (eventsToTrack.length > 0) {
-      this.uiAnalytics.trackBulkEvents(eventsToTrack);
-    }
+    this.uiAnalytics.trackBulkEvents(eventsToTrack);
   }
 
   public cleanInvisibleBrewData(brew: Brew) {

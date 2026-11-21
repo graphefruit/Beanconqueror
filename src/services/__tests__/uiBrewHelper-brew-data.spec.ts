@@ -1185,6 +1185,11 @@ describe('UIBrewHelper brew data', () => {
       action: `PARAMETER_USED_${preparationName}`,
       name,
     });
+    const customParameters = (active: boolean) => ({
+      category: 'BREW',
+      action: 'CUSTOM_PARAMETERS',
+      name: active ? 'YES' : 'NO',
+    });
 
     function trackedEvents(): unknown[] {
       expect(trackBulkEvents).toHaveBeenCalledTimes(1);
@@ -1195,10 +1200,20 @@ describe('UIBrewHelper brew data', () => {
       settings.manage_parameters = allParameters(false);
     });
 
-    it('sends nothing when no parameter is shown and no device is connected', () => {
+    it('only tells that no custom parameters were used when no parameter is shown and no device is connected', () => {
       helper.logUsedBrewParameters(link(recordedBrew()));
 
-      expect(trackBulkEvents).not.toHaveBeenCalled();
+      expect(trackedEvents()).toEqual([customParameters(false)]);
+    });
+
+    it('tells that the preparation has custom parameters, without its name', () => {
+      preparation.name = 'Annas Bialetti';
+      preparation.use_custom_parameters = true;
+      preparation.manage_parameters = allParameters(false);
+
+      helper.logUsedBrewParameters(link(recordedBrew()));
+
+      expect(trackedEvents()).toEqual([customParameters(true)]);
     });
 
     it('sends one event per shown parameter of the settings', () => {
@@ -1208,7 +1223,11 @@ describe('UIBrewHelper brew data', () => {
       helper.logUsedBrewParameters(link(recordedBrew()));
 
       expect(trackedEvents()).toEqual(
-        jasmine.arrayWithExactContents([used('brew_time'), used('rating')]),
+        jasmine.arrayWithExactContents([
+          customParameters(false),
+          used('brew_time'),
+          used('rating'),
+        ]),
       );
     });
 
@@ -1219,7 +1238,7 @@ describe('UIBrewHelper brew data', () => {
 
       helper.logUsedBrewParameters(link(recordedBrew()));
 
-      expect(trackedEvents()).toEqual([used('tds')]);
+      expect(trackedEvents()).toEqual([customParameters(true), used('tds')]);
     });
 
     // Privacy: the name the user gave the preparation and the advertised
@@ -1233,6 +1252,7 @@ describe('UIBrewHelper brew data', () => {
       helper.logUsedBrewParameters(link(recordedBrew()));
 
       expect(trackedEvents()).toEqual([
+        customParameters(false),
         used('SCALE_DEVICE_LUNAR-1A2B3C', 'Annas Bialetti'),
         used('PRESSURE_DEVICE_PRS12345', 'Annas Bialetti'),
       ]);
@@ -1244,7 +1264,7 @@ describe('UIBrewHelper brew data', () => {
 
       helper.logUsedBrewParameters(link(recordedBrew()));
 
-      expect(trackBulkEvents).not.toHaveBeenCalled();
+      expect(trackedEvents()).toEqual([customParameters(false)]);
     });
 
     it('leaves out devices that are not connected', () => {
@@ -1253,7 +1273,7 @@ describe('UIBrewHelper brew data', () => {
 
       helper.logUsedBrewParameters(link(recordedBrew()));
 
-      expect(trackedEvents()).toEqual([used('note')]);
+      expect(trackedEvents()).toEqual([customParameters(false), used('note')]);
     });
   });
 });
