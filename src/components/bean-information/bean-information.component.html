@@ -35,13 +35,10 @@
             }
             <div class="ion-justify-content-start center-icons-to-text expand-fill-space">
               <div class="expand-fill-space no-overflow-ellipsis" style="margin-right:-5px;">
-                {{bean.name}}&nbsp;
-                @if (!roastingTypeUnknown() && (settings | beanFieldVisiblePipe:
-                [settings.bean_visible_list_view_parameters.bean_roasting_type])) {
-                <span>
-                  ({{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}})
-                </span>
-                }
+                <!-- Two spaces wide before the roasting type, one of them hidden: the
+                     name gets one. -->
+                {{bean.name}}@if (!roastingTypeUnknown() && (settings | beanFieldVisiblePipe:
+                [settings.bean_visible_list_view_parameters.bean_roasting_type])) {<span aria-hidden="true">&nbsp;</span>&ngsp;<span>({{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}})</span>}
               </div>
             </div>
           </div>

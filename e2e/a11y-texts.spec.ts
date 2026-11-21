@@ -76,6 +76,25 @@ function openDialog(page: Page): Locator {
   return visible(page.getByRole('dialog'));
 }
 
+/**
+ * The names Chromium gives the elements of `role` on show, as a screen reader
+ * gets them: unlike Playwright's, with the spaces and the text-transform of
+ * the text.
+ */
+async function chromiumNames(page: Page, role: string): Promise<string[]> {
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Accessibility.enable');
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  await cdp.detach();
+  return nodes
+    .filter((node) => !node.ignored && node.role?.value === role)
+    .map((node) => String(node.name?.value ?? ''));
+}
+
+function escape(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 for (const language of ['en', 'de'] as const) {
   test.describe(language, () => {
     const t = (key: string, params?: Record<string, string>) =>
@@ -292,6 +311,48 @@ for (const language of ['en', 'de'] as const) {
       await expect(openDialog(page)).toHaveCount(1);
       await expect(visible(page.getByText(t('PRESET_BREW_TITLE')))).toHaveCount(
         1,
+      );
+    });
+
+    test('names have no spaces at their ends and the count of a segment as written', async ({
+      page,
+    }) => {
+      await start(page, language);
+      await expect(
+        page.getByRole('button', {
+          name: startsWith(t('UNWRAPPED.BUTTON.TITLE')),
+        }),
+      ).toBeVisible();
+      const unwrap = (await chromiumNames(page, 'button')).filter((name) =>
+        name.includes(t('UNWRAPPED.BUTTON.TITLE')),
+      );
+      expect(unwrap).toHaveLength(1);
+      expect(unwrap[0]).toBe(unwrap[0].trim());
+
+      await openTab(page, language, 'NAV_BEANS');
+      await expect(
+        visible(page.locator('beans bean-information').getByRole('heading')),
+      ).not.toHaveCount(0);
+      const headings = (await chromiumNames(page, 'heading')).filter(
+        (name) => name !== t('NAV_BEANS'),
+      );
+      expect(headings.length).toBeGreaterThan(1);
+      for (const name of headings) {
+        expect(name).toBe(name.trim());
+        expect(name).not.toMatch(/\s\s/);
+      }
+      // Chromium takes the capitals Ionic gives the label of a segment into
+      // its name; the count is read as written.
+      const count = escape(t('A11Y.COUNT_TOTAL', { total: '#' })).replace(
+        '#',
+        '\\d+',
+      );
+      const tabs = (await chromiumNames(page, 'tab')).filter((name) =>
+        name.startsWith(t('PAGE_BEANS_LIST_OBTAINABLE')),
+      );
+      expect(tabs).toHaveLength(1);
+      expect(tabs[0]).toMatch(
+        new RegExp(`^${escape(t('PAGE_BEANS_LIST_OBTAINABLE'))}, ${count}$`),
       );
     });
 

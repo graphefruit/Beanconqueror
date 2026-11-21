@@ -17,10 +17,9 @@
       <ion-col size="12">
         <ion-card button class="ion-no-margin" (click)="openUnwrapped(2026)" tappable>
           <ion-card-header>
-            <div class="card-title-text">
-              <ion-icon aria-hidden="true" color='accent' name="gift-outline" />
-              {{ 'UNWRAPPED.BUTTON.TITLE' | translate }}
-            </div>
+            <!-- The space after the icon is hidden with it, so the name does
+                 not start with a space. -->
+            <div class="card-title-text"><span aria-hidden="true"><ion-icon color='accent' name="gift-outline" />&ngsp;</span>{{ 'UNWRAPPED.BUTTON.TITLE' | translate }}</div>
             <div class="card-subtitle-text">{{ 'UNWRAPPED.BUTTON.SUBTITLE' | translate }}</div>
           </ion-card-header>
         </ion-card>

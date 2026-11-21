@@ -1057,6 +1057,8 @@ ion-card-header > :is(.card-title-text, .card-subtitle-text):not(:first-child) {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+  // Chromium reads text as transformed, e.g. "In Total" in a segment.
+  text-transform: none;
 }
 
 ion-modal.loading-modal {
