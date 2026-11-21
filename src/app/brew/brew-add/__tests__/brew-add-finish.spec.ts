@@ -173,6 +173,33 @@ describe('BrewAddComponent finish', () => {
     expect(dismiss).toHaveBeenCalled();
   });
 
+  it('names the bean events of a brew with water and grinder by the event title', async () => {
+    (Brew.prototype.getBean as jasmine.Spy).and.returnValue({
+      roaster: 'Roaster',
+      name: 'Bean',
+      openDate: '2024-01-01',
+    } as any);
+    spyOn(Brew.prototype, 'getWater').and.returnValue({ name: 'Soft' } as any);
+    spyOn(Brew.prototype, 'getMill').and.returnValue({ name: 'Mill' } as any);
+    component = createComponent(false);
+
+    await component.finish();
+
+    const [tracked] = (
+      component as any
+    ).uiAnalytics.trackBulkEvents.calls.mostRecent().args as [
+      { category: string; action: string; name: string }[],
+    ];
+    const beanEvents = tracked.filter((event) => event.category === 'BEAN');
+    expect(beanEvents.map((event) => event.name)).toContain('WATER_NAME_Soft');
+    expect(beanEvents.map((event) => event.name)).toContain(
+      'GRINDER_NAME_Mill',
+    );
+    expect(beanEvents.map((event) => event.action)).toEqual(
+      Array(5).fill('BREW_TRACKED_Roaster_Bean'),
+    );
+  });
+
   it('keeps the save time and an empty flow profile when nothing else is set', async () => {
     brewing.brewBrewingGraphEl.flow_profile_raw.weight = [];
     component = createComponent(false);
