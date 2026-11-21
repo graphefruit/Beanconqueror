@@ -938,22 +938,23 @@ describe('SettingsPage files of an export and an import', () => {
       expect(importedSettings().brew_view).toBe('1');
     });
 
-    it('known gap: hands the imported filters on, the filters of this version are set on the list around the settings', async () => {
+    it('replaces the imported filters with the empty filters of this version', async () => {
       await open(['capacitor', 'ios']);
       const content = parsed({ brew_filter: { OPEN: { mill: ['gone'] } } });
 
       await page.__importJSON(content, IMPORT_DIR, 'Beanconqueror.zip');
 
       expect(importedSettings().brew_filter).toEqual({
-        OPEN: { mill: ['gone'] },
-      });
-      expect(importedSettings().bean_filter).toBeUndefined();
-      expect(
-        (content.SETTINGS as unknown as { brew_filter: object }).brew_filter,
-      ).toEqual({
         ARCHIVED: new Settings().GET_BREW_FILTER(),
         OPEN: new Settings().GET_BREW_FILTER(),
       });
+      expect(importedSettings().bean_filter).toEqual({
+        OPEN: new Settings().GET_BEAN_FILTER(),
+        ARCHIVED: new Settings().GET_BEAN_FILTER(),
+      });
+      expect(
+        (content.SETTINGS as unknown as { brew_filter?: object }).brew_filter,
+      ).toBeUndefined();
     });
 
     it('gives settings without an order of the brew fields the one of this version', async () => {
@@ -970,17 +971,31 @@ describe('SettingsPage files of an export and an import', () => {
       );
     });
 
-    it('known gap: keeps an order of the brew fields in the old structure, the check for it never applies', async () => {
+    it('gives settings with an order of the brew fields in the old structure the one of this version', async () => {
       await open(['capacitor', 'ios']);
-      const oldOrder = { grind_size: 1, grind_weight: 2 };
 
       await page.__importJSON(
-        parsed({ brew_order: oldOrder }),
+        parsed({ brew_order: { grind_size: 1, grind_weight: 2 } }),
         IMPORT_DIR,
         'Beanconqueror.zip',
       );
 
-      expect(importedSettings().brew_order).toEqual(oldOrder);
+      expect(importedSettings().brew_order).toEqual(
+        structuredClone(new Settings().brew_order),
+      );
+    });
+
+    it('keeps an order of the brew fields in the current structure', async () => {
+      await open(['capacitor', 'ios']);
+      const order = { before: { grind_size: 2 }, while: {}, after: {} };
+
+      await page.__importJSON(
+        parsed({ brew_order: order }),
+        IMPORT_DIR,
+        'Beanconqueror.zip',
+      );
+
+      expect(importedSettings().brew_order).toEqual(order);
     });
 
     it('sets rating steps of 1 for settings that have none, resets the filters and saves', async () => {

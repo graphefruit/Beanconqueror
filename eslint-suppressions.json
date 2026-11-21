@@ -1375,9 +1375,6 @@
     },
     "@typescript-eslint/no-redundant-type-constituents": {
       "count": 1
-    },
-    "no-constant-binary-expression": {
-      "count": 1
     }
   },
   "src/app/statistic/__tests__/statistic.page.spec.ts": {

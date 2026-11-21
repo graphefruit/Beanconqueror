@@ -1691,26 +1691,18 @@ export class SettingsPage {
 
       this.uiLog.log('All data existing');
       this.__cleanupImportSettingsData(
-        parsedContent[this.uiSettingsStorage.getDBPath()],
+        parsedContent[this.uiSettingsStorage.getDBPath()][0],
       );
 
       // When exporting the value is a number, when importing it needs to be  a string.
       parsedContent.SETTINGS[0].brew_view =
         parsedContent.SETTINGS[0].brew_view + '';
       this.uiLog.log('Cleaned all data');
-      try {
-        if (!parsedContent.SETTINGS[0].brew_order.before === undefined) {
-          this.uiLog.log('Old brew order structure');
-          // Breaking change, we need to throw away the old order types by import
-          const settingsConst = new Settings();
-          parsedContent.SETTINGS[0].brew_order = this.uiHelper.copyData(
-            settingsConst.brew_order,
-          );
-        }
-      } catch {
-        const settingsConst = new Settings();
+      if (parsedContent.SETTINGS[0].brew_order?.before === undefined) {
+        this.uiLog.log('Old brew order structure');
+        // Breaking change, we need to throw away the old order types by import
         parsedContent.SETTINGS[0].brew_order = this.uiHelper.copyData(
-          settingsConst.brew_order,
+          new Settings().brew_order,
         );
       }
 
