@@ -41,8 +41,15 @@ import {
   ListAnchor,
   reveal,
   RowKey,
-  withIndex,
+  runAround,
+  withIndexes,
 } from './virtual-list-anchor';
+
+/** A row by its key and the index it had, which is checked before use. */
+interface KeptRow {
+  readonly key: RowKey;
+  readonly index: number;
+}
 
 export interface VirtualRowContext<T> {
   $implicit: T;
@@ -142,7 +149,7 @@ export class VirtualRowDirective<T> {
           role="list"
           [style.transform]="rowsOffset()"
           (focusin)="revealFocus($event); keepFocusedRow($event)"
-          (focusout)="focusedKey.set(null)"
+          (focusout)="focusedRow.set(null)"
         >
           @for (row of rows(); track row.key) {
             <div
@@ -205,10 +212,25 @@ export class VirtualListComponent<T> {
   /** Set while the ResizeObserver of the rows tells their new heights. */
   private observingRows = false;
   /** The row that holds the focus, null while the focus is elsewhere. */
-  protected readonly focusedKey = signal<RowKey | null>(null);
-  private readonly focusedIndex = computed(() => {
-    const key = this.focusedKey();
-    return key === null ? -1 : this.indexOf(key);
+  protected readonly focusedRow = signal<KeptRow | null>(null);
+  /** The rows on the screen when the list last stood still. */
+  private readonly restingRows = signal<readonly KeptRow[]>([]);
+  /**
+   * The rows that stay rendered when they leave the screen. Taken off, a
+   * row would take the focus with it, and the next Tab or screen reader step
+   * would start again at the top of the page. A screen reader (TalkBack,
+   * VoiceOver) moves its own focus without telling the page, so the rows it
+   * could be on, those on the screen before a scroll, stay until the next
+   * scroll.
+   */
+  private readonly keptIndexes = computed(() => {
+    const focused = this.focusedRow();
+    const rows = focused
+      ? [...this.restingRows(), focused]
+      : this.restingRows();
+    return rows
+      .map((row) => this.indexOfRow(row))
+      .filter((index) => index >= 0);
   });
 
   private readonly virtualizer = injectVirtualizer<HTMLElement, HTMLElement>(
@@ -216,17 +238,14 @@ export class VirtualListComponent<T> {
       const items = this.items();
       const key = this.itemKey();
       const size = this.estimateSize();
-      const focused = this.focusedIndex();
+      const kept = this.keptIndexes();
       return {
         scrollElement: this.scroller(),
         count: items.length,
         getItemKey: (index) => key(items[index]),
         estimateSize: () => size,
-        // The row with the focus stays rendered when it leaves the screen:
-        // taken off, it would take the focus with it, and the next Tab or
-        // screen reader step would start again at the top of the page.
         rangeExtractor: (range) =>
-          withIndex(defaultRangeExtractor(range), focused),
+          withIndexes(defaultRangeExtractor(range), kept),
         // Only the ResizeObserver measures a row: when it is rendered, its
         // Ionic elements are not drawn yet and the row is far too low, so
         // many more rows would be rendered. A hidden page reports its rows
@@ -263,6 +282,9 @@ export class VirtualListComponent<T> {
         observeElementOffset: (instance, report) =>
           observeElementOffset(instance, (offset, isScrolling) => {
             if (instance.scrollElement?.clientHeight !== 0) {
+              if (isScrolling && !instance.isScrolling) {
+                this.keepRowsAtRest(instance.range);
+              }
               report(offset, isScrolling);
             }
           }),
@@ -297,33 +319,30 @@ export class VirtualListComponent<T> {
   );
 
   /**
-   * The rows near the screen follow one another from `start`; the row with
-   * the focus lies `apart` from them once they have scrolled away from it.
+   * The rows on the screen and next to it follow one another from `start`;
+   * kept rows lie apart from them once they have scrolled away from them.
    */
   private readonly layout = computed(() => {
     const count = this.items().length;
     const rows = this.virtualizer
       .getVirtualItems()
       .filter((row) => row.index < count);
-    const focused = this.focusedIndex();
-    const apart = rows.find(
-      (row, i) =>
-        row.index === focused &&
-        rows[i - 1]?.index !== focused - 1 &&
-        rows[i + 1]?.index !== focused + 1,
+    const { first, end } = runAround(
+      rows.map((row) => row.index),
+      this.virtualizer().range?.startIndex ?? -1,
     );
-    const near = apart ? rows.filter((row) => row !== apart) : rows;
-    const start = (near[0] ?? apart)?.start ?? this.scrollMargin();
-    return { rows, near, apart, start };
+    const near = rows.slice(first, end);
+    const start = (near[0] ?? rows[0])?.start ?? this.scrollMargin();
+    return { rows, first, end, near, start };
   });
   protected readonly rows = computed(() => {
     const items = this.items();
-    const { rows, apart, start } = this.layout();
-    return rows.map((row) => ({
+    const { rows, first, end, start } = this.layout();
+    return rows.map((row, i) => ({
       key: row.key,
       index: row.index,
       item: items[row.index],
-      top: row === apart ? row.start - start : null,
+      top: i < first || i >= end ? row.start - start : null,
     }));
   });
   /** The number of items while the last row is rendered, else 0. */
@@ -423,7 +442,25 @@ export class VirtualListComponent<T> {
         : undefined,
     );
     const item = this.items()[index];
-    this.focusedKey.set(item === undefined ? null : this.itemKey()(item));
+    this.focusedRow.set(
+      item === undefined ? null : { key: this.itemKey()(item), index },
+    );
+  }
+
+  /** Called as a scroll starts, with the rows on the screen until then. */
+  private keepRowsAtRest(
+    range: { startIndex: number; endIndex: number } | null,
+  ): void {
+    const items = this.items();
+    const keyOf = this.itemKey();
+    const rows: KeptRow[] = [];
+    if (range) {
+      const last = Math.min(range.endIndex, items.length - 1);
+      for (let index = range.startIndex; index <= last; index++) {
+        rows.push({ key: keyOf(items[index]), index });
+      }
+    }
+    this.restingRows.set(rows);
   }
 
   /** The place on the screen, to come back to with `restore`. */
@@ -563,6 +600,14 @@ export class VirtualListComponent<T> {
       this.observingRows = true;
       queueMicrotask(() => (this.observingRows = false));
     }
+  }
+
+  /** Where `row` is now; -1 once it is gone. */
+  private indexOfRow({ key, index }: KeptRow): number {
+    const item = this.items()[index];
+    return item !== undefined && this.itemKey()(item) === key
+      ? index
+      : this.indexOf(key);
   }
 
   private indexOf(key: RowKey): number {

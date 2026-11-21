@@ -3,7 +3,8 @@ import {
   anchorOffset,
   ListAnchor,
   reveal,
-  withIndex,
+  runAround,
+  withIndexes,
 } from '../virtual-list-anchor';
 
 // Three rows below a toolbar of 50 px.
@@ -72,17 +73,39 @@ describe('virtual list anchor', () => {
     });
   });
 
-  describe('withIndex', () => {
-    it('adds an index before, after or between the others in order', () => {
-      expect(withIndex([30, 31, 32], 5)).toEqual([5, 30, 31, 32]);
-      expect(withIndex([30, 31, 32], 90)).toEqual([30, 31, 32, 90]);
-      expect(withIndex([], 4)).toEqual([4]);
+  describe('withIndexes', () => {
+    it('adds indexes before, after or between the others in order', () => {
+      expect(withIndexes([30, 31, 32], [5, 6])).toEqual([5, 6, 30, 31, 32]);
+      expect(withIndexes([30, 31, 32], [90, 5])).toEqual([5, 30, 31, 32, 90]);
+      expect(withIndexes([], [4, 4])).toEqual([4]);
     });
 
-    it('leaves the indexes as they are with the index among them or below 0', () => {
+    it('leaves the indexes as they are with the others among them', () => {
       const indexes = [30, 31, 32];
-      expect(withIndex(indexes, 31)).toBe(indexes);
-      expect(withIndex(indexes, -1)).toBe(indexes);
+      expect(withIndexes(indexes, [31, 32])).toBe(indexes);
+      expect(withIndexes(indexes, [])).toBe(indexes);
+    });
+  });
+
+  describe('runAround', () => {
+    it('finds the consecutive indexes around one', () => {
+      expect(runAround([3, 4, 30, 31, 32, 60], 31)).toEqual({
+        first: 2,
+        end: 5,
+      });
+      expect(runAround([3, 4, 30, 31, 32, 60], 3)).toEqual({
+        first: 0,
+        end: 2,
+      });
+      expect(runAround([3, 4, 30, 31, 32, 60], 60)).toEqual({
+        first: 5,
+        end: 6,
+      });
+    });
+
+    it('takes all indexes without the one among them', () => {
+      expect(runAround([3, 4, 30], 7)).toEqual({ first: 0, end: 3 });
+      expect(runAround([], 0)).toEqual({ first: 0, end: 0 });
     });
   });
 

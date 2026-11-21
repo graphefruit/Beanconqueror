@@ -170,6 +170,12 @@ describe('VirtualListComponent', () => {
     await settle();
   }
 
+  /** Scrolls once the list has stood still, as a new scroll. */
+  async function scrollAgainTo(offset: number): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    await scrollTo(offset);
+  }
+
   beforeEach(async () => {
     TestBed.configureTestingModule({
       providers: [{ provide: UILog, useValue: { error: () => undefined } }],
@@ -393,17 +399,47 @@ describe('VirtualListComponent', () => {
 
     expect(top(covered)).toBe(HEAD);
   });
+  it('keeps the rows on the screen in their place until the next scroll', async () => {
+    const before = shown();
+    expect(before).toEqual(['item-0', 'item-1', 'item-2', 'item-3', 'item-4']);
+
+    await scrollTo(5000);
+    expect(shown()).toEqual(jasmine.arrayContaining(['item-0', 'item-3']));
+    expect(top('item-1')).toBe(HEAD + 100 - 5000);
+    expect(top('item-50')).toBe(HEAD);
+
+    await scrollTo(0);
+    expect(top('item-1')).toBe(HEAD + 100);
+    expect(top('item-2')).toBe(HEAD + 200);
+
+    await scrollAgainTo(5000);
+    await scrollAgainTo(7000);
+    expect(shown()).not.toContain('item-1');
+    expect(shown()).toEqual(jasmine.arrayContaining(['item-50', 'item-70']));
+    expect(top('item-50')).toBe(HEAD + 5000 - 7000);
+  });
+
+  it('keeps the rows on the screen by their key when items are added', async () => {
+    await scrollTo(5000);
+    host.items.set([{ id: 'new', height: 100 }, ...items(100)]);
+    await settle();
+
+    expect(shown()).toContain('item-1');
+    expect(top('item-1')).toBe(HEAD + 200 - scroller().scrollTop);
+  });
+
   it('keeps the row with the focus in its place while the list scrolls away', async () => {
     document.getElementById('item-1').focus();
     await settle();
 
     await scrollTo(5000);
+    await scrollAgainTo(7000);
     expect(document.activeElement?.id).toBe('item-1');
-    expect(top('item-1')).toBe(HEAD + 100 - 5000);
-    expect(top('item-50')).toBe(HEAD);
+    expect(top('item-1')).toBe(HEAD + 100 - 7000);
+    expect(top('item-70')).toBe(HEAD);
     expect(shown()).not.toContain('item-2');
 
-    await scrollTo(0);
+    await scrollAgainTo(0);
     expect(top('item-1')).toBe(HEAD + 100);
     expect(top('item-2')).toBe(HEAD + 200);
   });
@@ -414,6 +450,7 @@ describe('VirtualListComponent', () => {
     document.getElementById('item-2').focus();
     await settle();
     await scrollTo(5000);
+    await scrollAgainTo(7000);
     expect(shown()).not.toContain('item-1');
     expect(shown()).toContain('item-2');
 

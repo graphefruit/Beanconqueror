@@ -45,15 +45,39 @@ export function reveal(row: Span, view: Span): number | 'start' | null {
   return row.end > view.end ? row.end - view.end : null;
 }
 
-/**
- * The indexes of the rows to render, in order, with `index` among them
- * unless it is below 0.
- */
-export function withIndex(indexes: number[], index: number): number[] {
-  if (index < 0 || indexes.includes(index)) {
+/** The indexes of the rows to render, in order, with `more` among them. */
+export function withIndexes(
+  indexes: number[],
+  more: readonly number[],
+): number[] {
+  const added = more.filter((index) => !indexes.includes(index));
+  if (added.length === 0) {
     return indexes;
   }
-  return [...indexes, index].sort((a, b) => a - b);
+  return [...new Set([...indexes, ...added])].sort((a, b) => a - b);
+}
+
+/**
+ * Where the run of consecutive indexes that holds `index` lies in `indexes`
+ * (in order): from `first` up to before `end`. All of them without `index`.
+ */
+export function runAround(
+  indexes: readonly number[],
+  index: number,
+): { first: number; end: number } {
+  const at = indexes.indexOf(index);
+  if (at < 0) {
+    return { first: 0, end: indexes.length };
+  }
+  let first = at;
+  while (first > 0 && indexes[first - 1] === indexes[first] - 1) {
+    first--;
+  }
+  let end = at + 1;
+  while (end < indexes.length && indexes[end] === indexes[end - 1] + 1) {
+    end++;
+  }
+  return { first, end };
 }
 
 /** The anchor at `offset`, from the rows in order; null without rows. */
