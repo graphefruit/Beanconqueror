@@ -459,10 +459,11 @@ describe('UIBrewHelper brew data', () => {
         customInformation: fresh.customInformation,
         favourite: fresh.favourite,
         best_brew: fresh.best_brew,
+        coordinates: fresh.coordinates,
       };
     }
 
-    it('takes over every brew value and starts photos, cupping, graph and identity anew', () => {
+    it('takes over every brew value and starts photos, cupping, graph, location and identity anew', () => {
       const source = link(recordedBrew());
 
       const repeat = helper.copyBrewToRepeat(source);
@@ -475,6 +476,7 @@ describe('UIBrewHelper brew data', () => {
       expect(repeat.flow_profile).toBe('');
       expect(repeat.config.uuid).toBe('');
       expect(repeat.attachments).toEqual([]);
+      expect(repeat.coordinates).not.toBe(source.coordinates);
     });
 
     it('leaves the source brew as it was', () => {

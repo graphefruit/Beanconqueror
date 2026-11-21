@@ -291,7 +291,6 @@ export class UIBrewHelper {
       _brewToCopy.coffee_blooming_time_milliseconds;
     repeatBrew.rating = _brewToCopy.rating;
     repeatBrew.note = _brewToCopy.note;
-    repeatBrew.coordinates = _brewToCopy.coordinates;
 
     repeatBrew.method_of_preparation_tools = [];
     const repeatTools = _brewToCopy.method_of_preparation_tools;
