@@ -8,7 +8,9 @@ function settingsWithSecrets(prefix: string): Settings {
   const settings = new Settings();
   settings.visualizer_username = `${prefix}-user`;
   settings.visualizer_password = `${prefix}-password`;
+  settings.visualizer_url = `https://${prefix}-user:${prefix}-password@visualizer.example.com/`;
   settings.cloud_ai_api_key = `${prefix}-key`;
+  settings.cloud_ai_base_url = `https://llm.example.com/v1?key=${prefix}-key`;
   settings.brew_by_weight_webhook.url = `https://webhook.example.com/${prefix}`;
   settings.brew_by_weight_webhook.bearerToken = `${prefix}-bearer`;
   settings.brew_by_weight_webhook.basicUsername = `${prefix}-basic-user`;
@@ -29,7 +31,9 @@ describe('settings secrets', () => {
 
     expect(stripped.visualizer_username).toBe('');
     expect(stripped.visualizer_password).toBe('');
+    expect(stripped.visualizer_url).toBe('');
     expect(stripped.cloud_ai_api_key).toBe('');
+    expect(stripped.cloud_ai_base_url).toBe('');
     expect(stripped.brew_by_weight_webhook.bearerToken).toBe('');
     expect(stripped.brew_by_weight_webhook.basicUsername).toBe('');
     expect(stripped.brew_by_weight_webhook.basicPassword).toBe('');
@@ -56,6 +60,12 @@ describe('settings secrets', () => {
 
     expect(merged.cloud_ai_api_key).toBe('backup-key');
     expect(merged.visualizer_password).toBe('device-password');
+    expect(merged.visualizer_url).toBe(
+      'https://device-user:device-password@visualizer.example.com/',
+    );
+    expect(merged.cloud_ai_base_url).toBe(
+      'https://llm.example.com/v1?key=device-key',
+    );
     expect(merged.brew_by_weight_webhook.basicPassword).toBe(
       'device-basic-password',
     );

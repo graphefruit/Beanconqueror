@@ -26,6 +26,28 @@ describe('Settings', () => {
     expect(hydratedSettings.cloud_ai_prompt_appendix).toBe('');
   });
 
+  for (const url of ['', undefined]) {
+    it(`gives settings with the Visualizer address ${JSON.stringify(url)} the default server`, () => {
+      const stored = JSON.parse(JSON.stringify(new Settings())) as Settings;
+      stored.visualizer_url = url;
+      const settings = new Settings();
+
+      settings.initializeByObject(stored);
+
+      expect(settings.visualizer_url).toBe('https://visualizer.coffee/');
+    });
+  }
+
+  it('keeps an own Visualizer address', () => {
+    const stored = JSON.parse(JSON.stringify(new Settings())) as Settings;
+    stored.visualizer_url = 'https://visualizer.example.com/';
+    const settings = new Settings();
+
+    settings.initializeByObject(stored);
+
+    expect(settings.visualizer_url).toBe('https://visualizer.example.com/');
+  });
+
   describe('user profile', () => {
     function storedSettingsWithUser(_user: unknown): Settings {
       const stored = JSON.parse(JSON.stringify(new Settings())) as Settings;

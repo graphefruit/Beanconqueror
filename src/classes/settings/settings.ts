@@ -673,6 +673,11 @@ export class Settings implements ISettings {
 
   public initializeByObject(settingsObj: ISettings): void {
     Object.assign(this, settingsObj);
+    // Backups leave the address empty (SETTINGS_SECRET_PATHS); the uploads
+    // need one, so a device without its own gets the default server again.
+    if (!this.visualizer_url) {
+      this.visualizer_url = 'https://visualizer.coffee/';
+    }
     // Safety check if graph_colors is missing (e.g. old backup)
     if (!this.graph_colors) {
       this.graph_colors = JSON.parse(JSON.stringify(DEFAULT_GRAPH_COLORS));
