@@ -12,6 +12,7 @@ import { Settings } from '../../../../classes/settings/settings';
 import { StorageChanges, StorageClass } from '../../../../classes/storageClass';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../../enums/beans/beanFreezingStorage';
 import { UIAlert } from '../../../../services/uiAlert';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../../services/uiBeanStorage';
 import { UIFileHelper } from '../../../../services/uiFileHelper';
@@ -64,6 +65,7 @@ describe('BeanPopoverFreezeComponent', () => {
   let uiHelperSpy: jasmine.SpyObj<UIHelper>;
   let settingsStorageSpy: jasmine.SpyObj<UISettingsStorage>;
   let platformSpy: jasmine.SpyObj<Platform>;
+  let uiAnalyticsSpy: jasmine.SpyObj<UIAnalytics>;
 
   beforeEach(() => {
     modalCtrlSpy = jasmine.createSpyObj('ModalController', [
@@ -100,6 +102,7 @@ describe('BeanPopoverFreezeComponent', () => {
       'getSettings',
     ]);
     platformSpy = jasmine.createSpyObj('Platform', ['is']);
+    uiAnalyticsSpy = jasmine.createSpyObj('UIAnalytics', ['trackEvent']);
 
     settingsStorageSpy.getSettings.and.returnValue(new Settings());
     uiBeanHelperSpy.generateFrozenId.and.returnValue('frozen-id-123');
@@ -127,6 +130,7 @@ describe('BeanPopoverFreezeComponent', () => {
         { provide: UISettingsStorage, useValue: settingsStorageSpy },
         { provide: Platform, useValue: platformSpy },
         { provide: UILog, useValue: jasmine.createSpyObj('UILog', ['error']) },
+        { provide: UIAnalytics, useValue: uiAnalyticsSpy },
         ChangeDetectorRef,
       ],
     });
@@ -216,6 +220,23 @@ describe('BeanPopoverFreezeComponent', () => {
       expect(bean.unfrozenDate).toBe('');
       expect(bean.frozenStorageType).toBe(BEAN_FREEZING_STORAGE_ENUM.ZIP_LOCK);
     });
+
+    it('reports the freezing to the analytics without naming the bean', async () => {
+      bean.name = 'Alpha';
+      bean.roaster = 'Roastery';
+
+      await component.saveWholePackage();
+
+      expect(uiAnalyticsSpy.trackEvent.calls.allArgs()).toEqual([
+        ['BEAN', 'FREEZE'],
+      ]);
+    });
+
+    it('reports nothing to the analytics when the dialog is closed without saving', async () => {
+      await component.dismiss();
+
+      expect(uiAnalyticsSpy.trackEvent.calls.count()).toBe(0);
+    });
   });
 
   describe('addOnePartialBag', () => {
@@ -259,6 +280,7 @@ describe('BeanPopoverFreezeComponent', () => {
       expect(uiAlertSpy.showMessage.calls.allArgs()).toEqual([ERROR_MESSAGE]);
       expect(uiToastSpy.showInfoToast.calls.count()).toBe(0);
       expect(modalCtrlSpy.dismiss.calls.count()).toBe(0);
+      expect(uiAnalyticsSpy.trackEvent.calls.count()).toBe(0);
     });
 
     it('reports an update that was not written and neither closes nor claims success', async () => {
@@ -270,6 +292,7 @@ describe('BeanPopoverFreezeComponent', () => {
       expect(uiAlertSpy.showMessage.calls.allArgs()).toEqual([ERROR_MESSAGE]);
       expect(uiToastSpy.showInfoToast.calls.count()).toBe(0);
       expect(modalCtrlSpy.dismiss.calls.count()).toBe(0);
+      expect(uiAnalyticsSpy.trackEvent.calls.count()).toBe(0);
     });
   });
 
@@ -818,6 +841,7 @@ describe('BeanPopoverFreezeComponent', () => {
         expect(modalCtrlSpy.dismiss.calls.count()).toBe(0);
         expect(modalCtrlSpy.create.calls.count()).toBe(0);
         expect(uiToastSpy.showInfoToast.calls.count()).toBe(0);
+        expect(uiAnalyticsSpy.trackEvent.calls.count()).toBe(0);
       }
 
       it('changes nothing when the bags and the original could not be saved', async () => {
@@ -1135,6 +1159,18 @@ describe('BeanPopoverFreezeComponent', () => {
       ]);
       expect(component.allNewCreatedBeans.length).toBe(2);
     });
+
+    it('reports the freezing once to the analytics without naming the bean', async () => {
+      bean.roaster = 'Roastery';
+      open();
+      addBags(100, 50);
+
+      await component.save();
+
+      expect(uiAnalyticsSpy.trackEvent.calls.allArgs()).toEqual([
+        ['BEAN', 'FREEZE'],
+      ]);
+    });
   });
 
   describe('bags', () => {
@@ -1430,6 +1466,10 @@ describe('BeanPopoverFreezeComponent on the real bean storage', () => {
         { provide: UIHelper, useValue: uiHelperSpy },
         { provide: UISettingsStorage, useValue: settingsStorageSpy },
         { provide: Platform, useValue: { is: () => false } },
+        {
+          provide: UIAnalytics,
+          useValue: jasmine.createSpyObj('UIAnalytics', ['trackEvent']),
+        },
       ],
     });
     TestBed.overrideTemplate(BeanPopoverFreezeComponent, '');

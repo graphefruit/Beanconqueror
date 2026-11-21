@@ -6,6 +6,7 @@ import { Bean } from '../../../../classes/bean/bean';
 import { Settings } from '../../../../classes/settings/settings';
 import { StorageClass } from '../../../../classes/storageClass';
 import { UIAlert } from '../../../../services/uiAlert';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../../services/uiBeanStorage';
 import { UIFileHelper } from '../../../../services/uiFileHelper';
@@ -38,6 +39,7 @@ describe('BeanPopoverUnfreezeComponent', () => {
   let hideLoadingSpinner: jasmine.Spy;
   let showMessage: jasmine.Spy;
   let saveSettings: jasmine.Spy;
+  let trackEvent: jasmine.Spy;
   let generatePath: jasmine.Spy;
   let writePhoto: jasmine.Spy;
   let readPhoto: jasmine.Spy;
@@ -110,6 +112,7 @@ describe('BeanPopoverUnfreezeComponent', () => {
       .and.resolveTo();
     showMessage = jasmine.createSpy('showMessage').and.resolveTo();
     saveSettings = jasmine.createSpy('saveSettings').and.resolveTo();
+    trackEvent = jasmine.createSpy('trackEvent');
     settings = new Settings();
 
     writtenFiles = new Map();
@@ -140,6 +143,7 @@ describe('BeanPopoverUnfreezeComponent', () => {
         { provide: UIAlert, useValue: alert },
         { provide: ModalController, useValue: { dismiss } },
         { provide: UIToast, useValue: { showInfoToast } },
+        { provide: UIAnalytics, useValue: { trackEvent } },
         {
           provide: UIFileHelper,
           useValue: {
@@ -199,6 +203,7 @@ describe('BeanPopoverUnfreezeComponent', () => {
         [undefined, undefined, 'bean-popover-unfreeze'],
       ]);
       expect(database.set).not.toHaveBeenCalled();
+      expect(trackEvent).not.toHaveBeenCalled();
     });
 
     it('shows the pins of the sliders as plain numbers', async () => {
@@ -227,6 +232,7 @@ describe('BeanPopoverUnfreezeComponent', () => {
         expect(saveSettings).not.toHaveBeenCalled();
         expect(showLoadingSpinner).not.toHaveBeenCalled();
         expect(dismiss).not.toHaveBeenCalled();
+        expect(trackEvent).not.toHaveBeenCalled();
       });
     }
 
@@ -296,6 +302,14 @@ describe('BeanPopoverUnfreezeComponent', () => {
       expect(readPhoto).not.toHaveBeenCalled();
     });
 
+    it('reports the unfreezing to the analytics without naming the bean', async () => {
+      await open();
+
+      await component.save();
+
+      expect(trackEvent.calls.allArgs()).toEqual([['BEAN', 'UNFREEZE']]);
+    });
+
     it('copies no photos, even when that was chosen before the weight went back up', async () => {
       await open({ attachments: ['photo.jpg'] });
       component.copyAttachments = true;
@@ -318,6 +332,7 @@ describe('BeanPopoverUnfreezeComponent', () => {
       expect(showInfoToast).not.toHaveBeenCalled();
       expect(saveSettings).not.toHaveBeenCalled();
       expect(dismiss).not.toHaveBeenCalled();
+      expect(trackEvent).not.toHaveBeenCalled();
       // The collection took the failed write back, the dialog kept its bean.
       expect(inMemory()[0].unfrozenDate).toBe('');
       expect(component.bean.unfrozenDate).toBe('');
@@ -540,6 +555,15 @@ describe('BeanPopoverUnfreezeComponent', () => {
       expect(saveSettings.calls.allArgs()).toEqual([[settings]]);
     });
 
+    it('reports the unfreezing to the analytics without naming the bean', async () => {
+      await open();
+      component.unfreezeWeight = 100;
+
+      await component.save();
+
+      expect(trackEvent.calls.allArgs()).toEqual([['BEAN', 'UNFREEZE']]);
+    });
+
     describe('when the bag has photos', () => {
       it('gives the part none unless chosen and leaves those of the bag alone', async () => {
         await open({ attachments: ['a.jpg', 'b.png'] });
@@ -720,6 +744,7 @@ describe('BeanPopoverUnfreezeComponent', () => {
         expect(showMessage.calls.allArgs()).toEqual([SAVE_FAILED_MESSAGE]);
         expect(showInfoToast).not.toHaveBeenCalled();
         expect(dismiss).not.toHaveBeenCalled();
+        expect(trackEvent).not.toHaveBeenCalled();
         // The photo copied for the part is deleted again.
         expect([...writtenFiles.keys()]).toEqual([]);
         expect(inMemory().map((_bean) => _bean.weight)).toEqual([250]);

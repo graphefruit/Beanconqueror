@@ -33,8 +33,10 @@ import { Settings } from '../../../classes/settings/settings';
 import { storedOrReported } from '../../../classes/storedOrReported';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIFileHelper } from '../../../services/uiFileHelper';
@@ -77,6 +79,7 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiAlert = inject(UIAlert);
   private readonly uiLog = inject(UILog);
+  private readonly uiAnalytics = inject(UIAnalytics);
 
   public static COMPONENT_ID = 'bean-popover-unfreeze';
   @Input() public bean: Bean;
@@ -297,6 +300,10 @@ export class BeanPopoverUnfreezeComponent implements OnInit {
       await this.uiAlert.hideLoadingSpinner();
       this.uiToast.showInfoToast('TOAST_BEAN_PARTIALLY_UNFROZEN_SUCCESSFULLY');
     }
+    this.uiAnalytics.trackEvent(
+      BEAN_TRACKING.TITLE,
+      BEAN_TRACKING.ACTIONS.UNFREEZE,
+    );
 
     // Reset settings filter if needed, similar to what was done before
     const settings = this.uiSettingsStorage.getSettings();

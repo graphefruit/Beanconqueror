@@ -107,6 +107,7 @@ describe('Adding an entry outside the forms', () => {
         uiAlert,
         uiToast,
         uiSettingsStorage: settingsStorage,
+        uiAnalytics: { trackEvent: () => undefined },
         modalController,
       }).save();
     };

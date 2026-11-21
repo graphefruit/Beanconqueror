@@ -39,6 +39,7 @@ import moment from 'moment/moment';
 import { Bean } from '../../../classes/bean/bean';
 import { Config } from '../../../classes/objectConfig/objectConfig';
 import { Settings } from '../../../classes/settings/settings';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { PickerFieldDirective } from '../../../directive/picker-field.directive';
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RangeNameDirective } from '../../../directive/range-name.directive';
@@ -49,6 +50,7 @@ import { KeysPipe } from '../../../pipes/keys';
 import { ToFixedPipe } from '../../../pipes/toFixed';
 import { sumUsedBeanWeight } from '../../../services/beanUsage/used-bean-weight';
 import { UIAlert } from '../../../services/uiAlert';
+import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIFileHelper } from '../../../services/uiFileHelper';
@@ -107,6 +109,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiToast = inject(UIToast);
   private readonly uiLog = inject(UILog);
+  private readonly uiAnalytics = inject(UIAnalytics);
 
   public static COMPONENT_ID = 'bean-popover-freeze';
   public settings: Settings;
@@ -187,6 +190,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
       await this.uiAlert.showMessage('ERROR_OCCURED', 'CARE', undefined, true);
       return;
     }
+    this.uiAnalytics.trackEvent(
+      BEAN_TRACKING.TITLE,
+      BEAN_TRACKING.ACTIONS.FREEZE,
+    );
     this.uiToast.showInfoToast('BEAN_HAS_BEEN_FROZEN', true);
     this.dismiss();
   }
@@ -217,6 +224,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
       );
       return;
     }
+    this.uiAnalytics.trackEvent(
+      BEAN_TRACKING.TITLE,
+      BEAN_TRACKING.ACTIONS.FREEZE,
+    );
     if (this.__isUsedUp() && this.__hasBrews()) {
       // The freezing is done; a failure here must not report otherwise.
       try {
