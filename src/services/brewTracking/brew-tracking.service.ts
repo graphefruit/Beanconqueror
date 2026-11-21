@@ -57,7 +57,6 @@ export class BrewTrackingService {
     serverBrew.brew_time = _brew.brew_time;
     serverBrew.brew_quantity = _brew.brew_quantity;
     serverBrew.brew_quantity_type = _brew.brew_quantity_type;
-    serverBrew.note = _brew.note;
     serverBrew.rating = _brew.rating;
     serverBrew.coffee_type = _brew.coffee_type;
     serverBrew.coffee_concentration = _brew.coffee_concentration;

@@ -51,6 +51,19 @@ describe('BrewTrackingService', () => {
     expect(brew.attachments).toBeUndefined();
   });
 
+  it('does not send the note of the brew', () => {
+    bean.qr_code = 'abc';
+    const brew = new Brew();
+    brew.note = 'Brewed at home with Anna';
+
+    service.trackBrew(brew);
+
+    expect(trackBrew).toHaveBeenCalledTimes(1);
+    const sent = trackBrew.calls.mostRecent().args[0];
+    expect('note' in sent).toBeFalse();
+    expect(JSON.stringify(sent)).not.toContain('Anna');
+  });
+
   for (const qrCode of ['', null, undefined]) {
     it(`sends nothing for a bean that was not scanned (qr_code ${JSON.stringify(qrCode)})`, () => {
       bean.qr_code = qrCode;

@@ -20,7 +20,6 @@ export class ServerBrew {
   public brew_time: number;
   public brew_quantity: number;
   public brew_quantity_type: BREW_QUANTITY_TYPES_ENUM;
-  public note: string;
   public rating: number;
   public coffee_type: string;
   public coffee_concentration: string;
@@ -55,7 +54,6 @@ export class ServerBrew {
     this.brew_time = 0;
     this.brew_quantity = 0;
     this.brew_quantity_type = 'GR' as BREW_QUANTITY_TYPES_ENUM;
-    this.note = '';
     this.rating = 0;
     this.coffee_type = '';
     this.coffee_concentration = '';
