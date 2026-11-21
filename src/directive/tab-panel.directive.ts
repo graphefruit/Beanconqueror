@@ -5,19 +5,38 @@ import {
   ElementRef,
   inject,
   NgZone,
+  signal,
 } from '@angular/core';
 
 let nextId = 0;
 
-/** The nearest ion-segment before `panel` among its siblings. */
+/**
+ * The nearest ion-segment before `panel` among its siblings, else the nearest
+ * one inside them: a virtual list keeps its segment in the head that stays on
+ * top. A segment inside a sibling, such as a range below the tabs, does not
+ * count while a sibling is one.
+ */
 function segmentBefore(panel: Element): HTMLIonSegmentElement | null {
+  const siblings: Element[] = [];
   for (
     let sibling = panel.previousElementSibling;
     sibling;
     sibling = sibling.previousElementSibling
   ) {
-    if (sibling.localName === 'ion-segment') {
-      return sibling as HTMLIonSegmentElement;
+    siblings.push(sibling);
+  }
+  const sibling = siblings.find(
+    (candidate): candidate is HTMLIonSegmentElement =>
+      candidate.localName === 'ion-segment',
+  );
+  if (sibling) {
+    return sibling;
+  }
+  for (const candidate of siblings) {
+    const inside =
+      candidate.querySelector<HTMLIonSegmentElement>('ion-segment');
+    if (inside) {
+      return inside;
     }
   }
   return null;
@@ -61,10 +80,13 @@ function linkSelectedTab(
  * segment the roles tablist and tab with aria-selected; arrow keys, Home and
  * End move the focus between the tabs and Enter or Space selects one. What
  * Ionic leaves out is the panel the selected tab shows, so a screen reader
- * cannot tell where its content starts.
+ * cannot tell where its content starts. Without a segment before it, the
+ * host stays a plain element.
  */
-@Directive({ selector: '[appTabPanel]', host: { role: 'tabpanel' } })
+@Directive({ selector: '[appTabPanel]', host: { '[attr.role]': 'role()' } })
 export class TabPanelDirective {
+  protected readonly role = signal<'tabpanel' | null>(null);
+
   constructor() {
     const panel = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
     const zone = inject(NgZone);
@@ -75,6 +97,7 @@ export class TabPanelDirective {
       if (!segment) {
         return;
       }
+      this.role.set('tabpanel');
       const update = () => linkSelectedTab(segment, panel);
       // Ionic marks the selected button with a class, also once it has
       // loaded; tabs come and go with the template. No Angular state changes.

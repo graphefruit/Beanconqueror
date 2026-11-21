@@ -46,6 +46,7 @@ import {
   VirtualRowDirective,
 } from '../../../components/virtual-list/virtual-list.component';
 import { SearchbarNameDirective } from '../../../directive/searchbar-name.directive';
+import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
@@ -97,6 +98,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonThumbnail,
     IonSearchbar,
     SearchbarNameDirective,
+    TabPanelDirective,
   ],
 })
 export class BeanModalSelectComponent implements OnInit {

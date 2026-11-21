@@ -32,6 +32,7 @@ import {
   observeElementRect,
 } from '@tanstack/angular-virtual';
 
+import { TabPanelDirective } from '../../directive/tab-panel.directive';
 import { UILog } from '../../services/uiLog';
 import {
   anchorAt,
@@ -75,10 +76,12 @@ export class VirtualRowDirective<T> {
  *
  * Content marked `virtualListHead` (segments, search) stays at the top while
  * the rows scroll under it; other content is shown between it and the rows.
+ * With a segment in the head, that content and the rows are the panel of the
+ * selected tab.
  */
 @Component({
   selector: 'app-virtual-list',
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, TabPanelDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     'data-virtual-list': '',
@@ -122,31 +125,33 @@ export class VirtualRowDirective<T> {
   `,
   template: `
     <div #head class="head"><ng-content select="[virtualListHead]" /></div>
-    <ng-content />
-    <div #sizer class="sizer" [style.height.px]="totalSize()">
-      <!-- Only some rows are rendered: each tells screen readers its place
-           in the whole list. -->
-      <div
-        class="rows"
-        role="list"
-        [style.transform]="rowsOffset()"
-        (focusin)="revealFocus($event)"
-      >
-        @for (row of rows(); track row.key) {
-          <div
-            #row
-            class="row"
-            role="listitem"
-            [attr.data-index]="row.index"
-            [attr.aria-setsize]="items().length"
-            [attr.aria-posinset]="row.index + 1"
-          >
-            <ng-container
-              [ngTemplateOutlet]="rowTemplate().template"
-              [ngTemplateOutletContext]="{ $implicit: row.item }"
-            />
-          </div>
-        }
+    <div appTabPanel>
+      <ng-content />
+      <div #sizer class="sizer" [style.height.px]="totalSize()">
+        <!-- Only some rows are rendered: each tells screen readers its place
+             in the whole list. -->
+        <div
+          class="rows"
+          role="list"
+          [style.transform]="rowsOffset()"
+          (focusin)="revealFocus($event)"
+        >
+          @for (row of rows(); track row.key) {
+            <div
+              #row
+              class="row"
+              role="listitem"
+              [attr.data-index]="row.index"
+              [attr.aria-setsize]="items().length"
+              [attr.aria-posinset]="row.index + 1"
+            >
+              <ng-container
+                [ngTemplateOutlet]="rowTemplate().template"
+                [ngTemplateOutletContext]="{ $implicit: row.item }"
+              />
+            </div>
+          }
+        </div>
       </div>
     </div>
   `,

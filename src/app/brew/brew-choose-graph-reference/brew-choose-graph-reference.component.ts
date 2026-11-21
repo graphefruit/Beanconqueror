@@ -40,6 +40,7 @@ import {
   VirtualRowDirective,
 } from '../../../components/virtual-list/virtual-list.component';
 import { SearchbarNameDirective } from '../../../directive/searchbar-name.directive';
+import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
@@ -75,6 +76,7 @@ import { BrewFilterComponent } from '../brew-filter/brew-filter.component';
     IonCard,
     IonSearchbar,
     SearchbarNameDirective,
+    TabPanelDirective,
     IonFooter,
     IonRow,
     IonCol,

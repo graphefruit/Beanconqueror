@@ -1,6 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
+import { showTab } from './support/beans';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
 import { startsWith, text, type Language } from './support/texts';
@@ -82,6 +83,26 @@ async function expectTabs(tabList: Locator, names: string[]): Promise<void> {
   for (const [index, name] of names.entries()) {
     await expect(tabs.nth(index)).toHaveAccessibleName(name);
   }
+}
+
+/**
+ * The selected tab of `screen` names its one panel, which holds the list
+ * below the tabs but not the tabs themselves.
+ */
+async function expectPanelOfSelectedTab(screen: Locator): Promise<void> {
+  const tab = visible(screen.getByRole('tab', { selected: true }));
+  await expect(tab).toHaveCount(1);
+  const name = /^- tab "(.+)"/.exec(await tab.ariaSnapshot())?.[1];
+  expect(name).toBeTruthy();
+  const panel = visible(screen.getByRole('tabpanel'));
+  await expect(panel).toHaveCount(1);
+  await expect(panel).toHaveAccessibleName(name!);
+  await expect(panel.getByRole('list')).toHaveCount(1);
+  await expect(panel.getByRole('tab')).toHaveCount(0);
+}
+
+interface AngularDevHooks {
+  getComponent(element: Element): unknown;
 }
 
 function tabBar(page: Page): Locator {
@@ -199,6 +220,72 @@ for (const language of ['en', 'de'] as const) {
           chooser.getByRole('heading', { level: 1, name: t(title) }),
         ).toBeHidden();
       }
+    });
+
+    test('the lists below segments are the panel of the selected tab', async ({
+      page,
+    }) => {
+      await start(page, language);
+      for (const [route, screen] of [
+        ['/home/beans', 'beans'],
+        ['/home/brews', 'brew'],
+        ['/home/profile/preparations', 'preparation'],
+        ['/home/profile/mills', 'mill'],
+        ['/home/profile/water', 'app-water'],
+        ['/home/profile/graph', 'app-graph'],
+        ['/roasting-section/dashboard', 'app-green-beans'],
+      ] as const) {
+        await show(page, route);
+        await expectPanelOfSelectedTab(page.locator(screen));
+      }
+
+      await show(page, '/home/brews');
+      await visible(page.getByRole('button', { name: t('ADD_BREW') })).click();
+      await visible(
+        page
+          .locator('ion-select')
+          .filter({ hasText: t('BREW_DATA_BEAN_TYPE') }),
+      )
+        .first()
+        .click();
+      const beans = openModal(page).last();
+      await expect(
+        beans.getByRole('heading', { level: 1, name: t('CHOOSE_BEAN') }),
+      ).toBeVisible();
+      await expectPanelOfSelectedTab(beans);
+      await page.keyboard.press('Escape');
+      await expect(
+        beans.getByRole('heading', { level: 1, name: t('CHOOSE_BEAN') }),
+      ).toBeHidden();
+
+      // The chooser of a reference graph is offered only with a connected
+      // device or a recorded graph: opened through Angular's development
+      // hooks.
+      const graph = openModal(page).last().locator('brew-brewing-graph');
+      await expect(graph).toBeAttached();
+      await graph.evaluate((element) => {
+        const ng = (window as unknown as { ng: AngularDevHooks }).ng;
+        const component = ng.getComponent(element) as {
+          chooseGraphToSetAsReference(): Promise<void>;
+        };
+        void component.chooseGraphToSetAsReference();
+      });
+      const reference = openModal(page).last();
+      await expect(
+        reference.getByRole('heading', {
+          level: 1,
+          name: t('CHOOSE_REFERENCE_GRAPH'),
+        }),
+      ).toBeVisible();
+      await expect(
+        reference.getByRole('tab', { name: t('GRAPHS'), selected: true }),
+      ).toBeVisible();
+      await expectPanelOfSelectedTab(reference);
+      await showTab(reference.getByRole('tab', { name: t('BREWS_ACTIVE') }));
+      await expect(
+        reference.getByRole('tabpanel', { name: t('BREWS_ACTIVE') }),
+      ).toBeVisible();
+      await expectPanelOfSelectedTab(reference);
     });
 
     test('the tab bars name and select their tabs and are reachable by keyboard', async ({

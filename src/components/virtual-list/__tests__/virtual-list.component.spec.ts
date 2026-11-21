@@ -1,12 +1,15 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   signal,
   viewChild,
 } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { IonContent } from '@ionic/angular';
+import { defineCustomElement as defineSegmentButton } from '@ionic/core/components/ion-segment-button.js';
+import { defineCustomElement as defineSegment } from '@ionic/core/components/ion-segment.js';
 
 import { _resetIOSDetectionForTests } from '@tanstack/angular-virtual';
 
@@ -86,6 +89,42 @@ class HostComponent {
   };
   public readonly list =
     viewChild.required<VirtualListComponent<Item>>(VirtualListComponent);
+}
+
+@Component({
+  imports: [VirtualListComponent, VirtualRowDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  template: `
+    <div
+      id="scroller"
+      style="height: ${SCREEN}px; width: ${WIDTH}px; overflow: auto"
+    >
+      <app-virtual-list [items]="items" [itemKey]="key" [estimateSize]="100">
+        <ion-segment virtualListHead value="open">
+          <ion-segment-button value="open">Open</ion-segment-button>
+          <ion-segment-button value="archive">Archive</ion-segment-button>
+        </ion-segment>
+        <p>Nothing found</p>
+        <ng-template [appVirtualRow]="items" let-item>
+          <div class="item" style="height: 100px">{{ item.id }}</div>
+        </ng-template>
+      </app-virtual-list>
+    </div>
+  `,
+  providers: [
+    {
+      provide: IonContent,
+      useValue: {
+        getScrollElement: () =>
+          Promise.resolve(document.getElementById('scroller')),
+      },
+    },
+  ],
+})
+class SegmentHostComponent {
+  public readonly items = items(10);
+  public readonly key = (item: Item) => item.id;
 }
 
 describe('VirtualListComponent', () => {
@@ -192,6 +231,10 @@ describe('VirtualListComponent', () => {
     expect(first.getAttribute('aria-posinset')).toBe(
       String(Number(first.querySelector('.item').id.slice(5)) + 1),
     );
+  });
+
+  it('is no tab panel without a segment in its head', () => {
+    expect(fixture.nativeElement.querySelector('[role="tabpanel"]')).toBeNull();
   });
 
   it('measures the rows and moves the next ones', async () => {
@@ -520,5 +563,45 @@ describe('VirtualListComponent', () => {
       expect(top('item-0')).toBe(HEAD);
       expect(top('item-1')).toBe(HEAD + 300);
     });
+  });
+});
+
+describe('VirtualListComponent below a segment', () => {
+  let fixture: ComponentFixture<SegmentHostComponent>;
+
+  beforeAll(() => {
+    defineSegment();
+    defineSegmentButton();
+  });
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: UILog, useValue: { error: () => undefined } }],
+    });
+    fixture = TestBed.createComponent(SegmentHostComponent);
+    fixture.autoDetectChanges();
+    await fixture.whenStable();
+  });
+
+  afterEach(() => fixture.destroy());
+
+  it('makes the content and the rows the panel of the selected tab', async () => {
+    const element = fixture.nativeElement as HTMLElement;
+    const open = element.querySelector('ion-segment-button');
+    for (
+      let i = 0;
+      i < 120 &&
+      !element.querySelector('[role="tabpanel"][aria-labelledby] .item');
+      i++
+    ) {
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      await fixture.whenStable();
+    }
+
+    const panel = element.querySelector('[role="tabpanel"]');
+    expect(panel.getAttribute('aria-labelledby')).toBe(open.id);
+    expect(panel.querySelector('p').textContent).toBe('Nothing found');
+    expect(panel.querySelector('[role="list"] .item')).not.toBeNull();
+    expect(panel.querySelector('ion-segment')).toBeNull();
   });
 });
