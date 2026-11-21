@@ -262,9 +262,10 @@
         </ion-select>
       </ion-item>
 
-      <!-- One control: the checkbox, which opens the question about analytics. -->
-      <ion-item (click)="showAnalyticsInformation()" tappable>
-        <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.matomo_analytics">
+      <!-- One control: the checkbox only opens the question; the choice made there is what is stored. -->
+      <ion-item tappable>
+        <ion-checkbox label-placement='start' opensDialog [checked]="settings.matomo_analytics === true"
+          (ionChange)="askAboutAnalytics($event)">
           <div class='ion-label'>
             <div class="field-label">{{ "PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate }}</div>
           </div>

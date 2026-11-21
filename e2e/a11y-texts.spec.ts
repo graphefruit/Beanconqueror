@@ -5,6 +5,7 @@ import { test as base, type Locator, type Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { seedDatabase } from './support/seed';
+import { readStoredValue } from './support/stored-values';
 import { generateDataSet } from './support/synthetic-data';
 import { hasText, startsWith, text, type Language } from './support/texts';
 
@@ -403,6 +404,9 @@ for (const language of ['en', 'de'] as const) {
       await expect(
         settings.getByRole('button', { name: analytics }),
       ).toHaveCount(0);
+      await expect(
+        settings.getByRole('checkbox', { name: analytics, exact: true }),
+      ).toHaveAttribute('aria-haspopup', 'dialog');
 
       for (const key of [
         'PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS',
@@ -418,6 +422,77 @@ for (const language of ['en', 'de'] as const) {
           }),
         ).toHaveCount(1);
       }
+    });
+
+    test('settings: only the choice in the analytics question is stored', async ({
+      page,
+    }) => {
+      await start(page, language);
+      await openFromProfile(page, language, 'NAV_SETTINGS');
+      const settings = page.locator('settings');
+      const name = t('PAGE_SETTINGS_ANALYTICS_INFORMATION');
+      const checkbox = settings.getByRole('checkbox', { name, exact: true });
+      const row = settings
+        .locator('ion-item')
+        .filter({ hasText: new RegExp(`^\\s*${escape(name)}\\s*$`) });
+      // Behind the open question the page is hidden from the AX tree.
+      const state = row.locator('ion-checkbox');
+      const stored = async () =>
+        (
+          await readStoredValue<{ matomo_analytics?: boolean }[]>(
+            page,
+            'SETTINGS',
+          )
+        )?.[0].matomo_analytics;
+      const dialog = openDialog(page);
+      // The buttons are slotted, outside the element with the role.
+      const question = page.locator('ion-modal');
+
+      const taps: [string, () => Promise<void>][] = [
+        [
+          'the edge of the row',
+          async () => {
+            const box = await row.boundingBox();
+            await row.click({ position: { x: 4, y: box!.height / 2 } });
+          },
+        ],
+        ['the checkbox', () => checkbox.click()],
+        [
+          'Space',
+          async () => {
+            await checkbox.focus();
+            await page.keyboard.press('Space');
+          },
+        ],
+      ];
+      for (const [what, tap] of taps) {
+        await tap();
+        await expect(dialog, what).toHaveCount(1);
+        await expect(state, what).toHaveAttribute('aria-checked', 'false');
+        // A save would have been written by the time the question is shown.
+        await page.waitForTimeout(300);
+        expect(await stored(), what).toBe(false);
+        await page.keyboard.press('Escape');
+        await expect(dialog, what).toHaveCount(0);
+        await expect(state, what).toHaveAttribute('aria-checked', 'false');
+        expect(await stored(), what).toBe(false);
+      }
+
+      await checkbox.click();
+      await question
+        .getByRole('button', { name: t('ACTIVATE'), exact: true })
+        .click();
+      await expect(dialog).toHaveCount(0);
+      await expect(checkbox).toBeChecked();
+      await expect.poll(stored).toBe(true);
+
+      await checkbox.click();
+      await question
+        .getByRole('button', { name: t('DO_NOT_ACTIVE'), exact: true })
+        .click();
+      await expect(dialog).toHaveCount(0);
+      await expect(checkbox).not.toBeChecked();
+      await expect.poll(stored).toBe(false);
     });
 
     test('Save ignores a second tap without becoming disabled', async ({

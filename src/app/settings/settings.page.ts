@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 
 import {
   AlertController,
+  CheckboxCustomEvent,
   IonAccordion,
   IonAccordionGroup,
   IonBackButton,
@@ -80,6 +81,7 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
 import { ControlDescriptionDirective } from '../../directive/control-description.directive';
+import { OpensDialogDirective } from '../../directive/opens-dialog.directive';
 import { RangeNameDirective } from '../../directive/range-name.directive';
 import { TabPanelDirective } from '../../directive/tab-panel.directive';
 import { TooltipDirective } from '../../directive/tooltip.directive';
@@ -177,6 +179,7 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
     RangeNameDirective,
     IonCheckbox,
     ControlDescriptionDirective,
+    OpensDialogDirective,
     IonInput,
     IonTextarea,
     IonButton,
@@ -730,6 +733,12 @@ export class SettingsPage {
       Logger.disableLog();
     }
     await this.uiSettingsStorage.saveSettings(this.settings);
+  }
+
+  /** Consent is given in the question, so a tap leaves the checkbox as stored. */
+  public async askAboutAnalytics(_event: CheckboxCustomEvent): Promise<void> {
+    _event.target.checked = this.settings.matomo_analytics === true;
+    await this.showAnalyticsInformation();
   }
 
   public async showAnalyticsInformation() {
