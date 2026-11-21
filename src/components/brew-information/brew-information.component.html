@@ -47,8 +47,9 @@
               <ion-grid class='ion-no-padding'>
                 <ion-row>
                   <ion-col class='margin-header' size='10'>
-                    <ion-list lines='none' style='width:100%;'>
-                      <ion-item>
+                    <!-- One entry in three lines, no list of its own. -->
+                    <div class='brew-summary' style='width:100%;'>
+                      <ion-item lines='none'>
                         <ion-col role="heading" aria-level="3" class='ion-text-bold' size='12'>
                           @if (brew.best_brew) {
                             <ion-icon [attr.aria-label]="'POPOVER_BEST_BREW' | translate" name='trophy'
@@ -72,17 +73,17 @@
                           {{ bean?.name }}
                         </ion-col>
                       </ion-item>
-                      <ion-item>
+                      <ion-item lines='none'>
                         <ion-col size='12'>
                           {{ preparation?.name }}
                         </ion-col>
                       </ion-item>
-                      <ion-item>
+                      <ion-item lines='none'>
                         <ion-col size='12'>
                           {{ mill?.name }}
                         </ion-col>
                       </ion-item>
-                    </ion-list>
+                    </div>
                   </ion-col>
                   <ion-col size='2'>
                     @if ((brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.IS_ARCHIVED)===false) {
@@ -94,9 +95,12 @@
                       </ion-button>
                     }
                     @if ((brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.IS_ARCHIVED) === true) {
-                      <ion-button [attr.aria-label]="'A11Y.ARCHIVED_BREW' | translate" class='button-top-absolute' color='accent' fill='clear'>
-                        <ion-icon aria-hidden="true" name='archive' slot='icon-only' />
+                      <!-- A mark in the place of the options button, no control: inert,
+                           so a tap on it reaches the card. -->
+                      <ion-button inert class='button-top-absolute' color='accent' fill='clear'>
+                        <ion-icon name='archive' slot='icon-only' />
                       </ion-button>
+                      <span class="visually-hidden">{{ 'A11Y.ARCHIVED_BREW' | translate }}</span>
                     }
                   </ion-col>
                 </ion-row>

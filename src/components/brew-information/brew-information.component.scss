@@ -104,10 +104,9 @@
       align-items: center;
     }
 
-    ion-list {
-      background: none;
-      margin: 0px;
-      padding: 0px;
+    // As the ion-list it replaces, which clips its content.
+    .brew-summary {
+      contain: content;
 
       ion-col {
         -ms-text-overflow: ellipsis;

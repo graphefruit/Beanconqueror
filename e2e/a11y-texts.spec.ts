@@ -24,8 +24,14 @@ const IONIC_NAMES = [
   'reset',
 ];
 
+type DataSet = ReturnType<typeof generateDataSet>;
+
 /** Starts an installation with some brews and beans in `language`. */
-async function start(page: Page, language: Language): Promise<void> {
+async function start(
+  page: Page,
+  language: Language,
+  adjust: (data: DataSet) => void = () => undefined,
+): Promise<void> {
   const data = generateDataSet({
     brews: 20,
     beans: 6,
@@ -33,6 +39,7 @@ async function start(page: Page, language: Language): Promise<void> {
     endDate: new Date('2026-11-01T18:00:00Z'),
   });
   data.SETTINGS[0].language = language;
+  adjust(data);
   // The pressure profile filter is offered once a brew has a profile.
   data.BREWS[0].pressure_profile = 'Blooming';
   await seedDatabase(page, data);
@@ -286,6 +293,40 @@ for (const language of ['en', 'de'] as const) {
       await expect(visible(page.getByText(t('PRESET_BREW_TITLE')))).toHaveCount(
         1,
       );
+    });
+
+    test('a brew card on Home is no list and its archive mark no button', async ({
+      page,
+    }) => {
+      await start(page, language, (data) => {
+        const latest = data.BREWS.reduce((a, b) =>
+          a.config.unix_timestamp > b.config.unix_timestamp ? a : b,
+        );
+        data.BEANS.find((bean) => bean.config.uuid === latest.bean)!.finished =
+          true;
+      });
+      const cards = page.locator('dashboard brew-information');
+      await expect(cards.first()).toBeVisible();
+      await expect(cards.getByRole('list')).toHaveCount(0);
+      await expect(cards.getByRole('listitem')).toHaveCount(0);
+      await expect(
+        cards.first().getByRole('heading', { level: 3 }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('button', { name: t('A11Y.ARCHIVED_BREW') }),
+      ).toHaveCount(0);
+      const mark = cards.first().getByText(t('A11Y.ARCHIVED_BREW'), {
+        exact: true,
+      });
+      await expect(mark).toHaveCount(1);
+      // A tap on the mark opens the brew, as one beside it.
+      const box = await cards
+        .first()
+        .locator('ion-icon[name="archive"]')
+        .boundingBox();
+      await page.mouse.click(box!.x + box!.width / 2, box!.y + box!.height / 2);
+      await expect(page).toHaveURL(/\/home\/dashboard$/);
+      await expect(openDialog(page)).toHaveCount(1);
     });
 
     test('Save ignores a second tap without becoming disabled', async ({
