@@ -1,7 +1,7 @@
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { IConfig } from '../../interfaces/objectConfig/iObjectConfig';
 import { IBrewVisualizer } from '../../interfaces/visualizer/iBrewVisualizer';
 import { BrewFlow } from '../brew/brewFlow';
-import { Config } from '../objectConfig/objectConfig';
 
 export class BrewVisualizer implements IBrewVisualizer {
   public grind_size: string;
@@ -36,7 +36,7 @@ export class BrewVisualizer implements IBrewVisualizer {
   public vessel_weight: number;
   public vessel_name: string;
 
-  public config: Config;
+  public config: Pick<IConfig, 'unix_timestamp'>;
 
   public brew_beverage_quantity: number;
 
@@ -74,7 +74,7 @@ export class BrewVisualizer implements IBrewVisualizer {
 
     this.vessel_name = '';
     this.vessel_weight = 0;
-    this.config = new Config();
+    this.config = { unix_timestamp: 0 };
     this.ey = 0;
   }
 }

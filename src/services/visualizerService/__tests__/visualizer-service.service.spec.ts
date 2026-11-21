@@ -264,7 +264,10 @@ describe('VisualizerService', () => {
       expect(sent.brew.brew_time).toBe(27);
       expect(sent.brew.note).toBe('Brew note');
       expect(sent.brew.rating).toBe(4);
-      expect((sent.brew.config as { uuid: string }).uuid).toBe('brew-1');
+      // visualizer.coffee reads the time of the shot from here.
+      expect(sent.brew.config).toEqual({
+        unix_timestamp: brew.config.unix_timestamp,
+      });
       expect(sent.bean.name).toBe('Alpha');
       expect(sent.bean.roaster).toBe('Roastery');
       expect(sent.bean.note).toBe('Bean note');
@@ -301,7 +304,18 @@ describe('VisualizerService', () => {
       expect(text).not.toContain('bean-photo.jpg');
       expect(text).not.toContain('share-code');
       expect(text).not.toContain('secret');
-      // Only the uuid of the brew itself identifies anything.
+      // No id, no device and no change info of any entry.
+      expect(text).not.toContain('brew-1');
+      expect(text).not.toContain('device-a');
+      for (const key of [
+        'uuid',
+        'updated_by',
+        'rev',
+        'updated_at',
+        'created_at',
+      ]) {
+        expect(text).not.toContain(`"${key}"`);
+      }
       expect(text).not.toContain('bean-1');
       expect(text).not.toContain('mill-1');
       expect(text).not.toContain('prep-1');
