@@ -265,7 +265,7 @@ test('after a brew is deleted sideways the first brew starts below the head at t
   });
   await expectStill(page);
   const card = page.locator(`[id="${id}"]`);
-  await card.getByRole('button', { name: 'Brew options', exact: true }).tap();
+  await card.getByRole('button', { name: /^Options for the brew of / }).tap();
   await page.getByRole('button', { name: 'Delete', exact: true }).tap();
   await page
     .getByRole('alertdialog', { name: /Delete brew\?/ })
