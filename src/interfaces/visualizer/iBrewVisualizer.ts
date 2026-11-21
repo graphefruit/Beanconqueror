@@ -112,7 +112,7 @@ export interface IBrewVisualizer {
   vessel_weight: number;
   vessel_name: string;
 
-  config: IConfig;
+  config: Pick<IConfig, 'unix_timestamp'>;
 
   /*** this is calculcated **/
   ey: number;

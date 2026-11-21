@@ -43,6 +43,10 @@ export class Visualizer implements IVisualizer {
         // This should be the EY key ;)
       }
     });
+    // visualizer.coffee reads only the time of the shot from config. The
+    // rest would name the brew and the device, and a copy keeps the brew
+    // itself from being changed through the upload data.
+    this.brew.config = { unix_timestamp: brew.config.unix_timestamp };
   }
   public mapBean(bean: Bean) {
     Object.keys(this.bean).map((_key) => {
