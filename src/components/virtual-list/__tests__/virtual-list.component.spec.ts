@@ -613,6 +613,35 @@ describe('VirtualListComponent', () => {
       expect(scroller().scrollTop).toBe(3100);
     });
 
+    it('holds a correction while a finger rests on the list, away from the top', async () => {
+      await scrollTo(2900);
+      touch('touchstart');
+      await scrollAgainTo(3000);
+      document.getElementById('item-28').style.height = '200px';
+      const held = await paintedTops('item-30', 30);
+
+      expect(held).toEqual(held.map(() => HEAD));
+      expect(scroller().scrollTop).toBe(3000);
+    });
+
+    it('lets go of a touch whose end never reached the list once it rests at the top', async () => {
+      host.items.set(items(100, 150));
+      host.estimate.set(280);
+      await settle();
+      await scrollTo(3000);
+      touch('touchstart');
+      for (let offset = 2700; offset >= 0; offset -= 300) {
+        await scrollTo(offset);
+      }
+      const held = top('item-0') - HEAD;
+      await paintedTops('item-1', 30);
+
+      expect(held).not.toBe(0);
+      expect(scroller().scrollTop).toBe(0);
+      expect(top('item-0')).toBe(HEAD);
+      expect(top('item-1')).toBe(HEAD + 150);
+    });
+
     it('draws no row above the list while a correction waits at the top', async () => {
       await scrollTo(150);
       touch('touchstart');
@@ -641,7 +670,7 @@ describe('VirtualListComponent', () => {
       expect(top('item-1')).toBe(HEAD + 300);
     });
 
-    it('lets go of a touch on a row that was deleted, and shows the first row below the head', async () => {
+    it('lets go of a touch on a row taken off once the list rests, and goes back to the top below the head', async () => {
       // Turned sideways: the cards are lower than estimated, and those above
       // the screen make the list shorter as they are measured.
       scroller().style.width = `${2 * WIDTH}px`;
@@ -651,7 +680,8 @@ describe('VirtualListComponent', () => {
       await settle();
       await scrollTo(5000);
 
-      // The finger is on a row that is deleted; its touch ends off the list.
+      // The finger is on a row that is taken off (deleted); the end of its
+      // touch goes to the row, off the list.
       const touched = shown().find((id) => top(id) >= HEAD);
       const row = document.getElementById(touched);
       row.dispatchEvent(new Event('touchstart', { bubbles: true }));
@@ -659,11 +689,64 @@ describe('VirtualListComponent', () => {
       await settle();
       row.dispatchEvent(new Event('touchend', { bubbles: true }));
 
-      for (let offset = 4700; offset >= 0; offset -= 300) {
+      for (let offset = 4700; offset >= 2000; offset -= 300) {
         await scrollTo(offset);
       }
-      await scrollAgainTo(0);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      host.list().scrollToTop();
+      await paintedTops('item-1', 30);
 
+      expect(scroller().scrollTop).toBe(0);
+      expect(top('item-0')).toBe(HEAD);
+      expect(top('item-1')).toBe(HEAD + 150);
+    });
+
+    it('writes the corrections of a fling into the bounce at the top once it rests, after the device was turned', async () => {
+      host.items.set(items(100, 150));
+      host.estimate.set(280);
+      await settle();
+      await scrollTo(5000);
+      // Turned: the rows above the screen count with the estimate again.
+      scroller().style.width = `${2 * WIDTH}px`;
+      await settle();
+
+      // The scroller reports what iOS reports while it bounces.
+      let bounce: number | null = null;
+      const native = Object.getOwnPropertyDescriptor(
+        Element.prototype,
+        'scrollTop',
+      );
+      Object.defineProperty(scroller(), 'scrollTop', {
+        configurable: true,
+        get(this: Element) {
+          return bounce ?? (native.get.call(this) as number);
+        },
+        set(this: Element, value: number) {
+          native.set.call(this, value);
+        },
+      });
+
+      touch('touchstart');
+      for (let offset = 4700; offset >= 3500; offset -= 300) {
+        await scrollTo(offset);
+      }
+      touch('touchend');
+      for (let offset = 3200; offset >= 0; offset -= 400) {
+        await scrollTo(offset);
+      }
+      await scrollTo(0);
+      for (const offset of [-40, -15]) {
+        bounce = offset;
+        scroller().dispatchEvent(new Event('scroll'));
+        await frame();
+      }
+      // Held while it bounces: the rows measured lower above the screen.
+      const held = top('item-0') - HEAD;
+      // Back at 0 with no further scroll event.
+      bounce = null;
+      await paintedTops('item-1', 30);
+
+      expect(held).toBeGreaterThan(1000);
       expect(scroller().scrollTop).toBe(0);
       expect(top('item-0')).toBe(HEAD);
       expect(top('item-1')).toBe(HEAD + 150);
