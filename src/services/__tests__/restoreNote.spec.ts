@@ -248,7 +248,7 @@ describe('The note about the last import', () => {
       BREWS: entries('brew', 1),
     });
 
-    expect(result).toEqual({ BACKUP: true });
+    expect(result).toEqual({ BACKUP: true, cause: jasmine.anything() });
     expect(device.data.get(LAST_RESTORE_STORAGE_KEY)).toEqual(PREVIOUS_NOTE);
   });
 
@@ -267,7 +267,7 @@ describe('The note about the last import', () => {
     });
 
     // The data is back; without the note it only counts as changed.
-    expect(result).toEqual({ BACKUP: true });
+    expect(result).toEqual({ BACKUP: true, cause: jasmine.anything() });
     expect(device.data.get('BREWS')).toEqual(entries('own-brew', 2));
     expect(device.data.has(LAST_RESTORE_STORAGE_KEY)).toBeFalse();
     expect(device.uiLog.error).toHaveBeenCalledOnceWith(
@@ -312,7 +312,7 @@ describe('The note about the last import', () => {
         SETTINGS: [{ language: 'en' }],
         BREWS: entries('brew', 1),
       }),
-    ).toBeRejectedWith({ BACKUP: true });
+    ).toBeRejectedWith({ BACKUP: true, cause: jasmine.anything() });
 
     // The settings of the import may be stored by now: the note before
     // does not describe that data.

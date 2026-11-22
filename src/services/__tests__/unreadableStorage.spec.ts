@@ -126,7 +126,9 @@ describe('Checking the internal backup at start-up with a database that cannot b
           ? Promise.resolve()
           : new Promise<void>(() => undefined),
       );
-    const showMessage = jasmine.createSpy('showMessage').and.resolveTo();
+    const showMessageWithDetails = jasmine
+      .createSpy('showMessageWithDetails')
+      .and.resolveTo();
     const createModal = jasmine.createSpy('create').and.callFake(() =>
       Promise.resolve({
         present: () => Promise.resolve(),
@@ -184,7 +186,8 @@ describe('Checking the internal backup at start-up with a database that cannot b
           useValue: {
             showLoadingSpinner: () => Promise.resolve(),
             hideLoadingSpinner: () => Promise.resolve(),
-            showMessage,
+            showMessage: () => Promise.resolve(),
+            showMessageWithDetails,
             showIOSIndexedDBIssues,
           },
         },
@@ -212,7 +215,7 @@ describe('Checking the internal backup at start-up with a database that cannot b
       replaceFileFromBlob,
       readFileAsUint8Array,
       showIOSIndexedDBIssues,
-      showMessage,
+      showMessageWithDetails,
       createModal,
     };
   }
@@ -387,31 +390,31 @@ describe('Checking the internal backup at start-up with a database that cannot b
     ['failed for another reason', 'IMPORT_UNSUCCESSFULLY'],
     ['failed and could not be rolled back', 'IMPORT_NOT_ROLLED_BACK_NO_BACKUP'],
   ]) {
-    it(`says so and asks again when the import ${failure}`, async () => {
+    it(`says so with the error of the import and asks again when the import ${failure}`, async () => {
       const data = createLegacyData({ brews: 20, beans: 4 });
       const backupFile = await writeBackupFile(data);
-      const { helper, importBackup, showIOSIndexedDBIssues, showMessage } =
-        await startApp(data, { readable: false }, backupFile, [
-          INTERNAL_BACKUP_URI,
-          INTERNAL_BACKUP_URI,
-        ]);
+      const {
+        helper,
+        importBackup,
+        showIOSIndexedDBIssues,
+        showMessageWithDetails,
+      } = await startApp(data, { readable: false }, backupFile, [
+        INTERNAL_BACKUP_URI,
+        INTERNAL_BACKUP_URI,
+      ]);
+      const cause = new Error('file not readable');
       const failed =
         message === 'IMPORT_UNSUCCESSFULLY'
-          ? Promise.reject(new Error('file not readable'))
+          ? Promise.reject(cause)
           : message === 'IMPORT_NOT_ROLLED_BACK_NO_BACKUP'
-            ? Promise.reject(new ImportNotRolledBackError(false))
-            : Promise.resolve({ BACKUP: true });
+            ? Promise.reject(new ImportNotRolledBackError(false, cause))
+            : Promise.resolve({ BACKUP: true, cause });
       failed.catch(() => undefined);
       importBackup.and.returnValues(failed, Promise.resolve({ BACKUP: false }));
 
       await helper.checkBackup();
 
-      expect(showMessage).toHaveBeenCalledOnceWith(
-        message,
-        undefined,
-        undefined,
-        true,
-      );
+      expect(showMessageWithDetails).toHaveBeenCalledOnceWith(message, cause);
       expect(showIOSIndexedDBIssues).toHaveBeenCalledTimes(2);
       expect(importBackup).toHaveBeenCalledTimes(2);
     });

@@ -915,14 +915,16 @@ describe('SettingsPage files of an export and an import', () => {
 
     it('copies no files when the data was put back as it was', async () => {
       await open(['capacitor', 'android']);
-      importBackup.and.resolveTo({ BACKUP: true });
+      const cause = new Error('quota exceeded');
+      importBackup.and.resolveTo({ BACKUP: true, cause });
 
       await page.__importJSON(parsed(), IMPORT_DIR, 'Beanconqueror.zip');
 
       expect(await filesIn('', Directory.Data)).toEqual([]);
       expect(saveSettings).not.toHaveBeenCalled();
-      expect(showMessage.calls.allArgs()).toEqual([
-        ['IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'],
+      expect(showMessage).not.toHaveBeenCalled();
+      expect(showMessageWithDetails.calls.allArgs()).toEqual([
+        ['IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED', cause],
       ]);
     });
 

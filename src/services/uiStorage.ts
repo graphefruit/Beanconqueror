@@ -407,6 +407,7 @@ export class UIStorage {
    * `{ BACKUP: true }` when it failed and was rolled back: the stored keys
    * and values are those from before again. Rejects with `{ BACKUP: true }`
    * when the rollback failed as well; the stored data can then be a mix.
+   * Both carry the error of the import as `cause`.
    *
    * `_current` are values the caller read before (readValues()). They are
    * kept as the copy to roll back to while nothing was written since;
@@ -471,11 +472,11 @@ export class UIStorage {
         }
         await this.__importBackup(_backup);
         await this.__removeImportedKeys(importData, _backup);
-      } catch (ex) {
-        throw { BACKUP: true };
+      } catch {
+        throw { BACKUP: true, cause: ex };
       }
       await this.__keepRestoreNote(previousNote);
-      return { BACKUP: true };
+      return { BACKUP: true, cause: ex };
     } finally {
       this.__countWrite();
     }

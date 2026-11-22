@@ -290,7 +290,7 @@ describe('Values local to one installation', () => {
       BREWS: entries('brew', 2),
     });
 
-    expect(result).toEqual({ BACKUP: true });
+    expect(result).toEqual({ BACKUP: true, cause: jasmine.anything() });
     expect(deviceB.data.get('BREWS')).toEqual(entries('own-brew', 2));
     expect((deviceB.data.get('SETTINGS') as any[])[0].language).toBe('en');
     for (const key of KEPT_BY_FAILED_IMPORT) {
@@ -329,7 +329,7 @@ describe('Values local to one installation', () => {
       BREWS: entries('brew', 2),
     });
 
-    expect(result).toEqual({ BACKUP: true });
+    expect(result).toEqual({ BACKUP: true, cause: jasmine.anything() });
     expect(deviceB.data.has('WATER')).toBeFalse();
     for (const key of LOCAL_KEYS) {
       expect(deviceB.data.get(key))

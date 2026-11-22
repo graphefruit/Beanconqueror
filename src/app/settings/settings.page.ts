@@ -124,6 +124,7 @@ import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIExcel } from '../../services/uiExcel';
 import {
+  importFailureCause,
   ImportNotRolledBackError,
   UIExportImportHelper,
 } from '../../services/uiExportImportHelper';
@@ -1787,8 +1788,9 @@ export class SettingsPage {
           }
         } else {
           await this.uiAlert.hideLoadingSpinner();
-          await this.uiAlert.showMessage(
-            this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'),
+          await this.uiAlert.showMessageWithDetails(
+            'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
+            _data.cause,
           );
         }
       } catch (error) {
@@ -1800,7 +1802,10 @@ export class SettingsPage {
         } else if (error instanceof ImportNotRolledBackError) {
           message = error.messageKey;
         }
-        await this.uiAlert.showMessage(this.translate.instant(message));
+        await this.uiAlert.showMessageWithDetails(
+          message,
+          importFailureCause(error),
+        );
       }
     } catch (ex) {
       this.uiLog.error('Import - invalid file data', ex);
