@@ -5,6 +5,6 @@
     </g>
     <path id="Polygon_1" data-name="Polygon 1"
           d="M6.136,1.481a1,1,0,0,1,1.728,0L13.123,10.5a1,1,0,0,1-.864,1.5H1.741a1,1,0,0,1-.864-1.5Z"
-          transform="translate(324.485 534.011) rotate(90)" fill="#fff"/>
+          transform="translate(324.485 534.011) rotate(90)" fill="var(--beanconqueror-icon-glyph-color, #ffffff)"/>
   </g>
 </svg>

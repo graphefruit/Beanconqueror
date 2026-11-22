@@ -74,7 +74,7 @@
       </ion-row>
       <ion-row>
         <ion-col size="6" size-md="3">
-          <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.weightTrace?.line?.color || 'var(--beanconqueror-icon-color)'">
+          <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.weightTrace?.line?.color || 'var(--ion-color-accent)'">
             <ion-card-header>
               <span class="visually-hidden">{{ 'BREW_FLOW_WEIGHT' | translate }}</span>
               <div><ion-icon aria-hidden="true" name="beanconqueror-scale-outline" /><span #smartScaleWeightPerSecondBarista>? g</span></div>
@@ -121,7 +121,7 @@
         @if ((uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS))) {
           <ion-col size="{{graphIconColSize}}"
             style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.weightTrace?.line?.color || 'var(--beanconqueror-icon-color)'">
+            <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.weightTrace?.line?.color || 'var(--ion-color-accent)'">
               <ion-card-header>
                 <span class="visually-hidden">{{ 'BREW_FLOW_WEIGHT' | translate }}</span>
                 <div #smartScaleWeight>? g</div>

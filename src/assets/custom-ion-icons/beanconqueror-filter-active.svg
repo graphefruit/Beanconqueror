@@ -3,6 +3,6 @@
     <g id="Gruppe_446" data-name="Gruppe 446" transform="translate(-336 -1468.199)">
       <path id="bg" d="M14.6,0A14.6,14.6,0,1,1,0,14.6,14.6,14.6,0,0,1,14.6,0Z" fill="var(--beanconqueror-icon-color)"/>
     </g>
-    <path id="icons8-filter" d="M3.648,3a.648.648,0,1,0,0,1.3H14.011a.648.648,0,1,0,0-1.3ZM4.3,5.591,7.534,9.477v4.534a.648.648,0,0,0,.648.648h1.3a.648.648,0,0,0,.648-.648V9.477l3.239-3.886Z" transform="translate(-330.24 -1461.688)" fill="#fff"/>
+    <path id="icons8-filter" d="M3.648,3a.648.648,0,1,0,0,1.3H14.011a.648.648,0,1,0,0-1.3ZM4.3,5.591,7.534,9.477v4.534a.648.648,0,0,0,.648.648h1.3a.648.648,0,0,0,.648-.648V9.477l3.239-3.886Z" transform="translate(-330.24 -1461.688)" fill="var(--beanconqueror-icon-glyph-color, #ffffff)"/>
   </g>
 </svg>

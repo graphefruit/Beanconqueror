@@ -3,7 +3,7 @@
     <circle id="Ellipse_366" data-name="Ellipse 366" cx="22.5" cy="22.5" r="22.5" transform="translate(32 170)"
             fill="var(--beanconqueror-icon-color)"/>
     <path id="Pfad_1357" data-name="Pfad 1357" d="M4098.12-1679.919l6.708,5.941,10.542-17.56"
-          transform="translate(-4226.465 1362.754) rotate(7)" fill="none" stroke="#fff" stroke-linecap="round"
+          transform="translate(-4226.465 1362.754) rotate(7)" fill="none" stroke="var(--beanconqueror-icon-glyph-color, #ffffff)" stroke-linecap="round"
           stroke-linejoin="round" stroke-width="3"/>
   </g>
 </svg>

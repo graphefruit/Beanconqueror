@@ -9,6 +9,6 @@
     </g>
     <path id="icons8-water"
           d="M11.734,1.744a1.616,1.616,0,0,0-2.477,0C7.373,3.989,4,8.445,4,11.587a6.5,6.5,0,1,0,12.992,0C16.992,8.445,13.619,3.989,11.734,1.744Z"
-          transform="translate(251 531.75)" fill="#fff"/>
+          transform="translate(251 531.75)" fill="var(--beanconqueror-icon-glyph-color, #ffffff)"/>
   </g>
 </svg>

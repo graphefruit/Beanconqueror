@@ -57,7 +57,7 @@
           <ion-row style="padding-bottom:5px;">
             @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected || ( brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected && brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
               <ion-col size="{{graphIconColSize}}" style="padding-right:5px;">
-                <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="brewComponent?.brewBrewingGraphEl?.traces?.weightTrace?.line?.color || 'var(--beanconqueror-icon-color)'">
+                <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="brewComponent?.brewBrewingGraphEl?.traces?.weightTrace?.line?.color || 'var(--ion-color-accent)'">
                   <ion-card-header>
                     <span class="visually-hidden">{{ 'BREW_FLOW_WEIGHT' | translate }}</span>
                     <div #smartScaleWeightDetail>? g</div>

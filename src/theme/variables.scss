@@ -51,9 +51,10 @@
   --ion-color-medium-tint: #a2a4ab;
 
   --beanconqueror-highlight-color-item: #ae9f87;
-  // The text colour: 17.30:1 on white, 12.54:1 on cream, and white glyphs
-  // drawn on it by the custom icons keep 17.30:1.
+  // The text colour: 17.30:1 on white, 12.54:1 on cream. Custom icons draw
+  // their glyph on it in the glyph colour (17.30:1).
   --beanconqueror-icon-color: var(--bq-text-primary);
+  --beanconqueror-icon-glyph-color: var(--bq-palette-white);
   --beanconqueror-icon-color-inactive: #cccccc;
   --beanconqueror-icon-star-full-color: #504027;
   --beanconqueror-icon-star-empty-color: #bfb9b0;
@@ -143,10 +144,10 @@
   --ion-color-medium-tint: #a2a4ab;
 
   --beanconqueror-highlight-color-item: #383a3e;
-  // Not the light dark-mode text colour: custom icons draw a white glyph on
-  // this colour (3.97:1 here, 1.38:1 on cream). 3.97:1 on cards, 4.36:1 on
-  // the page.
-  --beanconqueror-icon-color: #8b7e6a;
+  // Cream: 11.44:1 on cards, 12.54:1 on the page. White glyphs would fade on
+  // it (1.38:1), so the glyph turns espresso (12.54:1).
+  --beanconqueror-icon-color: var(--bq-palette-cream-200);
+  --beanconqueror-icon-glyph-color: var(--bq-palette-espresso-900);
   --beanconqueror-icon-color-inactive: #363636;
   --beanconqueror-icon-star-full-color: #bdb5a8;
   --beanconqueror-icon-star-empty-color: #38342e;
