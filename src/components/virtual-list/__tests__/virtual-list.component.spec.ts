@@ -419,6 +419,35 @@ describe('VirtualListComponent', () => {
     expect(top('item-50')).toBe(HEAD + 5000 - 7000);
   });
 
+  it('keeps no rows that were never on the screen when it comes back to an anchor', async () => {
+    // At rest away from the top, so that no row at the top was on the screen.
+    await scrollAgainTo(4800);
+    await scrollAgainTo(5000);
+    const anchor = host.list().anchor();
+
+    // Another segment at its top, and back once it stands still.
+    host.items.set(items(100).map((i) => ({ ...i, id: `other-${i.id}` })));
+    host.list().restore(null);
+    await settle();
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    host.items.set(items(100));
+    host.list().restore(anchor);
+    await settle();
+
+    expect(top('item-50')).toBe(HEAD);
+    expect(shown()).not.toContain('item-0');
+  });
+
+  it('keeps the rows on the screen again at the next scroll after a jump of the app', async () => {
+    await scrollAgainTo(3000);
+    host.list().scrollToTop();
+    await settle();
+    await scrollAgainTo(5000);
+    await scrollAgainTo(7000);
+
+    expect(shown()).toEqual(jasmine.arrayContaining(['item-50', 'item-70']));
+  });
+
   it('keeps the rows on the screen by their key when items are added', async () => {
     await scrollTo(5000);
     host.items.set([{ id: 'new', height: 100 }, ...items(100)]);

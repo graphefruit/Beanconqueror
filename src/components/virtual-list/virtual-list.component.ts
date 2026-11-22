@@ -224,6 +224,12 @@ export class VirtualListComponent<T> {
   /** The rows on the screen when the list last stood still. */
   private readonly restingRows = signal<readonly KeptRow[]>([]);
   /**
+   * A jump of the app (see `jumpTo`): `waiting` for its first scroll event,
+   * then `moving` until the list rests. A rest reported before that event
+   * belongs to an earlier scroll and does not end it.
+   */
+  private jump: 'none' | 'waiting' | 'moving' = 'none';
+  /**
    * The rows that stay rendered when they leave the screen. Taken off, a
    * row would take the focus with it, and the next Tab or screen reader step
    * would start again at the top of the page. A screen reader (TalkBack,
@@ -290,11 +296,20 @@ export class VirtualListComponent<T> {
         observeElementOffset: (instance, report) =>
           observeElementOffset(instance, (offset, isScrolling) => {
             if (instance.scrollElement?.clientHeight !== 0) {
-              if (isScrolling && !instance.isScrolling) {
+              if (isScrolling && this.jump === 'waiting') {
+                this.jump = 'moving';
+              } else if (
+                isScrolling &&
+                !instance.isScrolling &&
+                this.jump === 'none'
+              ) {
                 this.keepRowsAtRest(instance.range);
               }
               report(offset, isScrolling);
               if (!isScrolling) {
+                if (this.jump === 'moving') {
+                  this.jump = 'none';
+                }
                 this.endLostTouch(offset);
               }
             }
@@ -527,9 +542,26 @@ export class VirtualListComponent<T> {
     this.afterRender(() => {
       const offset = this.offsetOf(anchor);
       if (offset !== null) {
-        this.virtualizer.scrollToOffset(offset);
+        this.jumpTo(offset);
       }
     });
+  }
+
+  /**
+   * Scrolls for the app (another segment, a search, a new order), not for the
+   * screen reader: its focus is outside the rows. After a change of the items
+   * the rows at the old position were never on the screen with them, so no
+   * row is kept for the jump.
+   */
+  private jumpTo(offset: number): void {
+    this.restingRows.set([]);
+    const scroller = this.scroller();
+    // Without a move there is no scroll event to end the jump.
+    this.jump =
+      scroller && Math.abs(scroller.scrollTop - offset) >= 1
+        ? 'waiting'
+        : 'none';
+    this.virtualizer.scrollToOffset(offset);
   }
 
   /**
@@ -545,7 +577,7 @@ export class VirtualListComponent<T> {
 
   public scrollToTop(): void {
     this.keyToReveal = null;
-    this.afterRender(() => this.virtualizer.scrollToOffset(0));
+    this.afterRender(() => this.jumpTo(0));
   }
 
   /**
