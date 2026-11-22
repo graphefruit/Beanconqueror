@@ -310,14 +310,20 @@ for (const language of ['en', 'de'] as const) {
       await start(page, language);
       await openTab(page, language, 'NAV_BREWS');
 
+      // The button is named after the title of the dialog it opens.
       await visible(
-        page.getByRole('button', { name: t('A11Y.IMPORT_BREW'), exact: true }),
+        page.getByRole('button', { name: t('PRESET_BREW_TITLE'), exact: true }),
       ).press('Enter');
 
       await expect(openDialog(page)).toHaveCount(1);
-      await expect(visible(page.getByText(t('PRESET_BREW_TITLE')))).toHaveCount(
-        1,
-      );
+      await expect(
+        visible(
+          page.getByRole('heading', {
+            name: t('PRESET_BREW_TITLE'),
+            exact: true,
+          }),
+        ),
+      ).toHaveCount(1);
     });
 
     test('names have no spaces at their ends and the count of a segment as written', async ({
