@@ -27,7 +27,7 @@ def capacitor_pods
   pod 'CapacitorSplashScreen', :path => '../../node_modules/.pnpm/@capacitor+splash-screen@8.0.2_@capacitor+core@8.6.2/node_modules/@capacitor/splash-screen'
   pod 'CapacitorStatusBar', :path => '../../node_modules/.pnpm/@capacitor+status-bar@8.0.4_@capacitor+core@8.6.2/node_modules/@capacitor/status-bar'
   pod 'CapawesomeCapacitorFilePicker', :path => '../../node_modules/.pnpm/@capawesome+capacitor-file-picker@8.1.1_@capacitor+core@8.6.2/node_modules/@capawesome/capacitor-file-picker'
-  pod 'CapgoCameraPreview', :path => '../../node_modules/.pnpm/@capgo+camera-preview@8.14.4_@capacitor+core@8.6.2/node_modules/@capgo/camera-preview'
+  pod 'CapgoCameraPreview', :path => '../../node_modules/.pnpm/@capgo+camera-preview@8.15.4_@capacitor+core@8.6.2/node_modules/@capgo/camera-preview'
   pod 'CapgoCapacitorLlm', :path => '../../node_modules/.pnpm/@capgo+capacitor-llm@8.0.19_@capacitor+core@8.6.2_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm'
   pod 'PantristCapacitorPluginMlKitTextRecognition', :path => '../../node_modules/.pnpm/@pantrist+capacitor-plugin-ml-kit-text-recognition@8.1.1_@capacitor+core@8.6.2/node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition'
   pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'

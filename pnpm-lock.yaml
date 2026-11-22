@@ -106,8 +106,8 @@ importers:
         specifier: ^8.1.1
         version: 8.1.1(@capacitor/core@8.6.2)
       '@capgo/camera-preview':
-        specifier: ^8.14.4
-        version: 8.14.4(@capacitor/core@8.6.2)
+        specifier: ^8.15.4
+        version: 8.15.4(@capacitor/core@8.6.2)
       '@capgo/capacitor-llm':
         specifier: ~8.0.19
         version: 8.0.19(@capacitor/core@8.6.2)(@mediapipe/tasks-genai@0.10.30)
@@ -796,8 +796,8 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capgo/camera-preview@8.14.4':
-    resolution: {integrity: sha512-bkiqm8Z1Jx76TikrhXjA/RQqwwUf0eQCWsYsKKNOmOaLlQ7PCT5fVFaEPlLJurGcLD8FYBY/Dt68L7Uwzu5QUg==}
+  '@capgo/camera-preview@8.15.4':
+    resolution: {integrity: sha512-wYKHyU/BnylXXtS2iVZVGn2fs95tOrlGc29rwvhufLMrpHWNvdsvUi2kYfiCph267YokcPmoTUNVzSdVZEz9VQ==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -5779,7 +5779,7 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.6.2
 
-  '@capgo/camera-preview@8.14.4(@capacitor/core@8.6.2)':
+  '@capgo/camera-preview@8.15.4(@capacitor/core@8.6.2)':
     dependencies:
       '@capacitor/core': 8.6.2
 

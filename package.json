@@ -56,7 +56,7 @@
     "@capacitor/status-bar": "^8.0.4",
     "@capawesome/capacitor-android-edge-to-edge-support": "^8.0.8",
     "@capawesome/capacitor-file-picker": "^8.1.1",
-    "@capgo/camera-preview": "^8.14.4",
+    "@capgo/camera-preview": "^8.15.4",
     "@capgo/capacitor-llm": "~8.0.19",
     "@ionic/angular": "^9.0.11",
     "@ionic/core": "^9.0.11",
