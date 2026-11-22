@@ -15,7 +15,8 @@ import { openFromProfile } from './support/profile';
  * `accessibility-baseline.json` as "<rule id> | <target selector>" per area and theme.
  * A violation missing from the baseline fails the test. A baseline entry that no longer
  * occurs fails too, so fixed issues are removed and cannot silently come back.
- * Refresh the file with `A11Y_UPDATE_BASELINE=1 pnpm e2e e2e/accessibility.spec.ts`.
+ * Refresh the file with
+ * `A11Y_UPDATE_BASELINE=1 pnpm e2e e2e/accessibility.spec.ts --project=pixel-7-chromium`.
  */
 
 type Theme = 'light' | 'dark';

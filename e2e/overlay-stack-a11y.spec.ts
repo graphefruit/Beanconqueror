@@ -9,6 +9,7 @@ import {
 } from './support/brew-form';
 import { completeFirstRunWithBrew } from './support/first-brew';
 import { completeFirstRun } from './support/first-run';
+import { tabKey } from './support/keyboard';
 import { openTab } from './support/layout';
 
 /**
@@ -170,9 +171,9 @@ async function expectTabGoesRound(
   last: Locator,
 ): Promise<void> {
   await last.focus();
-  await page.keyboard.press('Tab');
+  await page.keyboard.press(tabKey(page));
   await expect(first).toBeFocused();
-  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press(tabKey(page, true));
   await expect(last).toBeFocused();
 }
 

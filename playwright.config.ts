@@ -5,6 +5,9 @@ const BASE_URL = `http://localhost:${PORT}`;
 const isCI = !!process.env['CI'];
 const TABLET_SPECS = /tablet\.spec\.ts$/;
 const PHONE_LANDSCAPE_SPECS = /phone-landscape\.spec\.ts$/;
+// Names, roles, focus and announcements also run in WebKit: VoiceOver on iOS reads what Safari exposes.
+const A11Y_SPECS =
+  /(a11y|accessibility|announcements|keyboard-focus|reading-order)[\w-]*\.spec\.ts$/;
 
 /**
  * Browser E2E against the real Angular/Ionic app served by `ng serve`.
@@ -62,8 +65,11 @@ export default defineConfig({
       use: { ...devices['Pixel 7 landscape'] },
       testMatch: PHONE_LANDSCAPE_SPECS,
     },
-    // Add further projects deliberately, e.g. when a journey depends on WebKit:
-    // { name: 'iphone-15-webkit', use: { ...devices['iPhone 15'] } },
+    {
+      name: 'iphone-15-webkit',
+      use: { ...devices['iPhone 15'] },
+      testMatch: A11Y_SPECS,
+    },
   ],
   webServer: {
     command: `pnpm exec ng serve --port ${PORT} --no-hmr --no-live-reload`,

@@ -2,6 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { showTab } from './support/beans';
+import { tabKey } from './support/keyboard';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
 import { startsWith, text, type Language } from './support/texts';
@@ -133,9 +134,6 @@ async function swipeBackAndCancel(page: Page, farthest: number): Promise<void> {
   await touch('touchEnd', 4);
   await cdp.detach();
 }
-
-// The barista mode keeps the screen on; the browser refuses that without a tap.
-test.use({ allowedConsoleErrors: [/Wake Lock permission request denied/] });
 
 for (const language of ['en', 'de'] as const) {
   test.describe(language, () => {
@@ -363,7 +361,7 @@ for (const language of ['en', 'de'] as const) {
         page.getByRole('heading', { level: 1, name: t('NAV_SETTINGS') }),
       ).toBeFocused();
 
-      await page.keyboard.press('Shift+Tab');
+      await page.keyboard.press(tabKey(page, true));
       await expect(
         visible(page.getByRole('button', { name: t('BACK'), exact: true })),
       ).toBeFocused();
@@ -374,7 +372,12 @@ for (const language of ['en', 'de'] as const) {
 
     test('focus stays where it was when a swipe back is let go of early', async ({
       page,
+      browserName,
     }) => {
+      test.skip(
+        browserName !== 'chromium',
+        'Drags the finger through Chromium.',
+      );
       await start(page, language);
       await tabBar(page)
         .getByRole('tab', { name: t('NAV_PROFILE') })

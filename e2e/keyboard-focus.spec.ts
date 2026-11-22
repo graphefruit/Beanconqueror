@@ -2,6 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { completeFirstRun } from './support/first-run';
+import { tabKey } from './support/keyboard';
 import { openFromProfile } from './support/profile';
 import { mainTabName } from './support/texts';
 
@@ -29,7 +30,7 @@ async function tabTo(page: Page, target: Locator, maxPresses = 60) {
     // Settings sliders are disabled while the page scrolls, and focusing the
     // previous control scrolls it; a user waits until the slider is usable.
     await expect(target).not.toHaveAttribute('aria-disabled', 'true');
-    await page.keyboard.press('Tab');
+    await page.keyboard.press(tabKey(page));
     const focused = await target
       .evaluate(
         (element) => {

@@ -328,7 +328,12 @@ for (const language of ['en', 'de'] as const) {
 
     test('names have no spaces at their ends and the count of a segment as written', async ({
       page,
+      browserName,
     }) => {
+      test.skip(
+        browserName !== 'chromium',
+        'Reads the accessibility tree of Chromium.',
+      );
       await start(page, language);
       await expect(
         page.getByRole('button', {
