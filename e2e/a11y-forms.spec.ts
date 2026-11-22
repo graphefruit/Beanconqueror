@@ -197,9 +197,13 @@ for (const language of ['en', 'de'] as const) {
       await show(page, '/home/beans');
       await click(page, t('ADD_BEAN'));
       const bean = openModal(page);
-      const roastDate = bean.getByRole('textbox', {
-        name: startsWith(t('BEAN_DATA_ROASTING_DATE')),
-      });
+      // On iOS Ionic briefly shows a copy of a focused field while it scrolls
+      // it above the keyboard.
+      const roastDate = bean
+        .getByRole('textbox', {
+          name: startsWith(t('BEAN_DATA_ROASTING_DATE')),
+        })
+        .and(page.locator(':not(.cloned-input)'));
       await expect(roastDate).toHaveAttribute('readonly', '');
       await expect(roastDate).toHaveAttribute('aria-haspopup', 'dialog');
       await expect(roastDate).toHaveValue('');
