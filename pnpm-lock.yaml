@@ -211,9 +211,6 @@ importers:
         specifier: ^0.16.3
         version: 0.16.3
     devDependencies:
-      '@angular-devkit/architect':
-        specifier: ^0.2202.7
-        version: 0.2202.7(chokidar@5.0.0)
       '@angular-devkit/schematics':
         specifier: ^22.2.7
         version: 22.2.7(chokidar@5.0.0)
@@ -259,9 +256,6 @@ importers:
       '@types/jasmine':
         specifier: ^5.1.15
         version: 5.1.15
-      '@types/jasminewd2':
-        specifier: ~2.0.13
-        version: 2.0.13
       '@types/lodash':
         specifier: ^4.17.27
         version: 4.17.27
@@ -298,9 +292,6 @@ importers:
       jasmine-core:
         specifier: ^5.13.0
         version: 5.13.0
-      jasmine-spec-reporter:
-        specifier: ^7.0.0
-        version: 7.0.0
       karma:
         specifier: ^6.4.4
         version: 6.4.4
@@ -2343,9 +2334,6 @@ packages:
   '@types/jasmine@5.1.15':
     resolution: {integrity: sha512-ZAC8KjmV2MJxbNTrwXFN+HKeajpXQZp6KpPiR6Aa4XvaEnjP6qh23lL/Rqb7AYzlp3h/rcwDrQ7Gg7q28cQTQg==}
 
-  '@types/jasminewd2@2.0.13':
-    resolution: {integrity: sha512-aJ3wj8tXMpBrzQ5ghIaqMisD8C3FIrcO6sDKHqFbuqAsI7yOxj0fA7MrRCPLZHIVUjERIwsMmGn/vB0UQ9u0Hg==}
-
   '@types/jsesc@2.5.1':
     resolution: {integrity: sha512-9VN+6yxLOPLOav+7PwjZbxiID2bVaeq0ED4qSQmdQTdjnXJSaCVKTR58t15oqH1H5t8Ng2ZX1SabJVoN9Q34bw==}
 
@@ -2767,10 +2755,6 @@ packages:
 
   colorjs.io@0.7.1:
     resolution: {integrity: sha512-LY7OHnJZxHwT5UlzNa9bbhHHDbzB6yE5+3MIPwJEQKRvSCt/T4G7epsj+9j2BExUIIfXFIJGsIXUKdfrK9Q5tA==}
-
-  colors@1.4.0:
-    resolution: {integrity: sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==}
-    engines: {node: '>=0.1.90'}
 
   combined-stream@1.0.8:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
@@ -3587,9 +3571,6 @@ packages:
 
   jasmine-core@5.13.0:
     resolution: {integrity: sha512-vsYjfh7lyqvZX5QgqKc4YH8phs7g96Z8bsdIFNEU3VqXhlHaq+vov/Fgn/sr6MiUczdZkyXRC3TX369Ll4Nzbw==}
-
-  jasmine-spec-reporter@7.0.0:
-    resolution: {integrity: sha512-OtC7JRasiTcjsaCBPtMO0Tl8glCejM4J4/dNuOJdA8lBjz4PmWjYQ6pzb0uzpBNAWJMDudYuj9OdXJWqM2QTJg==}
 
   javascript-color-gradient@2.5.0:
     resolution: {integrity: sha512-NfmEygIgldzvs/HUZ9EXjZENhh2q9aB1T/vZvCtQ5EKkuFfJ1/RKWcWd9YNA9BdBYTAh3odokubysjr2dBBZtg==}
@@ -7037,10 +7018,6 @@ snapshots:
 
   '@types/jasmine@5.1.15': {}
 
-  '@types/jasminewd2@2.0.13':
-    dependencies:
-      '@types/jasmine': 5.1.15
-
   '@types/jsesc@2.5.1': {}
 
   '@types/json-schema@7.0.15': {}
@@ -7486,8 +7463,6 @@ snapshots:
   colorette@2.0.20: {}
 
   colorjs.io@0.7.1: {}
-
-  colors@1.4.0: {}
 
   combined-stream@1.0.8:
     dependencies:
@@ -8339,10 +8314,6 @@ snapshots:
   jasmine-core@4.6.1: {}
 
   jasmine-core@5.13.0: {}
-
-  jasmine-spec-reporter@7.0.0:
-    dependencies:
-      colors: 1.4.0
 
   javascript-color-gradient@2.5.0: {}
 

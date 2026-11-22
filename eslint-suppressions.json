@@ -3282,11 +3282,6 @@
       "count": 2
     }
   },
-  "src/services/aiBeanImport/__tests__/type-mappings.spec.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 7
-    }
-  },
   "src/services/aiBeanImport/apple-intelligence-ai-bean-import.service.ts": {
     "@typescript-eslint/no-base-to-string": {
       "count": 2

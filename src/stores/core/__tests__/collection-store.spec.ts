@@ -56,7 +56,7 @@ describe('CollectionStore', () => {
     const [copy] = store.entries();
     stored.name = 'changed without an event';
 
-    expect(copy).not.toBe(stored as unknown as typeof copy);
+    expect(copy).not.toBe(stored);
     expect(copy.name).toBe('a');
     expect(Object.isFrozen(copy)).toBeTrue();
     expect(Object.isFrozen(copy.config)).toBeTrue();
