@@ -168,9 +168,6 @@ importers:
       javascript-color-gradient:
         specifier: ^2.5.0
         version: 2.5.0
-      localforage-cordovasqlitedriver:
-        specifier: ^1.8.0
-        version: 1.8.0
       lodash:
         specifier: ^4.18.1
         version: 4.18.1
@@ -271,9 +268,6 @@ importers:
       cordova-plugin-health:
         specifier: ^2.1.1
         version: 2.1.1
-      cordova-sqlite-storage:
-        specifier: ^7.0.0
-        version: 7.0.0
       eslint:
         specifier: ^9.39.5
         version: 9.39.5
@@ -2810,12 +2804,6 @@ packages:
     resolution: {integrity: sha512-PAwJJsZPpUERQIW14r5weZXzcgHev+cQ/B1+DSGKF9dta/v9q1BX0wXIIjBeyVXzFzJwqz9E6voY+HhauTqHdA==}
     engines: {'0': {name: cordova, version: '>=6.0.0'}}
 
-  cordova-sqlite-storage-dependencies@5.0.0:
-    resolution: {integrity: sha512-WjWm1QX+2JyLxjaNmYX2kNzmhrRk8q6n4GQ1PkUc79xR2bmJeO/m3koSuPemnWJdLdlsqDz8dCEHmgQSxhYjcg==}
-
-  cordova-sqlite-storage@7.0.0:
-    resolution: {integrity: sha512-BV1KCNtHnFD37ZQmhztStKsaNxniGlLcUSiQ9wieWH2PpZ0gH/tuWeINrrXGKIt9teTukYRnxFyerQ/Lc9x41A==}
-
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
 
@@ -3752,9 +3740,6 @@ packages:
   lmdb@3.5.6:
     resolution: {integrity: sha512-j3uE8ReKNyUWDjhfEFSJqE/1DLtfTR5Z8yFzVHvBjAk37wNg7HdScjcv8ttPHRvrdgPQMPWxFFI0SsdBzI5lBw==}
     hasBin: true
-
-  localforage-cordovasqlitedriver@1.8.0:
-    resolution: {integrity: sha512-AeYiVPURow8gPAGHNOiGMS9rlgv81wUuQLtnyCP6Eh1mq+IsqNl9fwAOP+RiTi6aO/Wfy3TTWiW2WtbTdJaUnQ==}
 
   localforage@1.10.0:
     resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
@@ -7498,12 +7483,6 @@ snapshots:
 
   cordova-plugin-health@2.1.1: {}
 
-  cordova-sqlite-storage-dependencies@5.0.0: {}
-
-  cordova-sqlite-storage@7.0.0:
-    dependencies:
-      cordova-sqlite-storage-dependencies: 5.0.0
-
   core-util-is@1.0.3: {}
 
   cors@2.8.6:
@@ -8518,10 +8497,6 @@ snapshots:
       '@lmdb/lmdb-win32-arm64': 3.5.6
       '@lmdb/lmdb-win32-x64': 3.5.6
     optional: true
-
-  localforage-cordovasqlitedriver@1.8.0:
-    dependencies:
-      localforage: 1.10.0
 
   localforage@1.10.0:
     dependencies:

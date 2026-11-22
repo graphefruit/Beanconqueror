@@ -19,7 +19,6 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
-import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
@@ -35,11 +34,7 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(
       IonicStorageModule.forRoot({
         name: '__baristaDB',
-        driverOrder: [
-          Drivers.IndexedDB,
-          CordovaSQLiteDriver._driver,
-          Drivers.LocalStorage,
-        ],
+        driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
       }),
     ),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

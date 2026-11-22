@@ -219,7 +219,7 @@ SPEC CHECKSUMS:
   CapawesomeCapacitorFilePicker: 7ae3700f2fee0d0a3ab54dcd0e74de6d914d7195
   CapgoCameraPreview: a6b7a282f60a259ef4873bb9182b1d03189af171
   CapgoCapacitorLlm: 49597eace2908bfed5a2624d1551e73ad1a4f3d4
-  CordovaPlugins: 55313ad589b9721fbe487e8ab46dd567b7667bde
+  CordovaPlugins: 7dccbc1c4b2760d41a7d0f0dec0ec72eb4779e5b
   GoogleDataTransport: a24e58982ab3ba2f64d79613e027fe7f57e88539
   GoogleMLKit: b1eee21a41c57704fe72483b15c85cb2c0cd7444
   GoogleToolboxForMac: d1a2cbf009c453f4d6ded37c105e2f67a32206d8
