@@ -187,7 +187,7 @@ UIStorage                            (src/services/uiStorage.ts)
    get/set by key with retries, export/import, STORAGE_CHANGED event
         │
         ▼
-@ionic/storage  ─ driver order: IndexedDB → Cordova SQLite → localStorage   (src/main.ts)
+@ionic/storage  ─ driver order: IndexedDB → localStorage   (src/main.ts)
    database name "__baristaDB"
 ```
 

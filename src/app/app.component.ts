@@ -164,10 +164,6 @@ export class AppComponent implements AfterViewInit {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
       const _db = window.indexedDB;
     } catch (ex) {}
-    try {
-      // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
-      const _db = window.sqlitePlugin;
-    } catch (ex) {}
 
     if (this.platform.is('capacitor')) {
       // Just support deeplinks on devices.
