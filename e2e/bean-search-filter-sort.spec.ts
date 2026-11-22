@@ -74,6 +74,11 @@ test('the search finds beans by parts of their name, roaster or varieties', asyn
   await available(page, '( 2 / 7 )');
   expect(await beanNames(page)).toEqual([BEANS.alpha, BEANS.blend]);
 
+  // Accents do not matter: "sud" finds the roaster "Süd".
+  await searchBeans(page, 'sud');
+  await available(page, '( 1 / 7 )');
+  expect(await beanNames(page)).toEqual([BEANS.blend]);
+
   await searchBeans(page, 'a,');
   await available(page, '( 6 / 7 )');
   expect(await beanNames(page)).not.toContain(BEANS.small);

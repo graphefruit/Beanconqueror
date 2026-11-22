@@ -15,6 +15,7 @@ import { beanAgeInDays } from '../../stores/beans/bean-rules';
 import { BeanUsageStore } from '../../stores/beans/bean-usage.store';
 import { UIBeanHelper } from '../uiBeanHelper';
 import { UIHelper } from '../uiHelper';
+import { foldSearchText } from './fold-search-text';
 
 @Service()
 export class BeanSortFilterHelperService {
@@ -116,30 +117,32 @@ export class BeanSortFilterHelperService {
   }
   private manageSearchText(searchText: string, filterBeans: Bean[]) {
     if (searchText) {
-      searchText = searchText.toLowerCase();
-      const splittingSearch = searchText.split(',');
+      const splittingSearch = foldSearchText(searchText).split(',');
       filterBeans = filterBeans.filter((e) => {
         return splittingSearch.find((sc) => {
-          const searchStr = sc.toLowerCase().trim();
+          const searchStr = sc.trim();
+          const has = (value: string | undefined) =>
+            typeof value === 'string' &&
+            foldSearchText(value).includes(searchStr);
           return (
-            e.note?.toLowerCase().includes(searchStr) ||
-            e.name?.toLowerCase().includes(searchStr) ||
-            e.roaster?.toLowerCase().includes(searchStr) ||
-            e.aromatics?.toLowerCase().includes(searchStr) ||
+            has(e.note) ||
+            has(e.name) ||
+            has(e.roaster) ||
+            has(e.aromatics) ||
             e.bean_information?.find((bi) => {
               return (
-                bi?.variety?.toLowerCase().includes(searchStr) ||
-                bi?.country?.toLowerCase().includes(searchStr) ||
-                bi?.region?.toLowerCase().includes(searchStr) ||
-                bi?.farm?.toLowerCase().includes(searchStr) ||
-                bi?.farmer?.toLowerCase().includes(searchStr) ||
-                bi?.harvest_time?.toLowerCase().includes(searchStr) ||
-                bi?.elevation?.toLowerCase().includes(searchStr) ||
-                bi?.processing?.toLowerCase().includes(searchStr)
+                has(bi?.variety) ||
+                has(bi?.country) ||
+                has(bi?.region) ||
+                has(bi?.farm) ||
+                has(bi?.farmer) ||
+                has(bi?.harvest_time) ||
+                has(bi?.elevation) ||
+                has(bi?.processing)
               );
             }) ||
-            e.frozenId?.toLowerCase().includes(searchStr) ||
-            e.ean_article_number?.toLowerCase().includes(searchStr)
+            has(e.frozenId) ||
+            has(e.ean_article_number)
           );
         });
       });
