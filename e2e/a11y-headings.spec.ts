@@ -164,9 +164,6 @@ async function addBy(page: Page, buttonName: string): Promise<void> {
     .click();
 }
 
-// The barista mode keeps the screen on; the browser refuses that without a tap.
-test.use({ allowedConsoleErrors: [/Wake Lock permission request denied/] });
-
 for (const language of ['en', 'de'] as const) {
   test.describe(language, () => {
     const t: Texts = (key, params) => text(language, key, params);
