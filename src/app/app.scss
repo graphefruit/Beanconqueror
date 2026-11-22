@@ -70,7 +70,7 @@ ag-virtual-scroll.clear-of-fab {
   padding-bottom: calc(56px + 2 * var(--bq-space-4));
 }
 // Icons on a coral fill take its label colour (5.22:1) rather than the global
-// icon colour (3.31:1 on coral light, 1.31:1 dark).
+// icon colour (3.31:1 on coral light, 3.78:1 dark).
 ion-button.button-solid.ion-color-accent ion-icon,
 ion-fab-button ion-icon {
   color: var(--bq-text-on-accent);

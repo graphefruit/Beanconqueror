@@ -3,6 +3,8 @@ import { beanconquerorIcons } from '../../generated/icon-registry';
 /**
  * The icon colour is cream in dark mode, where a fixed white glyph on it
  * would fade (1.38:1). Glyphs drawn on it take the glyph colour instead.
+ * beanconqueror-dashboard-add-fill is the inverse (disc white, plus in the
+ * icon colour); its disc takes the glyph colour for the same reason.
  */
 describe('Custom icon colours', () => {
   // As attribute (fill="#fff") or inline style (fill:rgb(100%,100%,100%)).
