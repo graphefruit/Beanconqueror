@@ -67,18 +67,22 @@ describe('UnwrappedService', () => {
       dateOnly.buyDate = '2027-01-01';
       const withOffset = new Bean();
       withOffset.buyDate = '2028-12-31T23:30:00+14:00';
+      const yearOnly = new Bean();
+      yearOnly.buyDate = '2029';
+      const yearAndMonth = new Bean();
+      yearAndMonth.buyDate = '2030-01';
       const invalid = new Bean();
       invalid.buyDate = 'not a date';
       beanStorage.getAllEntries.and.returnValue([
         dateOnly,
         withOffset,
+        yearOnly,
+        yearAndMonth,
         invalid,
       ]);
 
-      const offsetYear = new Date('2028-12-31T23:30:00+14:00').getFullYear();
-      expect(service.getAvailableYears()).toEqual(
-        [2027, offsetYear].sort((a, b) => b - a),
-      );
+      // 2028-12-31T09:30Z is still 2028 in every time zone from UTC-12 to UTC+14.
+      expect(service.getAvailableYears()).toEqual([2030, 2029, 2028, 2027]);
     });
   });
 

@@ -53,11 +53,12 @@ export class UnwrappedService {
   }
 
   private localYear(isoDate: string): number {
-    // Date reads a date-only ISO string as UTC; append a time so it is read as local midnight.
-    const date = new Date(
-      /^\d{4}-\d{2}-\d{2}$/.test(isoDate) ? `${isoDate}T00:00` : isoDate,
-    );
-    return date.getFullYear();
+    // Date reads a date without a time as UTC midnight, which falls into the
+    // previous year west of UTC; such a date names its local year itself.
+    if (/^\d{4}(-\d{2}){0,2}$/.test(isoDate)) {
+      return Number(isoDate.slice(0, 4));
+    }
+    return new Date(isoDate).getFullYear();
   }
 
   public getUnwrappedData(year: number): UnwrappedStats | null {
