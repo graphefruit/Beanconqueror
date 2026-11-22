@@ -1,7 +1,5 @@
 import { inject, Service } from '@angular/core';
 
-import { DateTime } from 'luxon';
-
 import { Bean } from '../../classes/bean/bean';
 import { ROASTS_ENUM } from '../../enums/beans/roasts';
 import { UIBeanStorage } from '../uiBeanStorage';
@@ -45,13 +43,21 @@ export class UnwrappedService {
     for (const bean of allBeans) {
       const dateStr = bean.buyDate || bean.roastingDate;
       if (dateStr) {
-        const date = DateTime.fromISO(dateStr);
-        if (date.isValid) {
-          years.add(date.year);
+        const year = this.localYear(dateStr);
+        if (!Number.isNaN(year)) {
+          years.add(year);
         }
       }
     }
     return Array.from(years).sort((a, b) => b - a);
+  }
+
+  private localYear(isoDate: string): number {
+    // Date reads a date-only ISO string as UTC; append a time so it is read as local midnight.
+    const date = new Date(
+      /^\d{4}-\d{2}-\d{2}$/.test(isoDate) ? `${isoDate}T00:00` : isoDate,
+    );
+    return date.getFullYear();
   }
 
   public getUnwrappedData(year: number): UnwrappedStats | null {
@@ -64,8 +70,7 @@ export class UnwrappedService {
       }
       if (!dateStr) return false;
 
-      const date = DateTime.fromISO(dateStr);
-      return date.isValid && date.year === year;
+      return this.localYear(dateStr) === year;
     });
 
     if (beansInYear.length === 0) {
@@ -218,8 +223,7 @@ export class UnwrappedService {
     // --- Preparations (Brews) ---
     const allBrews = this.uiBrewStorage.getAllEntries();
     const brewsInYear = allBrews.filter((brew) => {
-      const date = DateTime.fromSeconds(brew.config.unix_timestamp);
-      return date.isValid && date.year === year;
+      return new Date(brew.config.unix_timestamp * 1000).getFullYear() === year;
     });
 
     const preparationMap = new Map<string, number>();
@@ -234,15 +238,17 @@ export class UnwrappedService {
     const uniqueDays = new Set<string>();
 
     for (const brew of brewsInYear) {
-      const date = DateTime.fromSeconds(brew.config.unix_timestamp);
-      const dateStr = date.toISODate(); // YYYY-MM-DD
+      const date = new Date(brew.config.unix_timestamp * 1000);
+      const dateStr = [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, '0'),
+        String(date.getDate()).padStart(2, '0'),
+      ].join('-');
 
-      if (dateStr) {
-        uniqueDays.add(dateStr);
-        dayMap.set(dateStr, (dayMap.get(dateStr) || 0) + 1);
-      }
+      uniqueDays.add(dateStr);
+      dayMap.set(dateStr, (dayMap.get(dateStr) || 0) + 1);
 
-      const hour = date.hour;
+      const hour = date.getHours();
       hourMap.set(hour, (hourMap.get(hour) || 0) + 1);
 
       // Caffeine (approximate if not available, but let's try to use grind weight * 0.008 as per UIBrewStorage)

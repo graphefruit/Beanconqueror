@@ -61,6 +61,25 @@ describe('UnwrappedService', () => {
 
       expect(service.getAvailableYears()).toEqual([2026, 2025, 2024]);
     });
+
+    it('should read the year in local time and skip unparsable dates', () => {
+      const dateOnly = new Bean();
+      dateOnly.buyDate = '2027-01-01';
+      const withOffset = new Bean();
+      withOffset.buyDate = '2028-12-31T23:30:00+14:00';
+      const invalid = new Bean();
+      invalid.buyDate = 'not a date';
+      beanStorage.getAllEntries.and.returnValue([
+        dateOnly,
+        withOffset,
+        invalid,
+      ]);
+
+      const offsetYear = new Date('2028-12-31T23:30:00+14:00').getFullYear();
+      expect(service.getAvailableYears()).toEqual(
+        [2027, offsetYear].sort((a, b) => b - a),
+      );
+    });
   });
 
   describe('getUnwrappedData with frozen beans', () => {
@@ -336,6 +355,36 @@ describe('UnwrappedService', () => {
           expect(service.getUnwrappedData(2026).mostExpensiveBean).toBeNull();
         });
       }
+    });
+  });
+
+  describe('getUnwrappedData brew dates', () => {
+    function brewAt(local: Date): Brew {
+      const brew = new Brew();
+      brew.config.unix_timestamp = local.getTime() / 1000;
+      return brew;
+    }
+
+    it('should assign brews to year, day and hour in local time', () => {
+      const bean = new Bean();
+      bean.buyDate = '2026-06-01T12:00:00.000Z';
+      beanStorage.getAllEntries.and.returnValue([bean]);
+      brewStorage.getAllEntries.and.returnValue([
+        brewAt(new Date(2025, 11, 31, 23, 59, 59)),
+        brewAt(new Date(2026, 0, 1, 0, 0, 0)),
+        brewAt(new Date(2026, 0, 1, 7, 15)),
+        brewAt(new Date(2026, 0, 1, 7, 45)),
+        brewAt(new Date(2026, 2, 9, 18, 0)),
+        brewAt(new Date(2026, 11, 31, 23, 59, 59)),
+        brewAt(new Date(2027, 0, 1, 0, 0, 0)),
+      ]);
+
+      const stats = service.getUnwrappedData(2026);
+
+      expect(stats.totalBrews).toBe(5);
+      expect(stats.mostActiveDay).toEqual({ date: '2026-01-01', count: 3 });
+      expect(stats.averageBrewsPerDay).toBe(5 / 3);
+      expect(stats.mostActiveHour).toEqual({ hour: 7, count: 2 });
     });
   });
 });
