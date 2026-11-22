@@ -2065,6 +2065,7 @@
         "MORE_INFORMATION_ABOUT": "Mehr Infos: {{topic}}",
         "OPTIONS_FOR": "Optionen für {{name}}",
         "BREW_OPTIONS_FOR": "Optionen für die Brühung vom {{date}}",
+        "BREW_OPTIONS_FOR_BEAN": "Optionen für die Brühung vom {{date}}, {{bean}}",
         "BEANS_OF_GROUP": "Bohnen der Gruppe {{name}}",
         "COUNT_TOTAL": "{{total}} insgesamt",
         "COUNT_SHOWN": "{{shown}} von {{total}} angezeigt",

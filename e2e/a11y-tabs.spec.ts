@@ -484,11 +484,18 @@ for (const language of ['en', 'de'] as const) {
     });
 
     test('the buttons of a list entry name the entry', async ({ page }) => {
-      // Beans of the same name are told apart by what their cards show.
+      // Beans of the same name are told apart by what their cards show,
+      // brews of the same minute by their bean.
       await start(page, language, (data) => {
         const [first, second] = data.BEANS.filter((bean) => !bean.finished);
         second.name = first.name;
         second.roaster = first.roaster;
+        const [newest, next] = data.BREWS.slice(-2).reverse();
+        next.config.unix_timestamp = newest.config.unix_timestamp;
+        newest.bean = first.config.uuid;
+        next.bean = data.BEANS.find(
+          (bean) => !bean.finished && bean.name !== first.name,
+        )!.config.uuid;
       });
       const optionsFor = startsWith(t('A11Y.OPTIONS_FOR', { name: '' }));
       const brewOptions = startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' }));
@@ -513,6 +520,29 @@ for (const language of ['en', 'de'] as const) {
         expect(names.length, route).toBeGreaterThan(1);
         expect(new Set(names).size, `names on ${route}`).toBe(names.length);
       }
+    });
+
+    test('the options of a brew whose bean is gone name its date only', async ({
+      page,
+    }) => {
+      await start(page, language, (data) => {
+        const newest = data.BREWS[data.BREWS.length - 1];
+        data.BEANS = data.BEANS.filter(
+          (bean) => bean.config.uuid !== newest.bean,
+        );
+      });
+      await show(page, '/home/brews');
+      const options = visible(
+        page.locator('brew').getByRole('button', {
+          name: startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' })),
+        }),
+      ).first();
+      await expect(options).toHaveAttribute(
+        'aria-label',
+        new RegExp(
+          `^${escape(t('A11Y.BREW_OPTIONS_FOR', { date: '' }))}[\\d./-]+ \\d{2}:\\d{2}$`,
+        ),
+      );
     });
 
     test('the statistics work by keyboard', async ({ page }) => {
