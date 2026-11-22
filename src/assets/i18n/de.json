@@ -2096,6 +2096,8 @@
         "MOVE_DOWN": "{{name}} nach unten verschieben",
         "MOVED_TO_POSITION": "{{name}}: Position {{position}} von {{count}}",
         "STEP_OF": "Schritt {{step}} von {{count}}",
-        "OPENS_QUESTION": "Öffnet eine Frage"
+        "OPENS_QUESTION": "Öffnet eine Frage",
+        "TAB_HINT_NO_BEAN": "{{tab}}, keine verfügbare Bohne",
+        "TAB_HINT_NO_PREPARATION_OR_MILL": "{{tab}}, eine Zubereitungsmethode oder Mühle fehlt"
     }
 }

@@ -3,6 +3,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import { completeFirstRun } from './support/first-run';
 import { openFromProfile } from './support/profile';
+import { mainTabName } from './support/texts';
 
 /**
  * Keyboard and switch users must see where focus is (WCAG 2.4.7, 1.4.11).
@@ -154,7 +155,7 @@ for (const theme of ['light', 'dark'] as const) {
 
     await expectFocusRing(
       page,
-      page.getByRole('tab', { name: 'Profile', exact: true }),
+      page.getByRole('tab', { name: mainTabName('Profile') }),
     );
     await page.keyboard.press(' ');
     await expect(page).toHaveURL(/\/home\/profile$/);
@@ -337,7 +338,7 @@ for (const theme of ['light', 'dark'] as const) {
       );
 
     for (const { name, path, key } of TABS) {
-      const tab = tabBar.getByRole('tab', { name, exact: true });
+      const tab = tabBar.getByRole('tab', { name: mainTabName(name) });
       await expectFocusRing(page, tab);
       // Ionic's focus tint is a positioned layer in the tab that would paint
       // over the inset ring, leaving only a grey fill.

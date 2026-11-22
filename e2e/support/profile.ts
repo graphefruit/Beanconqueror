@@ -1,5 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
+import { mainTabName } from './texts';
+
 /**
  * Opens a page the way users reach every section that is not a tab of its
  * own: the Profile tab, then the hub entry whose name starts with `entry`
@@ -10,7 +12,7 @@ export async function openFromProfile(
   page: Page,
   entry: string,
 ): Promise<void> {
-  const tab = page.getByRole('tab', { name: 'Profile', exact: true });
+  const tab = page.getByRole('tab', { name: mainTabName('Profile') });
   await expect(async () => {
     await tab.click();
     await expect(page).toHaveURL(/\/home\/profile$/, { timeout: 2000 });

@@ -7,7 +7,13 @@ import { expect, test } from './fixtures';
 import { seedDatabase } from './support/seed';
 import { readStoredValue } from './support/stored-values';
 import { generateDataSet } from './support/synthetic-data';
-import { hasText, startsWith, text, type Language } from './support/texts';
+import {
+  hasText,
+  mainTabName,
+  startsWith,
+  text,
+  type Language,
+} from './support/texts';
 
 /**
  * Names, texts and operation for screen reader and keyboard users, in English
@@ -53,15 +59,14 @@ function visible(locator: Locator): Locator {
 }
 
 async function openTab(page: Page, language: Language, key: string) {
-  const tab = page.getByRole('tab', { name: text(language, key), exact: true });
+  const tab = page.getByRole('tab', { name: mainTabName(text(language, key)) });
   await tab.click();
   await expect(tab).toHaveAttribute('aria-selected', 'true');
 }
 
 async function openFromProfile(page: Page, language: Language, key: string) {
   const tab = page.getByRole('tab', {
-    name: text(language, 'NAV_PROFILE'),
-    exact: true,
+    name: mainTabName(text(language, 'NAV_PROFILE')),
   });
   await expect(async () => {
     await tab.click();

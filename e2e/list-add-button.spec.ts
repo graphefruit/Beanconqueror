@@ -4,6 +4,7 @@ import { expect, test } from './fixtures';
 import { openFromProfile } from './support/profile';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
+import { mainTabName } from './support/texts';
 import { isUncovered, scrollToEnd, VIRTUAL_LIST } from './support/virtual-list';
 
 /**
@@ -29,7 +30,7 @@ const LISTS: List[] = [
   {
     name: 'beans',
     open: async (page) => {
-      await page.getByRole('tab', { name: 'Beans', exact: true }).click();
+      await page.getByRole('tab', { name: mainTabName('Beans') }).click();
       await expect(page).toHaveURL(/\/home\/beans$/);
     },
     add: 'Add bean',
@@ -183,7 +184,7 @@ test('the add buttons are named in the app language', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('lang', 'de');
   await page.goBack();
 
-  await page.getByRole('tab', { name: 'Bohnen', exact: true }).click();
+  await page.getByRole('tab', { name: mainTabName('Bohnen') }).click();
   await expect(addButton(page, 'Bohne hinzufügen')).toHaveCount(1);
   for (const [entry, add] of [
     ['Mühlen', 'Mühle hinzufügen'],
@@ -192,7 +193,7 @@ test('the add buttons are named in the app language', async ({ page }) => {
   ]) {
     // The tab shows the page it was left on; tapping it again goes back to
     // the hub.
-    const profile = page.getByRole('tab', { name: 'Profil', exact: true });
+    const profile = page.getByRole('tab', { name: mainTabName('Profil') });
     await expect(async () => {
       await profile.click();
       await expect(page).toHaveURL(/\/home\/profile$/, { timeout: 2000 });

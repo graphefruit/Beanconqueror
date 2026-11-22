@@ -4,6 +4,7 @@ import { expect, test } from './fixtures';
 import { completeFirstRun } from './support/first-run';
 import { openFromProfile } from './support/profile';
 import { readStoredValue } from './support/stored-values';
+import { mainTabName } from './support/texts';
 
 /**
  * The optional sections are switched on a page of their own in the profile:
@@ -52,7 +53,7 @@ test('the profile opens the section switches and leads back', async ({
     await expect(switches.nth(index)).not.toBeChecked();
   }
   await expect(
-    page.getByRole('tab', { name: 'Profile', exact: true }),
+    page.getByRole('tab', { name: mainTabName('Profile') }),
   ).toHaveAttribute('aria-selected', 'true');
 
   await banner.getByRole('button', { name: 'back' }).click();

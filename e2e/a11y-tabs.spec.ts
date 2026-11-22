@@ -288,6 +288,28 @@ for (const language of ['en', 'de'] as const) {
       await expectPanelOfSelectedTab(reference);
     });
 
+    test('the tabs with a red mark say what it means', async ({ page }) => {
+      await start(page, language, (data) => {
+        for (const entry of [...data.BEANS, ...data.PREPARATION]) {
+          entry.finished = true;
+        }
+      });
+      const home = tabBar(page);
+      await expectTabs(home, [
+        t('NAV_HOME'),
+        t('NAV_BREWS'),
+        t('A11Y.TAB_HINT_NO_BEAN', { tab: t('NAV_BEANS') }),
+        t('A11Y.TAB_HINT_NO_PREPARATION_OR_MILL', { tab: t('NAV_PROFILE') }),
+      ]);
+      // The mark is still shown; only its words are read.
+      const badges = home.locator('ion-badge');
+      await expect(badges).toHaveCount(2);
+      for (const badge of await badges.all()) {
+        await expect(badge).toBeVisible();
+        await expect(badge).toHaveAttribute('aria-hidden', 'true');
+      }
+    });
+
     test('the tab bars name and select their tabs and are reachable by keyboard', async ({
       page,
     }) => {

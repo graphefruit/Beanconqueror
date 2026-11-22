@@ -17,17 +17,23 @@
       </ion-tab-button>
       <ion-tab-button tab="beans" href="/home/beans" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-bean" aria-hidden="true" />
-        <ion-label>{{"NAV_BEANS" | translate}}</ion-label>
-        @if (!beansExist) {
-          <ion-badge color="danger" />
+        @if (beansExist) {
+          <ion-label>{{"NAV_BEANS" | translate}}</ion-label>
+        } @else {
+          <!-- The badge only shows the hint; its words are in the tab's name.
+               A hidden part of the label would be read apart from the label. -->
+          <ion-label><span aria-hidden="true">{{"NAV_BEANS" | translate}}</span><span class="visually-hidden">{{ "A11Y.TAB_HINT_NO_BEAN" | translate: { tab: ("NAV_BEANS" | translate) } }}</span></ion-label>
+          <ion-badge color="danger" aria-hidden="true" />
         }
       </ion-tab-button>
 
       <ion-tab-button tab="profile" href="/home/profile" tappable>
         <ion-icon class="menu-icon" name="person-outline" aria-hidden="true" />
-        <ion-label>{{"NAV_PROFILE" | translate}}</ion-label>
-        @if (!preparationsExist || !millsExist) {
-          <ion-badge color="danger" />
+        @if (preparationsExist && millsExist) {
+          <ion-label>{{"NAV_PROFILE" | translate}}</ion-label>
+        } @else {
+          <ion-label><span aria-hidden="true">{{"NAV_PROFILE" | translate}}</span><span class="visually-hidden">{{ "A11Y.TAB_HINT_NO_PREPARATION_OR_MILL" | translate: { tab: ("NAV_PROFILE" | translate) } }}</span></ion-label>
+          <ion-badge color="danger" aria-hidden="true" />
         }
       </ion-tab-button>
     </ion-tab-bar>

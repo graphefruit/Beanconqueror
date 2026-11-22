@@ -2096,6 +2096,8 @@
         "MOVE_DOWN": "Move {{name}} down",
         "MOVED_TO_POSITION": "{{name}}: position {{position}} of {{count}}",
         "STEP_OF": "Step {{step}} of {{count}}",
-        "OPENS_QUESTION": "Opens a question"
+        "OPENS_QUESTION": "Opens a question",
+        "TAB_HINT_NO_BEAN": "{{tab}}, no available bean",
+        "TAB_HINT_NO_PREPARATION_OR_MILL": "{{tab}}, a preparation method or grinder is missing"
     }
 }
