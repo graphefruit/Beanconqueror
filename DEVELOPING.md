@@ -108,7 +108,15 @@ pnpm run build
 pnpm e2e
 pnpm e2e --repeat-each=5              # check a new test for flakiness
 pnpm exec playwright show-report      # inspect traces and screenshots of failures
+pnpm e2e:affected                     # only the specs of the areas changed since feature/relaunch
 ```
+
+`pnpm e2e:affected` compares the branch, including uncommitted and new files, with
+`origin/feature/relaunch` and runs the smoke test plus the specs of the changed areas; it passes
+further options on to Playwright. The areas of the specs and of the source folders are listed in
+`e2e/tools/areas.ts`; a changed file outside those folders (shared components, styles,
+translations, test support) runs the full suite. A new spec needs an entry there, which
+`pnpm test:e2e-tools` checks in CI.
 
 - Import `test`/`expect` from `e2e/fixtures.ts`. Each test starts with empty storage, `en-US`
   locale and no permissions. Page errors, console errors and requests leaving the app fail the
