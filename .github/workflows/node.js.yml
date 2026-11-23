@@ -5,9 +5,15 @@ name: pnpm test CI
 
 on:
   push:
-    branches: ['master', 'develop', 'feature/relaunch']
+    # Work branches too: the full E2E suite runs here, not on the shared Mac.
+    branches: ['master', 'develop', 'feature/relaunch', 'fix/**', 'feat/**', 'chore/**', 'perf/**', 'abnahme']
   pull_request:
   workflow_dispatch:
+
+# A newer push to the same branch replaces the running check.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-test:
@@ -38,8 +44,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { browser: chromium, shard: 1/2 }
-          - { browser: chromium, shard: 2/2 }
+          - { browser: chromium, shard: 1/4 }
+          - { browser: chromium, shard: 2/4 }
+          - { browser: chromium, shard: 3/4 }
+          - { browser: chromium, shard: 4/4 }
           # Names, focus and announcements as Safari on iOS exposes them; see playwright.config.ts.
           - { browser: webkit, shard: 1/1 }
 
