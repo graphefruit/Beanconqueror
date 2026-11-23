@@ -7,9 +7,9 @@ import { completeFirstRunWithBrew } from './support/first-brew';
 import { completeFirstRun } from './support/first-run';
 
 /**
- * People with low vision must be able to pinch-zoom (WCAG 1.4.4). Allowing
- * zoom is only safe while every text field is at least 16px: below that, iOS
- * Safari zooms into a field on focus and the layout jumps.
+ * Text grows with the user's text size, but the app itself does not zoom:
+ * a zoomed app reaches past the screen, and people did not find out how to
+ * undo it. Text fields stay at least 16px so they remain readable.
  */
 
 const MIN_FIELD_FONT_SIZE_PX = 16;
@@ -20,7 +20,7 @@ async function fontSizesOf(fields: Locator): Promise<number[]> {
   );
 }
 
-test('the viewport lets people zoom', async ({ page }) => {
+test('the viewport blocks zooming the app', async ({ page }) => {
   await page.goto('/');
   // A meta element has no role; it is read as markup, not as page content.
   const content =
@@ -33,11 +33,9 @@ test('the viewport lets people zoom', async ({ page }) => {
       ),
   );
 
-  expect(settings['user-scalable'] ?? 'yes').not.toMatch(/^(no|0)$/);
-  // axe asks for at least 5x so zooming is not capped early.
-  if (settings['maximum-scale'] !== undefined) {
-    expect(Number(settings['maximum-scale'])).toBeGreaterThanOrEqual(5);
-  }
+  expect(settings['user-scalable']).toBe('no');
+  // A capped scale also stops iOS from zooming into a focused field.
+  expect(Number(settings['maximum-scale'])).toBe(1);
 });
 
 test('text fields in the add-bean form are at least 16px', async ({ page }) => {
