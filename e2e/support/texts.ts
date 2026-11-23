@@ -49,3 +49,11 @@ export function text(
 export function startsWith(value: string): RegExp {
   return new RegExp(`^${value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`);
 }
+
+/**
+ * The name of a tab of the tab bar: its label, followed by what its red mark
+ * means while the tab shows one (as in a new installation).
+ */
+export function mainTabName(label: string): RegExp {
+  return new RegExp(`^${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(,|$)`);
+}

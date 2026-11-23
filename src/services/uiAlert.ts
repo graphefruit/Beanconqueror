@@ -187,6 +187,7 @@ export class UIAlert {
    * set apart under "Technical details:", for users to pass on to support.
    * Ionic shows the message of an alert as text only, so the details are
    * added as elements of their own, after the message in reading order.
+   * Without details (undefined) only the message is shown.
    * Resolves after the alert was dismissed.
    */
   public async showMessageWithDetails(
@@ -197,17 +198,19 @@ export class UIAlert {
       message: this.translate.instant(_message),
       buttons: [{ text: this.translate.instant('OK') }],
     });
-    const doc = alert.ownerDocument;
-    const details = doc.createElement('div');
-    details.className = 'alert-details';
-    const label = doc.createElement('p');
-    label.className = 'alert-details-label';
-    label.textContent = this.translate.instant('TECHNICAL_DETAILS');
-    const cause = doc.createElement('p');
-    cause.textContent = describeError(_details);
-    details.append(label, cause);
-    // Without the element (a changed Ionic) the message alone is still shown.
-    alert.querySelector('.alert-message')?.append(details);
+    if (_details !== undefined) {
+      const doc = alert.ownerDocument;
+      const details = doc.createElement('div');
+      details.className = 'alert-details';
+      const label = doc.createElement('p');
+      label.className = 'alert-details-label';
+      label.textContent = this.translate.instant('TECHNICAL_DETAILS');
+      const cause = doc.createElement('p');
+      cause.textContent = describeError(_details);
+      details.append(label, cause);
+      // Without the element (a changed Ionic) the message alone is still shown.
+      alert.querySelector('.alert-message')?.append(details);
+    }
     await alert.present();
     await alert.onDidDismiss();
   }

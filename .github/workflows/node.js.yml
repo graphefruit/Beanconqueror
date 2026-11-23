@@ -37,7 +37,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2]
+        include:
+          - { browser: chromium, shard: 1/2 }
+          - { browser: chromium, shard: 2/2 }
+          # Names, focus and announcements as Safari on iOS exposes them; see playwright.config.ts.
+          - { browser: webkit, shard: 1/1 }
 
     steps:
       - uses: actions/checkout@v4
@@ -51,13 +55,13 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm exec tsc -p e2e/tsconfig.json
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm e2e --shard=${{ matrix.shard }}/2
+      - run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
+      - run: pnpm e2e --project='*-${{ matrix.browser }}' --shard=${{ matrix.shard }}
       # Traces and screenshots only contain synthetic test data; external requests are blocked.
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report-${{ matrix.shard }}
+          name: playwright-report-${{ matrix.browser }}-${{ strategy.job-index }}
           path: |
             playwright-report/
             test-results/

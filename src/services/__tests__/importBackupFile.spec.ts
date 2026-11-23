@@ -255,7 +255,7 @@ async function startDevice(
   const uiAlert = {
     showLoadingSpinner: jasmine.createSpy('showLoadingSpinner'),
     hideLoadingSpinner: jasmine.createSpy('hideLoadingSpinner'),
-    showMessage: jasmine.createSpy('showMessage'),
+    showMessageWithDetails: jasmine.createSpy('showMessageWithDetails'),
   };
   const fileHelper = {
     // No unfinished file is left from a write before.
@@ -624,7 +624,8 @@ describe('Importing a backup', () => {
       'import',
     );
 
-    expect(result).toEqual({ BACKUP: true });
+    // The error of the import, for the technical details of the message.
+    expect(result).toEqual({ BACKUP: true, cause: new Error('write failed') });
     expect(writtenBackups(device).length).toBe(OLDER_BACKUPS.length + 1);
     expect(device.data.get('BREWS')).toEqual(before.BREWS);
   });
@@ -653,6 +654,9 @@ describe('Importing a backup', () => {
     // The file below is the one the message names.
     expect((failed as ImportNotRolledBackError).messageKey).toBe(
       'IMPORT_NOT_ROLLED_BACK',
+    );
+    expect((failed as ImportNotRolledBackError).cause).toEqual(
+      new Error('write failed'),
     );
 
     // The brews of the import are stored, its settings are not.
@@ -1165,11 +1169,9 @@ describe('Restoring the internal backup at start-up', () => {
     const device = await startDevice(stored, { internalBackup });
     device.directory.failing.write = true;
     await device.helper.checkBackup();
-    expect(device.uiAlert.showMessage).toHaveBeenCalledOnceWith(
+    expect(device.uiAlert.showMessageWithDetails).toHaveBeenCalledOnceWith(
       'PRE_IMPORT_BACKUP_FAILED',
-      undefined,
-      undefined,
-      true,
+      jasmine.anything(),
     );
     // The start writes the list of data updates again.
     device.data.set('VERSION', [{ updatedDataVersions: ['UPDATE_1'] }]);
@@ -1298,14 +1300,12 @@ describe('Restoring the internal backup at start-up', () => {
 
       await device.helper.checkBackup();
 
-      expect(device.uiAlert.showMessage).toHaveBeenCalledOnceWith(
+      expect(device.uiAlert.showMessageWithDetails).toHaveBeenCalledOnceWith(
         message,
-        undefined,
-        undefined,
-        true,
+        jasmine.anything(),
       );
       expect(device.uiAlert.hideLoadingSpinner).toHaveBeenCalledBefore(
-        device.uiAlert.showMessage,
+        device.uiAlert.showMessageWithDetails,
       );
     });
   }
@@ -1415,7 +1415,7 @@ describe('Restoring the internal backup at start-up', () => {
       'internal_backup',
     );
 
-    expect(result).toEqual({ BACKUP: true });
+    expect(result).toEqual({ BACKUP: true, cause: jasmine.anything() });
     const kept = writtenBackups(device);
     const [file] = kept.filter((_path) => !OLDER_BACKUPS.includes(_path));
     expect(kept.length).toBe(OLDER_BACKUPS.length + 1);
@@ -1435,7 +1435,7 @@ describe('Restoring the internal backup at start-up', () => {
       'internal_backup',
     );
 
-    expect(result).toEqual({ BACKUP: true });
+    expect(result).toEqual({ BACKUP: true, cause: jasmine.anything() });
     expect(writtenBackups(device).length).toBe(OLDER_BACKUPS.length + 1);
     expect(Object.fromEntries(device.data)).toEqual(before);
   });
@@ -1496,11 +1496,9 @@ describe('Restoring the internal backup at start-up', () => {
 
     await device.helper.checkBackup();
 
-    expect(device.uiAlert.showMessage).toHaveBeenCalledOnceWith(
+    expect(device.uiAlert.showMessageWithDetails).toHaveBeenCalledOnceWith(
       'PRE_IMPORT_BACKUP_FAILED',
-      undefined,
-      undefined,
-      true,
+      jasmine.anything(),
     );
     expect(Object.fromEntries(device.data)).toEqual(before);
   });
@@ -1658,7 +1656,7 @@ describe('The copy an import rolls back to', () => {
       'import',
     );
 
-    expect(result).toEqual({ BACKUP: true });
+    expect(result).toEqual({ BACKUP: true, cause: jasmine.anything() });
     expect(readAll).toHaveBeenCalledTimes(1);
     expect(Object.fromEntries(device.data)).toEqual(before);
   });
@@ -1680,7 +1678,7 @@ describe('The copy an import rolls back to', () => {
       'import',
     );
 
-    expect(result).toEqual({ BACKUP: true });
+    expect(result).toEqual({ BACKUP: true, cause: jasmine.anything() });
     expect(device.writes).toContain('database WATER');
     expect(Object.fromEntries(device.data)).toEqual(before);
   });
@@ -1736,7 +1734,7 @@ describe('The copy an import rolls back to', () => {
       'import',
     );
 
-    expect(result).toEqual({ BACKUP: true });
+    expect(result).toEqual({ BACKUP: true, cause: jasmine.anything() });
     expect(readAll).toHaveBeenCalledTimes(2);
     expect(Object.fromEntries(device.data)).toEqual({
       ...before,
@@ -1755,7 +1753,7 @@ describe('The copy an import rolls back to', () => {
       'import',
     );
 
-    expect(result).toEqual({ BACKUP: true });
+    expect(result).toEqual({ BACKUP: true, cause: jasmine.anything() });
     expect(readAll).toHaveBeenCalledTimes(1);
     expect(Object.fromEntries(device.data)).toEqual(before);
   });
@@ -2070,7 +2068,7 @@ describe('The backup before a start migration', () => {
     expect(saved.BREWS).toEqual(before.BREWS);
     expect(saved.BEANS).toEqual(before.BEANS);
     expect(Object.fromEntries(device.data)).toEqual(before);
-    expect(device.uiAlert.showMessage).not.toHaveBeenCalled();
+    expect(device.uiAlert.showMessageWithDetails).not.toHaveBeenCalled();
   });
 
   it('resolves false when the file cannot be written', async () => {
@@ -2081,11 +2079,9 @@ describe('The backup before a start migration', () => {
 
     expect(writtenBackups(device)).toEqual([]);
     expect(device.uiLog.error).toHaveBeenCalled();
-    expect(device.uiAlert.showMessage).toHaveBeenCalledOnceWith(
+    expect(device.uiAlert.showMessageWithDetails).toHaveBeenCalledOnceWith(
       'MIGRATION_BACKUP_FAILED',
       undefined,
-      undefined,
-      true,
     );
   });
 
@@ -2096,18 +2092,16 @@ describe('The backup before a start migration', () => {
     expect(await device.helper.writeBackupBeforeMigration()).toBeFalse();
 
     expect(device.directory.files.write).not.toHaveBeenCalled();
-    expect(device.uiAlert.showMessage).toHaveBeenCalledOnceWith(
+    expect(device.uiAlert.showMessageWithDetails).toHaveBeenCalledOnceWith(
       'MIGRATION_BACKUP_FAILED',
       undefined,
-      undefined,
-      true,
     );
   });
 
   it('resolves false also when the message cannot be shown', async () => {
     const device = await startDevice(storedData('own'));
     device.directory.failing.write = true;
-    device.uiAlert.showMessage.and.rejectWith(new Error('no alert'));
+    device.uiAlert.showMessageWithDetails.and.rejectWith(new Error('no alert'));
 
     expect(await device.helper.writeBackupBeforeMigration()).toBeFalse();
   });

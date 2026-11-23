@@ -1,5 +1,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
+import { tabKey } from './keyboard';
+
 /** Layout measurements shared by the tablet and phone-landscape specs. */
 
 export interface Layout {
@@ -175,13 +177,17 @@ export async function tabOrder(
     press < maxPresses && reached.length < controls.length;
     press++
   ) {
-    await page.keyboard.press('Tab');
+    await page.keyboard.press(tabKey(page));
     for (const [index, control] of controls.entries()) {
-      const focused = await control.evaluate(
-        (element) =>
-          (element.getRootNode() as Document | ShadowRoot).activeElement ===
-          element,
-      );
+      // On iOS Ionic briefly shows a copy of a focused field while it scrolls
+      // it above the keyboard.
+      const focused = await control
+        .and(page.locator(':not(.cloned-input)'))
+        .evaluate(
+          (element) =>
+            (element.getRootNode() as Document | ShadowRoot).activeElement ===
+            element,
+        );
       if (focused && !reached.includes(index)) {
         reached.push(index);
       }

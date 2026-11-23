@@ -439,6 +439,14 @@ describe('UIAlert message with technical details', () => {
     expect(texts()[2]).toBe('object');
   }));
 
+  it('shows only the message without details', fakeAsync(() => {
+    void uiAlert.showMessageWithDetails('ERROR_ON_FILE_READING', undefined);
+    flushMicrotasks();
+
+    expect(texts()).toEqual(['Error while reading file data']);
+    expect(alerts[0].element.querySelector('.alert-details')).toBeNull();
+  }));
+
   it('resolves once the alert was closed', fakeAsync(() => {
     let resolved = false;
     void uiAlert

@@ -254,7 +254,14 @@ export class PageFocusService {
   };
 
   private readonly onClick = (event: Event): void => {
-    this.lastControl = clickedControl(event);
+    const control = clickedControl(event);
+    const active = focusedElement(this.document);
+    // ion-input passes a click on its field on to itself, which then goes to
+    // the item around it: the field with focus stays the control.
+    this.lastControl =
+      active instanceof HTMLElement && control?.contains(active)
+        ? active
+        : control;
   };
 
   private readonly onFocusIn = (event: Event): void => {
@@ -281,8 +288,20 @@ export class PageFocusService {
     const overlay = event.target;
     setTimeout(() => {
       const active = this.document.activeElement;
+      const opener =
+        overlay instanceof Element ? this.openedBy.get(overlay) : undefined;
       if (
-        (active && active !== this.document.body && isShown(active)) ||
+        (active &&
+          active !== this.document.body &&
+          isShown(active) &&
+          // As the dialog above closes, focus can land on the host of the
+          // dialog under it (Ionic when that one finishes opening late,
+          // WebKit when the focused dialog is removed): not a real choice.
+          !(
+            opener &&
+            active.matches(OVERLAYS) &&
+            active.contains(inPage(opener))
+          )) ||
         (overlay instanceof Element && this.focusOpener(overlay)) ||
         hasOpenOverlay(this.document)
       ) {

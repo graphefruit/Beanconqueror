@@ -7,7 +7,13 @@ import { expect, test } from './fixtures';
 import { seedDatabase } from './support/seed';
 import { readStoredValue } from './support/stored-values';
 import { generateDataSet } from './support/synthetic-data';
-import { hasText, startsWith, text, type Language } from './support/texts';
+import {
+  hasText,
+  mainTabName,
+  startsWith,
+  text,
+  type Language,
+} from './support/texts';
 
 /**
  * Names, texts and operation for screen reader and keyboard users, in English
@@ -53,15 +59,14 @@ function visible(locator: Locator): Locator {
 }
 
 async function openTab(page: Page, language: Language, key: string) {
-  const tab = page.getByRole('tab', { name: text(language, key), exact: true });
+  const tab = page.getByRole('tab', { name: mainTabName(text(language, key)) });
   await tab.click();
   await expect(tab).toHaveAttribute('aria-selected', 'true');
 }
 
 async function openFromProfile(page: Page, language: Language, key: string) {
   const tab = page.getByRole('tab', {
-    name: text(language, 'NAV_PROFILE'),
-    exact: true,
+    name: mainTabName(text(language, 'NAV_PROFILE')),
   });
   await expect(async () => {
     await tab.click();
@@ -305,19 +310,30 @@ for (const language of ['en', 'de'] as const) {
       await start(page, language);
       await openTab(page, language, 'NAV_BREWS');
 
+      // The button is named after the title of the dialog it opens.
       await visible(
-        page.getByRole('button', { name: t('A11Y.IMPORT_BREW'), exact: true }),
+        page.getByRole('button', { name: t('PRESET_BREW_TITLE'), exact: true }),
       ).press('Enter');
 
       await expect(openDialog(page)).toHaveCount(1);
-      await expect(visible(page.getByText(t('PRESET_BREW_TITLE')))).toHaveCount(
-        1,
-      );
+      await expect(
+        visible(
+          page.getByRole('heading', {
+            name: t('PRESET_BREW_TITLE'),
+            exact: true,
+          }),
+        ),
+      ).toHaveCount(1);
     });
 
     test('names have no spaces at their ends and the count of a segment as written', async ({
       page,
+      browserName,
     }) => {
+      test.skip(
+        browserName !== 'chromium',
+        'Reads the accessibility tree of Chromium.',
+      );
       await start(page, language);
       await expect(
         page.getByRole('button', {

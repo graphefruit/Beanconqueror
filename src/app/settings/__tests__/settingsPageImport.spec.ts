@@ -64,6 +64,7 @@ describe('SettingsPage importing a backup file', () => {
       showLoadingSpinner: Promise.resolve(),
       hideLoadingSpinner: Promise.resolve(),
       showMessage: Promise.resolve(),
+      showMessageWithDetails: Promise.resolve(),
       showConfirm: Promise.resolve(_options.choice),
     });
     const uiExportImportHelper = {
@@ -159,23 +160,46 @@ describe('SettingsPage importing a backup file', () => {
     expect(importBackup).not.toHaveBeenCalled();
     expect(uiAlert.showLoadingSpinner).not.toHaveBeenCalled();
     expect(uiAlert.showMessage).not.toHaveBeenCalled();
+    expect(uiAlert.showMessageWithDetails).not.toHaveBeenCalled();
   });
 
-  it('says that nothing was imported when the current data could not be saved', async () => {
+  it('says that nothing was imported when the current data could not be saved, with the reason', async () => {
+    const reason = new Error('disk full');
     const { page, uiAlert } = pageWith({
       savesBackup: true,
       choice: 'YES',
       importBackup: jasmine
         .createSpy('importBackup')
-        .and.rejectWith(new PreImportBackupError(new Error('disk full'))),
+        .and.rejectWith(new PreImportBackupError(reason)),
     });
 
     await page.__importJSON(parsedBackup(), '');
 
     expect(uiAlert.hideLoadingSpinner).toHaveBeenCalled();
-    expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
+    expect(uiAlert.showMessageWithDetails).toHaveBeenCalledOnceWith(
       'PRE_IMPORT_BACKUP_FAILED',
+      reason,
     );
+  });
+
+  it('says that no data was changed when the import was rolled back, with the error of the import', async () => {
+    const cause = new TypeError('x is null');
+    const { page, uiAlert } = pageWith({
+      savesBackup: true,
+      choice: 'YES',
+      importBackup: jasmine
+        .createSpy('importBackup')
+        .and.resolveTo({ BACKUP: true, cause }),
+    });
+
+    await page.__importJSON(parsedBackup(), '');
+
+    expect(uiAlert.hideLoadingSpinner).toHaveBeenCalled();
+    expect(uiAlert.showMessageWithDetails).toHaveBeenCalledOnceWith(
+      'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
+      cause,
+    );
+    expect(uiAlert.showMessage).not.toHaveBeenCalled();
   });
 
   for (const [backup, written, message] of [
@@ -186,19 +210,23 @@ describe('SettingsPage importing a backup file', () => {
       'IMPORT_NOT_ROLLED_BACK_NO_BACKUP',
     ],
   ] as const) {
-    it(`says that the data can be incomplete and ${backup} when the import could not be rolled back`, async () => {
+    it(`says that the data can be incomplete and ${backup} when the import could not be rolled back, with the error of the import`, async () => {
+      const cause = new Error('quota exceeded');
       const { page, uiAlert } = pageWith({
         savesBackup: written,
         choice: 'YES',
         importBackup: jasmine
           .createSpy('importBackup')
-          .and.rejectWith(new ImportNotRolledBackError(written)),
+          .and.rejectWith(new ImportNotRolledBackError(written, cause)),
       });
 
       await page.__importJSON(parsedBackup(), '');
 
       expect(uiAlert.hideLoadingSpinner).toHaveBeenCalled();
-      expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(message);
+      expect(uiAlert.showMessageWithDetails).toHaveBeenCalledOnceWith(
+        message,
+        cause,
+      );
     });
   }
 
@@ -214,19 +242,19 @@ describe('SettingsPage importing a backup file', () => {
     }
   });
 
-  it('keeps the message for other failures of the import', async () => {
+  it('keeps the message for other failures of the import, with their error', async () => {
+    const error = new Error('current data not readable');
     const { page, uiAlert } = pageWith({
       savesBackup: true,
       choice: 'YES',
-      importBackup: jasmine
-        .createSpy('importBackup')
-        .and.rejectWith(new Error('current data not readable')),
+      importBackup: jasmine.createSpy('importBackup').and.rejectWith(error),
     });
 
     await page.__importJSON(parsedBackup(), '');
 
-    expect(uiAlert.showMessage).toHaveBeenCalledOnceWith(
+    expect(uiAlert.showMessageWithDetails).toHaveBeenCalledOnceWith(
       'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
+      error,
     );
   });
 });

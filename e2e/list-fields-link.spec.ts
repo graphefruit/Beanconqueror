@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { completeFirstRun } from './support/first-run';
+import { mainTabName } from './support/texts';
 
 /**
  * The gear at the top right of the Beans and Brews tabs opens the page that
@@ -26,7 +27,7 @@ const LISTS = [
 ];
 
 function tab(page: Page, name: string) {
-  return page.getByRole('tab', { name, exact: true });
+  return page.getByRole('tab', { name: mainTabName(name) });
 }
 
 function gear(page: Page, name: string) {

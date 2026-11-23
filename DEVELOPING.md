@@ -84,12 +84,14 @@ Do not regenerate the file with `--suppress-all` to hide new errors.
 
 ### Browser end-to-end tests
 
-Playwright runs user journeys against the real app in an emulated Pixel 7 (Chromium). It starts
-its own dev server on port 4300, so nothing needs to be running beforehand. These run in CI.
+Playwright runs user journeys against the real app in an emulated Pixel 7 (Chromium). The
+accessibility, focus and announcement specs also run in an emulated iPhone 15 (WebKit), as VoiceOver
+reads what Safari exposes. Playwright starts its own dev server on port 4300, so nothing needs to be
+running beforehand. These run in CI.
 Set `E2E_PORT` to use another port, e.g. to run two worktrees side by side (`E2E_PORT=4310 pnpm e2e`).
 
 ```shell
-pnpm exec playwright install chromium # once
+pnpm exec playwright install chromium webkit # once
 pnpm e2e
 pnpm e2e --repeat-each=5              # check a new test for flakiness
 pnpm exec playwright show-report      # inspect traces and screenshots of failures
@@ -112,6 +114,8 @@ pnpm exec playwright show-report      # inspect traces and screenshots of failur
   it. Each row is a `listitem` with `aria-setsize` and `aria-posinset` of the whole list.
 - Use synthetic data only; never real user exports. Traces and screenshots are uploaded as CI
   artifacts.
+- In WebKit, Tab passes over buttons and links as in Safari; press `tabKey(page)` from
+  `e2e/support/keyboard.ts` to move focus like a keyboard user.
 - Browser emulation does not replace testing on a real device (BLE, NFC, camera, filesystem).
 
 #### Accessibility baseline
@@ -128,7 +132,7 @@ After fixing violations, or when a markup change moves a known violation to a ne
 regenerate the file and review the diff before committing:
 
 ```shell
-A11Y_UPDATE_BASELINE=1 pnpm e2e e2e/accessibility.spec.ts
+A11Y_UPDATE_BASELINE=1 pnpm e2e e2e/accessibility.spec.ts --project=pixel-7-chromium
 git diff e2e/accessibility-baseline.json
 ```
 

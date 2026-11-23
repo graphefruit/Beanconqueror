@@ -9,6 +9,7 @@ import {
   saveBrew,
 } from './support/brew-form';
 import { completeFirstRunWithBrew } from './support/first-brew';
+import { mainTabName } from './support/texts';
 import { toast } from './support/toast';
 
 /**
@@ -65,7 +66,7 @@ test('the Brew quick action during a brew leaves the user on the tab they were o
   await page.getByRole('button', { name: 'Cancel' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(
-    page.getByRole('tab', { name: 'Beans', exact: true }),
+    page.getByRole('tab', { name: mainTabName('Beans') }),
   ).toHaveAttribute('aria-selected', 'true');
   await expect(page).toHaveURL(/\/home\/beans$/);
 });

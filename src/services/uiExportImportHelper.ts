@@ -185,21 +185,46 @@ function holdsUnchangedImport(_stored: any, _now: number): boolean {
 }
 
 /**
+ * How an import ended (UIStorage.import()): `BACKUP` is true when it failed
+ * and was rolled back, `cause` is then the error of the import.
+ */
+export interface ImportResult {
+  BACKUP: boolean;
+  cause?: unknown;
+}
+
+/**
  * An import failed and the values from before could not be written back
  * completely, so the stored data can be a mix of old and imported values.
  * `messageKey` is the text to show: it only names the backup written before
- * the import when there is one.
+ * the import when there is one. `cause` is the error of the import.
  */
 export class ImportNotRolledBackError extends Error {
   public readonly messageKey: string;
 
-  constructor(_backupWritten: boolean) {
-    super('The import failed and could not be rolled back');
+  constructor(_backupWritten: boolean, _cause?: unknown) {
+    super('The import failed and could not be rolled back', {
+      cause: _cause,
+    });
     this.name = 'ImportNotRolledBackError';
     this.messageKey = _backupWritten
       ? 'IMPORT_NOT_ROLLED_BACK'
       : 'IMPORT_NOT_ROLLED_BACK_NO_BACKUP';
   }
+}
+
+/**
+ * The error that made an import fail, for the technical details of the
+ * message: the one inside when only its consequence was wrapped around it.
+ */
+export function importFailureCause(_error: unknown): unknown {
+  if (_error instanceof PreImportBackupError) {
+    return _error.reason;
+  }
+  if (_error instanceof ImportNotRolledBackError) {
+    return _error.cause;
+  }
+  return _error;
 }
 
 @Service()
@@ -305,7 +330,7 @@ export class UIExportImportHelper {
     _source: RESTORE_SOURCE,
     _fileName?: string,
     _currentDataUnreadable = false,
-  ): Promise<{ BACKUP: boolean }> {
+  ): Promise<ImportResult> {
     const { written, current } = await this.__writeBackupBeforeImport(
       _currentDataUnreadable,
     );
@@ -313,7 +338,7 @@ export class UIExportImportHelper {
     let rolledBack = false;
     try {
       // The values the file was written from are the copy to roll back to.
-      const result: { BACKUP: boolean } = await this.uiStorage.import(
+      const result: ImportResult = await this.uiStorage.import(
         _data,
         _source,
         _fileName,
@@ -324,8 +349,11 @@ export class UIExportImportHelper {
       rolledBack = result?.BACKUP === true;
       return result;
     } catch (ex) {
-      throw (ex as { BACKUP?: boolean })?.BACKUP === true
-        ? new ImportNotRolledBackError(written !== undefined)
+      throw (ex as ImportResult)?.BACKUP === true
+        ? new ImportNotRolledBackError(
+            written !== undefined,
+            (ex as ImportResult).cause,
+          )
         : ex;
     } finally {
       // Neither rejects, so a failed import keeps its own error.
@@ -787,6 +815,7 @@ export class UIExportImportHelper {
         }
         await this.__sayBackupNotRestored(
           'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
+          result?.cause,
         );
       } catch (ex) {
         this.uiLog.error('Could not import the backup chosen at start-up', ex);
@@ -794,6 +823,7 @@ export class UIExportImportHelper {
           ex instanceof ImportNotRolledBackError
             ? ex.messageKey
             : 'IMPORT_UNSUCCESSFULLY',
+          importFailureCause(ex),
         );
       }
     }
@@ -897,6 +927,7 @@ export class UIExportImportHelper {
           this.uiLog.error('Could not import  Backup, it was rolled back');
           await this.__sayBackupNotRestored(
             'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
+            _result?.cause,
           );
           resolve(null);
         },
@@ -910,7 +941,10 @@ export class UIExportImportHelper {
           } else if (_error instanceof ImportNotRolledBackError) {
             message = _error.messageKey;
           }
-          await this.__sayBackupNotRestored(message);
+          await this.__sayBackupNotRestored(
+            message,
+            importFailureCause(_error),
+          );
           resolve(null);
         },
       );
@@ -923,10 +957,13 @@ export class UIExportImportHelper {
    * happen. Otherwise the user would only see it tried again at the next
    * start. Never rejects.
    */
-  private async __sayBackupNotRestored(_message: string): Promise<void> {
+  private async __sayBackupNotRestored(
+    _message: string,
+    _details?: unknown,
+  ): Promise<void> {
     try {
       await this.uiAlert.hideLoadingSpinner();
-      await this.uiAlert.showMessage(_message, undefined, undefined, true);
+      await this.uiAlert.showMessageWithDetails(_message, _details);
     } catch (ex) {
       this.uiLog.error('Could not import  Backup - message not shown', ex);
     }

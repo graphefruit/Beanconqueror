@@ -289,6 +289,70 @@ describe('PageFocusService', () => {
       expect(document.activeElement).toBe(heading(profile));
     });
 
+    describe('from a dialog that takes focus as the one above closes', () => {
+      /** A form dialog that gets focus itself while the picker above closes. */
+      async function form(control: HTMLElement): Promise<HTMLElement> {
+        const modal = await presented('ion-modal');
+        modal.tabIndex = -1;
+        modal.append(control);
+        return modal;
+      }
+
+      async function closePickerWhileFormTakesFocus(
+        modal: HTMLElement,
+      ): Promise<void> {
+        const picker = await presented('ion-modal');
+        fire(picker, 'ionModalWillPresent');
+        modal.focus();
+        dismissed(picker, 'ionModalDidDismiss');
+        await afterDismiss();
+      }
+
+      it('puts focus back on the field that opened the picker', async () => {
+        // Stand-ins for ion-item and ion-input, which other tests define.
+        const item = document.createElement('div');
+        item.className = 'ion-focusable';
+        item.innerHTML = '<span><input readonly /></span>';
+        const modal = await form(item);
+        const field = item.querySelector('input');
+        field.focus();
+        // ion-input passes the click on its field on to itself.
+        field.click();
+        field.parentElement.dispatchEvent(
+          new MouseEvent('click', { bubbles: true }),
+        );
+
+        await closePickerWhileFormTakesFocus(modal);
+
+        expect(document.activeElement).toBe(field);
+      });
+
+      it('puts focus back on a control in a shadow root', async () => {
+        const select = document.createElement('div');
+        const button = document.createElement('button');
+        select.attachShadow({ mode: 'open' }).append(button);
+        const modal = await form(select);
+        button.click();
+
+        await closePickerWhileFormTakesFocus(modal);
+
+        expect(select.shadowRoot.activeElement).toBe(button);
+      });
+
+      it('leaves focus on another dialog the app opened', async () => {
+        const button = document.createElement('button');
+        const modal = await form(button);
+        button.click();
+        const other = await form(document.createElement('button'));
+
+        await closePickerWhileFormTakesFocus(other);
+
+        // Ionic, once defined, may move focus on into that dialog.
+        expect(other.contains(document.activeElement)).toBe(true);
+        expect(modal.contains(document.activeElement)).toBe(false);
+      });
+    });
+
     it('leaves focus alone while another dialog is open', async () => {
       const alert = await presented('ion-alert');
       settingsLink.focus();

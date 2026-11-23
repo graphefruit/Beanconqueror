@@ -285,15 +285,12 @@ export class UIHelper {
     return promise;
   }
 
+  // Both reject where the screen cannot be kept on, e.g. in a browser before the first tap.
   public deviceKeepAwake() {
-    try {
-      KeepAwake.keepAwake();
-    } catch (ex) {}
+    KeepAwake.keepAwake().catch(() => undefined);
   }
   public deviceAllowSleepAgain() {
-    try {
-      KeepAwake.allowSleep();
-    } catch (ex) {}
+    KeepAwake.allowSleep().catch(() => undefined);
   }
 
   public convertToNumber(event: any): number {

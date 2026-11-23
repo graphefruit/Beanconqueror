@@ -7,6 +7,7 @@ import { pressHardwareBack } from './support/back-button';
 import { completeFirstRun } from './support/first-run';
 import type { NativeBoundary } from './support/native';
 import { openFromProfile } from './support/profile';
+import { mainTabName } from './support/texts';
 
 /**
  * The tab bar holds Home, Brews, Beans and Profile. Preparation methods,
@@ -617,7 +618,7 @@ test.describe('the Android back key', () => {
     page,
     native,
   }) => {
-    await page.getByRole('tab', { name: 'Beans', exact: true }).click();
+    await page.getByRole('tab', { name: mainTabName('Beans') }).click();
     await page
       .getByRole('banner')
       .getByRole('link', { name: 'Bean parameters', exact: true })

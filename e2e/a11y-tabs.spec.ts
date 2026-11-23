@@ -2,6 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { showTab } from './support/beans';
+import { tabKey } from './support/keyboard';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
 import { startsWith, text, type Language } from './support/texts';
@@ -133,9 +134,6 @@ async function swipeBackAndCancel(page: Page, farthest: number): Promise<void> {
   await touch('touchEnd', 4);
   await cdp.detach();
 }
-
-// The barista mode keeps the screen on; the browser refuses that without a tap.
-test.use({ allowedConsoleErrors: [/Wake Lock permission request denied/] });
 
 for (const language of ['en', 'de'] as const) {
   test.describe(language, () => {
@@ -288,6 +286,28 @@ for (const language of ['en', 'de'] as const) {
       await expectPanelOfSelectedTab(reference);
     });
 
+    test('the tabs with a red mark say what it means', async ({ page }) => {
+      await start(page, language, (data) => {
+        for (const entry of [...data.BEANS, ...data.PREPARATION]) {
+          entry.finished = true;
+        }
+      });
+      const home = tabBar(page);
+      await expectTabs(home, [
+        t('NAV_HOME'),
+        t('NAV_BREWS'),
+        t('A11Y.TAB_HINT_NO_BEAN', { tab: t('NAV_BEANS') }),
+        t('A11Y.TAB_HINT_NO_PREPARATION_OR_MILL', { tab: t('NAV_PROFILE') }),
+      ]);
+      // The mark is still shown; only its words are read.
+      const badges = home.locator('ion-badge');
+      await expect(badges).toHaveCount(2);
+      for (const badge of await badges.all()) {
+        await expect(badge).toBeVisible();
+        await expect(badge).toHaveAttribute('aria-hidden', 'true');
+      }
+    });
+
     test('the tab bars name and select their tabs and are reachable by keyboard', async ({
       page,
     }) => {
@@ -341,7 +361,7 @@ for (const language of ['en', 'de'] as const) {
         page.getByRole('heading', { level: 1, name: t('NAV_SETTINGS') }),
       ).toBeFocused();
 
-      await page.keyboard.press('Shift+Tab');
+      await page.keyboard.press(tabKey(page, true));
       await expect(
         visible(page.getByRole('button', { name: t('BACK'), exact: true })),
       ).toBeFocused();
@@ -352,7 +372,12 @@ for (const language of ['en', 'de'] as const) {
 
     test('focus stays where it was when a swipe back is let go of early', async ({
       page,
+      browserName,
     }) => {
+      test.skip(
+        browserName !== 'chromium',
+        'Drags the finger through Chromium.',
+      );
       await start(page, language);
       await tabBar(page)
         .getByRole('tab', { name: t('NAV_PROFILE') })
@@ -484,11 +509,18 @@ for (const language of ['en', 'de'] as const) {
     });
 
     test('the buttons of a list entry name the entry', async ({ page }) => {
-      // Beans of the same name are told apart by what their cards show.
+      // Beans of the same name are told apart by what their cards show,
+      // brews of the same minute by their bean.
       await start(page, language, (data) => {
         const [first, second] = data.BEANS.filter((bean) => !bean.finished);
         second.name = first.name;
         second.roaster = first.roaster;
+        const [newest, next] = data.BREWS.slice(-2).reverse();
+        next.config.unix_timestamp = newest.config.unix_timestamp;
+        newest.bean = first.config.uuid;
+        next.bean = data.BEANS.find(
+          (bean) => !bean.finished && bean.name !== first.name,
+        )!.config.uuid;
       });
       const optionsFor = startsWith(t('A11Y.OPTIONS_FOR', { name: '' }));
       const brewOptions = startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' }));
@@ -513,6 +545,29 @@ for (const language of ['en', 'de'] as const) {
         expect(names.length, route).toBeGreaterThan(1);
         expect(new Set(names).size, `names on ${route}`).toBe(names.length);
       }
+    });
+
+    test('the options of a brew whose bean is gone name its date only', async ({
+      page,
+    }) => {
+      await start(page, language, (data) => {
+        const newest = data.BREWS[data.BREWS.length - 1];
+        data.BEANS = data.BEANS.filter(
+          (bean) => bean.config.uuid !== newest.bean,
+        );
+      });
+      await show(page, '/home/brews');
+      const options = visible(
+        page.locator('brew').getByRole('button', {
+          name: startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' })),
+        }),
+      ).first();
+      await expect(options).toHaveAttribute(
+        'aria-label',
+        new RegExp(
+          `^${escape(t('A11Y.BREW_OPTIONS_FOR', { date: '' }))}[\\d./-]+ \\d{2}:\\d{2}$`,
+        ),
+      );
     });
 
     test('the statistics work by keyboard', async ({ page }) => {

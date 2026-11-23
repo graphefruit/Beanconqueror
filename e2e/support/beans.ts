@@ -8,6 +8,7 @@ import {
 import { BREW_TEST_START } from './brew-form';
 import { seedDatabase } from './seed';
 import { readStoredValue } from './stored-values';
+import { mainTabName } from './texts';
 
 /**
  * Helpers for the bean list, the bean cards and the bean dialogs. Elements are located by role
@@ -64,7 +65,7 @@ export async function startWithBeans(
 }
 
 export async function openBeansTab(page: Page): Promise<void> {
-  await page.getByRole('tab', { name: 'Beans', exact: true }).click();
+  await page.getByRole('tab', { name: mainTabName('Beans') }).click();
   await expect(
     page.getByRole('button', { name: 'Add bean' }).filter({ visible: true }),
   ).toHaveCount(1);
