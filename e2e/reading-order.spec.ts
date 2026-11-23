@@ -42,7 +42,7 @@ async function top(locator: Locator): Promise<number> {
 /** Drags "Brew Temperature" above "Bean Type" in the global sort order. */
 async function sortBrewTemperatureFirst(page: Page): Promise<void> {
   await openBrewParameterPage(page, 'Sort parameters');
-  // See brew-parameters.spec.ts: the drag handle has no accessible name yet.
+  // See brew-parameters.spec.ts: the drag handle is hidden from screen readers.
   const row = (label: string) =>
     page.locator('ion-item').filter({
       has: page.getByText(label, { exact: true }),
