@@ -68,6 +68,12 @@ re-exports or an `export default` value without functions) are skipped.
 An entry that matches no file fails as well, so rename or remove entries together with their
 folders. The rules are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#coverage-of-new-code).
 
+`pnpm test:coverage` sets `CI=1`, which turns off the Angular build cache for that run. In a git
+worktree, Angular keeps the cache in the main checkout, so all worktrees share it. Its entries are
+keyed by file content only, and coverage builds write the file path into them: another worktree
+with the same file would then report coverage under its own paths, and new code shows as
+"not loaded".
+
 Run the linter. It also runs in CI. Existing errors are recorded in `eslint-suppressions.json`,
 so only new errors fail. If you fix existing errors, shrink the file and commit it:
 

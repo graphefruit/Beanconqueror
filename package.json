@@ -8,7 +8,7 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test --browsers=ChromeHeadless --watch=false",
-    "test:coverage": "ng test --browsers=ChromeHeadless --watch=false --configuration=coverage",
+    "test:coverage": "CI=1 ng test --browsers=ChromeHeadless --watch=false --configuration=coverage",
     "test:dev": "ng test",
     "lint": "eslint \"src/**/*.ts\" \"src/**/*.html\" && stylelint \"src/**/*.scss\"",
     "e2e": "playwright test",
