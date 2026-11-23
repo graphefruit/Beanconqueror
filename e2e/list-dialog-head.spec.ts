@@ -1,6 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
+import { showTab } from './support/beans';
 import { openAddBrew } from './support/brew-form';
 import { tabKey } from './support/keyboard';
 import { seedDatabase } from './support/seed';
@@ -91,6 +92,15 @@ test('the reference graph chooser keeps its tabs and search on top', async ({
   });
   const list = page.locator(`app-brew-choose-graph-reference ${VIRTUAL_LIST}`);
   await expect(list.getByRole('listitem').first()).toBeVisible();
+
+  // The tabs lie inside the group of the radios: switching them keeps the
+  // brew chosen.
+  const chosen = list.getByRole('radio').first();
+  await chosen.click();
+  await expect(chosen).toBeChecked();
+  await showTab(dialog(page).getByRole('tab', { name: 'Archived Brews' }));
+  await showTab(dialog(page).getByRole('tab', { name: 'Active Brews' }));
+  await expect(list.getByRole('radio').first()).toBeChecked();
 
   await expectHeadOnTop(page, list);
 });
