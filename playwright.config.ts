@@ -17,6 +17,8 @@ export default defineConfig({
   testDir: './e2e',
   outputDir: './test-results',
   fullyParallel: true,
+  // Several worktrees run E2E at once on one Mac; the default (half the cores) per run starved it.
+  workers: isCI ? undefined : 3,
   forbidOnly: isCI,
   // Flaky tests must be fixed, not retried into green.
   retries: 0,
