@@ -50,8 +50,12 @@ jobs:
           - { browser: chromium, shard: 2/4 }
           - { browser: chromium, shard: 3/4 }
           - { browser: chromium, shard: 4/4 }
-          # Names, focus and announcements as Safari on iOS exposes them; see playwright.config.ts.
-          - { browser: webkit, shard: 1/1 }
+        # Names, focus and announcements as Safari on iOS exposes them; see playwright.config.ts.
+        # Only in Berlin time: UTC date logic is covered by Chromium, and ten jobs per run let two
+        # branches check at once within the 20 concurrent jobs of the free plan.
+        include:
+          - { tz: 'Europe/Berlin', run: { browser: webkit, shard: 1/2 } }
+          - { tz: 'Europe/Berlin', run: { browser: webkit, shard: 2/2 } }
 
     steps:
       - uses: actions/checkout@v4
