@@ -145,7 +145,6 @@ for (const language of ['en', 'de'] as const) {
 
     test('unit choices, date fields and time fields say what they set', async ({
       page,
-      browserName,
     }) => {
       await start(page, language);
       await show(page, '/home/brews');
@@ -195,12 +194,7 @@ for (const language of ['en', 'de'] as const) {
         ).toBeVisible();
       }
       await click(page, t('CANCEL'));
-      // Quarantined in WebKit: when the closing dialog itself has focus,
-      // WebKit moves it to the dialog below before Ionic can give it back, in
-      // about one run of five.
-      if (browserName !== 'webkit') {
-        await expect(time).toBeFocused();
-      }
+      await expect(time).toBeFocused();
 
       await click(page, t('CANCEL'));
       await show(page, '/home/beans');
