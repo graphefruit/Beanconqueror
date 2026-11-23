@@ -43,7 +43,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
+        # Date logic must hold in the user's zone and in UTC; replaces the local TZ=UTC second run.
+        tz: ['Europe/Berlin', 'UTC']
+        run:
           - { browser: chromium, shard: 1/4 }
           - { browser: chromium, shard: 2/4 }
           - { browser: chromium, shard: 3/4 }
@@ -63,13 +65,15 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm exec tsc -p e2e/tsconfig.json
-      - run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
-      - run: pnpm e2e --project='*-${{ matrix.browser }}' --shard=${{ matrix.shard }}
+      - run: pnpm exec playwright install --with-deps ${{ matrix.run.browser }}
+      - run: pnpm e2e --project='*-${{ matrix.run.browser }}' --shard=${{ matrix.run.shard }}
+        env:
+          TZ: ${{ matrix.tz }}
       # Traces and screenshots only contain synthetic test data; external requests are blocked.
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report-${{ matrix.browser }}-${{ strategy.job-index }}
+          name: playwright-report-${{ matrix.run.browser }}-${{ strategy.job-index }}
           path: |
             playwright-report/
             test-results/
