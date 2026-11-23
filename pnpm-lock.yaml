@@ -5,10 +5,10 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@aparajita/capacitor-dark-mode>@capacitor/android': ^8.6.0
+  '@aparajita/capacitor-dark-mode>@capacitor/android': ^8.6.2
   '@aparajita/capacitor-dark-mode>@capacitor/app': ^8.1.2
-  '@aparajita/capacitor-dark-mode>@capacitor/core': ^8.6.0
-  '@aparajita/capacitor-dark-mode>@capacitor/ios': ^8.6.0
+  '@aparajita/capacitor-dark-mode>@capacitor/core': ^8.6.2
+  '@aparajita/capacitor-dark-mode>@capacitor/ios': ^8.6.2
   '@aparajita/capacitor-dark-mode>@capacitor/status-bar': ^8.0.4
 
 importers:
@@ -50,67 +50,67 @@ importers:
         version: 2.17.0
       '@capacitor-community/keep-awake':
         specifier: ^8.0.1
-        version: 8.0.1(@capacitor/core@8.6.0)
+        version: 8.0.1(@capacitor/core@8.6.2)
       '@capacitor/android':
-        specifier: ^8.6.0
-        version: 8.6.0(@capacitor/core@8.6.0)
+        specifier: ^8.6.2
+        version: 8.6.2(@capacitor/core@8.6.2)
       '@capacitor/app':
         specifier: ^8.1.2
-        version: 8.1.2(@capacitor/core@8.6.0)
+        version: 8.1.2(@capacitor/core@8.6.2)
       '@capacitor/app-launcher':
         specifier: ^8.0.1
-        version: 8.0.1(@capacitor/core@8.6.0)
+        version: 8.0.1(@capacitor/core@8.6.2)
       '@capacitor/barcode-scanner':
         specifier: ^3.1.3
-        version: 3.1.3(@capacitor/core@8.6.0)
+        version: 3.1.3(@capacitor/core@8.6.2)
       '@capacitor/camera':
         specifier: ^8.2.6
-        version: 8.2.6(@capacitor/core@8.6.0)
+        version: 8.2.6(@capacitor/core@8.6.2)
       '@capacitor/clipboard':
         specifier: ^8.0.1
-        version: 8.0.1(@capacitor/core@8.6.0)
+        version: 8.0.1(@capacitor/core@8.6.2)
       '@capacitor/core':
-        specifier: ^8.6.0
-        version: 8.6.0
+        specifier: ^8.6.2
+        version: 8.6.2
       '@capacitor/device':
         specifier: ^8.0.3
-        version: 8.0.3(@capacitor/core@8.6.0)
+        version: 8.0.3(@capacitor/core@8.6.2)
       '@capacitor/filesystem':
         specifier: 8.1.5
-        version: 8.1.5(@capacitor/core@8.6.0)
+        version: 8.1.5(@capacitor/core@8.6.2)
       '@capacitor/geolocation':
         specifier: 8.2.4
-        version: 8.2.4(@capacitor/core@8.6.0)
+        version: 8.2.4(@capacitor/core@8.6.2)
       '@capacitor/haptics':
         specifier: ^8.0.2
-        version: 8.0.2(@capacitor/core@8.6.0)
+        version: 8.0.2(@capacitor/core@8.6.2)
       '@capacitor/ios':
-        specifier: ^8.6.0
-        version: 8.6.0(@capacitor/core@8.6.0)
+        specifier: ^8.6.2
+        version: 8.6.2(@capacitor/core@8.6.2)
       '@capacitor/keyboard':
-        specifier: 8.0.1
-        version: 8.0.1(@capacitor/core@8.6.0)
+        specifier: 8.0.6
+        version: 8.0.6(@capacitor/core@8.6.2)
       '@capacitor/share':
         specifier: ^8.0.3
-        version: 8.0.3(@capacitor/core@8.6.0)
+        version: 8.0.3(@capacitor/core@8.6.2)
       '@capacitor/splash-screen':
         specifier: ^8.0.2
-        version: 8.0.2(@capacitor/core@8.6.0)
+        version: 8.0.2(@capacitor/core@8.6.2)
       '@capacitor/status-bar':
         specifier: ^8.0.4
-        version: 8.0.4(@capacitor/core@8.6.0)
+        version: 8.0.4(@capacitor/core@8.6.2)
       '@capawesome/capacitor-android-edge-to-edge-support':
         specifier: ^8.0.8
-        version: 8.0.8(@capacitor/core@8.6.0)
+        version: 8.0.8(@capacitor/core@8.6.2)
       '@capawesome/capacitor-file-picker':
         specifier: ^8.1.1
-        version: 8.1.1(@capacitor/core@8.6.0)
+        version: 8.1.1(@capacitor/core@8.6.2)
       '@capgo/camera-preview':
-        specifier: ^8.14.4
-        version: 8.14.4(@capacitor/core@8.6.0)
+        specifier: ^8.15.4
+        version: 8.15.4(@capacitor/core@8.6.2)
       '@capgo/capacitor-llm':
         specifier: ~8.0.19
-        version: 8.0.19(@capacitor/core@8.6.0)(@mediapipe/tasks-genai@0.10.30)
+        version: 8.0.19(@capacitor/core@8.6.2)(@mediapipe/tasks-genai@0.10.30)
       '@ionic/angular':
         specifier: ^9.0.11
         version: 9.0.11(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/forms@22.2.6(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.2.6(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3)))(rxjs@7.8.2))(@angular/router@22.2.6(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.2.6(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3)))(rxjs@7.8.2))(rxjs@7.8.2)(zone.js@0.16.3)
@@ -140,7 +140,7 @@ importers:
         version: 17.0.0(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))
       '@pantrist/capacitor-plugin-ml-kit-text-recognition':
         specifier: ^8.1.1
-        version: 8.1.1(@capacitor/core@8.6.0)
+        version: 8.1.1(@capacitor/core@8.6.2)
       '@tanstack/angular-virtual':
         specifier: 6.1.12
         version: 6.1.12(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))
@@ -168,9 +168,6 @@ importers:
       javascript-color-gradient:
         specifier: ^2.5.0
         version: 2.5.0
-      localforage-cordovasqlitedriver:
-        specifier: ^1.8.0
-        version: 1.8.0
       lodash:
         specifier: ^4.18.1
         version: 4.18.1
@@ -233,8 +230,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(@types/node@25.9.9)
       '@capacitor/cli':
-        specifier: ^8.6.0
-        version: 8.6.0
+        specifier: ^8.6.2
+        version: 8.6.2
       '@eslint/js':
         specifier: ^9.39.5
         version: 9.39.5
@@ -271,9 +268,6 @@ importers:
       cordova-plugin-health:
         specifier: ^2.1.1
         version: 2.1.1
-      cordova-sqlite-storage:
-        specifier: ^7.0.0
-        version: 7.0.0
       eslint:
         specifier: ^9.39.5
         version: 9.39.5
@@ -695,8 +689,8 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/android@8.6.0':
-    resolution: {integrity: sha512-6IJS0TCfV/F/8+324CCwYd3xL6r+TH0W7zzaxYzPz9IV3YWCNvsZDuCCPHUIBC5iASb9od827ddSJ6rz+9Pu1Q==}
+  '@capacitor/android@8.6.2':
+    resolution: {integrity: sha512-dWXnXmOVTtxU91n5h11MzoQ7PAMjyzU1qguw0mBJZiwSuhGvLKTG/IlsQ75H8qeE0a1acV2f573x15wYvyzuVA==}
     peerDependencies:
       '@capacitor/core': ^8.6.0
 
@@ -725,8 +719,8 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/cli@8.6.0':
-    resolution: {integrity: sha512-TyLo1v6AqK39inlB5Edm7eFc+dyk4r+Du5bbyD+cRm/u/3b+LkNIeyp5wwYp3ToO3rWiLs4T/PabXGADO0Rlxg==}
+  '@capacitor/cli@8.6.2':
+    resolution: {integrity: sha512-3HeNPX3cEWBSljJT0sJviZCxXRoToTLAufhUcIJh+JMj1xOhLFZpuj8oFRnJ0kNYAf7DIBHQDmilIXloK9+YYg==}
     engines: {node: '>=22.0.0'}
     hasBin: true
 
@@ -735,8 +729,8 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/core@8.6.0':
-    resolution: {integrity: sha512-9F2zzuGYTJu+wqmQSEmqnFBfGrhC/njjMCfmxbvg9mq8xJT4wNh5pxbMFZxvW/yDhYJWPEBFQxeqzfo1gKrvxg==}
+  '@capacitor/core@8.6.2':
+    resolution: {integrity: sha512-UEb9crRuqEAe2Iu2eGOEuQ8rLQxpwg7ZZIpl17UJoytEpnV1e4oXXW0K7yYS2NsCOGmJjyLeKjNlgG7tkAoX8g==}
 
   '@capacitor/device@8.0.3':
     resolution: {integrity: sha512-rliPCCZwxtjU6200jJNDAsQhioyozV3fGgiP+NgRqtDOI7i+Jdz+DYNwEup+3MGZZ4NEmkuFaBeWLM3T01vJRg==}
@@ -758,13 +752,13 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capacitor/ios@8.6.0':
-    resolution: {integrity: sha512-Y2PE4zoBqMrSTWoVMJmX2byBznjn6egmATzoEUJiGVbVubkNpAvkF/tl0SBKDyP67ngyedTx1tQq5IGYIhby1A==}
+  '@capacitor/ios@8.6.2':
+    resolution: {integrity: sha512-YnVm0lRA1mQWK0SKd2bdJIOG+PXRRDDdndZ1+nGqeiob+QmHZmb4wWo5gVpWhoHO37pGi2qzH5w5WGvfKrs+Gg==}
     peerDependencies:
       '@capacitor/core': ^8.6.0
 
-  '@capacitor/keyboard@8.0.1':
-    resolution: {integrity: sha512-HDf4qrvvhLRMsgBoqeqIld6hP8JMK/WPbCYMvz8ajhY6TaibYt6B+NQyky4oIPCOfHTz5OcVsuHkbb8fQvGDAg==}
+  '@capacitor/keyboard@8.0.6':
+    resolution: {integrity: sha512-Bbe+9V0qaT6dzEFJEK7BUWR01l2+vZE8FM5ITF/WgKtx+G6eGZ6d5+YiSMRJBAK0VGjdO59v8yiQ10Doa5KyvQ==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -796,8 +790,8 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
-  '@capgo/camera-preview@8.14.4':
-    resolution: {integrity: sha512-bkiqm8Z1Jx76TikrhXjA/RQqwwUf0eQCWsYsKKNOmOaLlQ7PCT5fVFaEPlLJurGcLD8FYBY/Dt68L7Uwzu5QUg==}
+  '@capgo/camera-preview@8.15.4':
+    resolution: {integrity: sha512-wYKHyU/BnylXXtS2iVZVGn2fs95tOrlGc29rwvhufLMrpHWNvdsvUi2kYfiCph267YokcPmoTUNVzSdVZEz9VQ==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -2812,12 +2806,6 @@ packages:
     resolution: {integrity: sha512-PAwJJsZPpUERQIW14r5weZXzcgHev+cQ/B1+DSGKF9dta/v9q1BX0wXIIjBeyVXzFzJwqz9E6voY+HhauTqHdA==}
     engines: {'0': {name: cordova, version: '>=6.0.0'}}
 
-  cordova-sqlite-storage-dependencies@5.0.0:
-    resolution: {integrity: sha512-WjWm1QX+2JyLxjaNmYX2kNzmhrRk8q6n4GQ1PkUc79xR2bmJeO/m3koSuPemnWJdLdlsqDz8dCEHmgQSxhYjcg==}
-
-  cordova-sqlite-storage@7.0.0:
-    resolution: {integrity: sha512-BV1KCNtHnFD37ZQmhztStKsaNxniGlLcUSiQ9wieWH2PpZ0gH/tuWeINrrXGKIt9teTukYRnxFyerQ/Lc9x41A==}
-
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
 
@@ -3754,9 +3742,6 @@ packages:
   lmdb@3.5.6:
     resolution: {integrity: sha512-j3uE8ReKNyUWDjhfEFSJqE/1DLtfTR5Z8yFzVHvBjAk37wNg7HdScjcv8ttPHRvrdgPQMPWxFFI0SsdBzI5lBw==}
     hasBin: true
-
-  localforage-cordovasqlitedriver@1.8.0:
-    resolution: {integrity: sha512-AeYiVPURow8gPAGHNOiGMS9rlgv81wUuQLtnyCP6Eh1mq+IsqNl9fwAOP+RiTi6aO/Wfy3TTWiW2WtbTdJaUnQ==}
 
   localforage@1.10.0:
     resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
@@ -5435,11 +5420,11 @@ snapshots:
 
   '@aparajita/capacitor-dark-mode@6.0.0':
     dependencies:
-      '@capacitor/android': 8.6.0(@capacitor/core@8.6.0)
-      '@capacitor/app': 8.1.2(@capacitor/core@8.6.0)
-      '@capacitor/core': 8.6.0
-      '@capacitor/ios': 8.6.0(@capacitor/core@8.6.0)
-      '@capacitor/status-bar': 8.0.4(@capacitor/core@8.6.0)
+      '@capacitor/android': 8.6.2(@capacitor/core@8.6.2)
+      '@capacitor/app': 8.1.2(@capacitor/core@8.6.2)
+      '@capacitor/core': 8.6.2
+      '@capacitor/ios': 8.6.2(@capacitor/core@8.6.2)
+      '@capacitor/status-bar': 8.0.4(@capacitor/core@8.6.2)
 
   '@awesome-cordova-plugins/android-permissions@9.7.0(@awesome-cordova-plugins/core@9.7.0(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
@@ -5658,21 +5643,21 @@ snapshots:
 
   '@bufbuild/protobuf@2.17.0': {}
 
-  '@capacitor-community/keep-awake@8.0.1(@capacitor/core@8.6.0)':
+  '@capacitor-community/keep-awake@8.0.1(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capacitor/android@8.6.0(@capacitor/core@8.6.0)':
+  '@capacitor/android@8.6.2(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capacitor/app-launcher@8.0.1(@capacitor/core@8.6.0)':
+  '@capacitor/app-launcher@8.0.1(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capacitor/app@8.1.2(@capacitor/core@8.6.0)':
+  '@capacitor/app@8.1.2(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
   '@capacitor/assets@4.0.0(@types/node@25.9.9)':
     dependencies:
@@ -5693,16 +5678,16 @@ snapshots:
       - encoding
       - supports-color
 
-  '@capacitor/barcode-scanner@3.1.3(@capacitor/core@8.6.0)':
+  '@capacitor/barcode-scanner@3.1.3(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
       html5-qrcode: 2.3.8
 
-  '@capacitor/camera@8.2.6(@capacitor/core@8.6.0)':
+  '@capacitor/camera@8.2.6(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capacitor/cli@8.6.0':
+  '@capacitor/cli@8.6.2':
     dependencies:
       '@ionic/cli-framework-output': 2.2.8
       '@ionic/utils-subprocess': 3.0.1
@@ -5725,69 +5710,69 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@capacitor/clipboard@8.0.1(@capacitor/core@8.6.0)':
+  '@capacitor/clipboard@8.0.1(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capacitor/core@8.6.0':
+  '@capacitor/core@8.6.2':
     dependencies:
       tslib: 2.9.1
 
-  '@capacitor/device@8.0.3(@capacitor/core@8.6.0)':
+  '@capacitor/device@8.0.3(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capacitor/filesystem@8.1.5(@capacitor/core@8.6.0)':
+  '@capacitor/filesystem@8.1.5(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
       '@capacitor/synapse': 1.0.4
 
-  '@capacitor/geolocation@8.2.4(@capacitor/core@8.6.0)':
+  '@capacitor/geolocation@8.2.4(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
       '@capacitor/synapse': 1.0.4
 
-  '@capacitor/haptics@8.0.2(@capacitor/core@8.6.0)':
+  '@capacitor/haptics@8.0.2(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capacitor/ios@8.6.0(@capacitor/core@8.6.0)':
+  '@capacitor/ios@8.6.2(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capacitor/keyboard@8.0.1(@capacitor/core@8.6.0)':
+  '@capacitor/keyboard@8.0.6(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capacitor/share@8.0.3(@capacitor/core@8.6.0)':
+  '@capacitor/share@8.0.3(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capacitor/splash-screen@8.0.2(@capacitor/core@8.6.0)':
+  '@capacitor/splash-screen@8.0.2(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capacitor/status-bar@8.0.4(@capacitor/core@8.6.0)':
+  '@capacitor/status-bar@8.0.4(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
   '@capacitor/synapse@1.0.4': {}
 
-  '@capawesome/capacitor-android-edge-to-edge-support@8.0.8(@capacitor/core@8.6.0)':
+  '@capawesome/capacitor-android-edge-to-edge-support@8.0.8(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capawesome/capacitor-file-picker@8.1.1(@capacitor/core@8.6.0)':
+  '@capawesome/capacitor-file-picker@8.1.1(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capgo/camera-preview@8.14.4(@capacitor/core@8.6.0)':
+  '@capgo/camera-preview@8.15.4(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
-  '@capgo/capacitor-llm@8.0.19(@capacitor/core@8.6.0)(@mediapipe/tasks-genai@0.10.30)':
+  '@capgo/capacitor-llm@8.0.19(@capacitor/core@8.6.2)(@mediapipe/tasks-genai@0.10.30)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
       '@mediapipe/tasks-genai': 0.10.30
 
   '@colors/colors@1.5.0': {}
@@ -6718,9 +6703,9 @@ snapshots:
 
   '@oxc-project/types@0.156.0': {}
 
-  '@pantrist/capacitor-plugin-ml-kit-text-recognition@8.1.1(@capacitor/core@8.6.0)':
+  '@pantrist/capacitor-plugin-ml-kit-text-recognition@8.1.1(@capacitor/core@8.6.2)':
     dependencies:
-      '@capacitor/core': 8.6.0
+      '@capacitor/core': 8.6.2
 
   '@paralleldrive/cuid2@2.3.1':
     dependencies:
@@ -7500,12 +7485,6 @@ snapshots:
   cordova-plugin-ble-central@2.0.0: {}
 
   cordova-plugin-health@2.1.1: {}
-
-  cordova-sqlite-storage-dependencies@5.0.0: {}
-
-  cordova-sqlite-storage@7.0.0:
-    dependencies:
-      cordova-sqlite-storage-dependencies: 5.0.0
 
   core-util-is@1.0.3: {}
 
@@ -8521,10 +8500,6 @@ snapshots:
       '@lmdb/lmdb-win32-arm64': 3.5.6
       '@lmdb/lmdb-win32-x64': 3.5.6
     optional: true
-
-  localforage-cordovasqlitedriver@1.8.0:
-    dependencies:
-      localforage: 1.10.0
 
   localforage@1.10.0:
     dependencies:

@@ -7,11 +7,10 @@ import {
 } from './native-boundary';
 
 /** Cordova plugin globals whose reads are recorded in the native trace. */
-const TRACED_CORDOVA_GLOBALS = ['ble', 'NfcPlugin', 'TTS', 'sqlitePlugin'];
+const TRACED_CORDOVA_GLOBALS = ['ble', 'NfcPlugin', 'TTS'];
 
 type Envelope =
-  | { ok: true; value: unknown }
-  | { ok: false; message: string; code?: string };
+  { ok: true; value: unknown } | { ok: false; message: string; code?: string };
 
 type AnyMethod = (...args: never[]) => Promise<unknown>;
 type ScriptableMethod<P> = {
