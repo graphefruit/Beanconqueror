@@ -229,3 +229,75 @@ describe('UIImage choosing a photo', () => {
     expect(uiAlert.showLoadingSpinner).not.toHaveBeenCalled();
   });
 });
+
+describe('UIImage choosing a photo on iOS', () => {
+  let uiImage: UIImage;
+  let uiAlert: jasmine.SpyObj<any>;
+  let uiFileHelper: jasmine.SpyObj<any>;
+
+  beforeEach(() => {
+    uiAlert = createMockUIAlert();
+    uiFileHelper = Object.assign(createMockUIFileHelper(), {
+      readFileAsBase64: jasmine.createSpy('readFileAsBase64'),
+    });
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: UIFileHelper, useValue: uiFileHelper },
+        { provide: AlertController, useValue: {} },
+        { provide: ModalController, useValue: {} },
+        { provide: Platform, useValue: { is: (_p: string) => _p === 'ios' } },
+        { provide: AndroidPermissions, useValue: {} },
+        { provide: TranslateService, useValue: {} },
+        { provide: UIAlert, useValue: uiAlert },
+        { provide: UILog, useValue: createMockUILog() },
+        { provide: UISettingsStorage, useValue: {} },
+      ],
+    });
+    uiImage = TestBed.inject(UIImage);
+  });
+
+  // iOS hands out HEIC photos as they are unless the picker transcodes them.
+  it('lets the picker turn the photo into a JPEG and stores it as .jpg', async () => {
+    const pickImages = spyOn(
+      FilePickerWeb.prototype,
+      'pickImages',
+    ).and.resolveTo({
+      files: [
+        {
+          path: 'tmp/IMG_1.jpeg',
+          mimeType: 'image/jpeg',
+          name: 'IMG_1.jpeg',
+          size: 3,
+        },
+      ],
+    });
+    uiFileHelper.readFileAsBase64.and.resolveTo('/9j/');
+    uiFileHelper.generateInternalPath.and.resolveTo('photo_1.jpg');
+    uiFileHelper.writeInternalFileFromBase64.and.resolveTo({
+      path: 'photo_1.jpg',
+    });
+
+    await expectAsync(uiImage.choosePhoto()).toBeResolvedTo(['photo_1.jpg']);
+
+    expect(pickImages).toHaveBeenCalledOnceWith({ skipTranscoding: false });
+    expect(uiFileHelper.readFileAsBase64).toHaveBeenCalledOnceWith(
+      'tmp/IMG_1.jpeg',
+    );
+    expect(uiFileHelper.generateInternalPath).toHaveBeenCalledOnceWith(
+      'photo',
+      '.jpg',
+    );
+    expect(uiFileHelper.writeInternalFileFromBase64).toHaveBeenCalledOnceWith(
+      '/9j/',
+      'photo_1.jpg',
+    );
+  });
+
+  it('passes on when the photo could not be transcoded', async () => {
+    const cause = new Error('Unknown error occurred.');
+    spyOn(FilePickerWeb.prototype, 'pickImages').and.rejectWith(cause);
+
+    await expectAsync(uiImage.choosePhoto()).toBeRejectedWith(cause);
+    expect(uiAlert.showLoadingSpinner).not.toHaveBeenCalled();
+  });
+});
