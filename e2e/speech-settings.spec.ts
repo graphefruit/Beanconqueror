@@ -62,10 +62,11 @@ test.describe('on Android', () => {
     await expect(wholeGrams(page)).not.toBeChecked();
     await expect(interval(page)).toBeVisible();
 
-    // Only the time is said then: weights and their interval do not apply.
+    // Only the time is said then: weights, their interval and pace do not apply.
     await switchOn(timerOnly(page));
     await expect(wholeGrams(page)).toBeHidden();
     await expect(interval(page)).toBeHidden();
+    await expect(androidHint(page)).toBeHidden();
   });
 });
 

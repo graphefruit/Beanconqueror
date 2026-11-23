@@ -802,7 +802,7 @@
             <div class='ion-label' slot="end">{{ settings.text_to_speech_rate | number : '.0-1' }}</div>
           </ion-range>
         </ion-item>
-        @if (isAndroidSpeechHintShown) {
+        @if (isAndroidSpeechHintShown && !settings.text_to_speech_timer_only) {
         <ion-item lines='none'>
           <p>{{ "TEXT_TO_SPEECH.ANDROID_RATE_HINT" | translate }}</p>
         </ion-item>
