@@ -2075,6 +2075,8 @@
         "SELECT_MINUTE": "Minute auswählen",
         "RANGE_FROM": "{{name}}, von",
         "RANGE_TO": "{{name}}, bis",
+        "RANGE_FROM_VALUE": "von {{value}}",
+        "RANGE_TO_VALUE": "bis {{value}}",
         "START_TIMER_AT_WEIGHT": "Timer bei diesem Gewicht starten",
         "STOP_AT_MIN_FLOW": "Brühung unter diesem Durchfluss stoppen",
         "EDIT_TOOL": "Werkzeug bearbeiten: {{tool}}",

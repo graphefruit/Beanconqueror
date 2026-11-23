@@ -109,6 +109,26 @@ for (const language of ['en', 'de'] as const) {
         'aria-valuetext',
         `${before - 1} %`,
       );
+      // A screen reader does not speak a value changed by dragging the knob,
+      // so the app announces it.
+      await expect(quality).not.toHaveAttribute('aria-disabled', 'true');
+      const { x, y, width, height } = (await quality.boundingBox()) ?? {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+      };
+      await page.mouse.move(x + width / 2, y + height / 2);
+      await page.mouse.down();
+      await page.mouse.move(x - 60, y + height / 2, { steps: 8 });
+      await page.mouse.up();
+      await expect(quality).not.toHaveAttribute(
+        'aria-valuenow',
+        String(before - 1),
+      );
+      await expect(liveRegion(page)).toHaveText(
+        (await quality.getAttribute('aria-valuetext')) ?? '',
+      );
       for (const slider of await visible(settings.getByRole('slider')).all()) {
         await expect(slider).not.toHaveAccessibleName(VALUE_ONLY);
       }

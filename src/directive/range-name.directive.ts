@@ -12,10 +12,41 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 import { TranslateService } from '@ngx-translate/core';
 
+import {
+  Announcer,
+  ProgressAnnouncement,
+} from '../services/a11y/announcer.service';
+
 type RangeElement = HTMLElement & {
   step?: number;
   componentOnReady?: () => Promise<unknown>;
 };
+
+/** The value of an ion-range: a number, or both ends with two knobs. */
+export type RangeValue = number | { lower: number; upper: number };
+
+type KnobMoveEvent = CustomEvent<{ value: RangeValue }>;
+
+/**
+ * While a knob is dragged, its value is spoken at most this often. A screen
+ * reader queues polite messages, so faster ones would still be spoken after
+ * the knob was let go.
+ */
+export const DRAG_ANNOUNCE_INTERVAL_MS = 1000;
+
+/**
+ * Which knob of a two-knob range moved from `before` to `after`. The moved
+ * knob is the one whose value is new; a knob dragged past the other one
+ * swaps lower and upper, so the other end keeps a value it had before.
+ */
+export function movedKnob(
+  before: RangeValue,
+  after: { lower: number; upper: number },
+): 'lower' | 'upper' {
+  const old =
+    typeof before === 'number' ? [before] : [before.lower, before.upper];
+  return old.includes(after.lower) ? 'upper' : 'lower';
+}
 
 /** Decimal places of `step`, so 0.05 gives 2 and 1 gives 0. */
 function decimalsOf(step: number | undefined): number {
@@ -51,12 +82,18 @@ export function rangeValueText(
  * the bare number. Ionic names a knob after the range's own label, which the
  * app does not use, and announces only the number. With two knobs, the lower
  * one is named "from" and the upper one "to".
+ *
+ * While a knob is dragged, its value is announced as it changes and once more
+ * when it is let go: a screen reader does not speak value changes of a knob
+ * moved by touch. A step from the keyboard, which is also how a screen
+ * reader's own adjust gesture arrives, is spoken by the screen reader itself.
  */
 @Directive({ selector: 'ion-range' })
 export class RangeNameDirective {
   private readonly host =
     inject<ElementRef<RangeElement>>(ElementRef).nativeElement;
   private readonly translate = inject(TranslateService);
+  private readonly announcer = inject(Announcer);
 
   /** The label shown with the slider, e.g. "Image quality". */
   public readonly rangeLabel = input<string>();
@@ -65,6 +102,12 @@ export class RangeNameDirective {
 
   private readonly rendered = signal(false);
   private readonly language = toSignal(this.translate.onLangChange);
+
+  private knobMoving = false;
+  private dragging = false;
+  private dragValue: RangeValue = 0;
+  private dragKnob: 'lower' | 'upper' = 'lower';
+  private dragAnnouncement: ProgressAnnouncement | undefined;
 
   constructor() {
     const destroyRef = inject(DestroyRef);
@@ -87,7 +130,21 @@ export class RangeNameDirective {
         });
       });
     });
-    destroyRef.onDestroy(() => observer?.disconnect());
+    const listening = new AbortController();
+    zone.runOutsideAngular(() => {
+      const listen = (type: string, handle: (event: KnobMoveEvent) => void) =>
+        this.host.addEventListener(type, handle, {
+          signal: listening.signal,
+        });
+      listen('ionKnobMoveStart', (event) => this.onKnobMoveStart(event));
+      listen('ionInput', (event) => this.onInput(event));
+      listen('ionKnobMoveEnd', (event) => this.onKnobMoveEnd(event));
+    });
+    destroyRef.onDestroy(() => {
+      observer?.disconnect();
+      listening.abort();
+      this.dragAnnouncement?.end();
+    });
 
     effect(() => {
       this.rangeLabel();
@@ -97,6 +154,66 @@ export class RangeNameDirective {
         this.describeKnobs();
       }
     });
+  }
+
+  private onKnobMoveStart(event: KnobMoveEvent): void {
+    this.knobMoving = true;
+    this.dragValue = event.detail.value;
+    // Ionic starts and ends a keyboard step within one task, a drag ends in a
+    // later one: only a move still going on after this task is a drag.
+    queueMicrotask(() => (this.dragging = this.knobMoving));
+  }
+
+  private onInput(event: KnobMoveEvent): void {
+    if (!this.dragging) {
+      return;
+    }
+    const message = this.dragMessage(event.detail.value);
+    if (this.dragAnnouncement) {
+      this.dragAnnouncement.update(message);
+    } else {
+      this.dragAnnouncement = this.announcer.startProgress(
+        message,
+        DRAG_ANNOUNCE_INTERVAL_MS,
+      );
+    }
+  }
+
+  private onKnobMoveEnd(event: KnobMoveEvent): void {
+    const dragged = this.dragging;
+    this.knobMoving = false;
+    this.dragging = false;
+    this.dragAnnouncement?.end();
+    this.dragAnnouncement = undefined;
+    if (dragged) {
+      this.announcer.announce(this.dragMessage(event.detail.value));
+    }
+  }
+
+  /** Says the value of the knob being dragged, e.g. "80 %" or "to 3.5". */
+  private dragMessage(value: RangeValue): string {
+    const language = this.translate.getCurrentLang() ?? 'en';
+    const say = (knobValue: number) =>
+      rangeValueText(knobValue, this.host.step, this.rangeUnit(), language);
+    if (typeof value === 'number') {
+      return say(value);
+    }
+    if (
+      typeof this.dragValue === 'number' ||
+      value.lower !== this.dragValue.lower ||
+      value.upper !== this.dragValue.upper
+    ) {
+      this.dragKnob = movedKnob(this.dragValue, value);
+      this.dragValue = value;
+    }
+    return String(
+      this.translate.instant(
+        this.dragKnob === 'upper'
+          ? 'A11Y.RANGE_TO_VALUE'
+          : 'A11Y.RANGE_FROM_VALUE',
+        { value: say(value[this.dragKnob]) },
+      ),
+    );
   }
 
   private describeKnobs(): void {
