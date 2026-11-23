@@ -30,5 +30,9 @@ axe.configure({
 });`;
 
 export function axe(page: Page): AxeBuilder {
-  return new AxeBuilder({ page, axeSource: AXE_SOURCE });
+  // The app blocks pinch zoom on purpose (see typography.spec.ts); text
+  // still follows the user's text size.
+  return new AxeBuilder({ page, axeSource: AXE_SOURCE }).disableRules([
+    'meta-viewport',
+  ]);
 }
