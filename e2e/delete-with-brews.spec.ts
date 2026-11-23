@@ -44,6 +44,8 @@ async function deleteAndCheck(
     card: string;
     options: RegExp;
     question: string;
+    /** How many brews the question says go along. */
+    removedBrews: number;
     toast: string;
     /** What is stored afterwards, per collection. */
     left: Record<string, string[]>;
@@ -59,6 +61,10 @@ async function deleteAndCheck(
     await page.getByRole('button', { name: 'Delete', exact: true }).click();
     const question = page.getByRole('alertdialog');
     await expect(question).toContainText(flow.question);
+    // The number is part of the name a screen reader announces.
+    await expect(question).toHaveAccessibleName(
+      new RegExp(`${flow.removedBrews} brews`),
+    );
     await question.getByRole('button', { name: answer }).click();
   };
   const stored = async () =>
@@ -111,7 +117,8 @@ const WITH_BREWS = [
     entry: 'Grinders',
     card: 'mill-information-card',
     options: /^Options for /,
-    question: 'Delete grinder? All associated brews will be deleted as well!',
+    question: (brews: number) =>
+      `Delete grinder? ${brews} brews with this grinder will be deleted as well!`,
     toast: 'Grinder has been deleted',
   },
   {
@@ -121,8 +128,8 @@ const WITH_BREWS = [
     entry: 'Preparation methods',
     card: 'preparation-information-card',
     options: /^Options for /,
-    question:
-      'Delete preparation method? All associated brews will be deleted as well!',
+    question: (brews: number) =>
+      `Delete preparation method? ${brews} brews with this preparation method will be deleted as well!`,
     toast: 'Preparation method has been deleted',
   },
 ] as const;
@@ -154,6 +161,8 @@ for (const target of WITH_BREWS) {
 
     await deleteAndCheck(page, {
       ...target,
+      question: target.question(own.length),
+      removedBrews: own.length,
       left: {
         [target.key]: [kept.config.uuid],
         BREWS: uuids(
@@ -229,8 +238,8 @@ test('deleting a green bean removes it, the beans roasted from it and their brew
   await deleteAndCheck(page, {
     card: 'green-bean-information',
     options: /^Options for /,
-    question:
-      'Delete green bean? All associated roasted beans, as well as brews will be deleted!',
+    question: `Delete green bean? All beans roasted from it and their ${own.length} brews will be deleted as well!`,
+    removedBrews: own.length,
     toast: 'Green bean has been deleted',
     left: {
       GREEN_BEANS: ['kept-uuid'],

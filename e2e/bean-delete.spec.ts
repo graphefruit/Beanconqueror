@@ -45,8 +45,10 @@ test('deleting a bean removes it and its brews after a question', async ({
   await beanAction(page, BEANS.overused, 'Delete');
   const question = page.getByRole('alertdialog');
   await expect(question).toContainText(
-    'Delete bean? All associated brews will be deleted as well!',
+    'Delete bean? 3 brews of this bean will be deleted as well!',
   );
+  // The number is part of the name a screen reader announces.
+  await expect(question).toHaveAccessibleName(/3 brews/);
   await question.getByRole('button', { name: 'No' }).click();
   await dialogsClosed(page);
   await expect(beanCard(page, BEANS.overused)).toBeVisible();
