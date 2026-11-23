@@ -108,6 +108,10 @@ import {
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
+import {
+  speaksTimerOnly,
+  SPOKEN_TIME_INTERVAL_MS,
+} from '../../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -205,6 +209,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private readonly hapticService = inject(HapticService);
   private readonly textToSpeech = inject(TextToSpeechService);
   private readonly destroyRef = inject(DestroyRef);
+  private timerSpeechInterval: ReturnType<typeof setInterval> | undefined;
 
   @ViewChild('timer', { static: false }) public timer: BrewTimerComponent;
   @ViewChild('brewBrewingGraphEl', { static: false })
@@ -619,6 +624,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     try {
       this.brewBrewingGraphEl?.destroy();
     } catch (ex) {}
+    this.stopTimerSpeech();
   }
 
   public preparationMethodFocused() {
@@ -786,6 +792,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       return;
     }
     this.brewBrewingGraphEl.timerStarted(_event);
+    this.startTimerSpeech();
     if (
       this.settings.haptic_feedback_active &&
       this.settings.haptic_feedback_brew_started
@@ -925,6 +932,32 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async timerResumed(_event) {
     await this.brewBrewingGraphEl.timerResumed(_event);
+    this.startTimerSpeech();
+  }
+
+  /** Says the brew time every few seconds, without needing a scale. */
+  private startTimerSpeech() {
+    this.stopTimerSpeech();
+    if (!speaksTimerOnly(this.settings)) {
+      return;
+    }
+    this.ngZone.runOutsideAngular(() => {
+      this.timerSpeechInterval = setInterval(() => {
+        this.textToSpeech.speakInFull(
+          this.translate.instant('TEXT_TO_SPEECH.TIME') +
+            ' ' +
+            this.timer.getSeconds(),
+        );
+      }, SPOKEN_TIME_INTERVAL_MS);
+    });
+  }
+
+  private stopTimerSpeech() {
+    if (this.timerSpeechInterval !== undefined) {
+      clearInterval(this.timerSpeechInterval);
+      this.timerSpeechInterval = undefined;
+      this.textToSpeech.end();
+    }
   }
 
   public ignoreWeightClicked() {
@@ -936,6 +969,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public async timerPaused(_event) {
+    this.stopTimerSpeech();
     await this.brewBrewingGraphEl.timerPaused(_event);
     if (this.baristamode) {
       const prepSanremoDeviceCall: SanremoYOUDevice = this
@@ -1143,6 +1177,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public async timerReset(_event) {
+    this.stopTimerSpeech();
     await this.brewBrewingGraphEl.timerReset(_event);
   }
 

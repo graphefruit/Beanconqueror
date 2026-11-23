@@ -268,6 +268,8 @@ export interface ISettings {
   text_to_speech_active: boolean;
   text_to_speech_rate: number;
   text_to_speech_pitch: number;
+  text_to_speech_timer_only: boolean;
+  text_to_speech_whole_grams: boolean;
 
   haptic_feedback_active: boolean;
   haptic_feedback_brew_started: boolean;

@@ -235,6 +235,8 @@ export class SettingsPage {
 
   public isHealthSectionAvailable = false;
   public readonly isTextToSpeechSectionAvailable = this.textToSpeech.available;
+  /** The Android voice service takes about a second for every announcement. */
+  public readonly isAndroidSpeechHintShown = this.platform.is('android');
 
   public currencies = {};
 

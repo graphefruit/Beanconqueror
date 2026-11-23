@@ -160,6 +160,10 @@ The spoken brew values (text to speech on iOS and Android: weight every
 | Android                    | `@capacitor-community/text-to-speech` | TalkBack, from the live region of `Announcer` (assertive) |
 | Browser (web build, tests) | `speechSynthesis`                     | `speechSynthesis` (the state is not known there)          |
 
+- "Speak the brew time only" (`text_to_speech_timer_only`) says only the time, every
+  `SPOKEN_TIME_INTERVAL_MS`, also without a scale; `brew-brewing` runs it from the brew timer, and
+  the graph then says nothing. "Speak whole grams" drops the decimal of espresso weights, which
+  the Android voice service needs noticeably longer for (`spokenWeight` in `speech-options.ts`).
 - The native plugin gets the app language as a BCP 47 tag (`zh_TW` → `zh-TW`). Without a voice for
   it (`isLanguageSupported`), it speaks in the system language (`navigator.language`). A failed
   call is skipped and logged once, without the text or device details. `end()` calls its `stop()`.

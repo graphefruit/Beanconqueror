@@ -277,6 +277,8 @@ export class Settings implements ISettings {
   public text_to_speech_rate: number;
   public text_to_speech_pitch: number;
   public text_to_speech_interval_rate: number;
+  public text_to_speech_timer_only: boolean;
+  public text_to_speech_whole_grams: boolean;
 
   public haptic_feedback_active: boolean;
   public haptic_feedback_brew_started: boolean;
@@ -654,6 +656,8 @@ export class Settings implements ISettings {
     this.text_to_speech_rate = 1;
     this.text_to_speech_pitch = 3;
     this.text_to_speech_interval_rate = 500;
+    this.text_to_speech_timer_only = false;
+    this.text_to_speech_whole_grams = false;
 
     this.haptic_feedback_active = false;
     this.haptic_feedback_brew_started = false;

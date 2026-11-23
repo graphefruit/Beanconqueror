@@ -1383,7 +1383,12 @@
         "TEST_SPEAK": "Start test speak",
         "PITCH": "Pitch",
         "RATE": "Rate",
-        "SCREEN_READER_HINT": "While a screen reader such as VoiceOver or TalkBack is on, it speaks the announcements in its own voice and speaking rate. Pitch and rate set here then have no effect. Each announcement interrupts what the screen reader is reading."
+        "SCREEN_READER_HINT": "While a screen reader such as VoiceOver or TalkBack is on, it speaks the announcements in its own voice and speaking rate. Pitch and rate set here then have no effect. Each announcement interrupts what the screen reader is reading.",
+        "TIMER_ONLY": "Speak the brew time only",
+        "TIMER_ONLY_DESCRIPTION": "Says the brew time every 5 seconds, also without a scale. Weight, brew start and brew end are not spoken.",
+        "WHOLE_GRAMS": "Speak whole grams",
+        "WHOLE_GRAMS_DESCRIPTION": "Also espresso weights are spoken without decimal places, which keeps each announcement shorter.",
+        "ANDROID_RATE_HINT": "On Android, each announcement takes about one second longer. If the weight is spoken too late, raise the rate or choose “Speak whole grams”."
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptic feedback",
     "HAPTIC_FEEDBACK": {

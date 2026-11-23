@@ -1,3 +1,5 @@
+import { Settings } from '../../classes/settings/settings';
+
 /**
  * The rate and pitch in the settings use the scale of the Web Speech API that
  * spoke them before the native plugin: rate 0.1–10 and pitch 0–2, 1 is normal.
@@ -42,4 +44,34 @@ export function pluginSpeechPitch(pitch: number): number {
 /** The app language ('zh_TW', 'de') as a BCP 47 tag ('zh-TW', 'de'). */
 export function speechLanguageTag(appLanguage: string | undefined): string {
   return appLanguage ? appLanguage.replace('_', '-') : 'en';
+}
+
+/** How often the brew time is said during a brew. */
+export const SPOKEN_TIME_INTERVAL_MS = 5000;
+
+type BrewSpeechSettings = Pick<
+  Settings,
+  'text_to_speech_active' | 'text_to_speech_timer_only'
+>;
+
+/** Whether the values of the scale are said: weight, time, start and end. */
+export function speaksScaleValues(settings: BrewSpeechSettings): boolean {
+  return settings.text_to_speech_active && !settings.text_to_speech_timer_only;
+}
+
+/** Whether only the brew time is said, with or without a scale. */
+export function speaksTimerOnly(settings: BrewSpeechSettings): boolean {
+  return settings.text_to_speech_active && settings.text_to_speech_timer_only;
+}
+
+/**
+ * The weight as it is said: one decimal for espresso, whole grams otherwise or
+ * when chosen, as a decimal takes the Android voice noticeably longer to say.
+ */
+export function spokenWeight(
+  grams: number,
+  espresso: boolean,
+  wholeGrams: boolean,
+): string {
+  return String(+grams.toFixed(espresso && !wholeGrams ? 1 : 0));
 }

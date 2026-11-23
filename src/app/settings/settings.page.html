@@ -758,6 +758,26 @@
         <ion-item lines='none'>
           <p>{{ "TEXT_TO_SPEECH.SCREEN_READER_HINT" | translate }}</p>
         </ion-item>
+        <ion-item>
+          <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+            [(ngModel)]="settings.text_to_speech_timer_only">
+            <div class="ion-label">
+              <div class="field-label">{{ "TEXT_TO_SPEECH.TIMER_ONLY" | translate }}</div>
+              <p>{{ "TEXT_TO_SPEECH.TIMER_ONLY_DESCRIPTION" | translate }}</p>
+            </div>
+          </ion-checkbox>
+        </ion-item>
+        @if (!settings.text_to_speech_timer_only) {
+        <ion-item>
+          <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+            [(ngModel)]="settings.text_to_speech_whole_grams">
+            <div class="ion-label">
+              <div class="field-label">{{ "TEXT_TO_SPEECH.WHOLE_GRAMS" | translate }}</div>
+              <p>{{ "TEXT_TO_SPEECH.WHOLE_GRAMS_DESCRIPTION" | translate }}</p>
+            </div>
+          </ion-checkbox>
+        </ion-item>
+        }
         <ion-item lines='none'>
           <ion-label class="ion-margin-end">
             <p>{{ "TEXT_TO_SPEECH.PITCH" | translate }}</p>
@@ -782,6 +802,12 @@
             <div class='ion-label' slot="end">{{ settings.text_to_speech_rate | number : '.0-1' }}</div>
           </ion-range>
         </ion-item>
+        @if (isAndroidSpeechHintShown) {
+        <ion-item lines='none'>
+          <p>{{ "TEXT_TO_SPEECH.ANDROID_RATE_HINT" | translate }}</p>
+        </ion-item>
+        }
+        @if (!settings.text_to_speech_timer_only) {
         <ion-item lines='none'>
           <ion-label class="ion-margin-end">
             <p>{{ "TEXT_TO_SPEECH.SPEAK_EVERY_MS" | translate }}</p>
@@ -794,6 +820,7 @@
             <div class='ion-label' slot="end">{{ settings.text_to_speech_interval_rate | number : '.0' }}</div>
           </ion-range>
         </ion-item>
+        }
 
         <ion-item (click)="testSpeak()" tappable button>
           <ion-label>

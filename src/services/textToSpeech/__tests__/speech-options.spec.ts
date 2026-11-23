@@ -1,7 +1,10 @@
 import {
   pluginSpeechPitch,
   pluginSpeechRate,
+  speaksScaleValues,
+  speaksTimerOnly,
   speechLanguageTag,
+  spokenWeight,
 } from '../speech-options';
 
 /** What WebKit asked AVSpeechUtterance for (default 0.5, fastest 1). */
@@ -50,5 +53,39 @@ describe('speech options', () => {
     expect(speechLanguageTag('zh_TW')).toBe('zh-TW');
     expect(speechLanguageTag('')).toBe('en');
     expect(speechLanguageTag(undefined)).toBe('en');
+  });
+
+  it('says either the values of the scale or only the time', () => {
+    const cases = [
+      { active: false, timerOnly: false, scale: false, timer: false },
+      { active: false, timerOnly: true, scale: false, timer: false },
+      { active: true, timerOnly: false, scale: true, timer: false },
+      { active: true, timerOnly: true, scale: false, timer: true },
+    ];
+    for (const { active, timerOnly, scale, timer } of cases) {
+      const settings = {
+        text_to_speech_active: active,
+        text_to_speech_timer_only: timerOnly,
+      };
+      expect(speaksScaleValues(settings))
+        .withContext(`active ${active}, timer only ${timerOnly}`)
+        .toBe(scale);
+      expect(speaksTimerOnly(settings))
+        .withContext(`active ${active}, timer only ${timerOnly}`)
+        .toBe(timer);
+    }
+  });
+
+  it('says one decimal for espresso unless whole grams are chosen', () => {
+    expect(spokenWeight(18.26, true, false)).toBe('18.3');
+    expect(spokenWeight(18.04, true, false)).toBe('18');
+    expect(spokenWeight(18.26, true, true)).toBe('18');
+    expect(spokenWeight(18.5, true, true)).toBe('19');
+  });
+
+  it('says whole grams for other brews', () => {
+    expect(spokenWeight(251.6, false, false)).toBe('252');
+    expect(spokenWeight(251.6, false, true)).toBe('252');
+    expect(spokenWeight(-0.3, false, false)).toBe('0');
   });
 });
