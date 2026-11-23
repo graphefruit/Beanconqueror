@@ -357,6 +357,13 @@ export function busyNote(testInfo: TestInfo): string {
 export interface ScrollResult {
   /** From the first scroll step until the last entry is rendered. */
   duration: number;
+  /** Screen heights scrolled, which grow with the entries and their height. */
+  screens: number;
+  /**
+   * `duration` per screen height scrolled: the cost of a screen, apart from how long the list
+   * is. The total time also grows when the rows get taller, without any row costing more.
+   */
+  perScreen: number;
   frames: number;
   /** Frames that took longer than 50 ms (below 20 fps). */
   slowFrames: number;
@@ -388,6 +395,7 @@ export async function scrollListToEnd(
       }
       const nextFrame = perf.nextFrame;
       await nextFrame();
+      const startTop = scroller.scrollTop;
       const start = performance.now();
       const frames: number[] = [];
       let previous = start;
@@ -408,11 +416,14 @@ export async function scrollListToEnd(
         previous = now;
       }
       const end = performance.now();
+      const screens = (scroller.scrollTop - startTop) / scroller.clientHeight;
       const tasks = perf.longTasks
         .filter((t) => t.end > start && t.start < end)
         .map((t) => t.end - t.start);
       return {
         duration: Math.round(end - start),
+        screens: Math.round(screens),
+        perScreen: Math.round(((end - start) / screens) * 10) / 10,
         frames: frames.length,
         slowFrames: frames.filter((f) => f > 50).length,
         longestFrame: Math.round(Math.max(0, ...frames)),
