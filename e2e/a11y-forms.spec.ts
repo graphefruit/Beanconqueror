@@ -94,8 +94,11 @@ for (const language of ['en', 'de'] as const) {
         name: t('PAGE_SETTINGS_IMAGE_QUALITY'),
         exact: true,
       });
-      await expect(quality).toHaveAttribute('aria-valuetext', /^\d+ %$/);
-      const before = Number(await quality.getAttribute('aria-valuenow'));
+      // The range shows its minimum until the stored default of 100 arrives,
+      // and is disabled for a moment while the page scrolls in.
+      await expect(quality).toHaveAttribute('aria-valuenow', '100');
+      await expect(quality).not.toHaveAttribute('aria-disabled', 'true');
+      const before = 100;
       await quality.focus();
       await page.keyboard.press('ArrowLeft');
       await expect(quality).toHaveAttribute(
