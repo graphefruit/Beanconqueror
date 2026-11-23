@@ -182,11 +182,6 @@ test('an espresso method marks the first drip and shows the brew time after it',
 });
 
 test.describe('without the brew time parameter', () => {
-  // The graph still reads the missing timer while the maximized graph renders
-  // (brew-brewing-graph.component.ts); that error is allowed until it is fixed
-  // there. Any other page or console error still fails the test.
-  test.use({ allowedConsoleErrors: [/getSeconds/] });
-
   test('the scale tiles and the maximized graph render without the timer', async ({
     page,
   }) => {
