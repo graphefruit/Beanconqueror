@@ -1,0 +1,58 @@
+diff --git a/android/src/main/java/com/getcapacitor/community/tts/TextToSpeech.java b/android/src/main/java/com/getcapacitor/community/tts/TextToSpeech.java
+index 3ad76834dca58c126baa8f5edf3ab062c73ad11b..87761e400a3c285a1a5861b3804de3046010f506 100644
+--- a/android/src/main/java/com/getcapacitor/community/tts/TextToSpeech.java
++++ b/android/src/main/java/com/getcapacitor/community/tts/TextToSpeech.java
+@@ -17,6 +17,7 @@ import java.util.HashMap;
+ import java.util.Locale;
+ import java.util.Map;
+ import java.util.Set;
++import java.util.concurrent.ConcurrentHashMap;
+ 
+ public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListener {
+ 
+@@ -26,7 +27,7 @@ public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListe
+     private android.speech.tts.TextToSpeech tts = null;
+     private int initializationStatus;
+     private JSObject[] supportedVoices = null;
+-    private Map<String, SpeakResultCallback> requests = new HashMap();
++    private Map<String, SpeakResultCallback> requests = new ConcurrentHashMap<>();
+ 
+     TextToSpeech(Context context) {
+         this.context = context;
+@@ -39,19 +40,17 @@ public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListe
+ 
+                     @Override
+                     public void onDone(String utteranceId) {
+-                        SpeakResultCallback callback = requests.get(utteranceId);
++                        SpeakResultCallback callback = requests.remove(utteranceId);
+                         if (callback != null) {
+                             callback.onDone();
+-                            requests.remove(utteranceId);
+                         }
+                     }
+ 
+                     @Override
+                     public void onError(String utteranceId) {
+-                        SpeakResultCallback callback = requests.get(utteranceId);
++                        SpeakResultCallback callback = requests.remove(utteranceId);
+                         if (callback != null) {
+                             callback.onError();
+-                            requests.remove(utteranceId);
+                         }
+                     }
+ 
+@@ -125,7 +124,13 @@ public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListe
+ 
+     public void stop() {
+         tts.stop();
+-        requests.clear();
++        // Settle the calls cut off, as iOS does (didCancel): the bridge keeps every unsettled call.
++        for (String utteranceId : requests.keySet()) {
++            SpeakResultCallback callback = requests.remove(utteranceId);
++            if (callback != null) {
++                callback.onDone();
++            }
++        }
+     }
+ 
+     public JSArray getSupportedLanguages() {

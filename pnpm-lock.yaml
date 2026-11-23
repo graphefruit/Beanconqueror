@@ -11,6 +11,11 @@ overrides:
   '@aparajita/capacitor-dark-mode>@capacitor/ios': ^8.6.2
   '@aparajita/capacitor-dark-mode>@capacitor/status-bar': ^8.0.4
 
+patchedDependencies:
+  '@capacitor-community/text-to-speech@8.0.2':
+    hash: 646e7b336b9e0c59ee44f250128db04562cf08e173a9f5529ab3d6a3ca49bcf8
+    path: patches/@capacitor-community__text-to-speech@8.0.2.patch
+
 importers:
 
   .:
@@ -53,7 +58,7 @@ importers:
         version: 8.0.1(@capacitor/core@8.6.2)
       '@capacitor-community/text-to-speech':
         specifier: 8.0.2
-        version: 8.0.2(@capacitor/core@8.6.2)
+        version: 8.0.2(patch_hash=646e7b336b9e0c59ee44f250128db04562cf08e173a9f5529ab3d6a3ca49bcf8)(@capacitor/core@8.6.2)
       '@capacitor/android':
         specifier: ^8.6.2
         version: 8.6.2(@capacitor/core@8.6.2)
@@ -5663,7 +5668,7 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.6.2
 
-  '@capacitor-community/text-to-speech@8.0.2(@capacitor/core@8.6.2)':
+  '@capacitor-community/text-to-speech@8.0.2(patch_hash=646e7b336b9e0c59ee44f250128db04562cf08e173a9f5529ab3d6a3ca49bcf8)(@capacitor/core@8.6.2)':
     dependencies:
       '@capacitor/core': 8.6.2
 

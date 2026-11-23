@@ -27,3 +27,7 @@ overrides:
   '@aparajita/capacitor-dark-mode>@capacitor/core': '$@capacitor/core'
   '@aparajita/capacitor-dark-mode>@capacitor/ios': '$@capacitor/ios'
   '@aparajita/capacitor-dark-mode>@capacitor/status-bar': '$@capacitor/status-bar'
+
+# Settles the speech calls cut off by stop() on Android, as iOS does.
+patchedDependencies:
+  '@capacitor-community/text-to-speech@8.0.2': patches/@capacitor-community__text-to-speech@8.0.2.patch

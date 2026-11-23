@@ -120,7 +120,7 @@ DEPENDENCIES:
   - "CapacitorCamera (from `../../node_modules/.pnpm/@capacitor+camera@8.2.6_@capacitor+core@8.6.2/node_modules/@capacitor/camera`)"
   - "CapacitorClipboard (from `../../node_modules/.pnpm/@capacitor+clipboard@8.0.1_@capacitor+core@8.6.2/node_modules/@capacitor/clipboard`)"
   - "CapacitorCommunityKeepAwake (from `../../node_modules/.pnpm/@capacitor-community+keep-awake@8.0.1_@capacitor+core@8.6.2/node_modules/@capacitor-community/keep-awake`)"
-  - "CapacitorCommunityTextToSpeech (from `../../node_modules/.pnpm/@capacitor-community+text-to-speech@8.0.2_@capacitor+core@8.6.2/node_modules/@capacitor-community/text-to-speech`)"
+  - "CapacitorCommunityTextToSpeech (from `../../node_modules/.pnpm/@capacitor-community+text-to-speech@8.0.2_patch_hash=646e7b336b9e0c59ee44f250128db04562_b3232a7616bc58a09af2878644eceadd/node_modules/@capacitor-community/text-to-speech`)"
   - "CapacitorCordova (from `../../node_modules/.pnpm/@capacitor+ios@8.6.2_@capacitor+core@8.6.2/node_modules/@capacitor/ios`)"
   - "CapacitorDevice (from `../../node_modules/.pnpm/@capacitor+device@8.0.3_@capacitor+core@8.6.2/node_modules/@capacitor/device`)"
   - "CapacitorFilesystem (from `../../node_modules/.pnpm/@capacitor+filesystem@8.1.5_@capacitor+core@8.6.2/node_modules/@capacitor/filesystem`)"
@@ -176,7 +176,7 @@ EXTERNAL SOURCES:
   CapacitorCommunityKeepAwake:
     :path: "../../node_modules/.pnpm/@capacitor-community+keep-awake@8.0.1_@capacitor+core@8.6.2/node_modules/@capacitor-community/keep-awake"
   CapacitorCommunityTextToSpeech:
-    :path: "../../node_modules/.pnpm/@capacitor-community+text-to-speech@8.0.2_@capacitor+core@8.6.2/node_modules/@capacitor-community/text-to-speech"
+    :path: "../../node_modules/.pnpm/@capacitor-community+text-to-speech@8.0.2_patch_hash=646e7b336b9e0c59ee44f250128db04562_b3232a7616bc58a09af2878644eceadd/node_modules/@capacitor-community/text-to-speech"
   CapacitorCordova:
     :path: "../../node_modules/.pnpm/@capacitor+ios@8.6.2_@capacitor+core@8.6.2/node_modules/@capacitor/ios"
   CapacitorDevice:
@@ -252,6 +252,6 @@ SPEC CHECKSUMS:
   PantristCapacitorPluginMlKitTextRecognition: 22330573cd47ebbe1370bab03cfde514cedb9f4a
   PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
 
-PODFILE CHECKSUM: cbc4d3fffa01ada23980ea79d157512545c491eb
+PODFILE CHECKSUM: d7282dcb08c61b9431e951f6fc08914bf6446513
 
 COCOAPODS: 1.16.2
