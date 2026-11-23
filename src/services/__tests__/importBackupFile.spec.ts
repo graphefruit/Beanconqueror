@@ -1,9 +1,11 @@
+import { Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { ModalController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 
 import { Directory, FileInfo } from '@capacitor/filesystem';
+import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 
 import {
@@ -21,6 +23,9 @@ import {
   IRestoreNote,
   RESTORE_SOURCE,
 } from '../../interfaces/changeTracking/iRestoreNote';
+import { createMockTranslateService } from '../../test-utils';
+import { DeletionJournalService } from '../deletionJournal/deletion-journal.service';
+import { DeviceIdentityService } from '../deviceIdentity/device-identity.service';
 import {
   PRE_IMPORT_BACKUP_FILES,
   PreImportBackupFiles,
@@ -31,6 +36,7 @@ import {
 } from '../preImportBackup/pre-import-backup.service';
 import { EventQueueService } from '../queueService/queue-service.service';
 import { UIAlert } from '../uiAlert';
+import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
 import {
   ImportNotRolledBackError,
@@ -39,6 +45,8 @@ import {
 import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
+import { UIMillStorage } from '../uiMillStorage';
+import { UIPreparationStorage } from '../uiPreparationStorage';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIStorage } from '../uiStorage';
 
@@ -222,6 +230,8 @@ interface DeviceOptions {
   fileSystem?: boolean;
   /** The internal backup file the start-up check reads. */
   internalBackup?: Uint8Array;
+  /** Replace the services given in place of the real ones. */
+  providers?: Provider[];
 }
 
 /** An installation storing `_stored`, with the services of the import. */
@@ -301,6 +311,7 @@ async function startDevice(
         useValue: { getAllEntries: () => device.data.get('BREWS') ?? [] },
       },
       { provide: ModalController, useValue: {} },
+      ...(_options.providers ?? []),
     ],
   });
   const uiStorage = TestBed.inject(UIStorage);
@@ -1792,16 +1803,63 @@ describe('The collections counted by the check at start-up', () => {
     expect(reads.calls.allArgs()).toEqual([['BREWS']]);
   });
 
-  it('are read again once something was written', async () => {
+  it('is read again once it was written, the others are not', async () => {
     const stored = completeData('own');
     const { reads, uiStorage } = await startChecked(stored);
     const brews = imported(entries('new-brew', 3));
 
     await uiStorage.set('BREWS', brews);
+    await uiStorage.remove('MILL');
 
     expect(await uiStorage.getOrFail('BREWS')).toEqual(brews);
+    expect(await uiStorage.getOrFail('MILL')).toBeNull();
     expect(await uiStorage.getOrFail('BEANS')).toEqual(stored.BEANS);
-    expect(reads.calls.allArgs()).toEqual([['BREWS'], ['BEANS']]);
+    expect(reads.calls.allArgs()).toEqual([['BREWS'], ['MILL']]);
+  });
+
+  it('is read again when its write ended after it was counted', async () => {
+    const stored = completeData('own');
+    const device = await startDevice(stored, {
+      internalBackup: await backupFileOf(stored),
+    });
+    const uiStorage = TestBed.inject(UIStorage);
+    const brews = imported(entries('new-brew', 3));
+    const set = device.database.set;
+    let release: () => void;
+    const released = new Promise<void>((_resolve) => (release = _resolve));
+    spyOn(device.database, 'set').and.callFake(async (_key, _value) => {
+      await released;
+      return set(_key, _value);
+    });
+    const writing = uiStorage.set('BREWS', brews);
+    await device.helper.checkBackup();
+    release();
+    await writing;
+
+    expect(await uiStorage.getOrFail('BREWS')).toEqual(brews);
+  });
+
+  it('are not kept when something was written while they were counted', async () => {
+    const stored = completeData('own');
+    const device = await startDevice(stored, {
+      internalBackup: await backupFileOf(stored),
+    });
+    const uiStorage = TestBed.inject(UIStorage);
+    const brews = imported(entries('new-brew', 3));
+    const forEach = device.database.forEach;
+    let written = false;
+    spyOn(device.database, 'forEach').and.callFake(async (_callback) => {
+      const reading = forEach(_callback);
+      if (!written) {
+        written = true;
+        // Written after the brews were read, before the reading ended.
+        await uiStorage.set('BREWS', brews);
+      }
+      return reading;
+    });
+    await device.helper.checkBackup();
+
+    expect(await uiStorage.getOrFail('BREWS')).toEqual(brews);
   });
 
   it('are read again once the database was cleared', async () => {
@@ -1891,6 +1949,83 @@ describe('The collections counted by the check at start-up', () => {
     expect(await uiStorage.getOrFail('BREWS')).toEqual(stored.BREWS);
     expect(await uiStorage.getOrFail('BEANS')).toEqual(stored.BEANS);
     expect(reads.calls.allArgs()).toEqual([['BREWS'], ['BEANS']]);
+  });
+});
+
+describe('The start of an installation with data', () => {
+  it('reads the brews and the other counted collections once', async () => {
+    const stored = storedData('own', {
+      MILL: imported(entries('own-mill', 1)),
+      PREPARATION: imported(entries('own-preparation', 1)),
+    });
+    // Created at start; it reads VERSION first, so it is written only after
+    // the brews were taken. The journal is the write before them.
+    delete stored.SETTINGS;
+    const device = await startDevice(
+      {
+        ...stored,
+        // A note about an existing bean, which the journal drops and
+        // writes once the beans are read.
+        [DELETION_JOURNAL_STORAGE_KEY]: [
+          {
+            collection: 'BEANS',
+            uuid: stored.BEANS[0].config.uuid,
+            deleted_at: 1,
+            device_id: 'device-a',
+            rev: 1,
+          },
+        ],
+      },
+      {
+        internalBackup: await backupFileOf(stored),
+        providers: [
+          UISettingsStorage,
+          UIBrewStorage,
+          { provide: TranslateService, useValue: createMockTranslateService() },
+        ],
+      },
+    );
+    // Reads end in a later task, like those of IndexedDB.
+    const get = device.database.get;
+    const reads = spyOn(device.database, 'get').and.callFake(
+      (_key: string) =>
+        new Promise((_resolve) => setTimeout(() => _resolve(get(_key)))),
+    );
+    const readAll = spyOn(device.database, 'forEach').and.callThrough();
+    const bean = TestBed.inject(UIBeanStorage);
+    const preparation = TestBed.inject(UIPreparationStorage);
+    const settings = TestBed.inject(UISettingsStorage);
+    const brew = TestBed.inject(UIBrewStorage);
+    const mill = TestBed.inject(UIMillStorage);
+    const journal = TestBed.inject(DeletionJournalService);
+
+    // In the order of AppComponent.
+    await TestBed.inject(DeviceIdentityService).initialize();
+    void journal.initialize();
+    await device.helper.checkBackup();
+    await bean.initializeStorage();
+    await preparation.initializeStorage();
+    await settings.initializeStorage();
+    await brew.initializeStorage();
+    await mill.initializeStorage();
+    await Promise.all(
+      [bean, preparation, settings, brew, mill].map((_storage) =>
+        _storage.storageReady(),
+      ),
+    );
+    await journal.forgetExistingEntries('BEANS', new Set());
+
+    expect(device.data.get(DELETION_JOURNAL_STORAGE_KEY)).toEqual([]);
+    expect(device.data.has('SETTINGS')).toBeTrue();
+    expect(brew.getAllEntries().length).toBe(stored.BREWS.length);
+    expect(readAll).toHaveBeenCalledTimes(1);
+    const readAgain = reads.calls
+      .allArgs()
+      .map(([_key]) => _key)
+      .filter((_key) =>
+        ['BREWS', 'BEANS', 'MILL', 'PREPARATION'].includes(_key),
+      );
+    expect(readAgain).toEqual([]);
   });
 });
 

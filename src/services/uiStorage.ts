@@ -49,11 +49,10 @@ export class UIStorage {
 
   /**
    * Collections hasCorruptedData() read at start-up, handed to the first
-   * read of each (getOrFail) while nothing was written since, so the start
-   * does not read them twice.
+   * read of each (getOrFail) while they were not written since, so the start
+   * does not read them twice. Writes to other keys keep them.
    */
-  private readAhead:
-    { values: Map<string, unknown>; writeCount: number } | undefined;
+  private readAhead: Map<string, unknown> | undefined;
 
   public async init() {
     // If using, define drivers here: await this.storage.defineDriver(/*...*/);
@@ -124,11 +123,11 @@ export class UIStorage {
     );
   }
   private async internalSet(_key: string, _val: any): Promise<boolean> {
-    this.writeCount++;
+    this.__countWrite(_key);
     try {
       await this._storage.set(_key, _val);
     } finally {
-      this.writeCount++;
+      this.__countWrite(_key);
     }
     // Backups never contain local-only keys, so writing them needs no new one.
     if (isLocalOnlyStorageKey(_key)) {
@@ -146,11 +145,25 @@ export class UIStorage {
    * rejects when it could not be removed.
    */
   public async remove(_key: string): Promise<void> {
-    this.writeCount++;
+    this.__countWrite(_key);
     try {
       await this._storage.remove(_key);
     } finally {
-      this.writeCount++;
+      this.__countWrite(_key);
+    }
+  }
+
+  /**
+   * Called before and after every write of `_key`, or of any key when it
+   * is left out. Also after the write, as a read that ran meanwhile can
+   * have kept the value from before.
+   */
+  private __countWrite(_key?: string): void {
+    this.writeCount++;
+    if (_key === undefined) {
+      this.readAhead = undefined;
+    } else {
+      this.readAhead?.delete(_key);
     }
   }
 
@@ -184,16 +197,12 @@ export class UIStorage {
 
   private __takeReadAhead(_key: string): { value: unknown } | undefined {
     const readAhead = this.readAhead;
-    if (readAhead?.writeCount !== this.writeCount) {
-      this.readAhead = undefined;
+    if (!readAhead?.has(_key)) {
       return undefined;
     }
-    if (!readAhead.values.has(_key)) {
-      return undefined;
-    }
-    const value = readAhead.values.get(_key);
-    readAhead.values.delete(_key);
-    if (readAhead.values.size === 0) {
+    const value = readAhead.get(_key);
+    readAhead.delete(_key);
+    if (readAhead.size === 0) {
       this.readAhead = undefined;
     }
     return { value };
@@ -272,11 +281,11 @@ export class UIStorage {
   }
 
   public async clearStorage() {
-    this.writeCount++;
+    this.__countWrite();
     try {
       await this._storage.clear();
     } finally {
-      this.writeCount++;
+      this.__countWrite();
     }
   }
 
@@ -358,8 +367,9 @@ export class UIStorage {
         }
       } else {
         await this._storage.forEach(count);
-        if (_keepForFirstRead) {
-          this.readAhead = { values: counted, writeCount };
+        // A value written while it was read can be the one from before.
+        if (_keepForFirstRead && writeCount === this.writeCount) {
+          this.readAhead = counted;
         }
       }
       if (
@@ -430,7 +440,7 @@ export class UIStorage {
             );
             return undefined;
           });
-    this.writeCount++;
+    this.__countWrite();
     const previousNote: unknown = _backup?.[LAST_RESTORE_STORAGE_KEY];
     let importData: any;
     try {
@@ -467,7 +477,7 @@ export class UIStorage {
       await this.__keepRestoreNote(previousNote);
       return { BACKUP: true };
     } finally {
-      this.writeCount++;
+      this.__countWrite();
     }
   }
 
