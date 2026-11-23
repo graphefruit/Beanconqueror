@@ -260,6 +260,78 @@ describe('PageFocusService', () => {
       expect(document.activeElement).toBe(settingsLink);
     });
 
+    describe('that the app opened without a tap', () => {
+      let now: number;
+
+      beforeEach(() => {
+        now = 0;
+        spyOn(performance, 'now').and.callFake(() => now);
+      });
+
+      it('leaves focus alone instead of moving it to the control tapped long before', async () => {
+        settingsLink.click();
+        now = 5000;
+        const loading = await presented('ion-loading');
+        fire(loading, 'ionLoadingWillPresent');
+        const title = spyOn(heading(profile), 'focus');
+
+        dismissed(loading, 'ionLoadingDidDismiss');
+        await afterDismiss();
+
+        expect(document.activeElement).toBe(document.body);
+        expect(title).not.toHaveBeenCalled();
+      });
+
+      it('puts focus back on the control that had it when the dialog opened', async () => {
+        settingsLink.focus();
+        now = 5000;
+        const alert = await presented('ion-alert');
+        fire(alert, 'ionAlertWillPresent');
+        settingsLink.blur();
+
+        dismissed(alert, 'ionAlertDidDismiss');
+        await afterDismiss();
+
+        expect(document.activeElement).toBe(settingsLink);
+      });
+
+      it('puts focus on the control tapped to save after an error shown long after under the wait', async () => {
+        settingsLink.click();
+        const loading = await presented('ion-loading');
+        fire(loading, 'ionLoadingWillPresent');
+        now = 5000;
+        const alert = await presented('ion-alert');
+        fire(alert, 'ionAlertWillPresent');
+        const ok = document.createElement('button');
+        alert.append(ok);
+        ok.focus();
+        dismissed(loading, 'ionLoadingDidDismiss');
+        await afterDismiss();
+
+        dismissed(alert, 'ionAlertDidDismiss');
+        await afterDismiss();
+
+        expect(document.activeElement).toBe(settingsLink);
+      });
+
+      it('puts focus on the control tapped to save after an error shown long after the wait', async () => {
+        settingsLink.click();
+        const loading = await presented('ion-loading');
+        fire(loading, 'ionLoadingWillPresent');
+        now = 3000;
+        dismissed(loading, 'ionLoadingDidDismiss');
+        await afterDismiss();
+        now = 5000;
+        const alert = await presented('ion-alert');
+        fire(alert, 'ionAlertWillPresent');
+
+        dismissed(alert, 'ionAlertDidDismiss');
+        await afterDismiss();
+
+        expect(document.activeElement).toBe(settingsLink);
+      });
+    });
+
     it('puts focus on the control that opened the menu the dialog came from', async () => {
       settingsLink.click();
       const sheet = await presented('ion-action-sheet');
