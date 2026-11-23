@@ -3433,14 +3433,6 @@
       "count": 4
     }
   },
-  "src/services/textToSpeech/text-to-speech.service.ts": {
-    "no-empty": {
-      "count": 1
-    },
-    "no-var": {
-      "count": 2
-    }
-  },
   "src/services/uiAnalytics.ts": {
     "@typescript-eslint/no-misused-promises": {
       "count": 1

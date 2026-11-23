@@ -994,6 +994,17 @@ file maps them onto Ionic's variables at the end.
   region of the Angular CDK (`LIVE_REGION` in `src/services/a11y/live-region.ts`),
   never from live regions of their own (`src/services/uiToast.ts`,
   `src/services/uiAlert.ts`). Covered by `e2e/announcements.spec.ts`.
+  Info toasts stay longer while a screen reader is on (`ScreenReaderState` in
+  `src/services/a11y/screen-reader-state.service.ts`).
+- Spoken brew values: `TextToSpeechService` (iOS and Android) hands them to
+  the screen reader while it is on, so its voice and rate apply and only one
+  voice speaks: to VoiceOver through `ScreenReader.speak`, to TalkBack through
+  `Announcer` (assertive). Otherwise the native
+  `@capacitor-community/text-to-speech` speaks them in the app language with
+  the rate and pitch from the settings (`speech-options.ts`), and
+  `speechSynthesis` only in the browser. Each announcement cuts off what the
+  screen reader is still reading, including the user's navigation; the time
+  holds back the weight briefly (`DEVELOPING.md`).
 - axe baseline: `e2e/accessibility.spec.ts` scans the main areas in light and
   dark against WCAG 2.2 AA; known violations live in
   `e2e/accessibility-baseline.json`, which may only shrink (`DEVELOPING.md`).
