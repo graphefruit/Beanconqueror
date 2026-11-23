@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 
 import {
   IonButton,
-  IonCard,
   IonCheckbox,
   IonCol,
   IonContent,
@@ -46,7 +45,6 @@ import {
   VirtualRowDirective,
 } from '../../../components/virtual-list/virtual-list.component';
 import { SearchbarNameDirective } from '../../../directive/searchbar-name.directive';
-import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../../enums/beans/beanFunctionPipe';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
@@ -88,7 +86,6 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonSegmentButton,
     IonLabel,
     IonRadioGroup,
-    IonCard,
     IonItem,
     IonCheckbox,
     IonRadio,
@@ -98,7 +95,6 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonThumbnail,
     IonSearchbar,
     SearchbarNameDirective,
-    TabPanelDirective,
   ],
 })
 export class BeanModalSelectComponent implements OnInit {
@@ -122,6 +118,15 @@ export class BeanModalSelectComponent implements OnInit {
   public finishedBeans: Array<Bean> = [];
   public frozenBeans: Array<Bean> = [];
   public readonly beanKey = (bean: Bean): string => bean.config.uuid;
+
+  public get shownBeans(): Bean[] {
+    if (this.bean_segment === 'frozen') {
+      return this.frozenBeans;
+    }
+    return this.bean_segment === 'archive'
+      ? this.finishedBeans
+      : this.openBeans;
+  }
 
   private readonly content = viewChild.required(IonContent);
   private readonly list =

@@ -5,117 +5,69 @@
   </app-header>
 </ion-header>
 <ion-content>
-  <ion-segment scrollable="true" (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">
-    @if (graphOpenView?.length > 0) {
-      <ion-segment-button value="graphs-open">
-        <ion-label>{{ "GRAPHS" | translate }}</ion-label>
-      </ion-segment-button>
-    }
-    <ion-segment-button value="brews-open">
-      <ion-label>{{ "BREWS_ACTIVE" | translate }}</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="brews-archive">
-      <ion-label>{{ "BREWS_ARCHIVED" | translate }}</ion-label>
-    </ion-segment-button>
-  </ion-segment>
-  <div appTabPanel>
-    @switch (brew_segment) {
-      @case ('graphs-open') {
-        @if (graphOpenView?.length > 0) {
-          <ion-radio-group [(ngModel)]="radioSelection">
-            <ion-card>
-              <ion-radio-group [(ngModel)]="radioSelection">
-                <app-virtual-list [items]="graphOpenView" [itemKey]="entryKey" [estimateSize]="180" [clearOfAddButton]="false">
-                  <ng-template [appVirtualRow]="graphOpenView" let-graph>
-                    <brew-graph-reference-card [graph]="graph" />
-                  </ng-template>
-                </app-virtual-list>
-              </ion-radio-group>
-            </ion-card>
-          </ion-radio-group>
+  <ion-radio-group [(ngModel)]="radioSelection">
+    <app-virtual-list [items]="shownRows" [itemKey]="rowKey" [estimateSize]="180" [clearOfAddButton]="false">
+      <div virtualListHead>
+        <ion-segment scrollable="true" (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">
+          @if (graphOpenView?.length > 0) {
+            <ion-segment-button value="graphs-open">
+              <ion-label>{{ "GRAPHS" | translate }}</ion-label>
+            </ion-segment-button>
+          }
+          <ion-segment-button value="brews-open">
+            <ion-label>{{ "BREWS_ACTIVE" | translate }}</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="brews-archive">
+            <ion-label>{{ "BREWS_ARCHIVED" | translate }}</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        @if (brew_segment === 'brews-open' && brewsOpen?.length > 0) {
+          <div class="ion-justify-content-end container">
+            <ion-searchbar [searchName]="'A11Y.SEARCH_BREWS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText"
+                           class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
+                           search-icon="beanconqueror-detail" showCancelButton="never" />
+            <ion-button class="margin-right-5" (click)="showFilter('brews-open')" [attr.aria-label]="(isFilterActive('brews-open') ? 'A11Y.FILTER_BREWS_ACTIVE' : 'A11Y.FILTER_BREWS') | translate" fill="clear" size="small" tappable>
+              @if (isFilterActive('brews-open')) {
+                <ion-icon aria-hidden="true" name="beanconqueror-filter-active" slot="icon-only" />
+              } @else {
+                <ion-icon aria-hidden="true" name="beanconqueror-filter-inactive" slot="icon-only" />
+              }
+            </ion-button>
+          </div>
+          <hr/>
         }
+        @if (brew_segment === 'brews-archive' && brewsArchived.length > 0) {
+          <div class="ion-justify-content-end container">
+            <ion-searchbar [searchName]="'A11Y.SEARCH_BREWS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText"
+                           class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
+                           search-icon="beanconqueror-detail" showCancelButton="never" />
+            <ion-button class="margin-right-5" (click)="showFilter('brews-archive')" [attr.aria-label]="(isFilterActive('brews-archive') ? 'A11Y.FILTER_BREWS_ACTIVE' : 'A11Y.FILTER_BREWS') | translate" fill="clear" size="small"
+                        tappable>
+              @if (isFilterActive('brews-archive')) {
+                <ion-icon aria-hidden="true" name="beanconqueror-filter-active" slot="icon-only" />
+              } @else {
+                <ion-icon aria-hidden="true" name="beanconqueror-filter-inactive" slot="icon-only" />
+              }
+            </ion-button>
+          </div>
+          <hr/>
+        }
+      </div>
+      @if (brew_segment !== 'graphs-open' && shownRows.length === 0) {
+        <div class="ion-padding ion-text-center">
+          <div>
+            <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-cup" size="large" />
+          </div>
+          <div class="text-color-inactive ion-margin-top">
+            {{ "NO_BREWS_FOUND" | translate }}
+          </div>
+        </div>
       }
-      @case ('brews-open') {
-        <ion-radio-group [(ngModel)]="radioSelection">
-          <ion-card>
-            @if (brewsOpen?.length > 0) {
-              <div class="ion-justify-content-end container">
-                <ion-searchbar [searchName]="'A11Y.SEARCH_BREWS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText"
-                               class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
-                               search-icon="beanconqueror-detail" showCancelButton="never" />
-                <ion-button class="margin-right-5" (click)="showFilter('brews-open')" [attr.aria-label]="(isFilterActive('brews-open') ? 'A11Y.FILTER_BREWS_ACTIVE' : 'A11Y.FILTER_BREWS') | translate" fill="clear" size="small" tappable>
-                  @if (isFilterActive('brews-open')) {
-                    <ion-icon aria-hidden="true" name="beanconqueror-filter-active" slot="icon-only" />
-                  } @else {
-                    <ion-icon aria-hidden="true" name="beanconqueror-filter-inactive" slot="icon-only" />
-                  }
-                </ion-button>
-              </div>
-              <hr/>
-            }
-            @if (openBrewsView?.length > 0) {
-              <ion-radio-group [(ngModel)]="radioSelection">
-                <app-virtual-list [items]="openBrewsView" [itemKey]="entryKey" [estimateSize]="180" [clearOfAddButton]="false">
-                  <ng-template [appVirtualRow]="openBrewsView" let-brew>
-                    <brew-graph-reference-card [brew]="brew" />
-                  </ng-template>
-                </app-virtual-list>
-              </ion-radio-group>
-            } @else {
-              <div class="ion-padding ion-text-center">
-                <div>
-                  <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-cup" size="large" />
-                </div>
-                <div class="text-color-inactive ion-margin-top">
-                  {{ "NO_BREWS_FOUND" | translate }}
-                </div>
-              </div>
-            }
-          </ion-card>
-        </ion-radio-group>
-      }
-      @case ('brews-archive') {
-        <ion-radio-group [(ngModel)]="radioSelection">
-          <ion-card>
-            @if (brewsArchived.length > 0) {
-              <div class="ion-justify-content-end container">
-                <ion-searchbar [searchName]="'A11Y.SEARCH_BREWS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText"
-                               class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}"
-                               search-icon="beanconqueror-detail" showCancelButton="never" />
-                <ion-button class="margin-right-5" (click)="showFilter('brews-archive')" [attr.aria-label]="(isFilterActive('brews-archive') ? 'A11Y.FILTER_BREWS_ACTIVE' : 'A11Y.FILTER_BREWS') | translate" fill="clear" size="small"
-                            tappable>
-                  @if (isFilterActive('brews-archive')) {
-                    <ion-icon aria-hidden="true" name="beanconqueror-filter-active" slot="icon-only" />
-                  } @else {
-                    <ion-icon aria-hidden="true" name="beanconqueror-filter-inactive" slot="icon-only" />
-                  }
-                </ion-button>
-              </div>
-              <hr/>
-            }
-            @if (archiveBrewsView?.length > 0) {
-              <ion-radio-group [(ngModel)]="radioSelection">
-                <app-virtual-list [items]="archiveBrewsView" [itemKey]="entryKey" [estimateSize]="385" [clearOfAddButton]="false">
-                  <ng-template [appVirtualRow]="archiveBrewsView" let-brew>
-                    <brew-graph-reference-card [brew]="brew" />
-                  </ng-template>
-                </app-virtual-list>
-              </ion-radio-group>
-            } @else {
-              <div class="ion-padding ion-text-center">
-                <div>
-                  <ion-icon aria-hidden="true" color="inactive" name="beanconqueror-cup" size="large" />
-                </div>
-                <div class="text-color-inactive ion-margin-top">
-                  {{ "NO_BREWS_FOUND" | translate }}
-                </div>
-              </div>
-            }
-          </ion-card>
-        </ion-radio-group>
-      }
-    }
-  </div>
+      <ng-template [appVirtualRow]="shownRows" let-row>
+        <brew-graph-reference-card [brew]="row.brew" [graph]="row.graph" />
+      </ng-template>
+    </app-virtual-list>
+  </ion-radio-group>
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>
