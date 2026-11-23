@@ -72,7 +72,8 @@ folders. The rules are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#coverage-o
 worktree, Angular keeps the cache in the main checkout, so all worktrees share it. Its entries are
 keyed by file content only, and coverage builds write the file path into them: another worktree
 with the same file would then report coverage under its own paths, and new code shows as
-"not loaded".
+"not loaded". `ng build`, `ng serve`, `pnpm test` and `pnpm e2e` still use the
+shared cache.
 
 Run the linter. It also runs in CI. Existing errors are recorded in `eslint-suppressions.json`,
 so only new errors fail. If you fix existing errors, shrink the file and commit it:
