@@ -213,7 +213,6 @@ export class AcaiaScale {
       this.messageParseCallback(_data);
     });
     this.logger.log('Subscribing to notifications', {
-      device_id: this.device_id,
       weight_uuid: this.weight_uuid,
       char_uuid: this.rx_char_uuid,
     });
@@ -280,7 +279,6 @@ export class AcaiaScale {
         this.logger.debug(
           'We cant disconnect because one of the characteristics is missing' +
             JSON.stringify({
-              device_id: this.device_id,
               weight: this.weight_uuid,
               char_uuid: this.tx_char_uuid,
             }),
@@ -367,7 +365,6 @@ export class AcaiaScale {
         foundTx = true;
       }
       this.logger.log('findBleeUIDS', {
-        device_id: this.device_id,
         weight_uuid: this.weight_uuid,
         char_uuid: this.rx_char_uuid,
         isPyxis: this.isPyxisStyle,
