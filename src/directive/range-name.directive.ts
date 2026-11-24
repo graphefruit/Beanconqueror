@@ -12,10 +12,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import {
-  Announcer,
-  ProgressAnnouncement,
-} from '../services/a11y/announcer.service';
+import { Announcer } from '../services/a11y/announcer.service';
 
 type RangeElement = HTMLElement & {
   step?: number;
@@ -28,16 +25,12 @@ export type RangeValue = number | { lower: number; upper: number };
 type KnobMoveEvent = CustomEvent<{ value: RangeValue }>;
 
 /**
- * While a knob is dragged, its value is spoken at most this often. A screen
- * reader queues polite messages, so faster ones would still be spoken after
- * the knob was let go.
+ * While a knob is dragged, its value is spoken at most this often, so a value
+ * can be heard to its end before the next one cuts it off.
  */
 export const DRAG_ANNOUNCE_INTERVAL_MS = 1000;
 
-/**
- * Live region key of a dragged value: a value the screen reader has not been
- * handed yet is dropped for a newer one, so it never speaks a passed value.
- */
+/** Live region key of a dragged value: a newer one replaces it while it waits. */
 export const RANGE_VALUE_KEY = 'range-value';
 
 /**
@@ -89,10 +82,18 @@ export function rangeValueText(
  * app does not use, and announces only the number. With two knobs, the lower
  * one is named "from" and the upper one "to".
  *
- * While a knob is dragged, its value is announced as it changes and once more
- * when it is let go: a screen reader does not speak value changes of a knob
- * moved by touch. A step from the keyboard, which is also how a screen
- * reader's own adjust gesture arrives, is spoken by the screen reader itself.
+ * A step from the keyboard, which is also how the adjust gesture of VoiceOver
+ * and TalkBack (swipe up or down) arrives, is read by the screen reader itself
+ * right after the step. So the step's value is written into the knob before
+ * the screen reader reads it, not only when Ionic renders the knob again, and
+ * it is not announced: that would be a second message per step, and those
+ * pile up in the screen reader's queue while the user swipes on.
+ *
+ * A screen reader does not speak value changes of a knob dragged by touch,
+ * so while a knob is dragged its value is announced, at most once per
+ * DRAG_ANNOUNCE_INTERVAL_MS and assertively, so a newer value cuts off an
+ * older one instead of waiting behind it. When the knob is let go, its value
+ * is announced unless it was the last one spoken.
  */
 @Directive({ selector: 'ion-range' })
 export class RangeNameDirective {
@@ -118,7 +119,11 @@ export class RangeNameDirective {
   private dragging = false;
   private dragValue: RangeValue = 0;
   private dragKnob: 'lower' | 'upper' = 'lower';
-  private dragAnnouncement: ProgressAnnouncement | undefined;
+  /** The dragged value last handed to the screen reader, and when. */
+  private spoken = '';
+  private spokenAt = Number.NEGATIVE_INFINITY;
+  private waiting: string | undefined;
+  private timer: ReturnType<typeof setTimeout> | undefined;
 
   constructor() {
     const destroyRef = inject(DestroyRef);
@@ -154,7 +159,7 @@ export class RangeNameDirective {
     destroyRef.onDestroy(() => {
       observer?.disconnect();
       listening.abort();
-      this.dragAnnouncement?.end();
+      clearTimeout(this.timer);
     });
 
     effect(() => {
@@ -171,6 +176,7 @@ export class RangeNameDirective {
   private onKnobMoveStart(event: KnobMoveEvent): void {
     this.knobMoving = true;
     this.dragValue = event.detail.value;
+    this.spoken = '';
     // Ionic starts and ends a keyboard step within one task, a drag ends in a
     // later one: only a move still going on after this task is a drag.
     queueMicrotask(() => (this.dragging = this.knobMoving));
@@ -181,14 +187,20 @@ export class RangeNameDirective {
       return;
     }
     const message = this.dragMessage(event.detail.value);
-    if (this.dragAnnouncement) {
-      this.dragAnnouncement.update(message);
+    this.waiting = message === this.spoken ? undefined : message;
+    if (this.waiting === undefined || this.timer !== undefined) {
+      return;
+    }
+    const wait = this.spokenAt + DRAG_ANNOUNCE_INTERVAL_MS - Date.now();
+    if (wait > 0) {
+      this.timer = setTimeout(() => {
+        this.timer = undefined;
+        if (this.waiting !== undefined) {
+          this.say(this.waiting);
+        }
+      }, wait);
     } else {
-      this.dragAnnouncement = this.announcer.startProgress(
-        message,
-        DRAG_ANNOUNCE_INTERVAL_MS,
-        RANGE_VALUE_KEY,
-      );
+      this.say(message);
     }
   }
 
@@ -196,15 +208,24 @@ export class RangeNameDirective {
     const dragged = this.dragging;
     this.knobMoving = false;
     this.dragging = false;
-    this.dragAnnouncement?.end();
-    this.dragAnnouncement = undefined;
+    clearTimeout(this.timer);
+    this.timer = undefined;
+    this.waiting = undefined;
+    // Ionic renders the knob after the step, a screen reader reads it at once.
+    this.describeKnobs(event.detail.value);
     if (dragged) {
-      this.announcer.announce(
-        this.dragMessage(event.detail.value),
-        'polite',
-        RANGE_VALUE_KEY,
-      );
+      const message = this.dragMessage(event.detail.value);
+      if (message !== this.spoken) {
+        this.say(message);
+      }
     }
+  }
+
+  private say(message: string): void {
+    this.waiting = undefined;
+    this.spoken = message;
+    this.spokenAt = Date.now();
+    this.announcer.announce(message, 'assertive', RANGE_VALUE_KEY);
   }
 
   /** Says the value of the knob being dragged, e.g. "80 %" or "to 3.5". */
@@ -233,7 +254,11 @@ export class RangeNameDirective {
     );
   }
 
-  private describeKnobs(): void {
+  /**
+   * Names the knobs and says their value. `value` is the range's value when
+   * it is newer than the knobs' aria-valuenow, i.e. before Ionic renders.
+   */
+  private describeKnobs(value?: RangeValue): void {
     const knobs =
       this.host.shadowRoot?.querySelectorAll<HTMLElement>('[role="slider"]') ??
       [];
@@ -258,11 +283,23 @@ export class RangeNameDirective {
         // Ionic points to its own empty label, which would win over the name.
         knob.removeAttribute('aria-labelledby');
       }
-      const value =
+      if (value !== undefined) {
+        const now = String(
+          typeof value === 'number'
+            ? value
+            : value[
+                knob.part.contains('knob-handle-upper') ? 'upper' : 'lower'
+              ],
+        );
+        if (knob.getAttribute('aria-valuenow') !== now) {
+          knob.setAttribute('aria-valuenow', now);
+        }
+      }
+      const shown =
         this.rangeShownValue() ?? Number(knob.getAttribute('aria-valuenow'));
-      if (Number.isFinite(value)) {
+      if (Number.isFinite(shown)) {
         const text = rangeValueText(
-          value,
+          shown,
           this.host.step,
           this.rangeUnit(),
           language,

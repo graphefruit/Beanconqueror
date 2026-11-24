@@ -235,6 +235,50 @@ describe('RangeNameDirective', () => {
 
       expect(liveRegion.heard).toEqual([]);
     });
+
+    it('does not say the value again when the knob is let go where it was last said', async () => {
+      await startDrag(80);
+      fire('ionInput', 83);
+      jasmine.clock().tick(3000);
+      fire('ionInput', 83);
+      fire('ionKnobMoveEnd', 83);
+
+      expect(liveRegion.heard).toEqual(['83 %']);
+    });
+  });
+
+  describe('a keyboard step, as from the adjust gesture of a screen reader', () => {
+    /** Ionic's events for a step, all sent before the keydown returns. */
+    function step(before: RangeValue, after: RangeValue): void {
+      fire('ionKnobMoveStart', before);
+      fire('ionInput', after);
+      fire('ionKnobMoveEnd', after);
+    }
+
+    it('has the new value in the knob before Ionic renders it', async () => {
+      await create(knob(80));
+
+      step(80, 79);
+
+      // The screen reader reads the knob now, in the same task.
+      expect(knobs()[0].getAttribute('aria-valuenow')).toBe('79');
+      expect(knobs()[0].getAttribute('aria-valuetext')).toBe('79 %');
+      await settle();
+      expect(liveRegion.heard).toEqual([]);
+    });
+
+    it('has the new value in the moved knob of a range', async () => {
+      await create(
+        knob(1.5, 'knob-handle-lower') + knob(3, 'knob-handle-upper'),
+        0.5,
+      );
+
+      step({ lower: 1.5, upper: 3 }, { lower: 1.5, upper: 3.5 });
+
+      expect(
+        knobs().map((each) => each.getAttribute('aria-valuetext')),
+      ).toEqual(['1,5 %', '3,5 %']);
+    });
   });
 
   it('keeps Ionic’s name where no label is given', async () => {
@@ -249,22 +293,59 @@ describe('RangeNameDirective', () => {
   });
 });
 
-describe('RangeNameDirective with a screen reader still speaking', () => {
-  /** How long the screen reader is busy with each message written. */
-  const SPEAKING_MS = 10_000;
+describe('RangeNameDirective with a screen reader speaking', () => {
+  /** The CDK writes a message into its live region this long after the call. */
+  const CDK_WRITE_MS = 100;
+  /** How long the screen reader takes to say a value, e.g. "achtzig Prozent". */
+  const SPEAKING_MS = 1500;
 
-  it('drops values passed while it speaks and says only the newest', fakeAsync(() => {
-    const heard: string[] = [];
+  /**
+   * A screen reader: it says one message at a time, queues a polite one and
+   * drops what it is saying and what waits for an assertive one.
+   */
+  class ScreenReader {
+    public readonly said: { message: string; at: number }[] = [];
+    private queue: string[] = [];
+    private timer: ReturnType<typeof setTimeout> | undefined;
+
+    public hear(message: string, politeness: string): void {
+      if (politeness === 'assertive') {
+        this.queue = [];
+        clearTimeout(this.timer);
+        this.timer = undefined;
+      }
+      this.queue.push(message);
+      if (this.timer === undefined) {
+        this.next();
+      }
+    }
+
+    private next(): void {
+      const message = this.queue.shift();
+      if (message === undefined) {
+        this.timer = undefined;
+        return;
+      }
+      this.said.push({ message, at: Date.now() });
+      this.timer = setTimeout(() => this.next(), SPEAKING_MS);
+    }
+  }
+
+  it('says the value of a dragged knob in real time, not values passed by', fakeAsync(() => {
+    const screenReader = new ScreenReader();
     TestBed.configureTestingModule({
       imports: [HostComponent, TranslateModule.forRoot()],
       providers: [
         {
           provide: LiveAnnouncer,
           useValue: {
-            announce: (message: string) => {
-              heard.push(message);
-              return new Promise<void>((done) => setTimeout(done, SPEAKING_MS));
-            },
+            announce: (message: string, politeness: string) =>
+              new Promise<void>((done) =>
+                setTimeout(() => {
+                  screenReader.hear(message, politeness);
+                  done();
+                }, CDK_WRITE_MS),
+              ),
           },
         },
       ],
@@ -277,22 +358,27 @@ describe('RangeNameDirective with a screen reader still speaking', () => {
     const range = (fixture.nativeElement as HTMLElement).querySelector(
       'test-range',
     );
-    range.attachShadow({ mode: 'open' }).innerHTML = knob(80);
+    range.attachShadow({ mode: 'open' }).innerHTML = knob(10);
     fixture.detectChanges();
     flushMicrotasks();
     const fire = (type: string, value: number) =>
       range.dispatchEvent(new CustomEvent(type, { detail: { value } }));
 
-    fire('ionKnobMoveStart', 80);
+    // A finger drags the knob for 6 s, one step every 100 ms.
+    fire('ionKnobMoveStart', 10);
     flushMicrotasks();
-    for (let value = 81; value <= 89; value++) {
+    for (let value = 11; value <= 70; value++) {
       fire('ionInput', value);
-      tick(DRAG_ANNOUNCE_INTERVAL_MS);
+      tick(100);
     }
-    fire('ionKnobMoveEnd', 90);
+    const letGoAt = Date.now();
+    fire('ionKnobMoveEnd', 70);
     flush();
 
-    expect(heard).toEqual(['81 %', '90 %']);
+    const said = screenReader.said;
+    expect(said.at(-1)?.message).toBe('70 %');
+    expect(said.at(-1)?.at - letGoAt).toBeLessThan(1000);
+    expect(said.length).toBeLessThanOrEqual(8);
   }));
 });
 

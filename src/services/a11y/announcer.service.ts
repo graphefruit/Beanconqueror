@@ -20,7 +20,7 @@ export const PROGRESS_INTERVAL_MS = 3000;
 export interface ProgressAnnouncement {
   /**
    * The message changed. The latest message is spoken, at most once per
-   * interval and only if it differs from the one spoken last.
+   * PROGRESS_INTERVAL_MS and only if it differs from the one spoken last.
    */
   update(message: string): void;
   /** The work is over: says nothing and drops an update still waiting. */
@@ -72,21 +72,9 @@ export class Announcer {
     return true;
   }
 
-  /**
-   * Announces `message` politely at once and returns its handle for updates,
-   * which are spoken at most once per `interval` milliseconds. With a `key`,
-   * an update still waiting in the live region is replaced by a newer one.
-   */
-  public startProgress(
-    message: string,
-    interval = PROGRESS_INTERVAL_MS,
-    key?: string,
-  ): ProgressAnnouncement {
-    return new ThrottledProgress(
-      (text) => this.announce(text, 'polite', key),
-      message,
-      interval,
-    );
+  /** Announces `message` politely at once and returns its handle for updates. */
+  public startProgress(message: string): ProgressAnnouncement {
+    return new ThrottledProgress((text) => this.announce(text), message);
   }
 }
 
@@ -100,7 +88,6 @@ class ThrottledProgress implements ProgressAnnouncement {
   constructor(
     private readonly speak: (message: string) => void,
     message: string,
-    private readonly interval: number,
   ) {
     this.spoken = normalize(message);
     this.spokenAt = Date.now();
@@ -121,7 +108,7 @@ class ThrottledProgress implements ProgressAnnouncement {
     if (this.timer !== undefined) {
       return;
     }
-    const wait = this.spokenAt + this.interval - Date.now();
+    const wait = this.spokenAt + PROGRESS_INTERVAL_MS - Date.now();
     if (wait > 0) {
       this.timer = setTimeout(() => this.flush(), wait);
     } else {

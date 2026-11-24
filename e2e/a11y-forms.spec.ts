@@ -100,6 +100,31 @@ for (const language of ['en', 'de'] as const) {
       await expect(quality).not.toHaveAttribute('aria-disabled', 'true');
       const before = 100;
       await quality.focus();
+      // The adjust gesture of VoiceOver and TalkBack arrives as an arrow key,
+      // and the screen reader reads the knob as soon as the key is handled.
+      await quality.evaluate((knob) => {
+        const seen = { atKey: '', texts: [] as string[], announced: '' };
+        (window as unknown as { seen: typeof seen }).seen = seen;
+        knob.addEventListener('keydown', () => {
+          seen.atKey = knob.getAttribute('aria-valuetext') ?? '';
+        });
+        new MutationObserver(() =>
+          seen.texts.push(knob.getAttribute('aria-valuetext') ?? ''),
+        ).observe(knob, { attributeFilter: ['aria-valuetext'] });
+        const announcement = () =>
+          document.querySelector('.cdk-live-announcer-element')?.textContent ??
+          '';
+        const earlier = announcement();
+        new MutationObserver(() => {
+          if (announcement() !== earlier) {
+            seen.announced = announcement();
+          }
+        }).observe(document.body, {
+          subtree: true,
+          childList: true,
+          characterData: true,
+        });
+      });
       await page.keyboard.press('ArrowLeft');
       await expect(quality).toHaveAttribute(
         'aria-valuenow',
@@ -109,6 +134,19 @@ for (const language of ['en', 'de'] as const) {
         'aria-valuetext',
         `${before - 1} %`,
       );
+      // The CDK writes an announcement 100 ms after it is made.
+      await page.waitForTimeout(300);
+      // Read once by the screen reader, with the new value, and not said
+      // again by the app.
+      expect(
+        await page.evaluate(
+          () => (window as unknown as { seen: unknown }).seen,
+        ),
+      ).toEqual({
+        atKey: `${before - 1} %`,
+        texts: [`${before - 1} %`],
+        announced: '',
+      });
       // A screen reader does not speak a value changed by dragging the knob,
       // so the app announces it.
       await expect(quality).not.toHaveAttribute('aria-disabled', 'true');
