@@ -33,6 +33,7 @@ import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
+import { SheetCloseButtonComponent } from '../../../components/sheet-close-button/sheet-close-button.component';
 import { ChooseDateOverlayDirective } from '../../../directive/choose-date.directive';
 import { ControlDescriptionDirective } from '../../../directive/control-description.directive';
 import { PickerFieldDirective } from '../../../directive/picker-field.directive';
@@ -79,6 +80,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonBadge,
     IonList,
     IonButton,
+    SheetCloseButtonComponent,
   ],
 })
 export class BeanFilterComponent implements OnInit {

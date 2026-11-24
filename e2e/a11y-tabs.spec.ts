@@ -467,6 +467,59 @@ for (const language of ['en', 'de'] as const) {
       ).toBeFocused();
     });
 
+    test('focus stays where it is after a dialog the app opened without a tap', async ({
+      page,
+    }) => {
+      await page.clock.install();
+      await start(page, language);
+      await tabBar(page)
+        .getByRole('tab', { name: t('NAV_BREWS') })
+        .click();
+      await expect(page).toHaveURL(/\/home\/brews$/);
+      const options = page
+        .locator('brew')
+        .getByRole('button', {
+          name: startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' })),
+        })
+        .first();
+      // The control was used a while ago; the screen reader has moved on.
+      await options.focus();
+      await options.blur();
+      await page.clock.fastForward(5000);
+
+      // E.g. a wait or a Bluetooth message, which nothing on screen opened.
+      await page.evaluate(async () => {
+        const alert = document.createElement('ion-alert') as HTMLElement & {
+          header: string;
+          buttons: string[];
+          present(): Promise<void>;
+        };
+        alert.header = 'Scale';
+        alert.buttons = ['OK'];
+        document.querySelector('ion-app')?.append(alert);
+        await alert.present();
+        document.addEventListener(
+          'ionAlertDidDismiss',
+          () =>
+            setTimeout(() => {
+              document.body.dataset['focusAfterDialog'] =
+                document.activeElement?.tagName ?? '';
+            }),
+          { capture: true, once: true },
+        );
+      });
+      await page
+        .getByRole('alertdialog')
+        .getByRole('button', { name: 'OK', exact: true })
+        .dispatchEvent('click');
+
+      await expect(page.locator('body')).toHaveAttribute(
+        'data-focus-after-dialog',
+        'BODY',
+      );
+      await expect(options).not.toBeFocused();
+    });
+
     test('dialogs are modal and named after their title or the entry', async ({
       page,
     }) => {

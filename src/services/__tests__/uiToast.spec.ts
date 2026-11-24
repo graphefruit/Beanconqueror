@@ -7,6 +7,7 @@ import {
 
 import { ToastButton, ToastController } from '@ionic/angular';
 
+import { StateChangeListener } from '@capacitor/screen-reader';
 import { TranslateService } from '@ngx-translate/core';
 
 import {
@@ -14,7 +15,15 @@ import {
   LIVE_REGION,
   LiveRegion,
 } from '../a11y/live-region';
-import { UIToast } from '../uiToast';
+import {
+  SCREEN_READER,
+  ScreenReaderSource,
+} from '../a11y/screen-reader-state.service';
+import {
+  INFO_TOAST_DURATION_MS,
+  INFO_TOAST_DURATION_SCREEN_READER_MS,
+  UIToast,
+} from '../uiToast';
 
 const TRANSLATIONS: Record<string, string> = {
   TOAST_BREW_ADDED_SUCCESSFULLY: 'Brew added successfully',
@@ -40,6 +49,7 @@ class FakeLiveRegion implements LiveRegion {
 interface FakeToast extends HTMLElement {
   message: string;
   buttons?: ToastButton[];
+  duration: number;
   present: jasmine.Spy<() => Promise<void>>;
   onDidDismiss: () => Promise<{ role?: string }>;
   /** aria-live of the toast's own live region when present() was called. */
@@ -74,13 +84,16 @@ describe('UIToast', () => {
   let toasts: FakeToast[];
   let withShadowRoot: boolean;
 
-  function createService(): UIToast {
+  function createService(
+    screenReader: ScreenReaderSource | null = null,
+  ): UIToast {
     liveRegion = new FakeLiveRegion();
     toasts = [];
     withShadowRoot = true;
     TestBed.configureTestingModule({
       providers: [
         { provide: LIVE_REGION, useValue: liveRegion },
+        { provide: SCREEN_READER, useValue: screenReader },
         {
           provide: TranslateService,
           useValue: {
@@ -94,10 +107,15 @@ describe('UIToast', () => {
         {
           provide: ToastController,
           useValue: {
-            create: (options: { message: string; buttons?: ToastButton[] }) => {
+            create: (options: {
+              message: string;
+              buttons?: ToastButton[];
+              duration: number;
+            }) => {
               const toast = createToast(withShadowRoot);
               toast.message = options.message;
               toast.buttons = options.buttons;
+              toast.duration = options.duration;
               toasts.push(toast);
               return Promise.resolve(toast);
             },
@@ -204,4 +222,89 @@ describe('UIToast', () => {
       { message: 'Saving brew in 3', politeness: 'polite' },
     ]);
   }));
+
+  describe('with a screen reader', () => {
+    let stateChange: StateChangeListener | undefined;
+
+    function screenReader(
+      enabled: Promise<{ value: boolean }>,
+    ): ScreenReaderSource {
+      stateChange = undefined;
+      return {
+        speak: jasmine.createSpy('speak'),
+        isEnabled: jasmine.createSpy('isEnabled').and.returnValue(enabled),
+        addListener: jasmine
+          .createSpy('addListener')
+          .and.callFake((_event: string, listener: StateChangeListener) => {
+            stateChange = listener;
+            return Promise.resolve({ remove: () => Promise.resolve() });
+          }),
+      };
+    }
+
+    function durationsOfInfoToasts(uiToast: UIToast): number[] {
+      void uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
+      void uiToast.showInfoToastBottom('VISUALIZER.CONNECTION.SUCCESSFULLY');
+      flushMicrotasks();
+      return toasts.splice(0).map((toast) => toast.duration);
+    }
+
+    it('keeps the short duration where the state is not known (web)', fakeAsync(() => {
+      const uiToast = createService(null);
+
+      expect(durationsOfInfoToasts(uiToast)).toEqual([
+        INFO_TOAST_DURATION_MS,
+        INFO_TOAST_DURATION_MS,
+      ]);
+    }));
+
+    it('shows info toasts longer while it is on', fakeAsync(() => {
+      const uiToast = createService(
+        screenReader(Promise.resolve({ value: true })),
+      );
+      flushMicrotasks();
+
+      expect(durationsOfInfoToasts(uiToast)).toEqual([
+        INFO_TOAST_DURATION_SCREEN_READER_MS,
+        INFO_TOAST_DURATION_SCREEN_READER_MS,
+      ]);
+    }));
+
+    it('follows the screen reader being turned on and off', fakeAsync(() => {
+      const uiToast = createService(
+        screenReader(Promise.resolve({ value: false })),
+      );
+      flushMicrotasks();
+      expect(durationsOfInfoToasts(uiToast)).toEqual([
+        INFO_TOAST_DURATION_MS,
+        INFO_TOAST_DURATION_MS,
+      ]);
+
+      stateChange({ value: true });
+      expect(durationsOfInfoToasts(uiToast)).toEqual([
+        INFO_TOAST_DURATION_SCREEN_READER_MS,
+        INFO_TOAST_DURATION_SCREEN_READER_MS,
+      ]);
+
+      stateChange({ value: false });
+      expect(durationsOfInfoToasts(uiToast)).toEqual([
+        INFO_TOAST_DURATION_MS,
+        INFO_TOAST_DURATION_MS,
+      ]);
+    }));
+
+    it('does not change the duration of the automatic save countdown', fakeAsync(() => {
+      const uiToast = createService(
+        screenReader(Promise.resolve({ value: true })),
+      );
+      flushMicrotasks();
+
+      void uiToast.showAutomaticSaveTimer(3);
+      flushMicrotasks();
+
+      expect(toasts[0].duration).toBe(3000);
+      toasts[0].close('cancel');
+      tick(3000);
+    }));
+  });
 });

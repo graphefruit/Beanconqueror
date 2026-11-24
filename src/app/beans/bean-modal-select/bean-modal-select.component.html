@@ -5,147 +5,63 @@
   </app-header>
 </ion-header>
 <ion-content>
-
-  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]='bean_segment'>
-    <ion-segment-button value='open'>
-      <ion-label>{{ "CURRENT" | translate }}
-      </ion-label>
-    </ion-segment-button>
-    @if (settings.freeze_coffee_beans && frozenBeansLength) {
-      <ion-segment-button value='frozen'>
-        <ion-label>{{ "FROZEN_BEANS" | translate }}
-        </ion-label>
-      </ion-segment-button>
-    }
-    @if (showFinished===true && finishedBeansLength > 0) {
-      <ion-segment-button value='archive'>
-        <ion-label>{{ "TAB_ARCHIVE" | translate }}
-        </ion-label>
-      </ion-segment-button>
-    }
-  </ion-segment>
-  <div appTabPanel>
-    @switch (bean_segment) {
-      @case ('open') {
-        <ion-radio-group [(ngModel)]='radioSelection'>
-        <ion-card>
-          <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
-          @if (openBeans.length > 0) {
-            <app-virtual-list [items]="openBeans" [itemKey]="beanKey" [estimateSize]="60" [clearOfAddButton]="false">
-              <ng-template [appVirtualRow]="openBeans" let-bean>
-                <ion-item lines='none' tappable>
-                  @if (multiple) {
-                    <ion-checkbox justify='start' label-placement='end'
-                                  [(ngModel)]='multipleSelection[bean.config.uuid]'>
-                      <ng-container [ngTemplateOutlet]="beanInformationCard"
-                                    [ngTemplateOutletContext]="{bean:bean}" />
-                    </ion-checkbox>
-                  } @else {
-                    <ion-radio justify='start' label-placement='end' value='{{bean.config.uuid}}'>
-                      <ng-container [ngTemplateOutlet]="beanInformationCard"
-                                    [ngTemplateOutletContext]="{bean:bean}" />
-                    </ion-radio>
-                  }
-                  <ng-container [ngTemplateOutlet]="beanThumbnailCard"
-                                [ngTemplateOutletContext]="{bean:bean}" />
-                </ion-item>
-              </ng-template>
-            </app-virtual-list>
-
-          } @else {
-            <div class='ion-padding ion-text-center'>
-              <div>
-                <ion-icon aria-hidden="true" color='inactive' name='beanconqueror-beans' size='large' />
-              </div>
-              <div class='text-color-inactive ion-margin-top'>
-                {{ "PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate }}
-              </div>
-            </div>
+  <ion-radio-group [(ngModel)]='radioSelection'>
+    <app-virtual-list class="card" [items]="shownBeans" [itemKey]="beanKey" [estimateSize]="60" [clearOfAddButton]="false">
+      <div virtualListHead>
+        <ion-segment (ionChange)="segmentChanged()" [(ngModel)]='bean_segment'>
+          <ion-segment-button value='open'>
+            <ion-label>{{ "CURRENT" | translate }}
+            </ion-label>
+          </ion-segment-button>
+          @if (settings.freeze_coffee_beans && frozenBeansLength) {
+            <ion-segment-button value='frozen'>
+              <ion-label>{{ "FROZEN_BEANS" | translate }}
+              </ion-label>
+            </ion-segment-button>
           }
-        </ion-card>
-        </ion-radio-group>
-      }
-      @case ('frozen') {
-        <ion-radio-group [(ngModel)]='radioSelection'>
-        <ion-card>
-          <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
-          @if (frozenBeans.length > 0) {
-            <app-virtual-list [items]="frozenBeans" [itemKey]="beanKey" [estimateSize]="60" [clearOfAddButton]="false">
-              <ng-template [appVirtualRow]="frozenBeans" let-bean>
-                <ion-item lines='none' tappable>
-                  @if (multiple) {
-                    <ion-checkbox justify='start' label-placement='end'
-                                  [(ngModel)]='multipleSelection[bean.config.uuid]'
-                                  slot='start'>
-                      <ng-container [ngTemplateOutlet]="beanInformationCard"
-                                    [ngTemplateOutletContext]="{bean:bean}" />
-                    </ion-checkbox>
-                  } @else {
-                    <ion-radio justify='start' label-placement='end' value='{{bean.config.uuid}}'>
-                      <ng-container [ngTemplateOutlet]="beanInformationCard"
-                                    [ngTemplateOutletContext]="{bean:bean}" />
-                    </ion-radio>
-                  }
-                  <ng-container [ngTemplateOutlet]="beanThumbnailCard"
-                                [ngTemplateOutletContext]="{bean:bean}" />
-                </ion-item>
-              </ng-template>
-            </app-virtual-list>
-          } @else {
-            <div class='ion-padding ion-text-center'>
-              <div>
-                <ion-icon aria-hidden="true" color='inactive' name='beanconqueror-beans' size='large' />
-              </div>
-              <div class='text-color-inactive ion-margin-top'>
-                {{ "PAGE_BEANS_LIST_YOU_GOT_NO_FROZEN_BEANS" | translate }}
-              </div>
-            </div>
+          @if (showFinished===true && finishedBeansLength > 0) {
+            <ion-segment-button value='archive'>
+              <ion-label>{{ "TAB_ARCHIVE" | translate }}
+              </ion-label>
+            </ion-segment-button>
           }
-        </ion-card>
-        </ion-radio-group>
+        </ion-segment>
+        <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
+      </div>
+      @if (shownBeans.length === 0) {
+        <div class='ion-padding ion-text-center'>
+          <div>
+            <ion-icon aria-hidden="true" color='inactive' name='beanconqueror-beans' size='large' />
+          </div>
+          <div class='text-color-inactive ion-margin-top'>
+            @switch (bean_segment) {
+              @case ('open') { {{ "PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate }} }
+              @case ('frozen') { {{ "PAGE_BEANS_LIST_YOU_GOT_NO_FROZEN_BEANS" | translate }} }
+              @case ('archive') { {{ "PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate }} }
+            }
+          </div>
+        </div>
       }
-      @case ('archive') {
-        <ion-radio-group [(ngModel)]='radioSelection'>
-        <ion-card>
-          <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
-          @if (finishedBeans.length > 0) {
-            <app-virtual-list [items]="finishedBeans" [itemKey]="beanKey" [estimateSize]="60" [clearOfAddButton]="false">
-              <ng-template [appVirtualRow]="finishedBeans" let-bean>
-                <ion-item lines='none' tappable>
-                  @if (multiple) {
-
-                    <ion-checkbox justify='start' label-placement='end'
-                                  [(ngModel)]='multipleSelection[bean.config.uuid]'
-                                  slot='start'>
-                      <ng-container [ngTemplateOutlet]="beanInformationCard"
-                                    [ngTemplateOutletContext]="{bean:bean}" />
-                    </ion-checkbox>
-                  } @else {
-                    <ion-radio justify='start' label-placement='end' value='{{bean.config.uuid}}'>
-                      <ng-container [ngTemplateOutlet]="beanInformationCard"
-                                    [ngTemplateOutletContext]="{bean:bean}" />
-                    </ion-radio>
-                  }
-                  <ng-container [ngTemplateOutlet]="beanThumbnailCard"
-                                [ngTemplateOutletContext]="{bean:bean}" />
-                </ion-item>
-              </ng-template>
-            </app-virtual-list>
+      <ng-template [appVirtualRow]="shownBeans" let-bean>
+        <ion-item lines='none' tappable>
+          @if (multiple) {
+            <ion-checkbox justify='start' label-placement='end'
+                          [(ngModel)]='multipleSelection[bean.config.uuid]'>
+              <ng-container [ngTemplateOutlet]="beanInformationCard"
+                            [ngTemplateOutletContext]="{bean:bean}" />
+            </ion-checkbox>
           } @else {
-            <div class='ion-padding ion-text-center'>
-              <div>
-                <ion-icon aria-hidden="true" color='inactive' name='beanconqueror-beans' size='large' />
-              </div>
-              <div class='text-color-inactive ion-margin-top'>
-                {{ "PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate }}
-              </div>
-            </div>
+            <ion-radio justify='start' label-placement='end' value='{{bean.config.uuid}}'>
+              <ng-container [ngTemplateOutlet]="beanInformationCard"
+                            [ngTemplateOutletContext]="{bean:bean}" />
+            </ion-radio>
           }
-        </ion-card>
-        </ion-radio-group>
-      }
-    }
-  </div>
+          <ng-container [ngTemplateOutlet]="beanThumbnailCard"
+                        [ngTemplateOutletContext]="{bean:bean}" />
+        </ion-item>
+      </ng-template>
+    </app-virtual-list>
+  </ion-radio-group>
 </ion-content>
 <ion-footer class='ion-no-border'>
   <ion-row>

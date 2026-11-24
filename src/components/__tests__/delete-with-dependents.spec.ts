@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { ModalController } from '@ionic/angular';
 
 import de from '../../assets/i18n/de.json';
+import en from '../../assets/i18n/en.json';
 import { Settings } from '../../classes/settings/settings';
 import { StorageClass } from '../../classes/storageClass';
 import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
@@ -253,10 +254,12 @@ for (const card of CARDS) {
 
       await deleteEntry();
 
+      // Three brews go along with each of them.
       expect(showConfirm).toHaveBeenCalledOnceWith(
-        card.question,
+        `${card.question}_OTHER`,
         'SURE_QUESTION',
         true,
+        { count: 3 },
       );
       expect(steps).toEqual([]);
       expect(database.set).not.toHaveBeenCalled();
@@ -403,15 +406,34 @@ for (const card of CARDS) {
   });
 }
 
-describe('the German question before deleting an entry with dependents', () => {
+describe('the question before deleting an entry with dependents', () => {
   // What goes along is what DeleteCommands deletes with the entry.
   for (const [key, entry] of [
+    ['DELETE_BEAN_QUESTION', 'Bohne'],
     ['DELETE_MILL_QUESTION', 'Mühle'],
+    ['DELETE_PREPARATION_METHOD_QUESTION', 'Brühmethode'],
     ['DELETE_GREEN_BEAN_QUESTION', 'Rohkaffee'],
   ] as const) {
-    it(`names the ${entry} in ${key} and says that the dependents are deleted as well`, () => {
-      expect(de[key].startsWith(`${entry} löschen?`)).toBeTrue();
-      expect(de[key]).toContain('ebenfalls gelöscht');
+    for (const [language, texts] of [
+      ['en', en],
+      ['de', de],
+    ] as const) {
+      it(`names the number of brews in ${key} in ${language}`, () => {
+        for (const form of ['ONE', 'OTHER'] as const) {
+          expect(texts[`${key}_${form}`]).toContain('{{count}}');
+        }
+        expect(texts[`${key}_NONE`]).not.toContain('{{count}}');
+      });
+    }
+
+    it(`names the ${entry} in German and says that the dependents are deleted`, () => {
+      for (const form of ['NONE', 'ONE', 'OTHER'] as const) {
+        const text = de[`${key}_${form}`];
+        expect(text.startsWith(`${entry} löschen?`)).toBeTrue();
+        expect(text).toContain('gelöscht');
+        // The old texts said "abgeändert" while the brews were deleted.
+        expect(text).not.toContain('abgeändert');
+      }
     });
   }
 });

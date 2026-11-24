@@ -22,6 +22,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AppEvent } from '../../../classes/appEvent/appEvent';
 import { BluetoothTypes } from '../../../classes/devices';
 import { Settings } from '../../../classes/settings/settings';
+import { SheetCloseButtonComponent } from '../../../components/sheet-close-button/sheet-close-button.component';
 import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import {
@@ -46,6 +47,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonItem,
     IonLabel,
     IonIcon,
+    SheetCloseButtonComponent,
   ],
 })
 export class SettingsPopoverBluetoothActionsComponent implements OnInit {

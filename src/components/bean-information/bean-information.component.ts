@@ -94,6 +94,7 @@ import { BeanUsageStore, NO_USAGE } from '../../stores/beans/bean-usage.store';
 import { BeanStore, toLegacyBean } from '../../stores/beans/bean.store';
 import { DeepReadonly } from '../../stores/core/read-only';
 import { DeleteCommands } from '../../stores/delete-commands';
+import { deleteQuestion } from '../../stores/delete-rules';
 import {
   ActionsPopoverComponent,
   popoverAction,
@@ -635,10 +636,15 @@ export class BeanInformationComponent {
   }
 
   public async deleteBean(): Promise<void> {
+    const brews = this.deleteCommands.brewCount(
+      'bean',
+      this.actionBean.config.uuid,
+    );
     const choice = await this.uiAlert.showConfirm(
-      'DELETE_BEAN_QUESTION',
+      deleteQuestion('DELETE_BEAN_QUESTION', brews),
       'SURE_QUESTION',
       true,
+      { count: brews },
     );
     if (choice !== 'YES') {
       return;

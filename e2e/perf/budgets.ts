@@ -31,6 +31,15 @@ export type PerfTier = 7_000 | 15_000 | 30_000;
  * built, so `visible` in the `PERF` line is not the time of the deletion alone. The water has
  * 1,801 / 3,875 / 7,814 brews, which are saved once without it. While the sort by last use went
  * through all brews for both beans of every comparison, one run took 3,150 / 5,448 / 9,372 ms.
+ *
+ * `brewListScroll` is the time per screen height scrolled, from three to seven runs (2026-11-23,
+ * machine 6 to 8 % busy): the maximum plus 30 %, rounded up to whole milliseconds; the 50 ms
+ * minimum does not fit a value this small. The time per screen hardly grows with the brews, as
+ * only the rows near the screen are built. The whole time (24.5 / 52.2 / 108.2 s) was 30 to 40 %
+ * above that of the list before the virtual list building block, not because a row costs more,
+ * but because the scrolled height and the rows built per step grew: rows the fling skips count
+ * with the estimated card height (280 instead of 180 px), and a screen is the whole content
+ * (685 px) instead of the list below the search (532 px), so every step builds more rows.
  */
 export interface Budget {
   /** Navigation start until the home screen shows the brew count. */
@@ -39,7 +48,11 @@ export interface Budget {
   startInteractive: number;
   /** Brews tab until the newest brew is shown and the main thread is quiet. */
   brewListOpen: number;
-  /** Scrolling the current brews to the oldest one, three screens per frame. */
+  /**
+   * Scrolling the current brews to the oldest one, three screens per frame: time per screen
+   * height scrolled. The whole time grows with the height of the list, which unmeasured rows
+   * give with their estimated height, so it would change with the estimate alone.
+   */
   brewListScroll: number;
   brewListScrollLongestFrame: number;
   /** Search in the brew list until the list shows the matches, after the field's debounce. */
@@ -101,7 +114,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     startVisible: 3_900, // 2,438 / 2,926
     startInteractive: 4_000, // 2,541 / 3,044
     brewListOpen: 510, // 376 / 389
-    brewListScroll: 31_000, // 20,853 / 23,169
+    brewListScroll: 24, // 17.5 / 17.7
     brewListScrollLongestFrame: 200, // 112 / 145
     search: 170, // 90 / 112
     beanListOpen: 640, // 414 / 488
@@ -118,7 +131,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     startVisible: 3_900, // 2,752 / 2,904
     startInteractive: 4_000, // 2,855 / 3,011
     brewListOpen: 810, // 555 / 622
-    brewListScroll: 69_000, // 47,632 / 52,320
+    brewListScroll: 24, // 17.6 / 17.6
     brewListScrollLongestFrame: 300, // 179 / 224
     search: 200, // 118 / 146
     beanListOpen: 640, // 414 / 432
@@ -135,7 +148,7 @@ export const BUDGETS: Record<PerfTier, Budget> = {
     startVisible: 3_900, // 1,998 / 2,007
     startInteractive: 4_000, // 2,116 / 2,129
     brewListOpen: 810, // 272 / 306
-    brewListScroll: 126_000, // 87,800 / 96,607
+    brewListScroll: 24, // 18.0 / 18.0
     brewListScrollLongestFrame: 300, // 168 / 210
     search: 200, // 111 / 116
     beanListOpen: 680, // 459 / 519

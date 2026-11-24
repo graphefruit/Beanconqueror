@@ -834,26 +834,30 @@ is not recorded when the save failed. A second run finds nothing more to
 change. The log line carries numbers only (brews, repaired, grinders named
 "Standard").
 
-Before the brews are stored, and only when there are brews to repair, the
-current data is written into a backup file
-(`UIExportImportHelper.writeBackupBeforeMigration()`): the same file as
+#### Backup before `UPDATE_16` … `UPDATE_19`
+
+Before the first of `UPDATE_16` … `UPDATE_19` that is open runs,
+`checkUpdate()` writes the current data into a backup file, once for all of
+them (`UIExportImportHelper.writeBackupBeforeMigration()`): the same file as
 before an import (`PreImportBackupService`, folder `pre-import`), so it is
-listed with the backups to import. When it cannot be written, nothing is
-changed, an alert says so and asks to check the free storage
-(`MIGRATION_BACKUP_FAILED`), and `UPDATE_19` is not recorded; it runs again,
-with the backup, at the next start. In the browser no file is written and
-the repair runs (as an import does). No older backup is removed for it; the
-next completed import keeps the newest ones (`removeOldBackups`). When the
-brews then cannot be saved, the save alert (`STORAGE_SAVE_FAILED`) shows and
-every start writes another backup until a save works: while the database
-does not store, those files can be the only copy of the data, so none is
-deleted.
+listed with the backups to import. When it cannot be written, none of them
+runs, an alert says so and asks to check the free storage
+(`MIGRATION_BACKUP_FAILED`), and none is recorded; they run again, with the
+backup, at the next start. The updates before them have run. In the browser
+no file is written and the updates run (as an import does). No backup is
+written for an empty database (`getDataState()` not `'data'`), nor when the
+only open one is `UPDATE_18` opened again by an import in the settings: the
+imported file holds that data, and the data before the import was backed up
+already. No older backup is removed for it; the next completed import keeps
+the newest ones (`removeOldBackups`). When an update then cannot store, every
+start writes another backup until it is done: while the database does not
+store, those files can be the only copy of the data, so none is deleted.
 
 The backup runs during the start, before the home screen. On a Pixel 2 XL
 (debug build, 30,000 brews, three cold starts each) the home screen showed
-after about 6.4 s with the repair and the backup (2.7 MB) and after about
-2.5 s on the starts after it. That is paid once per installation with such
-brews, and on every start while the backup cannot be written.
+after about 6.4 s with the `UPDATE_19` repair and the backup (2.7 MB) and
+after about 2.5 s on the starts after it. That is paid once per installation
+with data, and on every start while the backup cannot be written.
 
 At every start, after the migrations, `logMissingReferences()` of the same
 service writes one log line with the number of brews that refer to a bean, a
@@ -994,6 +998,17 @@ file maps them onto Ionic's variables at the end.
   region of the Angular CDK (`LIVE_REGION` in `src/services/a11y/live-region.ts`),
   never from live regions of their own (`src/services/uiToast.ts`,
   `src/services/uiAlert.ts`). Covered by `e2e/announcements.spec.ts`.
+  Info toasts stay longer while a screen reader is on (`ScreenReaderState` in
+  `src/services/a11y/screen-reader-state.service.ts`).
+- Spoken brew values: `TextToSpeechService` (iOS and Android) hands them to
+  the screen reader while it is on, so its voice and rate apply and only one
+  voice speaks: to VoiceOver through `ScreenReader.speak`, to TalkBack through
+  `Announcer` (assertive). Otherwise the native
+  `@capacitor-community/text-to-speech` speaks them in the app language with
+  the rate and pitch from the settings (`speech-options.ts`), and
+  `speechSynthesis` only in the browser. Each announcement cuts off what the
+  screen reader is still reading, including the user's navigation; the time
+  holds back the weight briefly (`DEVELOPING.md`).
 - axe baseline: `e2e/accessibility.spec.ts` scans the main areas in light and
   dark against WCAG 2.2 AA; known violations live in
   `e2e/accessibility-baseline.json`, which may only shrink (`DEVELOPING.md`).

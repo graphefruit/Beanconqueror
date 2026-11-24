@@ -22,6 +22,7 @@ export type Area =
 export const SMOKE_SPEC = 'e2e/smoke.spec.ts';
 
 export const SPEC_AREAS: Readonly<Record<string, readonly Area[]>> = {
+  'e2e/a11y-brew-form.spec.ts': ['@a11y', '@brew'],
   'e2e/a11y-forms.spec.ts': ['@a11y', '@bean', '@brew'],
   'e2e/a11y-headings.spec.ts': ['@a11y'],
   'e2e/a11y-tabs.spec.ts': ['@a11y'],
@@ -63,6 +64,7 @@ export const SPEC_AREAS: Readonly<Record<string, readonly Area[]>> = {
   'e2e/keyboard-focus.spec.ts': ['@a11y', '@settings'],
   'e2e/language.spec.ts': ['@a11y', '@settings'],
   'e2e/list-add-button.spec.ts': ['@a11y', '@bean', '@brew'],
+  'e2e/list-dialog-head.spec.ts': ['@layout', '@bean', '@brew'],
   'e2e/list-fields-link.spec.ts': ['@a11y', '@bean', '@brew'],
   'e2e/list-turn.spec.ts': ['@layout', '@bean', '@brew'],
   'e2e/navigation.spec.ts': ['@app', '@profile'],
@@ -73,6 +75,7 @@ export const SPEC_AREAS: Readonly<Record<string, readonly Area[]>> = {
   'e2e/profile.spec.ts': ['@profile'],
   'e2e/reading-order.spec.ts': ['@a11y', '@brew'],
   'e2e/sections.spec.ts': ['@profile', '@settings'],
+  'e2e/sheet-close.spec.ts': ['@a11y', '@bean', '@brew'],
   'e2e/share-logs.spec.ts': ['@info'],
   [SMOKE_SPEC]: ['@app'],
   'e2e/standard-mill.spec.ts': ['@mill', '@data'],

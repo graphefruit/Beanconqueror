@@ -188,8 +188,9 @@ describe('BeanInformationComponent', () => {
       async <T>(work: () => T | Promise<T>) => work(),
     );
     toast = spies(['showInfoToast']);
-    commands = spies(['deleteBean']);
+    commands = spies(['deleteBean', 'brewCount']);
     commands.deleteBean.and.resolveTo('deleted');
+    commands.brewCount.and.returnValue(1);
     analytics = spies(['trackEvent']);
     brewHelper = spies(['showAssociatedBrews', 'repeatBrew']);
     modal = spies(['create']);
@@ -810,10 +811,12 @@ describe('BeanInformationComponent', () => {
         alert.showConfirm.and.resolveTo('NO');
         await card.showBeanActions(event());
 
+        expect(commands.brewCount).toHaveBeenCalledOnceWith('bean', 'alpha');
         expect(alert.showConfirm).toHaveBeenCalledOnceWith(
-          'DELETE_BEAN_QUESTION',
+          'DELETE_BEAN_QUESTION_ONE',
           'SURE_QUESTION',
           true,
+          { count: 1 },
         );
         expect(commands.deleteBean).not.toHaveBeenCalled();
         expect(steps).toEqual([]);

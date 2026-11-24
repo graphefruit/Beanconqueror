@@ -18,7 +18,6 @@ import { EventQueueService } from '../queueService/queue-service.service';
 import { UIAlert } from '../uiAlert';
 import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
-import { UIExportImportHelper } from '../uiExportImportHelper';
 import { UILog } from '../uiLog';
 import { UIMillStorage } from '../uiMillStorage';
 import { UIPreparationStorage } from '../uiPreparationStorage';
@@ -127,9 +126,6 @@ const ALL = [
 /** Starts the storages on the device; those in `_notRead` are left unread. */
 async function startApp(_device: Device, _notRead: unknown[] = []) {
   const info = jasmine.createSpy('info');
-  const backup = jasmine
-    .createSpy('writeBackupBeforeMigration')
-    .and.resolveTo(true);
   // No alert of a running app for the collections to report a failed save.
   spyOn(UIAlert, 'getInstance').and.returnValue(undefined);
   TestBed.resetTestingModule();
@@ -148,10 +144,6 @@ async function startApp(_device: Device, _notRead: unknown[] = []) {
       {
         provide: DeletionJournalService,
         useValue: { forgetExistingEntries: () => Promise.resolve() },
-      },
-      {
-        provide: UIExportImportHelper,
-        useValue: { writeBackupBeforeMigration: backup },
       },
       {
         provide: UILog,
@@ -188,7 +180,6 @@ async function startApp(_device: Device, _notRead: unknown[] = []) {
     failWritesOf,
     writesReachDevice: () => set.and.callThrough(),
     info,
-    backup,
     brewStorage: TestBed.inject(UIBrewStorage),
     settingsStorage: TestBed.inject(UISettingsStorage),
     service: TestBed.inject(BrewReferencesService),
@@ -615,58 +606,26 @@ describe('BrewReferencesService', () => {
       expect(JSON.stringify(info.calls.allArgs())).not.toContain('standard"');
     });
 
-    it('writes the backup before it changes the brews', async () => {
-      const data = leftByTheUpdate();
-      const device = createDeviceDatabase(data);
-      const { service, set, backup } = await startApp(device);
-      backup.and.callFake(() => {
-        expect(set).not.toHaveBeenCalled();
-        expect(device.data.get('BREWS')).toEqual(data.BREWS);
-        return Promise.resolve(true);
-      });
-
-      expect(await service.repairStandardMill()).toBeTrue();
-
-      expect(backup).toHaveBeenCalledTimes(1);
-      expect(writtenKeys(set)).toEqual(['BREWS']);
-    });
-
-    it('changes nothing when the backup could not be written', async () => {
-      const data = leftByTheUpdate();
-      const device = createDeviceDatabase(data);
-      const { service, set, backup, info } = await startApp(device);
-      backup.and.resolveTo(false);
-
-      expect(await service.repairStandardMill()).toBeFalse();
-
-      expect(set).not.toHaveBeenCalled();
-      expect(device.data.get('BREWS')).toEqual(data.BREWS);
-      expect(info.calls.mostRecent().args[0]).toContain('no backup');
-      expect(info.calls.mostRecent().args[1].repaired).toBe(0);
-    });
-
-    it('writes nothing, also no backup, when it has run already', async () => {
+    it('writes nothing when it has run already', async () => {
       const device = createDeviceDatabase(leftByTheUpdate());
-      const { service, set, backup } = await startApp(device);
+      const { service, set } = await startApp(device);
       await service.repairStandardMill();
       set.calls.reset();
 
       expect(await service.repairStandardMill()).toBeTrue();
 
       expect(set).not.toHaveBeenCalled();
-      expect(backup).toHaveBeenCalledTimes(1);
     });
 
     it('writes nothing when several grinders are named Standard', async () => {
       const data = leftByTheUpdate();
       data.MILL[0].name = 'Standard';
       const device = createDeviceDatabase(data);
-      const { service, set, info, backup } = await startApp(device);
+      const { service, set, info } = await startApp(device);
 
       expect(await service.repairStandardMill()).toBeTrue();
 
       expect(set).not.toHaveBeenCalled();
-      expect(backup).not.toHaveBeenCalled();
       expect(info.calls.mostRecent().args[1]).toEqual({
         brews: 5,
         repaired: 0,

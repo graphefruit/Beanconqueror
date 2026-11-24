@@ -44,6 +44,7 @@ import { UIImage } from '../../services/uiImage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
 import { DeleteCommands } from '../../stores/delete-commands';
+import { deleteQuestion } from '../../stores/delete-rules';
 import {
   ActionsPopoverComponent,
   popoverAction,
@@ -292,10 +293,15 @@ export class GreenBeanInformationComponent implements OnInit {
   }
 
   public async deleteBean(): Promise<void> {
+    const brews = this.deleteCommands.brewCount(
+      'greenBean',
+      this.greenBean.config.uuid,
+    );
     const choice = await this.uiAlert.showConfirm(
-      'DELETE_GREEN_BEAN_QUESTION',
+      deleteQuestion('DELETE_GREEN_BEAN_QUESTION', brews),
       'SURE_QUESTION',
       true,
+      { count: brews },
     );
     if (choice !== 'YES') {
       return;
