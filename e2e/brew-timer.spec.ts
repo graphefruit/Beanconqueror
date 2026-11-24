@@ -3,11 +3,14 @@ import type { Locator, Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import {
   addPreparationMethod,
+  backToBrews,
   BREW_TEST_START,
   brewAction,
   brewField,
   openAddBrew,
+  openBrewParameterPage,
   saveBrew,
+  setParameter,
   topDialog,
 } from './support/brew-form';
 import { completeFirstRunWithBrew } from './support/first-brew';
@@ -176,4 +179,31 @@ test('an espresso method marks the first drip and shows the brew time after it',
       `Coffee Brew Time:\\s*00:00:${String(brewTime).padStart(2, '0')}$`,
     ),
   );
+});
+
+test.describe('without the brew time parameter', () => {
+  test('the scale tiles and the maximized graph render without the timer', async ({
+    page,
+  }) => {
+    await openBrewParameterPage(page, 'Manage parameters');
+    await setParameter(page, 'Time', false);
+    await backToBrews(page);
+
+    // The web build reports the scale as connected once the form has settled,
+    // which shows its tiles and offers the maximized graph.
+    await openBrewFormAndSettle(page);
+    await expect(brewField(page, 'Time')).toHaveCount(0);
+    const maximize = page.getByRole('button', { name: 'Maximize flow graph' });
+    await expect(maximize).toBeVisible();
+
+    await maximize.click();
+    const close = page.getByRole('button', { name: 'Close flow graph' });
+    await expect(close).toBeVisible();
+    // Without a timer there is nothing to start.
+    await expect(page.getByRole('button', { name: 'Start timer' })).toHaveCount(
+      0,
+    );
+    await close.click();
+    await expect(maximize).toBeVisible();
+  });
 });

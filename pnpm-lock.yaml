@@ -279,6 +279,9 @@ importers:
       cordova-plugin-health:
         specifier: ^2.1.1
         version: 2.1.1
+      cross-env:
+        specifier: 7.0.3
+        version: 7.0.3
       eslint:
         specifier: ^9.39.5
         version: 9.39.5
@@ -2837,6 +2840,11 @@ packages:
   cosmiconfig@10.0.1:
     resolution: {integrity: sha512-/zvGoYn0y27QTBmK+0B+oPdEPC4fKGUmJsMTQbDjqph00TrkqfVFW/M+C6ya54sYCgHC6QCwK/mI6djt8cEGHQ==}
     engines: {node: ^22.18 || >= 24}
+
+  cross-env@7.0.3:
+    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
+    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
+    hasBin: true
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -7526,6 +7534,10 @@ snapshots:
     dependencies:
       env-paths: 2.2.1
       js-yaml: 5.5.0
+
+  cross-env@7.0.3:
+    dependencies:
+      cross-spawn: 7.0.6
 
   cross-spawn@7.0.6:
     dependencies:

@@ -25,6 +25,7 @@ import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { SheetCloseButtonComponent } from '../../../components/sheet-close-button/sheet-close-button.component';
 import { BREW_SORT_AFTER } from '../../../enums/brews/brewSortAfter';
 import { BREW_SORT_ORDER } from '../../../enums/brews/brewSortOrder';
 import { IBrewPageSort } from '../../../interfaces/brew/iBrewPageSort';
@@ -48,6 +49,7 @@ import { UIHelper } from '../../../services/uiHelper';
     IonIcon,
     IonLabel,
     IonButton,
+    SheetCloseButtonComponent,
   ],
 })
 export class BrewSortComponent implements OnInit {

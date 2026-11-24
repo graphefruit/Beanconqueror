@@ -519,7 +519,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.setUIParams();
           this.checkChanges();
           /**THe check changes is needed, else the values are not interpolated to all other components**/
-          this.timer.checkChanges();
+          this.timer?.checkChanges();
         });
 
       if (this.refractometerConnected()) {

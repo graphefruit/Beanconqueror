@@ -26,6 +26,7 @@ import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import { Settings } from '../../../classes/settings/settings';
 import { StorageClass } from '../../../classes/storageClass';
 import { storedOrReported } from '../../../classes/storedOrReported';
+import { SheetCloseButtonComponent } from '../../../components/sheet-close-button/sheet-close-button.component';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
 import { RequiredFields } from '../../../services/a11y/required-fields.service';
@@ -54,6 +55,7 @@ import { UIToast } from '../../../services/uiToast';
     IonRow,
     IonCol,
     IonButton,
+    SheetCloseButtonComponent,
   ],
 })
 export class PreparationEditToolComponent {

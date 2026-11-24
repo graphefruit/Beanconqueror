@@ -5,13 +5,21 @@ name: pnpm test CI
 
 on:
   push:
-    branches: ['master', 'develop', 'feature/relaunch']
+    # Work branches too: the full E2E suite runs here, not on the shared Mac.
+    branches: ['master', 'develop', 'feature/relaunch', 'fix/**', 'feat/**', 'chore/**', 'perf/**', 'abnahme']
   pull_request:
   workflow_dispatch:
+
+# A newer push to the same branch replaces the running check.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    # Step limits are about 3x the usual duration (24.11.2026): a hung step fails in minutes, not hours.
+    timeout-minutes: 12
 
     steps:
       - uses: actions/checkout@v4
@@ -24,24 +32,42 @@ jobs:
           node-version-file: .nvmrc
           cache: 'pnpm'
       - run: pnpm install
+        timeout-minutes: 3
       # Pre-existing errors are listed in eslint-suppressions.json; only new errors fail.
       - run: pnpm lint
+        timeout-minutes: 3
       - run: pnpm run build
+        timeout-minutes: 4
       # Unit tests with coverage; fails when new code (NEW_CODE in src/karma.conf.js) is below 80 %.
       - run: pnpm test:coverage
+        timeout-minutes: 6
 
   e2e:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Browsers and their system packages come with the image: "playwright install --with-deps" took
+    # up to 12 minutes in about every third job and once hung until the job limit. The tag must
+    # match @playwright/test; on a mismatch Playwright stops at once with "Executable doesn't exist".
+    container:
+      image: mcr.microsoft.com/playwright:v1.65.1-noble
+      options: --user 1001
+    timeout-minutes: 15
     # One runner takes longer than the timeout for all tests.
     strategy:
       fail-fast: false
       matrix:
+        # Date logic must hold in the user's zone and in UTC; replaces the local TZ=UTC second run.
+        tz: ['Europe/Berlin', 'UTC']
+        run:
+          - { browser: chromium, shard: 1/4 }
+          - { browser: chromium, shard: 2/4 }
+          - { browser: chromium, shard: 3/4 }
+          - { browser: chromium, shard: 4/4 }
+        # Names, focus and announcements as Safari on iOS exposes them; see playwright.config.ts.
+        # Only in Berlin time: UTC date logic is covered by Chromium, and ten jobs per run let two
+        # branches check at once within the 20 concurrent jobs of the free plan.
         include:
-          - { browser: chromium, shard: 1/2 }
-          - { browser: chromium, shard: 2/2 }
-          # Names, focus and announcements as Safari on iOS exposes them; see playwright.config.ts.
-          - { browser: webkit, shard: 1/1 }
+          - { tz: 'Europe/Berlin', run: { browser: webkit, shard: 1/2 } }
+          - { tz: 'Europe/Berlin', run: { browser: webkit, shard: 2/2 } }
 
     steps:
       - uses: actions/checkout@v4
@@ -54,14 +80,22 @@ jobs:
           node-version-file: .nvmrc
           cache: 'pnpm'
       - run: pnpm install
+        timeout-minutes: 3
       - run: pnpm exec tsc -p e2e/tsconfig.json
-      - run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
-      - run: pnpm e2e --project='*-${{ matrix.browser }}' --shard=${{ matrix.shard }}
+        timeout-minutes: 3
+      # The image sets its own TZ; a zone that is not applied would quietly test only one zone.
+      - run: node -e "const z = Intl.DateTimeFormat().resolvedOptions().timeZone; console.log(z); if (z !== process.env.TZ) process.exit(1)"
+        env:
+          TZ: ${{ matrix.tz }}
+      - run: pnpm e2e --project='*-${{ matrix.run.browser }}' --shard=${{ matrix.run.shard }}
+        timeout-minutes: 12
+        env:
+          TZ: ${{ matrix.tz }}
       # Traces and screenshots only contain synthetic test data; external requests are blocked.
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report-${{ matrix.browser }}-${{ strategy.job-index }}
+          name: playwright-report-${{ matrix.run.browser }}-${{ strategy.job-index }}
           path: |
             playwright-report/
             test-results/

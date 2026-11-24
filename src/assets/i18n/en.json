@@ -1976,6 +1976,7 @@
         "PREDICTIVE_MODE_TOOLTIP": "Instead of firing at exactly the target weight, the app fires slightly early to compensate for drip-through. The lead time is learned automatically across shots — set 36g, first shot delivers 38g, next shot ~37g, converging to 36g."
     },
     "A11Y": {
+        "CLOSE_DIALOG": "Close dialog",
         "FILTER_BREWS": "Filter brews",
         "FILTER_BREWS_ACTIVE": "Filter brews (active)",
         "SORT_BREWS": "Sort brews",
