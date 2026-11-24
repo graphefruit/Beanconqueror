@@ -1667,6 +1667,7 @@ export class SettingsPage {
         return;
       }
       await this.uiAlert.showLoadingSpinner();
+      let stored = false;
       try {
         const _data = await this.uiExportImportHelper.importBackup(
           parsedContent,
@@ -1674,6 +1675,9 @@ export class SettingsPage {
           _fileName,
         );
         if (_data.BACKUP === false) {
+          // A later failure must not say that no data was changed, or the
+          // file may be imported again.
+          stored = true;
           await this.__reinitializeStorages();
           // Show loadingspinner again, because the reintializestorages hides it.
           await this.uiAlert.showLoadingSpinner();
@@ -1753,7 +1757,9 @@ export class SettingsPage {
         this.uiLog.error('Error during import', error);
         await this.uiAlert.hideLoadingSpinner();
         let message = 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED';
-        if (error instanceof PreImportBackupError) {
+        if (stored) {
+          message = 'IMPORT_STORED_RELOAD_FAILED';
+        } else if (error instanceof PreImportBackupError) {
           message = 'PRE_IMPORT_BACKUP_FAILED';
         } else if (error instanceof ImportNotRolledBackError) {
           message = error.messageKey;
