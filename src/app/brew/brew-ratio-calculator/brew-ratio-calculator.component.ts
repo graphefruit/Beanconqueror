@@ -10,6 +10,7 @@ import { IonContent, IonHeader, ModalController } from '@ionic/angular';
 
 import { Brew } from '../../../classes/brew/brew';
 import { BrewRatioCardComponent } from '../../../components/brew-ratio-card/brew-ratio-card.component';
+import { SheetCloseButtonComponent } from '../../../components/sheet-close-button/sheet-close-button.component';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 
@@ -18,7 +19,12 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
   templateUrl: './brew-ratio-calculator.component.html',
   styleUrls: ['./brew-ratio-calculator.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [BrewRatioCardComponent, IonHeader, IonContent],
+  imports: [
+    BrewRatioCardComponent,
+    IonHeader,
+    IonContent,
+    SheetCloseButtonComponent,
+  ],
 })
 export class BrewRatioCalculatorComponent implements OnInit {
   private readonly modalController = inject(ModalController);

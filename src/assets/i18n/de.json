@@ -1970,6 +1970,7 @@
         "PREDICTIVE_MODE_TOOLTIP": "Anstatt exakt beim Zielgewicht auszulösen, feuert die App etwas früher, um den Nachlauf auszugleichen. Die Vorlaufzeit wird automatisch über die Brühungen hinweg gelernt – eingestellt auf 36 g, liefert der erste Schuss z.B. 38 g, der nächste Schuss etwa 37 g, bis sich das Gewicht auf 36 g einpendelt hat."
     },
     "A11Y": {
+        "CLOSE_DIALOG": "Dialog schließen",
         "FILTER_BREWS": "Brühungen filtern",
         "FILTER_BREWS_ACTIVE": "Brühungen filtern (aktiv)",
         "SORT_BREWS": "Brühungen sortieren",

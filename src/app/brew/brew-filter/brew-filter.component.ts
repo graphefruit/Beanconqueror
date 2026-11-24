@@ -31,6 +31,7 @@ import { Brew } from '../../../classes/brew/brew';
 import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
+import { SheetCloseButtonComponent } from '../../../components/sheet-close-button/sheet-close-button.component';
 import { BeanOverlayDirective } from '../../../directive/bean-overlay.directive';
 import { ControlDescriptionDirective } from '../../../directive/control-description.directive';
 import { MillOverlayDirective } from '../../../directive/mill-overlay.directive';
@@ -77,6 +78,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonSelectOption,
     IonList,
     IonButton,
+    SheetCloseButtonComponent,
   ],
 })
 export class BrewFilterComponent implements OnInit {
