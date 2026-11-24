@@ -107,10 +107,12 @@ export class RangeNameDirective {
   /** The unit shown with the value, e.g. "%" or "g/s". */
   public readonly rangeUnit = input<string>('');
   /**
-   * The value shown next to a single knob when it is not the knob's own, e.g.
-   * the interval that is in effect; said instead of the knob's value.
+   * The value shown next to a knob when it is not the knob's own, e.g. the
+   * interval that is in effect; said instead of the knob's value. A function
+   * of the knob's value, so a step says the value shown for the new value
+   * before the page renders it.
    */
-  public readonly rangeShownValue = input<number>();
+  public readonly rangeShownValue = input<(value: number) => number>();
 
   private readonly rendered = signal(false);
   private readonly language = toSignal(this.translate.onLangChange);
@@ -295,8 +297,8 @@ export class RangeNameDirective {
           knob.setAttribute('aria-valuenow', now);
         }
       }
-      const shown =
-        this.rangeShownValue() ?? Number(knob.getAttribute('aria-valuenow'));
+      const knobValue = Number(knob.getAttribute('aria-valuenow'));
+      const shown = this.rangeShownValue()?.(knobValue) ?? knobValue;
       if (Number.isFinite(shown)) {
         const text = rangeValueText(
           shown,

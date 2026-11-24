@@ -149,6 +149,11 @@ import { UiVersionStorage } from '../../services/uiVersionStorage';
 import { UIWaterStorage } from '../../services/uiWaterStorage';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 
+const SPOKEN_EVERY_WITH_MILLISECONDS = (interval: number) =>
+  brewTimeEverySeconds(interval, true);
+const SPOKEN_EVERY_WHOLE_SECOND = (interval: number) =>
+  brewTimeEverySeconds(interval, false);
+
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
@@ -241,10 +246,19 @@ export class SettingsPage {
 
   /** How often the brew time is said: whole seconds without milliseconds. */
   public get brewTimeSpokenEvery(): number {
-    return brewTimeEverySeconds(
+    return this.brewTimeSpokenEveryFor(
       this.settings.text_to_speech_brew_time_interval,
-      this.settings.brew_milliseconds === true,
     );
+  }
+
+  /**
+   * How often the brew time is said for a slider value. A new function when
+   * the timer's format changes, so the slider says the new interval.
+   */
+  public get brewTimeSpokenEveryFor(): (interval: number) => number {
+    return this.settings.brew_milliseconds === true
+      ? SPOKEN_EVERY_WITH_MILLISECONDS
+      : SPOKEN_EVERY_WHOLE_SECOND;
   }
 
   public currencies = {};
