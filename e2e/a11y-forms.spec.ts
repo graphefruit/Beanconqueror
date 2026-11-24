@@ -105,9 +105,20 @@ for (const language of ['en', 'de'] as const) {
       await quality.evaluate((knob) => {
         const seen = { atKey: '', texts: [] as string[], announced: '' };
         (window as unknown as { seen: typeof seen }).seen = seen;
-        knob.addEventListener('keydown', () => {
-          seen.atKey = knob.getAttribute('aria-valuetext') ?? '';
-        });
+        // Ionic adds its key handler to the knob again each time it renders
+        // the knob, e.g. after the focus, so a listener added here could run
+        // before it. One added while the key is on its way to the knob runs
+        // after all of the knob's own, when the key is handled.
+        window.addEventListener(
+          'keydown',
+          () =>
+            knob.addEventListener(
+              'keydown',
+              () => (seen.atKey = knob.getAttribute('aria-valuetext') ?? ''),
+              { once: true },
+            ),
+          { capture: true, once: true },
+        );
         new MutationObserver(() =>
           seen.texts.push(knob.getAttribute('aria-valuetext') ?? ''),
         ).observe(knob, { attributeFilter: ['aria-valuetext'] });
