@@ -276,11 +276,11 @@ test('a half-height sheet keeps the page and its tab bar out of reach', async ({
     behind(page, 'button', 'Import beans'),
   );
   await expect(behind(page, 'button', 'Import beans')).not.toBeFocused();
-  // The keyboard stays in the sheet's actions and its close button.
+  // The keyboard stays in the sheet's two actions.
   await expectTabGoesRound(
     page,
     scanQrCode,
-    page.getByRole('button', { name: 'Close dialog' }),
+    page.getByRole('button', { name: 'Scan NFC Tag' }),
   );
 
   await page.keyboard.press('Escape');

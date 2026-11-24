@@ -12,11 +12,11 @@ import { openFromProfile } from './support/profile';
 import { seedDatabase } from './support/seed';
 
 /**
- * Screen readers can neither swipe a sheet down nor tap beside it. A sheet
- * without a cancel button of its own ends with a button that closes it, for
- * everybody.
+ * Sheets without a cancel button of their own end with "Close dialog" while
+ * VoiceOver or TalkBack is on (unit tests of the button). The web build has
+ * no screen reader, as for a sighted user who swipes the sheet away instead.
  */
-test('a screen reader can close an actions menu without choosing an action', async ({
+test('an actions menu shows no close button without a screen reader', async ({
   page,
 }) => {
   await startWithBeans(page);
@@ -25,47 +25,30 @@ test('a screen reader can close an actions menu without choosing an action', asy
     .getByRole('button', { name: /^Options for / })
     .first();
   await options.click();
-  const menu = page.getByRole('dialog');
-  await expect(menu).toBeVisible();
+  await expect(page.locator('actions-popover ion-item').first()).toBeVisible();
 
-  // The dialog role sits in the modal's shadow root, the content is slotted.
-  const close = page.getByRole('button', { name: 'Close dialog' });
-  // Last in the menu, after every action.
-  expect(
-    await page
-      .locator('actions-popover ion-content')
-      .evaluate((content) => content.lastElementChild?.textContent?.trim()),
-  ).toBe('Close dialog');
-  await expect(close).toBeVisible();
-  await close.click();
-
+  await expect(page.getByRole('button', { name: 'Close dialog' })).toHaveCount(
+    0,
+  );
+  await page.keyboard.press('Escape');
   await dialogsClosed(page);
-  await expect(options).toBeFocused();
 });
 
-test('a screen reader can close the device menu of the brew form', async ({
+test('the device menu of the brew form shows no close button without a screen reader', async ({
   page,
 }) => {
   await page.clock.install({ time: BREW_TEST_START });
   await page.goto('/');
   await completeFirstRunWithBrew(page);
   await openAddBrew(page);
-  const options = page.getByRole('button', { name: 'Brew options' });
-  await options.click();
+  await page.getByRole('button', { name: 'Brew options' }).click();
   await expect(
-    page.locator('app-settings-popover-bluetooth-actions'),
+    page.locator('app-settings-popover-bluetooth-actions ion-item').first(),
   ).toBeVisible();
 
-  const close = page.getByRole('button', { name: 'Close dialog' });
-  await expect(close).toBeVisible();
-  await close.click();
-
-  await expect(
-    page.locator('app-settings-popover-bluetooth-actions'),
-  ).toHaveCount(0);
-  // The brew form underneath stays open.
-  await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
-  await expect(options).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Close dialog' })).toHaveCount(
+    0,
+  );
 });
 
 test('closing the green bean sort without choosing keeps the sort', async ({
@@ -100,11 +83,12 @@ test('closing the green bean sort without choosing keeps the sort', async ({
   await openFromProfile(page, 'Bean Roasting');
   const sort = page.getByRole('button', { name: 'Sort green beans' });
   await sort.click();
-  const close = page.getByRole('button', { name: 'Close dialog' });
-  await expect(close).toBeVisible();
-  await close.click();
+  const apply = page.getByRole('button', { name: 'Apply filter' });
+  await expect(apply).toBeVisible();
 
-  // Closed without data, which the page once read without a check.
-  await expect(close).toHaveCount(0);
+  // Closed without data, as by swiping it away, which the page once read
+  // without a check.
+  await page.keyboard.press('Escape');
+  await expect(apply).toHaveCount(0);
   await expect(sort).toBeVisible();
 });
