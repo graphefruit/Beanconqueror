@@ -14,6 +14,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LIVE_REGION, LiveRegion } from '../../services/a11y/live-region';
 import {
   DRAG_ANNOUNCE_INTERVAL_MS,
+  DRAG_SETTLE_MS,
   movedKnob,
   RangeNameDirective,
   RangeValue,
@@ -189,20 +190,46 @@ describe('RangeNameDirective', () => {
 
     afterEach(() => jasmine.clock().uninstall());
 
-    it('says the value as it changes, without a flood, and once more when let go', async () => {
+    it('says the value the knob rests on, not the values passed on the way', async () => {
       await startDrag(80);
-      fire('ionInput', 81);
-      fire('ionInput', 82);
+      // Ionic moves the knob to the finger once it has gone a few points.
       fire('ionInput', 83);
-      expect(liveRegion.heard).toEqual(['81 %']);
-
-      jasmine.clock().tick(DRAG_ANNOUNCE_INTERVAL_MS);
-      expect(liveRegion.heard).toEqual(['81 %', '83 %']);
-
+      jasmine.clock().tick(80);
       fire('ionInput', 84);
+      jasmine.clock().tick(80);
+      fire('ionInput', 85);
+      expect(liveRegion.heard).toEqual([]);
+
+      jasmine.clock().tick(DRAG_SETTLE_MS);
+      expect(liveRegion.heard).toEqual(['85 %']);
+
+      jasmine.clock().tick(3000);
       fire('ionKnobMoveEnd', 85);
-      jasmine.clock().tick(DRAG_ANNOUNCE_INTERVAL_MS);
-      expect(liveRegion.heard).toEqual(['81 %', '83 %', '85 %']);
+      expect(liveRegion.heard).toEqual(['85 %']);
+    });
+
+    it('says only the final value of a short drag', async () => {
+      await startDrag(80);
+      fire('ionInput', 83);
+      jasmine.clock().tick(80);
+      fire('ionInput', 85);
+      jasmine.clock().tick(80);
+      fire('ionKnobMoveEnd', 85);
+      jasmine.clock().tick(3000);
+
+      expect(liveRegion.heard).toEqual(['85 %']);
+    });
+
+    it('says the current value about once a second while the knob keeps moving', async () => {
+      await startDrag(80);
+      for (let value = 81; value <= 105; value++) {
+        fire('ionInput', value);
+        jasmine.clock().tick(100);
+      }
+      fire('ionKnobMoveEnd', 106);
+
+      // At 1 s, 2 s and when let go: the value of that moment.
+      expect(liveRegion.heard).toEqual(['90 %', '100 %', '106 %']);
     });
 
     it('says a value only when it changes as spoken', async () => {

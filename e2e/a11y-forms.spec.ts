@@ -103,7 +103,12 @@ for (const language of ['en', 'de'] as const) {
       // The adjust gesture of VoiceOver and TalkBack arrives as an arrow key,
       // and the screen reader reads the knob as soon as the key is handled.
       await quality.evaluate((knob) => {
-        const seen = { atKey: '', texts: [] as string[], announced: '' };
+        const seen = {
+          atKey: '',
+          texts: [] as string[],
+          announced: '',
+          heard: [] as string[],
+        };
         (window as unknown as { seen: typeof seen }).seen = seen;
         // Ionic adds its key handler to the knob again each time it renders
         // the knob, e.g. after the focus, so a listener added here could run
@@ -129,6 +134,9 @@ for (const language of ['en', 'de'] as const) {
         new MutationObserver(() => {
           if (announcement() !== earlier) {
             seen.announced = announcement();
+          }
+          if (announcement() && announcement() !== seen.heard.at(-1)) {
+            seen.heard.push(announcement());
           }
         }).observe(document.body, {
           subtree: true,
@@ -157,6 +165,7 @@ for (const language of ['en', 'de'] as const) {
         atKey: `${before - 1} %`,
         texts: [`${before - 1} %`],
         announced: '',
+        heard: [],
       });
       // A screen reader does not speak a value changed by dragging the knob,
       // so the app announces it.
@@ -167,17 +176,27 @@ for (const language of ['en', 'de'] as const) {
         width: 0,
         height: 0,
       };
+      // A short drag, as a finger moves: its first few points pass several
+      // values, and only the one the knob ends on is said.
       await page.mouse.move(x + width / 2, y + height / 2);
       await page.mouse.down();
-      await page.mouse.move(x - 60, y + height / 2, { steps: 8 });
+      for (let step = 1; step <= 6; step++) {
+        await page.mouse.move(x + width / 2 - 10 * step, y + height / 2);
+        await page.waitForTimeout(50);
+      }
       await page.mouse.up();
       await expect(quality).not.toHaveAttribute(
         'aria-valuenow',
         String(before - 1),
       );
-      await expect(liveRegion(page)).toHaveText(
-        (await quality.getAttribute('aria-valuetext')) ?? '',
-      );
+      const final = (await quality.getAttribute('aria-valuetext')) ?? '';
+      await expect(liveRegion(page)).toHaveText(final);
+      await page.waitForTimeout(1500);
+      expect(
+        await page.evaluate(
+          () => (window as unknown as { seen: { heard: string[] } }).seen.heard,
+        ),
+      ).toEqual([final]);
       for (const slider of await visible(settings.getByRole('slider')).all()) {
         await expect(slider).not.toHaveAccessibleName(VALUE_ONLY);
       }

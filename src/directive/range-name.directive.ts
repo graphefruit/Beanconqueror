@@ -30,6 +30,12 @@ type KnobMoveEvent = CustomEvent<{ value: RangeValue }>;
  */
 export const DRAG_ANNOUNCE_INTERVAL_MS = 1000;
 
+/**
+ * A dragged value is said once the knob has rested on it this long, so the
+ * values a finger passes on its way are not said.
+ */
+export const DRAG_SETTLE_MS = 300;
+
 /** Live region key of a dragged value: a newer one replaces it while it waits. */
 export const RANGE_VALUE_KEY = 'range-value';
 
@@ -90,10 +96,14 @@ export function rangeValueText(
  * pile up in the screen reader's queue while the user swipes on.
  *
  * A screen reader does not speak value changes of a knob dragged by touch,
- * so while a knob is dragged its value is announced, at most once per
- * DRAG_ANNOUNCE_INTERVAL_MS and assertively, so a newer value cuts off an
- * older one instead of waiting behind it. When the knob is let go, its value
- * is announced unless it was the last one spoken.
+ * so while a knob is dragged its value is announced: once the knob has rested
+ * on it for DRAG_SETTLE_MS, or while it keeps moving, its value of that moment
+ * DRAG_ANNOUNCE_INTERVAL_MS after the first unspoken change. On a fine slider
+ * the first few points of a drag pass several values, and only the one the
+ * knob reaches is said. Announcements are at most DRAG_ANNOUNCE_INTERVAL_MS
+ * apart and assertive, so a newer value cuts off an older one instead of
+ * waiting behind it. When the knob is let go, its value is announced unless
+ * it was the last one spoken.
  */
 @Directive({ selector: 'ion-range' })
 export class RangeNameDirective {
@@ -125,6 +135,7 @@ export class RangeNameDirective {
   private spoken = '';
   private spokenAt = Number.NEGATIVE_INFINITY;
   private waiting: string | undefined;
+  private waitingSince = 0;
   private timer: ReturnType<typeof setTimeout> | undefined;
 
   constructor() {
@@ -189,21 +200,31 @@ export class RangeNameDirective {
       return;
     }
     const message = this.dragMessage(event.detail.value);
-    this.waiting = message === this.spoken ? undefined : message;
-    if (this.waiting === undefined || this.timer !== undefined) {
+    if (message === this.waiting) {
       return;
     }
-    const wait = this.spokenAt + DRAG_ANNOUNCE_INTERVAL_MS - Date.now();
-    if (wait > 0) {
-      this.timer = setTimeout(() => {
-        this.timer = undefined;
-        if (this.waiting !== undefined) {
-          this.say(this.waiting);
-        }
-      }, wait);
-    } else {
-      this.say(message);
+    clearTimeout(this.timer);
+    this.timer = undefined;
+    if (message === this.spoken) {
+      this.waiting = undefined;
+      return;
     }
+    const now = Date.now();
+    if (this.waiting === undefined) {
+      this.waitingSince = now;
+    }
+    this.waiting = message;
+    const due = Math.max(
+      this.spokenAt + DRAG_ANNOUNCE_INTERVAL_MS,
+      Math.min(
+        now + DRAG_SETTLE_MS,
+        this.waitingSince + DRAG_ANNOUNCE_INTERVAL_MS,
+      ),
+    );
+    this.timer = setTimeout(() => {
+      this.timer = undefined;
+      this.say(message);
+    }, due - now);
   }
 
   private onKnobMoveEnd(event: KnobMoveEvent): void {
