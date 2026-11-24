@@ -14,7 +14,7 @@ const A11Y_SPECS =
   /(a11y|accessibility|announcements|keyboard-focus|reading-order)[\w-]*\.spec\.ts$/;
 
 /**
- * Browser E2E against the real Angular/Ionic app served by `ng serve`.
+ * Browser E2E against the development build of `pnpm run build` (in `www`), served as it is.
  * Mobile emulation is not a native-device test: Capacitor plugins run their web fallbacks here.
  */
 export default defineConfig<HarnessOptions>({
@@ -88,12 +88,15 @@ export default defineConfig<HarnessOptions>({
       testMatch: A11Y_SPECS,
     },
   ],
+  // Serving the build instead of `ng serve` keeps the compile out of every run; under load the
+  // compile ran into the start timeout. The server refuses a missing, production or outdated build.
   webServer: {
-    command: `pnpm exec ng serve --port ${PORT} --no-hmr --no-live-reload`,
+    command:
+      'node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON e2e/tools/serve-build.ts',
     url: BASE_URL,
     // A dedicated port and no reuse, so tests never run against a stale manually started server.
     reuseExistingServer: false,
-    timeout: 180_000,
+    timeout: 30_000,
     stdout: 'ignore',
     stderr: 'pipe',
   },
