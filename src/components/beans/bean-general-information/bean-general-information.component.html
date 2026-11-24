@@ -58,7 +58,7 @@
   <ion-item style="top:-10px;">
     <ion-range [rangeLabel]="'BEAN_DATA_ROAST_NAME' | translate" style='padding-left:20px;padding-right:10px;' (ionChange)="onRoastRate($event)" [(ngModel)]="data.roast_range" snaps="true" max="5" min="0" step="0.5">
       <div slot="end">
-        <ngx-stars #beanStars [readonly]="true" [initialStars]="data.roast_range"  class="bean-display ion-margin-top" />
+        <ngx-stars #beanStars [starsName]="'BEAN_DATA_ROAST_NAME' | translate" [readonly]="true" [initialStars]="data.roast_range"  class="bean-display ion-margin-top" />
       </div>
     </ion-range>
   </ion-item>

@@ -87,6 +87,8 @@ import { PreparationToolOverlayDirective } from '../../../directive/preparation-
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { SelectLabelDirective } from '../../../directive/select-label.directive';
+import { StarsNameDirective } from '../../../directive/stars-name.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { WaterOverlayDirective } from '../../../directive/water-overlay.directive';
 import { AppEventType } from '../../../enums/appEvent/appEvent';
@@ -152,6 +154,7 @@ declare var cordova;
     BrewBrewingGraphComponent,
     BrewTimerComponent,
     NgxStarsModule,
+    StarsNameDirective,
     TransformDateDirective,
     PhotoAddComponent,
     TranslatePipe,
@@ -166,6 +169,7 @@ declare var cordova;
     IonButton,
     IonIcon,
     IonSelect,
+    SelectLabelDirective,
     IonList,
     IonLabel,
     IonRow,

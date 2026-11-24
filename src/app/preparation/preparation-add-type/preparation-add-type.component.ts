@@ -37,6 +37,7 @@ import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import TrackContentImpression from '../../../data/tracking/trackContentImpression/trackContentImpression';
 import { ChipButtonDirective } from '../../../directive/chip-button.directive';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
+import { SelectLabelDirective } from '../../../directive/select-label.directive';
 import { TooltipDirective } from '../../../directive/tooltip.directive';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
@@ -63,6 +64,7 @@ import { UIToast } from '../../../services/uiToast';
     IonItem,
     IonInput,
     IonSelect,
+    SelectLabelDirective,
     IonSelectOption,
     IonLabel,
     IonIcon,

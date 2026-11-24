@@ -28,6 +28,7 @@ import { Bean } from '../../../classes/bean/bean';
 import { GreenBean } from '../../../classes/green-bean/green-bean';
 import { Settings } from '../../../classes/settings/settings';
 import { PickerFieldDirective } from '../../../directive/picker-field.directive';
+import { SelectLabelDirective } from '../../../directive/select-label.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { KeysPipe } from '../../../pipes/keys';
@@ -50,6 +51,7 @@ declare var cordova;
     IonInput,
     PickerFieldDirective,
     IonSelect,
+    SelectLabelDirective,
     IonSelectOption,
     IonLabel,
     IonTextarea,

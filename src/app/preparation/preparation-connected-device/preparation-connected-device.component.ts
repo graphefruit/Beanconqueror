@@ -43,6 +43,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { RangeNameDirective } from '../../../directive/range-name.directive';
+import { SelectLabelDirective } from '../../../directive/select-label.directive';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { environment } from '../../../environments/environment';
@@ -75,6 +76,7 @@ import { UIToast } from '../../../services/uiToast';
     IonCardContent,
     IonItem,
     IonSelect,
+    SelectLabelDirective,
     IonSelectOption,
     IonInput,
     IonLabel,
