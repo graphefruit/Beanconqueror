@@ -2089,6 +2089,7 @@
         "SELECT_MINUTE": "Select a minute",
         "RANGE_FROM": "{{name}}, from",
         "RANGE_TO": "{{name}}, to",
+        "STARS": "{{name}}: {{rating}} of {{max}} stars",
         "START_TIMER_AT_WEIGHT": "Start the timer at this weight",
         "STOP_AT_MIN_FLOW": "Stop the brew below this flow",
         "EDIT_TOOL": "Edit tool: {{tool}}",

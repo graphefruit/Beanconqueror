@@ -33,6 +33,7 @@ import { Graph } from '../../classes/graph/graph';
 import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
+import { StarsNameDirective } from '../../directive/stars-name.directive';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../enums/brews/brewFunctionPipe';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { BrewFieldVisiblePipe } from '../../pipes/brew/brewFieldVisible';
@@ -51,6 +52,7 @@ import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-c
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     NgxStarsModule,
+    StarsNameDirective,
     GraphDisplayCardComponent,
     DecimalPipe,
     TranslatePipe,

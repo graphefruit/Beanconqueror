@@ -33,6 +33,7 @@ import { PickerFieldDirective } from '../../../directive/picker-field.directive'
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { StarsNameDirective } from '../../../directive/stars-name.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { PhotoAddComponent } from '../../photo-add/photo-add.component';
@@ -47,6 +48,7 @@ declare var cordova;
     FormsModule,
     TransformDateDirective,
     NgxStarsModule,
+    StarsNameDirective,
     PreventCharacterDirective,
     RemoveEmptyNumberDirective,
     PhotoAddComponent,
