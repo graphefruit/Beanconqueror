@@ -181,12 +181,12 @@ The spoken brew values (text to speech on iOS and Android: weight every
   `REPEAT_WINDOW_MS` (2 s), so an unchanged weight is heard every 2 s instead of every interval,
   while a changed weight is announced at once.
 - A screen reader taking over during a brew stops what the app's own voice still has to say.
-- Known limit of the plugin on Android (8.0.2): a `speak` cut off by the next one
-  (`QueueStrategy.Flush`) or by `stop()` never settles. Its `stop()` clears the pending requests
-  without resolving them, so the Capacitor bridge keeps one small callback entry per cut-off value
-  (and the waiting `speakNatively` with it) until the app restarts: at the default interval of
-  500 ms about two per second of brewing, a few hundred per brew. Not awaiting `speak` would not
-  remove the bridge entry. iOS resolves cut-off calls (`didCancel`).
+- The plugin's Android `stop()` (8.0.2) cleared the pending requests without settling them, so a
+  `speak` cut off by the next one (`QueueStrategy.Flush`) or by `stop()` stayed in the Capacitor
+  bridge until the app restarted. `patches/@capacitor-community__text-to-speech@8.0.2.patch`
+  resolves them, as iOS does (`didCancel`). After a plugin update, check whether the patch is still
+  needed; a changed patch changes the plugin path in `capacitor.settings.gradle` and the Podfile
+  (`pnpm exec cap sync android` and `… ios`).
 - The plugin binds the system TTS service when Capacitor loads it at app start (`load()` creates
   `android.speech.tts.TextToSpeech`), for every Android user, also with text to speech off; the
   plugin cannot start it later. Depending on the device this starts the TTS engine's process.
