@@ -96,6 +96,7 @@ import { STATISTIC_BEAN_DATE_FIELD_ENUM } from '../../enums/settings/statisticBe
 import { THEME_MODE_ENUM } from '../../enums/settings/themeMode';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { WEBHOOK_AUTH_TYPE_ENUM } from '../../enums/settings/webhookAuthType';
+import { environment } from '../../environments/environment';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { IGreenBean } from '../../interfaces/green-bean/iGreenBean';
@@ -237,6 +238,8 @@ export class SettingsPage {
   public readonly isTextToSpeechSectionAvailable = this.textToSpeech.available;
   /** The Android voice service takes about a second for every announcement. */
   public readonly isAndroidSpeechHintShown = this.platform.is('android');
+  /** Development builds keep pitch and rate to try the voice without a screen reader. */
+  public readonly isSpeechVoiceAdjustable = !environment.production;
 
   public currencies = {};
 
