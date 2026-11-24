@@ -1395,14 +1395,14 @@
         "TEST_SPEAK": "Start test speak",
         "PITCH": "Pitch",
         "RATE": "Rate",
-        "SCREEN_READER_HINT": "While a screen reader such as VoiceOver or TalkBack is on, it speaks the announcements in its own voice and speaking rate. Pitch and rate set here then have no effect. Each announcement interrupts what the screen reader is reading.",
+        "SCREEN_READER_HINT": "Speaking rate and pitch come from your device’s voice output, such as VoiceOver or TalkBack. While a screen reader is on, each announcement interrupts what it is reading.",
         "WEIGHT": "Announce weight",
         "BREW_TIME": "Announce brew time",
         "BREW_TIME_EVERY": "Brew time every",
         "BREW_START_END": "Announce brew start and brew end",
         "WHOLE_GRAMS": "Speak whole grams",
         "WHOLE_GRAMS_DESCRIPTION": "Also espresso weights are spoken without decimal places, which keeps each announcement shorter.",
-        "ANDROID_RATE_HINT": "On Android, each announcement takes about one second longer. If announcements come too late, raise the rate. For weights, “Speak whole grams” also helps."
+        "ANDROID_RATE_HINT": "On Android, each announcement takes about one second longer. If announcements come too late, raise the speaking rate on your device. For weights, “Speak whole grams” also helps."
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptic feedback",
     "HAPTIC_FEEDBACK": {

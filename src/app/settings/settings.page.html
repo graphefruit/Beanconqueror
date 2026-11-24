@@ -813,6 +813,7 @@
             <div class="ion-label">{{ "TEXT_TO_SPEECH.BREW_START_END" | translate }}</div>
           </ion-checkbox>
         </ion-item>
+        @if (isSpeechVoiceAdjustable) {
         <ion-item lines='none'>
           <ion-label class="ion-margin-end">
             <p>{{ "TEXT_TO_SPEECH.PITCH" | translate }}</p>
@@ -837,6 +838,7 @@
             <div class='ion-label' slot="end">{{ settings.text_to_speech_rate | number : '.0-1' }}</div>
           </ion-range>
         </ion-item>
+        }
         @if (isAndroidSpeechHintShown && (settings.text_to_speech_weight || settings.text_to_speech_brew_time ||
           settings.text_to_speech_brew_start_end)) {
         <ion-item lines='none'>

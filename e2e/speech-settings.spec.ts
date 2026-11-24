@@ -51,6 +51,8 @@ const startAndEnd = (page: Page) =>
   page.getByRole('checkbox', { name: 'Announce brew start and brew end' });
 const androidHint = (page: Page) =>
   page.getByText(/^On Android, each announcement takes about one second/);
+const deviceVoiceHint = (page: Page) =>
+  page.getByText(/^Speaking rate and pitch come from your device/);
 
 /** Ionic reports the new state after the click; uncheck() would not wait for it. */
 async function switchOff(checkbox: Locator): Promise<void> {
@@ -78,6 +80,10 @@ test.describe('on Android', () => {
     await expect(page.getByText('5 s', { exact: true })).toBeVisible();
     await expect(startAndEnd(page)).toBeChecked();
     await expect(androidHint(page)).toBeVisible();
+    await expect(deviceVoiceHint(page)).toBeVisible();
+    // pnpm e2e serves the development build, which keeps pitch and rate for trying the voice.
+    await expect(page.getByRole('slider', { name: 'Pitch' })).toBeVisible();
+    await expect(page.getByRole('slider', { name: 'Rate' })).toBeVisible();
 
     // The slider shows the chosen interval, also when the timer shows whole seconds.
     await brewTimeEvery(page).focus();
