@@ -8,6 +8,7 @@ import {
   brewAction,
   brewField,
   openAddBrew,
+  openAddBrewWithoutTime,
   openBrewParameterPage,
   setParameter,
   WATER,
@@ -205,7 +206,7 @@ test('the brew graph stays in the brew form when the brew time is hidden', async
   await setParameter(page, 'Time', false);
   await backToBrews(page);
 
-  await openAddBrew(page);
+  await openAddBrewWithoutTime(page, 'Not now');
   await expect(brewField(page, 'Time')).toHaveCount(0);
   await expect(brewField(page, 'Bloom Time / Pre-infusion')).toBeVisible();
   // The graph runs the brew with connected devices (scale, pressure, brew by
