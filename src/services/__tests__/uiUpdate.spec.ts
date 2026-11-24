@@ -454,6 +454,10 @@ describe('UIUpdate change info migration', () => {
           },
         },
         { provide: UIHelper, useValue: {} },
+        {
+          provide: UIExportImportHelper,
+          useValue: { writeBackupBeforeMigration: () => Promise.resolve(true) },
+        },
       ],
     });
     uiUpdate = TestBed.inject(UIUpdate);
@@ -576,6 +580,10 @@ describe('UIUpdate duplicate entries migration', () => {
           },
         },
         { provide: UIHelper, useValue: {} },
+        {
+          provide: UIExportImportHelper,
+          useValue: { writeBackupBeforeMigration: () => Promise.resolve(true) },
+        },
       ],
     });
     uiUpdate = TestBed.inject(UIUpdate);
@@ -732,6 +740,10 @@ describe('UIUpdate foreign brew tools update', () => {
           },
         },
         { provide: UIHelper, useValue: {} },
+        {
+          provide: UIExportImportHelper,
+          useValue: { writeBackupBeforeMigration: () => Promise.resolve(true) },
+        },
       ],
     });
     uiUpdate = TestBed.inject(UIUpdate);
@@ -842,7 +854,6 @@ interface StoredEntry {
 describe('UIUpdate standard grinder', () => {
   let database: MemoryDatabase;
   let uiUpdate: UIUpdate;
-  let backup: jasmine.Spy;
 
   /** A brew as it was stored before there were grinders. */
   function brewBefore(_uuid: string, _mill: string, _created: number) {
@@ -863,9 +874,6 @@ describe('UIUpdate standard grinder', () => {
 
   beforeEach(() => {
     database = new MemoryDatabase();
-    backup = jasmine
-      .createSpy('writeBackupBeforeMigration')
-      .and.resolveTo(true);
     const settings = new Settings();
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
@@ -889,7 +897,7 @@ describe('UIUpdate standard grinder', () => {
         { provide: UIHelper, useValue: {} },
         {
           provide: UIExportImportHelper,
-          useValue: { writeBackupBeforeMigration: backup },
+          useValue: { writeBackupBeforeMigration: () => Promise.resolve(true) },
         },
       ],
     });
@@ -964,35 +972,6 @@ describe('UIUpdate standard grinder', () => {
       'standard',
       '',
     ]);
-    expect(backup).toHaveBeenCalledTimes(1);
-  });
-
-  it('UPDATE_19 stays open and changes nothing when the backup could not be written', async () => {
-    const mill = {
-      ...(JSON.parse(JSON.stringify(new Mill())) as object),
-      name: 'Standard',
-      config: { uuid: 'standard', unix_timestamp: 10 },
-    };
-    const brews = [brewBefore('old', '', 5)];
-    await start(brews, [mill]);
-    backup.and.resolveTo(false);
-
-    expect(await runUpdate(uiUpdate, 'UPDATE_19')).toBeFalse();
-
-    expect(stored('BREWS')).toEqual(brews);
-  });
-
-  it('UPDATE_19 writes no backup when no brew is to be repaired', async () => {
-    const mill = {
-      ...(JSON.parse(JSON.stringify(new Mill())) as object),
-      name: 'Standard',
-      config: { uuid: 'standard', unix_timestamp: 10 },
-    };
-    await start([brewBefore('new', '', 20)], [mill]);
-
-    expect(await runUpdate(uiUpdate, 'UPDATE_19')).toBeTrue();
-
-    expect(backup).not.toHaveBeenCalled();
   });
 
   it('UPDATE_19 stays open when the brews could not be stored', async () => {
@@ -1007,3 +986,175 @@ describe('UIUpdate standard grinder', () => {
     expect(await runUpdate(uiUpdate, 'UPDATE_19')).toBeFalse();
   });
 });
+
+describe('UIUpdate backup before the data updates 16 to 19', () => {
+  let version: Version;
+  let hasData: boolean;
+  let uiUpdate: UIUpdate;
+  /** The backup and the four updates, in the order they were called. */
+  let calls: string[];
+  let backedUp: boolean;
+
+  function step(_name: string, _result: () => boolean) {
+    return jasmine.createSpy(_name).and.callFake(() => {
+      calls.push(_name);
+      return Promise.resolve(_result());
+    });
+  }
+
+  beforeEach(() => {
+    version = new Version();
+    hasData = true;
+    calls = [];
+    backedUp = true;
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        UIUpdate,
+        {
+          provide: UIExportImportHelper,
+          useValue: {
+            writeBackupBeforeMigration: step('backup', () => backedUp),
+          },
+        },
+        {
+          provide: ChangeTrackingMigrationService,
+          useValue: { run: step('UPDATE_16', () => true) },
+        },
+        {
+          provide: DuplicateEntriesMigrationService,
+          useValue: { run: step('UPDATE_17', () => true) },
+        },
+        {
+          provide: BrewReferencesService,
+          useValue: {
+            removeForeignTools: step('UPDATE_18', () => true),
+            repairStandardMill: step('UPDATE_19', () => true),
+          },
+        },
+        {
+          provide: UiVersionStorage,
+          useValue: {
+            getVersion: () => version,
+            saveVersion: () => Promise.resolve(),
+          },
+        },
+        {
+          provide: UILog,
+          useValue: {
+            log: () => undefined,
+            info: () => undefined,
+            error: () => undefined,
+          },
+        },
+        { provide: UIBrewStorage, useValue: {} },
+        { provide: UIBeanStorage, useValue: {} },
+        { provide: UIPreparationStorage, useValue: {} },
+        { provide: UIMillStorage, useValue: {} },
+        { provide: UISettingsStorage, useValue: {} },
+        { provide: Platform, useValue: { is: () => true } },
+        { provide: ModalController, useValue: {} },
+        { provide: UIFileHelper, useValue: {} },
+        {
+          provide: UIAlert,
+          useValue: {
+            showLoadingSpinner: () => Promise.resolve(),
+            hideLoadingSpinner: () => Promise.resolve(),
+            isLoadingSpinnerShown: () => false,
+          },
+        },
+        { provide: TranslateService, useValue: {} },
+        {
+          provide: UIStorage,
+          useValue: {
+            getDataState: () => Promise.resolve(hasData ? 'data' : 'empty'),
+          },
+        },
+        { provide: UIHelper, useValue: {} },
+      ],
+    });
+    uiUpdate = TestBed.inject(UIUpdate);
+  });
+
+  function markDone(_upTo: number) {
+    for (let i = 1; i <= _upTo; i++) {
+      version.pushUpdatedDataVersion(`UPDATE_${i}`);
+    }
+  }
+
+  it('writes one backup before the first of them changes entries', async () => {
+    markDone(15);
+
+    await uiUpdate.checkUpdate();
+
+    expect(calls).toEqual([
+      'backup',
+      'UPDATE_16',
+      'UPDATE_17',
+      'UPDATE_18',
+      'UPDATE_19',
+    ]);
+    expect(version.checkIfDataVersionWasUpdated('UPDATE_19')).toBeTrue();
+  });
+
+  it('writes the backup before the first one still open', async () => {
+    markDone(18);
+
+    await uiUpdate.checkUpdate();
+
+    expect(calls).toEqual(['backup', 'UPDATE_19']);
+  });
+
+  it('runs none of them when the backup could not be written, and tries again at the next start', async () => {
+    markDone(15);
+    backedUp = false;
+
+    await uiUpdate.checkUpdate();
+
+    expect(calls).toEqual(['backup']);
+    for (const update of UPDATES) {
+      expect(version.checkIfDataVersionWasUpdated(update)).toBeFalse();
+    }
+
+    backedUp = true;
+    calls = [];
+    await uiUpdate.checkUpdate();
+
+    expect(calls).toEqual(['backup', ...UPDATES]);
+  });
+
+  it('writes no backup when they are all done', async () => {
+    markDone(19);
+
+    await uiUpdate.checkUpdate();
+
+    expect(calls).toEqual([]);
+  });
+
+  it('writes no backup for an empty database', async () => {
+    markDone(15);
+    hasData = false;
+
+    await uiUpdate.checkUpdate();
+
+    expect(calls).toEqual(UPDATES);
+  });
+
+  it('writes no backup for UPDATE_18 opened again by an import', async () => {
+    markDone(19);
+
+    await uiUpdate.checkUpdate(true);
+
+    expect(calls).toEqual(['UPDATE_18']);
+  });
+
+  it('writes one backup after an import of data with updates still open', async () => {
+    markDone(16);
+
+    await uiUpdate.checkUpdate(true);
+
+    expect(calls).toEqual(['backup', 'UPDATE_17', 'UPDATE_18', 'UPDATE_19']);
+  });
+});
+
+const UPDATES = ['UPDATE_16', 'UPDATE_17', 'UPDATE_18', 'UPDATE_19'];
