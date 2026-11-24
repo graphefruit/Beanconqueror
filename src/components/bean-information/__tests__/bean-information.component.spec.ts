@@ -11,15 +11,16 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxStarsComponent } from 'ngx-stars';
 import { Subject } from 'rxjs';
 
+import en from '../../../assets/i18n/en.json';
 import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
+import { BeanListViewParameter } from '../../../classes/parameter/beanListViewParameter';
 import { Settings } from '../../../classes/settings/settings';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { BEAN_ACTION } from '../../../enums/beans/beanAction';
 import { BeanGroup } from '../../../interfaces/bean/beanGroup';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { BeanMapper } from '../../../mapper/bean/beanMapper';
-import { CurrencyService } from '../../../services/currencyService/currency.service';
 import { ServerCommunicationService } from '../../../services/serverCommunication/server-communication.service';
 import { ShareService } from '../../../services/shareService/share-service.service';
 import { UIAlert } from '../../../services/uiAlert';
@@ -199,8 +200,8 @@ describe('BeanInformationComponent', () => {
     share = spies(['shareBean', 'shareImage']);
     image = spies(['viewPhotos']);
     uiHelper = spies(['toFixedIfNecessary', 'copyToClipboard']);
-    uiHelper.toFixedIfNecessary.and.callFake(
-      (value: number, dp: number) => +value.toFixed(dp),
+    uiHelper.toFixedIfNecessary.and.callFake((value: number, dp: number) =>
+      UIHelper.prototype.toFixedIfNecessary(value, dp),
     );
 
     TestBed.configureTestingModule({
@@ -222,10 +223,6 @@ describe('BeanInformationComponent', () => {
         { provide: UIHelper, useValue: uiHelper },
         { provide: UIAnalytics, useValue: analytics },
         { provide: DeleteCommands, useValue: commands },
-        {
-          provide: CurrencyService,
-          useValue: { getActualCurrencySymbol: () => '€' },
-        },
         { provide: Platform, useValue: { is: () => false } },
       ],
     });
@@ -256,14 +253,16 @@ describe('BeanInformationComponent', () => {
   ): string {
     const element = fixture.nativeElement as HTMLElement;
     // Ionic hides the text of a label from textContent.
+    // Whitespace is compared as a reader sees it, as in the E2E helper.
+    const normalize = (content: string) => content.replace(/\s+/g, ' ').trim();
     const headline = [
       ...element.querySelectorAll('ion-label.card-headline'),
     ].find(
-      (node) => node.innerHTML.replace(/<!--.*?-->/g, '').trim() === label,
+      (node) =>
+        normalize(node.innerHTML.replace(/<!--[\s\S]*?-->/g, '')) === label,
     );
-    return (
-      headline?.parentElement?.querySelector('ion-text')?.textContent?.trim() ??
-      ''
+    return normalize(
+      headline?.parentElement?.querySelector('ion-text')?.textContent ?? '',
     );
   }
 
@@ -280,9 +279,9 @@ describe('BeanInformationComponent', () => {
     expect(text(fixture)).toContain('Alpha');
     expect(text(fixture)).not.toContain('Unsaved change');
     expect(value(fixture, 'PAGE_HOME_TOTAL_BREWS')).toBe('2');
-    expect(value(fixture, 'ROASTED_BEFORE')).toBe('10 DAYS_OLD');
+    expect(value(fixture, 'ROASTED_BEFORE')).toBe('10 DAYS_OLD');
     expect(value(fixture, 'BREW_DATA_FLAVOR')).toBe('Honey,CUPPING_1');
-    expect(value(fixture, 'BEAN_DATA_COST')).toBe('12.5 (50 €/kg)');
+    expect(value(fixture, 'BEAN_DATA_COST')).toBe('12.5 (50 €/kg)');
     expect(value(fixture, 'BEAN_DATA_ROAST_NAME_TYPE')).toBe('-');
     expect(text(fixture)).not.toContain('BEAN_ROASTING_TYPE_');
   });
@@ -304,7 +303,7 @@ describe('BeanInformationComponent', () => {
     expect(text(fixture)).toContain('Preview');
     expect(text(fixture)).toContain('(BEAN_ROASTING_TYPE_FILTER)');
     expect(value(fixture, 'PAGE_HOME_TOTAL_BREWS')).toBe('0');
-    expect(value(fixture, 'ROASTED_BEFORE')).toBe('1 DAY_OLD');
+    expect(value(fixture, 'ROASTED_BEFORE')).toBe('1 DAY_OLD');
     expect(value(fixture, 'BEAN_DATA_ROAST_NAME_TYPE')).toBe('House');
     expect(
       fixture.nativeElement.querySelector('ion-icon[name="flame-outline"]'),
@@ -396,7 +395,114 @@ describe('BeanInformationComponent', () => {
 
     const fixture = await render(legacyBean(alpha));
 
-    expect(value(fixture, 'ROASTED_BEFORE')).toBe('9 DAYS_OLD');
+    expect(value(fixture, 'ROASTED_BEFORE')).toBe('9 DAYS_OLD');
+  });
+
+  /**
+   * The card in English, as the user reads it, with the settings of a new
+   * user: only the varieties are switched on beyond the defaults.
+   */
+  function inEnglish(): void {
+    const translate = TestBed.inject(TranslateService);
+    translate.setTranslation('en', en);
+    translate.use('en');
+    settings.date_format = 'DD.MM.YYYY';
+    settings.currency = 'EUR';
+    settings.bean_visible_list_view_parameters = Object.assign(
+      new BeanListViewParameter(),
+      { bean_information: true, country: true, percentage: true },
+    );
+  }
+
+  it('shows the brews, the usage and the age of a bean', async () => {
+    inEnglish();
+    beans.change([
+      storedBean('alpha', {
+        name: 'Alpha Filter',
+        roaster: 'Rösterei Nord',
+        roastingDate: new Date(NOW - 10 * DAY).toISOString(),
+        weight: 250,
+        cost: 12.5,
+      }),
+      // Known defect: a bean without a roasting date is "0 days old".
+      storedBean('ethiopia', { name: 'Äthiopien', weight: 0 }),
+      // Known defect: more used than the bag held leaves a negative rest.
+      storedBean('overused', {
+        name: 'Delta Minus',
+        weight: 100,
+        roastingDate: new Date(NOW - 20 * DAY).toISOString(),
+      }),
+    ]);
+    brews.change([
+      storedBrew('alpha', 18, 3),
+      // The weight of the beans put in counts instead of the ground weight.
+      { ...storedBrew('alpha', 18, 1), bean_weight_in: 18.5 },
+      ...[6, 5, 4].map((days) => storedBrew('overused', 40, days)),
+    ]);
+
+    const alphaCard = await render(beans.entries[0] as IBean);
+    expect(value(alphaCard, 'Roast date')).toBe('19.02.2026');
+    expect(value(alphaCard, 'Roaster')).toBe('Rösterei Nord');
+    expect(value(alphaCard, 'Brews')).toBe('2');
+    expect(value(alphaCard, 'Roasted before')).toBe('10 days old');
+    expect(value(alphaCard, 'Consumed')).toBe('36.5g of 250g (213.5g)');
+    expect(value(alphaCard, 'Cost')).toBe('12.5 (50 €/kg)');
+
+    const ethiopia = await render(beans.entries[1] as IBean);
+    expect(value(ethiopia, 'Roast date')).toBe('-');
+    expect(value(ethiopia, 'Roasted before')).toBe('0 days old');
+    expect(value(ethiopia, 'Consumed')).toBe('0g of 0g (0g)');
+
+    const overused = await render(beans.entries[2] as IBean);
+    expect(value(overused, 'Consumed')).toBe('120g of 100g (-20g)');
+  });
+
+  it('numbers the fields of the varieties of a blend', async () => {
+    inEnglish();
+    const blend = storedBean('blend', {
+      name: 'Gamma Blend',
+      beanMix: 'BLEND' as never,
+      bean_information: [
+        { country: 'Ethiopia', percentage: 50 },
+        { country: 'Brazil', percentage: 30 },
+        { country: 'Colombia', percentage: 20 },
+      ] as never,
+    });
+    beans.change([blend]);
+
+    const fixture = await render(blend);
+
+    expect(value(fixture, 'Bean mix')).toBe('Blend');
+    for (const [index, country, percentage] of [
+      [1, 'Ethiopia', '50'],
+      [2, 'Brazil', '30'],
+      [3, 'Colombia', '20'],
+    ] as const) {
+      expect(value(fixture, `${index}. Country`)).toBe(country);
+      expect(value(fixture, `${index}. Percentage`)).toBe(percentage);
+    }
+  });
+
+  it('ends the age of an archived bean with its last brew, also when it was frozen later', async () => {
+    const archived = storedBean('archived', {
+      finished: true,
+      roastingDate: new Date(NOW - 60 * DAY).toISOString(),
+    });
+    // Known defect: the days until it was frozen count although the last
+    // brew was before that.
+    const archivedLate = storedBean('late', {
+      finished: true,
+      roastingDate: new Date(NOW - 50 * DAY).toISOString(),
+      frozenDate: new Date(NOW - 20 * DAY).toISOString(),
+      frozenId: 'LA1',
+    });
+    beans.change([archived, archivedLate]);
+    brews.change([storedBrew('archived', 15, 40), storedBrew('late', 15, 45)]);
+
+    expect(value(await render(archived), 'ROASTED_BEFORE')).toBe('20 DAYS_OLD');
+    expect(value(await render(archivedLate), 'ROASTED_BEFORE')).toBe(
+      '29 DAYS_OLD',
+    );
   });
 
   it('moves the stars when the stored rating changes', async () => {
@@ -651,6 +757,24 @@ describe('BeanInformationComponent', () => {
         [A.GENERATE_INTERNAL_SHARE_CODE, 'qr-code-outline'],
         [A.DELETE, 'beanconqueror-delete'],
       ]);
+    });
+
+    it('offer no gallery and show no photo for a bean without one', async () => {
+      const photo = () =>
+        (fixture.nativeElement as HTMLElement).querySelector('async-image');
+      expect(photo()).not.toBeNull();
+
+      beans.change([storedBean('alpha', { ...alpha, attachments: [] })]);
+      await fixture.whenStable();
+
+      const items = await menu();
+      // The popover shows the entries by their translation keys.
+      expect(items).toContain([A.DETAIL, 'DETAIL', 'beanconqueror-detail']);
+      expect(items.map(([role]) => role)).not.toContain(A.PHOTO_GALLERY);
+      expect(items.map(([, key]) => key)).not.toContain(
+        'POPOVER_BREWS_OPTION_PHOTO_GALLERY',
+      );
+      expect(photo()).toBeNull();
     });
 
     for (const stored of [false, undefined]) {

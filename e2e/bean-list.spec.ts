@@ -96,38 +96,6 @@ test('the collapsed list shows the beans by name and stays collapsed after a res
   await expect(beanCard(page, BEANS.alpha)).toContainText('Roast date');
 });
 
-test('a card shows the brews, the usage and the age of its bean', async ({
-  page,
-}) => {
-  await startWithBeans(page);
-
-  const alpha = beanCard(page, BEANS.alpha);
-  await expect(beanCardValue(alpha, 'Roast date')).toHaveText('19.02.2026');
-  await expect(beanCardValue(alpha, 'Roaster')).toHaveText('Rösterei Nord');
-  await expect(beanCardValue(alpha, 'Brews')).toHaveText('2');
-  await expect(beanCardValue(alpha, 'Roasted before')).toHaveText(
-    '10 days old',
-  );
-  // 18 g ground and 18.5 g of beans put in.
-  await expect(beanCardValue(alpha, 'Consumed')).toHaveText(
-    '36.5g of 250g (213.5g)',
-  );
-  await expect(beanCardValue(alpha, 'Cost')).toHaveText('12.5 (50 €/kg)');
-
-  // Known defect: a bean without a roasting date is "0 days old".
-  const ethiopia = beanCard(page, BEANS.ethiopia);
-  await expect(beanCardValue(ethiopia, 'Roast date')).toHaveText('-');
-  await expect(beanCardValue(ethiopia, 'Roasted before')).toHaveText(
-    '0 days old',
-  );
-  await expect(beanCardValue(ethiopia, 'Consumed')).toHaveText('0g of 0g (0g)');
-
-  // Known defect: more used than the bag held leaves a negative rest.
-  await expect(
-    beanCardValue(beanCard(page, BEANS.overused), 'Consumed'),
-  ).toHaveText('120g of 100g (-20g)');
-});
-
 test('frozen portions of one bag share a card that opens to show them', async ({
   page,
 }) => {
@@ -194,23 +162,6 @@ test('archived beans are listed in the archive only', async ({ page }) => {
   // An archived bean that is still frozen is not among the frozen ones.
   await showBeanSegment(page, 'Frozen');
   await expect(beanCard(page, BEANS.archivedFrozen)).toHaveCount(0);
-});
-
-test('the age of an archived bean ends with its last brew', async ({
-  page,
-}) => {
-  await startWithBeans(page);
-  await showBeanSegment(page, 'Archive');
-
-  // Roasted 60 days ago, last brewed 40 days ago.
-  await expect(
-    beanCardValue(beanCard(page, BEANS.archived), 'Roasted before'),
-  ).toHaveText('20 days old');
-  // Known defect: roasted 50 days ago, last brewed 45 days ago and frozen
-  // only after that; the days until it was frozen count nevertheless.
-  await expect(
-    beanCardValue(beanCard(page, BEANS.archivedLate), 'Roasted before'),
-  ).toHaveText('29 days old');
 });
 
 test('the archive is hidden when archived beans are switched off', async ({
