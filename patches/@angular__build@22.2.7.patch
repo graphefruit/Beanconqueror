@@ -1,0 +1,15 @@
+diff --git a/src/tools/javascript-transformer/javascript-transformer.js b/src/tools/javascript-transformer/javascript-transformer.js
+index 27f14874e6c040d6ca581651e93a62932b064d55..b96597c309f40716e40ce8ffa31fb1aede63d182 100755
+--- a/src/tools/javascript-transformer/javascript-transformer.js
++++ b/src/tools/javascript-transformer/javascript-transformer.js
+@@ -229,6 +229,10 @@ class JavaScriptTransformer {
+             // NOTE: If additional options are added, this may need to be updated.
+             const hasher = (0, hash_1.createContentHash)();
+             hasher.update(`${!options?.skipLinker}--${resolvedSideEffects === false}--${!!options?.instrumentForCoverage}`);
++            // Instrumented code contains the file path, and git worktrees share the cache.
++            if (options?.instrumentForCoverage) {
++                hasher.update(filename);
++            }
+             hasher.update(data);
+             hasher.update(this.#fileCacheKeyBase);
+             cacheKey = hasher.digest();

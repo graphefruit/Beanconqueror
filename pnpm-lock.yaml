@@ -12,6 +12,9 @@ overrides:
   '@aparajita/capacitor-dark-mode>@capacitor/status-bar': ^8.0.4
 
 patchedDependencies:
+  '@angular/build@22.2.7':
+    hash: f560f53bc1ad83f8bb4c85958b0cfabc1f01a7303249061a26b3c5dc2c7e952d
+    path: patches/@angular__build@22.2.7.patch
   '@capacitor-community/text-to-speech@8.0.2':
     hash: 646e7b336b9e0c59ee44f250128db04562cf08e173a9f5529ab3d6a3ca49bcf8
     path: patches/@capacitor-community__text-to-speech@8.0.2.patch
@@ -221,7 +224,7 @@ importers:
         version: 22.2.7(chokidar@5.0.0)
       '@angular/build':
         specifier: ^22.2.7
-        version: 22.2.7(@angular/compiler-cli@22.2.6(@angular/compiler@22.2.6)(typescript@6.0.3))(@angular/compiler@22.2.6)(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.2.6(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3)))(@types/node@25.9.9)(istanbul-lib-instrument@6.0.3)(karma@6.4.4)(postcss@8.5.32)(rollup@4.68.0)(tslib@2.9.1)(typescript@6.0.3)(yaml@2.9.1)
+        version: 22.2.7(patch_hash=f560f53bc1ad83f8bb4c85958b0cfabc1f01a7303249061a26b3c5dc2c7e952d)(@angular/compiler-cli@22.2.6(@angular/compiler@22.2.6)(typescript@6.0.3))(@angular/compiler@22.2.6)(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.2.6(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3)))(@types/node@25.9.9)(istanbul-lib-instrument@6.0.3)(karma@6.4.4)(postcss@8.5.32)(rollup@4.68.0)(tslib@2.9.1)(typescript@6.0.3)(yaml@2.9.1)
       '@angular/cli':
         specifier: ^22.2.7
         version: 22.2.7(@types/node@25.9.9)(chokidar@5.0.0)
@@ -279,9 +282,6 @@ importers:
       cordova-plugin-health:
         specifier: ^2.1.1
         version: 2.1.1
-      cross-env:
-        specifier: 7.0.3
-        version: 7.0.3
       eslint:
         specifier: ^9.39.5
         version: 9.39.5
@@ -2841,11 +2841,6 @@ packages:
     resolution: {integrity: sha512-/zvGoYn0y27QTBmK+0B+oPdEPC4fKGUmJsMTQbDjqph00TrkqfVFW/M+C6ya54sYCgHC6QCwK/mI6djt8cEGHQ==}
     engines: {node: ^22.18 || >= 24}
 
-  cross-env@7.0.3:
-    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
-    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
-    hasBin: true
-
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
@@ -5297,7 +5292,7 @@ snapshots:
       eslint: 9.39.5
       typescript: 6.0.3
 
-  '@angular/build@22.2.7(@angular/compiler-cli@22.2.6(@angular/compiler@22.2.6)(typescript@6.0.3))(@angular/compiler@22.2.6)(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.2.6(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3)))(@types/node@25.9.9)(istanbul-lib-instrument@6.0.3)(karma@6.4.4)(postcss@8.5.32)(rollup@4.68.0)(tslib@2.9.1)(typescript@6.0.3)(yaml@2.9.1)':
+  '@angular/build@22.2.7(patch_hash=f560f53bc1ad83f8bb4c85958b0cfabc1f01a7303249061a26b3c5dc2c7e952d)(@angular/compiler-cli@22.2.6(@angular/compiler@22.2.6)(typescript@6.0.3))(@angular/compiler@22.2.6)(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.2.6(@angular/common@22.2.6(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.2.6(@angular/compiler@22.2.6)(rxjs@7.8.2)(zone.js@0.16.3)))(@types/node@25.9.9)(istanbul-lib-instrument@6.0.3)(karma@6.4.4)(postcss@8.5.32)(rollup@4.68.0)(tslib@2.9.1)(typescript@6.0.3)(yaml@2.9.1)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@angular-devkit/architect': 0.2202.7(chokidar@5.0.0)
@@ -7534,10 +7529,6 @@ snapshots:
     dependencies:
       env-paths: 2.2.1
       js-yaml: 5.5.0
-
-  cross-env@7.0.3:
-    dependencies:
-      cross-spawn: 7.0.6
 
   cross-spawn@7.0.6:
     dependencies:
