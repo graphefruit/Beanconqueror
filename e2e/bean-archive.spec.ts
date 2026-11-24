@@ -41,7 +41,7 @@ test('a bean is archived with a rating and a note and can be brought back', asyn
     - dialog:
       - text: "Name: Alpha Filter Average Brew Rating 3 Rating 3"
       - slider "Rating"
-      - 'img "Rating: 3 out of 5 stars"'
+      - 'img "Rating: 3 of 5 stars"'
       - text: Notes
       - textbox "Notes"
       - button "Cancel"

@@ -44,6 +44,7 @@ import { PickerFieldDirective } from '../../../directive/picker-field.directive'
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { SelectLabelDirective } from '../../../directive/select-label.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { KeysPipe } from '../../../pipes/keys';
@@ -85,6 +86,7 @@ declare var cordova;
     IonRange,
     RangeNameDirective,
     IonSelect,
+    SelectLabelDirective,
     IonSelectOption,
     IonTextarea,
     IonIcon,

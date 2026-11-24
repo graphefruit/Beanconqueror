@@ -54,6 +54,7 @@ import { StorageClass } from '../../classes/storageClass';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import { ChipButtonDirective } from '../../directive/chip-button.directive';
 import { LongPressDirective } from '../../directive/long-press.directive';
+import { StarsNameDirective } from '../../directive/stars-name.directive';
 import { BEAN_FUNCTION_PIPE_ENUM } from '../../enums/beans/beanFunctionPipe';
 import { BREW_ACTION } from '../../enums/brews/brewAction';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
@@ -109,6 +110,7 @@ declare let window;
     NgClass,
     AsyncImageComponent,
     NgxStarsModule,
+    StarsNameDirective,
     DecimalPipe,
     TranslatePipe,
     FormatDatePipe,

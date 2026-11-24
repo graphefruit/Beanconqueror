@@ -33,6 +33,7 @@ import { GreenBean } from '../../classes/green-bean/green-bean';
 import { Settings } from '../../classes/settings/settings';
 import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
 import { LongPressDirective } from '../../directive/long-press.directive';
+import { StarsNameDirective } from '../../directive/stars-name.directive';
 import { GREEN_BEAN_ACTION } from '../../enums/green-beans/greenBeanAction';
 import { FormatDatePipe } from '../../pipes/formatDate';
 import { UIAlert } from '../../services/uiAlert';
@@ -60,6 +61,7 @@ import { AsyncImageComponent } from '../async-image/async-image.component';
   imports: [
     LongPressDirective,
     NgxStarsModule,
+    StarsNameDirective,
     AsyncImageComponent,
     DecimalPipe,
     TranslatePipe,

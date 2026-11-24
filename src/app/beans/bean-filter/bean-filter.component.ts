@@ -38,6 +38,7 @@ import { ChooseDateOverlayDirective } from '../../../directive/choose-date.direc
 import { ControlDescriptionDirective } from '../../../directive/control-description.directive';
 import { PickerFieldDirective } from '../../../directive/picker-field.directive';
 import { RangeNameDirective } from '../../../directive/range-name.directive';
+import { SelectLabelDirective } from '../../../directive/select-label.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
 import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
@@ -67,6 +68,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonItem,
     IonToggle,
     IonSelect,
+    SelectLabelDirective,
     IonSelectOption,
     IonGrid,
     IonRow,

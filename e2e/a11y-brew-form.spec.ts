@@ -1,10 +1,16 @@
 import type { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
-import { BREW_TEST_START, openAddBrew } from './support/brew-form';
+import {
+  BREW_TEST_START,
+  brewField,
+  openAddBrew,
+  WATER,
+} from './support/brew-form';
 import { completeFirstRunWithBrew } from './support/first-brew';
 import { tabKey } from './support/keyboard';
 import { waitForAnimations } from './support/layout';
+import { textStops } from './support/screen-reader';
 
 /**
  * The brew form for keyboard and screen reader users. Each test starts like
@@ -106,4 +112,43 @@ test('the choosers of the brew form open from a tap and from a screen reader', a
       await expect(select).toBeVisible();
     }
   }
+});
+
+test('a screen reader stops once on each field of the brew form', async ({
+  page,
+}) => {
+  await openAddBrew(page);
+  const form = page.locator('brew-brewing');
+
+  // The label shown with a field is in the name of its control already.
+  const labels = [
+    'Preparation method',
+    'Bean Type',
+    'Grinder',
+    'Amount of water',
+    'Beverage quantity',
+    'Rating',
+    'Notes',
+  ];
+  await expect
+    .poll(async () =>
+      (await textStops(form)).filter((stop) =>
+        labels.some((label) => stop.startsWith(label)),
+      ),
+    )
+    .toEqual([]);
+
+  await expect(
+    form.getByRole('button', {
+      name: 'Bean Type, Ethiopia Yirgacheffe Natural',
+    }),
+  ).toBeVisible();
+  await expect(brewField(page, WATER)).toBeVisible();
+  await expect(form.getByRole('slider', { name: 'Rating' })).toHaveAttribute(
+    'aria-valuetext',
+    '0 of 5',
+  );
+  await expect(
+    form.getByRole('img', { name: 'Rating: 0 of 5 stars' }),
+  ).toBeAttached();
 });

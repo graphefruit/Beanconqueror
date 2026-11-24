@@ -29,11 +29,16 @@ import {
 @Component({
   imports: [RangeNameDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  template: `<test-range [rangeLabel]="label()" [rangeUnit]="unit()" />`,
+  template: `<test-range
+    [rangeLabel]="label()"
+    [rangeUnit]="unit()"
+    [rangeOfMax]="ofMax()"
+  />`,
 })
 class HostComponent {
   public readonly label = signal('Bildqualität');
   public readonly unit = signal('%');
+  public readonly ofMax = signal(false);
 }
 
 function knob(value: number, extraPart = ''): string {
@@ -51,7 +56,7 @@ class FakeLiveRegion implements LiveRegion {
 
 describe('RangeNameDirective', () => {
   let fixture: ComponentFixture<HostComponent>;
-  let range: HTMLElement & { step?: number };
+  let range: HTMLElement & { step?: number; max?: number };
   let liveRegion: FakeLiveRegion;
 
   async function create(knobs: string, step = 1): Promise<void> {
@@ -104,10 +109,15 @@ describe('RangeNameDirective', () => {
         RANGE_TO: '{{name}}, bis',
         RANGE_FROM_VALUE: 'von {{value}}',
         RANGE_TO_VALUE: 'bis {{value}}',
+        RANGE_VALUE_OF_MAX: '{{value}} von {{max}}',
       },
     });
     translate.setTranslation('en', {
-      A11Y: { RANGE_FROM: '{{name}}, from', RANGE_TO: '{{name}}, to' },
+      A11Y: {
+        RANGE_FROM: '{{name}}, from',
+        RANGE_TO: '{{name}}, to',
+        RANGE_VALUE_OF_MAX: '{{value}} of {{max}}',
+      },
     });
     translate.use('de');
   });
@@ -287,6 +297,53 @@ describe('RangeNameDirective', () => {
       expect(
         knobs().map((each) => each.getAttribute('aria-valuetext')),
       ).toEqual(['1,5 %', '3,5 %']);
+    });
+  });
+
+  describe('with rangeOfMax, as on a rating', () => {
+    async function createRating(value: number, max?: number): Promise<void> {
+      fixture = TestBed.createComponent(HostComponent);
+      fixture.componentInstance.label.set('Bewertung');
+      fixture.componentInstance.unit.set('');
+      fixture.componentInstance.ofMax.set(true);
+      range = (fixture.nativeElement as HTMLElement).querySelector(
+        'test-range',
+      );
+      range.step = 0.5;
+      range.max = max;
+      range.attachShadow({ mode: 'open' }).innerHTML = knob(value);
+      await settle();
+    }
+
+    it('says the value against the maximum of the range', async () => {
+      await createRating(4.5, 5);
+
+      expect(knobs()[0].getAttribute('aria-valuetext')).toBe('4,5 von 5');
+    });
+
+    it('follows a new maximum and takes Ionic’s 100 when none is set', async () => {
+      await createRating(4);
+      expect(knobs()[0].getAttribute('aria-valuetext')).toBe('4 von 100');
+
+      range.max = 5;
+      knobs()[0].setAttribute('aria-valuemax', '5');
+      await new Promise((resolve) => setTimeout(resolve));
+
+      expect(knobs()[0].getAttribute('aria-valuetext')).toBe('4 von 5');
+    });
+
+    it('says a dragged value against the maximum', async () => {
+      await createRating(4, 5);
+
+      await startDrag(4);
+      fire('ionKnobMoveEnd', 2.5);
+      TestBed.inject(TranslateService).use('en');
+      await settle();
+      await startDrag(2.5);
+      fire('ionKnobMoveEnd', 3);
+
+      expect(liveRegion.heard).toEqual(['2,5 von 5', '3 of 5']);
+      expect(knobs()[0].getAttribute('aria-valuetext')).toBe('3 of 5');
     });
   });
 

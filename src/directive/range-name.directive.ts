@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   DestroyRef,
   Directive,
   effect,
@@ -16,6 +17,7 @@ import { Announcer } from '../services/a11y/announcer.service';
 
 type RangeElement = HTMLElement & {
   step?: number;
+  max?: number | string;
   componentOnReady?: () => Promise<unknown>;
 };
 
@@ -84,7 +86,8 @@ export function rangeValueText(
 /**
  * Names the knobs of an ion-range after the label shown above the slider
  * (`rangeLabel`) and says their value with its unit (`rangeUnit`) instead of
- * the bare number. Ionic names a knob after the range's own label, which the
+ * the bare number, or with `rangeOfMax` together with the range's maximum,
+ * e.g. "4 of 5". Ionic names a knob after the range's own label, which the
  * app does not use, and announces only the number. With two knobs, the lower
  * one is named "from" and the upper one "to".
  *
@@ -116,6 +119,8 @@ export class RangeNameDirective {
   public readonly rangeLabel = input<string>();
   /** The unit shown with the value, e.g. "%" or "g/s". */
   public readonly rangeUnit = input<string>('');
+  /** Says the value against the maximum, e.g. "4 of 5" on a rating. */
+  public readonly rangeOfMax = input(false, { transform: booleanAttribute });
 
   private readonly rendered = signal(false);
   private readonly language = toSignal(this.translate.onLangChange);
@@ -148,7 +153,7 @@ export class RangeNameDirective {
         observer.observe(root, {
           subtree: true,
           childList: true,
-          attributeFilter: ['aria-valuenow'],
+          attributeFilter: ['aria-valuenow', 'aria-valuemax'],
         });
       });
     });
@@ -171,6 +176,7 @@ export class RangeNameDirective {
     effect(() => {
       this.rangeLabel();
       this.rangeUnit();
+      this.rangeOfMax();
       this.language();
       if (this.rendered()) {
         this.describeKnobs();
@@ -245,9 +251,7 @@ export class RangeNameDirective {
 
   /** Says the value of the knob being dragged, e.g. "80 %" or "to 3.5". */
   private dragMessage(value: RangeValue): string {
-    const language = this.translate.getCurrentLang() ?? 'en';
-    const say = (knobValue: number) =>
-      rangeValueText(knobValue, this.host.step, this.rangeUnit(), language);
+    const say = (knobValue: number) => this.valueText(knobValue);
     if (typeof value === 'number') {
       return say(value);
     }
@@ -269,6 +273,31 @@ export class RangeNameDirective {
     );
   }
 
+  /** What a screen reader says for a knob at `value`, e.g. "80 %" or "4 of 5". */
+  private valueText(value: number): string {
+    const language = this.translate.getCurrentLang() ?? 'en';
+    const text = rangeValueText(
+      value,
+      this.host.step,
+      this.rangeUnit(),
+      language,
+    );
+    if (!this.rangeOfMax()) {
+      return text;
+    }
+    return String(
+      this.translate.instant('A11Y.RANGE_VALUE_OF_MAX', {
+        value: text,
+        max: rangeValueText(
+          Number(this.host.max ?? 100),
+          this.host.step,
+          '',
+          language,
+        ),
+      }),
+    );
+  }
+
   /**
    * Names the knobs and says their value. `value` is the range's value when
    * it is newer than the knobs' aria-valuenow, i.e. before Ionic renders.
@@ -278,7 +307,6 @@ export class RangeNameDirective {
       this.host.shadowRoot?.querySelectorAll<HTMLElement>('[role="slider"]') ??
       [];
     const label = this.rangeLabel()?.trim();
-    const language = this.translate.getCurrentLang() ?? 'en';
     for (const knob of knobs) {
       if (label) {
         const name =
@@ -312,12 +340,7 @@ export class RangeNameDirective {
       }
       const knobValue = Number(knob.getAttribute('aria-valuenow'));
       if (Number.isFinite(knobValue)) {
-        const text = rangeValueText(
-          knobValue,
-          this.host.step,
-          this.rangeUnit(),
-          language,
-        );
+        const text = this.valueText(knobValue);
         if (knob.getAttribute('aria-valuetext') !== text) {
           knob.setAttribute('aria-valuetext', text);
         }

@@ -31,7 +31,7 @@
       }
     </ion-select>
   </ion-item>
-  <div class='ion-label' style='margin-left: 16px;margin-top: 5px;'>{{"BEAN_DATA_ROASTING_DATE" | translate}}</div>
+  <div class='ion-label' style='margin-left: 16px;margin-top: 5px;' aria-hidden="true">{{"BEAN_DATA_ROASTING_DATE" | translate}}</div>
   <ion-item>
     <ion-grid class="ion-no-padding" style="margin-left:0px;margin-top:-5px;">
       <ion-row>
@@ -47,7 +47,7 @@
       </ion-row>
     </ion-grid>
   </ion-item>
-  <ion-item lines='none'>
+  <ion-item lines='none' aria-hidden="true">
     <ion-label style="min-height:30px;">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
   </ion-item>
   <ion-item style='margin-top:-10px;'>
@@ -57,7 +57,7 @@
     </ion-range>
   </ion-item>
 
-  <ion-item lines='none'>
+  <ion-item lines='none' aria-hidden="true">
     <ion-label  style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
       style="vertical-align: top;">{{filter.rating.lower | toFixed: 2}}&nbsp;-&nbsp;{{filter.rating.upper| toFixed: 2}} </ion-badge>
     </ion-label>

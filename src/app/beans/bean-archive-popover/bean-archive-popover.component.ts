@@ -30,6 +30,7 @@ import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
 import { DisableDoubleClickDirective } from '../../../directive/disable-double-click.directive';
 import { RangeNameDirective } from '../../../directive/range-name.directive';
+import { StarsNameDirective } from '../../../directive/stars-name.directive';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { ToFixedPipe } from '../../../pipes/toFixed';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -45,6 +46,7 @@ import { UIToast } from '../../../services/uiToast';
   imports: [
     FormsModule,
     NgxStarsModule,
+    StarsNameDirective,
     DisableDoubleClickDirective,
     TranslatePipe,
     ToFixedPipe,

@@ -29,6 +29,7 @@ import { PickerFieldDirective } from '../../../directive/picker-field.directive'
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
 import { RoastingMachineOverlayDirective } from '../../../directive/roasting-machine-overlay.directive';
+import { SelectLabelDirective } from '../../../directive/select-label.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
@@ -50,6 +51,7 @@ import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetooth
     IonInput,
     PickerFieldDirective,
     IonSelect,
+    SelectLabelDirective,
     IonButton,
     IonIcon,
   ],

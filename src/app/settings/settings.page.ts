@@ -82,6 +82,7 @@ import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
 import { ControlDescriptionDirective } from '../../directive/control-description.directive';
 import { RangeNameDirective } from '../../directive/range-name.directive';
+import { SelectLabelDirective } from '../../directive/select-label.directive';
 import { TabPanelDirective } from '../../directive/tab-panel.directive';
 import { TooltipDirective } from '../../directive/tooltip.directive';
 import { AppEventType } from '../../enums/appEvent/appEvent';
@@ -175,6 +176,7 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
     IonItem,
     IonIcon,
     IonSelect,
+    SelectLabelDirective,
     IonSelectOption,
     IonRange,
     RangeNameDirective,
