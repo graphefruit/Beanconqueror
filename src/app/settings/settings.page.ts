@@ -143,7 +143,6 @@ import { UIMillStorage } from '../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIStorage } from '../../services/uiStorage';
 import { UIToast } from '../../services/uiToast';
 import { UIUpdate } from '../../services/uiUpdate';
 import { UiVersionStorage } from '../../services/uiVersionStorage';
@@ -195,7 +194,6 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
 export class SettingsPage {
   protected readonly platform = inject(Platform);
   uiSettingsStorage = inject(UISettingsStorage);
-  uiStorage = inject(UIStorage);
   uiHelper = inject(UIHelper);
   private readonly alertCtrl = inject(AlertController);
   private readonly uiAlert = inject(UIAlert);
@@ -1592,39 +1590,6 @@ export class SettingsPage {
         error,
       );
       this.filesNotCopied++;
-    }
-  }
-
-  private async __importDummyData(): Promise<void> {
-    this.uiLog.log('Import dummy data');
-
-    // Dynamically import the data here to avoid including it in the normal application bundle
-    const dummyData = (await import('../../assets/BeanconquerorTestData.json'))
-      .default;
-
-    if (dummyData.SETTINGS[0].brew_order.before === undefined) {
-      this.uiLog.log('Old brew order structure');
-      // Breaking change, we need to throw away the old order types by import
-      const settingsConst = new Settings();
-      dummyData.SETTINGS[0].brew_order = this.uiHelper.copyData(
-        settingsConst.brew_order,
-      );
-    }
-    this.__cleanupImportSettingsData(dummyData.SETTINGS[0]);
-
-    await this.uiStorage.import(dummyData);
-    await this.__reinitializeStorages();
-    this.uiAnalytics.disableTracking();
-    this.__initializeSettings();
-    this.settings.resetFilter();
-    this.setLanguage();
-    await this.uiAlert.showMessage(
-      this.translate.instant('IMPORT_SUCCESSFULLY'),
-    );
-    if (this.settings.matomo_analytics === undefined) {
-      await this.showAnalyticsInformation();
-    } else {
-      await this.uiAnalytics.enableTracking();
     }
   }
 
