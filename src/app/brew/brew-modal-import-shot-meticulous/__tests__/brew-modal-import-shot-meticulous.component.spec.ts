@@ -238,4 +238,55 @@ describe('BrewModalImportShotMeticulousComponent', () => {
       BrewModalImportShotMeticulousComponent.COMPONENT_ID,
     );
   });
+
+  // A desktop or a tablet with a mouse draws a scrollbar that takes width
+  // (src/test.ts hides it for the other tests).
+  describe('with a classic scrollbar', () => {
+    let scrollbars: HTMLStyleElement;
+
+    beforeEach(() => {
+      scrollbars = document.createElement('style');
+      scrollbars.textContent = `
+        *, ion-content::part(scroll) { scrollbar-width: auto !important; }
+        ion-content::part(scroll)::-webkit-scrollbar { width: 15px; }`;
+      document.head.append(scrollbars);
+    });
+
+    afterEach(() => scrollbars.remove());
+
+    it('loads more at the end and draws the charts beside the scrollbar', async () => {
+      // As the scrollbar comes or goes, the rows change their width within
+      // the frame the observers report in; Chrome reports the rest in the
+      // next frame and says so in an error event, which is no failure.
+      await jasmine.spyOnGlobalErrorsAsync(async (globalErrors) => {
+        const entries = page(3 * PAGE);
+        getHistory.and.callFake((before?: number) => {
+          const from =
+            before === undefined
+              ? 0
+              : entries.findIndex((entry) => entry.time < before);
+          return answer(entries.slice(from, from + PAGE));
+        });
+        await open();
+        const element = await scroller();
+        expect(element.offsetWidth - element.clientWidth).toBe(15);
+
+        await scrollTo(1_000_000);
+        await scrollTo(1_000_000);
+
+        expect(getHistory).toHaveBeenCalledTimes(3);
+        expect(component.history.length).toBe(3 * PAGE);
+        const item = fixture.nativeElement.querySelector(
+          'ion-item',
+        ) as HTMLElement;
+        expect(component.chartWidth()).toBe(item.offsetWidth - 50);
+        expect(item.getBoundingClientRect().right).toBeLessThanOrEqual(
+          element.getBoundingClientRect().left + element.clientWidth,
+        );
+        for (const [error] of globalErrors.calls.allArgs()) {
+          expect(String(error)).toContain('ResizeObserver loop');
+        }
+      });
+    });
+  });
 });
