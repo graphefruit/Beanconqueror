@@ -115,7 +115,6 @@ import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDev
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import { PreImportBackupError } from '../../services/preImportBackup/pre-import-backup.service';
 import { EventQueueService } from '../../services/queueService/queue-service.service';
-import { brewTimeEverySeconds } from '../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
 import { ThemeService } from '../../services/theme/theme.service';
 import { UIAlert } from '../../services/uiAlert';
@@ -148,11 +147,6 @@ import { UIUpdate } from '../../services/uiUpdate';
 import { UiVersionStorage } from '../../services/uiVersionStorage';
 import { UIWaterStorage } from '../../services/uiWaterStorage';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
-
-const SPOKEN_EVERY_WITH_MILLISECONDS = (interval: number) =>
-  brewTimeEverySeconds(interval, true);
-const SPOKEN_EVERY_WHOLE_SECOND = (interval: number) =>
-  brewTimeEverySeconds(interval, false);
 
 @Component({
   selector: 'settings',
@@ -243,23 +237,6 @@ export class SettingsPage {
   public readonly isTextToSpeechSectionAvailable = this.textToSpeech.available;
   /** The Android voice service takes about a second for every announcement. */
   public readonly isAndroidSpeechHintShown = this.platform.is('android');
-
-  /** How often the brew time is said: whole seconds without milliseconds. */
-  public get brewTimeSpokenEvery(): number {
-    return this.brewTimeSpokenEveryFor(
-      this.settings.text_to_speech_brew_time_interval,
-    );
-  }
-
-  /**
-   * How often the brew time is said for a slider value. A new function when
-   * the timer's format changes, so the slider says the new interval.
-   */
-  public get brewTimeSpokenEveryFor(): (interval: number) => number {
-    return this.settings.brew_milliseconds === true
-      ? SPOKEN_EVERY_WITH_MILLISECONDS
-      : SPOKEN_EVERY_WHOLE_SECOND;
-  }
 
   public currencies = {};
 

@@ -29,18 +29,11 @@ import {
 @Component({
   imports: [RangeNameDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  template: `<test-range
-    [rangeLabel]="label()"
-    [rangeUnit]="unit()"
-    [rangeShownValue]="shown()"
-  />`,
+  template: `<test-range [rangeLabel]="label()" [rangeUnit]="unit()" />`,
 })
 class HostComponent {
   public readonly label = signal('Bildqualität');
   public readonly unit = signal('%');
-  public readonly shown = signal<((value: number) => number) | undefined>(
-    undefined,
-  );
 }
 
 function knob(value: number, extraPart = ''): string {
@@ -151,19 +144,6 @@ describe('RangeNameDirective', () => {
     await new Promise((resolve) => setTimeout(resolve));
 
     expect(knobs()[0].getAttribute('aria-valuetext')).toBe('95 %');
-  });
-
-  it('says the value shown next to the knob when it is not the knob’s own', async () => {
-    await create(knob(0.25), 0.25);
-    fixture.componentInstance.unit.set('s');
-    fixture.componentInstance.shown.set((value) => Math.ceil(value));
-    await settle();
-
-    expect(knobs()[0].getAttribute('aria-valuetext')).toBe('1 s');
-
-    fixture.componentInstance.shown.set(undefined);
-    await settle();
-    expect(knobs()[0].getAttribute('aria-valuetext')).toBe('0,25 s');
   });
 
   it('follows the label, the unit and the app language', async () => {
@@ -294,18 +274,6 @@ describe('RangeNameDirective', () => {
       expect(knobs()[0].getAttribute('aria-valuetext')).toBe('79 %');
       await settle();
       expect(liveRegion.heard).toEqual([]);
-    });
-
-    it('says the shown value of the new value before Ionic renders it', async () => {
-      await create(knob(1), 0.25);
-      fixture.componentInstance.unit.set('s');
-      fixture.componentInstance.shown.set((value) => Math.ceil(value));
-      await settle();
-
-      step(1, 1.25);
-
-      expect(knobs()[0].getAttribute('aria-valuenow')).toBe('1.25');
-      expect(knobs()[0].getAttribute('aria-valuetext')).toBe('2 s');
     });
 
     it('has the new value in the moved knob of a range', async () => {

@@ -65,24 +65,12 @@ export function spokenBrewValues(settings: BrewSpeechSettings) {
 }
 
 /**
- * How often the brew time is said, in seconds. A timer without milliseconds
- * shows whole seconds only, so the interval is rounded up to the next whole
- * second there: 0.25 s says every second, 1.5 s every 2 s.
- */
-export function brewTimeEverySeconds(
-  intervalSeconds: number,
-  showsMilliseconds: boolean,
-): number {
-  return showsMilliseconds
-    ? intervalSeconds
-    : Math.max(1, Math.ceil(intervalSeconds));
-}
-
-/**
  * The brew time to say once the timer has run `elapsedMs`: at every multiple
- * of brewTimeEverySeconds, as the timer shows it, in whole seconds or, when it
- * shows milliseconds, as that multiple. `lastStep` is the multiple reached last,
- * undefined while the timer stands; the result carries the one to pass next.
+ * of the interval, as the timer shows it. A timer without milliseconds shows
+ * whole seconds only, so there the time is said at the first second that
+ * reaches the interval since the last one said: 0.25 s says every second,
+ * 1.5 s every 2 s. `lastStep` is the multiple reached last, undefined while
+ * the timer stands; the result carries the one to pass next.
  */
 export function brewTimeToSay(
   lastStep: number | undefined,
@@ -91,7 +79,9 @@ export function brewTimeToSay(
   showsMilliseconds: boolean,
 ): { step: number; say?: string } {
   const intervalMs = Math.round(
-    brewTimeEverySeconds(intervalSeconds, showsMilliseconds) * 1000,
+    (showsMilliseconds
+      ? intervalSeconds
+      : Math.max(1, Math.ceil(intervalSeconds))) * 1000,
   );
   const step = Math.floor(elapsedMs / intervalMs);
   if (lastStep === undefined || step <= lastStep) {

@@ -1,5 +1,4 @@
 import {
-  brewTimeEverySeconds,
   brewTimeToSay,
   pluginSpeechPitch,
   pluginSpeechRate,
@@ -103,17 +102,15 @@ describe('speech options', () => {
       expect(said(seconds.slice(0, 4), 0.75)).toEqual(['1', '2', '3']);
     });
 
-    it('says every whole second the interval rounds up to without milliseconds', () => {
+    it('says the first whole second that reaches the interval without milliseconds', () => {
       const seconds = Array.from({ length: 9 }, (_, i) => i * 1000);
 
       expect(said(seconds, 1.5)).toEqual(['2', '4', '6', '8']);
       expect(said(seconds, 2.25)).toEqual(['3', '6']);
       // The first tick after the start, at second 1, is said.
       expect(said([0, 1000, 2000], 0.25)).toEqual(['1', '2']);
-      expect(brewTimeEverySeconds(0.25, false)).toBe(1);
-      expect(brewTimeEverySeconds(1.5, false)).toBe(2);
-      expect(brewTimeEverySeconds(5, false)).toBe(5);
-      expect(brewTimeEverySeconds(0.75, true)).toBe(0.75);
+      // A second the timer shows twice is said once.
+      expect(said([0, 1000, 1000, 2000], 0.25)).toEqual(['1', '2']);
     });
 
     it('says the multiple of the interval when the timer shows milliseconds', () => {
