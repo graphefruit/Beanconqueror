@@ -71,6 +71,8 @@ function writeBaseline(
  * Lets entry and theme transitions finish so axe does not measure half-faded colours.
  * Transitions only exist after the next style recalculation, hence the frames first, and
  * `document.getAnimations()` leaves out those inside Ionic's shadow roots (e.g. segments).
+ * Ionic hides the page left behind only a frame or more after its animation ended; until
+ * then axe would scan both pages.
  */
 async function settle(page: Page): Promise<void> {
   await page.evaluate(async () => {
@@ -88,9 +90,19 @@ async function settle(page: Page): Promise<void> {
           animation.playState === 'running' &&
           animation.effect?.getComputedTiming().iterations !== Infinity,
       );
+    const leftPageShown = () =>
+      [...document.querySelectorAll('ion-router-outlet')].some(
+        (outlet) =>
+          outlet.querySelectorAll(':scope > .ion-page:not(.ion-page-hidden)')
+            .length > 1,
+      );
     await nextFrame();
     await nextFrame();
-    for (let pending = running(); pending.length > 0; pending = running()) {
+    for (
+      let pending = running();
+      pending.length > 0 || leftPageShown();
+      pending = running()
+    ) {
       await Promise.all(
         pending.map((animation) => animation.finished.catch(() => undefined)),
       );

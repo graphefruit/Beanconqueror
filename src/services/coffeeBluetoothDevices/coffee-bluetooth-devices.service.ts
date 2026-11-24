@@ -264,9 +264,6 @@ export class CoffeeBluetoothDevicesService {
       [],
       searchOptions,
       async (scanDevice: any) => {
-        this.logger.log(
-          Date().toString() + 'Device found ' + JSON.stringify(scanDevice),
-        );
         devicesFound.push(scanDevice);
         if (_foundDeviceFunction) {
           _foundDeviceFunction(scanDevice);
@@ -313,9 +310,7 @@ export class CoffeeBluetoothDevicesService {
               foundDevices.push(type.id);
               subscriber.next(type);
 
-              this.logger.log(
-                'Supported device found ' + JSON.stringify(scanDevice),
-              );
+              this.logger.log('Supported device found ' + type.type);
             }
           }
         },
@@ -364,8 +359,7 @@ export class CoffeeBluetoothDevicesService {
                 ) {
                   checkIds[scanDevice.id.toLowerCase()] = true;
                   this.logger.log(
-                    'findDeviceWithDirectIds - we found the exact searched device  ' +
-                      JSON.stringify(scanDevice),
+                    'findDeviceWithDirectIds - we found the exact searched device',
                   );
 
                   let areAllDevicesFound: boolean = true;
@@ -480,8 +474,7 @@ export class CoffeeBluetoothDevicesService {
                   scanDevice.id.toLowerCase() === _id.toLowerCase()
                 ) {
                   this.logger.log(
-                    'findDeviceWithDirectId - we found the exact searched device  ' +
-                      JSON.stringify(scanDevice),
+                    'findDeviceWithDirectId - we found the exact searched device',
                   );
                   // We found all needed devices.
                   promiseResolved = true;
@@ -546,9 +539,7 @@ export class CoffeeBluetoothDevicesService {
             this.stopScanning();
             const devices = [scanDevice];
             resolve(devices);
-            this.logger.log(
-              'Temperature devices found ' + JSON.stringify(scanDevice),
-            );
+            this.logger.log('Temperature devices found');
           }
         },
         (_devices: Array<any>) => {
@@ -1061,10 +1052,7 @@ export class CoffeeBluetoothDevicesService {
     }
 
     this.logger.log(
-      'AutoConnectScale - We can start to connect to the id ' +
-        deviceId +
-        ' and type ' +
-        deviceType,
+      'AutoConnectScale - We can start to connect to the type ' + deviceType,
     );
     try {
       ble.connect(
@@ -1164,9 +1152,7 @@ export class CoffeeBluetoothDevicesService {
     }
 
     this.logger.log(
-      'AutoConnectPressureDevice - We can start to connect to the id ' +
-        deviceId +
-        ' and type ' +
+      'AutoConnectPressureDevice - We can start to connect to the type ' +
         pressureType,
     );
     try {
@@ -1265,9 +1251,7 @@ export class CoffeeBluetoothDevicesService {
     }
 
     this.logger.log(
-      'AutoConnectTemperatureDevice - We can start to connect to the id ' +
-        deviceId +
-        ' and type ' +
+      'AutoConnectTemperatureDevice - We can start to connect to the type ' +
         temperatureType,
     );
     try {
@@ -1330,9 +1314,7 @@ export class CoffeeBluetoothDevicesService {
     }
 
     this.logger.log(
-      'AutoConnectRefractometerDevice - We can start to connect to the id ' +
-        deviceId +
-        ' and type ' +
+      'AutoConnectRefractometerDevice - We can start to connect to the type ' +
         refractometerType,
     );
     try {

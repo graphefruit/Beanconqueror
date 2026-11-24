@@ -68,12 +68,13 @@ re-exports or an `export default` value without functions) are skipped.
 An entry that matches no file fails as well, so rename or remove entries together with their
 folders. The rules are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#coverage-of-new-code).
 
-`pnpm test:coverage` sets `CI=1`, which turns off the Angular build cache for that run. In a git
-worktree, Angular keeps the cache in the main checkout, so all worktrees share it. Its entries are
-keyed by file content only, and coverage builds write the file path into them: another worktree
-with the same file would then report coverage under its own paths, and new code shows as
-"not loaded". `ng build`, `ng serve`, `pnpm test` and `pnpm e2e` still use the
-shared cache.
+In a git worktree, Angular keeps the build cache in the main checkout, so all worktrees share it.
+Its entries are keyed by file content, but code instrumented for coverage contains the file path:
+another worktree with the same file would report coverage under its own path, and new code would
+show as "not loaded". A patch of `@angular/build` in `patches/` adds the path to the key of
+instrumented code, and `pnpm test:coverage` first checks that the patch works
+(`tools/tests/coverage-cache-key.test.mjs`). When `@angular/build` is updated, carry the patch over
+with `pnpm patch`, or drop it once Angular keys instrumented code by path itself.
 
 Run the linter. It also runs in CI. Existing errors are recorded in `eslint-suppressions.json`,
 so only new errors fail. If you fix existing errors, shrink the file and commit it:
@@ -93,16 +94,30 @@ Do not regenerate the file with `--suppress-all` to hide new errors.
 
 Playwright runs user journeys against the real app in an emulated Pixel 7 (Chromium). The
 accessibility, focus and announcement specs also run in an emulated iPhone 15 (WebKit), as VoiceOver
-reads what Safari exposes. Playwright starts its own dev server on port 4300, so nothing needs to be
-running beforehand. These run in CI.
-Set `E2E_PORT` to use another port, e.g. to run two worktrees side by side (`E2E_PORT=4310 pnpm e2e`).
+reads what Safari exposes. These run in CI.
+
+The tests run against the development build in `www/browser`: build it with `pnpm run build`
+first, and again after changing the app. Playwright serves the build on port 4300
+(`e2e/tools/serve-build.ts`) and stops with a message when there is no build, when it is a
+production build (the tests use Angular's development hooks such as `ng.getComponent`) or when a
+file in `src` changed after it. Set `E2E_PORT` to use another port, e.g. to run two worktrees side
+by side (`E2E_PORT=4310 pnpm e2e`).
 
 ```shell
 pnpm exec playwright install chromium webkit # once
+pnpm run build
 pnpm e2e
 pnpm e2e --repeat-each=5              # check a new test for flakiness
 pnpm exec playwright show-report      # inspect traces and screenshots of failures
+pnpm e2e:affected                     # only the specs of the areas changed since feature/relaunch
 ```
+
+`pnpm e2e:affected` compares the branch, including uncommitted and new files, with
+`origin/feature/relaunch` and runs the smoke test plus the specs of the changed areas; it passes
+further options on to Playwright. The areas of the specs and of the source folders are listed in
+`e2e/tools/areas.ts`; a changed file outside those folders (shared components, styles,
+translations, test support) runs the full suite. A new spec needs an entry there, which
+`pnpm test:e2e-tools` checks in CI.
 
 - Import `test`/`expect` from `e2e/fixtures.ts`. Each test starts with empty storage, `en-US`
   locale and no permissions. Page errors, console errors and requests leaving the app fail the

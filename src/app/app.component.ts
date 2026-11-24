@@ -702,7 +702,7 @@ export class AppComponent implements AfterViewInit {
     const settings = this.uiSettingsStorage.getSettings();
     const scale_id: string = settings.scale_id;
     const scale_type: ScaleType = settings.scale_type;
-    this.uiLog.log(`Connect smartscale? ${scale_id}`);
+    this.uiLog.log(`Connect smartscale? Saved: ${!!scale_id}`);
     if (scale_id !== undefined && scale_id !== '') {
       this.bleManager.autoConnectScale(
         scale_type,
@@ -721,7 +721,7 @@ export class AppComponent implements AfterViewInit {
     const pressure_id: string = settings.pressure_id;
     const pressure_type: PressureType = settings.pressure_type;
 
-    this.uiLog.log(`Connect pressure device? ${pressure_id}`);
+    this.uiLog.log(`Connect pressure device? Saved: ${!!pressure_id}`);
     if (pressure_id !== undefined && pressure_id !== '') {
       this.bleManager.autoConnectPressureDevice(
         pressure_type,
@@ -740,7 +740,7 @@ export class AppComponent implements AfterViewInit {
     const temperature_id: string = settings.temperature_id;
     const temperature_type: TemperatureType = settings.temperature_type;
 
-    this.uiLog.log(`Connect temperature device? ${temperature_id}`);
+    this.uiLog.log(`Connect temperature device? Saved: ${!!temperature_id}`);
     if (temperature_id !== undefined && temperature_id !== '') {
       this.bleManager.autoConnectTemperatureDevice(
         temperature_type,
@@ -759,7 +759,9 @@ export class AppComponent implements AfterViewInit {
     const refractometer_id: string = settings.refractometer_id;
     const refractometer_type: RefractometerType = settings.refractometer_type;
 
-    this.uiLog.log(`Connect refractometer device? ${refractometer_id}`);
+    this.uiLog.log(
+      `Connect refractometer device? Saved: ${!!refractometer_id}`,
+    );
     if (refractometer_id !== undefined && refractometer_id !== '') {
       this.bleManager.autoConnectRefractometerDevice(
         refractometer_type,
