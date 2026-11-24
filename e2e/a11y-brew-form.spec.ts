@@ -144,7 +144,10 @@ test('a screen reader stops once on each field of the brew form', async ({
     }),
   ).toBeVisible();
   await expect(brewField(page, WATER)).toBeVisible();
-  await expect(form.getByRole('slider', { name: 'Rating' })).toBeVisible();
+  await expect(form.getByRole('slider', { name: 'Rating' })).toHaveAttribute(
+    'aria-valuetext',
+    '0 of 5',
+  );
   await expect(
     form.getByRole('img', { name: 'Rating: 0 of 5 stars' }),
   ).toBeAttached();
