@@ -34,6 +34,7 @@ import {
 } from '@tanstack/angular-virtual';
 
 import { TabPanelDirective } from '../../directive/tab-panel.directive';
+import { FOCUS_LOST_EVENT } from '../../services/a11y/page-focus.service';
 import { UILog } from '../../services/uiLog';
 import {
   anchorAt,
@@ -44,6 +45,10 @@ import {
   runAround,
   withIndexes,
 } from './virtual-list-anchor';
+
+/** What can take focus in a row. */
+const FOCUSABLE =
+  'a[href], button:not([inert]), input, select, textarea, [tabindex]:not([tabindex="-1"]), .ion-focusable:not([inert])';
 
 /** A row by its key and the index it had, which is checked before use. */
 interface KeptRow {
@@ -233,6 +238,8 @@ export class VirtualListComponent<T> {
   private observingRows = false;
   /** The row that holds the focus, null while the focus is elsewhere. */
   protected readonly focusedRow = signal<KeptRow | null>(null);
+  /** The row that held the focus last, also while a dialog has it. */
+  private lastFocusedRow: KeptRow | null = null;
   /** The rows on the screen when the list last stood still. */
   private readonly restingRows = signal<readonly KeptRow[]>([]);
   /**
@@ -444,7 +451,37 @@ export class VirtualListComponent<T> {
       });
     });
 
+    // A deleted row takes the focus with it, and the screen reader would start
+    // over at the top: the row that takes its place gets the focus, or the
+    // one before when it was the last. While a dialog (a wait) has the focus,
+    // that happens once the dialog has closed.
+    const document = this.host.nativeElement.ownerDocument;
+    effect(() => {
+      this.items();
+      untracked(() => {
+        if (this.lastFocusedRowGone()) {
+          this.afterRender(() => {
+            if (document.activeElement === document.body) {
+              this.focusInPlaceOfLastRow();
+            }
+          });
+        }
+      });
+    });
+    const onFocusLost = (event: Event) => {
+      if (
+        this.lastFocusedRowGone() &&
+        this.scroller()?.clientHeight &&
+        this.focusInPlaceOfLastRow()
+      ) {
+        event.preventDefault();
+      }
+    };
+    document.addEventListener(FOCUS_LOST_EVENT, onFocusLost);
     const destroyRef = inject(DestroyRef);
+    destroyRef.onDestroy(() =>
+      document.removeEventListener(FOCUS_LOST_EVENT, onFocusLost),
+    );
     afterNextRender(() => {
       const observer = new ResizeObserver(() => this.measureHead());
       observer.observe(this.head().nativeElement);
@@ -515,9 +552,43 @@ export class VirtualListComponent<T> {
         : undefined,
     );
     const item = this.items()[index];
-    this.focusedRow.set(
-      item === undefined ? null : { key: this.itemKey()(item), index },
+    const row =
+      item === undefined ? null : { key: this.itemKey()(item), index };
+    this.focusedRow.set(row);
+    this.lastFocusedRow = row;
+  }
+
+  private lastFocusedRowGone(): boolean {
+    return (
+      this.lastFocusedRow !== null && this.indexOfRow(this.lastFocusedRow) < 0
     );
+  }
+
+  /**
+   * Focuses the row now at the place of the row that had the focus last;
+   * false when nothing there takes it.
+   */
+  private focusInPlaceOfLastRow(): boolean {
+    const document = this.host.nativeElement.ownerDocument;
+    const index = Math.min(
+      this.lastFocusedRow?.index ?? 0,
+      this.items().length - 1,
+    );
+    const element = this.rowElements().find(
+      ({ nativeElement }) =>
+        nativeElement.getAttribute('data-index') === `${index}`,
+    )?.nativeElement;
+    for (const control of element?.querySelectorAll<HTMLElement>(FOCUSABLE) ??
+      []) {
+      // An Ionic button takes focus with the button in its shadow root.
+      (
+        control.shadowRoot?.querySelector<HTMLElement>(FOCUSABLE) ?? control
+      ).focus();
+      if (element?.contains(document.activeElement)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /** Called as a scroll starts, with the rows on the screen until then. */

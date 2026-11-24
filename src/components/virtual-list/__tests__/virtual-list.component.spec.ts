@@ -13,6 +13,7 @@ import { defineCustomElement as defineSegment } from '@ionic/core/components/ion
 
 import { _resetIOSDetectionForTests } from '@tanstack/angular-virtual';
 
+import { FOCUS_LOST_EVENT } from '../../../services/a11y/page-focus.service';
 import { UILog } from '../../../services/uiLog';
 import {
   VirtualListComponent,
@@ -399,6 +400,70 @@ describe('VirtualListComponent', () => {
 
     expect(top(covered)).toBe(HEAD);
   });
+
+  describe('when the row with the focus is deleted', () => {
+    const without = (id: string) =>
+      host.items.set(host.items().filter((item) => item.id !== id));
+
+    it('puts focus on the row that takes its place', async () => {
+      document.getElementById('item-2').focus();
+
+      without('item-2');
+      await settle();
+
+      expect(document.activeElement?.id).toBe('item-3');
+    });
+
+    it('puts focus on the row before when it was the last', async () => {
+      host.items.set(items(3));
+      await settle();
+      document.getElementById('item-2').focus();
+
+      without('item-2');
+      await settle();
+
+      expect(document.activeElement?.id).toBe('item-1');
+    });
+
+    it('leaves focus where it went in the meantime', async () => {
+      const outside = document.createElement('button');
+      document.body.append(outside);
+      document.getElementById('item-2').focus();
+
+      without('item-2');
+      outside.focus();
+      await settle();
+
+      expect(document.activeElement).toBe(outside);
+      outside.remove();
+    });
+
+    it('puts focus on the row at its place once a dialog that had it is gone', async () => {
+      const wait = document.createElement('button');
+      document.body.append(wait);
+      document.getElementById('item-2').focus();
+      wait.focus();
+      without('item-2');
+      await settle();
+      expect(document.activeElement).toBe(wait);
+
+      wait.remove();
+      const lost = new Event(FOCUS_LOST_EVENT, { cancelable: true });
+      document.dispatchEvent(lost);
+
+      expect(lost.defaultPrevented).toBeTrue();
+      expect(document.activeElement?.id).toBe('item-3');
+    });
+
+    it('leaves the focus to others when no row was deleted', () => {
+      document.getElementById('item-2').focus();
+      const lost = new Event(FOCUS_LOST_EVENT, { cancelable: true });
+      document.dispatchEvent(lost);
+
+      expect(lost.defaultPrevented).toBeFalse();
+    });
+  });
+
   it('keeps the rows on the screen in their place until the next scroll', async () => {
     const before = shown();
     expect(before).toEqual(['item-0', 'item-1', 'item-2', 'item-3', 'item-4']);

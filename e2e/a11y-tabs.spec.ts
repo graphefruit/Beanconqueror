@@ -418,7 +418,7 @@ for (const language of ['en', 'de'] as const) {
       await expect(title).toBeFocused();
     });
 
-    test('focus goes back to the control that opened a dialog, or to the title once it is gone', async ({
+    test('focus goes back to the control that opened a dialog, or to the entry at its place once it is gone', async ({
       page,
     }) => {
       await start(page, language);
@@ -453,6 +453,11 @@ for (const language of ['en', 'de'] as const) {
       await expect(page.getByRole('alertdialog')).toHaveCount(0);
       await expect(options).toBeFocused();
 
+      // Once it is gone with its brew, the brew at its place takes the focus.
+      const next = await page
+        .locator('brew brew-information')
+        .nth(1)
+        .getAttribute('id');
       await options.click();
       await page
         .getByRole('button', { name: t('DELETE'), exact: true })
@@ -462,9 +467,13 @@ for (const language of ['en', 'de'] as const) {
         .getByRole('button', { name: t('YES'), exact: true })
         .click();
       await expect(page.getByRole('alertdialog')).toHaveCount(0);
-      await expect(
-        page.getByRole('heading', { level: 1, name: t('NAV_BREWS') }),
-      ).toBeFocused();
+      await expect
+        .poll(() =>
+          page.evaluate(
+            () => document.activeElement?.closest('brew-information')?.id,
+          ),
+        )
+        .toBe(next);
     });
 
     test('focus stays where it is after a dialog the app opened without a tap', async ({

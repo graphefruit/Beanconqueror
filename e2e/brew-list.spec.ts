@@ -156,3 +156,43 @@ test('each segment is shown where it was left', async ({ page }) => {
   await expect(last).toBeInViewport();
   await expect(page.locator(`[id="${firstId}"]`)).toHaveCount(0);
 });
+
+/** The card that holds the focus, by its id. */
+function focusedCard(page: Page): Promise<string | undefined> {
+  return page.evaluate(
+    () => document.activeElement?.closest('brew-information')?.id,
+  );
+}
+
+async function deleteBrew(page: Page, id: string): Promise<void> {
+  await page
+    .locator(`[id="${id}"]`)
+    .getByRole('button', { name: /^Options for the brew of / })
+    .click();
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  await page
+    .getByRole('alertdialog')
+    .getByRole('button', { name: 'Yes' })
+    .click();
+  await expect(page.locator(`[id="${id}"]`)).toHaveCount(0);
+}
+
+test('a deleted brew passes the focus on to the brew at its place', async ({
+  page,
+}) => {
+  await showBrews(page);
+  const ids = await cards(page).evaluateAll((elements) =>
+    elements.map((element) => element.id),
+  );
+
+  await deleteBrew(page, ids[1]);
+  await expect.poll(() => focusedCard(page)).toBe(ids[2]);
+
+  // The last brew passes it on to the one before.
+  await scrollToEnd(list(page));
+  const last = await cards(page).evaluateAll((elements) =>
+    elements.slice(-2).map((element) => element.id),
+  );
+  await deleteBrew(page, last[1]);
+  await expect.poll(() => focusedCard(page)).toBe(last[0]);
+});

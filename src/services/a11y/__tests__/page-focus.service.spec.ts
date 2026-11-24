@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { PageFocusService } from '../page-focus.service';
+import { FOCUS_LOST_EVENT, PageFocusService } from '../page-focus.service';
 
 /**
  * Screens and overlays are plain elements in the page; each test fires the
@@ -347,6 +347,76 @@ describe('PageFocusService', () => {
       await afterDismiss();
 
       expect(document.activeElement).toBe(settingsLink);
+    });
+
+    it('puts focus on the control that opened the menu once the content of the menu is gone', async () => {
+      settingsLink.click();
+      const menu = await presented('ion-modal');
+      fire(menu, 'ionModalWillPresent');
+      const content = document.createElement('div');
+      const remove = document.createElement('button');
+      content.append(remove);
+      menu.append(content);
+      remove.click();
+      const alert = await presented('ion-alert');
+      fire(alert, 'ionAlertWillPresent');
+      const yes = document.createElement('button');
+      alert.append(yes);
+      yes.focus();
+      // Angular takes the content out of the menu that closes.
+      content.remove();
+      dismissed(menu, 'ionModalDidDismiss');
+      await afterDismiss();
+
+      dismissed(alert, 'ionAlertDidDismiss');
+      await afterDismiss();
+
+      expect(document.activeElement).toBe(settingsLink);
+    });
+
+    it('forgets the menu of a dialog that opens again from outside a menu', async () => {
+      homeTab.click();
+      const menu = await presented('ion-modal');
+      fire(menu, 'ionModalWillPresent');
+      const remove = document.createElement('button');
+      menu.append(remove);
+      remove.click();
+      const alert = await presented('ion-alert');
+      fire(alert, 'ionAlertWillPresent');
+      dismissed(menu, 'ionModalDidDismiss');
+      // An inline dialog stays in the page, hidden, and opens again.
+      fire(alert, 'ionAlertDidDismiss');
+      alert.classList.add('overlay-hidden');
+      await afterDismiss();
+      expect(document.activeElement).toBe(homeTab);
+      homeTab.blur();
+
+      settingsLink.click();
+      alert.classList.remove('overlay-hidden');
+      fire(alert, 'ionAlertWillPresent');
+      settingsLink.remove();
+      dismissed(alert, 'ionAlertDidDismiss');
+      await afterDismiss();
+
+      expect(document.activeElement).toBe(heading(profile));
+    });
+
+    it('leaves focus to a list that puts it on the entry at the place of the one deleted', async () => {
+      settingsLink.click();
+      const alert = await presented('ion-alert');
+      fire(alert, 'ionAlertWillPresent');
+      settingsLink.remove();
+      const list = (event: Event) => {
+        event.preventDefault();
+        homeTab.focus();
+      };
+      document.addEventListener(FOCUS_LOST_EVENT, list);
+
+      dismissed(alert, 'ionAlertDidDismiss');
+      await afterDismiss();
+      document.removeEventListener(FOCUS_LOST_EVENT, list);
+
+      expect(document.activeElement).toBe(homeTab);
     });
 
     it('takes the title when the control tapped to open it is gone', async () => {
