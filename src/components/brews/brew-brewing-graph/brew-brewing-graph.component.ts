@@ -493,10 +493,12 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
   }
 
-  public uiSmartScaleConnected: boolean = undefined;
+  // Known from the first render: the form swaps its header buttons once a
+  // device counts as connected, and a swapped button loses the focus.
+  public uiSmartScaleConnected: boolean = this.smartScaleConnected();
   public uiSmartScaleSupportsTaring: boolean = undefined;
-  public uiPressureConnected: boolean = undefined;
-  public uiTemperatureConnected: boolean = undefined;
+  public uiPressureConnected: boolean = this.pressureDeviceConnected();
+  public uiTemperatureConnected: boolean = this.temperatureDeviceConnected();
   public uiPreparationDeviceConnected: boolean = undefined;
   public uiPreparationDeviceType: PreparationDeviceType = undefined;
   public uiSmartScaleConnectedSupportsTwoWeights: boolean = undefined;
