@@ -9,6 +9,7 @@ import { BrewBrewingComponent } from '../brew-brewing.component';
 describe('BrewBrewingComponent brew time speech', () => {
   function brewing(timerOnly: boolean) {
     const speech = {
+      speak: jasmine.createSpy('speak'),
       speakInFull: jasmine.createSpy('speakInFull'),
       end: jasmine.createSpy('end'),
     };
@@ -47,7 +48,7 @@ describe('BrewBrewingComponent brew time speech', () => {
     return { component, textToSpeech: speech, advance };
   }
 
-  it('says the brew time every 5 seconds until the brew is paused', fakeAsync(() => {
+  it('says the start, the brew time every 5 seconds and the end', fakeAsync(() => {
     const { component, textToSpeech, advance } = brewing(true);
 
     void component.timerStarted(undefined);
@@ -58,8 +59,12 @@ describe('BrewBrewingComponent brew time speech', () => {
     advance(10000);
 
     expect(textToSpeech.speakInFull.calls.allArgs()).toEqual([
+      ['TEXT_TO_SPEECH.BREW_STARTED'],
       ['TEXT_TO_SPEECH.TIME 5'],
       ['TEXT_TO_SPEECH.TIME 10'],
+    ]);
+    expect(textToSpeech.speak.calls.allArgs()).toEqual([
+      ['TEXT_TO_SPEECH.BREW_ENDED', true],
     ]);
     expect(textToSpeech.end).toHaveBeenCalledTimes(1);
   }));
@@ -82,7 +87,9 @@ describe('BrewBrewingComponent brew time speech', () => {
     component.ngOnDestroy();
     advance(10000);
 
+    // A resume goes on with the time and does not start the brew again.
     expect(textToSpeech.speakInFull.calls.allArgs()).toEqual([
+      ['TEXT_TO_SPEECH.BREW_STARTED'],
       ['TEXT_TO_SPEECH.TIME 5'],
     ]);
     expect(textToSpeech.end).toHaveBeenCalledTimes(3);
@@ -98,6 +105,7 @@ describe('BrewBrewingComponent brew time speech', () => {
     flushMicrotasks();
 
     expect(textToSpeech.speakInFull).not.toHaveBeenCalled();
+    expect(textToSpeech.speak).not.toHaveBeenCalled();
     expect(textToSpeech.end).not.toHaveBeenCalled();
   }));
 });

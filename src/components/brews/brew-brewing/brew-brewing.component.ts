@@ -793,6 +793,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     this.brewBrewingGraphEl.timerStarted(_event);
     this.startTimerSpeech();
+    if (speaksTimerOnly(this.settings)) {
+      this.textToSpeech.speakInFull(
+        this.translate.instant('TEXT_TO_SPEECH.BREW_STARTED'),
+      );
+    }
     if (
       this.settings.haptic_feedback_active &&
       this.settings.haptic_feedback_brew_started
@@ -970,6 +975,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async timerPaused(_event) {
     this.stopTimerSpeech();
+    if (speaksTimerOnly(this.settings)) {
+      this.textToSpeech.speak(
+        this.translate.instant('TEXT_TO_SPEECH.BREW_ENDED'),
+        true,
+      );
+    }
     await this.brewBrewingGraphEl.timerPaused(_event);
     if (this.baristamode) {
       const prepSanremoDeviceCall: SanremoYOUDevice = this

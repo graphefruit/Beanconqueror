@@ -80,7 +80,7 @@ describe('BrewBrewingGraphComponent spoken scale values', () => {
     expect(textToSpeech.speakInFull.calls.count()).toBe(0);
   }));
 
-  it('does not announce the brew end when only the time is said', async () => {
+  it('leaves the brew end to the timer when only the time is said', async () => {
     create({ text_to_speech_timer_only: true });
 
     await component.timerPaused(undefined);

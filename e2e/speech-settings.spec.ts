@@ -62,11 +62,12 @@ test.describe('on Android', () => {
     await expect(wholeGrams(page)).not.toBeChecked();
     await expect(interval(page)).toBeVisible();
 
-    // Only the time is said then: weights, their interval and pace do not apply.
+    // Only the time is said then: weights and their interval do not apply,
+    // the pace of the voice still does.
     await switchOn(timerOnly(page));
     await expect(wholeGrams(page)).toBeHidden();
     await expect(interval(page)).toBeHidden();
-    await expect(androidHint(page)).toBeHidden();
+    await expect(androidHint(page)).toBeVisible();
   });
 });
 
@@ -83,10 +84,14 @@ test.describe('on iOS', () => {
 
     await expect(wholeGrams(page)).toBeVisible();
     await expect(androidHint(page)).toHaveCount(0);
+    await switchOn(timerOnly(page));
+    await expect(androidHint(page)).toHaveCount(0);
   });
 });
 
-test('says only the brew time while the timer runs', async ({ page }) => {
+test('says the brew start, the brew time and the brew end', async ({
+  page,
+}) => {
   await page.addInitScript(recordSpeech);
   await page.clock.install({ time: BREW_TEST_START });
   await page.goto('/');
@@ -108,8 +113,10 @@ test('says only the brew time while the timer runs', async ({ page }) => {
     page.evaluate(() => (window as unknown as Spoken).spoken);
   const time = expect.stringMatching(/^Time \d+$/);
   await page.clock.fastForward(5_500);
-  await expect.poll(spoken).toEqual([time]);
+  await expect.poll(spoken).toEqual(['Brew started', time]);
   await page.clock.fastForward(5_500);
   // The web build feeds simulated scale weights, which stay unsaid.
-  await expect.poll(spoken).toEqual([time, time]);
+  await expect.poll(spoken).toEqual(['Brew started', time, time]);
+  await page.getByRole('button', { name: 'Pause timer' }).click();
+  await expect.poll(spoken).toEqual(['Brew started', time, time, 'Brew end']);
 });
