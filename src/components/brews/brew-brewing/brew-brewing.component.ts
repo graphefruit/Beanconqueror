@@ -109,8 +109,8 @@ import {
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
 import {
-  speaksTimerOnly,
-  SPOKEN_TIME_INTERVAL_MS,
+  brewTimeToSay,
+  spokenBrewValues,
 } from '../../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
@@ -209,7 +209,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private readonly hapticService = inject(HapticService);
   private readonly textToSpeech = inject(TextToSpeechService);
   private readonly destroyRef = inject(DestroyRef);
-  private timerSpeechInterval: ReturnType<typeof setInterval> | undefined;
+  /** The multiple of the speech interval the brew timer reached last. */
+  private spokenTimeStep: number | undefined;
 
   @ViewChild('timer', { static: false }) public timer: BrewTimerComponent;
   @ViewChild('brewBrewingGraphEl', { static: false })
@@ -624,7 +625,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     try {
       this.brewBrewingGraphEl?.destroy();
     } catch (ex) {}
-    this.stopTimerSpeech();
   }
 
   public preparationMethodFocused() {
@@ -792,12 +792,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       return;
     }
     this.brewBrewingGraphEl.timerStarted(_event);
-    this.startTimerSpeech();
-    if (speaksTimerOnly(this.settings)) {
-      this.textToSpeech.speakInFull(
-        this.translate.instant('TEXT_TO_SPEECH.BREW_STARTED'),
-      );
-    }
     if (
       this.settings.haptic_feedback_active &&
       this.settings.haptic_feedback_brew_started
@@ -832,6 +826,37 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     this.writeCalculatedCoffeeBrewTime();
     this.brewTimerTickedSubject.next(true);
+    this.speakBrewTime();
+  }
+
+  /**
+   * Says the brew time from the timer's own ticks, so the time said is the
+   * one shown and falls on the multiples of the interval.
+   */
+  private speakBrewTime() {
+    if (
+      !this.timer?.isTimerRunning() ||
+      !spokenBrewValues(this.settings).time
+    ) {
+      this.spokenTimeStep = undefined;
+      return;
+    }
+    const showsMilliseconds = this.settings.brew_milliseconds === true;
+    const elapsedMs =
+      this.timer.getSeconds() * 1000 +
+      (showsMilliseconds ? this.timer.getMilliseconds() : 0);
+    const { step, say } = brewTimeToSay(
+      this.spokenTimeStep,
+      elapsedMs,
+      this.settings.text_to_speech_brew_time_interval,
+      showsMilliseconds,
+    );
+    this.spokenTimeStep = step;
+    if (say !== undefined) {
+      this.textToSpeech.speakTime(
+        this.translate.instant('TEXT_TO_SPEECH.TIME') + ' ' + say,
+      );
+    }
   }
 
   private writeCalculatedCoffeeBrewTime() {
@@ -937,32 +962,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async timerResumed(_event) {
     await this.brewBrewingGraphEl.timerResumed(_event);
-    this.startTimerSpeech();
-  }
-
-  /** Says the brew time every few seconds, without needing a scale. */
-  private startTimerSpeech() {
-    this.stopTimerSpeech();
-    if (!speaksTimerOnly(this.settings)) {
-      return;
-    }
-    this.ngZone.runOutsideAngular(() => {
-      this.timerSpeechInterval = setInterval(() => {
-        this.textToSpeech.speakInFull(
-          this.translate.instant('TEXT_TO_SPEECH.TIME') +
-            ' ' +
-            this.timer.getSeconds(),
-        );
-      }, SPOKEN_TIME_INTERVAL_MS);
-    });
-  }
-
-  private stopTimerSpeech() {
-    if (this.timerSpeechInterval !== undefined) {
-      clearInterval(this.timerSpeechInterval);
-      this.timerSpeechInterval = undefined;
-      this.textToSpeech.end();
-    }
   }
 
   public ignoreWeightClicked() {
@@ -974,13 +973,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public async timerPaused(_event) {
-    this.stopTimerSpeech();
-    if (speaksTimerOnly(this.settings)) {
-      this.textToSpeech.speak(
-        this.translate.instant('TEXT_TO_SPEECH.BREW_ENDED'),
-        true,
-      );
-    }
     await this.brewBrewingGraphEl.timerPaused(_event);
     if (this.baristamode) {
       const prepSanremoDeviceCall: SanremoYOUDevice = this
@@ -1188,7 +1180,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public async timerReset(_event) {
-    this.stopTimerSpeech();
     await this.brewBrewingGraphEl.timerReset(_event);
   }
 

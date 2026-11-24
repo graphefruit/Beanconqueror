@@ -1,111 +1,115 @@
 import { NgZone } from '@angular/core';
-import { fakeAsync, flushMicrotasks, tick } from '@angular/core/testing';
 
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 
 import { Settings } from '../../../../classes/settings/settings';
 import { BrewBrewingComponent } from '../brew-brewing.component';
 
 describe('BrewBrewingComponent brew time speech', () => {
-  function brewing(timerOnly: boolean) {
-    const speech = {
-      speak: jasmine.createSpy('speak'),
-      speakInFull: jasmine.createSpy('speakInFull'),
-      end: jasmine.createSpy('end'),
-    };
-    const settings = {
-      text_to_speech_active: true,
-      text_to_speech_timer_only: timerOnly,
-    } as Settings;
-    let seconds = 0;
-    // Only the timer handlers are needed; no scale is connected.
+  function brewing(settings: Partial<Settings> = {}) {
+    const speech = jasmine.createSpyObj<{ speakTime: (text: string) => void }>(
+      'TextToSpeechService',
+      ['speakTime'],
+    );
+    const timer = { running: false, seconds: 0, milliseconds: 0 };
     const component = Object.assign(
       Object.create(BrewBrewingComponent.prototype),
       {
         textToSpeech: speech,
-        settings,
+        settings: {
+          text_to_speech_active: true,
+          text_to_speech_brew_time: true,
+          text_to_speech_brew_time_interval: 5,
+          brew_milliseconds: false,
+          ...settings,
+        } as Settings,
+        data: {},
+        brewTimerTickedSubject: new Subject<boolean>(),
         ngZone: { runOutsideAngular: (fn: () => void) => fn() } as NgZone,
         translate: { instant: (key: string) => key } as TranslateService,
         timer: {
-          isTimerRunning: () => false,
-          getSeconds: () => seconds,
+          isTimerRunning: () => timer.running,
+          getSeconds: () => timer.seconds,
+          getMilliseconds: () => timer.milliseconds,
         },
-        brewBrewingGraphEl: jasmine.createSpyObj('BrewBrewingGraphComponent', {
-          timerStarted: Promise.resolve(),
-          timerPaused: Promise.resolve(),
-          timerResumed: Promise.resolve(),
-          timerReset: Promise.resolve(),
-          destroy: undefined,
-        }),
       },
     ) as BrewBrewingComponent;
-    const advance = (ms: number) => {
-      for (let passed = 0; passed < ms; passed += 1000) {
-        seconds++;
-        tick(1000);
-      }
+    /** Like the brew timer: it shows the new time and then reports a tick. */
+    const show = (seconds: number, milliseconds = 0) => {
+      timer.seconds = seconds;
+      timer.milliseconds = milliseconds;
+      component.brewTimeTicked(undefined);
     };
-    return { component, textToSpeech: speech, advance };
+    const start = () => {
+      timer.running = true;
+      component.brewTimeTicked(undefined);
+    };
+    const pause = () => {
+      timer.running = false;
+      component.brewTimeTicked(undefined);
+    };
+    const said = () => speech.speakTime.calls.allArgs().map(([text]) => text);
+    return { show, start, pause, said };
   }
 
-  it('says the start, the brew time every 5 seconds and the end', fakeAsync(() => {
-    const { component, textToSpeech, advance } = brewing(true);
+  it('says the time the timer shows when it reaches a multiple of the interval', () => {
+    const { show, start, said } = brewing();
 
-    void component.timerStarted(undefined);
-    flushMicrotasks();
-    advance(10000);
-    void component.timerPaused(undefined);
-    flushMicrotasks();
-    advance(10000);
+    start();
+    for (let second = 1; second <= 10; second++) {
+      show(second);
+    }
 
-    expect(textToSpeech.speakInFull.calls.allArgs()).toEqual([
-      ['TEXT_TO_SPEECH.BREW_STARTED'],
-      ['TEXT_TO_SPEECH.TIME 5'],
-      ['TEXT_TO_SPEECH.TIME 10'],
+    expect(said()).toEqual(['TEXT_TO_SPEECH.TIME 5', 'TEXT_TO_SPEECH.TIME 10']);
+  });
+
+  it('says quarter seconds when the timer shows milliseconds', () => {
+    const { show, start, said } = brewing({
+      brew_milliseconds: true,
+      text_to_speech_brew_time_interval: 0.25,
+    });
+
+    start();
+    for (let ms = 10; ms <= 1000; ms += 10) {
+      show(Math.floor(ms / 1000), ms % 1000);
+    }
+
+    expect(said()).toEqual([
+      'TEXT_TO_SPEECH.TIME 0.25',
+      'TEXT_TO_SPEECH.TIME 0.5',
+      'TEXT_TO_SPEECH.TIME 0.75',
+      'TEXT_TO_SPEECH.TIME 1',
     ]);
-    expect(textToSpeech.speak.calls.allArgs()).toEqual([
-      ['TEXT_TO_SPEECH.BREW_ENDED', true],
-    ]);
-    expect(textToSpeech.end).toHaveBeenCalledTimes(1);
-  }));
+  });
 
-  it('goes on after a resume and stops on reset and when left', fakeAsync(() => {
-    const { component, textToSpeech, advance } = brewing(true);
+  it('goes on after a resume from where the timer stands', () => {
+    const { show, start, pause, said } = brewing();
 
-    void component.timerStarted(undefined);
-    flushMicrotasks();
-    void component.timerPaused(undefined);
-    flushMicrotasks();
-    void component.timerResumed(undefined);
-    flushMicrotasks();
-    advance(5000);
-    void component.timerReset(undefined);
-    flushMicrotasks();
-    advance(5000);
-    void component.timerResumed(undefined);
-    flushMicrotasks();
-    component.ngOnDestroy();
-    advance(10000);
+    start();
+    show(4);
+    pause();
+    show(4);
+    start();
+    for (let second = 5; second <= 10; second++) {
+      show(second);
+    }
 
-    // A resume goes on with the time and does not start the brew again.
-    expect(textToSpeech.speakInFull.calls.allArgs()).toEqual([
-      ['TEXT_TO_SPEECH.BREW_STARTED'],
-      ['TEXT_TO_SPEECH.TIME 5'],
-    ]);
-    expect(textToSpeech.end).toHaveBeenCalledTimes(3);
-  }));
+    expect(said()).toEqual(['TEXT_TO_SPEECH.TIME 5', 'TEXT_TO_SPEECH.TIME 10']);
+  });
 
-  it('leaves the brew time to the scale when not only the timer is said', fakeAsync(() => {
-    const { component, textToSpeech, advance } = brewing(false);
+  it('says nothing while the timer stands or the brew time switch is off', () => {
+    const standing = brewing();
+    standing.show(5);
+    const off = brewing({ text_to_speech_brew_time: false });
+    off.start();
+    off.show(5);
+    const speechOff = brewing({ text_to_speech_active: false });
+    speechOff.start();
+    speechOff.show(5);
 
-    void component.timerStarted(undefined);
-    flushMicrotasks();
-    advance(10000);
-    void component.timerPaused(undefined);
-    flushMicrotasks();
-
-    expect(textToSpeech.speakInFull).not.toHaveBeenCalled();
-    expect(textToSpeech.speak).not.toHaveBeenCalled();
-    expect(textToSpeech.end).not.toHaveBeenCalled();
-  }));
+    expect(standing.said()).toEqual([]);
+    expect(off.said()).toEqual([]);
+    expect(speechOff.said()).toEqual([]);
+  });
 });

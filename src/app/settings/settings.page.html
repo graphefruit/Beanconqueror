@@ -760,14 +760,11 @@
         </ion-item>
         <ion-item>
           <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
-            [(ngModel)]="settings.text_to_speech_timer_only">
-            <div class="ion-label">
-              <div class="field-label">{{ "TEXT_TO_SPEECH.TIMER_ONLY" | translate }}</div>
-              <p>{{ "TEXT_TO_SPEECH.TIMER_ONLY_DESCRIPTION" | translate }}</p>
-            </div>
+            [(ngModel)]="settings.text_to_speech_weight">
+            <div class="ion-label">{{ "TEXT_TO_SPEECH.WEIGHT" | translate }}</div>
           </ion-checkbox>
         </ion-item>
-        @if (!settings.text_to_speech_timer_only) {
+        @if (settings.text_to_speech_weight) {
         <ion-item>
           <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
             [(ngModel)]="settings.text_to_speech_whole_grams">
@@ -777,7 +774,45 @@
             </div>
           </ion-checkbox>
         </ion-item>
+        <ion-item lines='none'>
+          <ion-label class="ion-margin-end">
+            <p>{{ "TEXT_TO_SPEECH.SPEAK_EVERY_MS" | translate }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-item style="top:-10px;">
+          <ion-range [rangeLabel]="'TEXT_TO_SPEECH.SPEAK_EVERY_MS' | translate" rangeUnit="ms" [disabled]='isScrolling'
+            style="padding-left:20px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="250" snaps="true"
+            max="1000" step="50" (ngModelChange)="saveSettings()" [(ngModel)]="settings.text_to_speech_interval_rate">
+            <div class='ion-label' slot="end">{{ settings.text_to_speech_interval_rate | number : '.0' }}</div>
+          </ion-range>
+        </ion-item>
         }
+        <ion-item>
+          <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+            [(ngModel)]="settings.text_to_speech_brew_time">
+            <div class="ion-label">{{ "TEXT_TO_SPEECH.BREW_TIME" | translate }}</div>
+          </ion-checkbox>
+        </ion-item>
+        @if (settings.text_to_speech_brew_time) {
+        <ion-item lines='none'>
+          <ion-label class="ion-margin-end">
+            <p>{{ "TEXT_TO_SPEECH.BREW_TIME_EVERY" | translate }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-item style="top:-10px;">
+          <ion-range [rangeLabel]="'TEXT_TO_SPEECH.BREW_TIME_EVERY' | translate" rangeUnit="s" [disabled]='isScrolling'
+            style="padding-left:20px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.25" snaps="true"
+            max="5" step="0.25" (ngModelChange)="saveSettings()" [(ngModel)]="settings.text_to_speech_brew_time_interval">
+            <div class='ion-label' slot="end">{{ settings.text_to_speech_brew_time_interval | number : '1.0-2' }} s</div>
+          </ion-range>
+        </ion-item>
+        }
+        <ion-item>
+          <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+            [(ngModel)]="settings.text_to_speech_brew_start_end">
+            <div class="ion-label">{{ "TEXT_TO_SPEECH.BREW_START_END" | translate }}</div>
+          </ion-checkbox>
+        </ion-item>
         <ion-item lines='none'>
           <ion-label class="ion-margin-end">
             <p>{{ "TEXT_TO_SPEECH.PITCH" | translate }}</p>
@@ -802,23 +837,10 @@
             <div class='ion-label' slot="end">{{ settings.text_to_speech_rate | number : '.0-1' }}</div>
           </ion-range>
         </ion-item>
-        @if (isAndroidSpeechHintShown) {
+        @if (isAndroidSpeechHintShown && (settings.text_to_speech_weight || settings.text_to_speech_brew_time ||
+          settings.text_to_speech_brew_start_end)) {
         <ion-item lines='none'>
           <p>{{ "TEXT_TO_SPEECH.ANDROID_RATE_HINT" | translate }}</p>
-        </ion-item>
-        }
-        @if (!settings.text_to_speech_timer_only) {
-        <ion-item lines='none'>
-          <ion-label class="ion-margin-end">
-            <p>{{ "TEXT_TO_SPEECH.SPEAK_EVERY_MS" | translate }}</p>
-          </ion-label>
-        </ion-item>
-        <ion-item style="top:-10px;">
-          <ion-range [rangeLabel]="'TEXT_TO_SPEECH.SPEAK_EVERY_MS' | translate" rangeUnit="ms" [disabled]='isScrolling'
-            style="padding-left:20px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="250" snaps="true"
-            max="1000" step="50" (ngModelChange)="saveSettings()" [(ngModel)]="settings.text_to_speech_interval_rate">
-            <div class='ion-label' slot="end">{{ settings.text_to_speech_interval_rate | number : '.0' }}</div>
-          </ion-range>
         </ion-item>
         }
 

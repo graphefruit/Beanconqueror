@@ -100,8 +100,7 @@ import {
 } from '../../../services/graphHelper/graph-helper.service';
 import { drawWhenPlotlyLoaded } from '../../../services/graphHelper/load-plotly';
 import {
-  speaksScaleValues,
-  SPOKEN_TIME_INTERVAL_MS,
+  spokenBrewValues,
   spokenWeight,
 } from '../../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
@@ -292,7 +291,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   public chartData = [];
 
   public textToSpeechWeightInterval: any = undefined;
-  public textToSpeechTimerInterval: any = undefined;
 
   public graphIconColSize = 2;
 
@@ -1776,6 +1774,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   public async timerPaused(_event) {
+    this.speakBrewEnd();
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
@@ -1786,12 +1785,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.deattachToWeightChange();
         this.deattachToFlowChange();
         this.deattachToTextToSpeedChange();
-        if (speaksScaleValues(this.settings)) {
-          this.textToSpeech.speak(
-            this.translate.instant('TEXT_TO_SPEECH.BREW_ENDED'),
-            true,
-          );
-        }
       }
       if (pressureDevice) {
         this.deattachToPressureChange();
@@ -2415,6 +2408,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.data.brew_beverage_quantity > 0
         ? this.data.brew_beverage_quantity
         : (webhookCfg?.defaultTargetWeight ?? 0);
+    if (spokenBrewValues(this.settings).startAndEnd) {
+      this.textToSpeech.speakInFull(
+        this.translate.instant('TEXT_TO_SPEECH.BREW_STARTED'),
+      );
+    }
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
@@ -2461,7 +2459,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
             (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
               90,
           );
-          if (speaksScaleValues(this.settings)) {
+          if (spokenBrewValues(this.settings).weight) {
             this.textToSpeech.speak(weight.toString());
           }
 
@@ -2534,12 +2532,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.attachToScaleWeightChange();
         this.attachToFlowChange();
         this.attachToTextToSpeechChange();
-
-        if (speaksScaleValues(this.settings)) {
-          this.textToSpeech.speakInFull(
-            this.translate.instant('TEXT_TO_SPEECH.BREW_STARTED'),
-          );
-        }
       }
       if (
         pressureDevice &&
@@ -2843,9 +2835,17 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       clearInterval(this.textToSpeechWeightInterval);
       this.textToSpeechWeightInterval = undefined;
     }
-    if (this.textToSpeechTimerInterval) {
-      clearInterval(this.textToSpeechTimerInterval);
-      this.textToSpeechTimerInterval = undefined;
+  }
+
+  /** The brew end stops what is still said; the time is said by the timer. */
+  private speakBrewEnd() {
+    if (spokenBrewValues(this.settings).startAndEnd) {
+      this.textToSpeech.speak(
+        this.translate.instant('TEXT_TO_SPEECH.BREW_ENDED'),
+        true,
+      );
+    } else if (this.settings.text_to_speech_active) {
+      this.textToSpeech.end();
     }
   }
 
@@ -2911,7 +2911,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
   public attachToTextToSpeechChange() {
     this.deattachToTextToSpeedChange();
-    if (speaksScaleValues(this.settings)) {
+    if (spokenBrewValues(this.settings).weight) {
       const isEspressoBrew: boolean =
         this.data.getPreparation().style_type ===
         PREPARATION_STYLE_TYPE.ESPRESSO;
@@ -2931,13 +2931,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
             }
           }
         }, this.settings.text_to_speech_interval_rate);
-        this.textToSpeechTimerInterval = setInterval(() => {
-          this.textToSpeech.speakInFull(
-            this.translate.instant('TEXT_TO_SPEECH.TIME') +
-              ' ' +
-              this.data.brew_time,
-          );
-        }, SPOKEN_TIME_INTERVAL_MS);
       });
     }
   }

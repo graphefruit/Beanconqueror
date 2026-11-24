@@ -16,7 +16,7 @@ describe('BrewBrewingGraphComponent spoken scale values', () => {
   ) {
     textToSpeech = jasmine.createSpyObj<TextToSpeechService>(
       'TextToSpeechService',
-      ['speak', 'speakInFull'],
+      ['speak', 'speakInFull', 'end'],
     );
     scale = jasmine.createSpyObj('BluetoothScale', ['setTimer']);
     const bleManager = jasmine.createSpyObj('CoffeeBluetoothDevicesService', {
@@ -40,7 +40,9 @@ describe('BrewBrewingGraphComponent spoken scale values', () => {
         flowProfileTempAll: [{ weight: 18.46 }],
         settings: {
           text_to_speech_active: true,
-          text_to_speech_timer_only: false,
+          text_to_speech_weight: true,
+          text_to_speech_brew_time: true,
+          text_to_speech_brew_start_end: true,
           text_to_speech_whole_grams: false,
           text_to_speech_interval_rate: 500,
           ...settings,
@@ -56,6 +58,13 @@ describe('BrewBrewingGraphComponent spoken scale values', () => {
     }
   }
 
+  const noDevices = (): unknown =>
+    jasmine.createSpyObj('CoffeeBluetoothDevicesService', {
+      getScale: null,
+      getPressureDevice: null,
+      getTemperatureDevice: null,
+    });
+
   afterEach(() => component.deattachToTextToSpeedChange());
 
   it('says the espresso weight in whole grams when chosen', fakeAsync(() => {
@@ -70,23 +79,36 @@ describe('BrewBrewingGraphComponent spoken scale values', () => {
     expect(textToSpeech.speak.calls.allArgs()).toEqual([['18']]);
   }));
 
-  it('leaves weight and time to the timer when only the time is said', fakeAsync(() => {
-    create({ text_to_speech_timer_only: true });
+  it('says the weight only, as the brew time is said from the timer', fakeAsync(() => {
+    create({});
+
+    component.attachToTextToSpeechChange();
+    tick(1000);
+
+    expect(textToSpeech.speak.calls.allArgs()).toEqual([['18'], ['18']]);
+    expect(textToSpeech.speakInFull.calls.count()).toBe(0);
+  }));
+
+  it('says no weight when its switch is off', fakeAsync(() => {
+    create({ text_to_speech_weight: false });
 
     component.attachToTextToSpeechChange();
     tick(5000);
 
     expect(textToSpeech.speak.calls.count()).toBe(0);
-    expect(textToSpeech.speakInFull.calls.count()).toBe(0);
   }));
 
-  it('leaves the brew end to the timer when only the time is said', async () => {
-    create({ text_to_speech_timer_only: true });
+  it('announces the brew start without a scale, unless its switch is off', async () => {
+    for (const startAndEnd of [true, false]) {
+      create({ text_to_speech_brew_start_end: startAndEnd });
+      Object.assign(component, { bleManager: noDevices() });
 
-    await component.timerPaused(undefined);
+      await component.timerStarted(undefined);
 
-    expect(scale.setTimer.calls.count()).toBe(1);
-    expect(textToSpeech.speak.calls.count()).toBe(0);
+      expect(textToSpeech.speakInFull.calls.allArgs())
+        .withContext(`start and end ${startAndEnd}`)
+        .toEqual(startAndEnd ? [['TEXT_TO_SPEECH.BREW_STARTED']] : []);
+    }
   });
 
   it('announces the brew end with the scale values', async () => {
@@ -94,8 +116,29 @@ describe('BrewBrewingGraphComponent spoken scale values', () => {
 
     await component.timerPaused(undefined);
 
+    expect(scale.setTimer.calls.count()).toBe(1);
     expect(textToSpeech.speak.calls.allArgs()).toEqual([
       ['TEXT_TO_SPEECH.BREW_ENDED', true],
     ]);
+  });
+
+  it('announces the brew end without a scale', async () => {
+    create({});
+    Object.assign(component, { bleManager: noDevices() });
+
+    await component.timerPaused(undefined);
+
+    expect(textToSpeech.speak.calls.allArgs()).toEqual([
+      ['TEXT_TO_SPEECH.BREW_ENDED', true],
+    ]);
+  });
+
+  it('only stops what is said at the brew end when its switch is off', async () => {
+    create({ text_to_speech_brew_start_end: false });
+
+    await component.timerPaused(undefined);
+
+    expect(textToSpeech.speak.calls.count()).toBe(0);
+    expect(textToSpeech.end.calls.count()).toBe(1);
   });
 });

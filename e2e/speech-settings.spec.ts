@@ -4,6 +4,8 @@ import { expect, test } from './fixtures';
 import { BREW_TEST_START, openAddBrew } from './support/brew-form';
 import { completeFirstRunWithBrew } from './support/first-brew';
 import { openFromProfile } from './support/profile';
+import { seedDatabase } from './support/seed';
+import { generateDataSet } from './support/synthetic-data';
 import { mainTabName } from './support/texts';
 
 /**
@@ -37,14 +39,26 @@ async function openSpeechSettings(page: Page): Promise<void> {
   );
 }
 
-const timerOnly = (page: Page) =>
-  page.getByRole('checkbox', { name: /^Speak the brew time only/ });
+const weight = (page: Page) =>
+  page.getByRole('checkbox', { name: 'Announce weight' });
 const wholeGrams = (page: Page) =>
   page.getByRole('checkbox', { name: /^Speak whole grams/ });
-const interval = (page: Page) =>
+const weightInterval = (page: Page) =>
   page.getByText('Speak every selected millisecond');
+const brewTime = (page: Page) =>
+  page.getByRole('checkbox', { name: 'Announce brew time' });
+const brewTimeEvery = (page: Page) =>
+  page.getByRole('slider', { name: 'Brew time every' });
+const startAndEnd = (page: Page) =>
+  page.getByRole('checkbox', { name: 'Announce brew start and brew end' });
 const androidHint = (page: Page) =>
   page.getByText(/^On Android, each announcement takes about one second/);
+
+/** Ionic reports the new state after the click; uncheck() would not wait for it. */
+async function switchOff(checkbox: Locator): Promise<void> {
+  await checkbox.click();
+  await expect(checkbox).not.toBeChecked();
+}
 
 test.describe('on Android', () => {
   test.beforeEach(async ({ page }) => {
@@ -52,22 +66,64 @@ test.describe('on Android', () => {
     await completeFirstRunWithBrew(page);
   });
 
-  test('offers whole grams and the brew time only, with a hint on the rate', async ({
+  test('offers a switch for each brew value, with a hint on the rate', async ({
     page,
   }) => {
     await openSpeechSettings(page);
 
-    await expect(androidHint(page)).toBeVisible();
-    await expect(timerOnly(page)).not.toBeChecked();
+    // The spoken values of the versions before: weight, time every 5 s, start and end.
+    await expect(weight(page)).toBeChecked();
     await expect(wholeGrams(page)).not.toBeChecked();
-    await expect(interval(page)).toBeVisible();
-
-    // Only the time is said then: weights and their interval do not apply,
-    // the pace of the voice still does.
-    await switchOn(timerOnly(page));
-    await expect(wholeGrams(page)).toBeHidden();
-    await expect(interval(page)).toBeHidden();
+    await expect(weightInterval(page)).toBeVisible();
+    await expect(brewTime(page)).toBeChecked();
+    await expect(brewTimeEvery(page)).toHaveAttribute('aria-valuetext', '5 s');
+    await expect(page.getByText('5 s', { exact: true })).toBeVisible();
+    await expect(startAndEnd(page)).toBeChecked();
     await expect(androidHint(page)).toBeVisible();
+
+    // Whole grams belong to the weight and stay with it, whatever the time does.
+    await switchOff(brewTime(page));
+    await expect(brewTimeEvery(page)).toBeHidden();
+    await expect(wholeGrams(page)).toBeVisible();
+    await switchOff(weight(page));
+    await expect(wholeGrams(page)).toBeHidden();
+    await expect(weightInterval(page)).toBeHidden();
+    await expect(androidHint(page)).toBeVisible();
+
+    // The pace of the voice matters as long as anything is said.
+    await switchOff(startAndEnd(page));
+    await expect(androidHint(page)).toBeHidden();
+    await switchOn(brewTime(page));
+    await expect(brewTimeEvery(page)).toBeVisible();
+    await expect(androidHint(page)).toBeVisible();
+  });
+
+  test('moves "brew time only" of an older version to the switches', async ({
+    page,
+  }) => {
+    const data = generateDataSet({
+      brews: 1,
+      beans: 1,
+      seed: 7,
+      endDate: new Date('2026-11-01T18:00:00Z'),
+    });
+    Object.assign(data.SETTINGS[0], {
+      text_to_speech_active: true,
+      text_to_speech_timer_only: true,
+      text_to_speech_whole_grams: true,
+    });
+    await seedDatabase(page, data);
+    await page.goto('/');
+    await openFromProfile(page, 'Settings');
+
+    await expect(weight(page)).not.toBeChecked();
+    await expect(wholeGrams(page)).toBeHidden();
+    await expect(brewTime(page)).toBeChecked();
+    await expect(brewTimeEvery(page)).toHaveAttribute('aria-valuetext', '5 s');
+    await expect(startAndEnd(page)).toBeChecked();
+    // Whole grams are kept for when the weight is said again.
+    await switchOn(weight(page));
+    await expect(wholeGrams(page)).toBeChecked();
   });
 });
 
@@ -84,12 +140,10 @@ test.describe('on iOS', () => {
 
     await expect(wholeGrams(page)).toBeVisible();
     await expect(androidHint(page)).toHaveCount(0);
-    await switchOn(timerOnly(page));
-    await expect(androidHint(page)).toHaveCount(0);
   });
 });
 
-test('says the brew start, the brew time and the brew end', async ({
+test('says the brew start, the brew time the timer shows and the brew end', async ({
   page,
 }) => {
   await page.addInitScript(recordSpeech);
@@ -97,7 +151,8 @@ test('says the brew start, the brew time and the brew end', async ({
   await page.goto('/');
   await completeFirstRunWithBrew(page);
   await openSpeechSettings(page);
-  await switchOn(timerOnly(page));
+  // The web build feeds simulated scale weights; without them the time is heard alone.
+  await switchOff(weight(page));
 
   await page.getByRole('tab', { name: mainTabName('Brews') }).click();
   await openAddBrew(page);
@@ -108,15 +163,13 @@ test('says the brew start, the brew time and the brew end', async ({
     .toBeGreaterThan(opened + 1500);
   await page.getByRole('button', { name: 'Start timer' }).click();
   await expect(page.getByRole('button', { name: 'Pause timer' })).toBeVisible();
-  // A jump fires a due timer once, so the clock moves on in two steps.
   const spoken = () =>
     page.evaluate(() => (window as unknown as Spoken).spoken);
-  const time = expect.stringMatching(/^Time \d+$/);
-  await page.clock.fastForward(5_500);
-  await expect.poll(spoken).toEqual(['Brew started', time]);
-  await page.clock.fastForward(5_500);
-  // The web build feeds simulated scale weights, which stay unsaid.
-  await expect.poll(spoken).toEqual(['Brew started', time, time]);
+  // Every tick of the timer runs, as on a device.
+  await page.clock.runFor(10_500);
+  await expect.poll(spoken).toEqual(['Brew started', 'Time 5', 'Time 10']);
   await page.getByRole('button', { name: 'Pause timer' }).click();
-  await expect.poll(spoken).toEqual(['Brew started', time, time, 'Brew end']);
+  await expect
+    .poll(spoken)
+    .toEqual(['Brew started', 'Time 5', 'Time 10', 'Brew end']);
 });

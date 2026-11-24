@@ -26,6 +26,7 @@ import {
   ISettings,
 } from '../../interfaces/settings/iSettings';
 import { IUserProfile } from '../../interfaces/settings/iUserProfile';
+import { migrateSpeechSettings } from '../../services/textToSpeech/speech-options';
 import {
   PressureType,
   RefractometerType,
@@ -277,8 +278,12 @@ export class Settings implements ISettings {
   public text_to_speech_rate: number;
   public text_to_speech_pitch: number;
   public text_to_speech_interval_rate: number;
-  public text_to_speech_timer_only: boolean;
+  public text_to_speech_weight: boolean;
   public text_to_speech_whole_grams: boolean;
+  public text_to_speech_brew_time: boolean;
+  /** How often the brew time is said, in seconds (0.25–5). */
+  public text_to_speech_brew_time_interval: number;
+  public text_to_speech_brew_start_end: boolean;
 
   public haptic_feedback_active: boolean;
   public haptic_feedback_brew_started: boolean;
@@ -656,8 +661,11 @@ export class Settings implements ISettings {
     this.text_to_speech_rate = 1;
     this.text_to_speech_pitch = 3;
     this.text_to_speech_interval_rate = 500;
-    this.text_to_speech_timer_only = false;
+    this.text_to_speech_weight = true;
     this.text_to_speech_whole_grams = false;
+    this.text_to_speech_brew_time = true;
+    this.text_to_speech_brew_time_interval = 5;
+    this.text_to_speech_brew_start_end = true;
 
     this.haptic_feedback_active = false;
     this.haptic_feedback_brew_started = false;
@@ -676,7 +684,7 @@ export class Settings implements ISettings {
   }
 
   public initializeByObject(settingsObj: ISettings): void {
-    Object.assign(this, settingsObj);
+    Object.assign(this, migrateSpeechSettings(settingsObj));
     // Backups leave the address empty (SETTINGS_SECRET_PATHS); the uploads
     // need one, so a device without its own gets the default server again.
     if (!this.visualizer_url) {

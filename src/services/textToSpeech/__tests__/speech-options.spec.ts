@@ -1,9 +1,10 @@
 import {
+  brewTimeToSay,
+  migrateSpeechSettings,
   pluginSpeechPitch,
   pluginSpeechRate,
-  speaksScaleValues,
-  speaksTimerOnly,
   speechLanguageTag,
+  spokenBrewValues,
   spokenWeight,
 } from '../speech-options';
 
@@ -55,25 +56,102 @@ describe('speech options', () => {
     expect(speechLanguageTag(undefined)).toBe('en');
   });
 
-  it('says either the values of the scale or only the time', () => {
-    const cases = [
-      { active: false, timerOnly: false, scale: false, timer: false },
-      { active: false, timerOnly: true, scale: false, timer: false },
-      { active: true, timerOnly: false, scale: true, timer: false },
-      { active: true, timerOnly: true, scale: false, timer: true },
-    ];
-    for (const { active, timerOnly, scale, timer } of cases) {
-      const settings = {
-        text_to_speech_active: active,
-        text_to_speech_timer_only: timerOnly,
-      };
-      expect(speaksScaleValues(settings))
-        .withContext(`active ${active}, timer only ${timerOnly}`)
-        .toBe(scale);
-      expect(speaksTimerOnly(settings))
-        .withContext(`active ${active}, timer only ${timerOnly}`)
-        .toBe(timer);
+  it('says each brew value whose switch is on, and nothing when speech is off', () => {
+    const switches = {
+      text_to_speech_weight: true,
+      text_to_speech_brew_time: false,
+      text_to_speech_brew_start_end: true,
+    };
+
+    expect(
+      spokenBrewValues({ text_to_speech_active: true, ...switches }),
+    ).toEqual({ weight: true, time: false, startAndEnd: true });
+    expect(
+      spokenBrewValues({ text_to_speech_active: false, ...switches }),
+    ).toEqual({ weight: false, time: false, startAndEnd: false });
+  });
+
+  describe('settings saved before each brew value had a switch', () => {
+    it('turns off the weight of "brew time only" and drops the old switch', () => {
+      expect(
+        migrateSpeechSettings({
+          text_to_speech_active: true,
+          text_to_speech_timer_only: true,
+          text_to_speech_whole_grams: true,
+          text_to_speech_interval_rate: 750,
+        }),
+      ).toEqual({
+        text_to_speech_active: true,
+        text_to_speech_weight: false,
+        text_to_speech_whole_grams: true,
+        text_to_speech_interval_rate: 750,
+      });
+    });
+
+    it('leaves the weight to its default without "brew time only"', () => {
+      expect(
+        migrateSpeechSettings({
+          text_to_speech_active: true,
+          text_to_speech_timer_only: false,
+        }),
+      ).toEqual({ text_to_speech_active: true });
+      expect(migrateSpeechSettings({ text_to_speech_active: true })).toEqual({
+        text_to_speech_active: true,
+      });
+    });
+
+    it('keeps a weight switch saved already', () => {
+      expect(
+        migrateSpeechSettings({
+          text_to_speech_timer_only: true,
+          text_to_speech_weight: true,
+        }),
+      ).toEqual({ text_to_speech_weight: true });
+    });
+  });
+
+  describe('brew time to say', () => {
+    /** Feeds the timer's ticks in and returns what is said. */
+    function said(
+      ticksMs: number[],
+      intervalSeconds: number,
+      showsMilliseconds = false,
+    ): string[] {
+      const spoken: string[] = [];
+      let last: number | undefined;
+      for (const elapsed of ticksMs) {
+        const { step, say } = brewTimeToSay(
+          last,
+          elapsed,
+          intervalSeconds,
+          showsMilliseconds,
+        );
+        last = step;
+        if (say !== undefined) {
+          spoken.push(say);
+        }
+      }
+      return spoken;
     }
+
+    it('says the time the timer shows at every multiple of the interval', () => {
+      const seconds = Array.from({ length: 11 }, (_, i) => i * 1000);
+
+      expect(said(seconds, 5)).toEqual(['5', '10']);
+      expect(said(seconds.slice(0, 4), 0.25)).toEqual(['1', '2', '3']);
+      expect(said(seconds.slice(0, 4), 0.75)).toEqual(['1', '2', '3']);
+    });
+
+    it('says the multiple of the interval when the timer shows milliseconds', () => {
+      const ticks = Array.from({ length: 80 }, (_, i) => i * 10 + 4);
+
+      expect(said(ticks, 0.25, true)).toEqual(['0.25', '0.5', '0.75']);
+      expect(said([4990, 5003, 5250], 5, true)).toEqual(['5']);
+    });
+
+    it('starts counting where a resumed timer stands', () => {
+      expect(said([7000, 8000, 9000, 10_000], 5)).toEqual(['10']);
+    });
   });
 
   it('says one decimal for espresso unless whole grams are chosen', () => {

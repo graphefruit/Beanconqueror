@@ -158,7 +158,8 @@ once at start and kept current through its `stateChange` event by `ScreenReaderS
 own keep it.
 
 The spoken brew values (text to speech on iOS and Android: weight every
-`text_to_speech_interval_rate` ms, time every 5 s, brew start and end;
+`text_to_speech_interval_rate` ms, time every `text_to_speech_brew_time_interval` s, brew start and
+end, each with its own switch;
 `src/services/textToSpeech/text-to-speech.service.ts`) take one of three ways:
 
 |                            | Screen reader off                     | Screen reader on                                          |
@@ -167,10 +168,15 @@ The spoken brew values (text to speech on iOS and Android: weight every
 | Android                    | `@capacitor-community/text-to-speech` | TalkBack, from the live region of `Announcer` (assertive) |
 | Browser (web build, tests) | `speechSynthesis`                     | `speechSynthesis` (the state is not known there)          |
 
-- "Speak the brew time only" (`text_to_speech_timer_only`) says the brew start, the time every
-  `SPOKEN_TIME_INTERVAL_MS` and the brew end, also without a scale; `brew-brewing` runs it from the
-  brew timer, and the graph then says nothing. "Speak whole grams" drops the decimal of espresso weights, which
-  the Android voice service needs noticeably longer for (`spokenWeight` in `speech-options.ts`).
+- The graph says the weight (needs a scale) and the brew start and end. `brew-brewing` says the
+  time from the brew timer's own ticks (`brewTimeToSay`), also without a scale, so the time said is
+  the one shown and falls on the multiples of the interval. "Speak whole grams" drops the decimal of
+  espresso weights, which the Android voice service needs noticeably longer for (`spokenWeight` in
+  `speech-options.ts`). Settings of "Speak the brew time only" are moved to the switches by
+  `migrateSpeechSettings`.
+- Values never pile up: a weight or time due while the last one is still said replaces the one
+  waiting (`enqueueAnnouncement`), in the native queue and in the live region; other messages are
+  all said, in order.
 - The native plugin gets the app language as a BCP 47 tag (`zh_TW` → `zh-TW`). Without a voice for
   it (`isLanguageSupported`), it speaks in the system language (`navigator.language`). A failed
   call is skipped and logged once, without the text or device details. `end()` calls its `stop()`.
