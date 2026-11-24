@@ -22,6 +22,13 @@ const FOCUSABLE =
 const LEVEL_1_HEADING = 'h1, [role="heading"][aria-level="1"]';
 
 /**
+ * Fired on the document, cancelable, before focus goes to the title of the
+ * screen because the control a dialog came from is gone: a list whose entry
+ * was deleted puts focus on the entry at its place instead and cancels it.
+ */
+export const FOCUS_LOST_EVENT = 'appfocuslost';
+
+/**
  * How long after a tap an overlay that opens counts as opened by it; enough
  * for a dialog built after an await, short of the next tap.
  */
@@ -117,7 +124,8 @@ function focusHeading(heading: HTMLElement, document: Document): void {
  *   opened takes it then, if it was tapped just before or still had focus.
  *   If that control is gone with a menu that opened the dialog, the control
  *   that opened the menu does; if that is gone too, e.g. the card of an entry
- *   just deleted, the title of the screen. A dialog the app opened by itself,
+ *   just deleted, the entry at its place in the list (`FOCUS_LOST_EVENT`) or
+ *   else the title of the screen. A dialog the app opened by itself,
  *   e.g. a wait, leaves focus where it is.
  *
  * Nothing is announced through the live region: moving focus makes the
@@ -139,6 +147,12 @@ export class PageFocusService {
   private lastClickAt = Number.NEGATIVE_INFINITY;
   /** Per overlay, the control that opened it; null when none did. */
   private readonly openedBy = new WeakMap<Element, HTMLElement | null>();
+  /**
+   * Per overlay, the menu that held the control that opened it. Angular takes
+   * the content out of a menu as it closes, and the control no longer leads
+   * to its menu then.
+   */
+  private readonly openedFrom = new WeakMap<Element, Element>();
   /**
    * Focus moved to a screen that is still coming in: the screen, the element
    * that had focus before and the one remembered for the screen.
@@ -290,16 +304,19 @@ export class PageFocusService {
       return;
     }
     const control = this.lastControl;
-    this.openedBy.set(
-      overlay,
+    const opener =
       control &&
-        !overlay.contains(inPage(control)) &&
-        (performance.now() - this.lastClickAt <= TAP_OPENS_WITHIN_MS ||
-          control === focusedElement(this.document) ||
-          this.openerOfOpenOverlay(control))
+      !overlay.contains(inPage(control)) &&
+      (performance.now() - this.lastClickAt <= TAP_OPENS_WITHIN_MS ||
+        control === focusedElement(this.document) ||
+        this.openerOfOpenOverlay(control))
         ? control
-        : null,
-    );
+        : null;
+    this.openedBy.set(overlay, opener);
+    const menu = opener && inPage(opener).closest(OVERLAYS);
+    if (menu) {
+      this.openedFrom.set(overlay, menu);
+    }
   };
 
   /** After Ionic has given focus back, which it does once closed. */
@@ -325,6 +342,10 @@ export class PageFocusService {
           (this.openedBy.get(overlay) === null || this.focusOpener(overlay))) ||
         hasOpenOverlay(this.document)
       ) {
+        return;
+      }
+      const lost = new Event(FOCUS_LOST_EVENT, { cancelable: true });
+      if (!this.document.dispatchEvent(lost)) {
         return;
       }
       const heading = shownHeading(this.document);
@@ -361,7 +382,7 @@ export class PageFocusService {
       if (moveFocus(control, this.document)) {
         return true;
       }
-      current = inPage(control).closest(OVERLAYS);
+      current = this.openedFrom.get(current) ?? null;
     }
     return false;
   }
