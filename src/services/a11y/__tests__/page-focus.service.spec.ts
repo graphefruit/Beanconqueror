@@ -374,6 +374,33 @@ describe('PageFocusService', () => {
       expect(document.activeElement).toBe(settingsLink);
     });
 
+    it('forgets the menu of a dialog that opens again from outside a menu', async () => {
+      homeTab.click();
+      const menu = await presented('ion-modal');
+      fire(menu, 'ionModalWillPresent');
+      const remove = document.createElement('button');
+      menu.append(remove);
+      remove.click();
+      const alert = await presented('ion-alert');
+      fire(alert, 'ionAlertWillPresent');
+      dismissed(menu, 'ionModalDidDismiss');
+      // An inline dialog stays in the page, hidden, and opens again.
+      fire(alert, 'ionAlertDidDismiss');
+      alert.classList.add('overlay-hidden');
+      await afterDismiss();
+      expect(document.activeElement).toBe(homeTab);
+      homeTab.blur();
+
+      settingsLink.click();
+      alert.classList.remove('overlay-hidden');
+      fire(alert, 'ionAlertWillPresent');
+      settingsLink.remove();
+      dismissed(alert, 'ionAlertDidDismiss');
+      await afterDismiss();
+
+      expect(document.activeElement).toBe(heading(profile));
+    });
+
     it('leaves focus to a list that puts it on the entry at the place of the one deleted', async () => {
       settingsLink.click();
       const alert = await presented('ion-alert');

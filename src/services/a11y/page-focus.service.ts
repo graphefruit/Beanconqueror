@@ -316,6 +316,8 @@ export class PageFocusService {
     const menu = opener && inPage(opener).closest(OVERLAYS);
     if (menu) {
       this.openedFrom.set(overlay, menu);
+    } else {
+      this.openedFrom.delete(overlay);
     }
   };
 
