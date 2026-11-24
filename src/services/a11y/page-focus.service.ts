@@ -21,6 +21,12 @@ const FOCUSABLE =
 
 const LEVEL_1_HEADING = 'h1, [role="heading"][aria-level="1"]';
 
+/**
+ * How long after a tap an overlay that opens counts as opened by it; enough
+ * for a dialog built after an await, short of the next tap.
+ */
+const TAP_OPENS_WITHIN_MS = 1000;
+
 /** On screen and not hidden from assistive technology. */
 function isShown(element: Element): boolean {
   return (
@@ -30,9 +36,11 @@ function isShown(element: Element): boolean {
   );
 }
 
+const OPEN_OVERLAY = `:is(${OVERLAYS}):not(.overlay-hidden)`;
+
 /** Whether `root` holds an overlay that is open or still opening. */
 function hasOpenOverlay(root: ParentNode): boolean {
-  return root.querySelector(`:is(${OVERLAYS}):not(.overlay-hidden)`) !== null;
+  return root.querySelector(OPEN_OVERLAY) !== null;
 }
 
 /** The title of the screen on show, outside the overlays. */
@@ -106,9 +114,11 @@ function focusHeading(heading: HTMLElement, document: Document): void {
  *   when it opened. WebKit does not focus a button that is tapped, nor does
  *   VoiceOver on iOS when it activates one, so there Ionic has nothing to
  *   give it back to: the control last clicked or focused before the dialog
- *   opened takes it then. If that control is gone with a menu that opened
- *   the dialog, the control that opened the menu does; if that is gone too,
- *   e.g. the card of an entry just deleted, the title of the screen.
+ *   opened takes it then, if it was tapped just before or still had focus.
+ *   If that control is gone with a menu that opened the dialog, the control
+ *   that opened the menu does; if that is gone too, e.g. the card of an entry
+ *   just deleted, the title of the screen. A dialog the app opened by itself,
+ *   e.g. a wait, leaves focus where it is.
  *
  * Nothing is announced through the live region: moving focus makes the
  * screen reader read the title, and an announcement would repeat it.
@@ -125,8 +135,10 @@ export class PageFocusService {
   private navigating = false;
   /** The control last clicked or focused. */
   private lastControl: HTMLElement | undefined;
-  /** Per overlay, the control that opened it. */
-  private readonly openedBy = new WeakMap<Element, HTMLElement>();
+  /** When the last click came, from `performance.now()`. */
+  private lastClickAt = Number.NEGATIVE_INFINITY;
+  /** Per overlay, the control that opened it; null when none did. */
+  private readonly openedBy = new WeakMap<Element, HTMLElement | null>();
   /**
    * Focus moved to a screen that is still coming in: the screen, the element
    * that had focus before and the one remembered for the screen.
@@ -256,6 +268,7 @@ export class PageFocusService {
   private readonly onClick = (event: Event): void => {
     const control = clickedControl(event);
     const active = focusedElement(this.document);
+    this.lastClickAt = performance.now();
     // ion-input passes a click on its field on to itself, which then goes to
     // the item around it: the field with focus stays the control.
     this.lastControl =
@@ -273,14 +286,20 @@ export class PageFocusService {
 
   private readonly onPresent = (event: Event): void => {
     const overlay = event.target;
-    const control = this.lastControl;
-    if (
-      overlay instanceof Element &&
-      control &&
-      !overlay.contains(inPage(control))
-    ) {
-      this.openedBy.set(overlay, control);
+    if (!(overlay instanceof Element)) {
+      return;
     }
+    const control = this.lastControl;
+    this.openedBy.set(
+      overlay,
+      control &&
+        !overlay.contains(inPage(control)) &&
+        (performance.now() - this.lastClickAt <= TAP_OPENS_WITHIN_MS ||
+          control === focusedElement(this.document) ||
+          this.openerOfOpenOverlay(control))
+        ? control
+        : null,
+    );
   };
 
   /** After Ionic has given focus back, which it does once closed. */
@@ -302,7 +321,8 @@ export class PageFocusService {
             active.matches(OVERLAYS) &&
             active.contains(inPage(opener))
           )) ||
-        (overlay instanceof Element && this.focusOpener(overlay)) ||
+        (overlay instanceof Element &&
+          (this.openedBy.get(overlay) === null || this.focusOpener(overlay))) ||
         hasOpenOverlay(this.document)
       ) {
         return;
@@ -313,6 +333,16 @@ export class PageFocusService {
       }
     });
   };
+
+  /**
+   * Whether `control` opened an overlay still open, e.g. the wait while
+   * saving, under which an error message can come long after the tap.
+   */
+  private openerOfOpenOverlay(control: HTMLElement): boolean {
+    return [...this.document.querySelectorAll(OPEN_OVERLAY)].some(
+      (overlay) => this.openedBy.get(overlay) === control,
+    );
+  }
 
   /**
    * Focuses the control that opened `overlay`, or, when that control was in a
