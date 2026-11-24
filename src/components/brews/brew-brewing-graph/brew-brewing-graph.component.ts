@@ -1105,7 +1105,12 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
       if (!_firstStart) {
         /** IF we're a PRS or Bookoo-device we stop the transmission and start it after 300ms again **/
-        await pressureDevice.disableValueTransmission();
+        try {
+          await pressureDevice.disableValueTransmission();
+        } catch (ex) {
+          // A failed BLE write must not keep the brew from switching.
+          this.uiLog.error('Pressure device - disable transmission failed', ex);
+        }
         await sleep(300);
         if (this.bleManager.getPressureDevice() !== pressureDevice) {
           // Disconnected or replaced while waiting.

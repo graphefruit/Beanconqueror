@@ -32,6 +32,7 @@ describe('BrewBrewingGraphComponent pressure device on preparation change', () =
         },
         brewComponent: {},
         settings: { pressure_threshold_active: false },
+        uiLog: jasmine.createSpyObj('UILog', ['error']),
       },
     );
     spyOn(component, 'deattachToPressureChange').and.stub();
@@ -62,6 +63,16 @@ describe('BrewBrewingGraphComponent pressure device on preparation change', () =
     await component.preparationChanged();
 
     expect(device.enableValueTransmission).not.toHaveBeenCalled();
+    expect(setUIParams).toHaveBeenCalled();
+  });
+
+  it('switches although the device rejects stopping the transmission', async () => {
+    const device = pressureDevice();
+    device.disableValueTransmission.and.rejectWith(new Error('write failed'));
+    bleManager.getPressureDevice.and.returnValues(device, null);
+
+    await expectAsync(component.preparationChanged()).toBeResolved();
+
     expect(setUIParams).toHaveBeenCalled();
   });
 });
