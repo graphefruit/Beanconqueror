@@ -26,7 +26,6 @@ import {
   ISettings,
 } from '../../interfaces/settings/iSettings';
 import { IUserProfile } from '../../interfaces/settings/iUserProfile';
-import { migrateSpeechSettings } from '../../services/textToSpeech/speech-options';
 import {
   PressureType,
   RefractometerType,
@@ -684,7 +683,7 @@ export class Settings implements ISettings {
   }
 
   public initializeByObject(settingsObj: ISettings): void {
-    Object.assign(this, migrateSpeechSettings(settingsObj));
+    Object.assign(this, settingsObj);
     // Backups leave the address empty (SETTINGS_SECRET_PATHS); the uploads
     // need one, so a device without its own gets the default server again.
     if (!this.visualizer_url) {

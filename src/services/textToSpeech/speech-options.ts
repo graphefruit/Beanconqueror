@@ -65,26 +65,23 @@ export function spokenBrewValues(settings: BrewSpeechSettings) {
 }
 
 /**
- * Settings saved before the brew values had a switch each. "Speak the brew
- * time only" said start, end and the time every 5 s; without it the weight
- * was said as well. The defaults of the new switches (all on, time every 5 s)
- * keep both, so only the weight of "time only" is turned off.
+ * How often the brew time is said, in seconds. A timer without milliseconds
+ * shows whole seconds only, so the interval is rounded up to the next whole
+ * second there: 0.25 s says every second, 1.5 s every 2 s.
  */
-export function migrateSpeechSettings(saved: object): Record<string, unknown> {
-  const { text_to_speech_timer_only: timerOnly, ...rest } = saved as Record<
-    string,
-    unknown
-  >;
-  if (timerOnly === true && !('text_to_speech_weight' in rest)) {
-    return { ...rest, text_to_speech_weight: false };
-  }
-  return rest;
+export function brewTimeEverySeconds(
+  intervalSeconds: number,
+  showsMilliseconds: boolean,
+): number {
+  return showsMilliseconds
+    ? intervalSeconds
+    : Math.max(1, Math.ceil(intervalSeconds));
 }
 
 /**
  * The brew time to say once the timer has run `elapsedMs`: at every multiple
- * of the interval, as the timer shows it, in whole seconds or, when it shows
- * milliseconds, as that multiple. `lastStep` is the multiple reached last,
+ * of brewTimeEverySeconds, as the timer shows it, in whole seconds or, when it
+ * shows milliseconds, as that multiple. `lastStep` is the multiple reached last,
  * undefined while the timer stands; the result carries the one to pass next.
  */
 export function brewTimeToSay(
@@ -93,7 +90,9 @@ export function brewTimeToSay(
   intervalSeconds: number,
   showsMilliseconds: boolean,
 ): { step: number; say?: string } {
-  const intervalMs = Math.round(intervalSeconds * 1000);
+  const intervalMs = Math.round(
+    brewTimeEverySeconds(intervalSeconds, showsMilliseconds) * 1000,
+  );
   const step = Math.floor(elapsedMs / intervalMs);
   if (lastStep === undefined || step <= lastStep) {
     return { step };

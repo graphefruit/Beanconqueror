@@ -54,6 +54,7 @@ describe('Settings', () => {
       const old = JSON.parse(JSON.stringify(new Settings()));
       for (const field of [
         'text_to_speech_weight',
+        'text_to_speech_whole_grams',
         'text_to_speech_brew_time',
         'text_to_speech_brew_time_interval',
         'text_to_speech_brew_start_end',
@@ -74,26 +75,7 @@ describe('Settings', () => {
       weightEveryMs: settings.text_to_speech_interval_rate,
     });
 
-    it('say start, end and the time every 5 s after "brew time only"', () => {
-      const settings = saved({
-        text_to_speech_active: true,
-        text_to_speech_timer_only: true,
-        text_to_speech_whole_grams: true,
-        text_to_speech_interval_rate: 750,
-      });
-
-      expect(switches(settings)).toEqual({
-        weight: false,
-        wholeGrams: true,
-        time: true,
-        every: 5,
-        startAndEnd: true,
-        weightEveryMs: 750,
-      });
-      expect('text_to_speech_timer_only' in settings).toBeFalse();
-    });
-
-    it('say the weight, the time every 5 s, start and end as before otherwise', () => {
+    it('say the weight, the time every 5 s, start and end as before', () => {
       const settings = saved({
         text_to_speech_active: true,
         text_to_speech_interval_rate: 400,
