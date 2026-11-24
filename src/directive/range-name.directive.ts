@@ -35,6 +35,12 @@ type KnobMoveEvent = CustomEvent<{ value: RangeValue }>;
 export const DRAG_ANNOUNCE_INTERVAL_MS = 1000;
 
 /**
+ * Live region key of a dragged value: a value the screen reader has not been
+ * handed yet is dropped for a newer one, so it never speaks a passed value.
+ */
+export const RANGE_VALUE_KEY = 'range-value';
+
+/**
  * Which knob of a two-knob range moved from `before` to `after`. The moved
  * knob is the one whose value is new; a knob dragged past the other one
  * swaps lower and upper, so the other end keeps a value it had before.
@@ -175,6 +181,7 @@ export class RangeNameDirective {
       this.dragAnnouncement = this.announcer.startProgress(
         message,
         DRAG_ANNOUNCE_INTERVAL_MS,
+        RANGE_VALUE_KEY,
       );
     }
   }
@@ -186,7 +193,11 @@ export class RangeNameDirective {
     this.dragAnnouncement?.end();
     this.dragAnnouncement = undefined;
     if (dragged) {
-      this.announcer.announce(this.dragMessage(event.detail.value));
+      this.announcer.announce(
+        this.dragMessage(event.detail.value),
+        'polite',
+        RANGE_VALUE_KEY,
+      );
     }
   }
 

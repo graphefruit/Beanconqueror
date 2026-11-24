@@ -74,14 +74,16 @@ export class Announcer {
 
   /**
    * Announces `message` politely at once and returns its handle for updates,
-   * which are spoken at most once per `interval` milliseconds.
+   * which are spoken at most once per `interval` milliseconds. With a `key`,
+   * an update still waiting in the live region is replaced by a newer one.
    */
   public startProgress(
     message: string,
     interval = PROGRESS_INTERVAL_MS,
+    key?: string,
   ): ProgressAnnouncement {
     return new ThrottledProgress(
-      (text) => this.announce(text),
+      (text) => this.announce(text, 'polite', key),
       message,
       interval,
     );

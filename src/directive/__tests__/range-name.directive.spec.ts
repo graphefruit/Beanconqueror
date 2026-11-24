@@ -1,5 +1,13 @@
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  flush,
+  flushMicrotasks,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -221,6 +229,53 @@ describe('RangeNameDirective', () => {
     expect(knobs()[0].hasAttribute('aria-label')).toBe(false);
     expect(knobs()[0].getAttribute('aria-labelledby')).toBe('range-label');
   });
+});
+
+describe('RangeNameDirective with a screen reader still speaking', () => {
+  /** How long the screen reader is busy with each message written. */
+  const SPEAKING_MS = 10_000;
+
+  it('drops values passed while it speaks and says only the newest', fakeAsync(() => {
+    const heard: string[] = [];
+    TestBed.configureTestingModule({
+      imports: [HostComponent, TranslateModule.forRoot()],
+      providers: [
+        {
+          provide: LiveAnnouncer,
+          useValue: {
+            announce: (message: string) => {
+              heard.push(message);
+              return new Promise<void>((done) => setTimeout(done, SPEAKING_MS));
+            },
+          },
+        },
+      ],
+    });
+    TestBed.overrideDirective(RangeNameDirective, {
+      set: { selector: 'test-range' },
+    });
+    TestBed.inject(TranslateService).use('de');
+    const fixture = TestBed.createComponent(HostComponent);
+    const range = (fixture.nativeElement as HTMLElement).querySelector(
+      'test-range',
+    );
+    range.attachShadow({ mode: 'open' }).innerHTML = knob(80);
+    fixture.detectChanges();
+    flushMicrotasks();
+    const fire = (type: string, value: number) =>
+      range.dispatchEvent(new CustomEvent(type, { detail: { value } }));
+
+    fire('ionKnobMoveStart', 80);
+    flushMicrotasks();
+    for (let value = 81; value <= 89; value++) {
+      fire('ionInput', value);
+      tick(DRAG_ANNOUNCE_INTERVAL_MS);
+    }
+    fire('ionKnobMoveEnd', 90);
+    flush();
+
+    expect(heard).toEqual(['81 %', '90 %']);
+  }));
 });
 
 describe('movedKnob', () => {
