@@ -2,6 +2,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { DOCUMENT, inject, InjectionToken, NgZone } from '@angular/core';
 
 import { UILog } from '../uiLog';
+import { enqueueAnnouncement } from './announcement-queue';
 
 /**
  * How a screen reader speaks a message: `polite` once it has finished what it
@@ -11,7 +12,15 @@ export type AnnouncementPoliteness = 'polite' | 'assertive';
 
 /** The live region screen readers speak announcements from. */
 export interface LiveRegion {
-  announce(message: string, politeness: AnnouncementPoliteness): void;
+  /**
+   * `key` marks a value that goes out of date (see enqueueAnnouncement): a
+   * newer one replaces it while it still waits.
+   */
+  announce(
+    message: string,
+    politeness: AnnouncementPoliteness,
+    key?: string,
+  ): void;
 }
 
 /**
@@ -97,7 +106,8 @@ function overlayClosingWatch(document: Document, zone: NgZone) {
  * with its text is often not announced at all. Messages wait while an overlay
  * closes (overlayClosingWatch) and keep their order: the next one is passed on
  * only LIVE_REGION_NEXT_MESSAGE_AFTER_MS after the CDK has written the last,
- * which it would otherwise drop. A
+ * which it would otherwise drop. A value still waiting is replaced by a newer
+ * one of its key, so values every quarter second do not pile up. A
  * message that fails is logged and the next one still announced. Unit tests
  * provide a fake.
  */
@@ -108,7 +118,6 @@ export const LIVE_REGION = new InjectionToken<LiveRegion>('LIVE_REGION', {
     const zone = inject(NgZone);
     const uiLog = inject(UILog);
     const isQuiet = overlayClosingWatch(inject(DOCUMENT), zone);
-    let queue = Promise.resolve();
     const whenQuiet = () =>
       new Promise<void>((resolve) => {
         const heldSince = Date.now();
@@ -118,27 +127,40 @@ export const LIVE_REGION = new InjectionToken<LiveRegion>('LIVE_REGION', {
             : setTimeout(check, 50);
         check();
       });
-    return {
-      announce: (message, politeness) => {
-        queue = queue
-          .then(whenQuiet)
-          .then(() =>
-            liveAnnouncer.announce(
-              message,
-              politeness,
-              LIVE_REGION_CLEAR_AFTER_MS,
-            ),
-          )
-          .then(
-            () =>
-              new Promise<void>((resolve) =>
-                setTimeout(resolve, LIVE_REGION_NEXT_MESSAGE_AFTER_MS),
-              ),
-          )
-          // The message itself is not logged: it may hold the user's data.
-          .catch((error: unknown) =>
-            uiLog.error('Live region: announcement failed', error),
+    let waiting: {
+      message: string;
+      politeness: AnnouncementPoliteness;
+      key?: string;
+    }[] = [];
+    let writing = false;
+    const writeWaiting = async () => {
+      writing = true;
+      while (waiting.length > 0) {
+        await whenQuiet();
+        const [next, ...rest] = waiting;
+        waiting = rest;
+        try {
+          await liveAnnouncer.announce(
+            next.message,
+            next.politeness,
+            LIVE_REGION_CLEAR_AFTER_MS,
           );
+          await new Promise<void>((resolve) =>
+            setTimeout(resolve, LIVE_REGION_NEXT_MESSAGE_AFTER_MS),
+          );
+        } catch (error: unknown) {
+          // The message itself is not logged: it may hold the user's data.
+          uiLog.error('Live region: announcement failed', error);
+        }
+      }
+      writing = false;
+    };
+    return {
+      announce: (message, politeness, key) => {
+        waiting = enqueueAnnouncement(waiting, { message, politeness, key });
+        if (!writing) {
+          void writeWaiting();
+        }
       },
     };
   },

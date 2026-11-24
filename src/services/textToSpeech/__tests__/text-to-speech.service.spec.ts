@@ -174,6 +174,25 @@ describe('TextToSpeechService', () => {
       expect(spokenNatively()).toEqual(['20', 'Time 5', '21']);
     }));
 
+    it('says only the newest time and weight once the voice is free', fakeAsync(() => {
+      const service = create({ nativeSpeak: slowVoice });
+      service.speakTime('Time 1');
+      for (const time of ['1.25', '1.5', '1.75']) {
+        tick(250);
+        service.speakTime(`Time ${time}`);
+        service.speak(time);
+      }
+      service.speakInFull('Brew started');
+      tick(5000);
+
+      expect(spokenNatively()).toEqual([
+        'Time 1',
+        'Time 1.75',
+        '1.75',
+        'Brew started',
+      ]);
+    }));
+
     it('says every test number in order', fakeAsync(() => {
       const service = create({ nativeSpeak: slowVoice });
       service.speakInFull('182.5', '28', '0.1');
@@ -364,7 +383,9 @@ describe('TextToSpeechService', () => {
     service.speak('18.5');
     flushMicrotasks();
 
-    expect(announcer.announce.calls.allArgs()).toEqual([['18.5', 'assertive']]);
+    expect(announcer.announce.calls.allArgs()).toEqual([
+      ['18.5', 'assertive', 'weight'],
+    ]);
     expect(screenReader.speak).not.toHaveBeenCalled();
     expect(native.speak).not.toHaveBeenCalled();
   }));
@@ -388,6 +409,19 @@ describe('TextToSpeechService', () => {
       expect(heard()).toEqual(['Time 83', '18.7']);
     }));
   }
+
+  it('lets TalkBack replace a time still waiting in the live region', fakeAsync(() => {
+    const service = create({ screenReaderOn: true, platform: 'android' });
+
+    service.speakTime('Time 5');
+    service.speakTime('Time 5.25');
+    flushMicrotasks();
+
+    expect(announcer.announce.calls.allArgs()).toEqual([
+      ['Time 5', 'assertive', 'time'],
+      ['Time 5.25', 'assertive', 'time'],
+    ]);
+  }));
 
   it('speaks the time with its own voice while no screen reader is on', fakeAsync(() => {
     const service = create();
@@ -429,7 +463,7 @@ describe('TextToSpeechService', () => {
         expect(screenReader.speak.calls.allArgs()).toEqual([[{ value: '11' }]]);
       } else {
         expect(announcer.announce.calls.allArgs()).toEqual([
-          ['11', 'assertive'],
+          ['11', 'assertive', 'weight'],
         ]);
       }
     }));

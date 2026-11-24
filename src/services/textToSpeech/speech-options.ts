@@ -1,3 +1,5 @@
+import type { Settings } from '../../classes/settings/settings';
+
 /**
  * The rate and pitch in the settings use the scale of the Web Speech API that
  * spoke them before the native plugin: rate 0.1–10 and pitch 0–2, 1 is normal.
@@ -42,4 +44,74 @@ export function pluginSpeechPitch(pitch: number): number {
 /** The app language ('zh_TW', 'de') as a BCP 47 tag ('zh-TW', 'de'). */
 export function speechLanguageTag(appLanguage: string | undefined): string {
   return appLanguage ? appLanguage.replace('_', '-') : 'en';
+}
+
+type BrewSpeechSettings = Pick<
+  Settings,
+  | 'text_to_speech_active'
+  | 'text_to_speech_weight'
+  | 'text_to_speech_brew_time'
+  | 'text_to_speech_brew_start_end'
+>;
+
+/** Which brew values are said: each has its own switch under the main one. */
+export function spokenBrewValues(settings: BrewSpeechSettings) {
+  const on = settings.text_to_speech_active === true;
+  return {
+    weight: on && settings.text_to_speech_weight,
+    time: on && settings.text_to_speech_brew_time,
+    startAndEnd: on && settings.text_to_speech_brew_start_end,
+  };
+}
+
+/**
+ * Settings saved before the brew values had a switch each. "Speak the brew
+ * time only" said start, end and the time every 5 s; without it the weight
+ * was said as well. The defaults of the new switches (all on, time every 5 s)
+ * keep both, so only the weight of "time only" is turned off.
+ */
+export function migrateSpeechSettings(saved: object): Record<string, unknown> {
+  const { text_to_speech_timer_only: timerOnly, ...rest } = saved as Record<
+    string,
+    unknown
+  >;
+  if (timerOnly === true && !('text_to_speech_weight' in rest)) {
+    return { ...rest, text_to_speech_weight: false };
+  }
+  return rest;
+}
+
+/**
+ * The brew time to say once the timer has run `elapsedMs`: at every multiple
+ * of the interval, as the timer shows it, in whole seconds or, when it shows
+ * milliseconds, as that multiple. `lastStep` is the multiple reached last,
+ * undefined while the timer stands; the result carries the one to pass next.
+ */
+export function brewTimeToSay(
+  lastStep: number | undefined,
+  elapsedMs: number,
+  intervalSeconds: number,
+  showsMilliseconds: boolean,
+): { step: number; say?: string } {
+  const intervalMs = Math.round(intervalSeconds * 1000);
+  const step = Math.floor(elapsedMs / intervalMs);
+  if (lastStep === undefined || step <= lastStep) {
+    return { step };
+  }
+  const say = showsMilliseconds
+    ? +((step * intervalMs) / 1000).toFixed(3)
+    : Math.floor(elapsedMs / 1000);
+  return { step, say: String(say) };
+}
+
+/**
+ * The weight as it is said: one decimal for espresso, whole grams otherwise or
+ * when chosen, as a decimal takes the Android voice noticeably longer to say.
+ */
+export function spokenWeight(
+  grams: number,
+  espresso: boolean,
+  wholeGrams: boolean,
+): string {
+  return String(+grams.toFixed(espresso && !wholeGrams ? 1 : 0));
 }

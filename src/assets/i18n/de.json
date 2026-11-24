@@ -1395,7 +1395,14 @@
         "TEST_SPEAK": "Sprachtest starten",
         "PITCH": "Tonhöhe",
         "RATE": "Sprechgeschwindigkeit",
-        "SCREEN_READER_HINT": "Solange ein Screenreader wie VoiceOver oder TalkBack an ist, spricht er die Ansagen mit seiner eigenen Stimme und Sprechgeschwindigkeit. Tonhöhe und Sprechgeschwindigkeit von hier wirken dann nicht. Jede Ansage unterbricht, was der Screenreader gerade vorliest."
+        "SCREEN_READER_HINT": "Solange ein Screenreader wie VoiceOver oder TalkBack an ist, spricht er die Ansagen mit seiner eigenen Stimme und Sprechgeschwindigkeit. Tonhöhe und Sprechgeschwindigkeit von hier wirken dann nicht. Jede Ansage unterbricht, was der Screenreader gerade vorliest.",
+        "WEIGHT": "Gewicht ansagen",
+        "BREW_TIME": "Brühzeit ansagen",
+        "BREW_TIME_EVERY": "Brühzeit alle",
+        "BREW_START_END": "Brühbeginn und Brühende ansagen",
+        "WHOLE_GRAMS": "Ganze Gramm ansagen",
+        "WHOLE_GRAMS_DESCRIPTION": "Auch Espresso-Gewichte werden ohne Nachkommastelle angesagt; so ist jede Ansage kürzer.",
+        "ANDROID_RATE_HINT": "Unter Android dauert jede Ansage rund eine Sekunde länger. Kommen die Ansagen zu spät, hilft eine höhere Sprechgeschwindigkeit, beim Gewicht auch „Ganze Gramm ansagen“."
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptisches Feedback",
     "HAPTIC_FEEDBACK": {
