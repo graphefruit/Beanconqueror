@@ -191,7 +191,6 @@ export class Settings implements ISettings {
   };
 
   public wake_lock: boolean;
-  public security_check_when_going_back: boolean;
 
   public show_roasting_section: boolean;
   public show_water_section: boolean;
@@ -568,7 +567,6 @@ export class Settings implements ISettings {
 
     this.welcome_page_showed = false;
     this.wake_lock = false;
-    this.security_check_when_going_back = false;
     this.image_quality = 100;
 
     this.scale_id = '';

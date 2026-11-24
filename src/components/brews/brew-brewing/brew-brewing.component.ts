@@ -14,6 +14,7 @@ import {
   NgZone,
   OnInit,
   Output,
+  output,
   signal,
   ViewChild,
 } from '@angular/core';
@@ -243,6 +244,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   @Input('baristamode') public baristamode: boolean = false;
   @Output() public lastShotInformation = new EventEmitter();
+  /** The form has filled itself in (last brew, device, graph). */
+  public readonly loaded = output<void>();
 
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
@@ -366,169 +369,173 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async ngAfterViewInit() {
     setTimeout(async () => {
-      /**We need to track the state if the brewing was visible on start, because if not we need to give some time for the graph to start**/
-      const uiSectionWhileBrewingVisibleOnStart = this.uiShowSectionWhileBrew;
-      // If we wouldn't wait in the timeout, the components wouldnt be existing
-      if (this.isEdit === false) {
-        // We need a short timeout because of ViewChild, else we get an exception
+      try {
+        /**We need to track the state if the brewing was visible on start, because if not we need to give some time for the graph to start**/
+        const uiSectionWhileBrewingVisibleOnStart = this.uiShowSectionWhileBrew;
+        // If we wouldn't wait in the timeout, the components wouldnt be existing
+        if (this.isEdit === false) {
+          // We need a short timeout because of ViewChild, else we get an exception
 
-        if (this.baristamode === false) {
-          if (this.brewTemplate) {
-            await this.__loadBrew(this.brewTemplate, true);
-          } else if (this.loadSpecificLastPreparation) {
-            const foundBrews: Array<Brew> = UIBrewHelper.sortBrews(
-              this.uiBrewStorage
-                .getAllEntries()
-                .filter(
-                  (e) =>
-                    e.method_of_preparation ===
-                    this.loadSpecificLastPreparation.config.uuid,
-                ),
-            );
-            if (foundBrews.length > 0) {
-              await this.__loadBrew(foundBrews[0], false);
+          if (this.baristamode === false) {
+            if (this.brewTemplate) {
+              await this.__loadBrew(this.brewTemplate, true);
+            } else if (this.loadSpecificLastPreparation) {
+              const foundBrews: Array<Brew> = UIBrewHelper.sortBrews(
+                this.uiBrewStorage
+                  .getAllEntries()
+                  .filter(
+                    (e) =>
+                      e.method_of_preparation ===
+                      this.loadSpecificLastPreparation.config.uuid,
+                  ),
+              );
+              if (foundBrews.length > 0) {
+                await this.__loadBrew(foundBrews[0], false);
+              } else {
+                /** We start an empty new brew, and set the preparation method for it
+                 * so when the next brew will come, data can or will be preset
+                 * **/
+                const newBrew = new Brew();
+                newBrew.method_of_preparation =
+                  this.loadSpecificLastPreparation.config.uuid;
+                await this.__loadBrew(newBrew, false);
+              }
             } else {
-              /** We start an empty new brew, and set the preparation method for it
-               * so when the next brew will come, data can or will be preset
-               * **/
-              const newBrew = new Brew();
-              newBrew.method_of_preparation =
-                this.loadSpecificLastPreparation.config.uuid;
-              await this.__loadBrew(newBrew, false);
+              await this.__loadLastBrew();
             }
           } else {
-            await this.__loadLastBrew();
+            await this._waiUntilGraphAndPreparationElementIsThere();
           }
+          this.setChoosenPreparation();
+          this.setChoosenMill();
         } else {
-          await this._waiUntilGraphAndPreparationElementIsThere();
-        }
-        this.setChoosenPreparation();
-        this.setChoosenMill();
-      } else {
-        this.setChoosenPreparation();
-        this.setChoosenMill();
-        if (this.timer) {
-          this.timer.setTime(
-            this.data.brew_time,
-            this.data.brew_time_milliseconds,
-          );
+          this.setChoosenPreparation();
+          this.setChoosenMill();
+          if (this.timer) {
+            this.timer.setTime(
+              this.data.brew_time,
+              this.data.brew_time_milliseconds,
+            );
+          }
+
+          // If the preparation method is customized, and we're in the edit view, we need to check if custom parameters are used
+          // #570
+          let checkData;
+          if (this.getPreparation().use_custom_parameters === true) {
+            checkData = this.getPreparation();
+          } else {
+            checkData = this.settings;
+          }
+
+          if (this.brewMillTimer && checkData.manage_parameters.mill_timer) {
+            this.brewMillTimer.setTime(
+              this.data.mill_timer,
+              this.data.mill_timer_milliseconds,
+            );
+          }
+
+          if (
+            this.brewTemperatureTime &&
+            checkData.manage_parameters.brew_temperature_time
+          ) {
+            this.brewTemperatureTime.setTime(
+              this.data.brew_temperature_time,
+              this.data.brew_temperature_time_milliseconds,
+            );
+          }
+          if (
+            this.brewCoffeeBloomingTime &&
+            checkData.manage_parameters.coffee_blooming_time
+          ) {
+            this.brewCoffeeBloomingTime.setTime(
+              this.data.coffee_blooming_time,
+              this.data.coffee_blooming_time_milliseconds,
+            );
+          }
+          if (
+            this.brewFirstDripTime &&
+            checkData.manage_parameters.coffee_first_drip_time
+          ) {
+            this.brewFirstDripTime.setTime(
+              this.data.coffee_first_drip_time,
+              this.data.coffee_first_drip_time_milliseconds,
+            );
+          }
         }
 
-        // If the preparation method is customized, and we're in the edit view, we need to check if custom parameters are used
-        // #570
-        let checkData;
-        if (this.getPreparation().use_custom_parameters === true) {
-          checkData = this.getPreparation();
-        } else {
-          checkData = this.settings;
+        if (this.beanPreset && this.beanPreset?.config?.uuid) {
+          /**We got called from an internal identifier to start a brew directly with this bean.**/
+          this.data.bean = this.beanPreset.config.uuid;
         }
 
-        if (this.brewMillTimer && checkData.manage_parameters.mill_timer) {
-          this.brewMillTimer.setTime(
-            this.data.mill_timer,
-            this.data.mill_timer_milliseconds,
-          );
-        }
-
-        if (
-          this.brewTemperatureTime &&
-          checkData.manage_parameters.brew_temperature_time
-        ) {
-          this.brewTemperatureTime.setTime(
-            this.data.brew_temperature_time,
-            this.data.brew_temperature_time_milliseconds,
-          );
-        }
-        if (
-          this.brewCoffeeBloomingTime &&
-          checkData.manage_parameters.coffee_blooming_time
-        ) {
-          this.brewCoffeeBloomingTime.setTime(
-            this.data.coffee_blooming_time,
-            this.data.coffee_blooming_time_milliseconds,
-          );
-        }
-        if (
-          this.brewFirstDripTime &&
-          checkData.manage_parameters.coffee_first_drip_time
-        ) {
-          this.brewFirstDripTime.setTime(
-            this.data.coffee_first_drip_time,
-            this.data.coffee_first_drip_time_milliseconds,
-          );
-        }
-      }
-
-      if (this.beanPreset && this.beanPreset?.config?.uuid) {
-        /**We got called from an internal identifier to start a brew directly with this bean.**/
-        this.data.bean = this.beanPreset.config.uuid;
-      }
-
-      /**
-       * We removed this line, because we loaded the preparation device element twice, because it was already loaded fron the last brew
-       */
-      /** if (this.brewBrewingPreparationDeviceEl && !this.brewBrewingPreparationDeviceEl.hasAPreparationDeviceSet()) {
+        /**
+         * We removed this line, because we loaded the preparation device element twice, because it was already loaded fron the last brew
+         */
+        /** if (this.brewBrewingPreparationDeviceEl && !this.brewBrewingPreparationDeviceEl.hasAPreparationDeviceSet()) {
               await this.brewBrewingPreparationDeviceEl?.instance();
             }**/
 
-      const uiSectionWhileBrewingVisibleOnEnd = this.uiShowSectionWhileBrew;
-      if (
-        uiSectionWhileBrewingVisibleOnStart === false &&
-        uiSectionWhileBrewingVisibleOnEnd === true
-      ) {
-        //Ok we need to wait 250ms, because else the brewGraph won't be visible
-        /**
-         * This happens, when a preparation was customized and is on top to load, where the while brewing was not visible.
-         * if you swap then to another preparation method, the graph will never be loaded.
-         */
-        await sleep(250);
-      }
-
-      if (this.brewBrewingGraphEl) {
-        if (this.isEdit === false && this.brewFlowPreset) {
-          this.brewBrewingGraphEl.reference_profile_raw =
-            this.uiHelper.cloneData(this.brewFlowPreset);
+        const uiSectionWhileBrewingVisibleOnEnd = this.uiShowSectionWhileBrew;
+        if (
+          uiSectionWhileBrewingVisibleOnStart === false &&
+          uiSectionWhileBrewingVisibleOnEnd === true
+        ) {
+          //Ok we need to wait 250ms, because else the brewGraph won't be visible
+          /**
+           * This happens, when a preparation was customized and is on top to load, where the while brewing was not visible.
+           * if you swap then to another preparation method, the graph will never be loaded.
+           */
+          await sleep(250);
         }
 
-        await this.brewBrewingGraphEl?.instance();
-      }
-
-      /** If we edit a connected preparation device, we didn't set the data we used before
-       * Adding to this, we don't do this when we're in baristamode, because else the Websocket would already trigger and connect
-       * 26.04.26 - if we wouldn't check isEdit here, we instance the methods twice.
-       */
-      if (
-        this.isEdit === true &&
-        this.brewBrewingPreparationDeviceEl &&
-        this.baristamode === false
-      ) {
-        await this.brewBrewingPreparationDeviceEl.instancePreparationDevice(
-          this.data,
-        );
-      }
-
-      this.bluetoothSubscription = this.bleManager
-        .attachOnEvent()
-        .subscribe((_type) => {
-          if (_type === CoffeeBluetoothServiceEvent.CONNECTED_REFRACTOMETER) {
-            this.__connectRefractometerDevice(false);
-          } else if (
-            _type === CoffeeBluetoothServiceEvent.DISCONNECTED_REFRACTOMETER
-          ) {
-            this.deattachToRefractometerChange();
+        if (this.brewBrewingGraphEl) {
+          if (this.isEdit === false && this.brewFlowPreset) {
+            this.brewBrewingGraphEl.reference_profile_raw =
+              this.uiHelper.cloneData(this.brewFlowPreset);
           }
-          this.setUIParams();
-          this.checkChanges();
-          /**THe check changes is needed, else the values are not interpolated to all other components**/
-          this.timer?.checkChanges();
-        });
 
-      if (this.refractometerConnected()) {
-        await this.__connectRefractometerDevice(true);
+          await this.brewBrewingGraphEl?.instance();
+        }
+
+        /** If we edit a connected preparation device, we didn't set the data we used before
+         * Adding to this, we don't do this when we're in baristamode, because else the Websocket would already trigger and connect
+         * 26.04.26 - if we wouldn't check isEdit here, we instance the methods twice.
+         */
+        if (
+          this.isEdit === true &&
+          this.brewBrewingPreparationDeviceEl &&
+          this.baristamode === false
+        ) {
+          await this.brewBrewingPreparationDeviceEl.instancePreparationDevice(
+            this.data,
+          );
+        }
+
+        this.bluetoothSubscription = this.bleManager
+          .attachOnEvent()
+          .subscribe((_type) => {
+            if (_type === CoffeeBluetoothServiceEvent.CONNECTED_REFRACTOMETER) {
+              this.__connectRefractometerDevice(false);
+            } else if (
+              _type === CoffeeBluetoothServiceEvent.DISCONNECTED_REFRACTOMETER
+            ) {
+              this.deattachToRefractometerChange();
+            }
+            this.setUIParams();
+            this.checkChanges();
+            /**THe check changes is needed, else the values are not interpolated to all other components**/
+            this.timer?.checkChanges();
+          });
+
+        if (this.refractometerConnected()) {
+          await this.__connectRefractometerDevice(true);
+        }
+
+        // Trigger change rating
+        this.changedRating();
+      } finally {
+        this.loaded.emit();
       }
-
-      // Trigger change rating
-      this.changedRating();
     });
   }
 

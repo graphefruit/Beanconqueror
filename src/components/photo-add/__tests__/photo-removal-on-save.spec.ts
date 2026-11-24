@@ -37,7 +37,6 @@ describe('Photos removed in an edit form', () => {
       data: () => new Bean(),
       extra: () => ({
         bean: new Bean(),
-        settings: { security_check_when_going_back: false },
       }),
       save: 'editBean',
     },

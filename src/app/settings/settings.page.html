@@ -279,15 +279,6 @@
         </ion-checkbox>
       </ion-item>
       <ion-item>
-        <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
-          [(ngModel)]="settings.security_check_when_going_back">
-          <div class="ion-label">
-            <div class="field-label">{{ "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK" | translate }}</div>
-            <p>{{ "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION" | translate }}</p>
-          </div>
-        </ion-checkbox>
-      </ion-item>
-      <ion-item>
         <ion-checkbox label-placement='start' (ionChange)="checkCoordinates()" (ngModelChange)="saveSettings();"
           [(ngModel)]="settings.track_brew_coordinates">
           <div class="ion-label">

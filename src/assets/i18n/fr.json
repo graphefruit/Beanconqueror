@@ -1201,8 +1201,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "Français",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Les données ne peuvent pas être sauvegardées en raison des restrictions d'Android",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Ton téléphone Android ne prend pas en charge les systèmes de fichiers externes, donc tu devras télécharger le fichier ZIP sans les fichiers multimédias. Pour plus d'informations, veuillez visiter https:\/\/beanconqueror.com\/faq.",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Message de sécurité avant la sortie?",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Vérifie si les données ont changé lors de l'ajout\/modification des grains de café ou d’infusions ; si c'est le cas, un avertissement de sécurité s'affichera en revenant en arrière.",
     "PAGE_BEANS_DISCARD_CONFIRM": "Les informations sur les grains de cafés ont été modifiées. Es-tu sûr de vouloir quitter la page sans enregistrer ?",
     "PAGE_BREW_DISCARD_CONFIRM": "Les informations de préparation ont été modifiées. Es-tu sûr de vouloir quitter la page sans enregistrer ?",
     "NO_ENTRIES_FOUND": "Aucun élément trouvé",

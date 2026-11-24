@@ -390,11 +390,11 @@ for (const language of ['en', 'de'] as const) {
       await start(page, language);
       await show(page, '/home/profile/settings');
       const checkbox = page.locator('settings').getByRole('checkbox', {
-        name: t('PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK'),
+        name: t('PAGE_SETTINGS_TRACK_BREW_COORDINATES'),
         exact: true,
       });
       await expect(checkbox).toHaveAccessibleDescription(
-        t('PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION'),
+        t('PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION'),
       );
       for (const each of await visible(
         page.locator('settings').getByRole('checkbox'),

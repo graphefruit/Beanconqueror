@@ -1179,8 +1179,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "Francúzština",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Dáta nie je možné uložiť kvôli obmedzeniam systému Android",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Váš telefón so systémom Android nepodporuje externé súborové systémy, takže si budete musieť stiahnuť súbor ZIP bez mediálnych súborov. Viac informácií nájdete na stránke https:\/\/beanconqueror.com\/faq.",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Bezpečnostná správa pred ukončením?",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Skontrolujte, či sa údaje nezmenili pri pridávaní\/úprave zŕn alebo príprav; ak áno, pri návrate späť sa zobrazí bezpečnostné upozornenie.",
     "PAGE_BEANS_DISCARD_CONFIRM": "Informácie o zrnách boli zmenené. Naozaj chcete opustiť stránku bez uloženia?",
     "PAGE_BREW_DISCARD_CONFIRM": "Informácie o príprave boli zmenené. Naozaj chcete opustiť stránku bez uloženia?",
     "NO_ENTRIES_FOUND": "Záznamy nenájdené",

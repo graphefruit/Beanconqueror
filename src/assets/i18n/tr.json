@@ -1201,8 +1201,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "Fransızca",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Android kısıtlamaları nedeniyle veriler kaydedilemiyor",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Android telefonunuz harici dosya sistemlerini desteklemediğinden ZIP dosyasını medya dosyaları olmadan indirmeniz gerekir. Daha fazla bilgi için lütfen https:\/\/beanconqueror.com\/faq adresini ziyaret edin.",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Çıkıştan önce güvenlik mesajı mı var?",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Çekirdekleri hazırlarken\/eklerken\/düzenlerken verilerin değişip değişmediğini kontrol edin; eğer öyleyse, geri döndüğünüzde bir güvenlik uyarısı görüntülenecektir.",
     "PAGE_BEANS_DISCARD_CONFIRM": "Çekirdek bilgileri değiştirildi. Sayfayı kaydetmeden çıkmak istediğinizden emin misiniz?",
     "PAGE_BREW_DISCARD_CONFIRM": "Demleme bilgisi değiştirildi. Sayfayı kaydetmeden çıkmak istediğinizden emin misiniz?",
     "NO_ENTRIES_FOUND": "Hiçbir girdi bulunamadı",

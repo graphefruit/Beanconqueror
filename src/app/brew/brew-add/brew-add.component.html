@@ -74,7 +74,7 @@
   <brew-brewing #brewBrewing [loadSpecificLastPreparation]="loadSpecificLastPreparation" [brewTemplate]="brew_template"
                 [brewFlowPreset]='brew_flow_preset'
                 [beanPreset]='bean_preset'
-    [(data)]="data" />
+    [(data)]="data" (loaded)="brewLoaded()" />
 </ion-content>
 @if(showFooter) {
 <ion-footer class="ion-no-border">

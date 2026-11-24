@@ -48,7 +48,12 @@ test('a bean cannot be saved without a name', async ({ page }) => {
       .getByText('Please enter a name for these beans.'),
   ).toBeVisible();
 
+  // The roaster was entered, so leaving asks first.
   await page.getByRole('button', { name: 'Cancel' }).click();
+  await page
+    .getByRole('alertdialog')
+    .getByRole('button', { name: 'Yes' })
+    .click();
   await dialogsClosed(page);
   expect(await storedBeans(page)).toHaveLength(14);
 });

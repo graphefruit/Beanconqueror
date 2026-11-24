@@ -193,7 +193,6 @@ export interface ISettings {
   welcome_page_showed: boolean;
 
   wake_lock: boolean;
-  security_check_when_going_back: boolean;
 
   config: IConfig;
 

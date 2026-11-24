@@ -1201,8 +1201,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "Perancis",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Data tidak dapat disimpan karena pembatasan Android",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Ponsel Android Anda tidak mendukung sistem file eksternal, jadi Anda perlu mengunduh file ZIP tanpa file media. Untuk informasi lebih lanjut, silakan kunjungi https:\/\/beanconqueror.com\/faq.",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Pesan keamanan sebelum keluar?",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Periksa apakah data telah berubah saat menambah\/mengedit biji atau penyeduhan; jika ya, peringatan keamanan akan ditampilkan saat kembali.",
     "PAGE_BEANS_DISCARD_CONFIRM": "Informasi penyeduhan telah diubah. Apakah Anda yakin ingin meninggalkan halaman tanpa menyimpan?",
     "PAGE_BREW_DISCARD_CONFIRM": "Informasi penyeduhan telah dimodifikasi. Apakah Anda yakin ingin meninggalkan halaman tanpa menyimpan?",
     "NO_ENTRIES_FOUND": "Tidak ada entri yang ditemukan",

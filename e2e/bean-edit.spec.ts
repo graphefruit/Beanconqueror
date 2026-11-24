@@ -1,3 +1,5 @@
+import type { Page } from '@playwright/test';
+
 import { expect, test } from './fixtures';
 import { pressHardwareBack } from './support/back-button';
 import { BEANS } from './support/bean-data';
@@ -23,7 +25,8 @@ import { toast } from './support/toast';
 
 /**
  * Characterization of editing a bean as it works today: what "Save" stores,
- * how the dialog is left without saving, and archiving from the dialog.
+ * how the dialog is left without saving (with a question once something was
+ * changed), and archiving from the dialog.
  */
 
 const DISCARD_QUESTION = /Bean information has been changed/;
@@ -80,68 +83,81 @@ test('a long press on a card opens the bean for editing', async ({ page }) => {
   await expect(beanField(page, /^Name/)).toHaveValue(BEANS.small);
 });
 
-test('cancelling an edit keeps the stored bean without asking', async ({
+/** Whether the focus is inside the open bean form (also inside its fields). */
+async function focusInBeanForm(page: Page): Promise<boolean> {
+  return page.evaluate(
+    () => !!document.activeElement?.closest('ion-modal#bean-edit'),
+  );
+}
+
+test('cancelling a changed bean asks before the changes are dropped', async ({
   page,
 }) => {
   const data = await startWithBeans(page);
+  await beanAction(page, BEANS.alpha, 'Edit');
+
+  // Nothing changed: no question.
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await dialogsClosed(page);
+  await expect(page.getByRole('alertdialog')).toHaveCount(0);
 
   await beanAction(page, BEANS.alpha, 'Edit');
   await beanField(page, /^Name/).fill('Verworfen');
   await page.getByRole('button', { name: 'Cancel' }).click();
+  const question = page.getByRole('alertdialog');
+  await expect(question).toContainText(DISCARD_QUESTION);
+  await question.getByRole('button', { name: 'No' }).click();
+  await expect(question).toHaveCount(0);
+  await expect(beanField(page, /^Name/)).toHaveValue('Verworfen');
+  await expect.poll(() => focusInBeanForm(page)).toBe(true);
 
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await question.getByRole('button', { name: 'Yes' }).click();
   await dialogsClosed(page);
-  await expect(page.getByRole('alertdialog')).toHaveCount(0);
   await expect(beanCard(page, BEANS.alpha)).toBeVisible();
   expect(await storedBeans(page)).toEqual(data.BEANS);
 });
 
-test.describe('with the safety question for unsaved changes switched on', () => {
-  test('cancelling a changed bean asks before the changes are dropped', async ({
-    page,
-  }) => {
-    const data = await startWithBeans(page, {
-      settings: { security_check_when_going_back: true },
-    });
-    await beanAction(page, BEANS.alpha, 'Edit');
+test('the Android back key asks the same question, and a second back answers no', async ({
+  page,
+}) => {
+  const data = await startWithBeans(page);
+  await beanAction(page, BEANS.alpha, 'Edit');
+  await beanField(page, /^Name/).fill('Verworfen');
 
-    // Nothing changed: no question.
-    await page.getByRole('button', { name: 'Cancel' }).click();
-    await dialogsClosed(page);
+  await pressHardwareBack(page);
+  const question = page.getByRole('alertdialog');
+  await expect(question).toContainText(DISCARD_QUESTION);
 
-    await beanAction(page, BEANS.alpha, 'Edit');
-    await beanField(page, /^Name/).fill('Verworfen');
-    await page.getByRole('button', { name: 'Cancel' }).click();
-    const question = page.getByRole('alertdialog');
-    await expect(question).toContainText(DISCARD_QUESTION);
-    await question.getByRole('button', { name: 'No' }).click();
-    await expect(question).toHaveCount(0);
-    await expect(beanField(page, /^Name/)).toHaveValue('Verworfen');
+  // Back again while asking: no second question, the form stays.
+  await pressHardwareBack(page);
+  await expect(question).toHaveCount(0);
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(beanField(page, /^Name/)).toHaveValue('Verworfen');
 
-    await page.getByRole('button', { name: 'Cancel' }).click();
-    await question.getByRole('button', { name: 'Yes' }).click();
-    await dialogsClosed(page);
-    await expect(beanCard(page, BEANS.alpha)).toBeVisible();
-    expect(await storedBeans(page)).toEqual(data.BEANS);
-  });
+  await pressHardwareBack(page);
+  await expect(question).toHaveCount(1);
+  await question.getByRole('button', { name: 'Yes' }).click();
+  await dialogsClosed(page);
+  expect(await storedBeans(page)).toEqual(data.BEANS);
+});
 
-  test('the Android back key asks the same question', async ({ page }) => {
-    const data = await startWithBeans(page, {
-      settings: { security_check_when_going_back: true },
-    });
-    await beanAction(page, BEANS.alpha, 'Edit');
-    await beanField(page, /^Name/).fill('Verworfen');
+test('Escape asks before a changed bean is dropped', async ({ page }) => {
+  const data = await startWithBeans(page);
+  await beanAction(page, BEANS.alpha, 'Edit');
+  await beanField(page, /^Name/).fill('Verworfen');
 
-    await pressHardwareBack(page);
-    const question = page.getByRole('alertdialog');
-    await expect(question).toContainText(DISCARD_QUESTION);
-    await question.getByRole('button', { name: 'No' }).click();
-    await expect(page.getByRole('dialog')).toBeVisible();
+  await page.keyboard.press('Escape');
+  const question = page.getByRole('alertdialog');
+  await expect(question).toContainText(DISCARD_QUESTION);
+  await page.keyboard.press('Escape');
+  await expect(question).toHaveCount(0);
+  await expect(beanField(page, /^Name/)).toHaveValue('Verworfen');
 
-    await pressHardwareBack(page);
-    await question.getByRole('button', { name: 'Yes' }).click();
-    await dialogsClosed(page);
-    expect(await storedBeans(page)).toEqual(data.BEANS);
-  });
+  await page.keyboard.press('Escape');
+  await question.getByRole('button', { name: 'Yes' }).click();
+  await dialogsClosed(page);
+  expect(await storedBeans(page)).toEqual(data.BEANS);
 });
 
 test('ticking "Archive?" in the dialog archives the bean without a rating question', async ({

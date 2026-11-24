@@ -265,7 +265,7 @@
       "count": 4
     },
     "no-empty": {
-      "count": 3
+      "count": 2
     }
   },
   "src/app/beans/beans-detail/beans-detail.component.html": {
@@ -295,9 +295,6 @@
     },
     "@typescript-eslint/no-floating-promises": {
       "count": 2
-    },
-    "no-empty": {
-      "count": 1
     }
   },
   "src/app/beans/beans.page.ts": {
@@ -396,7 +393,7 @@
       "count": 1
     },
     "no-empty": {
-      "count": 4
+      "count": 3
     },
     "no-var": {
       "count": 1
@@ -493,7 +490,7 @@
       "count": 6
     },
     "no-empty": {
-      "count": 2
+      "count": 1
     },
     "no-var": {
       "count": 2

@@ -26,6 +26,17 @@ describe('Settings', () => {
     expect(hydratedSettings.cloud_ai_prompt_appendix).toBe('');
   });
 
+  it('loads stored settings that still hold the removed safety question switch', () => {
+    const stored = {
+      ...JSON.parse(JSON.stringify(new Settings())),
+      security_check_when_going_back: true,
+    } as Settings;
+    const settings = new Settings();
+
+    expect(() => settings.initializeByObject(stored)).not.toThrow();
+    expect(settings.wake_lock).toBeFalse();
+  });
+
   for (const url of ['', undefined]) {
     it(`gives settings with the Visualizer address ${JSON.stringify(url)} the default server`, () => {
       const stored = JSON.parse(JSON.stringify(new Settings())) as Settings;

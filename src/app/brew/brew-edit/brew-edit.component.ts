@@ -18,7 +18,6 @@ import {
   IonIcon,
   IonRow,
   ModalController,
-  Platform,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { bluetoothOutline } from 'ionicons/icons';
@@ -43,6 +42,7 @@ import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { IBrew } from '../../../interfaces/brew/iBrew';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { injectDiscardGuard } from '../../../services/discardGuard/discard-guard';
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -55,6 +55,11 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
+import {
+  brewFormChanged,
+  BrewFormState,
+  brewFormState,
+} from '../../../stores/brews/brew-form-rules';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 
 declare var Plotly;
@@ -85,7 +90,6 @@ export class BrewEditComponent implements OnInit {
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiHelper = inject(UIHelper);
   private readonly uiToast = inject(UIToast);
-  private readonly platform = inject(Platform);
   private readonly uiBrewHelper = inject(UIBrewHelper);
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly brewTracking = inject(BrewTrackingService);
@@ -104,8 +108,13 @@ export class BrewEditComponent implements OnInit {
   public data: Brew = new Brew();
   public settings: Settings;
   public showFooter: boolean = true;
-  private initialBeanData: string = '';
-  private disableHardwareBack;
+  private formStart: BrewFormState | undefined;
+  private enteredWhileLoading = false;
+  private readonly discardGuard = injectDiscardGuard({
+    question: 'PAGE_BREW_DISCARD_CONFIRM',
+    changed: () => this.formChanged(),
+    close: () => this.dismiss(),
+  });
   public readonly PreparationDeviceType = PreparationDeviceType;
   @Input('brew') public brew: IBrew;
   constructor() {
@@ -129,7 +138,6 @@ export class BrewEditComponent implements OnInit {
     if (this.settings.wake_lock) {
       this.uiHelper.deviceKeepAwake();
     }
-    this.initialBeanData = JSON.stringify(this.data);
   }
   public ionViewWillLeave() {
     if (this.settings.wake_lock) {
@@ -137,31 +145,38 @@ export class BrewEditComponent implements OnInit {
     }
   }
 
-  public async confirmDismiss(): Promise<void> {
-    if (
-      this.settings.security_check_when_going_back === false ||
-      JSON.stringify(this.data) === this.initialBeanData
-    ) {
-      this.dismiss();
-      return;
-    }
+  public brewLoaded(): void {
+    this.formStart = this.formState();
+  }
 
-    const choice = await this.uiAlert.showConfirm(
-      'PAGE_BREW_DISCARD_CONFIRM',
-      'SURE_QUESTION',
-      true,
-    );
-    if (choice === 'YES') {
-      this.dismiss();
+  // Typing and choosing fire these events, values set by the form do not.
+  @HostListener('input')
+  @HostListener('ionChange')
+  public noteInput(): void {
+    if (this.formStart === undefined) {
+      this.enteredWhileLoading = true;
     }
   }
 
+  private formState(): BrewFormState {
+    return brewFormState(
+      this.data,
+      this.brewBrewing?.brewBrewingGraphEl?.flow_profile_raw,
+    );
+  }
+
+  private formChanged(): boolean {
+    return brewFormChanged(this.formStart, this.formState(), {
+      timerRunning: this.brewBrewing?.timer?.isTimerRunning() === true,
+      enteredWhileLoading: this.enteredWhileLoading,
+    });
+  }
+
+  public confirmDismiss(): Promise<void> {
+    return this.discardGuard.confirmDismiss();
+  }
+
   public dismiss(): void {
-    try {
-      if (this.settings.security_check_when_going_back === true) {
-        this.disableHardwareBack.unsubscribe();
-      }
-    } catch (ex) {}
     this.stopScaleTimer();
     try {
       if (this.brewBrewing.brewBrewingGraphEl) {
@@ -323,14 +338,5 @@ export class BrewEditComponent implements OnInit {
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.EDIT,
     );
-    if (this.settings.security_check_when_going_back === true) {
-      this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
-        9999,
-        async () => {
-          // Only go back after confirmation
-          await this.confirmDismiss();
-        },
-      );
-    }
   }
 }

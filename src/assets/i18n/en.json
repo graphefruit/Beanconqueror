@@ -1259,8 +1259,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "French",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Data can't be saved due to Android restrictions",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Your Android phone doesn't support external file systems, so you'll need to download the ZIP file without media files. For more information, please visit https:\/\/beanconqueror.com\/faq.",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Security message before exit?",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Check if the data has changed when adding\/editing beans or brews; if so, a safety warning will be displayed when going back.",
     "PAGE_BEANS_DISCARD_CONFIRM": "Bean information has been changed. Are you sure you want to leave the page without saving?",
     "PAGE_BREW_DISCARD_CONFIRM": "Brewing information has been modified. Are you sure you want to leave the page without saving?",
     "NO_ENTRIES_FOUND": "No entries found",

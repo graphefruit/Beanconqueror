@@ -1201,8 +1201,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "Fransk",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Data kan ikke lagres på grunn av Android-begrensninger",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Android-telefonen din støtter ikke eksterne filsystemer, så du må laste ned ZIP-filen uten mediefiler. For mer informasjon, vennligst besøk https:\/\/beanconqueror.com\/faq.",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Sikkerhetsbeskjed før avslutning?",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Sjekk om dataene har endret seg når det legges til\/redigerer bønner eller brygg; i så fall vil en sikkerhetsadvarsel vises når du går tilbake.",
     "PAGE_BEANS_DISCARD_CONFIRM": "Bønneinformasjonen er endret. Er du sikker på at du vil forlate siden uten å lagre?",
     "PAGE_BREW_DISCARD_CONFIRM": "Informasjonen om brygget er endret. Er du sikker på at du vil forlate siden uten å lagre?",
     "NO_ENTRIES_FOUND": "Ingen oppføringer funnet",

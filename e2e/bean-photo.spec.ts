@@ -215,6 +215,10 @@ test.describe('a bean with a photo', () => {
 
     await deletePhotoInForm(page, card);
     await page.getByRole('button', { name: 'Cancel' }).click();
+    await page
+      .getByRole('alertdialog')
+      .getByRole('button', { name: 'Yes' })
+      .click();
     await dialogsClosed(page);
 
     expect(await storedBeans(page)).toEqual(data.BEANS);

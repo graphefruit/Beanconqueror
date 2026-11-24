@@ -55,7 +55,6 @@ describe('BrewEditComponent flow profile file', () => {
       brew: stored,
       data: new Brew(),
       settings: {
-        security_check_when_going_back: false,
         visualizer_active: false,
       },
       brewBrewing,
@@ -247,10 +246,10 @@ describe('BrewEditComponent flow profile file', () => {
     expect(brewBrewing.saveFlowProfile).not.toHaveBeenCalled();
   });
 
-  it('leaves brew and file alone when editing is cancelled after a reset', async () => {
+  it('leaves brew and file alone when editing is left after a reset', async () => {
     resetGraph();
 
-    await component.confirmDismiss();
+    component.dismiss();
 
     expect(modalController.dismiss).toHaveBeenCalledTimes(1);
     expect(uiBrewStorage.update).not.toHaveBeenCalled();

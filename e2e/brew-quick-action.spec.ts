@@ -99,6 +99,10 @@ for (const type of ['Bean', 'Preparation', 'Mill']) {
     await expect(brewField(page, 'Ground Coffee (gr)')).toHaveValue('17');
 
     await page.getByRole('button', { name: 'Cancel' }).click();
+    await page
+      .getByRole('alertdialog')
+      .getByRole('button', { name: 'Yes' })
+      .click();
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(page).toHaveURL(/\/home\/beans$/);
   });

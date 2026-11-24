@@ -1201,8 +1201,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "フランス語",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Android の制限によりデータを保存できません",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "お使いの Android は外部ファイルシステムをサポートしていないため、メディアファイルを除いた ZIP ファイルをダウンロードする必要があります。詳細は https:\/\/beanconqueror.com\/faq をご覧ください。",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "戻る前に確認しますか？",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "豆や抽出の追加・編集時にデータが変更されているかをチェックし、戻る際に確認メッセージを表示します。",
     "PAGE_BEANS_DISCARD_CONFIRM": "豆情報が変更されています。保存せずにページを離れてもよろしいですか？",
     "PAGE_BREW_DISCARD_CONFIRM": "抽出情報が変更されています。保存せずにページを離れてもよろしいですか？",
     "NO_ENTRIES_FOUND": "エントリが見つかりません",

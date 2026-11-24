@@ -1259,8 +1259,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "Französisch",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Daten können nicht extern gespeichert werden",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Leider unterstützt dein Android-Handy keine externen Dateisysteme zum abspeichern, daher wird dir im nachfolgenden Schritt die ZIP-Datei ohne Media-Dateien zum herunterladen angeboten. Bitte schaue unter https:\/\/beanconqueror.com\/faq für mehr Infromationen",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Sicherheitsmeldung vor Verlassen?",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Überprüfe ob die Daten sich verändert haben bei Brühung\/Bohne hinzufügen\/editieren, falls ja, wird beim zurückgehen ein Sicherheitshinweis angezeigt.",
     "PAGE_BEANS_DISCARD_CONFIRM": "Bohneninformationen wurden verändert, sicher dass du die Seite ohne speichern verlassen möchtest?",
     "PAGE_BREW_DISCARD_CONFIRM": "Brühinformationen wurden verändert, sicher dass du die Seite ohne speichern verlassen möchtest?",
     "NO_ENTRIES_FOUND": "Keine Einträge gefunden",

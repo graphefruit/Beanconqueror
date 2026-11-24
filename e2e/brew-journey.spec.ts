@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures';
+import { pressHardwareBack } from './support/back-button';
 import { tabName } from './support/beans';
 import {
   BREW_TEST_START,
@@ -16,11 +17,14 @@ import { toast } from './support/toast';
 
 /**
  * Characterization of the brew journey as it works today: add, show in list
- * and details, edit, repeat, cancel and delete. The brew form will be rebuilt;
+ * and details, edit, repeat, cancel (with a question once something was entered)
+ * and delete. The brew form will be rebuilt;
  * these tests pin the user-visible behavior the rebuild has to keep.
  * Each test starts with one bean (Ethiopia Yirgacheffe Natural), a V60, one
  * grinder (Comandante C40) and one brew of 18 g / 300 g.
  */
+
+const DISCARD_QUESTION = /Brewing information has been modified/;
 
 test.beforeEach(async ({ page }) => {
   await page.clock.install({ time: BREW_TEST_START });
@@ -141,15 +145,48 @@ test('the brew details offer repeat and edit', async ({ page }) => {
   await expect(brewField(page, 'Ground Coffee (gr)')).toHaveValue('18');
 });
 
-test('cancelling a new brew discards it without asking', async ({ page }) => {
+test('cancelling an untouched new brew closes it without asking', async ({
+  page,
+}) => {
+  await openAddBrew(page);
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('alertdialog')).toHaveCount(0);
+});
+
+test('leaving a new brew with input asks first, on cancel and on back', async ({
+  page,
+}) => {
   await openAddBrew(page);
   await fillBrewField(page, 'Ground Coffee (gr)', '17');
-  // "Ask before leaving" is off by default, so no confirmation is shown.
+  const question = page.getByRole('alertdialog');
+
+  await pressHardwareBack(page);
+  await expect(question).toContainText(DISCARD_QUESTION);
+  await question.getByRole('button', { name: 'No' }).click();
+  await expect(question).toHaveCount(0);
+  await expect(brewField(page, 'Ground Coffee (gr)')).toHaveValue('17');
+
   await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(question).toContainText(DISCARD_QUESTION);
+  await question.getByRole('button', { name: 'Yes' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(
     page.getByRole('tab', { name: tabName('Current ( 1 )') }),
   ).toBeVisible();
+});
+
+test('leaving an edited brew asks first', async ({ page }) => {
+  await brewAction(page, 'Edit');
+  await expect(page.getByText('Edit brew')).toBeVisible();
+  await fillBrewField(page, 'Ground Coffee (gr)', '17');
+
+  await page.keyboard.press('Escape');
+  const question = page.getByRole('alertdialog');
+  await expect(question).toContainText(DISCARD_QUESTION);
+  await question.getByRole('button', { name: 'Yes' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(brewList(page)).toContainText(/18gr \/ 300gr/);
 });
 
 test('deleting a brew asks first and removes it', async ({ page }) => {

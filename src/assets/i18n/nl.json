@@ -1201,8 +1201,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "Frans",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Gegevens kunnen niet worden opgeslagen vanwege Android-beperkingen",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Je Android-telefoon ondersteunt geen externe bestandssystemen, dus je moet het ZIP-bestand downloaden zonder mediabestanden. Ga voor meer informatie naar https:\/\/beanconqueror.com\/faq.",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Beveiligingsbericht voor afsluiten?",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Controleer of de gegevens zijn gewijzigd bij het toevoegen\/bewerken van bonen of brouwsels; als dat het geval is, wordt er een veiligheidswaarschuwing weergegeven bij het teruggaan.",
     "PAGE_BEANS_DISCARD_CONFIRM": "Boon informatie is gewijzigd. Weet je zeker dat je de pagina wilt verlaten zonder op te slaan?",
     "PAGE_BREW_DISCARD_CONFIRM": "De brouw informatie is gewijzigd. Weet je zeker dat je de pagina wilt verlaten zonder op te slaan?",
     "NO_ENTRIES_FOUND": "Geen vermeldingen gevonden",

@@ -1201,8 +1201,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "Francouzština",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Data nelze uložit kvůli omezením systému Android",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Telefon se systémem Android nepodporuje externí souborové systémy, takže budete muset stáhnout soubor ZIP bez mediálních souborů. Další informace naleznete na adrese https:\/\/beanconqueror.com\/faq.",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Bezpečnostní zpráva před ukončením?",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Při přidávání nebo úpravě kávových zrn či nápojů se zkontroluje, zda došlo ke změně dat; pokud ano, při návratu zpět se zobrazí bezpečnostní varování.",
     "PAGE_BEANS_DISCARD_CONFIRM": "Informace o zrnu byly změněny. Opravdu chcete stránku opustit bez uložení?",
     "PAGE_BREW_DISCARD_CONFIRM": "Informace o přípravě vaření byly upraveny. Opravdu chcete stránku opustit bez uložení?",
     "NO_ENTRIES_FOUND": "Nebyly nalezeny žádné záznamy",

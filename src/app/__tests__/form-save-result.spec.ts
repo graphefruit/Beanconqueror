@@ -90,7 +90,6 @@ describe('Saving a form', () => {
 
   const beanForm = () => ({
     bean: new Bean(),
-    settings: { security_check_when_going_back: false },
     uiBeanHelper: jasmine.createSpyObj('UIBeanHelper', [
       'generateFrozenId',
       'logUsedBeanParameters',

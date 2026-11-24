@@ -1201,8 +1201,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "Francés",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "No se pueden guardar los datos debido a restricciones de Android",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Tu dispositivo no es compatible con sistemas de almacenamiento externo de ficheros, por lo que tendrás que descargar el fichero .ZIP sin los recursos multimedia. Para más información, visita https:\/\/beanconqueror.com\/faq.",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "¿Alerta de seguridad al salir?",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Verifica si se ha modificado algún dato al preparar, añadir o editar un café o preparación; se mostrará una alerta al ir hacia atrás.",
     "PAGE_BEANS_DISCARD_CONFIRM": "Se ha modificado la información del café. ¿Seguro que quieres salir sin guardar?",
     "PAGE_BREW_DISCARD_CONFIRM": "Se ha modificado la información de la preparación. ¿Seguro que quieres salir sin guardar?",
     "NO_ENTRIES_FOUND": "No se han encontrado coincidencias",

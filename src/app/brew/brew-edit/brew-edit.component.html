@@ -71,7 +71,7 @@
   </app-header>
 </ion-header>
 <ion-content>
-  <brew-brewing [isEdit]="true" #brewBrewing [(data)]="data" />
+  <brew-brewing [isEdit]="true" #brewBrewing [(data)]="data" (loaded)="brewLoaded()" />
 </ion-content>
 
 @if(showFooter) {

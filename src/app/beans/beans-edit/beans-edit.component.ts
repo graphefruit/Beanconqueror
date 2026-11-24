@@ -19,11 +19,9 @@ import {
   IonSegment,
   IonSegmentButton,
   ModalController,
-  Platform,
 } from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
 
 import { Bean } from '../../../classes/bean/bean';
 import { Settings } from '../../../classes/settings/settings';
@@ -39,6 +37,7 @@ import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { RequiredFields } from '../../../services/a11y/required-fields.service';
+import { injectDiscardGuard } from '../../../services/discardGuard/discard-guard';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
@@ -85,7 +84,6 @@ export class BeansEditComponent implements OnInit {
   readonly uiBeanHelper = inject(UIBeanHelper);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly uiAlert = inject(UIAlert);
-  private readonly platform = inject(Platform);
 
   public static readonly COMPONENT_ID: string = 'bean-edit';
   public settings: Settings = undefined;
@@ -93,7 +91,11 @@ export class BeansEditComponent implements OnInit {
   @Input() public bean: IBean;
   public bean_segment = 'general';
   private initialBeanData: string = '';
-  private disableHardwareBack: Subscription;
+  private readonly discardGuard = injectDiscardGuard({
+    question: 'PAGE_BEANS_DISCARD_CONFIRM',
+    changed: () => JSON.stringify(this.data) !== this.initialBeanData,
+    close: () => this.dismiss(),
+  });
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
@@ -116,31 +118,11 @@ export class BeansEditComponent implements OnInit {
     }
   }
 
-  public async confirmDismiss(): Promise<void> {
-    if (
-      this.settings.security_check_when_going_back === false ||
-      JSON.stringify(this.data) === this.initialBeanData
-    ) {
-      this.dismiss();
-      return;
-    }
-
-    const choice = await this.uiAlert.showConfirm(
-      'PAGE_BEANS_DISCARD_CONFIRM',
-      'SURE_QUESTION',
-      true,
-    );
-    if (choice === 'YES') {
-      this.dismiss();
-    }
+  public confirmDismiss(): Promise<void> {
+    return this.discardGuard.confirmDismiss();
   }
 
   public dismiss(): void {
-    try {
-      if (this.settings.security_check_when_going_back === true) {
-        this.disableHardwareBack.unsubscribe();
-      }
-    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,
@@ -209,14 +191,5 @@ export class BeansEditComponent implements OnInit {
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
-    if (this.settings.security_check_when_going_back === true) {
-      this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
-        9999,
-        async () => {
-          // Only go back after confirmation
-          await this.confirmDismiss();
-        },
-      );
-    }
   }
 }

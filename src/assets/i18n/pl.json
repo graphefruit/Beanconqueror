@@ -1201,8 +1201,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "Francuski",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Dane nie mogą zostać zapisane z powodu ograniczeń systemu Android",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Twój telefon z Androidem nie obsługuje zewnętrznych systemów plików, więc musisz pobrać plik ZIP bez plików multimedialnych. Więcej informacji można znaleźć na stronie https:\/\/beanconqueror.com\/faq.",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Komunikat bezpieczeństwa przed wyjściem?",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Sprawdzaj, czy dane uległy zmianie podczas dodawania\/edycji ziaren lub naparów; jeśli tak, podczas powrotu wyświetli się ostrzeżenie dotyczące bezpieczeństwa.",
     "PAGE_BEANS_DISCARD_CONFIRM": "Informacje o ziarnach zostały zmienione. Czy na pewno chcesz opuścić stronę bez zapisywania?",
     "PAGE_BREW_DISCARD_CONFIRM": "Informacje o parzeniu zostały zmodyfikowane. Czy na pewno chcesz opuścić stronę bez zapisywania?",
     "NO_ENTRIES_FOUND": "Nie znaleziono wpisów",

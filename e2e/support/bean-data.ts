@@ -22,7 +22,6 @@ const DAY_MS = 86_400_000;
 export interface BeanTestSettings extends SyntheticSettings {
   freeze_coffee_beans: boolean;
   show_archived_beans: boolean;
-  security_check_when_going_back: boolean;
   date_format: string;
   currency: string;
   bean_manage_parameters: { bean_information: boolean };
@@ -327,7 +326,6 @@ export function createBeanDataSet(options: BeanDataOptions): BeanDataSet {
         ...generated.SETTINGS[0],
         freeze_coffee_beans: true,
         show_archived_beans: true,
-        security_check_when_going_back: false,
         date_format: 'DD.MM.YYYY',
         currency: 'EUR',
         bean_manage_parameters: { bean_information: true },

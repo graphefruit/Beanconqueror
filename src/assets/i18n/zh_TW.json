@@ -1201,8 +1201,6 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "法語",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "由於Android限制，無法保存資料",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "您的Android手機不支持外部檔案系統，因此您需要下載不帶媒體檔的ZIP檔。更多資訊，請訪問https:\/\/beanconqueror.com\/faq。",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "退出前進行安全檢查？",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "在萃取\/添加\/編輯咖啡豆時檢查資料是否已更改；如果是，則在返回時顯示安全警告。",
     "PAGE_BEANS_DISCARD_CONFIRM": "咖啡豆信息已更改。確定要在不保存的情況下離開頁面嗎？",
     "PAGE_BREW_DISCARD_CONFIRM": "萃取資訊已修改。確定要在不保存的情況下離開頁面嗎？",
     "NO_ENTRIES_FOUND": "未找到條目",

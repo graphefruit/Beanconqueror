@@ -140,6 +140,7 @@ export const SOURCE_AREAS: Readonly<Record<string, readonly Area[]>> = {
   'src/services/a11y/': ['@a11y'],
   'src/services/changeTracking/': ['@data'],
   'src/services/deletionJournal/': ['@data'],
+  'src/services/discardGuard/': ['@bean', '@brew'],
   'src/services/deviceIdentity/': ['@data'],
   'src/services/preImportBackup/': ['@import'],
   'src/services/textToSpeech/': ['@brew', '@settings'],

@@ -43,6 +43,7 @@ import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 import { ServerBean } from '../../../models/bean/serverBean';
 import { RequiredFields } from '../../../services/a11y/required-fields.service';
+import { injectDiscardGuard } from '../../../services/discardGuard/discard-guard';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
@@ -108,19 +109,14 @@ export class BeansAddComponent implements OnInit {
   public settings: Settings = undefined;
 
   private initialBeanData: string = '';
-  private disableHardwareBack;
+  private readonly discardGuard = injectDiscardGuard({
+    question: 'PAGE_BEANS_DISCARD_CONFIRM',
+    changed: () => JSON.stringify(this.data) !== this.initialBeanData,
+    close: () => this.dismiss(),
+  });
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
-    if (this.settings.security_check_when_going_back === true) {
-      this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
-        9999,
-        async () => {
-          // Only go back after confirmation
-          await this.confirmDismiss();
-        },
-      );
-    }
   }
 
   private async checkIfInformationAreSetButNotDisplayed() {
@@ -246,23 +242,8 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
-  public async confirmDismiss(): Promise<void> {
-    if (
-      this.settings.security_check_when_going_back === false ||
-      JSON.stringify(this.data) === this.initialBeanData
-    ) {
-      this.dismiss();
-      return;
-    }
-
-    const choice = await this.uiAlert.showConfirm(
-      'PAGE_BEANS_DISCARD_CONFIRM',
-      'SURE_QUESTION',
-      true,
-    );
-    if (choice === 'YES') {
-      this.dismiss();
-    }
+  public confirmDismiss(): Promise<void> {
+    return this.discardGuard.confirmDismiss();
   }
 
   public async __addBean() {
@@ -333,11 +314,6 @@ export class BeansAddComponent implements OnInit {
   }
 
   public dismiss(role?: string): void {
-    try {
-      if (this.settings.security_check_when_going_back === true) {
-        this.disableHardwareBack.unsubscribe();
-      }
-    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,

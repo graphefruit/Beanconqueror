@@ -7,7 +7,6 @@ import {
   inject,
   Input,
   OnDestroy,
-  OnInit,
   ViewChild,
 } from '@angular/core';
 
@@ -21,7 +20,6 @@ import {
   IonIcon,
   IonRow,
   ModalController,
-  Platform,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { bluetoothOutline } from 'ionicons/icons';
@@ -63,6 +61,7 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { injectDiscardGuard } from '../../../services/discardGuard/discard-guard';
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
 import { UIAlert } from '../../../services/uiAlert';
@@ -79,6 +78,11 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
+import {
+  brewFormChanged,
+  BrewFormState,
+  brewFormState,
+} from '../../../stores/brews/brew-form-rules';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 
 declare var Plotly;
@@ -113,7 +117,7 @@ interface IEventPayload {
     HeaderButtonComponent,
   ],
 })
-export class BrewAddComponent implements OnInit, OnDestroy {
+export class BrewAddComponent implements OnDestroy {
   private readonly modalController = inject(ModalController);
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
@@ -121,7 +125,6 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly uiMillStorage = inject(UIMillStorage);
   private readonly uiToast = inject(UIToast);
-  private readonly platform = inject(Platform);
   private readonly uiLog = inject(UILog);
   private readonly uiBrewHelper = inject(UIBrewHelper);
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
@@ -157,8 +160,13 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   private brewUuid: string | undefined;
 
   public showFooter: boolean = true;
-  private initialBeanData: string = '';
-  private disableHardwareBack;
+  private formStart: BrewFormState | undefined;
+  private enteredWhileLoading = false;
+  private readonly discardGuard = injectDiscardGuard({
+    question: 'PAGE_BREW_DISCARD_CONFIRM',
+    changed: () => this.formChanged(),
+    close: () => this.dismiss(),
+  });
   public bluetoothSubscription: Subscription = undefined;
   public automaticSaveSubscription: Subscription = undefined;
   public closeBrewScreenSubscription: Subscription = undefined;
@@ -219,8 +227,6 @@ export class BrewAddComponent implements OnInit, OnDestroy {
      */
     this.setCoordinates(true);
 
-    this.initialBeanData = JSON.stringify(this.data);
-
     this.bluetoothSubscription = this.bleManager
       .attachOnEvent()
       .subscribe((_type) => {
@@ -241,23 +247,35 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     }, 15);
   }
 
-  public async confirmDismiss(): Promise<void> {
-    if (
-      this.settings.security_check_when_going_back === false ||
-      JSON.stringify(this.data) === this.initialBeanData
-    ) {
-      await this.dismiss();
-      return;
-    }
+  public brewLoaded(): void {
+    this.formStart = this.formState();
+  }
 
-    const choice = await this.uiAlert.showConfirm(
-      'PAGE_BREW_DISCARD_CONFIRM',
-      'SURE_QUESTION',
-      true,
-    );
-    if (choice === 'YES') {
-      await this.dismiss();
+  // Typing and choosing fire these events, values set by the form do not.
+  @HostListener('input')
+  @HostListener('ionChange')
+  public noteInput(): void {
+    if (this.formStart === undefined) {
+      this.enteredWhileLoading = true;
     }
+  }
+
+  private formState(): BrewFormState {
+    return brewFormState(
+      this.data,
+      this.brewBrewing?.brewBrewingGraphEl?.flow_profile_raw,
+    );
+  }
+
+  private formChanged(): boolean {
+    return brewFormChanged(this.formStart, this.formState(), {
+      timerRunning: this.brewBrewing?.timer?.isTimerRunning() === true,
+      enteredWhileLoading: this.enteredWhileLoading,
+    });
+  }
+
+  public confirmDismiss(): Promise<void> {
+    return this.discardGuard.confirmDismiss();
   }
 
   public ionViewWillLeave() {
@@ -385,11 +403,6 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   }
 
   public async dismiss() {
-    try {
-      if (this.settings.security_check_when_going_back === true) {
-        this.disableHardwareBack.unsubscribe();
-      }
-    } catch (ex) {}
     this.stopScaleTimer();
     try {
       if (this.brewBrewing.brewBrewingGraphEl) {
@@ -737,17 +750,6 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     return this.uiPreparationStorage.getByUUID(this.data.method_of_preparation);
   }
 
-  public ngOnInit() {
-    if (this.settings.security_check_when_going_back === true) {
-      this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
-        9999,
-        async () => {
-          // Only go back after confirmation
-          await this.confirmDismiss();
-        },
-      );
-    }
-  }
   public deattachBrewAutoSave() {
     if (this.automaticSaveSubscription) {
       this.automaticSaveSubscription.unsubscribe();
