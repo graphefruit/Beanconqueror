@@ -22,3 +22,25 @@ export function enqueueAnnouncement<T extends QueuedAnnouncement>(
       : waiting.filter(({ key }) => key !== next.key);
   return [...kept, next];
 }
+
+/**
+ * Takes the message to speak next from `waiting`: the first one, unless it is
+ * a value of the key spoken last (`lastKey`) and something else waits, which
+ * then goes first. Values due at the same pace thus take turns instead of one
+ * key always being newer when the voice is free. Returns the message and what
+ * still waits.
+ */
+export function takeNextAnnouncement<T extends QueuedAnnouncement>(
+  waiting: readonly T[],
+  lastKey: string | undefined,
+): [T, T[]] | undefined {
+  if (waiting.length === 0) {
+    return undefined;
+  }
+  const other =
+    lastKey !== undefined && waiting[0].key === lastKey
+      ? waiting.findIndex(({ key }) => key !== lastKey)
+      : -1;
+  const index = Math.max(0, other);
+  return [waiting[index], waiting.filter((_, i) => i !== index)];
+}
