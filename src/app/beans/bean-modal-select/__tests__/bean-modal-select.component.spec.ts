@@ -130,6 +130,35 @@ describe('BeanModalSelectComponent - the beans of the selected tab', () => {
     expect(component.shownBeans.map((e) => e.name)).toEqual(['Kenya']);
   });
 
+  it('keeps a bean tapped before the modal has entered', () => {
+    const component = create();
+    Object.assign(component, { multiple: false, selectedValues: ['Ethiopia'] });
+
+    component.ngOnInit();
+    expect(component.radioSelection).toBe('Ethiopia');
+    component.radioSelection = 'Kenya';
+    component.ionViewDidEnter();
+
+    expect(component.radioSelection).toBe('Kenya');
+  });
+
+  it('keeps beans ticked before the modal has entered', () => {
+    const component = create();
+    Object.assign(component, { multiple: true, selectedValues: ['Ethiopia'] });
+
+    component.ngOnInit();
+    expect(component.multipleSelection).toEqual({
+      Ethiopia: true,
+      Kenya: false,
+      Brazil: false,
+      Colombia: false,
+    });
+    component.multipleSelection['Kenya'] = true;
+    component.ionViewDidEnter();
+
+    expect(component.multipleSelection['Kenya']).toBe(true);
+  });
+
   it('keys a row by the bean', () => {
     const component = create();
 

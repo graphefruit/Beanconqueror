@@ -75,7 +75,7 @@ export class RoastingMachineModalSelectComponent implements OnInit {
   @Input() private selectedValues: string[];
   @Input() public showFinished: boolean;
 
-  public ionViewDidEnter(): void {
+  public ngOnInit(): void {
     this.objs = this.uiRoastingMachineStorage.getAllEntries();
     if (this.multiple) {
       for (const obj of this.objs) {
@@ -88,8 +88,6 @@ export class RoastingMachineModalSelectComponent implements OnInit {
       }
     }
   }
-
-  public ngOnInit() {}
 
   public getOpenEntries(): RoastingMachine[] {
     return this.objs.filter((e) => !e.finished);

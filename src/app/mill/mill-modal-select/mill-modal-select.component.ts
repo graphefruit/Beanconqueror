@@ -101,7 +101,7 @@ export class MillModalSelectComponent implements OnInit {
     this.settings = this.uiSettings.getSettings();
   }
 
-  public ionViewDidEnter(): void {
+  public ngOnInit(): void {
     this.objs = this.uiMillStorage.getAllEntries();
 
     this.openMills = this.getOpenMills();
@@ -117,8 +117,6 @@ export class MillModalSelectComponent implements OnInit {
       }
     }
   }
-
-  public ngOnInit() {}
 
   public getOpenMills(): Array<Mill> {
     return this.objs
