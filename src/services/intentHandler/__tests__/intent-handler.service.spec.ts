@@ -323,6 +323,7 @@ describe('IntentHandlerService', () => {
           provide: NgZone,
           useValue: jasmine.createSpyObj('NgZone', {
             run: (fn: () => unknown) => fn(),
+            runOutsideAngular: undefined,
           }),
         },
       ],

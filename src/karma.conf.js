@@ -45,6 +45,7 @@ const NEW_CODE = [
   'src/services/graphHelper/load-plotly.ts',
   'src/services/preImportBackup/pre-import-backup.service.ts',
   'src/services/tabletLayout/**',
+  'src/services/textToSpeech/**',
   'src/services/theme/theme-plugins.ts',
   'src/stores/**',
 ];
