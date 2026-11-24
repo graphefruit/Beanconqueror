@@ -253,16 +253,6 @@ export class BeanModalSelectComponent implements OnInit {
   }
 
   public ionViewDidEnter(): void {
-    if (this.multiple) {
-      for (const obj of this.beans) {
-        this.multipleSelection[obj.config.uuid] =
-          this.selectedValues.filter((e) => e === obj.config.uuid).length > 0;
-      }
-    } else {
-      if (this.selectedValues.length > 0) {
-        this.radioSelection = this.selectedValues[0];
-      }
-    }
     this.research();
   }
 
@@ -276,7 +266,19 @@ export class BeanModalSelectComponent implements OnInit {
     return this.uiUsedWeightCountCache[_bean.config.uuid];
   }
 
-  public ngOnInit() {}
+  // Preselect here, not on enter: a bean tapped while the modal slides in keeps its choice.
+  public ngOnInit() {
+    if (this.multiple) {
+      for (const obj of this.beans) {
+        this.multipleSelection[obj.config.uuid] =
+          this.selectedValues.filter((e) => e === obj.config.uuid).length > 0;
+      }
+    } else {
+      if (this.selectedValues.length > 0) {
+        this.radioSelection = this.selectedValues[0];
+      }
+    }
+  }
 
   public async choose(): Promise<void> {
     const chosenKeys: Array<string> = [];

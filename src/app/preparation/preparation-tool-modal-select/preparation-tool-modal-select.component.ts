@@ -95,7 +95,7 @@ export class PreparationToolModalSelectComponent implements OnInit {
     addIcons({ eyeOffOutline });
   }
 
-  public ionViewDidEnter(): void {
+  public ngOnInit(): void {
     if (this.preparationId) {
       this.data = this.uiPreparationStorage.getByUUID(this.preparationId);
       this.initializeSingleId();
@@ -168,8 +168,6 @@ export class PreparationToolModalSelectComponent implements OnInit {
       }
     }
   }
-
-  public ngOnInit() {}
 
   public getActivePreparationTools() {
     if (this.data) {
