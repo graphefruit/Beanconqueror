@@ -10,6 +10,10 @@ import {
 import { Capacitor } from '@capacitor/core';
 
 import { Settings } from '../../classes/settings/settings';
+import {
+  enqueueAnnouncement,
+  QueuedAnnouncement,
+} from '../a11y/announcement-queue';
 import { Announcer } from '../a11y/announcer.service';
 import {
   SCREEN_READER,
@@ -92,10 +96,8 @@ export class TextToSpeechService {
   private lastSpoken: string | undefined;
   /** Whether the native voice is still saying a value. */
   private nativeBusy = false;
-  /** Said next, in this order, each in full (the time, the test numbers). */
-  private nextInFull: string[] = [];
-  /** The newest value that came while the native voice was busy. */
-  private nextLatest: string | undefined;
+  /** Said next by the native voice, see enqueueAnnouncement. */
+  private waiting: (QueuedAnnouncement & { text: string })[] = [];
 
   /**
    * Says a value that changes (the weight). Every value is said to its end:
@@ -112,22 +114,37 @@ export class TextToSpeechService {
     }
     if (this.screenReaderState.on()) {
       if (_end || Date.now() >= this.screenReaderHeldUntil) {
-        this.speakThroughScreenReader(_text, screenReaderSpeakingMs(_text));
+        this.speakThroughScreenReader(
+          _text,
+          screenReaderSpeakingMs(_text),
+          _end ? undefined : 'weight',
+        );
       }
       return;
     }
     if (_end) {
       this.end();
     }
-    this.ownVoiceMaySpeak = true;
-    if (!this.nativeSpeech) {
-      this.lastSpoken = _text;
-      this.speakInBrowser(_text);
-    } else if (this.nativeBusy) {
-      this.nextLatest = _text;
-    } else {
-      void this.speakNatively(this.nativeSpeech, _text);
+    this.say(_text, _end ? undefined : 'weight');
+  }
+
+  /**
+   * Says the brew time like the weight, but heard in full before the next
+   * weight: a time that is due while the last one is still said replaces it.
+   */
+  public speakTime(_text: string) {
+    if (!this.available) {
+      return;
     }
+    if (this.screenReaderState.on()) {
+      this.speakThroughScreenReader(
+        _text,
+        Math.max(SCREEN_READER_HOLD_MS, screenReaderSpeakingMs(_text)),
+        'time',
+      );
+      return;
+    }
+    this.say(_text, 'time');
   }
 
   /** Says each text in full, in order, before the next changing value. */
@@ -143,14 +160,22 @@ export class TextToSpeechService {
       );
       return;
     }
+    _texts.forEach((text) => this.say(text));
+  }
+
+  /** Says `_text` in its own voice, after what is still said and waiting. */
+  private say(_text: string, _key?: string) {
     this.ownVoiceMaySpeak = true;
     if (!this.nativeSpeech) {
-      _texts.forEach((text) => this.speakInBrowser(text));
-      return;
-    }
-    this.nextInFull.push(..._texts);
-    if (!this.nativeBusy) {
-      void this.speakNatively(this.nativeSpeech, this.nextInFull.shift());
+      this.lastSpoken = _text;
+      this.speakInBrowser(_text);
+    } else if (this.nativeBusy) {
+      this.waiting = enqueueAnnouncement(this.waiting, {
+        text: _text,
+        key: _key,
+      });
+    } else {
+      void this.speakNatively(this.nativeSpeech, _text);
     }
   }
 
@@ -161,8 +186,7 @@ export class TextToSpeechService {
     this.ended++;
     this.ownVoiceMaySpeak = false;
     this.nativeBusy = false;
-    this.nextInFull = [];
-    this.nextLatest = undefined;
+    this.waiting = [];
     this.lastSpoken = undefined;
     try {
       if (this.nativeSpeech) {
@@ -184,7 +208,11 @@ export class TextToSpeechService {
    * instead, assertive so the latest value wins. A failed announcement is
    * skipped: the next follows within a second.
    */
-  private speakThroughScreenReader(_text: string, _holdMs: number) {
+  private speakThroughScreenReader(
+    _text: string,
+    _holdMs: number,
+    _key?: string,
+  ) {
     if (this.ownVoiceMaySpeak) {
       this.end();
     }
@@ -195,14 +223,13 @@ export class TextToSpeechService {
     } else {
       // The announcer drops the same text within REPEAT_WINDOW_MS: an unchanged
       // weight is heard every two seconds instead of interrupting TalkBack.
-      this.announcer.announce(_text, 'assertive');
+      this.announcer.announce(_text, 'assertive', _key);
     }
   }
 
   /**
-   * Says one value and then the next one waiting: first what is to be said in
-   * full, then the newest changing value. The plugin resolves when the value
-   * has been said.
+   * Says one value and then the next one waiting. The plugin resolves when
+   * the value has been said.
    */
   private async speakNatively(speech: NativeSpeech, _text: string) {
     const ended = this.ended;
@@ -246,13 +273,13 @@ export class TextToSpeechService {
       return;
     }
     this.nativeBusy = false;
-    let next = this.nextInFull.shift();
-    if (next === undefined) {
-      next = this.nextLatest !== this.lastSpoken ? this.nextLatest : undefined;
-      this.nextLatest = undefined;
+    let next = this.waiting.shift();
+    // A weight that came back to the value just said is not repeated.
+    while (next?.key === 'weight' && next.text === this.lastSpoken) {
+      next = this.waiting.shift();
     }
     if (next !== undefined) {
-      void this.speakNatively(speech, next);
+      void this.speakNatively(speech, next.text);
     }
   }
 
