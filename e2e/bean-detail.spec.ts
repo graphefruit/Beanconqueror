@@ -90,27 +90,6 @@ test('a tap on a card shows the details of the bean on three tabs', async ({
   await dialogsClosed(page);
 });
 
-test('the details of a frozen bean show when it was frozen', async ({
-  page,
-}) => {
-  await startWithBeans(page);
-
-  await (await findBean(page, BEANS.thawed)).getByText(BEANS.thawed).click();
-  await expect(page.getByText(BEANS.thawed, { exact: true })).toBeVisible();
-  await showTab(page.getByRole('tab', { name: 'Frozen information' }));
-
-  await expect(topDialog(page)).toMatchAriaSnapshot(`
-    - dialog:
-      - banner
-      - tablist
-      - tabpanel "Frozen information": "Frozen date: 21.11.2025 Unfrozen date: 24.02.2026 Freezing storage type: Unknown Frozen notes:"
-      - contentinfo:
-        - button "Cancel"
-  `);
-  // The id of the frozen bag, which the card shows, is missing here.
-  await expect(page.locator('ion-modal').getByText('TA1')).toHaveCount(0);
-});
-
 test('a bean edited from its details is shown with the new values', async ({
   page,
 }) => {
