@@ -1667,7 +1667,9 @@ export class SettingsPage {
         return;
       }
       await this.uiAlert.showLoadingSpinner();
-      let stored = false;
+      // A failure after the data was stored must not say that no data was
+      // changed, or the file may be imported again.
+      let phase: 'storing' | 'reloading' | 'reported' = 'storing';
       try {
         const _data = await this.uiExportImportHelper.importBackup(
           parsedContent,
@@ -1675,9 +1677,7 @@ export class SettingsPage {
           _fileName,
         );
         if (_data.BACKUP === false) {
-          // A later failure must not say that no data was changed, or the
-          // file may be imported again.
-          stored = true;
+          phase = 'reloading';
           await this.__reinitializeStorages();
           // Show loadingspinner again, because the reintializestorages hides it.
           await this.uiAlert.showLoadingSpinner();
@@ -1740,6 +1740,7 @@ export class SettingsPage {
           await this.uiAlert.showMessage(
             this.translate.instant('IMPORT_SUCCESSFULLY'),
           );
+          phase = 'reported';
           await this.__reportFilesNotCopied();
           if (this.settings.matomo_analytics === undefined) {
             await this.showAnalyticsInformation();
@@ -1756,8 +1757,12 @@ export class SettingsPage {
       } catch (error) {
         this.uiLog.error('Error during import', error);
         await this.uiAlert.hideLoadingSpinner();
+        if (phase === 'reported') {
+          // The data is loaded and the success was shown already.
+          return;
+        }
         let message = 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED';
-        if (stored) {
+        if (phase === 'reloading') {
           message = 'IMPORT_STORED_RELOAD_FAILED';
         } else if (error instanceof PreImportBackupError) {
           message = 'PRE_IMPORT_BACKUP_FAILED';
