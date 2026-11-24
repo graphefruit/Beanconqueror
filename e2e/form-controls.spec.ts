@@ -114,6 +114,7 @@ test('the add-bean form labels its fields and its rating slider follows the arro
   await page.keyboard.press('ArrowRight');
   await page.keyboard.press('ArrowRight');
   await expect(rating).toHaveAttribute('aria-valuenow', '2');
+  await expect(rating).toHaveAttribute('aria-valuetext', '2 of 5');
   await page.keyboard.press('ArrowLeft');
   await expect(rating).toHaveAttribute('aria-valuenow', '1');
 });

@@ -220,7 +220,7 @@
               <ion-row style="width:100%">
                 <ion-col class="ion-no-padding" size="10">
                   <ion-item class="ion-no-margin-important" lines='none'>
-                    <ion-label id='brew_quantity' position="stacked">
+                    <ion-label id='brew_quantity' position="stacked" aria-hidden="true">
                       <div class="field-label">{{"BREW_DATA_BREW_QUANTITY" | translate}}</div>
                       <p style="top: -7px; position: relative;">({{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,data.brew_beverage_quantity,data.brew_quantity,data.grind_weight]}} , {{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_GRAMS_PER_LITER,data.brew_beverage_quantity,data.brew_quantity,data.grind_weight]}})</p>
                     </ion-label>
@@ -279,13 +279,14 @@
             </ion-item>
           }
           @case ('rating') {
-            <ion-item lines="none">
+            <!-- The slider below says the name and the value. -->
+            <ion-item lines="none" aria-hidden="true">
               <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
                 style="vertical-align: top;">{{data.rating| toFixed: 2}}</ion-badge>
               </ion-label>
             </ion-item>
             <ion-item style="" lines="inset">
-              <ion-range [rangeLabel]="'BREW_DATA_RATING' | translate" [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="-1" snaps="true"
+              <ion-range [rangeLabel]="'BREW_DATA_RATING' | translate" rangeOfMax [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;padding-bottom:0px;' (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="-1" snaps="true"
                          [step]="settings.brew_rating_steps" >
                 @if(maxBrewRating=== 5 && settings.brew_rating_steps === 1) {
                   <div slot="end">
@@ -298,7 +299,7 @@
           }
           @case ('note') {
             <ion-item lines="inset">
-              <ion-label id='note' position="stacked">{{"BREW_DATA_NOTES" | translate }}</ion-label>
+              <ion-label id='note' position="stacked" aria-hidden="true">{{"BREW_DATA_NOTES" | translate }}</ion-label>
               <ion-textarea style='margin-top:20px;' [autoGrow]="true" aria-labelledby='note' [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true" autocorrect="true"
                             placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_NOTES' | translate}}" rows="5" spellcheck="true" />
             </ion-item>
@@ -309,7 +310,7 @@
                 <ion-row style="width:100%">
                   <ion-col class="ion-no-padding" size="10">
                     <ion-item class="ion-no-margin-important" lines='none'>
-                      <ion-label id='brew_beverage_quantity' position="stacked">
+                      <ion-label id='brew_beverage_quantity' position="stacked" aria-hidden="true">
                         <div class="field-label">{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate}}</div>
                         @if(choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO || (data.brew_quantity <=0 && data.brew_beverage_quantity >0)) {
                           <p style="top: -7px; position: relative;">

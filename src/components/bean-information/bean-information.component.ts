@@ -54,6 +54,7 @@ import { Settings } from '../../classes/settings/settings';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import QR_TRACKING from '../../data/tracking/qrTracking';
 import { LongPressDirective } from '../../directive/long-press.directive';
+import { StarsNameDirective } from '../../directive/stars-name.directive';
 import { BEAN_ACTION } from '../../enums/beans/beanAction';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
 import { ROASTS_ENUM } from '../../enums/beans/roasts';
@@ -115,6 +116,7 @@ export type BeanActionEvent = [BEAN_ACTION, Bean];
   imports: [
     LongPressDirective,
     NgxStarsModule,
+    StarsNameDirective,
     AsyncImageComponent,
     DecimalPipe,
     TranslatePipe,

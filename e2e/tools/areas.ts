@@ -22,6 +22,7 @@ export type Area =
 export const SMOKE_SPEC = 'e2e/smoke.spec.ts';
 
 export const SPEC_AREAS: Readonly<Record<string, readonly Area[]>> = {
+  'e2e/a11y-bean-filter.spec.ts': ['@a11y', '@bean'],
   'e2e/a11y-brew-form.spec.ts': ['@a11y', '@brew'],
   'e2e/a11y-forms.spec.ts': ['@a11y', '@bean', '@brew'],
   'e2e/a11y-headings.spec.ts': ['@a11y'],

@@ -31,6 +31,7 @@ import QRCode from 'qrcode';
 import { Bean } from '../../../classes/bean/bean';
 import { Settings } from '../../../classes/settings/settings';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import { SelectLabelDirective } from '../../../directive/select-label.directive';
 import { BEAN_CODE_ACTION } from '../../../enums/beans/beanCodeAction';
 import { environment } from '../../../environments/environment';
 import { NfcService } from '../../../services/nfcService/nfc-service.service';
@@ -54,6 +55,7 @@ import { UILog } from '../../../services/uiLog';
     IonCard,
     IonItem,
     IonSelect,
+    SelectLabelDirective,
     IonSelectOption,
     IonLabel,
     IonButton,

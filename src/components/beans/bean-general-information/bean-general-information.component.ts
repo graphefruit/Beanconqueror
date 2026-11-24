@@ -38,6 +38,8 @@ import { PickerFieldDirective } from '../../../directive/picker-field.directive'
 import { PreventCharacterDirective } from '../../../directive/prevent-character.directive';
 import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { RemoveEmptyNumberDirective } from '../../../directive/remove-empty-number.directive';
+import { SelectLabelDirective } from '../../../directive/select-label.directive';
+import { StarsNameDirective } from '../../../directive/stars-name.directive';
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
@@ -64,6 +66,7 @@ declare var cordova;
     FormsModule,
     TransformDateDirective,
     NgxStarsModule,
+    StarsNameDirective,
     PreventCharacterDirective,
     RemoveEmptyNumberDirective,
     PhotoAddComponent,
@@ -78,6 +81,7 @@ declare var cordova;
     PickerFieldDirective,
     IonLabel,
     IonSelect,
+    SelectLabelDirective,
     IonSelectOption,
     IonBadge,
     IonRange,

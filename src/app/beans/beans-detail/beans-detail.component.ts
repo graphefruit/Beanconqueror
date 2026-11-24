@@ -42,6 +42,7 @@ import { HeaderComponent } from '../../../components/header/header.component';
 import { PhotoViewComponent } from '../../../components/photo-view/photo-view.component';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { RangeNameDirective } from '../../../directive/range-name.directive';
+import { StarsNameDirective } from '../../../directive/stars-name.directive';
 import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
@@ -65,6 +66,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     TabPanelDirective,
     FormsModule,
     NgxStarsModule,
+    StarsNameDirective,
     PhotoViewComponent,
     BeanDetailSortInformationComponent,
     TranslatePipe,

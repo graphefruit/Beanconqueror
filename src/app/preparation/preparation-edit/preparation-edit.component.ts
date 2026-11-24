@@ -40,6 +40,7 @@ import { HeaderComponent } from '../../../components/header/header.component';
 import { PhotoAddComponent } from '../../../components/photo-add/photo-add.component';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { ChipButtonDirective } from '../../../directive/chip-button.directive';
+import { SelectLabelDirective } from '../../../directive/select-label.directive';
 import { TooltipDirective } from '../../../directive/tooltip.directive';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
@@ -76,6 +77,7 @@ import { UIToast } from '../../../services/uiToast';
     IonCard,
     IonItem,
     IonSelect,
+    SelectLabelDirective,
     IonSelectOption,
     IonInput,
     IonLabel,

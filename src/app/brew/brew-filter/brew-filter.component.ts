@@ -38,6 +38,7 @@ import { MillOverlayDirective } from '../../../directive/mill-overlay.directive'
 import { PreparationOverlayDirective } from '../../../directive/preparation-overlay.directive';
 import { PreparationToolOverlayDirective } from '../../../directive/preparation-tool-overlay.directive';
 import { RangeNameDirective } from '../../../directive/range-name.directive';
+import { SelectLabelDirective } from '../../../directive/select-label.directive';
 import { WaterOverlayDirective } from '../../../directive/water-overlay.directive';
 import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
@@ -69,6 +70,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonContent,
     IonItem,
     IonSelect,
+    SelectLabelDirective,
     IonToggle,
     IonLabel,
     IonBadge,

@@ -68,7 +68,7 @@ test('a new brew shows its entered values in the list and in the details', async
     /15\.5gr \/ 250gr\s*\(1 \/ 16\.13\)\s*Grind Setting\s*14 clicks\s*Brew Temperature\s*94/,
   );
   await expect(
-    page.getByRole('img', { name: 'Rating: 3 out of 5 stars' }),
+    page.getByRole('img', { name: 'Rating: 3 of 5 stars' }),
   ).toBeVisible();
 
   await brewAction(page, 'Details');
