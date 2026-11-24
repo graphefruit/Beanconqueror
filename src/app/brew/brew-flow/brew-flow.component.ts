@@ -464,7 +464,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public __tareScale() {
-    this.brewComponent.timer.__tareScale();
+    void this.brewComponent.tareScale(undefined);
   }
 
   public setActualScaleInformation(_val: any) {

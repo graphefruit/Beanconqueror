@@ -425,7 +425,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           }
           if (connectTriggered) {
             //Always initialize new as long as the timer is not running
-            if (this.brewComponent.timer.isTimerRunning() === false) {
+            if (this.brewComponent.timer?.isTimerRunning() !== true) {
               this.initializeFlowChart();
             }
           }
@@ -746,7 +746,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
 
     if (
-      this.brewComponent?.timer?.isTimerRunning() === false ||
+      this.brewComponent?.timer?.isTimerRunning() !== true ||
       this.data.brew_time === 0 ||
       this.isDetail === true
     ) {
@@ -1108,12 +1108,12 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
             switch (event.command) {
               case SCALE_TIMER_COMMAND.START:
                 if (this.brewComponent?.timer?.isTimerRunning() === false) {
-                  this.brewComponent.timer.startTimer();
+                  this.brewComponent.timer?.startTimer();
                   this.checkChanges();
                 }
                 break;
               case SCALE_TIMER_COMMAND.STOP:
-                this.brewComponent.timer.pauseTimer();
+                this.brewComponent.timer?.pauseTimer();
                 this.checkChanges();
                 break;
               case SCALE_TIMER_COMMAND.RESET:
@@ -1129,7 +1129,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
                   )
                   .then((choice) => {
                     if (choice === 'YES') {
-                      this.brewComponent.timer.reset();
+                      this.brewComponent.timer?.reset();
                       this.checkChanges();
                     }
                   });
@@ -1137,10 +1137,10 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
                 break;
             }
           } else {
-            if (this.brewComponent.timer.isTimerRunning() === true) {
-              this.brewComponent.timer.pauseTimer();
+            if (this.brewComponent.timer?.isTimerRunning() === true) {
+              this.brewComponent.timer?.pauseTimer();
             } else {
-              this.brewComponent.timer.startTimer();
+              this.brewComponent.timer?.startTimer();
             }
           }
           this.checkChanges();
@@ -1402,11 +1402,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
             if (this.brewComponent.maximizeFlowGraphIsShown === true) {
               newRenderingInstance = Math.floor(
-                this.brewComponent.timer.getSeconds() / fullScreenTime,
+                this.brewComponent.getTime() / fullScreenTime,
               );
             } else {
               newRenderingInstance = Math.floor(
-                this.brewComponent.timer.getSeconds() / normalScreenTime,
+                this.brewComponent.getTime() / normalScreenTime,
               );
             }
 
@@ -1428,15 +1428,12 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
               const delay = moment(new Date())
                 .startOf('day')
-                .add(
-                  'seconds',
-                  this.brewComponent.timer.getSeconds() - subtractTime,
-                )
+                .add('seconds', this.brewComponent.getTime() - subtractTime)
                 .toDate()
                 .getTime();
               const delayedTime: number = moment(new Date())
                 .startOf('day')
-                .add('seconds', this.brewComponent.timer.getSeconds() + addTime)
+                .add('seconds', this.brewComponent.getTime() + addTime)
                 .toDate()
                 .getTime();
               this.lastChartLayout.xaxis.range = [delay, delayedTime];
@@ -1803,7 +1800,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     ) {
       //Let this timeout stand, we don't want to have an await
       setTimeout(() => {
-        this.brewComponent.timer.reset();
+        this.brewComponent.timer?.reset();
       }, 1000);
     }
 
@@ -1960,12 +1957,12 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               this.data.coffee_first_drip_time_milliseconds = 0;
               this.data.coffee_blooming_time = 0;
               this.data.coffee_blooming_time_milliseconds = 0;
-              this.brewComponent.timer.initTimer(false);
+              this.brewComponent.timer?.initTimer(false);
               if (this.baristamode === true) {
                 this.timerStarted('sanremo_barista_mode');
               }
 
-              this.brewComponent.timer.startTimer(false, false);
+              this.brewComponent.timer?.startTimer(false, false);
 
               this.lastChartRenderingInstance = -1;
               this.updateChart();
@@ -1975,7 +1972,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               const smartScaleConnected: boolean = this.smartScaleConnected();
               if (this.baristamode && smartScaleConnected === false) {
                 //If the barista mode is running and a smartscale is not connected, the timer would run endless, so we stop if there is no smart scale connected at all.
-                this.brewComponent.timer.pauseTimer('sanremo_you');
+                this.brewComponent.timer?.pauseTimer('sanremo_you');
                 this.stopFetchingDataFromSanremoYOU();
                 this.updateChart();
                 this.uiToast.showInfoToast(
@@ -1983,7 +1980,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
                 );
                 return;
               } else if (this.baristamode) {
-                if (this.brewComponent.timer.isTimerRunning() === true) {
+                if (this.brewComponent.timer?.isTimerRunning() === true) {
                   if (
                     this.traces.weightTrace.y.length > 40 &&
                     ((this.traces.weightTrace.y[
@@ -1997,13 +1994,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
                       ] <= -2)
                   ) {
                     //Something happend, we tared... so we stop the timer
-                    this.brewComponent.timer.pauseTimer('sanremo_you');
+                    this.brewComponent.timer?.pauseTimer('sanremo_you');
                     this.stopFetchingDataFromSanremoYOU();
                     this.updateChart();
                     return;
                   } else if (this.traces.weightTrace.y.length == 0) {
                     //Something happend, it looked like  that we already paused, so we stop the timer again
-                    this.brewComponent.timer.pauseTimer('sanremo_you');
+                    this.brewComponent.timer?.pauseTimer('sanremo_you');
                     this.stopFetchingDataFromSanremoYOU();
                     this.updateChart();
                     return;
@@ -2110,8 +2107,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               this.data.coffee_blooming_time = 0;
               this.data.coffee_blooming_time_milliseconds = 0;
 
-              this.brewComponent.timer.initTimer(false);
-              this.brewComponent.timer.startTimer(false, false);
+              this.brewComponent.timer?.initTimer(false);
+              this.brewComponent.timer?.startTimer(false, false);
               this.lastChartRenderingInstance = -1;
               this.updateChart();
             } else if (
@@ -2120,7 +2117,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
             ) {
               hasShotStarted = false;
 
-              this.brewComponent.timer.pauseTimer('meticulous');
+              this.brewComponent.timer?.pauseTimer('meticulous');
               this.stopFetchingDataFromMeticulous();
               this.updateChart();
               this.uiToast.showInfoToast(
@@ -2342,7 +2339,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   public async timerStarted(_event) {
-    if (this.brewComponent.timer.isTimerRunning()) {
+    if (this.brewComponent.timer?.isTimerRunning()) {
       //Maybe we got temperature threshold, bar threshold, and weight threshold, it could be three triggers. so we ignore that one
       return;
     }
@@ -2692,14 +2689,14 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
 
       await this.timerReset(undefined);
-      await this.brewComponent.timer.resetWithoutEmit(false);
+      await this.brewComponent.timer?.resetWithoutEmit(false);
 
       if (scale.getScaleType() === ScaleType.VARIA_AKU) {
         //#878 When we start listening to the varia scale, somehow the tare is to slow/sensetive, and the timer directly starts when starting to listening.
         await sleep(this.settings.bluetooth_command_delay + 500);
       }
 
-      this.brewComponent.timer.checkChanges();
+      this.brewComponent.timer?.checkChanges();
       this.checkChanges();
 
       await this.uiAlert.hideLoadingSpinner();
@@ -2708,7 +2705,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.scaleListeningSubscription = scale.flowChange.subscribe((_val) => {
         const weight: number = this.uiHelper.toFixedIfNecessary(_val.actual, 1);
 
-        if (this.brewComponent.timer.isTimerRunning()) {
+        if (this.brewComponent.timer?.isTimerRunning()) {
           // Ignore.
         } else {
           if (
@@ -2723,7 +2720,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               this.deattachToScaleListening();
               setTimeout(() => {
                 this.changeDetectorRef.markForCheck();
-                this.brewComponent.timer.checkChanges();
+                this.brewComponent.timer?.checkChanges();
                 this.checkChanges();
               });
             });
@@ -2837,7 +2834,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         if (
           didWeReceiveAnyFlow === false &&
-          this.brewComponent.timer.isTimerRunning() === false
+          this.brewComponent.timer?.isTimerRunning() !== true
         ) {
           const isFutula = scale?.getScaleType?.() === ScaleType.FUTULA;
 
@@ -2914,7 +2911,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           if (actual > 15) {
             _val.actual = 0;
           }
-          if (this.brewComponent.timer.isTimerRunning()) {
+          if (this.brewComponent.timer?.isTimerRunning()) {
             this.__setPressureFlow(_val);
           } else {
             if (
@@ -2944,7 +2941,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
                 setTimeout(() => {
                   this.changeDetectorRef.markForCheck();
-                  this.brewComponent.timer.checkChanges();
+                  this.brewComponent.timer?.checkChanges();
                   this.checkChanges();
                 });
               });
@@ -2964,7 +2961,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
       this.temperatureDeviceSubscription =
         temperatureDevice.temperatureChange.subscribe((_val) => {
-          if (this.brewComponent.timer.isTimerRunning()) {
+          if (this.brewComponent.timer?.isTimerRunning()) {
             this.__setTemperatureFlow(_val);
           } else {
             if (
@@ -2989,7 +2986,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
                 setTimeout(() => {
                   this.changeDetectorRef.markForCheck();
-                  this.brewComponent.timer.checkChanges();
+                  this.brewComponent.timer?.checkChanges();
                   this.checkChanges();
                 });
               });
@@ -3033,7 +3030,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       1,
     );
 
-    if (this.baristamode && this.brewComponent.timer.getSeconds() <= 6) {
+    if (this.baristamode && this.brewComponent.getTime() <= 6) {
       /**Maybe the barista put on a new cup, which means the weight was before -XXX grams, and it may jump to like 5 grams then
        * this means we would regarding the rising factor never work correctly, so we ignore the first 6 seconds in barista mode and then we start**/
 
@@ -3167,7 +3164,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     _brewByWeightActive: boolean,
     _scale: BluetoothScale,
   ) {
-    if (this.baristamode && this.brewComponent.timer.getSeconds() <= 6) {
+    if (this.baristamode && this.brewComponent.getTime() <= 6) {
       // We don't want to calculcate the brew by weight in the first 6 seconds, because the scale can still reset
       return false;
     }
@@ -3293,7 +3290,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.settings.bluetooth_scale_espresso_stop_on_no_weight_change === false
     ) {
       this.stopFetchingAndSettingDataFromXenia();
-      this.brewComponent.timer.pauseTimer('xenia');
+      this.brewComponent.timer?.pauseTimer('xenia');
     } else {
       // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
     }
@@ -3314,7 +3311,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.settings.bluetooth_scale_espresso_stop_on_no_weight_change === false
     ) {
       this.stopFetchingDataFromSanremoYOU();
-      this.brewComponent.timer.pauseTimer('sanremo_you');
+      this.brewComponent.timer?.pauseTimer('sanremo_you');
     } else {
       // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
     }
@@ -3332,7 +3329,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.settings.bluetooth_scale_espresso_stop_on_no_weight_change === false
     ) {
       this.stopFetchingDataFromMove2();
-      this.brewComponent.timer.pauseTimer('shot_ended');
+      this.brewComponent.timer?.pauseTimer('shot_ended');
     } else {
       // We wait for the normal "hasEspressoShotEnded" to stop the graph and fetching
     }
@@ -3412,7 +3409,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         } else {
           _val = _valChange;
         }
-        if (this.brewComponent.timer.isTimerRunning() && prepDeviceConnected) {
+        if (this.brewComponent.timer?.isTimerRunning() && prepDeviceConnected) {
           if (
             preparationDeviceType === PreparationDeviceType.XENIA &&
             this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber >
@@ -3533,7 +3530,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           this.webhookFired === false &&
           this.webhookTargetWeight > 0 &&
           this.settings.brew_by_weight_webhook?.url?.trim() &&
-          this.brewComponent.timer.isTimerRunning()
+          this.brewComponent.timer?.isTimerRunning()
         ) {
           const cfg = this.settings.brew_by_weight_webhook;
           let webhookThresholdHit: boolean;
@@ -3769,9 +3766,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
       /** We just support the end by pressure if no smart scale is connected, because the smart scale will be the master **/
       if (this.hasEspressoShotEndedWithPressure()) {
-        this.brewComponent.timer.pauseTimer('shot_ended');
+        this.brewComponent.timer?.pauseTimer('shot_ended');
         this.changeDetectorRef.markForCheck();
-        this.brewComponent.timer.checkChanges();
+        this.brewComponent.timer?.checkChanges();
         this.checkChanges();
       }
     }
@@ -4238,7 +4235,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     ) {
       // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
       if (
-        this.brewComponent.timer.showDripTimer === true &&
+        this.brewComponent.timer?.showDripTimer === true &&
         this.data.coffee_first_drip_time <= 0
       ) {
         // First drip is incoming
@@ -4310,9 +4307,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       if (!isMeticulous) {
         // We have found a written weight which is above 5 grams at least
         this.__setScaleWeight(weight, false, false);
-        this.brewComponent.timer.pauseTimer('shot_ended');
+        this.brewComponent.timer?.pauseTimer('shot_ended');
         this.changeDetectorRef.markForCheck();
-        this.brewComponent.timer.checkChanges();
+        this.brewComponent.timer?.checkChanges();
         this.checkChanges();
       }
     }
