@@ -24,6 +24,7 @@ import { DuplicateEntriesMigrationService } from './changeTracking/duplicate-ent
 import { UIAlert } from './uiAlert';
 import { UIBeanStorage } from './uiBeanStorage';
 import { UIBrewStorage } from './uiBrewStorage';
+import { UIExportImportHelper } from './uiExportImportHelper';
 import { UIFileHelper } from './uiFileHelper';
 import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
@@ -32,6 +33,14 @@ import { UIPreparationStorage } from './uiPreparationStorage';
 import { UISettingsStorage } from './uiSettingsStorage';
 import { UIStorage } from './uiStorage';
 import { UiVersionStorage } from './uiVersionStorage';
+
+/** The data updates that the current data is backed up for, once, before the first of them runs. */
+const UPDATES_AFTER_BACKUP = [
+  'UPDATE_16',
+  'UPDATE_17',
+  'UPDATE_18',
+  'UPDATE_19',
+];
 
 @Service()
 export class UIUpdate {
@@ -56,18 +65,33 @@ export class UIUpdate {
     DuplicateEntriesMigrationService,
   );
   private readonly brewReferences = inject(BrewReferencesService);
+  private readonly uiExportImportHelper = inject(UIExportImportHelper);
 
   /**
    * `_afterImport`: the stored data was just replaced by a backup chosen
    * in the settings. Its VERSION entry tells which updates the installation
    * it comes from had run, but UPDATE_18 runs on each of these backups. A
    * backup restored at the start goes by its VERSION entry alone.
+   *
+   * Before the first open update of UPDATES_AFTER_BACKUP the current data is
+   * written into a backup file, once. When it cannot be written, none of
+   * them runs and the next start tries again. Not for an empty database,
+   * and not for UPDATE_18 opened again by an import: the imported file holds
+   * that data, and the data before the import was backed up already.
    */
   public async checkUpdate(_afterImport: boolean = false) {
     this.uiLog.info('Check updates');
     const hasData: boolean = (await this.uiStorage.getDataState()) === 'data';
 
     try {
+      let backupPending =
+        hasData &&
+        UPDATES_AFTER_BACKUP.some(
+          (_update) =>
+            !this.uiVersionStorage
+              .getVersion()
+              .checkIfDataVersionWasUpdated(_update),
+        );
       if (_afterImport) {
         await this.__reopenDataVersion('UPDATE_18');
       }
@@ -105,6 +129,16 @@ export class UIUpdate {
       }
 
       for (const updateVersion of updateVersions) {
+        if (
+          backupPending &&
+          UPDATES_AFTER_BACKUP.includes(updateVersion) &&
+          !version.checkIfDataVersionWasUpdated(updateVersion)
+        ) {
+          backupPending = false;
+          if (!(await this.uiExportImportHelper.writeBackupBeforeMigration())) {
+            break;
+          }
+        }
         // An update that is not done ends the check: the updates after it
         // build on it and run in order at a later start.
         if (

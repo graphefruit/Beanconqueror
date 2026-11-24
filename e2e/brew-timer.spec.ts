@@ -8,9 +8,11 @@ import {
   brewAction,
   brewField,
   openAddBrew,
+  openAddBrewWithoutTime,
   openBrewParameterPage,
   saveBrew,
   setParameter,
+  timeParameterHint,
   topDialog,
 } from './support/brew-form';
 import { completeFirstRunWithBrew } from './support/first-brew';
@@ -182,16 +184,18 @@ test('an espresso method marks the first drip and shows the brew time after it',
 });
 
 test.describe('without the brew time parameter', () => {
-  test('the scale tiles and the maximized graph render without the timer', async ({
-    page,
-  }) => {
+  test.beforeEach(async ({ page }) => {
     await openBrewParameterPage(page, 'Manage parameters');
     await setParameter(page, 'Time', false);
     await backToBrews(page);
+  });
 
-    // The web build reports the scale as connected once the form has settled,
-    // which shows its tiles and offers the maximized graph.
-    await openBrewFormAndSettle(page);
+  test('the scale tiles and the maximized graph render without the timer', async ({
+    page,
+  }) => {
+    // The web build reports the scale as connected, which shows its tiles,
+    // offers the maximized graph and asks to show the brew time.
+    await openAddBrewWithoutTime(page, 'Not now');
     await expect(brewField(page, 'Time')).toHaveCount(0);
     const maximize = page.getByRole('button', { name: 'Maximize flow graph' });
     await expect(maximize).toBeVisible();
@@ -205,5 +209,27 @@ test.describe('without the brew time parameter', () => {
     );
     await close.click();
     await expect(maximize).toBeVisible();
+    // Asked once per brew.
+    await expect(timeParameterHint(page)).toHaveCount(0);
+  });
+
+  test('a connected scale offers to show the brew time', async ({ page }) => {
+    await page
+      .getByRole('button', { name: 'Add brew' })
+      .filter({ visible: true })
+      .click();
+    const hint = timeParameterHint(page);
+    await expect(hint).toBeVisible();
+    // Screen readers read the title and the message as the dialog's name.
+    await expect(hint).toHaveAccessibleName(
+      /^Show the brew time\? A device is connected, but the brew parameter "Time" is hidden\./,
+    );
+
+    await hint.getByRole('button', { name: 'Show time' }).click();
+    await expect(hint).toHaveCount(0);
+    await expect(timeField(page)).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Start timer' }),
+    ).toBeVisible();
   });
 });

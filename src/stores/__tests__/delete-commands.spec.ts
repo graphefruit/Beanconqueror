@@ -211,6 +211,25 @@ describe('DeleteCommands', () => {
         expect(database.set).not.toHaveBeenCalled();
       });
 
+      it('counts the brews it would take along, as many as it deletes', async () => {
+        const own = brewsOf('doomed', 37);
+        await startWith(
+          [stored('kept'), stored('doomed'), stored('lonely')],
+          [
+            brew('other-1', 'kept'),
+            ...own,
+            stored('other-2', { other: 'doomed' }),
+          ],
+        );
+
+        expect(commands.brewCount(name, 'doomed')).toBe(37);
+        expect(commands.brewCount(name, 'lonely')).toBe(0);
+        expect(commands.brewCount(name, 'unknown')).toBe(0);
+        expect(await run('doomed')).toBe('deleted');
+        expect(database.journal().length).toBe(38);
+        expect(commands.brewCount(name, 'doomed')).toBe(0);
+      });
+
       it('saves only its own collection when it has no brews', async () => {
         await startWith([stored('doomed')], [brew('other', 'kept')]);
 
@@ -541,6 +560,14 @@ describe('DeleteCommands', () => {
         jasmine.objectContaining({ collection: 'BEANS', rev: 3 }),
         jasmine.objectContaining({ collection: 'GREEN_BEANS', rev: 4 }),
       ]);
+    });
+
+    it('counts the brews of the beans roasted from it', async () => {
+      await start(seed());
+
+      expect(commands.brewCount('greenBean', 'doomed')).toBe(brews.length);
+      expect(commands.brewCount('greenBean', 'kept')).toBe(1);
+      expect(commands.brewCount('greenBean', 'unknown')).toBe(0);
     });
 
     it('saves only the green beans when nothing was roasted from it', async () => {

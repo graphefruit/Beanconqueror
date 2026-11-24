@@ -52,6 +52,7 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIToast } from '../../services/uiToast';
 import { BrewUsageStore } from '../../stores/brews/brew-usage.store';
 import { DeleteCommands } from '../../stores/delete-commands';
+import { deleteQuestion } from '../../stores/delete-rules';
 import {
   ActionsPopoverComponent,
   popoverAction,
@@ -422,10 +423,15 @@ export class PreparationInformationCardComponent {
   }
 
   public async deletePreparation(): Promise<void> {
+    const brews = this.deleteCommands.brewCount(
+      'preparation',
+      this.preparation.config.uuid,
+    );
     const choice = await this.uiAlert.showConfirm(
-      'DELETE_PREPARATION_METHOD_QUESTION',
+      deleteQuestion('DELETE_PREPARATION_METHOD_QUESTION', brews),
       'SURE_QUESTION',
       true,
+      { count: brews },
     );
     if (choice !== 'YES') {
       return;
