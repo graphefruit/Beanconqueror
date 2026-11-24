@@ -5,43 +5,30 @@ import {
   inject,
 } from '@angular/core';
 
+import { IonButton } from '@ionic/angular';
+
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
  * Closes the sheet it sits in, for sheets that have no cancel button of their
- * own. Sighted users swipe such a sheet down or tap beside it; screen readers
- * can do neither, and the grip either is hidden from them or only changes the
- * size. It goes last in the sheet and stays invisible until something
- * focuses it.
+ * own. Sighted users can swipe such a sheet down or tap beside it; screen
+ * readers can do neither, and the grip either is hidden from them or only
+ * changes the size. It goes last in the sheet.
  */
 @Component({
   selector: 'app-sheet-close-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [IonButton, TranslatePipe],
   template: `
-    <button type="button" (click)="close()">
+    <ion-button
+      class="ion-margin-horizontal"
+      color="dark"
+      expand="block"
+      fill="clear"
+      (click)="close()"
+    >
       {{ 'A11Y.CLOSE_DIALOG' | translate }}
-    </button>
-  `,
-  styles: `
-    button:not(:focus) {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      border: 0;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
-    }
-    button:focus {
-      display: block;
-      margin: 8px auto;
-      padding: 8px 16px;
-      color: var(--ion-color-primary);
-      background: none;
-      border: none;
-    }
+    </ion-button>
   `,
 })
 export class SheetCloseButtonComponent {

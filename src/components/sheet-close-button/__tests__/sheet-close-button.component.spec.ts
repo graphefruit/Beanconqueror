@@ -16,7 +16,7 @@ import { SheetCloseButtonComponent } from '../sheet-close-button.component';
 class SheetHostComponent {}
 
 describe('SheetCloseButtonComponent', () => {
-  function render(): { button: HTMLButtonElement; modal: HTMLElement } {
+  function render(): { button: HTMLElement; modal: HTMLElement } {
     TestBed.configureTestingModule({
       imports: [SheetHostComponent, TranslateModule.forRoot()],
     });
@@ -29,7 +29,7 @@ describe('SheetCloseButtonComponent', () => {
     fixture.detectChanges();
     const host = fixture.nativeElement as HTMLElement;
     return {
-      button: host.querySelector('app-sheet-close-button button'),
+      button: host.querySelector('app-sheet-close-button ion-button'),
       modal: host.querySelector('ion-modal'),
     };
   }
@@ -37,7 +37,6 @@ describe('SheetCloseButtonComponent', () => {
   it('is a button named after what it does', () => {
     const { button } = render();
 
-    expect(button.type).toBe('button');
     expect(button.textContent.trim()).toBe('Dialog schließen');
   });
 
@@ -51,11 +50,5 @@ describe('SheetCloseButtonComponent', () => {
     button.click();
 
     expect(dismiss).toHaveBeenCalledOnceWith(undefined, 'cancel');
-  });
-
-  it('takes no space until it has focus', () => {
-    const { button } = render();
-
-    expect(button.getBoundingClientRect().height).toBeLessThanOrEqual(1);
   });
 });

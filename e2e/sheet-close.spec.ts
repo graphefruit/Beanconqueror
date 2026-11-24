@@ -13,7 +13,8 @@ import { seedDatabase } from './support/seed';
 
 /**
  * Screen readers can neither swipe a sheet down nor tap beside it. A sheet
- * without a cancel button of its own ends with a button that closes it.
+ * without a cancel button of its own ends with a button that closes it, for
+ * everybody.
  */
 test('a screen reader can close an actions menu without choosing an action', async ({
   page,
@@ -35,10 +36,8 @@ test('a screen reader can close an actions menu without choosing an action', asy
       .locator('actions-popover ion-content')
       .evaluate((content) => content.lastElementChild?.textContent?.trim()),
   ).toBe('Close dialog');
-  // It shows once it has focus, e.g. from a keyboard.
-  await close.focus();
-  await expect(close).toHaveCSS('position', 'static');
-  await page.keyboard.press('Enter');
+  await expect(close).toBeVisible();
+  await close.click();
 
   await dialogsClosed(page);
   await expect(options).toBeFocused();
@@ -58,8 +57,8 @@ test('a screen reader can close the device menu of the brew form', async ({
   ).toBeVisible();
 
   const close = page.getByRole('button', { name: 'Close dialog' });
-  await close.focus();
-  await page.keyboard.press('Enter');
+  await expect(close).toBeVisible();
+  await close.click();
 
   await expect(
     page.locator('app-settings-popover-bluetooth-actions'),
@@ -102,10 +101,8 @@ test('closing the green bean sort without choosing keeps the sort', async ({
   const sort = page.getByRole('button', { name: 'Sort green beans' });
   await sort.click();
   const close = page.getByRole('button', { name: 'Close dialog' });
-  await expect(close).toHaveCount(1);
-
-  await close.focus();
-  await page.keyboard.press('Enter');
+  await expect(close).toBeVisible();
+  await close.click();
 
   // Closed without data, which the page once read without a check.
   await expect(close).toHaveCount(0);
