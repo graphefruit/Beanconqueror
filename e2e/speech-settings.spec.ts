@@ -4,8 +4,6 @@ import { expect, test } from './fixtures';
 import { BREW_TEST_START, openAddBrew } from './support/brew-form';
 import { completeFirstRunWithBrew } from './support/first-brew';
 import { openFromProfile } from './support/profile';
-import { seedDatabase } from './support/seed';
-import { generateDataSet } from './support/synthetic-data';
 import { mainTabName } from './support/texts';
 
 /**
@@ -81,6 +79,15 @@ test.describe('on Android', () => {
     await expect(startAndEnd(page)).toBeChecked();
     await expect(androidHint(page)).toBeVisible();
 
+    // A timer without milliseconds shows whole seconds: 0.25 s means every second.
+    await brewTimeEvery(page).focus();
+    for (let i = 0; i < 19; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await expect(brewTimeEvery(page)).toHaveAttribute('aria-valuenow', '0.25');
+    await expect(brewTimeEvery(page)).toHaveAttribute('aria-valuetext', '1 s');
+    await expect(page.getByText('1 s', { exact: true })).toBeVisible();
+
     // Whole grams belong to the weight and stay with it, whatever the time does.
     await switchOff(brewTime(page));
     await expect(brewTimeEvery(page)).toBeHidden();
@@ -96,34 +103,6 @@ test.describe('on Android', () => {
     await switchOn(brewTime(page));
     await expect(brewTimeEvery(page)).toBeVisible();
     await expect(androidHint(page)).toBeVisible();
-  });
-
-  test('moves "brew time only" of an older version to the switches', async ({
-    page,
-  }) => {
-    const data = generateDataSet({
-      brews: 1,
-      beans: 1,
-      seed: 7,
-      endDate: new Date('2026-11-01T18:00:00Z'),
-    });
-    Object.assign(data.SETTINGS[0], {
-      text_to_speech_active: true,
-      text_to_speech_timer_only: true,
-      text_to_speech_whole_grams: true,
-    });
-    await seedDatabase(page, data);
-    await page.goto('/');
-    await openFromProfile(page, 'Settings');
-
-    await expect(weight(page)).not.toBeChecked();
-    await expect(wholeGrams(page)).toBeHidden();
-    await expect(brewTime(page)).toBeChecked();
-    await expect(brewTimeEvery(page)).toHaveAttribute('aria-valuetext', '5 s');
-    await expect(startAndEnd(page)).toBeChecked();
-    // Whole grams are kept for when the weight is said again.
-    await switchOn(weight(page));
-    await expect(wholeGrams(page)).toBeChecked();
   });
 });
 

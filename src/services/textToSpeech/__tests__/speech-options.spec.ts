@@ -1,6 +1,6 @@
 import {
+  brewTimeEverySeconds,
   brewTimeToSay,
-  migrateSpeechSettings,
   pluginSpeechPitch,
   pluginSpeechRate,
   speechLanguageTag,
@@ -71,45 +71,6 @@ describe('speech options', () => {
     ).toEqual({ weight: false, time: false, startAndEnd: false });
   });
 
-  describe('settings saved before each brew value had a switch', () => {
-    it('turns off the weight of "brew time only" and drops the old switch', () => {
-      expect(
-        migrateSpeechSettings({
-          text_to_speech_active: true,
-          text_to_speech_timer_only: true,
-          text_to_speech_whole_grams: true,
-          text_to_speech_interval_rate: 750,
-        }),
-      ).toEqual({
-        text_to_speech_active: true,
-        text_to_speech_weight: false,
-        text_to_speech_whole_grams: true,
-        text_to_speech_interval_rate: 750,
-      });
-    });
-
-    it('leaves the weight to its default without "brew time only"', () => {
-      expect(
-        migrateSpeechSettings({
-          text_to_speech_active: true,
-          text_to_speech_timer_only: false,
-        }),
-      ).toEqual({ text_to_speech_active: true });
-      expect(migrateSpeechSettings({ text_to_speech_active: true })).toEqual({
-        text_to_speech_active: true,
-      });
-    });
-
-    it('keeps a weight switch saved already', () => {
-      expect(
-        migrateSpeechSettings({
-          text_to_speech_timer_only: true,
-          text_to_speech_weight: true,
-        }),
-      ).toEqual({ text_to_speech_weight: true });
-    });
-  });
-
   describe('brew time to say', () => {
     /** Feeds the timer's ticks in and returns what is said. */
     function said(
@@ -140,6 +101,19 @@ describe('speech options', () => {
       expect(said(seconds, 5)).toEqual(['5', '10']);
       expect(said(seconds.slice(0, 4), 0.25)).toEqual(['1', '2', '3']);
       expect(said(seconds.slice(0, 4), 0.75)).toEqual(['1', '2', '3']);
+    });
+
+    it('says every whole second the interval rounds up to without milliseconds', () => {
+      const seconds = Array.from({ length: 9 }, (_, i) => i * 1000);
+
+      expect(said(seconds, 1.5)).toEqual(['2', '4', '6', '8']);
+      expect(said(seconds, 2.25)).toEqual(['3', '6']);
+      // The first tick after the start, at second 1, is said.
+      expect(said([0, 1000, 2000], 0.25)).toEqual(['1', '2']);
+      expect(brewTimeEverySeconds(0.25, false)).toBe(1);
+      expect(brewTimeEverySeconds(1.5, false)).toBe(2);
+      expect(brewTimeEverySeconds(5, false)).toBe(5);
+      expect(brewTimeEverySeconds(0.75, true)).toBe(0.75);
     });
 
     it('says the multiple of the interval when the timer shows milliseconds', () => {

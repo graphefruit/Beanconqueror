@@ -41,6 +41,8 @@ jobs:
       # Unit tests with coverage; fails when new code (NEW_CODE in src/karma.conf.js) is below 80 %.
       - run: pnpm test:coverage
         timeout-minutes: 6
+      - run: pnpm test:e2e-tools
+        timeout-minutes: 2
 
   e2e:
     runs-on: ubuntu-latest
@@ -87,6 +89,9 @@ jobs:
       - run: node -e "const z = Intl.DateTimeFormat().resolvedOptions().timeZone; console.log(z); if (z !== process.env.TZ) process.exit(1)"
         env:
           TZ: ${{ matrix.tz }}
+      # pnpm e2e serves this development build; see playwright.config.ts.
+      - run: pnpm run build
+        timeout-minutes: 4
       - run: pnpm e2e --project='*-${{ matrix.run.browser }}' --shard=${{ matrix.run.shard }}
         timeout-minutes: 12
         env:

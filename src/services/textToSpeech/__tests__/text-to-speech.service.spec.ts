@@ -1,3 +1,4 @@
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
   fakeAsync,
   flushMicrotasks,
@@ -23,7 +24,7 @@ import {
   NATIVE_SPEECH,
   nativeSpeakingLimitMs,
   NativeSpeech,
-  SCREEN_READER_HOLD_MS,
+  screenReaderSpeakingMs,
   TextToSpeechService,
 } from '../text-to-speech.service';
 
@@ -44,6 +45,8 @@ describe('TextToSpeechService', () => {
     nativeApp?: boolean;
     languageSupported?: () => Promise<{ supported: boolean }>;
     nativeSpeak?: () => Promise<void>;
+    /** Announces through the app's real live region into this CDK announcer. */
+    liveAnnouncer?: LiveAnnouncer;
   }
 
   function create({
@@ -52,6 +55,7 @@ describe('TextToSpeechService', () => {
     nativeApp = true,
     languageSupported = () => Promise.resolve({ supported: true }),
     nativeSpeak = () => Promise.resolve(),
+    liveAnnouncer,
   }: Setup = {}): TextToSpeechService {
     stateChange = undefined;
     screenReader = jasmine.createSpyObj<ScreenReaderSource>('ScreenReader', [
@@ -76,7 +80,7 @@ describe('TextToSpeechService', () => {
     native.stop.and.resolveTo();
     native.isLanguageSupported.and.callFake(languageSupported);
     announcer = jasmine.createSpyObj<Announcer>('Announcer', ['announce']);
-    uiLog = jasmine.createSpyObj<UILog>('UILog', ['warn']);
+    uiLog = jasmine.createSpyObj<UILog>('UILog', ['warn', 'error']);
     settings = new Settings();
     settings.text_to_speech_rate = 1.5;
     settings.text_to_speech_pitch = 1.5;
@@ -90,7 +94,9 @@ describe('TextToSpeechService', () => {
       providers: [
         { provide: SCREEN_READER, useValue: screenReader },
         { provide: NATIVE_SPEECH, useValue: nativeApp ? native : null },
-        { provide: Announcer, useValue: announcer },
+        liveAnnouncer
+          ? { provide: LiveAnnouncer, useValue: liveAnnouncer }
+          : { provide: Announcer, useValue: announcer },
         { provide: UILog, useValue: uiLog },
         {
           provide: Platform,
@@ -174,7 +180,7 @@ describe('TextToSpeechService', () => {
       expect(spokenNatively()).toEqual(['20', 'Time 5', '21']);
     }));
 
-    it('says only the newest time and weight once the voice is free', fakeAsync(() => {
+    it('says only the newest time and weight once the voice is free, taking turns', fakeAsync(() => {
       const service = create({ nativeSpeak: slowVoice });
       service.speakTime('Time 1');
       for (const time of ['1.25', '1.5', '1.75']) {
@@ -187,8 +193,8 @@ describe('TextToSpeechService', () => {
 
       expect(spokenNatively()).toEqual([
         'Time 1',
-        'Time 1.75',
         '1.75',
+        'Time 1.75',
         'Brew started',
       ]);
     }));
@@ -217,6 +223,122 @@ describe('TextToSpeechService', () => {
       expect(uiLog.warn.calls.count()).toBe(1);
       tick(nativeSpeakingLimitMs('19', 1.5));
     }));
+  });
+
+  describe('time and weight both due every quarter second', () => {
+    interface Utterance {
+      text: string;
+      at: number;
+    }
+
+    /** How long a voice takes to say a value, about a second for a time. */
+    const speakingMs = (text: string) => 300 + 90 * text.length;
+
+    /** The utterances a later one cut off before they were said in full. */
+    function cutOff(utterances: Utterance[]): string[] {
+      return utterances
+        .filter(
+          ({ text, at }, i) =>
+            i + 1 < utterances.length &&
+            utterances[i + 1].at - at < speakingMs(text),
+        )
+        .map(({ text }) => text);
+    }
+
+    /** What started within the first `ms` of the brew. */
+    function startedWithin(utterances: Utterance[], start: number, ms: number) {
+      return utterances
+        .filter(({ at }) => at - start <= ms)
+        .map(({ text }) => text);
+    }
+
+    /** The timer and the scale report a new value every 0.25 s for 6 s. */
+    function brew(service: TextToSpeechService): number {
+      const start = Date.now();
+      for (let ms = 250; ms <= 6000; ms += 250) {
+        service.speakTime(`Time ${ms / 1000}`);
+        service.speak(String(18 + ms / 1000));
+        tick(250);
+      }
+      tick(10_000);
+      return start;
+    }
+
+    const texts = (utterances: Utterance[]) => utterances.map((u) => u.text);
+    const times = (said: string[]) => said.filter((t) => t.startsWith('Time'));
+    const weights = (said: string[]) =>
+      said.filter((t) => !t.startsWith('Time'));
+
+    it('lets VoiceOver say both in full, taking turns', fakeAsync(() => {
+      const service = create({ screenReaderOn: true });
+      const utterances: Utterance[] = [];
+      // VoiceOver cuts off what it says for every new announcement.
+      screenReader.speak.and.callFake(({ value }) => {
+        utterances.push({ text: value, at: Date.now() });
+        return Promise.resolve();
+      });
+
+      const start = brew(service);
+
+      expect(cutOff(utterances)).toEqual([]);
+      const early = startedWithin(utterances, start, 3000);
+      expect(times(early).length).toBeGreaterThan(0);
+      expect(weights(early).length).toBeGreaterThan(0);
+      expect(times(texts(utterances)).length).toBeGreaterThan(1);
+      expect(weights(texts(utterances)).length).toBeGreaterThan(1);
+    }));
+
+    it('lets TalkBack say both in full from the live region, taking turns', fakeAsync(() => {
+      const utterances: Utterance[] = [];
+      // The CDK writes the message 100 ms after it is handed over; TalkBack
+      // cuts off what it says for every assertive message written.
+      const liveAnnouncer = {
+        announce: (message: string) =>
+          new Promise<void>((done) =>
+            setTimeout(() => {
+              utterances.push({ text: message, at: Date.now() });
+              done();
+            }, 100),
+          ),
+      } as unknown as LiveAnnouncer;
+      const service = create({
+        screenReaderOn: true,
+        platform: 'android',
+        liveAnnouncer,
+      });
+
+      const start = brew(service);
+
+      expect(cutOff(utterances)).toEqual([]);
+      const early = startedWithin(utterances, start, 3000);
+      expect(times(early).length).toBeGreaterThan(0);
+      expect(weights(early).length).toBeGreaterThan(0);
+      expect(times(texts(utterances)).length).toBeGreaterThan(1);
+      expect(weights(texts(utterances)).length).toBeGreaterThan(1);
+    }));
+
+    it('lets its own voice say both, taking turns', fakeAsync(() => {
+      const utterances: Utterance[] = [];
+      const service = create();
+      // Its own voice says a value to its end before it takes the next.
+      native.speak.and.callFake(({ text }) => {
+        utterances.push({ text, at: Date.now() });
+        return new Promise<void>((done) => setTimeout(done, speakingMs(text)));
+      });
+
+      const start = brew(service);
+
+      expect(cutOff(utterances)).toEqual([]);
+      const early = startedWithin(utterances, start, 3000);
+      expect(times(early).length).toBeGreaterThan(0);
+      expect(weights(early).length).toBeGreaterThan(0);
+    }));
+  });
+
+  it('gives a screen reader at least 1.2 s for a value, longer for a long one', () => {
+    expect(screenReaderSpeakingMs('18.5')).toBe(1200);
+    expect(screenReaderSpeakingMs('Zeit 5.25')).toBe(1400);
+    expect(screenReaderSpeakingMs('Brühbeginn')).toBe(1500);
   });
 
   it('allows a slow voice longer for a value', () => {
@@ -400,27 +522,33 @@ describe('TextToSpeechService', () => {
 
       service.speakInFull('Time 83');
       service.speak('18.5');
-      tick(SCREEN_READER_HOLD_MS - 1);
+      tick(screenReaderSpeakingMs('Time 83') - 1);
       service.speak('18.6');
-      tick(1);
-      service.speak('18.7');
-      flushMicrotasks();
 
-      expect(heard()).toEqual(['Time 83', '18.7']);
+      expect(heard()).toEqual(['Time 83']);
+      tick(1);
+      expect(heard()).toEqual(['Time 83', '18.6']);
+      tick(screenReaderSpeakingMs('18.6'));
     }));
   }
 
-  it('lets TalkBack replace a time still waiting in the live region', fakeAsync(() => {
+  it('hands TalkBack only the newest time once it had time for the last', fakeAsync(() => {
     const service = create({ screenReaderOn: true, platform: 'android' });
 
     service.speakTime('Time 5');
     service.speakTime('Time 5.25');
+    service.speakTime('Time 5.5');
     flushMicrotasks();
 
     expect(announcer.announce.calls.allArgs()).toEqual([
       ['Time 5', 'assertive', 'time'],
-      ['Time 5.25', 'assertive', 'time'],
     ]);
+    tick(screenReaderSpeakingMs('Time 5'));
+    expect(announcer.announce.calls.allArgs()).toEqual([
+      ['Time 5', 'assertive', 'time'],
+      ['Time 5.5', 'assertive', 'time'],
+    ]);
+    tick(screenReaderSpeakingMs('Time 5.5'));
   }));
 
   it('speaks the time with its own voice while no screen reader is on', fakeAsync(() => {
@@ -454,7 +582,7 @@ describe('TextToSpeechService', () => {
       service.speak('11');
       stateChange({ value: false });
       service.speak('12');
-      flushMicrotasks();
+      tick(screenReaderSpeakingMs('11'));
 
       expect(spokenNatively()).toEqual(['10', '12']);
       // What its own voice still had to say stops once the screen reader takes over.

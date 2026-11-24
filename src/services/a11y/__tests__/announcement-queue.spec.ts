@@ -1,4 +1,7 @@
-import { enqueueAnnouncement } from '../announcement-queue';
+import {
+  enqueueAnnouncement,
+  takeNextAnnouncement,
+} from '../announcement-queue';
 
 interface Message {
   text: string;
@@ -50,5 +53,38 @@ describe('enqueueAnnouncement', () => {
     enqueueAnnouncement<Message>(waiting, { text: 'Time 2', key: 'time' });
 
     expect(waiting).toEqual([{ text: 'Time 1', key: 'time' }]);
+  });
+});
+
+describe('takeNextAnnouncement', () => {
+  const time: Message = { text: 'Time 2', key: 'time' };
+  const weight: Message = { text: '19', key: 'weight' };
+  const started: Message = { text: 'Brew started' };
+
+  it('takes the first message', () => {
+    expect(takeNextAnnouncement([time, weight], 'weight')).toEqual([
+      time,
+      [weight],
+    ]);
+    expect(takeNextAnnouncement([time, weight], undefined)).toEqual([
+      time,
+      [weight],
+    ]);
+  });
+
+  it('lets another message go before a value of the key said last', () => {
+    expect(takeNextAnnouncement([time, weight], 'time')).toEqual([
+      weight,
+      [time],
+    ]);
+    expect(takeNextAnnouncement([time, started, weight], 'time')).toEqual([
+      started,
+      [time, weight],
+    ]);
+  });
+
+  it('takes the value of the key said last when nothing else waits', () => {
+    expect(takeNextAnnouncement([time], 'time')).toEqual([time, []]);
+    expect(takeNextAnnouncement<Message>([], 'time')).toBeUndefined();
   });
 });
