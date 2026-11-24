@@ -20,9 +20,10 @@ test.beforeEach(async ({ page }) => {
 /**
  * Marks the element that has focus, down through shadow roots, so it can be
  * located; the host of an Ionic control matches `:focus` as well. Returns
- * whether it is the element marked first, i.e. focus has gone round.
+ * where it is, or null once it is the element marked first, i.e. focus has
+ * gone round. One call per stop: the walk has 30 of them.
  */
-async function markFocused(page: Page): Promise<boolean> {
+async function markFocused(page: Page): Promise<string | null> {
   return page.evaluate(() => {
     const marks = window as unknown as {
       e2eFirstStop?: Element | null;
@@ -37,13 +38,19 @@ async function markFocused(page: Page): Promise<boolean> {
     marks.e2eTabStop = element;
     if (marks.e2eFirstStop === undefined) {
       marks.e2eFirstStop = element;
-      return false;
+    } else if (marks.e2eFirstStop === element) {
+      return null;
     }
-    return marks.e2eFirstStop === element;
+    // An element without a role, such as the host of an Ionic button with a
+    // tabindex, has no name of its own even when the button inside it has.
+    return `${element?.tagName.toLowerCase()} after ${element?.parentElement?.closest('ion-item')?.textContent?.trim().slice(0, 30) ?? ''}`;
   });
 }
 
 test('every Tab stop of the brew form has a name', async ({ page }) => {
+  // In WebKit on CI the first run of a worker spends up to 23 s in the setup
+  // above, and the 31 stops take 7 s more.
+  test.slow();
   await openAddBrew(page);
   const focused = page.locator('[data-e2e-tab-stop]');
 
@@ -51,15 +58,10 @@ test('every Tab stop of the brew form has a name', async ({ page }) => {
   const unnamed: string[] = [];
   for (let press = 0; press < 80; press++) {
     await page.keyboard.press(tabKey(page));
-    if (await markFocused(page)) {
+    const stop = await markFocused(page);
+    if (stop === null) {
       break;
     }
-    // An element without a role, such as the host of an Ionic button with a
-    // tabindex, has no name of its own even when the button inside it has.
-    const stop = await focused.evaluate(
-      (element) =>
-        `${element.tagName.toLowerCase()} after ${element.parentElement?.closest('ion-item')?.textContent?.trim().slice(0, 30) ?? ''}`,
-    );
     stops.push(stop);
     try {
       await expect(focused).toHaveAccessibleName(/\S/, { timeout: 500 });
