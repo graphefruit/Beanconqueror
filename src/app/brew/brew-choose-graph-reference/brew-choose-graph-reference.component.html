@@ -6,7 +6,7 @@
 </ion-header>
 <ion-content>
   <ion-radio-group [(ngModel)]="radioSelection">
-    <app-virtual-list [items]="shownRows" [itemKey]="rowKey" [estimateSize]="180" [clearOfAddButton]="false">
+    <app-virtual-list class="card" [items]="shownRows" [itemKey]="rowKey" [estimateSize]="180" [clearOfAddButton]="false">
       <div virtualListHead>
         <ion-segment scrollable="true" (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">
           @if (graphOpenView?.length > 0) {

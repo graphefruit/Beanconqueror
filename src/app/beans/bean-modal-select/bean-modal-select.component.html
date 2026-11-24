@@ -6,7 +6,7 @@
 </ion-header>
 <ion-content>
   <ion-radio-group [(ngModel)]='radioSelection'>
-    <app-virtual-list [items]="shownBeans" [itemKey]="beanKey" [estimateSize]="60" [clearOfAddButton]="false">
+    <app-virtual-list class="card" [items]="shownBeans" [itemKey]="beanKey" [estimateSize]="60" [clearOfAddButton]="false">
       <div virtualListHead>
         <ion-segment (ionChange)="segmentChanged()" [(ngModel)]='bean_segment'>
           <ion-segment-button value='open'>

@@ -36,6 +36,28 @@ function dialog(page: Page): Locator {
   return page.locator('ion-modal:not(.overlay-hidden)').last();
 }
 
+/**
+ * The rows lie on a card set off from the edges of the dialog, and the radios
+ * keep a margin to the edge of that card.
+ */
+async function expectRowsOnCard(page: Page, list: Locator): Promise<void> {
+  const card = list.getByRole('tabpanel');
+  const radio = list.getByRole('listitem').first().locator('ion-radio');
+  const [screen, cardBox, radioBox] = await Promise.all([
+    dialog(page).boundingBox(),
+    card.boundingBox(),
+    radio.boundingBox(),
+  ]);
+  if (!screen || !cardBox || !radioBox) {
+    throw new Error('The dialog, its card or a radio is not shown');
+  }
+  expect(cardBox.x - screen.x).toBeGreaterThanOrEqual(8);
+  expect(
+    screen.x + screen.width - (cardBox.x + cardBox.width),
+  ).toBeGreaterThanOrEqual(8);
+  expect(radioBox.x - cardBox.x).toBeGreaterThanOrEqual(12);
+}
+
 /** Scrolled to the end, the tabs and the search are still on top and can be used. */
 async function expectHeadOnTop(page: Page, list: Locator): Promise<void> {
   const tab = dialog(page).getByRole('tab', { selected: true });
@@ -72,6 +94,7 @@ test('the bean chooser keeps its tabs and search on top', async ({ page }) => {
     });
   }).toPass();
 
+  await expectRowsOnCard(page, list);
   await expectHeadOnTop(page, list);
 });
 
@@ -92,6 +115,7 @@ test('the reference graph chooser keeps its tabs and search on top', async ({
   });
   const list = page.locator(`app-brew-choose-graph-reference ${VIRTUAL_LIST}`);
   await expect(list.getByRole('listitem').first()).toBeVisible();
+  await expectRowsOnCard(page, list);
 
   // The tabs lie inside the group of the radios: switching them keeps the
   // brew chosen.
