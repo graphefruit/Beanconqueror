@@ -93,16 +93,30 @@ Do not regenerate the file with `--suppress-all` to hide new errors.
 
 Playwright runs user journeys against the real app in an emulated Pixel 7 (Chromium). The
 accessibility, focus and announcement specs also run in an emulated iPhone 15 (WebKit), as VoiceOver
-reads what Safari exposes. Playwright starts its own dev server on port 4300, so nothing needs to be
-running beforehand. These run in CI.
-Set `E2E_PORT` to use another port, e.g. to run two worktrees side by side (`E2E_PORT=4310 pnpm e2e`).
+reads what Safari exposes. These run in CI.
+
+The tests run against the development build in `www/browser`: build it with `pnpm run build`
+first, and again after changing the app. Playwright serves the build on port 4300
+(`e2e/tools/serve-build.ts`) and stops with a message when there is no build, when it is a
+production build (the tests use Angular's development hooks such as `ng.getComponent`) or when a
+file in `src` changed after it. Set `E2E_PORT` to use another port, e.g. to run two worktrees side
+by side (`E2E_PORT=4310 pnpm e2e`).
 
 ```shell
 pnpm exec playwright install chromium webkit # once
+pnpm run build
 pnpm e2e
 pnpm e2e --repeat-each=5              # check a new test for flakiness
 pnpm exec playwright show-report      # inspect traces and screenshots of failures
+pnpm e2e:affected                     # only the specs of the areas changed since feature/relaunch
 ```
+
+`pnpm e2e:affected` compares the branch, including uncommitted and new files, with
+`origin/feature/relaunch` and runs the smoke test plus the specs of the changed areas; it passes
+further options on to Playwright. The areas of the specs and of the source folders are listed in
+`e2e/tools/areas.ts`; a changed file outside those folders (shared components, styles,
+translations, test support) runs the full suite. A new spec needs an entry there, which
+`pnpm test:e2e-tools` checks in CI.
 
 - Import `test`/`expect` from `e2e/fixtures.ts`. Each test starts with empty storage, `en-US`
   locale and no permissions. Page errors, console errors and requests leaving the app fail the
