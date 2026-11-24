@@ -210,12 +210,13 @@ test('the brew graph stays in the brew form when the brew time is hidden', async
   await expect(brewField(page, 'Time')).toHaveCount(0);
   await expect(brewField(page, 'Bloom Time / Pre-infusion')).toBeVisible();
   // The graph runs the brew with connected devices (scale, pressure, brew by
-  // weight); the section header reads it to offer its controls.
+  // weight); the section header reads it to offer its controls. The web build
+  // reports the scale as connected, so the header settles on the graph.
   await expect(
     section(page, 'While brewing').locator('brew-brewing-graph'),
   ).toHaveCount(1);
   await expect(
-    page.getByRole('button', { name: 'Maximize controls' }),
+    page.getByRole('button', { name: 'Maximize flow graph' }),
   ).toBeVisible();
   await expectReadingOrder(page, 'While brewing');
 });
