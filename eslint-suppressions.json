@@ -141,13 +141,7 @@
     }
   },
   "src/app/beans/bean-modal-select/bean-modal-select.component.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
     "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
@@ -952,13 +946,7 @@
     }
   },
   "src/app/mill/mill-modal-select/mill-modal-select.component.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
     "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
@@ -1077,13 +1065,7 @@
     }
   },
   "src/app/preparation/preparation-modal-select/preparation-modal-select.component.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
     "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
@@ -1115,13 +1097,7 @@
     }
   },
   "src/app/preparation/preparation-tool-modal-select/preparation-tool-modal-select.component.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
     "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
@@ -1253,13 +1229,7 @@
     }
   },
   "src/app/roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
     "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
@@ -1420,13 +1390,7 @@
     }
   },
   "src/app/water-section/water/water-modal-select/water-modal-select.component.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
     "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {

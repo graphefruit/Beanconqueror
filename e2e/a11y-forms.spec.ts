@@ -100,6 +100,50 @@ for (const language of ['en', 'de'] as const) {
       await expect(quality).not.toHaveAttribute('aria-disabled', 'true');
       const before = 100;
       await quality.focus();
+      // The adjust gesture of VoiceOver and TalkBack arrives as an arrow key,
+      // and the screen reader reads the knob as soon as the key is handled.
+      await quality.evaluate((knob) => {
+        const seen = {
+          atKey: '',
+          texts: [] as string[],
+          announced: '',
+          heard: [] as string[],
+        };
+        (window as unknown as { seen: typeof seen }).seen = seen;
+        // Ionic adds its key handler to the knob again each time it renders
+        // the knob, e.g. after the focus, so a listener added here could run
+        // before it. One added while the key is on its way to the knob runs
+        // after all of the knob's own, when the key is handled.
+        window.addEventListener(
+          'keydown',
+          () =>
+            knob.addEventListener(
+              'keydown',
+              () => (seen.atKey = knob.getAttribute('aria-valuetext') ?? ''),
+              { once: true },
+            ),
+          { capture: true, once: true },
+        );
+        new MutationObserver(() =>
+          seen.texts.push(knob.getAttribute('aria-valuetext') ?? ''),
+        ).observe(knob, { attributeFilter: ['aria-valuetext'] });
+        const announcement = () =>
+          document.querySelector('.cdk-live-announcer-element')?.textContent ??
+          '';
+        const earlier = announcement();
+        new MutationObserver(() => {
+          if (announcement() !== earlier) {
+            seen.announced = announcement();
+          }
+          if (announcement() && announcement() !== seen.heard.at(-1)) {
+            seen.heard.push(announcement());
+          }
+        }).observe(document.body, {
+          subtree: true,
+          childList: true,
+          characterData: true,
+        });
+      });
       await page.keyboard.press('ArrowLeft');
       await expect(quality).toHaveAttribute(
         'aria-valuenow',
@@ -109,6 +153,50 @@ for (const language of ['en', 'de'] as const) {
         'aria-valuetext',
         `${before - 1} %`,
       );
+      // The CDK writes an announcement 100 ms after it is made.
+      await page.waitForTimeout(300);
+      // Read once by the screen reader, with the new value, and not said
+      // again by the app.
+      expect(
+        await page.evaluate(
+          () => (window as unknown as { seen: unknown }).seen,
+        ),
+      ).toEqual({
+        atKey: `${before - 1} %`,
+        texts: [`${before - 1} %`],
+        announced: '',
+        heard: [],
+      });
+      // A screen reader does not speak a value changed by dragging the knob,
+      // so the app announces it.
+      await expect(quality).not.toHaveAttribute('aria-disabled', 'true');
+      const { x, y, width, height } = (await quality.boundingBox()) ?? {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+      };
+      // A short drag, as a finger moves: its first few points pass several
+      // values, and only the one the knob ends on is said.
+      await page.mouse.move(x + width / 2, y + height / 2);
+      await page.mouse.down();
+      for (let step = 1; step <= 6; step++) {
+        await page.mouse.move(x + width / 2 - 10 * step, y + height / 2);
+        await page.waitForTimeout(50);
+      }
+      await page.mouse.up();
+      await expect(quality).not.toHaveAttribute(
+        'aria-valuenow',
+        String(before - 1),
+      );
+      const final = (await quality.getAttribute('aria-valuetext')) ?? '';
+      await expect(liveRegion(page)).toHaveText(final);
+      await page.waitForTimeout(1500);
+      expect(
+        await page.evaluate(
+          () => (window as unknown as { seen: { heard: string[] } }).seen.heard,
+        ),
+      ).toEqual([final]);
       for (const slider of await visible(settings.getByRole('slider')).all()) {
         await expect(slider).not.toHaveAccessibleName(VALUE_ONLY);
       }

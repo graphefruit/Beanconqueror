@@ -16,10 +16,19 @@ class FakeLiveRegion implements LiveRegion {
   public readonly heard: {
     message: string;
     politeness: AnnouncementPoliteness;
+    key?: string;
   }[] = [];
 
-  public announce(message: string, politeness: AnnouncementPoliteness): void {
-    this.heard.push({ message, politeness });
+  public announce(
+    message: string,
+    politeness: AnnouncementPoliteness,
+    key?: string,
+  ): void {
+    this.heard.push(
+      key === undefined
+        ? { message, politeness }
+        : { message, politeness, key },
+    );
   }
 
   public messages(): string[] {
@@ -48,6 +57,15 @@ describe('Announcer', () => {
       expect(liveRegion.heard).toEqual([
         { message: 'Brew added successfully', politeness: 'polite' },
         { message: 'Scale disconnected', politeness: 'assertive' },
+      ]);
+    });
+
+    it('passes on the key of a value that goes out of date', () => {
+      const announcer = createAnnouncer();
+      announcer.announce('Time 5', 'assertive', 'time');
+
+      expect(liveRegion.heard).toEqual([
+        { message: 'Time 5', politeness: 'assertive', key: 'time' },
       ]);
     });
 

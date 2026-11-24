@@ -10,6 +10,11 @@ import {
 import { Capacitor } from '@capacitor/core';
 
 import { Settings } from '../../classes/settings/settings';
+import {
+  enqueueAnnouncement,
+  QueuedAnnouncement,
+  takeNextAnnouncement,
+} from '../a11y/announcement-queue';
 import { Announcer } from '../a11y/announcer.service';
 import {
   SCREEN_READER,
@@ -23,20 +28,17 @@ import {
   speechLanguageTag,
 } from './speech-options';
 
-/**
- * How long an announcement that has to be heard in full (the brew time) holds
- * back the weight while a screen reader is on. A new announcement cuts off the
- * one still spoken; "Time 83" takes about a second at the default rate.
- */
-export const SCREEN_READER_HOLD_MS = 1500;
+/** The least a screen reader gets for a value, e.g. "Time 5.25". */
+export const SCREEN_READER_MIN_SPEAKING_MS = 1200;
 
 /**
- * A screen reader does not tell when it has finished, so a value holds back
- * the next one for about as long as it takes to say: a new announcement would
- * cut it off, and a weight cut off every half second is never heard.
+ * How long a screen reader is given for `_text` before the next value. It
+ * does not tell when it has finished, and a new announcement cuts off the one
+ * still spoken, so this is a generous estimate per character at the default
+ * rate. Values due more often than this are said as often as it allows.
  */
 export function screenReaderSpeakingMs(_text: string): number {
-  return 500 + 70 * _text.length;
+  return Math.max(SCREEN_READER_MIN_SPEAKING_MS, 500 + 100 * _text.length);
 }
 
 /**
@@ -65,7 +67,15 @@ export const NATIVE_SPEECH = new InjectionToken<NativeSpeech | null>(
   },
 );
 
-/** Speaks brew values (weight, time, events) on iOS and Android. */
+type WaitingText = QueuedAnnouncement & { readonly text: string };
+
+/**
+ * Speaks brew values (weight, time, events) on iOS and Android. Everything
+ * goes through one channel: a value is said to its end before the next, of
+ * each kind only the newest waits, and the weight and the time take turns
+ * when both are due, so neither is cut off or left out however short their
+ * intervals are.
+ */
 @Service()
 export class TextToSpeechService {
   private readonly platform = inject(Platform);
@@ -82,51 +92,39 @@ export class TextToSpeechService {
   public readonly available = this.ios || this.platform.is('android');
 
   private ownVoiceMaySpeak = false;
-  private screenReaderHeldUntil = 0;
-  /** Counts end() calls, so a value still waiting for its language stays silent. */
+  /** Counts end() calls, so what was still said or waited stays silent. */
   private ended = 0;
   private supportedLanguage: string | undefined;
   private failureLogged = false;
 
-  /** The value spoken last, so an unchanged weight is not repeated. */
-  private lastSpoken: string | undefined;
-  /** Whether the native voice is still saying a value. */
-  private nativeBusy = false;
-  /** Said next, in this order, each in full (the time, the test numbers). */
-  private nextInFull: string[] = [];
-  /** The newest value that came while the native voice was busy. */
-  private nextLatest: string | undefined;
+  /** Whether a text is still being said. */
+  private busy = false;
+  private waiting: WaitingText[] = [];
+  /** The key of the value said last, see takeNextAnnouncement. */
+  private lastKey: string | undefined;
+  /** The text said last of each key, so an unchanged value is not repeated. */
+  private lastSaid = new Map<string, string>();
 
   /**
-   * Says a value that changes (the weight). Every value is said to its end:
-   * values that come meanwhile are dropped except the newest, which follows,
-   * so what is heard is current and never cut off. An unchanged value is not
-   * said again. `_end` stops whatever is said and says this at once.
+   * Says a value that changes (the weight). An unchanged value is not said
+   * again. `_end` stops whatever is said or waits and says this at once.
    */
   public speak(_text: string, _end = false) {
     if (!this.available) {
       return;
     }
-    if (!_end && _text === this.lastSpoken) {
-      return;
-    }
-    if (this.screenReaderState.on()) {
-      if (_end || Date.now() >= this.screenReaderHeldUntil) {
-        this.speakThroughScreenReader(_text, screenReaderSpeakingMs(_text));
-      }
-      return;
-    }
     if (_end) {
       this.end();
-    }
-    this.ownVoiceMaySpeak = true;
-    if (!this.nativeSpeech) {
-      this.lastSpoken = _text;
-      this.speakInBrowser(_text);
-    } else if (this.nativeBusy) {
-      this.nextLatest = _text;
+      this.enqueue(_text);
     } else {
-      void this.speakNatively(this.nativeSpeech, _text);
+      this.enqueue(_text, 'weight');
+    }
+  }
+
+  /** Says the brew time, like the weight and taking turns with it. */
+  public speakTime(_text: string) {
+    if (this.available) {
+      this.enqueue(_text, 'time');
     }
   }
 
@@ -135,23 +133,9 @@ export class TextToSpeechService {
     if (!this.available || _texts.length === 0) {
       return;
     }
-    if (this.screenReaderState.on()) {
-      const text = _texts.join(', ');
-      this.speakThroughScreenReader(
-        text,
-        Math.max(SCREEN_READER_HOLD_MS, screenReaderSpeakingMs(text)),
-      );
-      return;
-    }
-    this.ownVoiceMaySpeak = true;
-    if (!this.nativeSpeech) {
-      _texts.forEach((text) => this.speakInBrowser(text));
-      return;
-    }
-    this.nextInFull.push(..._texts);
-    if (!this.nativeBusy) {
-      void this.speakNatively(this.nativeSpeech, this.nextInFull.shift());
-    }
+    // A screen reader says them as one, so the list is not spaced out.
+    const texts = this.screenReaderState.on() ? [_texts.join(', ')] : _texts;
+    texts.forEach((text) => this.enqueue(text));
   }
 
   public end() {
@@ -159,11 +143,90 @@ export class TextToSpeechService {
       return;
     }
     this.ended++;
+    this.busy = false;
+    this.waiting = [];
+    this.lastKey = undefined;
+    this.lastSaid.clear();
+    this.stopOwnVoice();
+  }
+
+  private enqueue(_text: string, _key?: string) {
+    if (_key !== undefined && this.lastSaid.get(_key) === _text) {
+      // Back to the value said last: one still waiting is out of date.
+      this.waiting = this.waiting.filter(({ key }) => key !== _key);
+      return;
+    }
+    this.waiting = enqueueAnnouncement(this.waiting, {
+      text: _text,
+      key: _key,
+    });
+    this.sayNext();
+  }
+
+  private sayNext() {
+    const next = this.busy
+      ? undefined
+      : takeNextAnnouncement(this.waiting, this.lastKey);
+    if (next === undefined) {
+      return;
+    }
+    const [{ text, key }, rest] = next;
+    this.waiting = rest;
+    this.busy = true;
+    this.lastKey = key;
+    if (key !== undefined) {
+      this.lastSaid.set(key, text);
+    }
+    const ended = this.ended;
+    void this.say(text, key).then(() => {
+      if (ended === this.ended) {
+        this.busy = false;
+        this.sayNext();
+      }
+    });
+  }
+
+  /** Says `_text` and resolves once it has been said. */
+  private say(_text: string, _key: string | undefined): Promise<void> {
+    if (this.screenReaderState.on()) {
+      return this.sayThroughScreenReader(_text, _key);
+    }
+    this.ownVoiceMaySpeak = true;
+    if (this.nativeSpeech) {
+      return this.speakNatively(this.nativeSpeech, _text);
+    }
+    this.speakInBrowser(_text);
+    return Promise.resolve();
+  }
+
+  /**
+   * While a screen reader is on, it speaks the value in its own voice and
+   * rate; a second voice would talk over it. VoiceOver takes the value from
+   * the screen reader plugin. On Android that plugin starts a new speech
+   * engine for every call, so TalkBack reads it from the app's live region
+   * instead, assertive so it is not held back behind what TalkBack reads
+   * otherwise. Either cuts off what it is saying, so the next value waits
+   * screenReaderSpeakingMs. A failed announcement is skipped.
+   */
+  private sayThroughScreenReader(
+    _text: string,
+    _key: string | undefined,
+  ): Promise<void> {
+    if (this.ownVoiceMaySpeak) {
+      this.stopOwnVoice();
+    }
+    if (this.ios) {
+      this.screenReader?.speak({ value: _text }).catch(() => undefined);
+    } else {
+      this.announcer.announce(_text, 'assertive', _key);
+    }
+    return new Promise((done) =>
+      setTimeout(done, screenReaderSpeakingMs(_text)),
+    );
+  }
+
+  private stopOwnVoice() {
     this.ownVoiceMaySpeak = false;
-    this.nativeBusy = false;
-    this.nextInFull = [];
-    this.nextLatest = undefined;
-    this.lastSpoken = undefined;
     try {
       if (this.nativeSpeech) {
         this.nativeSpeech.stop().catch(() => undefined);
@@ -175,39 +238,9 @@ export class TextToSpeechService {
     }
   }
 
-  /**
-   * While a screen reader is on, it speaks the value in its own voice and rate,
-   * and a new value cuts off the one still spoken, so the weight heard is the
-   * current one; a second voice would talk over it. VoiceOver takes the value
-   * from the screen reader plugin. On Android that plugin starts a new speech
-   * engine for every call, so TalkBack reads it from the app's live region
-   * instead, assertive so the latest value wins. A failed announcement is
-   * skipped: the next follows within a second.
-   */
-  private speakThroughScreenReader(_text: string, _holdMs: number) {
-    if (this.ownVoiceMaySpeak) {
-      this.end();
-    }
-    this.lastSpoken = _text;
-    this.screenReaderHeldUntil = Date.now() + _holdMs;
-    if (this.ios) {
-      this.screenReader?.speak({ value: _text }).catch(() => undefined);
-    } else {
-      // The announcer drops the same text within REPEAT_WINDOW_MS: an unchanged
-      // weight is heard every two seconds instead of interrupting TalkBack.
-      this.announcer.announce(_text, 'assertive');
-    }
-  }
-
-  /**
-   * Says one value and then the next one waiting: first what is to be said in
-   * full, then the newest changing value. The plugin resolves when the value
-   * has been said.
-   */
+  /** Says one value; the plugin resolves when it has been said. */
   private async speakNatively(speech: NativeSpeech, _text: string) {
     const ended = this.ended;
-    this.nativeBusy = true;
-    this.lastSpoken = _text;
     let limit: ReturnType<typeof setTimeout> | undefined;
     try {
       const lang = await this.language(speech);
@@ -241,18 +274,6 @@ export class TextToSpeechService {
       }
     } finally {
       clearTimeout(limit);
-    }
-    if (ended !== this.ended) {
-      return;
-    }
-    this.nativeBusy = false;
-    let next = this.nextInFull.shift();
-    if (next === undefined) {
-      next = this.nextLatest !== this.lastSpoken ? this.nextLatest : undefined;
-      this.nextLatest = undefined;
-    }
-    if (next !== undefined) {
-      void this.speakNatively(speech, next);
     }
   }
 

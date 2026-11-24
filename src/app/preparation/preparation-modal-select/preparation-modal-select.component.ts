@@ -113,7 +113,7 @@ export class PreparationModalSelectComponent implements OnInit {
     addIcons({ wifiOutline });
   }
 
-  public ionViewDidEnter(): void {
+  public ngOnInit() {
     if (this.multiple) {
       for (const obj of this.objs) {
         this.multipleSelection[obj.config.uuid] =
@@ -125,8 +125,6 @@ export class PreparationModalSelectComponent implements OnInit {
       }
     }
   }
-
-  public ngOnInit() {}
 
   public getOpenPreparations(): Array<Preparation> {
     return this.preparationSortFilterHelperService.initializePreparationsView(

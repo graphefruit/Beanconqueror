@@ -78,7 +78,7 @@ export class WaterModalSelectComponent implements OnInit {
     this.objs = this.uiWaterStorage.getAllEntries();
   }
 
-  public ionViewDidEnter(): void {
+  public ngOnInit() {
     if (this.multiple) {
       for (const obj of this.objs) {
         this.multipleSelection[obj.config.uuid] =
@@ -90,8 +90,6 @@ export class WaterModalSelectComponent implements OnInit {
       }
     }
   }
-
-  public ngOnInit() {}
 
   public getOpen(): Array<Water> {
     return this.objs.filter((e) => !e.finished);

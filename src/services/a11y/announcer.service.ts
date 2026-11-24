@@ -46,12 +46,14 @@ export class Announcer {
   /**
    * Announces `message`, unless it is empty or is the message announced last,
    * less than REPEAT_WINDOW_MS ago. Use `assertive` only for what must
-   * interrupt the user. Returns whether the message was passed on to the
-   * screen reader.
+   * interrupt the user. A `key` marks a value that goes out of date: a newer
+   * one replaces it while it still waits. Returns whether the message was
+   * passed on to the screen reader.
    */
   public announce(
     message: string,
     politeness: AnnouncementPoliteness = 'polite',
+    key?: string,
   ): boolean {
     const text = normalize(message);
     if (text === '') {
@@ -66,7 +68,7 @@ export class Announcer {
     }
     this.lastMessage = text;
     this.lastMessageAt = now;
-    this.liveRegion.announce(text, politeness);
+    this.liveRegion.announce(text, politeness, key);
     return true;
   }
 

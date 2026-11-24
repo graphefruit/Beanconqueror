@@ -3,6 +3,7 @@ import { BEANS } from './support/bean-data';
 import {
   beanAction,
   beanCard,
+  beanNames,
   beanSegment,
   dialogsClosed,
   NO_BEAN_FILTER,
@@ -54,12 +55,25 @@ test('deleting a bean removes it and its brews after a question', async ({
   await expect(beanCard(page, BEANS.overused)).toBeVisible();
   expect(await storedBeans(page)).toHaveLength(14);
 
+  const names = await beanNames(page);
+  const next = names[names.indexOf(BEANS.overused) + 1];
   await beanAction(page, BEANS.overused, 'Delete');
   await question.getByRole('button', { name: 'Yes' }).click();
 
   await expect(toast(page, 'Bean has been deleted')).toBeVisible();
   await dialogsClosed(page);
   await expect(beanCard(page, BEANS.overused)).toHaveCount(0);
+  // The focus goes on to the bean at its place in the list.
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          document.activeElement
+            ?.closest('bean-information')
+            ?.querySelector('.ion-title')?.textContent,
+      ),
+    )
+    .toContain(next);
   await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
     tabName('Available ( 6 )'),
   );

@@ -110,6 +110,10 @@ import {
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
+import {
+  brewTimeToSay,
+  spokenBrewValues,
+} from '../../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -209,6 +213,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private readonly hapticService = inject(HapticService);
   private readonly textToSpeech = inject(TextToSpeechService);
   private readonly destroyRef = inject(DestroyRef);
+  /** The multiple of the speech interval the brew timer reached last. */
+  private spokenTimeStep: number | undefined;
 
   @ViewChild('timer', { static: false }) public timer: BrewTimerComponent;
   @ViewChild('brewBrewingGraphEl', { static: false })
@@ -824,6 +830,37 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     this.writeCalculatedCoffeeBrewTime();
     this.brewTimerTickedSubject.next(true);
+    this.speakBrewTime();
+  }
+
+  /**
+   * Says the brew time from the timer's own ticks, so the time said is the
+   * one shown and falls on the multiples of the interval.
+   */
+  private speakBrewTime() {
+    if (
+      !this.timer?.isTimerRunning() ||
+      !spokenBrewValues(this.settings).time
+    ) {
+      this.spokenTimeStep = undefined;
+      return;
+    }
+    const showsMilliseconds = this.settings.brew_milliseconds === true;
+    const elapsedMs =
+      this.timer.getSeconds() * 1000 +
+      (showsMilliseconds ? this.timer.getMilliseconds() : 0);
+    const { step, say } = brewTimeToSay(
+      this.spokenTimeStep,
+      elapsedMs,
+      this.settings.text_to_speech_brew_time_interval,
+      showsMilliseconds,
+    );
+    this.spokenTimeStep = step;
+    if (say !== undefined) {
+      this.textToSpeech.speakTime(
+        this.translate.instant('TEXT_TO_SPEECH.TIME') + ' ' + say,
+      );
+    }
   }
 
   private writeCalculatedCoffeeBrewTime() {
