@@ -178,10 +178,19 @@ test('an export announces its loading message once and does not take focus', asy
     ]);
   // Ionic hands focus back to the control that opened the dialog.
   await expect(exportData).toBeFocused();
-  // Closing says nothing.
-  expect((await recorded(page)).announcements).toEqual([
+  // Closing says nothing. Polled: the live region writes a message 100 ms
+  // after it is passed on, and later still while an overlay closes, so a quick
+  // export can close the dialog before its message is written.
+  const loadingMessage = [
     { text: 'Please wait...', politeness: 'polite', echoes: 0 },
-  ]);
+  ];
+  await expect
+    .poll(async () => (await recorded(page)).announcements)
+    .toEqual(loadingMessage);
+  // Something said on closing would come once the focus is back and settled
+  // (400 ms), plus the 100 ms the live region takes to write it.
+  await page.waitForTimeout(1_000);
+  expect((await recorded(page)).announcements).toEqual(loadingMessage);
 });
 
 test('the live region stays above an open dialog, out of what it hides and out of sight', async ({

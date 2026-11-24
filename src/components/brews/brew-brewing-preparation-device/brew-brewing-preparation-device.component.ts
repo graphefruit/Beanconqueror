@@ -402,9 +402,9 @@ export class BrewBrewingPreparationDeviceComponent
       }
     } catch (ex) {}
 
-    if (this.brewComponent.timer.isTimerRunning()) {
+    if (this.brewComponent.timer?.isTimerRunning()) {
       //If timer is running, we need to stop, else scripts would get execute which would get realy bad in the end :O
-      this.brewComponent.timer.pauseTimer();
+      this.brewComponent.timer?.pauseTimer();
     }
     this.preparationDevice = connectedDevice as XeniaDevice;
     await this.uiAlert.setLoadingSpinnerMessage(
@@ -656,7 +656,7 @@ export class BrewBrewingPreparationDeviceComponent
             // instance() already ran without MOVE2, so it missed the MOVE2 setup).
             //this.brewComponent.brewBrewingGraphEl?.initializeFlowChart();
 
-            if (!this.brewComponent.timer.isTimerRunning()) {
+            if (!this.brewComponent.timer?.isTimerRunning()) {
               // Only show the alert if the timer is not running, else we may have already started a brew and the user would get confused if we show an alert in the middle of the brew, even so the device got reconnected.
               const dismissedData =
                 await this.uiAlert.showLoadingMessageWithCustomTimeout(

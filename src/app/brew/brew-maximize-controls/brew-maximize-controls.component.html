@@ -26,48 +26,51 @@
           <ion-col size='12'>
 
 
-            @if(brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showBloomTimer) {
-              <ion-button (click)="brewComponent.timer.bloomTime()"
-                          [attr.aria-label]="'A11Y.SET_BLOOM_TIME' | translate"
-                          class="big-control-icon" fill="clear" tappable>
-                <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only" />
-              </ion-button>
-            }
-            @if(brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && brewComponent.timer.showDripTimer) {
-              <ion-button (click)="brewComponent.timer.dripTime()"
-                          [attr.aria-label]="'A11Y.SET_FIRST_DRIP_TIME' | translate"
-                          class="big-control-icon" fill="clear" tappable>
-                <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only" />
-              </ion-button>
-            }
-            @if(brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) {
-              <ion-button (click)="pauseTimer()"
-                          [attr.aria-label]="'A11Y.PAUSE_TIMER' | translate"
-                          class="big-control-icon" fill="clear" tappable>
-                <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-pause" slot="icon-only" />
-              </ion-button>
-            }
-            @if((!brewComponent.timer.timer.hasStarted || !brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) && brewComponent.timer.getSeconds()>0) {
-              <ion-button (click)="resetTimer()"
-                          [attr.aria-label]="'A11Y.RESET_TIMER' | translate"
-                          class="big-control-icon" fill="clear" tappable>
-                <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only" />
-              </ion-button>
-            }
-            @if(!brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) {
-              <ion-button (click)="resumeTimer()"
-                          [attr.aria-label]="'A11Y.RESUME_TIMER' | translate"
-                          class="big-control-icon" fill="clear" tappable>
-                <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
-              </ion-button>
-            }
-            @if(!brewComponent.timer.timer.hasStarted) {
-              <ion-button (click)="startTimer()"
-                          [attr.aria-label]="'A11Y.START_TIMER' | translate"
-                          class="big-control-icon" fill="clear"
-                          tappable>
-                <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
-              </ion-button>
+            <!-- Without the brew time parameter the form has no timer to control. -->
+            @if(brewComponent.timer; as brewTimer) {
+              @if(brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished && brewTimer.showBloomTimer) {
+                <ion-button (click)="brewTimer.bloomTime()"
+                            [attr.aria-label]="'A11Y.SET_BLOOM_TIME' | translate"
+                            class="big-control-icon" fill="clear" tappable>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only" />
+                </ion-button>
+              }
+              @if(brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished && brewTimer.showDripTimer) {
+                <ion-button (click)="brewTimer.dripTime()"
+                            [attr.aria-label]="'A11Y.SET_FIRST_DRIP_TIME' | translate"
+                            class="big-control-icon" fill="clear" tappable>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only" />
+                </ion-button>
+              }
+              @if(brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished) {
+                <ion-button (click)="pauseTimer()"
+                            [attr.aria-label]="'A11Y.PAUSE_TIMER' | translate"
+                            class="big-control-icon" fill="clear" tappable>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-pause" slot="icon-only" />
+                </ion-button>
+              }
+              @if((!brewTimer.timer.hasStarted || !brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished) && brewTimer.getSeconds()>0) {
+                <ion-button (click)="resetTimer()"
+                            [attr.aria-label]="'A11Y.RESET_TIMER' | translate"
+                            class="big-control-icon" fill="clear" tappable>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only" />
+                </ion-button>
+              }
+              @if(!brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished) {
+                <ion-button (click)="resumeTimer()"
+                            [attr.aria-label]="'A11Y.RESUME_TIMER' | translate"
+                            class="big-control-icon" fill="clear" tappable>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
+                </ion-button>
+              }
+              @if(!brewTimer.timer.hasStarted) {
+                <ion-button (click)="startTimer()"
+                            [attr.aria-label]="'A11Y.START_TIMER' | translate"
+                            class="big-control-icon" fill="clear"
+                            tappable>
+                  <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
+                </ion-button>
+              }
             }
           </ion-col>
         </ion-row>

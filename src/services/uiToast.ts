@@ -5,6 +5,17 @@ import { ToastButton, ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Announcer } from './a11y/announcer.service';
+import { ScreenReaderState } from './a11y/screen-reader-state.service';
+
+export const INFO_TOAST_DURATION_MS = 2000;
+
+/**
+ * An info toast stays this long while VoiceOver or TalkBack is on. The toast
+ * is spoken through the app's live region, and a polite message waits until
+ * the screen reader has finished what it is saying; the user then needs time
+ * to swipe to the toast or its close button (WCAG 2.2.1).
+ */
+export const INFO_TOAST_DURATION_SCREEN_READER_MS = 7000;
 
 /**
  * Live regions in the shadow root of an Ionic toast. Ionic 9 renders one, the
@@ -43,6 +54,7 @@ export class UIToast {
   private readonly translate = inject(TranslateService);
   private readonly toastController = inject(ToastController);
   private readonly announcer = inject(Announcer);
+  private readonly screenReader = inject(ScreenReaderState);
 
   /**
    * Only the first message is announced: one announcement per second of the
@@ -101,7 +113,7 @@ export class UIToast {
     }
     const toast = await this.toastController.create({
       message: message,
-      duration: 2000,
+      duration: this.infoToastDuration(),
       position: 'top',
       animated: false,
       buttons: [this.closeButton()],
@@ -113,7 +125,7 @@ export class UIToast {
     const message = this.translate.instant(_message);
     const toast = await this.toastController.create({
       message: message,
-      duration: 2000,
+      duration: this.infoToastDuration(),
       position: 'bottom',
       animated: false,
       buttons: [this.closeButton()],
@@ -129,6 +141,12 @@ export class UIToast {
       role: 'cancel',
       htmlAttributes: { 'aria-label': this.translate.instant('CLOSE') },
     };
+  }
+
+  private infoToastDuration(): number {
+    return this.screenReader.on()
+      ? INFO_TOAST_DURATION_SCREEN_READER_MS
+      : INFO_TOAST_DURATION_MS;
   }
 
   private present(toast: HTMLIonToastElement, message: string): Promise<void> {

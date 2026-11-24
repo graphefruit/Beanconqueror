@@ -51,6 +51,9 @@ importers:
       '@capacitor-community/keep-awake':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.6.2)
+      '@capacitor-community/text-to-speech':
+        specifier: 8.0.2
+        version: 8.0.2(@capacitor/core@8.6.2)
       '@capacitor/android':
         specifier: ^8.6.2
         version: 8.6.2(@capacitor/core@8.6.2)
@@ -90,6 +93,9 @@ importers:
       '@capacitor/keyboard':
         specifier: 8.0.6
         version: 8.0.6(@capacitor/core@8.6.2)
+      '@capacitor/screen-reader':
+        specifier: 8.0.1
+        version: 8.0.1(@capacitor/core@8.6.2)
       '@capacitor/share':
         specifier: ^8.0.3
         version: 8.0.3(@capacitor/core@8.6.2)
@@ -692,6 +698,11 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
+  '@capacitor-community/text-to-speech@8.0.2':
+    resolution: {integrity: sha512-SbpBMzcmzdTiN8jQDme/yUYHEJISZA+IiaRn5zT14k3UKpjaA7eYBnSm9h76rJHRV/y6DVZVhT1J0SaK5JTKtA==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+
   '@capacitor/android@8.6.2':
     resolution: {integrity: sha512-dWXnXmOVTtxU91n5h11MzoQ7PAMjyzU1qguw0mBJZiwSuhGvLKTG/IlsQ75H8qeE0a1acV2f573x15wYvyzuVA==}
     peerDependencies:
@@ -762,6 +773,11 @@ packages:
 
   '@capacitor/keyboard@8.0.6':
     resolution: {integrity: sha512-Bbe+9V0qaT6dzEFJEK7BUWR01l2+vZE8FM5ITF/WgKtx+G6eGZ6d5+YiSMRJBAK0VGjdO59v8yiQ10Doa5KyvQ==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+
+  '@capacitor/screen-reader@8.0.1':
+    resolution: {integrity: sha512-r7tS7pjWawaBPbda0rSJsi1/4/5voaeGw18Txt8UyRo5e0YBkscxfPb+29Io0/CDc+fmE73cVhKl/PVUxwFwtQ==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
 
@@ -5655,6 +5671,10 @@ snapshots:
     dependencies:
       '@capacitor/core': 8.6.2
 
+  '@capacitor-community/text-to-speech@8.0.2(@capacitor/core@8.6.2)':
+    dependencies:
+      '@capacitor/core': 8.6.2
+
   '@capacitor/android@8.6.2(@capacitor/core@8.6.2)':
     dependencies:
       '@capacitor/core': 8.6.2
@@ -5749,6 +5769,10 @@ snapshots:
       '@capacitor/core': 8.6.2
 
   '@capacitor/keyboard@8.0.6(@capacitor/core@8.6.2)':
+    dependencies:
+      '@capacitor/core': 8.6.2
+
+  '@capacitor/screen-reader@8.0.1(@capacitor/core@8.6.2)':
     dependencies:
       '@capacitor/core': 8.6.2
 

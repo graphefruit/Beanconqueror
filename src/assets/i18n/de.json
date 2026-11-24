@@ -1382,7 +1382,8 @@
         "FOLLOWING_NUMBERS_WILL_BE_TEST_SPOKEN": "Folgende Nummern werden testgesprochen",
         "TEST_SPEAK": "Sprachtest starten",
         "PITCH": "Tonhöhe",
-        "RATE": "Sprechgeschwindigkeit"
+        "RATE": "Sprechgeschwindigkeit",
+        "SCREEN_READER_HINT": "Solange ein Screenreader wie VoiceOver oder TalkBack an ist, spricht er die Ansagen mit seiner eigenen Stimme und Sprechgeschwindigkeit. Tonhöhe und Sprechgeschwindigkeit von hier wirken dann nicht. Jede Ansage unterbricht, was der Screenreader gerade vorliest."
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptisches Feedback",
     "HAPTIC_FEEDBACK": {
