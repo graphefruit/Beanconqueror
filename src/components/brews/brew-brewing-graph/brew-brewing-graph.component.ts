@@ -1097,22 +1097,25 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   private async __connectPressureDevice(_firstStart: boolean) {
-    if (this.pressureDeviceConnected()) {
+    // pressureDeviceConnected() is always true in the browser to preview the
+    // graph, so only the real device decides whether there is one to talk to.
+    const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
+    if (pressureDevice) {
       this.deattachToPressureChange();
 
-      const pressureDevice: PressureDevice =
-        this.bleManager.getPressureDevice();
       if (!_firstStart) {
         /** IF we're a PRS or Bookoo-device we stop the transmission and start it after 300ms again **/
         await pressureDevice.disableValueTransmission();
         await sleep(300);
-      }
-      if (_firstStart) {
-        if (pressureDevice) {
-          pressureDevice.updateZero();
+        if (this.bleManager.getPressureDevice() !== pressureDevice) {
+          // Disconnected or replaced while waiting.
+          return;
         }
       }
-      pressureDevice?.enableValueTransmission();
+      if (_firstStart) {
+        pressureDevice.updateZero();
+      }
+      pressureDevice.enableValueTransmission();
       if (
         this.brewComponent?.timer?.isTimerRunning() === true &&
         _firstStart === false
