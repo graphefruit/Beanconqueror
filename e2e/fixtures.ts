@@ -2,9 +2,14 @@ import { test as base, expect } from '@playwright/test';
 
 import { NativeBoundary } from './support/native';
 
-interface HarnessOptions {
+export interface HarnessOptions {
   /** Console errors matching one of these patterns do not fail the test. Keep it empty if possible. */
   allowedConsoleErrors: RegExp[];
+  /**
+   * Scrollbars that take width, as on a desktop or a tablet with a mouse. Needs Chromium started
+   * without `--hide-scrollbars`; the style makes them classic where the system would overlay them.
+   */
+  classicScrollbars: boolean;
 }
 
 /**
@@ -16,9 +21,31 @@ interface HarnessOptions {
  * to the report.
  */
 export const test = base.extend<
-  HarnessOptions & { browserGuards: void; native: NativeBoundary }
+  HarnessOptions & {
+    browserGuards: void;
+    native: NativeBoundary;
+    scrollbars: void;
+  }
 >({
   allowedConsoleErrors: [[], { option: true }],
+  classicScrollbars: [false, { option: true }],
+
+  scrollbars: [
+    async ({ context, classicScrollbars }, use) => {
+      if (classicScrollbars) {
+        await context.addInitScript(() =>
+          document.addEventListener('DOMContentLoaded', () => {
+            const style = document.createElement('style');
+            style.textContent =
+              '::-webkit-scrollbar, ion-content::part(scroll)::-webkit-scrollbar { width: 15px; }';
+            document.head.append(style);
+          }),
+        );
+      }
+      await use();
+    },
+    { auto: true },
+  ],
 
   /**
    * Capacitor/Cordova plugin boundary (see `support/native.ts`). Always installed so every test

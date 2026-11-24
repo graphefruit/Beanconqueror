@@ -20,6 +20,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Brew } from '../../../classes/brew/brew';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
+import { SheetCloseButtonComponent } from '../../../components/sheet-close-button/sheet-close-button.component';
 import { PREPARATION_SEGMENT } from '../../../enums/preparations/preparationSegment';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { PreparationSortFilterHelperService } from '../../../services/preparationSortFilterHelper/preparation-sort-filter-helper.service';
@@ -42,6 +43,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
     IonContent,
     IonItem,
     IonIcon,
+    SheetCloseButtonComponent,
   ],
 })
 export class BrewChoosePreparationToBrewComponent implements OnInit {

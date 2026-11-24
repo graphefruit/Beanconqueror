@@ -152,6 +152,62 @@ go through `Announcer` (`src/services/a11y/announcer.service.ts`), not through l
 their own. A second live region makes screen readers speak a message twice, and VoiceOver ignores
 live regions outside an open dialog unless they are stacked above it.
 
+Info toasts stay 2 s, or 7 s while VoiceOver or TalkBack is on (`@capacitor/screen-reader`, read
+once at start and kept current through its `stateChange` event by `ScreenReaderState`,
+`src/services/a11y/screen-reader-state.service.ts`; native only). Toasts with a duration of their
+own keep it.
+
+The spoken brew values (text to speech on iOS and Android: weight every
+`text_to_speech_interval_rate` ms, time every 5 s, brew start and end;
+`src/services/textToSpeech/text-to-speech.service.ts`) take one of three ways:
+
+|                            | Screen reader off                     | Screen reader on                                          |
+| -------------------------- | ------------------------------------- | --------------------------------------------------------- |
+| iOS                        | `@capacitor-community/text-to-speech` | VoiceOver, through `ScreenReader.speak`                   |
+| Android                    | `@capacitor-community/text-to-speech` | TalkBack, from the live region of `Announcer` (assertive) |
+| Browser (web build, tests) | `speechSynthesis`                     | `speechSynthesis` (the state is not known there)          |
+
+- The native plugin gets the app language as a BCP 47 tag (`zh_TW` → `zh-TW`). Without a voice for
+  it (`isLanguageSupported`), it speaks in the system language (`navigator.language`). A failed
+  call is skipped and logged once, without the text or device details. `end()` calls its `stop()`.
+- Rate and pitch keep the scale of the settings sliders, which was the scale of `speechSynthesis`
+  (rate 0.1–10, pitch 0–2). Android takes them as they are. On iOS the plugin maps the rate
+  differently from WebKit (`adjustRate` in its iOS source against `mapSpeechRateToPlatformRate` in
+  WebKit), so `pluginSpeechRate` converts it (`speech-options.ts`) and iOS sounds as before. Pitch
+  is kept within 0.5–2, where both platforms follow it; the settings default of 3 was spoken as 2
+  before, too.
+- Android never calls the screen reader plugin's `speak`, which starts a new TTS engine on every
+  call. TalkBack reads from the app's one live region; `Announcer` drops the same text within
+  `REPEAT_WINDOW_MS` (2 s), so an unchanged weight is heard every 2 s instead of every interval,
+  while a changed weight is announced at once.
+- A screen reader taking over during a brew stops what the app's own voice still has to say.
+- The plugin's Android `stop()` (8.0.2) cleared the pending requests without settling them, so a
+  `speak` cut off by the next one (`QueueStrategy.Flush`) or by `stop()` stayed in the Capacitor
+  bridge until the app restarted. `patches/@capacitor-community__text-to-speech@8.0.2.patch`
+  resolves them, as iOS does (`didCancel`). After a plugin update, check whether the patch is still
+  needed; a changed patch changes the plugin path in `capacitor.settings.gradle` and the Podfile
+  (`pnpm exec cap sync android` and `… ios`).
+- The plugin binds the system TTS service when Capacitor loads it at app start (`load()` creates
+  `android.speech.tts.TextToSpeech`), for every Android user, also with text to speech off; the
+  plugin cannot start it later. Depending on the device this starts the TTS engine's process.
+  Start time and memory have to be checked on a device.
+
+VoiceOver announcements carry no queue attribute and TalkBack gets them assertive, so a new one
+cuts off what the screen reader is still speaking. That keeps the weight current, but has two
+costs:
+
+- The time and "brew started" go through `speakInFull`, which holds back the weight for
+  `SCREEN_READER_HOLD_MS` (1.5 s) so they are heard in full. At a slow speaking rate they can still
+  be cut off.
+- During a brew, an announcement every 250–1000 ms also cuts off what the screen reader reads while
+  the user navigates (the focused element, the stop button) and messages from `Announcer`. Turning
+  text to speech off ends both.
+
+`ScreenReaderState` reads the state again on every return to the foreground, as `stateChange` can
+get lost while the screen reader is switched in the system settings. Whether announcements are cut
+off or dropped, whether the time is heard in full, and whether the native voice is heard with the
+silent switch on, have to be checked on a device.
+
 #### Native plugins
 
 The app runs as the `web` platform, so Capacitor plugins use their web implementations and
@@ -227,7 +283,8 @@ statistics, start-up or backups.
   info, so the start includes the migration check but no migration. The import writes entries
   that already have their change info as well. The import test goes through Settings > Import with the generated ZIP.
 - Measured: start until the home screen is interactive, opening the brew list and scrolling it to
-  the end (duration, slow frames, longest frame), search in the brew list, opening the bean list
+  the end (time per screen height scrolled, slow frames, longest frame; the whole time also grows
+  with the estimated height of the rows the fling skips), search in the brew list, opening the bean list
   (also sorted by last use),
   deleting a bean with 200 brews, deleting the grinder with the most brews, deleting the water with the most brews, statistics with the brew charts, export (from the tap until the app hands the ZIP to the
   browser) and import (from the moment the app gets the file until the success message).

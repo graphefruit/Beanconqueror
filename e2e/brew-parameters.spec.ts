@@ -208,8 +208,8 @@ test('sorted parameters change the order of the brew form', async ({
   page,
 }) => {
   await openBrewParameterPage(page, 'Sort parameters');
-  // The rows only have text; the drag handle has no accessible name, so it is
-  // found by its element (known gap until the sort list gets labelled handles).
+  // The drag handle is hidden from screen readers, whose users move rows with
+  // the move buttons instead, so it is found by its element.
   const row = (label: string) =>
     page.locator('ion-item').filter({
       has: page.getByText(label, { exact: true }),

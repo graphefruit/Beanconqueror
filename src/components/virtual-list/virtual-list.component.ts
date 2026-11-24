@@ -86,7 +86,8 @@ export class VirtualRowDirective<T> {
  * Content marked `virtualListHead` (segments, search) stays at the top while
  * the rows scroll under it; other content is shown between it and the rows.
  * With a segment in the head, that content and the rows are the panel of the
- * selected tab.
+ * selected tab. With the class `card`, that panel is drawn as a card below
+ * the head.
  */
 @Component({
   selector: 'app-virtual-list',
@@ -114,6 +115,17 @@ export class VirtualRowDirective<T> {
       z-index: 2;
       background: var(--ion-background-color);
     }
+    /* An ion-card around the list would hold the head as well: Ionic clips the
+       card, and the head would no longer stay on top. */
+    :host(.card) .panel {
+      /* Ionic's card margin. */
+      margin: 10px;
+      overflow: clip;
+      border: 1px solid var(--bq-border-card);
+      border-radius: var(--bq-radius-card);
+      background: var(--ion-card-background);
+      color: var(--ion-text-color);
+    }
     .sizer {
       position: relative;
       /* On iOS a correction waits while a finger or momentum moves the list,
@@ -139,7 +151,7 @@ export class VirtualRowDirective<T> {
   `,
   template: `
     <div #head class="head"><ng-content select="[virtualListHead]" /></div>
-    <div appTabPanel>
+    <div appTabPanel class="panel">
       <ng-content />
       <div #sizer class="sizer" [style.height.px]="totalSize()">
         <!-- Only some rows are rendered: each tells screen readers its place

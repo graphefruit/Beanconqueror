@@ -8,6 +8,7 @@ import {
   brewAction,
   brewField,
   openAddBrew,
+  openAddBrewWithoutTime,
   openBrewParameterPage,
   setParameter,
   WATER,
@@ -42,7 +43,7 @@ async function top(locator: Locator): Promise<number> {
 /** Drags "Brew Temperature" above "Bean Type" in the global sort order. */
 async function sortBrewTemperatureFirst(page: Page): Promise<void> {
   await openBrewParameterPage(page, 'Sort parameters');
-  // See brew-parameters.spec.ts: the drag handle has no accessible name yet.
+  // See brew-parameters.spec.ts: the drag handle is hidden from screen readers.
   const row = (label: string) =>
     page.locator('ion-item').filter({
       has: page.getByText(label, { exact: true }),
@@ -205,16 +206,17 @@ test('the brew graph stays in the brew form when the brew time is hidden', async
   await setParameter(page, 'Time', false);
   await backToBrews(page);
 
-  await openAddBrew(page);
+  await openAddBrewWithoutTime(page, 'Not now');
   await expect(brewField(page, 'Time')).toHaveCount(0);
   await expect(brewField(page, 'Bloom Time / Pre-infusion')).toBeVisible();
   // The graph runs the brew with connected devices (scale, pressure, brew by
-  // weight); the section header reads it to offer its controls.
+  // weight); the section header reads it to offer its controls. The web build
+  // reports the scale as connected, so the header settles on the graph.
   await expect(
     section(page, 'While brewing').locator('brew-brewing-graph'),
   ).toHaveCount(1);
   await expect(
-    page.getByRole('button', { name: 'Maximize controls' }),
+    page.getByRole('button', { name: 'Maximize flow graph' }),
   ).toBeVisible();
   await expectReadingOrder(page, 'While brewing');
 });

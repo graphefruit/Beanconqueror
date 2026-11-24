@@ -244,7 +244,7 @@ for (const tier of TIERS) {
       });
       if (checkBudgets) {
         checkBudget('brewListOpen', list.settled, budget, testInfo);
-        checkBudget('brewListScroll', scroll.duration, budget, testInfo);
+        checkBudget('brewListScroll', scroll.perScreen, budget, testInfo);
         checkBudget(
           'brewListScrollLongestFrame',
           scroll.longestFrame,

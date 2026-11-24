@@ -14,9 +14,14 @@ import { UILog } from '../services/uiLog';
 import { UIMillStorage } from '../services/uiMillStorage';
 import { UIPreparationStorage } from '../services/uiPreparationStorage';
 import { UIStorage } from '../services/uiStorage';
+import {
+  beansRoastedFrom,
+  brewsDeletedWith,
+  Owner,
+  StoredEntry,
+} from './delete-rules';
 
 type Removal = [storage: StorageClass, uuids: string[]];
-type Stored = Record<string, unknown> & { config?: { uuid?: string } };
 
 /**
  * What became of a deletion. After `reported` a collection has told the user
@@ -60,32 +65,18 @@ export class DeleteCommands {
   private readonly uiExportImportHelper = inject(UIExportImportHelper);
   private readonly uiLog = inject(UILog);
 
-  /** What goes along with an entry of each collection. */
-  private readonly dependents = new Map<
-    StorageClass,
-    (_uuid: string) => Removal[]
-  >([
-    [this.uiBeanStorage, (_uuid) => [this.brewsWith('bean', [_uuid])]],
-    [this.uiMillStorage, (_uuid) => [this.brewsWith('mill', [_uuid])]],
-    [
-      this.uiPreparationStorage,
-      (_uuid) => [this.brewsWith('method_of_preparation', [_uuid])],
-    ],
-    [
-      this.uiGreenBeanStorage,
-      (_uuid) => {
-        const beans = DeleteCommands.uuidsWhere(
-          this.uiBeanStorage,
-          (_bean) =>
-            (
-              _bean.bean_roast_information as
-                { bean_uuid?: unknown } | undefined
-            )?.bean_uuid === _uuid,
-        );
-        return [this.brewsWith('bean', beans), [this.uiBeanStorage, beans]];
-      },
-    ],
+  /** The collections whose entries take brews along. */
+  private readonly owners = new Map<StorageClass, Owner>([
+    [this.uiBeanStorage, 'bean'],
+    [this.uiMillStorage, 'mill'],
+    [this.uiPreparationStorage, 'preparation'],
+    [this.uiGreenBeanStorage, 'greenBean'],
   ]);
+
+  /** The number of brews that deleting the entry now would take along. */
+  public brewCount(_owner: Owner, _uuid: string): number {
+    return brewsDeletedWith(_owner, _uuid, this.stored()).length;
+  }
 
   /** The bean and its brews. */
   public deleteBean(_uuid: string): Promise<Deletion> {
@@ -135,7 +126,7 @@ export class DeleteCommands {
       }
       await this.uiStorage.remove(PENDING_DELETION_STORAGE_KEY);
       const { collection, uuid, started_at } = note as Partial<PendingDeletion>;
-      const storage = [...this.dependents.keys()].find(
+      const storage = [...this.owners.keys()].find(
         (_storage) => _storage.DB_PATH === collection,
       );
       if (
@@ -161,9 +152,9 @@ export class DeleteCommands {
         age >= 0 &&
         age <= PENDING_DELETION_MAX_AGE_MS &&
         storage.getByUUID(uuid) !== undefined &&
-        this.dependents
-          .get(storage)(uuid)
-          .every(([, uuids]) => uuids.length === 0) &&
+        this.dependents(storage, uuid).every(
+          ([, uuids]) => uuids.length === 0,
+        ) &&
         (await storage.removeManyByUUID([uuid]));
       this.uiLog.log(
         `DeleteCommands - Interrupted - ${storage.DB_PATH} - ${finish ? 'entry deleted' : 'nothing deleted'}`,
@@ -173,31 +164,24 @@ export class DeleteCommands {
     }
   }
 
-  private brewsWith(_field: string, _owners: readonly string[]): Removal {
-    const owners = new Set<unknown>(_owners);
-    return [
-      this.uiBrewStorage,
-      DeleteCommands.uuidsWhere(this.uiBrewStorage, (_brew) =>
-        owners.has(_brew[_field]),
-      ),
-    ];
+  private stored(): { beans: StoredEntry[]; brews: StoredEntry[] } {
+    return {
+      beans: this.uiBeanStorage.getRawEntries() as StoredEntry[],
+      brews: this.uiBrewStorage.getRawEntries() as StoredEntry[],
+    };
   }
 
-  /**
-   * From the stored form: building a Brew for each of 30,000 entries would
-   * take longer than the deletion.
-   */
-  private static uuidsWhere(
-    _storage: StorageClass,
-    _matches: (_entry: Stored) => boolean,
-  ): string[] {
-    const uuids: string[] = [];
-    for (const entry of _storage.getRawEntries() as (Stored | null)[]) {
-      if (entry && _matches(entry) && entry.config?.uuid) {
-        uuids.push(entry.config.uuid);
-      }
-    }
-    return uuids;
+  /** What goes along with an entry of the collection. */
+  private dependents(_storage: StorageClass, _uuid: string): Removal[] {
+    const owner = this.owners.get(_storage);
+    const stored = this.stored();
+    const brews: Removal = [
+      this.uiBrewStorage,
+      brewsDeletedWith(owner, _uuid, stored),
+    ];
+    return owner === 'greenBean'
+      ? [brews, [this.uiBeanStorage, beansRoastedFrom(stored.beans, _uuid)]]
+      : [brews];
   }
 
   private async delete(
@@ -221,7 +205,7 @@ export class DeleteCommands {
         return false;
       }
       const removals = (): Removal[] => [
-        ...this.dependents.get(_storage)(_uuid),
+        ...this.dependents(_storage, _uuid),
         [_storage, [_uuid]],
       ];
       // An empty list removes nothing but tells whether the collection

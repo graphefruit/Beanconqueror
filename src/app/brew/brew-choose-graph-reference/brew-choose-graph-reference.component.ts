@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 
 import {
   IonButton,
-  IonCard,
   IonCol,
   IonContent,
   IonFooter,
@@ -40,7 +39,6 @@ import {
   VirtualRowDirective,
 } from '../../../components/virtual-list/virtual-list.component';
 import { SearchbarNameDirective } from '../../../directive/searchbar-name.directive';
-import { TabPanelDirective } from '../../../directive/tab-panel.directive';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
@@ -50,6 +48,12 @@ import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { BrewFilterComponent } from '../brew-filter/brew-filter.component';
+
+/** A row of the list: a graph, or a brew with its graph. */
+interface ReferenceRow {
+  readonly brew?: Brew;
+  readonly graph?: Graph;
+}
 
 @Component({
   selector: 'app-brew-choose-graph-reference',
@@ -73,10 +77,8 @@ import { BrewFilterComponent } from '../brew-filter/brew-filter.component';
     IonSegmentButton,
     IonLabel,
     IonRadioGroup,
-    IonCard,
     IonSearchbar,
     SearchbarNameDirective,
-    TabPanelDirective,
     IonFooter,
     IonRow,
     IonCol,
@@ -99,11 +101,14 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   public graphOpenView: Array<Graph> = [];
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
-  public readonly entryKey = (entry: Brew | Graph): string => entry.config.uuid;
+  /** The rows of the selected segment. */
+  public shownRows: ReferenceRow[] = [];
+  public readonly rowKey = (row: ReferenceRow): string =>
+    (row.brew ?? row.graph).config.uuid;
 
   private readonly content = viewChild.required(IonContent);
   private readonly list =
-    viewChild<VirtualListComponent<Brew | Graph>>(VirtualListComponent);
+    viewChild<VirtualListComponent<ReferenceRow>>(VirtualListComponent);
 
   public graphsOpen: Array<Graph> = [];
   public brewsOpen: Array<Brew> = [];
@@ -143,7 +148,20 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   }
 
   public segmentChanged() {
+    this.showSegment();
     void this.content().scrollToTop();
+  }
+
+  private showSegment(): void {
+    if (this.brew_segment === 'graphs-open') {
+      this.shownRows = this.graphOpenView.map((graph) => ({ graph }));
+      return;
+    }
+    const brews =
+      this.brew_segment === 'brews-open'
+        ? this.openBrewsView
+        : this.archiveBrewsView;
+    this.shownRows = brews.map((brew) => ({ brew }));
   }
 
   public async addOwnGraph() {
@@ -183,11 +201,13 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     this.__initializeBrewView('brews-open');
     this.__initializeBrewView('brews-archiv');
     this.__initializeGraphView('graphs-open');
+    this.showSegment();
   }
   public research() {
     this.__initializeBrewView('brews-open');
     this.__initializeBrewView('brews-archiv');
     this.__initializeGraphView('graphs-open');
+    this.showSegment();
     this.list()?.scrollToTop();
   }
 
