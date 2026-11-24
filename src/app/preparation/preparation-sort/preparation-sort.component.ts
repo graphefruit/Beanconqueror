@@ -23,6 +23,7 @@ import {
 
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { SheetCloseButtonComponent } from '../../../components/sheet-close-button/sheet-close-button.component';
 import { PREPARATION_SORT_AFTER } from '../../../enums/preparations/preparationSortAfter';
 import { PREPARATION_SORT_ORDER } from '../../../enums/preparations/preparationSortOrder';
 import { IPreparationPageSort } from '../../../interfaces/preparation/iPreparationPageSort';
@@ -46,6 +47,7 @@ import { UIHelper } from '../../../services/uiHelper';
     IonIcon,
     IonLabel,
     IonButton,
+    SheetCloseButtonComponent,
   ],
 })
 export class PreparationSortComponent implements OnInit {

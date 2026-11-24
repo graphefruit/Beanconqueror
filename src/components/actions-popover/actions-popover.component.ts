@@ -38,6 +38,8 @@ import {
 
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { SheetCloseButtonComponent } from '../sheet-close-button/sheet-close-button.component';
+
 export interface PopoverAction {
   itemType: 'action';
   role: string;
@@ -150,6 +152,7 @@ interface ActionsPopoverOptions {
           }
         }
       </ion-list>
+      <app-sheet-close-button />
     </ion-content>
   `,
   styles: `
@@ -168,6 +171,7 @@ interface ActionsPopoverOptions {
     IonItem,
     IonIcon,
     IonLabel,
+    SheetCloseButtonComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

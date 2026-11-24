@@ -25,6 +25,7 @@ import { calendarOutline, timeOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { SheetCloseButtonComponent } from '../../../../components/sheet-close-button/sheet-close-button.component';
 import { BEAN_SORT_AFTER } from '../../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../../enums/beans/beanSortOrder';
 import { IBeanPageSort } from '../../../../interfaces/bean/iBeanPageSort';
@@ -48,6 +49,7 @@ import { UIHelper } from '../../../../services/uiHelper';
     IonIcon,
     IonLabel,
     IonButton,
+    SheetCloseButtonComponent,
   ],
 })
 export class GreenBeanSortComponent implements OnInit {
