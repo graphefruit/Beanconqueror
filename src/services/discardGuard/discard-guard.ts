@@ -24,16 +24,20 @@ export interface DiscardGuardOptions {
  */
 export class DiscardGuard {
   private busy = false;
+  private formClosing = false;
 
   constructor(
     private readonly uiAlert: UIAlert,
     private readonly platform: Platform,
     private readonly alertController: AlertController,
     private readonly options: DiscardGuardOptions,
-    modal: HTMLIonModalElement | null,
+    private readonly modal: HTMLIonModalElement | null,
   ) {
     if (modal) {
       modal.canDismiss = (_data, role) => this.canDismiss(role);
+      modal.addEventListener('ionModalWillDismiss', () => {
+        this.formClosing = true;
+      });
     }
   }
 
@@ -58,7 +62,11 @@ export class DiscardGuard {
         this.busy = false;
         return;
       }
-      await this.options.close();
+      // The form may have closed itself meanwhile (automatic save, lost
+      // scale), so there is nothing left to close.
+      if (!this.formClosing) {
+        await this.options.close();
+      }
     } catch (error) {
       this.busy = false;
       throw error;
@@ -69,6 +77,8 @@ export class DiscardGuard {
    * The question cannot be dismissed by its backdrop (that would count as
    * "yes"), so Ionic leaves back and Escape to the app, which would put the
    * app in the background. Here they answer "no", as on any Android dialog.
+   * When the form closes itself while asking (automatic save, lost scale),
+   * the question goes with it instead of standing over the list.
    */
   private async ask(): Promise<boolean> {
     const answerNo = () =>
@@ -85,6 +95,7 @@ export class DiscardGuard {
       answerNo,
     );
     document.addEventListener('keydown', onKey);
+    this.modal?.addEventListener('ionModalWillDismiss', answerNo);
     try {
       const choice = await this.uiAlert.showConfirm(
         this.options.question,
@@ -95,6 +106,7 @@ export class DiscardGuard {
     } finally {
       back.unsubscribe();
       document.removeEventListener('keydown', onKey);
+      this.modal?.removeEventListener('ionModalWillDismiss', answerNo);
     }
   }
 }

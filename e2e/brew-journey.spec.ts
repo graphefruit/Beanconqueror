@@ -145,11 +145,27 @@ test('the brew details offer repeat and edit', async ({ page }) => {
   await expect(brewField(page, 'Ground Coffee (gr)')).toHaveValue('18');
 });
 
-test('cancelling an untouched new brew closes it without asking', async ({
+test('leaving an untouched new or repeated brew closes it without asking', async ({
   page,
 }) => {
+  // The form takes its starting point only once it has filled itself in;
+  // leaving earlier would never ask and prove nothing. The settle leaves room
+  // for anything it still sets after that.
   await openAddBrew(page);
+  await expect(
+    page.getByRole('button', { name: 'Preparation method, V60' }),
+  ).toBeVisible();
+  await page.waitForTimeout(1_000);
   await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('alertdialog')).toHaveCount(0);
+
+  // A repeated brew is filled in from the last one: still no input.
+  await brewAction(page, 'Repeat');
+  await expect(brewField(page, 'Ground Coffee (gr)')).toHaveValue('18');
+  await expect(brewField(page, WATER)).toHaveValue('300');
+  await page.waitForTimeout(1_000);
+  await pressHardwareBack(page);
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.getByRole('alertdialog')).toHaveCount(0);
 });

@@ -15,6 +15,7 @@ describe('DiscardGuard', () => {
   let guard: DiscardGuard;
 
   beforeEach(() => {
+    answer = undefined;
     showConfirm = jasmine.createSpy('showConfirm').and.callFake(
       () =>
         new Promise((resolve) => {
@@ -38,6 +39,13 @@ describe('DiscardGuard', () => {
       { question: 'QUESTION', changed: () => changed, close },
       modal,
     );
+  });
+
+  // A question left open would keep its Escape listener on the document and
+  // answer for the next test.
+  afterEach(async () => {
+    answer?.('NO');
+    await new Promise((resolve) => setTimeout(resolve));
   });
 
   const canDismiss = (role?: string) =>
@@ -142,6 +150,19 @@ describe('DiscardGuard', () => {
     expect(await canDismiss('gesture')).toBeFalse();
     await Promise.resolve();
     expect(showConfirm).toHaveBeenCalledTimes(1);
+  });
+
+  it('takes the question away when the form closes itself meanwhile', async () => {
+    const closing = guard.confirmDismiss();
+    await Promise.resolve();
+
+    modal.dispatchEvent(new CustomEvent('ionModalWillDismiss'));
+    await Promise.resolve();
+    expect(dismissTop).toHaveBeenCalledOnceWith(undefined, 'cancel');
+
+    answer('YES');
+    await closing;
+    expect(close).not.toHaveBeenCalled();
   });
 
   for (const role of [undefined, 'saved', 'parent-dismissed', 'cancel']) {
