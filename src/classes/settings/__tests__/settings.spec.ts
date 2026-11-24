@@ -48,6 +48,51 @@ describe('Settings', () => {
     expect(settings.visualizer_url).toBe('https://visualizer.example.com/');
   });
 
+  describe('spoken brew values of settings saved before their switches', () => {
+    /** Settings as an older version saved them, with the given speech fields. */
+    function saved(speech: object): Settings {
+      const old = JSON.parse(JSON.stringify(new Settings()));
+      for (const field of [
+        'text_to_speech_weight',
+        'text_to_speech_whole_grams',
+        'text_to_speech_brew_time',
+        'text_to_speech_brew_time_interval',
+        'text_to_speech_brew_start_end',
+      ]) {
+        delete old[field];
+      }
+      const settings = new Settings();
+      settings.initializeByObject({ ...old, ...speech });
+      return settings;
+    }
+
+    const switches = (settings: Settings) => ({
+      weight: settings.text_to_speech_weight,
+      wholeGrams: settings.text_to_speech_whole_grams,
+      time: settings.text_to_speech_brew_time,
+      every: settings.text_to_speech_brew_time_interval,
+      startAndEnd: settings.text_to_speech_brew_start_end,
+      weightEveryMs: settings.text_to_speech_interval_rate,
+    });
+
+    it('say the weight, the time every 5 s, start and end as before', () => {
+      const settings = saved({
+        text_to_speech_active: true,
+        text_to_speech_interval_rate: 400,
+      });
+
+      expect(settings.text_to_speech_active).toBeTrue();
+      expect(switches(settings)).toEqual({
+        weight: true,
+        wholeGrams: false,
+        time: true,
+        every: 5,
+        startAndEnd: true,
+        weightEveryMs: 400,
+      });
+    });
+  });
+
   describe('user profile', () => {
     function storedSettingsWithUser(_user: unknown): Settings {
       const stored = JSON.parse(JSON.stringify(new Settings())) as Settings;

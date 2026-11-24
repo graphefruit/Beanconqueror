@@ -1,3 +1,5 @@
+import type { Settings } from '../../classes/settings/settings';
+
 /**
  * The rate and pitch in the settings use the scale of the Web Speech API that
  * spoke them before the native plugin: rate 0.1–10 and pitch 0–2, 1 is normal.
@@ -42,4 +44,63 @@ export function pluginSpeechPitch(pitch: number): number {
 /** The app language ('zh_TW', 'de') as a BCP 47 tag ('zh-TW', 'de'). */
 export function speechLanguageTag(appLanguage: string | undefined): string {
   return appLanguage ? appLanguage.replace('_', '-') : 'en';
+}
+
+type BrewSpeechSettings = Pick<
+  Settings,
+  | 'text_to_speech_active'
+  | 'text_to_speech_weight'
+  | 'text_to_speech_brew_time'
+  | 'text_to_speech_brew_start_end'
+>;
+
+/** Which brew values are said: each has its own switch under the main one. */
+export function spokenBrewValues(settings: BrewSpeechSettings) {
+  const on = settings.text_to_speech_active === true;
+  return {
+    weight: on && settings.text_to_speech_weight,
+    time: on && settings.text_to_speech_brew_time,
+    startAndEnd: on && settings.text_to_speech_brew_start_end,
+  };
+}
+
+/**
+ * The brew time to say once the timer has run `elapsedMs`: at every multiple
+ * of the interval, as the timer shows it. A timer without milliseconds shows
+ * whole seconds only, so there the time is said at the first second that
+ * reaches the interval since the last one said: 0.25 s says every second,
+ * 1.5 s every 2 s. `lastStep` is the multiple reached last, undefined while
+ * the timer stands; the result carries the one to pass next.
+ */
+export function brewTimeToSay(
+  lastStep: number | undefined,
+  elapsedMs: number,
+  intervalSeconds: number,
+  showsMilliseconds: boolean,
+): { step: number; say?: string } {
+  const intervalMs = Math.round(
+    (showsMilliseconds
+      ? intervalSeconds
+      : Math.max(1, Math.ceil(intervalSeconds))) * 1000,
+  );
+  const step = Math.floor(elapsedMs / intervalMs);
+  if (lastStep === undefined || step <= lastStep) {
+    return { step };
+  }
+  const say = showsMilliseconds
+    ? +((step * intervalMs) / 1000).toFixed(3)
+    : Math.floor(elapsedMs / 1000);
+  return { step, say: String(say) };
+}
+
+/**
+ * The weight as it is said: one decimal for espresso, whole grams otherwise or
+ * when chosen, as a decimal takes the Android voice noticeably longer to say.
+ */
+export function spokenWeight(
+  grams: number,
+  espresso: boolean,
+  wholeGrams: boolean,
+): string {
+  return String(+grams.toFixed(espresso && !wholeGrams ? 1 : 0));
 }

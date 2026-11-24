@@ -91,6 +91,37 @@ describe('LIVE_REGION', () => {
     tick(LIVE_REGION_CLEAR_AFTER_MS);
   }));
 
+  it('writes only the newest value of a key, and every other message', fakeAsync(() => {
+    const liveRegion = TestBed.inject(LIVE_REGION);
+    const region = TestBed.inject(DOCUMENT).querySelector(
+      '.cdk-live-announcer-element',
+    );
+    const next = LIVE_REGION_NEXT_MESSAGE_AFTER_MS + CDK_WRITE_DELAY_MS;
+
+    liveRegion.announce('Time 1', 'assertive', 'time');
+    tick(CDK_WRITE_DELAY_MS);
+    expect(region.textContent).toBe('Time 1');
+    liveRegion.announce('Time 1.25', 'assertive', 'time');
+    liveRegion.announce('Bean saved', 'polite');
+    liveRegion.announce('Time 1.5', 'assertive', 'time');
+    liveRegion.announce('Bean archived', 'polite');
+    liveRegion.announce('Time 1.75', 'assertive', 'time');
+    // One more turn than messages: no outdated time follows the newest.
+    const written: string[] = [];
+    for (let turn = 0; turn < 4; turn++) {
+      tick(next);
+      written.push(region.textContent);
+    }
+
+    expect(written).toEqual([
+      'Bean saved',
+      'Bean archived',
+      'Time 1.75',
+      'Time 1.75',
+    ]);
+    tick(LIVE_REGION_CLEAR_AFTER_MS);
+  }));
+
   describe('while an overlay closes', () => {
     // The overlay stays put while it closes, so its events reach the document.
     const overlayEvent = (type: string) =>
