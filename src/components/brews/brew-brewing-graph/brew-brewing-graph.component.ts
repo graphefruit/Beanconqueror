@@ -46,6 +46,7 @@ import regression from 'regression';
 import { Subscription } from 'rxjs';
 
 import { BrewChooseGraphReferenceComponent } from '../../../app/brew/brew-choose-graph-reference/brew-choose-graph-reference.component';
+import { timeParameterHintDue } from '../../../brew-session/rules/timeParameterHint';
 import { Brew } from '../../../classes/brew/brew';
 import {
   BrewFlow,
@@ -80,6 +81,7 @@ import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/san
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { triggerBrewByWeightWebhook } from '../../../classes/settings/brewByWeightWebhook';
 import { Settings } from '../../../classes/settings/settings';
+import { storedOrReported } from '../../../classes/storedOrReported';
 import { ChipButtonDirective } from '../../../directive/chip-button.directive';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
 import { BREW_GRAPH_TYPE } from '../../../enums/brews/brewGraphType';
@@ -377,6 +379,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
       if (isSomethingConnected === true) {
         this.initializeFlowChart();
+        void this.hintTimeParameter();
       }
 
       this.bluetoothSubscription = this.bleManager
@@ -428,6 +431,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
             if (this.brewComponent.timer?.isTimerRunning() !== true) {
               this.initializeFlowChart();
             }
+            void this.hintTimeParameter();
           }
           // If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
           setTimeout(() => {
@@ -438,6 +442,54 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           this.brewComponent?.brewBrewingPreparationDeviceEl?.checkChanges();
           this.brewComponent?.checkChanges();
         });
+    }
+  }
+
+  private timeParameterHinted = false;
+
+  /** Offers to show the brew time, see timeParameterHintDue. */
+  private async hintTimeParameter(): Promise<void> {
+    const preparation = this.brewComponent?.choosenPreparation;
+    if (!preparation) {
+      return;
+    }
+    const parameters = preparation.use_custom_parameters
+      ? preparation.manage_parameters
+      : this.settings.manage_parameters;
+    if (
+      !timeParameterHintDue({
+        parameters,
+        baristaMode: this.baristamode,
+        editing: this.isEdit,
+        hinted: this.timeParameterHinted,
+      })
+    ) {
+      return;
+    }
+    this.timeParameterHinted = true;
+    try {
+      const choice = await this.uiAlert.showConfirmWithYesNoTranslation(
+        'TIME_PARAMETER_HINT_DESCRIPTION',
+        'TIME_PARAMETER_HINT_TITLE',
+        'TIME_PARAMETER_HINT_SHOW',
+        'TIME_PARAMETER_HINT_NOT_NOW',
+        true,
+      );
+      if (choice !== 'YES') {
+        return;
+      }
+      parameters.brew_time = true;
+      // The brew form lays out its fields again once the change is stored.
+      const saved = await storedOrReported(this.uiAlert, () =>
+        preparation.use_custom_parameters
+          ? this.uiPreparationStorage.update(preparation)
+          : this.uiSettingsStorage.saveSettings(this.settings),
+      );
+      if (!saved) {
+        parameters.brew_time = false;
+      }
+    } catch (ex) {
+      this.uiLog.error('Brew - Time parameter hint failed', ex);
     }
   }
 

@@ -101,6 +101,28 @@ export function topDialog(page: Page): Locator {
   return page.getByRole('dialog').last();
 }
 
+/**
+ * The question to show the brew time. The web build counts a scale as
+ * connected, so a brew form without the brew time asks it once.
+ */
+export function timeParameterHint(page: Page): Locator {
+  return page.getByRole('alertdialog', { name: 'Show the brew time?' });
+}
+
+/** Opens the brew form without the brew time and answers its question. */
+export async function openAddBrewWithoutTime(
+  page: Page,
+  answer: 'Not now' | 'Show time',
+): Promise<void> {
+  await page
+    .getByRole('button', { name: 'Add brew' })
+    .filter({ visible: true })
+    .click();
+  await timeParameterHint(page).getByRole('button', { name: answer }).click();
+  await expect(timeParameterHint(page)).toHaveCount(0);
+  await expect(brewField(page, 'Creation Date')).toBeVisible();
+}
+
 /** The brew cards of the Brews tab (the page's main region). */
 export function brewList(page: Page): Locator {
   return page.locator('brew').getByRole('main');
