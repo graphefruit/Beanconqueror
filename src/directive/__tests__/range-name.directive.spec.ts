@@ -13,16 +13,11 @@ import { RangeNameDirective, rangeValueText } from '../range-name.directive';
 @Component({
   imports: [RangeNameDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  template: `<test-range
-    [rangeLabel]="label()"
-    [rangeUnit]="unit()"
-    [rangeShownValue]="shown()"
-  />`,
+  template: `<test-range [rangeLabel]="label()" [rangeUnit]="unit()" />`,
 })
 class HostComponent {
   public readonly label = signal('Bildqualität');
   public readonly unit = signal('%');
-  public readonly shown = signal<number | undefined>(undefined);
 }
 
 function knob(value: number, extraPart = ''): string {
@@ -102,19 +97,6 @@ describe('RangeNameDirective', () => {
     await new Promise((resolve) => setTimeout(resolve));
 
     expect(knobs()[0].getAttribute('aria-valuetext')).toBe('95 %');
-  });
-
-  it('says the value shown next to the knob when it is not the knob’s own', async () => {
-    await create(knob(0.25), 0.25);
-    fixture.componentInstance.unit.set('s');
-    fixture.componentInstance.shown.set(1);
-    await settle();
-
-    expect(knobs()[0].getAttribute('aria-valuetext')).toBe('1 s');
-
-    fixture.componentInstance.shown.set(undefined);
-    await settle();
-    expect(knobs()[0].getAttribute('aria-valuetext')).toBe('0,25 s');
   });
 
   it('follows the label, the unit and the app language', async () => {

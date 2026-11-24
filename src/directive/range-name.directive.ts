@@ -62,11 +62,6 @@ export class RangeNameDirective {
   public readonly rangeLabel = input<string>();
   /** The unit shown with the value, e.g. "%" or "g/s". */
   public readonly rangeUnit = input<string>('');
-  /**
-   * The value shown next to a single knob when it is not the knob's own, e.g.
-   * the interval that is in effect; said instead of the knob's value.
-   */
-  public readonly rangeShownValue = input<number>();
 
   private readonly rendered = signal(false);
   private readonly language = toSignal(this.translate.onLangChange);
@@ -97,7 +92,6 @@ export class RangeNameDirective {
     effect(() => {
       this.rangeLabel();
       this.rangeUnit();
-      this.rangeShownValue();
       this.language();
       if (this.rendered()) {
         this.describeKnobs();
@@ -130,8 +124,7 @@ export class RangeNameDirective {
         // Ionic points to its own empty label, which would win over the name.
         knob.removeAttribute('aria-labelledby');
       }
-      const value =
-        this.rangeShownValue() ?? Number(knob.getAttribute('aria-valuenow'));
+      const value = Number(knob.getAttribute('aria-valuenow'));
       if (Number.isFinite(value)) {
         const text = rangeValueText(
           value,

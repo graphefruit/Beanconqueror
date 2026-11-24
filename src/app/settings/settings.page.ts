@@ -115,7 +115,6 @@ import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDev
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import { PreImportBackupError } from '../../services/preImportBackup/pre-import-backup.service';
 import { EventQueueService } from '../../services/queueService/queue-service.service';
-import { brewTimeEverySeconds } from '../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
 import { ThemeService } from '../../services/theme/theme.service';
 import { UIAlert } from '../../services/uiAlert';
@@ -238,14 +237,6 @@ export class SettingsPage {
   public readonly isTextToSpeechSectionAvailable = this.textToSpeech.available;
   /** The Android voice service takes about a second for every announcement. */
   public readonly isAndroidSpeechHintShown = this.platform.is('android');
-
-  /** How often the brew time is said: whole seconds without milliseconds. */
-  public get brewTimeSpokenEvery(): number {
-    return brewTimeEverySeconds(
-      this.settings.text_to_speech_brew_time_interval,
-      this.settings.brew_milliseconds === true,
-    );
-  }
 
   public currencies = {};
 

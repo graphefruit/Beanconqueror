@@ -79,14 +79,17 @@ test.describe('on Android', () => {
     await expect(startAndEnd(page)).toBeChecked();
     await expect(androidHint(page)).toBeVisible();
 
-    // A timer without milliseconds shows whole seconds: 0.25 s means every second.
+    // The slider shows the chosen interval, also when the timer shows whole seconds.
     await brewTimeEvery(page).focus();
     for (let i = 0; i < 19; i++) {
       await page.keyboard.press('ArrowLeft');
     }
     await expect(brewTimeEvery(page)).toHaveAttribute('aria-valuenow', '0.25');
-    await expect(brewTimeEvery(page)).toHaveAttribute('aria-valuetext', '1 s');
-    await expect(page.getByText('1 s', { exact: true })).toBeVisible();
+    await expect(brewTimeEvery(page)).toHaveAttribute(
+      'aria-valuetext',
+      '0.25 s',
+    );
+    await expect(page.getByText('0.25 s', { exact: true })).toBeVisible();
 
     // Whole grams belong to the weight and stay with it, whatever the time does.
     await switchOff(brewTime(page));
