@@ -1,4 +1,4 @@
-import { readExcelDate } from '../excel-import-rules';
+import { readBeanMix, readExcelDate } from '../excel-import-rules';
 
 describe('readExcelDate', () => {
   const cases: [string, unknown, string | null][] = [
@@ -36,6 +36,32 @@ describe('readExcelDate', () => {
   for (const [name, value, expected] of cases) {
     it(`reads ${name}`, () => {
       expect(readExcelDate(value)).toBe(expected);
+    });
+  }
+});
+
+describe('readBeanMix', () => {
+  const cases: [string, unknown, string | null][] = [
+    ['the key of a single origin', 'SINGLE_ORIGIN', 'SINGLE_ORIGIN'],
+    ['the key of a blend', 'BLEND', 'BLEND'],
+    ['the key of an unknown mix', 'UNKNOWN', 'UNKNOWN'],
+    ['the English text of a single origin', 'Single Origin', 'SINGLE_ORIGIN'],
+    ['the English text of a blend', 'Blend', 'BLEND'],
+    ['the English text of an unknown mix', 'Unknown', 'UNKNOWN'],
+    ['the German text of an unknown mix', 'Unbekannt', 'UNKNOWN'],
+    ['a text in other case with spaces', '  single ORIGIN ', 'SINGLE_ORIGIN'],
+    ['an empty cell', undefined, ''],
+    ['null', null, ''],
+    ['empty text', ' ', ''],
+    ['an unknown text', 'Mixed', null],
+    ['a name of the object prototype', 'constructor', null],
+    ['a number', 1, null],
+    ['yes or no', true, null],
+  ];
+
+  for (const [name, value, expected] of cases) {
+    it(`reads ${name}`, () => {
+      expect(readBeanMix(value)).toBe(expected as never);
     });
   }
 });

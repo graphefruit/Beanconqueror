@@ -1,3 +1,5 @@
+import { BEAN_MIX_ENUM } from '../enums/beans/mix';
+
 /** A cell of an imported row that was not read; its field keeps its default. */
 export interface ExcelImportIssue {
   /** The row as Excel counts it, with the header in row 1. */
@@ -63,4 +65,36 @@ export function readExcelDate(value: unknown): string | null {
   }
   const time = new Date(text);
   return Number.isNaN(time.getTime()) ? null : time.toISOString();
+}
+
+/**
+ * The texts a blend cell can hold, in lower case: the key, the English text
+ * that the export writes and has written from the start, and the German text
+ * of the app. The other languages are not read.
+ */
+const BEAN_MIX_TEXTS = new Map<string, keyof typeof BEAN_MIX_ENUM>([
+  ['unknown', 'UNKNOWN'],
+  ['unbekannt', 'UNKNOWN'],
+  ['single_origin', 'SINGLE_ORIGIN'],
+  ['single origin', 'SINGLE_ORIGIN'],
+  ['blend', 'BLEND'],
+]);
+
+/**
+ * A blend cell as the key a bean stores. '' for an empty cell, null for a
+ * text that is none of the known ones.
+ */
+export function readBeanMix(value: unknown): BEAN_MIX_ENUM | '' | null {
+  if (value === undefined || value === null) {
+    return '';
+  }
+  if (typeof value !== 'string') {
+    return null;
+  }
+  const text = value.trim().toLowerCase();
+  if (text === '') {
+    return '';
+  }
+  // A bean stores the key in its field typed as the enum.
+  return (BEAN_MIX_TEXTS.get(text) as BEAN_MIX_ENUM) ?? null;
 }

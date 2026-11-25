@@ -408,6 +408,33 @@ describe('UIExcel', () => {
       );
     });
 
+    it('stores the key of the blend for its key and its English and German text', async () => {
+      const beans = await importBeans([
+        { Name: 'Key', Blend: 'BLEND' },
+        { Name: 'English', Blend: 'Single Origin' },
+        { Name: 'German', Blend: 'Unbekannt' },
+        { Name: 'Empty' },
+      ]);
+
+      expect(beans.map((bean) => bean.beanMix as string)).toEqual([
+        'BLEND',
+        'SINGLE_ORIGIN',
+        'UNKNOWN',
+        'SINGLE_ORIGIN',
+      ]);
+      expect(issues).toEqual([]);
+    });
+
+    it('keeps the default for an unknown blend and notes and logs its row and field', async () => {
+      const [bean] = await importBeans([{ Name: 'Mixed', Blend: 'Mixed' }]);
+
+      expect(bean.beanMix as string).toBe('SINGLE_ORIGIN');
+      expect(issues).toEqual([{ row: 2, field: 'Blend' }]);
+      expect(uiLog.warn).toHaveBeenCalledOnceWith(
+        'Excel import - row 2, Blend: not read',
+      );
+    });
+
     it('takes the custom degree of roast only for a custom roast', async () => {
       const beans = await importBeans([
         {
@@ -438,7 +465,6 @@ describe('UIExcel', () => {
           Name: 'Unchecked',
           'Roast type': 'Light filter',
           'Degree of Roast': 3,
-          Blend: 'Mixed',
           Cost: 'twelve',
           Decaffeinated: 'no',
           Archived: 'false',
@@ -447,7 +473,6 @@ describe('UIExcel', () => {
 
       expect(bean.bean_roasting_type as string).toBe('Light filter');
       expect(bean.roast as unknown).toBe(3);
-      expect(bean.beanMix as string).toBe('Mixed');
       // NaN, which the database stores as null.
       expect(bean.cost).toBeNull();
       // Text in the yes/no fields counts as yes: the bean lands in the archive.
@@ -1676,7 +1701,6 @@ describe('UIExcel', () => {
         expect(imported.roastingDate).toBe('2022-02-02T00:00:00.000Z');
         // The export writes display texts, the import expects the enum keys.
         expect(imported.bean_roasting_type as string).toBe('Filter');
-        expect(imported.beanMix as string).toBe('Blend');
         // "Degree of Roast" holds the roast range, so the degree is lost.
         expect(imported.roast as unknown).toBe(2);
         expect(imported.roast_custom).toBe('');
@@ -1688,6 +1712,24 @@ describe('UIExcel', () => {
         ]);
         expect(imported.config.uuid).not.toBe('bean-1');
       });
+
+      for (const beanMix of ['SINGLE_ORIGIN', 'BLEND', 'UNKNOWN']) {
+        it(`keeps the blend ${beanMix}`, async () => {
+          setup(ENGLISH);
+          const exported = bean();
+          exported.beanMix = beanMix as BEAN_MIX_ENUM;
+          beanStorage.entries = [exported];
+          await excel.export();
+          const { buffer } = await exportedFile();
+
+          issues = await excel.importBeansByExcel(buffer);
+
+          expect(beanStorage.stored.map((entry) => entry.beanMix)).toEqual([
+            beanMix as BEAN_MIX_ENUM,
+          ]);
+          expect(issues).toEqual([]);
+        });
+      }
     });
   });
 

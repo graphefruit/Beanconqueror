@@ -17,7 +17,11 @@ import { StorageClass } from '../classes/storageClass';
 import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../enums/beans/mix';
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
-import { ExcelImportIssue, readExcelDate } from './excel-import-rules';
+import {
+  ExcelImportIssue,
+  readBeanMix,
+  readExcelDate,
+} from './excel-import-rules';
 import { UIAlert } from './uiAlert';
 import { UIBeanHelper } from './uiBeanHelper';
 import { UIBeanStorage } from './uiBeanStorage';
@@ -1334,9 +1338,11 @@ export class UIExcel {
           bean.cost = Number(costEntry);
         }
 
-        const blendEntry = entry['Blend'];
-        if (blendEntry) {
-          bean.beanMix = blendEntry;
+        const beanMix = readBeanMix(entry['Blend']);
+        if (beanMix === null) {
+          this.noteIssue(entry, 'Blend', issues);
+        } else if (beanMix) {
+          bean.beanMix = beanMix;
         }
 
         const archivedEntry = entry['Archived'];
