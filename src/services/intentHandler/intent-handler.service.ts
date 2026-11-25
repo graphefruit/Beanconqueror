@@ -12,6 +12,7 @@ import {
   BrewImportRollbackError,
   BrewImportService,
 } from '../brewImport/brew-import.service';
+import { internalLinkFromNfcTagLink } from '../nfcService/nfc-tag-link';
 import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
 import { UIAlert } from '../uiAlert';
 import { UIAnalytics } from '../uiAnalytics';
@@ -115,7 +116,7 @@ export class IntentHandlerService {
     try {
       if (_url) {
         await this.uiHelper.isBeanconqurorAppReady().then(async () => {
-          const url: string = _url;
+          const url: string = internalLinkFromNfcTagLink(_url) ?? _url;
           const matchedHandoff = this.handoffIntentName(url);
           if (matchedHandoff !== undefined) {
             this.uiLog.log(
@@ -429,6 +430,10 @@ export class IntentHandlerService {
     // A shared bean carries the whole bean, encoded, in its parameters.
     if (/[?&]shareUserBean0=/.test(url)) {
       return IntentHandlerService.SUPPORTED_INTENTS.ADD_USER_BEAN;
+    }
+    // The bean code of a tag stays out of the log.
+    if (/int\/bean\//i.test(url) || internalLinkFromNfcTagLink(url)) {
+      return 'INTERNAL_BEAN';
     }
     return undefined;
   }

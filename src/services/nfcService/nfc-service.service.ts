@@ -5,7 +5,6 @@ import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject } from 'rxjs';
 
-import { textSummary } from '../../classes/log/logSummary';
 import { IntentHandlerService } from '../intentHandler/intent-handler.service';
 import { UIAlert } from '../uiAlert';
 import { UIHelper } from '../uiHelper';
@@ -134,27 +133,28 @@ export class NfcService {
     }
   }
 
-  public writeNFCData(_text: string) {
+  /** Writes a tag link (see nfcTagLink) as a URI record. */
+  public writeNFCData(_link: string) {
     if (this.platform.is('android')) {
       this.uiToast.showInfoToastBottom(
         'NFC.SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER',
       );
       const nfcReadSubscription = this.attachOnNFCAndroid().subscribe(
         (_data) => {
-          this.__writeInternal(_text);
+          this.__writeInternal(_link);
           nfcReadSubscription.unsubscribe();
         },
       );
     } else {
-      this.__writeInternal(_text);
+      this.__writeInternal(_link);
     }
   }
-  private __writeInternal(_text: string) {
-    let record = [NfcPlugin.NdefPlugin.textRecord(_text)];
+  private __writeInternal(_link: string) {
+    const record = [NfcPlugin.NdefPlugin.uriRecord(_link)];
     NfcPlugin.write(
       record,
       (success) => {
-        this.uiLog.log('NFC-Date wrote successfully: ' + textSummary(_text));
+        this.uiLog.log('NFC tag written');
         if (this.platform.is('android')) {
           this.uiAlert.showMessage(
             'NFC.WRITE_COMPLETED_DESCRIPTION',
@@ -165,7 +165,7 @@ export class NfcService {
         }
       },
       (error) => {
-        this.uiLog.log('NFC-Date wrote unsuccessfully: ' + textSummary(_text));
+        this.uiLog.log('NFC tag not written');
         if (this.platform.is('android')) {
           this.uiAlert.showMessage(
             'NFC.WRITE_UNCOMPLETED_DESCRIPTION',

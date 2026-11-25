@@ -1,12 +1,16 @@
+import { Subject } from 'rxjs';
+
 import { NfcService } from './nfc-service.service';
 
 interface NfcInternals {
   __handleNFCData(tag: unknown): void;
-  __writeInternal(text: string): void;
+  __writeInternal(link: string): void;
+  writeNFCData(link: string): void;
 }
 
 const SERIAL = [4, 87, 51, 2, 202, 96, 128];
 const LINK = 'https://beanconqueror.com/?shareUserBean0=' + 'Q'.repeat(300);
+const TAG_LINK = 'https://beanconqueror.com/app/nfc/#3E95E1/START_BREW';
 
 function uriRecord(uri: string) {
   return {
@@ -30,7 +34,7 @@ describe('NfcService', () => {
     write = jasmine.createSpy('write');
     globals.NfcPlugin = {
       NdefPlugin: {
-        textRecord: (text: string) => ({ text }),
+        uriRecord: (uri: string) => ({ uri }),
       },
       write,
     };
@@ -76,30 +80,47 @@ describe('NfcService', () => {
     });
   }
 
-  it('logs only the start of the text written to a tag', () => {
+  it('writes the link as a URI record and keeps it out of the log', () => {
     write.and.callFake((_record: unknown, success: () => void) => success());
 
-    service.__writeInternal(LINK);
+    service.__writeInternal(TAG_LINK);
 
-    expect(log.calls.allArgs()).toEqual([
-      [
-        `NFC-Date wrote successfully: ${LINK.slice(0, 100)}… (${LINK.length} chars)`,
-      ],
-    ]);
+    expect(write.calls.argsFor(0)[0]).toEqual([{ uri: TAG_LINK }]);
+    expect(log.calls.allArgs()).toEqual([['NFC tag written']]);
   });
 
-  it('logs only the start of the text that could not be written', () => {
+  it('keeps the link out of the log when writing fails', () => {
     write.and.callFake(
       (_record: unknown, _success: () => void, failure: () => void) =>
         failure(),
     );
 
-    service.__writeInternal(LINK);
+    service.__writeInternal(TAG_LINK);
 
-    expect(log.calls.allArgs()).toEqual([
-      [
-        `NFC-Date wrote unsuccessfully: ${LINK.slice(0, 100)}… (${LINK.length} chars)`,
-      ],
+    expect(log.calls.allArgs()).toEqual([['NFC tag not written']]);
+  });
+
+  it('writes right away on iOS', () => {
+    service.writeNFCData(TAG_LINK);
+
+    expect(write.calls.argsFor(0)[0]).toEqual([{ uri: TAG_LINK }]);
+  });
+
+  it('writes on Android once a tag is held to the reader', () => {
+    const tags = new Subject<unknown>();
+    Object.assign(service, {
+      platform: { is: (name: string) => name === 'android' },
+      uiToast: { showInfoToastBottom: jasmine.createSpy('toast') },
+      androidMessageSubject: tags,
+    });
+
+    service.writeNFCData(TAG_LINK);
+    expect(write).not.toHaveBeenCalled();
+    tags.next({ tag: {} });
+    tags.next({ tag: {} });
+
+    expect(write.calls.allArgs().map((args): unknown => args[0])).toEqual([
+      [{ uri: TAG_LINK }],
     ]);
   });
 });

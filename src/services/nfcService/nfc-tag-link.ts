@@ -14,6 +14,22 @@ const LANGUAGE_LENGTH_MASK = 0x3f;
 const URI_PREFIXES = ['', 'http://www.', 'https://www.', 'http://', 'https://'];
 const APP_LINK =
   /^(beanconqueror:\/\/|https:\/\/(www\.)?beanconqueror\.com[/?])/i;
+// The code sits in the fragment: the page answers without a redirect and the
+// code never reaches a server log.
+const NFC_PAGE = 'https://beanconqueror.com/app/nfc/#';
+const NFC_PAGE_LINK =
+  /^https:\/\/(?:www\.)?beanconqueror\.com\/app\/nfc\/?#([^/?#]+)\/([^/?#]+)\/?$/i;
+
+/** The link written to a tag; the OS opens the app or the web page with it. */
+export function nfcTagLink(code: string, action: string): string {
+  return `${NFC_PAGE}${code}/${action}`;
+}
+
+/** The internal bean link of a tag link, undefined for any other link. */
+export function internalLinkFromNfcTagLink(url: string): string | undefined {
+  const match = NFC_PAGE_LINK.exec(url);
+  return match ? `beanconqueror://int/bean/${match[1]}/${match[2]}` : undefined;
+}
 
 /**
  * The first Beanconqueror link on a tag: older chips carry it in a text record,

@@ -1,7 +1,14 @@
-import { appLinkFromNdefMessage, INdefRecord } from './nfc-tag-link';
+import { BEAN_CODE_ACTION } from '../../enums/beans/beanCodeAction';
+import {
+  appLinkFromNdefMessage,
+  INdefRecord,
+  internalLinkFromNfcTagLink,
+  nfcTagLink,
+} from './nfc-tag-link';
 
 const OLD_LINK = 'beanconqueror://int/bean/3E95E1/START_BREW';
 const NEW_LINK = 'https://beanconqueror.com/app/int/bean/3E95E1/START_BREW';
+const TAG_LINK = 'https://beanconqueror.com/app/nfc/#3E95E1/START_BREW';
 
 const bytes = (text: string) => Array.from(new TextEncoder().encode(text));
 // Android hands bytes over signed, as Java does.
@@ -33,6 +40,11 @@ describe('appLinkFromNdefMessage', () => {
       NEW_LINK,
     ],
     ['a URI record without prefix code', [uriRecord(0, NEW_LINK)], NEW_LINK],
+    [
+      'a tag link as the app writes it',
+      [uriRecord(4, TAG_LINK.slice(8))],
+      TAG_LINK,
+    ],
     [
       'a URI record with the https://www. prefix code',
       [uriRecord(2, 'beanconqueror.com/app/int/bean/3E95E1/DETAIL')],
@@ -116,4 +128,72 @@ describe('appLinkFromNdefMessage', () => {
       expect(appLinkFromNdefMessage(records)).toBe(expected);
     });
   }
+});
+
+describe('nfcTagLink', () => {
+  it('puts code and action into the fragment of the NFC page', () => {
+    expect(nfcTagLink('3E95E1', 'START_BREW')).toBe(TAG_LINK);
+  });
+});
+
+describe('internalLinkFromNfcTagLink', () => {
+  const cases: [string, string, string | undefined][] = [
+    ['a written tag link', TAG_LINK, OLD_LINK],
+    [
+      'a link with www, upper-case host and trailing slash',
+      'https://WWW.beanconqueror.com/app/nfc/#3E95E1/DETAIL/',
+      'beanconqueror://int/bean/3E95E1/DETAIL',
+    ],
+    [
+      'a link without slash before the fragment',
+      'https://beanconqueror.com/app/nfc#3E95E1/EDIT',
+      'beanconqueror://int/bean/3E95E1/EDIT',
+    ],
+    ['an old text chip link', OLD_LINK, undefined],
+    ['the former path link', NEW_LINK, undefined],
+    [
+      'the page without fragment',
+      'https://beanconqueror.com/app/nfc/',
+      undefined,
+    ],
+    [
+      'a fragment without action',
+      'https://beanconqueror.com/app/nfc/#3E95E1',
+      undefined,
+    ],
+    [
+      'a fragment with more parts',
+      'https://beanconqueror.com/app/nfc/#3E95E1/DETAIL/x',
+      undefined,
+    ],
+    [
+      'a plain http link',
+      'http://beanconqueror.com/app/nfc/#3E95E1/DETAIL',
+      undefined,
+    ],
+    [
+      'a look-alike host',
+      'https://beanconqueror.com.example.com/app/nfc/#3E95E1/DETAIL',
+      undefined,
+    ],
+    [
+      'the NFC path on a foreign host',
+      'https://example.com/app/nfc/#3E95E1/DETAIL',
+      undefined,
+    ],
+  ];
+
+  for (const [name, url, expected] of cases) {
+    it(`reads ${name}`, () => {
+      expect(internalLinkFromNfcTagLink(url)).toBe(expected);
+    });
+  }
+
+  it('reads back what nfcTagLink writes for every action', () => {
+    for (const action of Object.values(BEAN_CODE_ACTION)) {
+      expect(internalLinkFromNfcTagLink(nfcTagLink('AB12CD', action))).toBe(
+        `beanconqueror://int/bean/AB12CD/${action}`,
+      );
+    }
+  });
 });

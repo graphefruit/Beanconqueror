@@ -2010,4 +2010,43 @@ describe('IntentHandlerService', () => {
       true,
     ]);
   });
+
+  for (const link of [
+    'https://beanconqueror.com/app/nfc/#3E95E1/DETAIL',
+    'beanconqueror://int/bean/3E95E1/DETAIL',
+  ]) {
+    it(`opens the bean of ${link} without logging its code`, async () => {
+      uiBeanHelper.detailBeanByInternalShareCode.and.resolveTo();
+
+      await service.handleDeepLink(link);
+
+      expect(
+        uiBeanHelper.detailBeanByInternalShareCode.calls.allArgs(),
+      ).toEqual([['3E95E1']]);
+      expect(uiAlert.showMessage.calls.count()).toBe(0);
+      expect(JSON.stringify(uiLog.log.calls.allArgs())).not.toContain('3E95E1');
+    });
+  }
+
+  it('lets the user choose the action of a tag link', async () => {
+    uiBeanHelper.chooseNFCTagAction.and.resolveTo('EDIT');
+    uiBeanHelper.editBeanByInternalShareCode.and.resolveTo();
+
+    await service.handleDeepLink(
+      'https://beanconqueror.com/app/nfc/#3E95E1/CHOOSE_ACTION',
+    );
+
+    expect(uiBeanHelper.editBeanByInternalShareCode.calls.allArgs()).toEqual([
+      ['3E95E1'],
+    ]);
+  });
+
+  it('rejects the NFC page without a bean code', async () => {
+    await service.handleDeepLink('https://beanconqueror.com/app/nfc/');
+
+    expect(uiBeanHelper.detailBeanByInternalShareCode.calls.count()).toBe(0);
+    expect(uiAlert.showMessage.calls.allArgs()).toEqual([
+      ['QR.WRONG_QRCODE_DESCRIPTION', 'QR.WRONG_QRCODE_TITLE', undefined, true],
+    ]);
+  });
 });
