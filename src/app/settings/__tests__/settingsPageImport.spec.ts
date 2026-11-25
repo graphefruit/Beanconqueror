@@ -1,14 +1,35 @@
 import { TestBed } from '@angular/core/testing';
 
+import { ModalController, Platform } from '@ionic/angular';
+
+import { TranslateService } from '@ngx-translate/core';
+
 import de from '../../../assets/i18n/de.json';
 import en from '../../../assets/i18n/en.json';
 import { Settings } from '../../../classes/settings/settings';
 import { StorageClass } from '../../../classes/storageClass';
+import { Version } from '../../../classes/version/iVersion';
+import { BrewReferencesService } from '../../../services/brewReferences/brew-references.service';
+import { ChangeTrackingMigrationService } from '../../../services/changeTracking/change-tracking-migration.service';
+import { DuplicateEntriesMigrationService } from '../../../services/changeTracking/duplicate-entries-migration.service';
 import { PreImportBackupError } from '../../../services/preImportBackup/pre-import-backup.service';
 import { UIAlert } from '../../../services/uiAlert';
-import { ImportNotRolledBackError } from '../../../services/uiExportImportHelper';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import {
+  ImportNotRolledBackError,
+  UIExportImportHelper,
+} from '../../../services/uiExportImportHelper';
+import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIHelper } from '../../../services/uiHelper';
 import { UILog } from '../../../services/uiLog';
+import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIStorage } from '../../../services/uiStorage';
+import { UIUpdate } from '../../../services/uiUpdate';
+import { UiVersionStorage } from '../../../services/uiVersionStorage';
+import { createLegacyData } from '../../../test-utils/legacy-data-fixture';
 import { SettingsPage } from '../settings.page';
 
 describe('SettingsPage standard mill after an import', () => {
@@ -480,6 +501,155 @@ describe('SettingsPage loading the collections again after an import', () => {
       false,
     );
     expect(uuids(database.BEANS)).toEqual(['imported-BEANS']);
+  });
+});
+
+describe('SettingsPage importing a backup of an older version', () => {
+  class TestStorage extends StorageClass {
+    public constructor(_path: string) {
+      super(_path);
+    }
+  }
+
+  const COLLECTIONS: Record<string, string> = {
+    uiBeanStorage: 'BEANS',
+    uiPreparationStorage: 'PREPARATION',
+    uiBrewStorage: 'BREWS',
+    uiMillStorage: 'MILL',
+    uiGreenBeanStorage: 'GREEN_BEANS',
+    uiRoastingMachineStorage: 'ROASTING_MACHINES',
+    uiWaterStorage: 'WATER',
+    uiGraphStorage: 'GRAPH',
+    uiBaristamodeBrewStorage: 'BARISTAMODE_BREWS',
+  };
+
+  let database: Record<string, unknown>;
+  let instanceBefore: UISettingsStorage;
+
+  beforeEach(() => {
+    instanceBefore = UISettingsStorage.instance;
+  });
+
+  afterEach(() => {
+    UISettingsStorage.instance = instanceBefore;
+  });
+
+  /**
+   * The page after a start with current data, with real collections, real
+   * settings, version and data updates over one database. The migrations
+   * of UPDATE_16 to UPDATE_19 have their own tests and only report done.
+   */
+  async function pageAfterStart() {
+    database = createLegacyData({ brews: 2, beans: 1, dataUpdatesDone: 19 });
+    const storages: Record<string, StorageClass> = {};
+    const uiExportImportHelper = {
+      allCollectionsRead: () => undefined,
+      writeBackupBeforeMigration: () => Promise.resolve(true),
+    };
+    const done = { run: () => Promise.resolve(true) };
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        UIUpdate,
+        UISettingsStorage,
+        UiVersionStorage,
+        {
+          provide: UIStorage,
+          useValue: {
+            getDataState: () => Promise.resolve('data'),
+            getOrFail: (_key: string) =>
+              Promise.resolve(structuredClone(database[_key] ?? null)),
+            set: (_key: string, _value: unknown) => {
+              database[_key] = structuredClone(_value);
+              return Promise.resolve(true);
+            },
+          },
+        },
+        {
+          provide: UILog,
+          useValue: jasmine.createSpyObj('UILog', [
+            'log',
+            'info',
+            'debug',
+            'error',
+          ]),
+        },
+        ...[
+          [UIBeanStorage, 'BEANS'],
+          [UIPreparationStorage, 'PREPARATION'],
+          [UIBrewStorage, 'BREWS'],
+          [UIMillStorage, 'MILL'],
+        ].map(([token, path]) => ({
+          provide: token,
+          useFactory: () => storages[path as string],
+        })),
+        { provide: ChangeTrackingMigrationService, useValue: done },
+        { provide: DuplicateEntriesMigrationService, useValue: done },
+        {
+          provide: BrewReferencesService,
+          useValue: {
+            removeForeignTools: () => Promise.resolve(true),
+            repairStandardMill: () => Promise.resolve(true),
+          },
+        },
+        { provide: UIExportImportHelper, useValue: uiExportImportHelper },
+        {
+          provide: UIAlert,
+          useValue: { isLoadingSpinnerShown: () => false },
+        },
+        { provide: Platform, useValue: {} },
+        { provide: ModalController, useValue: {} },
+        { provide: UIFileHelper, useValue: {} },
+        { provide: TranslateService, useValue: {} },
+        { provide: UIHelper, useValue: {} },
+      ],
+    });
+    spyOn(UIAlert, 'getInstance').and.returnValue({
+      showMessage: () => Promise.resolve(),
+    } as any);
+    const page = Object.create(SettingsPage.prototype);
+    for (const [field, path] of Object.entries(COLLECTIONS)) {
+      const storage = TestBed.runInInjectionContext(
+        () => new TestStorage(path),
+      );
+      await storage.initializeStorage();
+      storages[path] = storage;
+      page[field] = storage;
+    }
+    page.uiSettingsStorage = TestBed.inject(UISettingsStorage);
+    page.uiVersionStorage = TestBed.inject(UiVersionStorage);
+    await page.uiSettingsStorage.initializeStorage();
+    await page.uiVersionStorage.initializeStorage();
+    page.uiUpdate = TestBed.inject(UIUpdate);
+    page.uiExportImportHelper = uiExportImportHelper;
+    page.uiLog = TestBed.inject(UILog);
+    return page as { __reinitializeStorages(): Promise<void> };
+  }
+
+  it('runs the data updates the backup has not done', async () => {
+    const page = await pageAfterStart();
+    // A backup from before UPDATE_12, with the filters of the scale on.
+    const backup = createLegacyData({
+      brews: 2,
+      beans: 1,
+      dataUpdatesDone: 11,
+    });
+    const [settings] = backup.SETTINGS;
+    settings.bluetooth_ignore_anomaly_values = true;
+    settings.bluetooth_ignore_negative_values = true;
+    Object.assign(database, structuredClone(backup));
+
+    await page.__reinitializeStorages();
+
+    const [storedSettings] = database.SETTINGS as Settings[];
+    expect(storedSettings.bluetooth_ignore_anomaly_values).toBeFalse();
+    expect(storedSettings.bluetooth_ignore_negative_values).toBeFalse();
+    const [version] = database.VERSION as Version[];
+    for (let i = 1; i <= 19; i++) {
+      expect(version.updatedDataVersions)
+        .withContext(`UPDATE_${i}`)
+        .toContain(`UPDATE_${i}`);
+    }
   });
 });
 
