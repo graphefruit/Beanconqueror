@@ -242,6 +242,62 @@ describe('SettingsPage importing a backup file', () => {
     }
   });
 
+  it('says that the import was stored when loading the data again fails, with the error', async () => {
+    const error = new Error('BEANS could not be read');
+    const { page, uiAlert } = pageWith({
+      savesBackup: true,
+      choice: 'YES',
+      importBackup: jasmine
+        .createSpy('importBackup')
+        .and.resolveTo({ BACKUP: false }),
+    });
+    spyOn(page, '__reinitializeStorages').and.rejectWith(error);
+
+    await page.__importJSON(parsedBackup(), '');
+
+    // Not "no data changed": the user would import the file again.
+    expect(uiAlert.hideLoadingSpinner).toHaveBeenCalled();
+    expect(uiAlert.showMessageWithDetails).toHaveBeenCalledOnceWith(
+      'IMPORT_STORED_RELOAD_FAILED',
+      error,
+    );
+    expect(uiAlert.showMessage).not.toHaveBeenCalled();
+  });
+
+  it('does not report a failed reload when a step after the success message fails', async () => {
+    const { page, uiAlert } = pageWith({
+      savesBackup: true,
+      choice: 'YES',
+      importBackup: jasmine
+        .createSpy('importBackup')
+        .and.resolveTo({ BACKUP: false }),
+    });
+    spyOn(page, '__reinitializeStorages').and.resolveTo();
+    spyOn(page, '__initializeSettings');
+    spyOn(page, '__addStandardMillAfterImport').and.resolveTo();
+    spyOn(page, 'setLanguage');
+    spyOn(page, '__reportFilesNotCopied').and.rejectWith(
+      new Error('alert not shown'),
+    );
+    Object.assign(page, {
+      uiAnalytics: { disableTracking: () => undefined },
+      themeService: { adjustTheme: () => Promise.resolve() },
+    });
+    page.uiSettingsStorage.saveSettings = () => Promise.resolve();
+
+    await page.__importJSON(parsedBackup(), '');
+
+    expect(uiAlert.showMessage).toHaveBeenCalledOnceWith('IMPORT_SUCCESSFULLY');
+    expect(uiAlert.showMessageWithDetails).not.toHaveBeenCalled();
+  });
+
+  it('says in English and German that the import was stored and to start the app again', () => {
+    expect(en.IMPORT_STORED_RELOAD_FAILED).toContain('Import saved');
+    expect(en.IMPORT_STORED_RELOAD_FAILED).toContain('start it again');
+    expect(de.IMPORT_STORED_RELOAD_FAILED).toContain('Import gespeichert');
+    expect(de.IMPORT_STORED_RELOAD_FAILED).toContain('starte sie neu');
+  });
+
   it('keeps the message for other failures of the import, with their error', async () => {
     const error = new Error('current data not readable');
     const { page, uiAlert } = pageWith({

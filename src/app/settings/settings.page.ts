@@ -143,7 +143,6 @@ import { UIMillStorage } from '../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIStorage } from '../../services/uiStorage';
 import { UIToast } from '../../services/uiToast';
 import { UIUpdate } from '../../services/uiUpdate';
 import { UiVersionStorage } from '../../services/uiVersionStorage';
@@ -195,7 +194,6 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
 export class SettingsPage {
   protected readonly platform = inject(Platform);
   uiSettingsStorage = inject(UISettingsStorage);
-  uiStorage = inject(UIStorage);
   uiHelper = inject(UIHelper);
   private readonly alertCtrl = inject(AlertController);
   private readonly uiAlert = inject(UIAlert);
@@ -1595,39 +1593,6 @@ export class SettingsPage {
     }
   }
 
-  private async __importDummyData(): Promise<void> {
-    this.uiLog.log('Import dummy data');
-
-    // Dynamically import the data here to avoid including it in the normal application bundle
-    const dummyData = (await import('../../assets/BeanconquerorTestData.json'))
-      .default;
-
-    if (dummyData.SETTINGS[0].brew_order.before === undefined) {
-      this.uiLog.log('Old brew order structure');
-      // Breaking change, we need to throw away the old order types by import
-      const settingsConst = new Settings();
-      dummyData.SETTINGS[0].brew_order = this.uiHelper.copyData(
-        settingsConst.brew_order,
-      );
-    }
-    this.__cleanupImportSettingsData(dummyData.SETTINGS[0]);
-
-    await this.uiStorage.import(dummyData);
-    await this.__reinitializeStorages();
-    this.uiAnalytics.disableTracking();
-    this.__initializeSettings();
-    this.settings.resetFilter();
-    this.setLanguage();
-    await this.uiAlert.showMessage(
-      this.translate.instant('IMPORT_SUCCESSFULLY'),
-    );
-    if (this.settings.matomo_analytics === undefined) {
-      await this.showAnalyticsInformation();
-    } else {
-      await this.uiAnalytics.enableTracking();
-    }
-  }
-
   /**
    * `_fileName` is the name of the backup file chosen, which the note about
    * the import keeps (UIExportImportHelper.importBackup).
@@ -1702,6 +1667,9 @@ export class SettingsPage {
         return;
       }
       await this.uiAlert.showLoadingSpinner();
+      // A failure after the data was stored must not say that no data was
+      // changed, or the file may be imported again.
+      let phase: 'storing' | 'reloading' | 'reported' = 'storing';
       try {
         const _data = await this.uiExportImportHelper.importBackup(
           parsedContent,
@@ -1709,6 +1677,7 @@ export class SettingsPage {
           _fileName,
         );
         if (_data.BACKUP === false) {
+          phase = 'reloading';
           await this.__reinitializeStorages();
           // Show loadingspinner again, because the reintializestorages hides it.
           await this.uiAlert.showLoadingSpinner();
@@ -1771,6 +1740,7 @@ export class SettingsPage {
           await this.uiAlert.showMessage(
             this.translate.instant('IMPORT_SUCCESSFULLY'),
           );
+          phase = 'reported';
           await this.__reportFilesNotCopied();
           if (this.settings.matomo_analytics === undefined) {
             await this.showAnalyticsInformation();
@@ -1787,8 +1757,14 @@ export class SettingsPage {
       } catch (error) {
         this.uiLog.error('Error during import', error);
         await this.uiAlert.hideLoadingSpinner();
+        if (phase === 'reported') {
+          // The data is loaded and the success was shown already.
+          return;
+        }
         let message = 'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED';
-        if (error instanceof PreImportBackupError) {
+        if (phase === 'reloading') {
+          message = 'IMPORT_STORED_RELOAD_FAILED';
+        } else if (error instanceof PreImportBackupError) {
           message = 'PRE_IMPORT_BACKUP_FAILED';
         } else if (error instanceof ImportNotRolledBackError) {
           message = error.messageKey;

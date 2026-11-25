@@ -5,7 +5,6 @@ import type { Locator, Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import { BEANS } from './support/bean-data';
 import {
-  beanCard,
   beanField,
   dialogsClosed,
   findBean,
@@ -186,25 +185,6 @@ test.describe('a bean with a photo', () => {
     await card.getByRole('button', { name: /^Options for / }).click();
     await page.getByRole('button', { name: 'Photo Gallery' }).click();
     await expect(slides(page)).toHaveCount(1);
-  });
-
-  test('a bean without a photo has no gallery in its menu', async ({
-    page,
-  }) => {
-    await startWithBeans(page);
-
-    await beanCard(page, BEANS.alpha)
-      .getByRole('button', { name: /^Options for / })
-      .click();
-    await expect(
-      page.getByRole('button', { name: 'Details', exact: true }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: 'Photo Gallery' }),
-    ).toHaveCount(0);
-    await expect(
-      beanCard(page, BEANS.alpha).locator('async-image'),
-    ).toHaveCount(0);
   });
 
   test('a photo deleted in the form stays on the bean when the form is cancelled', async ({

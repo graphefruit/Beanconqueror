@@ -63,8 +63,10 @@ export async function saveBrew(page: Page): Promise<void> {
 /**
  * Picks an entry in one of the brew form's choosers (preparation method, bean,
  * grinder). Ionic layers the select's visible wrapper over its inner button,
- * so the tap is forced through to where a finger would land; keyboard Enter
- * is sometimes swallowed while the form is still settling.
+ * so the click is dispatched on the button itself: a click by coordinates can
+ * land on a neighbouring field (e.g. a time picker) while the form still
+ * scrolls after typing, and keyboard Enter is sometimes swallowed while the
+ * form is still settling.
  */
 export async function chooseInBrewSelect(
   page: Page,
@@ -79,7 +81,7 @@ export async function chooseInBrewSelect(
   // the select can still be reached, i.e. no chooser covers the form.
   await expect(async () => {
     if (await select.isVisible()) {
-      await select.click({ force: true });
+      await select.dispatchEvent('click');
     }
     await expect(radio).toBeVisible({ timeout: 5000 });
   }).toPass({ timeout: 20_000 });

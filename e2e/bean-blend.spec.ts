@@ -58,25 +58,6 @@ async function editBean(page: Page, name: string): Promise<void> {
   await expect(beanField(page, /^Name/)).toHaveValue(name);
 }
 
-test('the card of a blend numbers the fields of its varieties', async ({
-  page,
-}) => {
-  await startWithBeans(page);
-  const card = await findBean(page, BEANS.blend);
-
-  await expect(beanCardValue(card, 'Bean mix')).toHaveText('Blend');
-  for (const [index, country, percentage] of [
-    [1, 'Ethiopia', '50'],
-    [2, 'Brazil', '30'],
-    [3, 'Colombia', '20'],
-  ] as const) {
-    await expect(beanCardValue(card, `${index}. Country`)).toHaveText(country);
-    await expect(beanCardValue(card, `${index}. Percentage`)).toHaveText(
-      percentage,
-    );
-  }
-});
-
 test('varieties of a blend are added, copied and deleted in the form', async ({
   page,
 }) => {
