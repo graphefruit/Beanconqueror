@@ -42,6 +42,7 @@ const NEW_CODE = [
   'src/services/deletionJournal/**',
   'src/services/deviceIdentity/**',
   'src/services/documentLanguage/**',
+  'src/services/excel-import-rules.ts',
   'src/services/graphHelper/load-plotly.ts',
   'src/services/preImportBackup/pre-import-backup.service.ts',
   'src/services/tabletLayout/**',
