@@ -6,6 +6,9 @@ import {
   tick,
 } from '@angular/core/testing';
 
+import { IonInput } from '@ionic/angular';
+import { defineCustomElement as defineInput } from '@ionic/core/components/ion-input.js';
+
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import {
@@ -315,4 +318,113 @@ describe('SuggestionListComponent', () => {
       '1 suggestion',
     ]);
   }));
+});
+
+@Component({
+  template: `
+    <suggestion-list (picked)="value = $event" [candidates]="candidates">
+      <ion-input [value]="value" label="Roaster" />
+    </suggestion-list>
+  `,
+  imports: [SuggestionListComponent, IonInput],
+})
+class IonicHostComponent {
+  public value = '';
+  public readonly candidates = () => ['Rösterei Nord', 'Rösterei Süd'];
+}
+
+describe('SuggestionListComponent around an Ionic text field', () => {
+  let fixture: ComponentFixture<IonicHostComponent>;
+  let field: HTMLIonInputElement;
+  let native: HTMLInputElement;
+
+  beforeAll(() => {
+    defineInput();
+  });
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      imports: [IonicHostComponent, TranslateModule.forRoot()],
+      providers: [{ provide: LIVE_REGION, useValue: new FakeLiveRegion() }],
+    });
+    fixture = TestBed.createComponent(IonicHostComponent);
+    fixture.detectChanges();
+    field = (fixture.nativeElement as HTMLElement).querySelector('ion-input');
+    native = await field.getInputElement();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  });
+
+  function type(value: string): void {
+    field.value = value;
+    field.dispatchEvent(new CustomEvent('ionInput', { bubbles: true }));
+    fixture.detectChanges();
+  }
+
+  function press(key: string): void {
+    native.dispatchEvent(
+      new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }),
+    );
+    fixture.detectChanges();
+  }
+
+  function listbox(): HTMLElement | null {
+    return (fixture.nativeElement as HTMLElement).querySelector(
+      '[role="listbox"]',
+    );
+  }
+
+  function option(name: string): HTMLElement {
+    return Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>(
+        '[role="option"]',
+      ),
+    ).find((each) => each.textContent.trim() === name);
+  }
+
+  it('makes the native field a combobox that points to the list and its active option', async () => {
+    expect(native.getAttribute('role')).toBe('combobox');
+    expect(native.getAttribute('aria-autocomplete')).toBe('list');
+    expect(native.getAttribute('aria-expanded')).toBe('false');
+    expect(native.hasAttribute('aria-controls')).toBeFalse();
+
+    field.dispatchEvent(new CustomEvent('ionFocus', { bubbles: true }));
+    type('rös');
+
+    expect(native.getAttribute('aria-expanded')).toBe('true');
+    expect(native.getAttribute('aria-controls')).toBe(listbox().id);
+    expect(native.hasAttribute('aria-activedescendant')).toBeFalse();
+
+    press('ArrowDown');
+    const north = option('Rösterei Nord');
+    expect(north.getAttribute('aria-selected')).toBe('true');
+    expect(native.getAttribute('aria-activedescendant')).toBe(north.id);
+
+    press('ArrowDown');
+    const south = option('Rösterei Süd');
+    expect(south.getAttribute('aria-selected')).toBe('true');
+    expect(north.getAttribute('aria-selected')).toBe('false');
+    expect(native.getAttribute('aria-activedescendant')).toBe(south.id);
+
+    press('Enter');
+    await fixture.whenStable();
+
+    expect(listbox()).toBeNull();
+    expect(native.getAttribute('aria-expanded')).toBe('false');
+    expect(native.hasAttribute('aria-controls')).toBeFalse();
+    expect(native.hasAttribute('aria-activedescendant')).toBeFalse();
+    expect(native.value).toBe('Rösterei Süd');
+  });
+
+  it('leaves the typed text in the field when Escape closes the list', async () => {
+    field.dispatchEvent(new CustomEvent('ionFocus', { bubbles: true }));
+    native.value = 'rös';
+    type('rös');
+    press('Escape');
+    await fixture.whenStable();
+
+    expect(listbox()).toBeNull();
+    expect(native.getAttribute('aria-expanded')).toBe('false');
+    expect(native.value).toBe('rös');
+  });
 });
