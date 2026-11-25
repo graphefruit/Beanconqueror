@@ -1,7 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
+import { defineCustomElement as defineIcon } from 'ionicons/components/ion-icon.js';
+
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
+import de from '../../../assets/i18n/de.json';
 import en from '../../../assets/i18n/en.json';
 import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
@@ -15,6 +20,8 @@ import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIWaterStorage } from '../../../services/uiWaterStorage';
+import { accessibleName } from '../../../test-utils';
+import { AppComponent } from '../../app.component';
 import { ProfilePage } from '../profile.page';
 
 function archived<T extends { finished: boolean }>(entry: T): T {
@@ -25,6 +32,24 @@ function archived<T extends { finished: boolean }>(entry: T): T {
 function times<T>(count: number, create: () => T): T[] {
   return Array.from({ length: count }, create);
 }
+
+/** The hub's entries in their groups, so header and footer are left out. */
+function entries(page: HTMLElement): HTMLElement[] {
+  return [...page.querySelectorAll<HTMLElement>('ion-list ion-item')];
+}
+
+/** Names of the entries of a fresh install, title then description. */
+const ENTRY_NAMES = [
+  'Preparation methods None added yet',
+  'Grinders None added yet',
+  'Statistics Your brews and beans in numbers',
+  'Brewing Parameters Which fields a brew records',
+  'Bean parameters Which fields a bean records',
+  'Calculations Brew ratio, water hardness',
+  'More sections Roasting, water, graphs',
+  'Settings Language, appearance, devices, backup',
+  'Info & support Impressum, privacy, contact, logs',
+];
 
 describe('ProfilePage', () => {
   let settings: Settings;
@@ -52,11 +77,10 @@ describe('ProfilePage', () => {
       waters: new Subject(),
     };
 
-    // The template only renders the page's fields; e2e/profile.spec.ts checks
-    // the rendered hub in the browser.
-    TestBed.overrideTemplate(ProfilePage, '');
     TestBed.configureTestingModule({
+      imports: [TranslateModule.forRoot()],
       providers: [
+        provideRouter([]),
         { provide: UIAnalytics, useValue: { trackEvent } },
         { provide: UIHelper, useValue: { openExternalWebpage } },
         {
@@ -89,13 +113,125 @@ describe('ProfilePage', () => {
         },
       ],
     });
+    useLanguage('en');
   });
+
+  function useLanguage(language: 'en' | 'de'): void {
+    const translate = TestBed.inject(TranslateService);
+    translate.setTranslation(language, language === 'en' ? en : de);
+    translate.use(language);
+  }
 
   function open() {
     const fixture = TestBed.createComponent(ProfilePage);
     fixture.detectChanges();
     return fixture;
   }
+
+  function render(): HTMLElement {
+    return open().nativeElement as HTMLElement;
+  }
+
+  it('has a page heading, three groups and entries named by title and description', () => {
+    const page = render();
+
+    const headings = [...page.querySelectorAll('[role="heading"], h1, h2')];
+    expect(
+      headings.map((heading) => [
+        heading.getAttribute('aria-level') ?? heading.tagName.slice(1),
+        accessibleName(heading),
+      ]),
+    ).toEqual([
+      ['1', 'Profile'],
+      ['2', 'Equipment'],
+      ['2', 'Sections'],
+      ['2', 'App'],
+    ]);
+    expect(entries(page).map(accessibleName)).toEqual(ENTRY_NAMES);
+    // The dot before "None added yet" is not read.
+    for (const dot of page.querySelectorAll('.setup-dot')) {
+      expect(dot.getAttribute('aria-hidden')).toBe('true');
+    }
+  });
+
+  it('lists water as third entry of the equipment once switched on', () => {
+    settings.show_water_section = true;
+    const page = render();
+
+    expect(entries(page).map(accessibleName)).toEqual([
+      ...ENTRY_NAMES.slice(0, 2),
+      'Water None added yet',
+      ...ENTRY_NAMES.slice(2),
+    ]);
+  });
+
+  it('names the entries with the glossary terms in German', () => {
+    useLanguage('de');
+    const page = render();
+
+    const names = entries(page).map(accessibleName);
+    for (const [index, term] of [
+      [0, 'Zubereitungsmethoden'],
+      [1, 'Mühlen'],
+      [2, 'Statistiken'],
+      [7, 'Einstellungen'],
+    ] as const) {
+      expect(names[index]).toMatch(new RegExp(`^${term} `));
+    }
+  });
+
+  it('shows the icon of every entry', async () => {
+    defineIcon();
+    // The app registers its own icons at start; the page adds the others.
+    (
+      AppComponent.prototype as unknown as { addAllCustomIcons(): void }
+    ).addAllCustomIcons();
+    settings.show_water_section = true;
+    settings.show_graph_section = true;
+    settings.show_roasting_section = true;
+    preparations = [sanremoYou()];
+    const page = render();
+    document.body.appendChild(page);
+
+    try {
+      const icons = [
+        ...page.querySelectorAll<HTMLElement>('.entry-icon ion-icon'),
+      ];
+      expect(icons.length).toBe(ENTRY_NAMES.length + 4);
+      const drawn = (icon: HTMLElement) =>
+        (icon.shadowRoot?.querySelector('svg')?.childElementCount ?? 0) > 0;
+      for (let wait = 0; wait < 1000 && !icons.every(drawn); wait++) {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
+      for (const icon of icons) {
+        expect(drawn(icon)).withContext(icon.getAttribute('name')).toBeTrue();
+      }
+    } finally {
+      page.remove();
+    }
+  });
+
+  it('opens each community link of the footer by its named button', () => {
+    const page = render();
+
+    const links = [...page.querySelectorAll<HTMLElement>('.social-link')];
+    expect(links.map((link) => link.getAttribute('aria-label'))).toEqual([
+      'Instagram',
+      'Facebook',
+      'GitHub',
+      'Discord',
+    ]);
+    for (const link of links) {
+      link.click();
+    }
+
+    expect(openExternalWebpage.calls.allArgs()).toEqual([
+      ['https://www.instagram.com/beanconqueror/'],
+      ['https://www.facebook.com/Beanconqueror/'],
+      ['https://github.com/graphefruit/Beanconqueror'],
+      ['https://discord.gg/vDzA5dZjG8'],
+    ]);
+  });
 
   it('shows no count for a section without entries, so its entry shows the setup hint', () => {
     const page = open().componentInstance;

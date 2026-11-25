@@ -49,6 +49,27 @@ describe('BeanSortFilterHelperService - search text', () => {
     expect(found('kenya, café', beans())).toEqual(['House', 'Kenya']);
   });
 
+  it('finds a bean by its roaster or the country of one of its varieties', () => {
+    const list = [
+      bean('Alpha Filter', { roaster: 'Rösterei Nord' }),
+      bean('Gamma Blend', { roaster: 'Rösterei Süd' }, { country: 'Ethiopia' }),
+      bean('Epsilon Rest'),
+    ];
+
+    expect(found('NORD', list)).toEqual(['Alpha Filter']);
+    expect(found('ethiopia', list)).toEqual(['Gamma Blend']);
+    expect(found('nord, süd', list)).toEqual(['Alpha Filter', 'Gamma Blend']);
+    expect(found('sud', list)).toEqual(['Gamma Blend']);
+  });
+
+  it('ignores an empty alternative after a comma, but not one with a blank (known defect)', () => {
+    const list = [bean('Alpha'), bean('Kenya'), bean('Epsilon Rest')];
+
+    expect(found('a,', list)).toEqual(['Alpha', 'Kenya']);
+    // A blank after the comma finds every bean.
+    expect(found('a, ', list)).toEqual(['Alpha', 'Kenya', 'Epsilon Rest']);
+  });
+
   it('keeps all beans without a search text', () => {
     expect(found('', beans()).length).toBe(5);
   });

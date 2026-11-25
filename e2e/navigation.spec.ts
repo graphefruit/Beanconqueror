@@ -1,5 +1,4 @@
 import type { AppPlugin } from '@capacitor/app';
-import type { AppLauncherPlugin } from '@capacitor/app-launcher';
 import type { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
@@ -14,8 +13,6 @@ import { mainTabName } from './support/texts';
  * grinders, water, statistics and settings are one step away on the profile
  * page, and the former tab links still open their sections.
  */
-
-const TAB_NAMES = ['Home', 'Brews', 'Beans', 'Profile'] as const;
 
 function tabBar(page: Page) {
   // Lists also use tablists (segments), so pick the one holding the tabs.
@@ -47,17 +44,6 @@ async function expectProfileTabSelected(page: Page): Promise<void> {
     tabBar(page).getByRole('tab', { name: 'Profile' }),
   ).toHaveAttribute('aria-selected', 'true');
 }
-
-test('the tab bar has the four main sections', async ({ page }) => {
-  await page.goto('/');
-  await completeFirstRun(page);
-
-  const tabs = tabBar(page).getByRole('tab');
-  await expect(tabs).toHaveCount(TAB_NAMES.length);
-  for (const [index, name] of TAB_NAMES.entries()) {
-    await expect(tabs.nth(index)).toHaveAccessibleName(new RegExp(`^${name}`));
-  }
-});
 
 test('preparation methods and grinders open from the profile and lead back', async ({
   page,
@@ -325,36 +311,6 @@ test('the brewing parameters page still links to the preparation methods', async
   await expect(page).toHaveURL(/\/home\/profile$/);
 });
 
-test('tabs and profile entries use the glossary terms in German', async ({
-  page,
-}) => {
-  await page.goto('/');
-  await completeFirstRun(page);
-
-  await openProfile(page);
-  await switchToGermanFromProfile(page);
-
-  const tabs = tabBar(page).getByRole('tab');
-  for (const [index, name] of [
-    'Home',
-    'Brühungen',
-    'Bohnen',
-    'Profil',
-  ].entries()) {
-    await expect(tabs.nth(index)).toHaveAccessibleName(new RegExp(`^${name}`));
-  }
-  for (const name of [
-    'Zubereitungsmethoden',
-    'Mühlen',
-    'Statistiken',
-    'Einstellungen',
-  ]) {
-    await expect(
-      page.getByRole('link', { name: new RegExp(`^${name}`) }),
-    ).toBeVisible();
-  }
-});
-
 /** Whether Ionic ellipsizes the screen title shown in the header. */
 async function screenTitleIsCut(page: Page, title: string): Promise<boolean> {
   const span = page.getByRole('banner').getByText(title, { exact: true });
@@ -527,23 +483,6 @@ test('the profile marks a missing grinder and names it', async ({ page }) => {
   await expect(profileDot(page)).toHaveCount(0);
 });
 
-test('the profile marks a missing preparation method and names it', async ({
-  page,
-}) => {
-  await page.goto('/');
-  await completeFirstRun(page);
-
-  await openProfile(page);
-  await addGrinderFromProfile(page);
-  await expect(
-    page.getByRole('link', { name: 'Grinders 1 grinder', exact: true }),
-  ).toBeVisible();
-  await expect(profileDot(page)).toBeVisible();
-  await expect(
-    page.getByRole('link', { name: 'Preparation methods None added yet' }),
-  ).toBeVisible();
-});
-
 test.describe('the Android back key', () => {
   test.beforeEach(async ({ page, native }) => {
     // On the profile itself the key leaves the app, as on every tab.
@@ -651,35 +590,6 @@ test.describe('the Android back key', () => {
     await expect.poll(() => minimizeCalls(native)).toHaveLength(1);
     await expect(page).toHaveURL(/\/home\/profile$/);
   });
-});
-
-test('the profile opens the community links of the former menu', async ({
-  page,
-  native,
-}) => {
-  const opened: string[] = [];
-  await native.mockCapacitor<AppLauncherPlugin>('AppLauncher', {
-    openUrl: ({ url }) => {
-      opened.push(url);
-      return { completed: true };
-    },
-  });
-  await page.goto('/');
-  await completeFirstRun(page);
-  await openProfile(page);
-
-  const content = page.locator('app-profile ion-content');
-  for (const name of ['Instagram', 'Facebook', 'GitHub', 'Discord']) {
-    await content.getByRole('button', { name, exact: true }).click();
-  }
-  await expect
-    .poll(() => opened)
-    .toEqual([
-      'https://www.instagram.com/beanconqueror/',
-      'https://www.facebook.com/Beanconqueror/',
-      'https://github.com/graphefruit/Beanconqueror',
-      'https://discord.gg/vDzA5dZjG8',
-    ]);
 });
 
 test('the barista mode is listed under equipment once a Sanremo YOU method exists', async ({

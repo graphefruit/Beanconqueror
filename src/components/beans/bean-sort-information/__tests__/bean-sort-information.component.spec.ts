@@ -7,8 +7,9 @@ import {
   waitForAsync,
 } from '@angular/core/testing';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
+import en from '../../../../assets/i18n/en.json';
 import { Bean } from '../../../../classes/bean/bean';
 import { Settings } from '../../../../classes/settings/settings';
 import { BEAN_MIX_ENUM } from '../../../../enums/beans/mix';
@@ -194,6 +195,129 @@ describe('BeanSortInformationComponent', () => {
         'Panama',
         'Bolivia',
       ]);
+    });
+  });
+
+  describe('the tools of a blend', () => {
+    beforeEach(() => {
+      settings.bean_manage_parameters.percentage = true;
+      mockUIBeanStorage.getAllEntries.and.returnValue([]);
+      (
+        TestBed.inject(UIHelper) as jasmine.SpyObj<UIHelper>
+      ).cloneData.and.callFake(<T>(value: T): T => structuredClone(value));
+      const translate = TestBed.inject(TranslateService);
+      translate.setTranslation('en', en);
+      translate.use('en');
+    });
+
+    function element(): HTMLElement {
+      return fixture.nativeElement as HTMLElement;
+    }
+
+    function buttons(name: string): HTMLElement[] {
+      return Array.from(
+        element().querySelectorAll<HTMLElement>(
+          `ion-button[aria-label="${name}"]`,
+        ),
+      );
+    }
+
+    function addButton(): HTMLElement | undefined {
+      return Array.from(
+        element().querySelectorAll<HTMLElement>('ion-button'),
+      ).find((button) => button.textContent.trim() === 'Add another bean type');
+    }
+
+    function headings(): string[] {
+      return Array.from(
+        element().querySelectorAll('[role="heading"]'),
+        (heading) => heading.textContent.replace(/\s+/g, ' ').trim(),
+      );
+    }
+
+    function show(beanMix: BEAN_MIX_ENUM, varieties: string[]): void {
+      const bean = new Bean();
+      bean.beanMix = beanMix;
+      bean.bean_information = varieties.map(
+        (country) => ({ country, percentage: 50 }) as IBeanInformation,
+      );
+      component.data = bean;
+      fixture.detectChanges();
+    }
+
+    function percentages(): number {
+      return Array.from(element().querySelectorAll('ion-input')).filter(
+        (input) => input.label === 'Percentage',
+      ).length;
+    }
+
+    function countries(): string[] {
+      return component.data.bean_information.map(
+        (information) => information.country,
+      );
+    }
+
+    function click(button: HTMLElement): void {
+      button.click();
+      fixture.detectChanges();
+    }
+
+    it('gives a single origin bean one variety without the tools of a blend', () => {
+      show('SINGLE_ORIGIN' as BEAN_MIX_ENUM, ['Kenya']);
+
+      expect(element().querySelectorAll('ion-card').length).toBe(1);
+      expect(headings()).toEqual(['Variety information']);
+      expect(percentages()).toBe(0);
+      expect(buttons('Copy variety information')).toEqual([]);
+      expect(buttons('Delete variety')).toEqual([]);
+      expect(addButton()).toBeUndefined();
+    });
+
+    it('numbers the varieties of a blend and keeps the only one from being deleted', () => {
+      show('BLEND' as BEAN_MIX_ENUM, ['Kenya']);
+
+      expect(headings()).toEqual(['1. Bean Type']);
+      expect(percentages()).toBe(1);
+      expect(buttons('Copy variety information').length).toBe(1);
+      expect(buttons('Delete variety')).toEqual([]);
+      expect(addButton()).toBeDefined();
+    });
+
+    it('adds an empty variety at the end, which can be deleted', () => {
+      show('BLEND' as BEAN_MIX_ENUM, ['Kenya']);
+
+      click(addButton());
+
+      expect(countries()).toEqual(['Kenya', undefined]);
+      expect(headings()).toEqual(['1. Bean Type', '2. Bean Type']);
+      expect(percentages()).toBe(2);
+      expect(buttons('Delete variety').length).toBe(1);
+    });
+
+    it('adds a copy of a variety at the end', () => {
+      show('BLEND' as BEAN_MIX_ENUM, ['Kenya', 'Peru']);
+
+      click(buttons('Copy variety information')[0]);
+
+      expect(component.data.bean_information).toEqual([
+        { country: 'Kenya', percentage: 50 },
+        { country: 'Peru', percentage: 50 },
+        { country: 'Kenya', percentage: 50 },
+      ] as IBeanInformation[]);
+      // A copy, so changing it leaves the first variety as it is.
+      expect(component.data.bean_information[2]).not.toBe(
+        component.data.bean_information[0],
+      );
+    });
+
+    it('deletes the variety whose button was used, every one but the first', () => {
+      show('BLEND' as BEAN_MIX_ENUM, ['Kenya', 'Peru', 'Kenya']);
+
+      const remove = buttons('Delete variety');
+      expect(remove.length).toBe(2);
+      click(remove[0]);
+
+      expect(countries()).toEqual(['Kenya', 'Kenya']);
     });
   });
 });
