@@ -362,7 +362,8 @@ for (const language of ['en', 'de'] as const) {
       );
     });
 
-    test('a brew card on Home is no list and its archive mark no button', async ({
+    // Roles and names of the card: its unit test.
+    test('a tap on the archive mark of a brew card on Home opens the brew', async ({
       page,
     }) => {
       await start(page, language, (data) => {
@@ -373,20 +374,10 @@ for (const language of ['en', 'de'] as const) {
           true;
       });
       const cards = page.locator('dashboard brew-information');
-      await expect(cards.first()).toBeVisible();
-      await expect(cards.getByRole('list')).toHaveCount(0);
-      await expect(cards.getByRole('listitem')).toHaveCount(0);
+      // Home shows the cards in their own layout.
       await expect(
         cards.first().getByRole('heading', { level: 3 }),
       ).toBeVisible();
-      await expect(
-        page.getByRole('button', { name: t('A11Y.ARCHIVED_BREW') }),
-      ).toHaveCount(0);
-      const mark = cards.first().getByText(t('A11Y.ARCHIVED_BREW'), {
-        exact: true,
-      });
-      await expect(mark).toHaveCount(1);
-      // A tap on the mark opens the brew, as one beside it.
       const box = await cards
         .first()
         .locator('ion-icon[name="archive"]')
