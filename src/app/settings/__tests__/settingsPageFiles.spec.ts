@@ -1025,8 +1025,39 @@ describe('SettingsPage files of an export and an import', () => {
       expect(settings.bean_rating_steps).toBe(0.1);
     });
 
+    for (const [name, content, problem] of [
+      ['an empty file', {}, 'The file holds no list SETTINGS, BEANS, BREWS'],
+      [
+        'the file of another app',
+        { recipes: [{ name: 'V60' }], version: 3 },
+        'The file holds no list SETTINGS, BEANS, BREWS',
+      ],
+      ['a list', [{ SETTINGS: [{}] }], 'The file holds no JSON object'],
+    ] as [string, unknown, string][]) {
+      it(`refuses ${name} as no backup before anything is asked or imported`, async () => {
+        await open(['capacitor', 'android']);
+        const { uiAlert } = page as unknown as {
+          uiAlert: { showConfirm: () => Promise<string> };
+        };
+        const confirm = spyOn(uiAlert, 'showConfirm').and.resolveTo('YES');
+
+        await page.__importJSON(content, IMPORT_DIR, 'Beanconqueror.zip');
+
+        expect(confirm).not.toHaveBeenCalled();
+        expect(importBackup).not.toHaveBeenCalled();
+        expect(showMessage).not.toHaveBeenCalled();
+        expect(hideLoadingSpinner).toHaveBeenCalled();
+        expect(showMessageWithDetails).toHaveBeenCalledOnceWith(
+          'IMPORT_NOT_A_BACKUP',
+          problem,
+        );
+        expect(await filesIn('', Directory.Data)).toEqual([]);
+        expect(database.set).not.toHaveBeenCalled();
+      });
+    }
+
+    // Taken for a backup, but without the settings it cannot be imported.
     for (const [name, content] of [
-      ['an empty file', {}],
       ['a file without settings', { BREWS: [{}], BEANS: [{}] }],
       ['a file with an empty list of settings', { SETTINGS: [] }],
     ] as [string, object][]) {
@@ -1065,7 +1096,7 @@ describe('SettingsPage files of an export and an import', () => {
       );
     });
 
-    it('known gap: reads a JSON file and then imports nothing, without a word', async () => {
+    it('imports a JSON file of an older export as a backup', async () => {
       await android();
       await write('picked/Beanconqueror.json', '{"BREWS":[]}', Directory.Cache);
       const importJSON = spyOn(page, '__importJSON').and.resolveTo();
@@ -1077,8 +1108,59 @@ describe('SettingsPage files of an export and an import', () => {
         'Beanconqueror.json',
       );
 
-      expect(importJSON).not.toHaveBeenCalled();
+      expect(importJSON.calls.allArgs()).toEqual([
+        [{ BREWS: [] }, '/CACHE/picked', 'Beanconqueror.json'],
+      ]);
+    });
+
+    it('refuses a JSON file of another app with the reason, without writing', async () => {
+      await android();
+      await write(
+        'picked/brews.json',
+        '{"shots":[{"dose":18}]}',
+        Directory.Cache,
+      );
+
+      await page.doImport(
+        'json',
+        '/CACHE/picked/brews.json',
+        '/CACHE/picked',
+        'brews.json',
+      );
+
       expect(showMessage).not.toHaveBeenCalled();
+      expect(showMessageWithDetails).toHaveBeenCalledOnceWith(
+        'IMPORT_NOT_A_BACKUP',
+        'The file holds no list SETTINGS, BEANS, BREWS',
+      );
+      expect(log.error).toHaveBeenCalledOnceWith(
+        'Import - not a backup: The file holds no list SETTINGS, BEANS, BREWS',
+      );
+      expect(database.set).not.toHaveBeenCalled();
+    });
+
+    it('refuses a zip without settings, beans and brews with the reason, without writing', async () => {
+      await android();
+      await write('picked/other.zip', 'zip of another app', Directory.Cache);
+      Object.assign(page, {
+        uiExportImportHelper: {
+          getJSONFromZIPArrayBufferContent: () =>
+            Promise.resolve({ PHOTOS: [] }),
+        },
+      });
+
+      await page.doImport(
+        'zip',
+        '/CACHE/picked/other.zip',
+        '/CACHE/picked',
+        'other.zip',
+      );
+
+      expect(showMessage).not.toHaveBeenCalled();
+      expect(showMessageWithDetails).toHaveBeenCalledOnceWith(
+        'IMPORT_NOT_A_BACKUP',
+        'The file holds no list SETTINGS, BEANS, BREWS',
+      );
       expect(database.set).not.toHaveBeenCalled();
     });
 

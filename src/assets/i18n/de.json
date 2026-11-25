@@ -210,6 +210,7 @@
     "IMPORT_SUCCESSFULLY": "Import Erfolgreich",
     "IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED": "Import unerfolgreich, Daten wurden nicht verändert",
     "INVALID_FILE_DATA": "Invalider Dateiinhalt",
+    "IMPORT_NOT_A_BACKUP": "Diese Datei ist keine Sicherung von Beanconqueror. Es wurde nichts importiert, deine Daten sind unverändert. Bitte wähle die Beanconqueror.zip eines Exports aus Beanconqueror.",
     "DOWNLOADED": "Heruntergeladen",
     "FILE_DOWNLOADED_SUCCESSFULLY": "Datei '{{fileName}}' wurde erfolgreich in den Download-Ordner heruntergeladen!",
     "NO": "Nein",

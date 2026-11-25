@@ -112,6 +112,7 @@ import { ToFixedPipe } from '../../pipes/toFixed';
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import { backupFormatProblem } from '../../services/backup-format-rules';
 import { BrewReferencesService } from '../../services/brewReferences/brew-references.service';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { CurrencyService } from '../../services/currencyService/currency.service';
@@ -878,8 +879,9 @@ export class SettingsPage {
           );
         await this.__importJSON(parsedJSON, directoryUri, fileName);
       } else {
-        // importMode === 'json'
-        await this.uiFileHelper.readJSONFile(mainFileUri);
+        // A Beanconqueror.json, as older versions exported it.
+        const parsedJSON = await this.uiFileHelper.readJSONFile(mainFileUri);
+        await this.__importJSON(parsedJSON, directoryUri, fileName);
       }
     } catch (error) {
       this.uiLog.error(
@@ -1602,6 +1604,16 @@ export class SettingsPage {
     _importDirectory: string,
     _fileName: string,
   ) {
+    const formatProblem = backupFormatProblem(_parsedJSON);
+    if (formatProblem !== null) {
+      this.uiLog.error(`Import - not a backup: ${formatProblem}`);
+      await this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.showMessageWithDetails(
+        'IMPORT_NOT_A_BACKUP',
+        formatProblem,
+      );
+      return;
+    }
     try {
       const parsedContent = _parsedJSON;
       this.uiLog.log('Parsed import data successfully');
