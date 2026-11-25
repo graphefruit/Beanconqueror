@@ -1,4 +1,4 @@
-import { Service } from '@angular/core';
+import { inject, NgZone, Service } from '@angular/core';
 
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
@@ -56,6 +56,7 @@ export class UILog {
   private unwritten: LogEntry[] = [];
   private currentFile: LogFile | undefined;
   private writing: Promise<void> = Promise.resolve();
+  private readonly ngZone = inject(NgZone);
 
   public static getInstance(): UILog {
     if (UILog.instance) {
@@ -111,20 +112,26 @@ export class UILog {
       // No log written yet; the first write creates the folder.
     }
     this.fileLog = 'on';
-    setInterval(() => void this.writeToFile(), WRITE_INTERVAL_MS);
-    // The interval may never fire once the app is in the background, and
-    // iOS tells of the pause too late when the app is closed from the switcher.
-    void App.addListener('pause', () => void this.writeToFile());
-    void App.addListener('appStateChange', (_state) => {
-      if (!_state.isActive) {
-        void this.writeToFile();
-      }
+    // Outside Angular: neither the interval nor the writes may run change
+    // detection of the whole app every few seconds.
+    this.ngZone.runOutsideAngular(() => {
+      setInterval(() => void this.writeToFile(), WRITE_INTERVAL_MS);
+      // The interval may never fire once the app is in the background, and
+      // iOS tells of the pause too late when the app is closed from the switcher.
+      void App.addListener('pause', () => void this.writeToFile());
+      void App.addListener('appStateChange', (_state) => {
+        if (!_state.isActive) {
+          void this.writeToFile();
+        }
+      });
     });
   }
 
   /** Writes the entries logged since the last write, one after another. */
   public writeToFile(): Promise<void> {
-    this.writing = this.writing.then(() => this.writeUnwritten());
+    this.writing = this.ngZone.runOutsideAngular(() =>
+      this.writing.then(() => this.writeUnwritten()),
+    );
     return this.writing;
   }
 

@@ -1,3 +1,6 @@
+import { NgZone, provideZoneChangeDetection } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+
 import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
@@ -72,7 +75,7 @@ const created: UILog[] = [];
 
 /** A log that keeps the console of the test run clean. */
 function quietLog(): UILog {
-  const uiLog = new UILog();
+  const uiLog = TestBed.runInInjectionContext(() => new UILog());
   uiLog.disable();
   created.push(uiLog);
   return uiLog;
@@ -82,6 +85,10 @@ describe('UILog', () => {
   let native: jasmine.Spy;
 
   beforeEach(async () => {
+    // As in the app: the log runs beside the change detection of zone.js.
+    TestBed.configureTestingModule({
+      providers: [provideZoneChangeDetection()],
+    });
     await clearFiles();
     native = spyOn(Capacitor, 'isNativePlatform').and.returnValue(true);
     // The interval of the file log runs on the mocked clock.
@@ -165,6 +172,28 @@ describe('UILog', () => {
     jasmine.clock().tick(1);
 
     expect(write).toHaveBeenCalledTimes(1);
+  });
+
+  it('writes outside Angular, so it runs no change detection', async () => {
+    const zone = TestBed.inject(NgZone);
+    const uiLog = quietLog();
+    const inAngular: boolean[] = [];
+    // The mocked clock would run the interval in the zone of the test.
+    jasmine.clock().uninstall();
+    spyOn(window, 'setInterval').and.callFake((() => {
+      inAngular.push(NgZone.isInAngularZone());
+      return 0;
+    }) as unknown as typeof setInterval);
+    spyOn(FilesystemWeb.prototype, 'writeFile').and.callFake(async () => {
+      inAngular.push(NgZone.isInAngularZone());
+      return { uri: '' };
+    });
+
+    await zone.run(() => uiLog.startFileLog());
+    uiLog.log('Entry');
+    await zone.run(() => uiLog.writeToFile());
+
+    expect(inAngular).toEqual([false, false]);
   });
 
   it('writes when the app goes into the background', async () => {
