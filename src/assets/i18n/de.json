@@ -1526,7 +1526,9 @@
         "WRITE_UNCOMPLETED_DESCRIPTION": "NFC-Tag konnte nicht geschrieben werden",
         "WRITE_UNCOMPLETED_TITLE": "Schreiben fehlgeschlagen",
         "SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER": "Bitte halten Sie Ihren Anhänger an das Lesegerät",
-        "WRITE_NFC_TAG": "NFC-Tag schreiben"
+        "WRITE_NFC_TAG": "NFC-Tag schreiben",
+        "TAG_WITHOUT_APP_LINK_DESCRIPTION": "Dieser NFC-Tag enthält keinen Beanconqueror-Link.",
+        "TAG_WITHOUT_APP_LINK_TITLE": "Tag nicht erkannt"
     },
     "BREW_FLOW_WEIGHT_REALTIME_SECOND": "Fluss (Echtzeit, raus)",
     "BREW_FLOW_WEIGHT_SECOND": "Gewicht (raus)",

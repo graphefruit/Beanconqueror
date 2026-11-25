@@ -1526,7 +1526,9 @@
         "WRITE_UNCOMPLETED_DESCRIPTION": "NFC tag could not be written",
         "WRITE_UNCOMPLETED_TITLE": "Write failed",
         "SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER": "Please hold your tag to the reader",
-        "WRITE_NFC_TAG": "Write NFC tag"
+        "WRITE_NFC_TAG": "Write NFC tag",
+        "TAG_WITHOUT_APP_LINK_DESCRIPTION": "This NFC tag does not contain a Beanconqueror link.",
+        "TAG_WITHOUT_APP_LINK_TITLE": "Tag not recognised"
     },
     "BREW_FLOW_WEIGHT_REALTIME_SECOND": "Flow (Realtime, out)",
     "BREW_FLOW_WEIGHT_SECOND": "Weight (out)",

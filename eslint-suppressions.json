@@ -3381,7 +3381,7 @@
       "count": 1
     },
     "prefer-const": {
-      "count": 3
+      "count": 2
     }
   },
   "src/services/serverCommunication/server-communication.service.ts": {

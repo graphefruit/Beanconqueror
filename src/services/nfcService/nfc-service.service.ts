@@ -11,6 +11,7 @@ import { UIAlert } from '../uiAlert';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
 import { UIToast } from '../uiToast';
+import { appLinkFromNdefMessage } from './nfc-tag-link';
 
 /**https://github.com/EYALIN/community-cordova-plugin-nfc**/
 /** The plugin only clobbers NfcPlugin globally (not nfc/ndef). Use NfcPlugin.**/
@@ -119,15 +120,17 @@ export class NfcService {
   private __handleNFCData(_tag) {
     // The tag carries its serial number; its link is logged when it is opened.
     this.uiLog.log('We read NFC-Tag');
-    if (_tag) {
-      let data = NfcPlugin.NdefPlugin.textHelper.decodePayload(
-        _tag.ndefMessage[0].payload,
-      );
-      /**We dont use bytes to string because somehow ascis came into play
-            let data = NfcPlugin.bytesToString(_tag.ndefMessage[0].payload)**/
-      this.intentHandler.handleDeepLink(data);
+    const link = appLinkFromNdefMessage(_tag?.ndefMessage);
+    if (link) {
+      this.intentHandler.handleDeepLink(link);
     } else {
-      this.uiLog.error('No data found on NFC-Tag');
+      this.uiLog.error('No Beanconqueror link found on NFC-Tag');
+      void this.uiAlert.showMessage(
+        'NFC.TAG_WITHOUT_APP_LINK_DESCRIPTION',
+        'NFC.TAG_WITHOUT_APP_LINK_TITLE',
+        'OK',
+        true,
+      );
     }
   }
 

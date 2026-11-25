@@ -43,6 +43,7 @@ const NEW_CODE = [
   'src/services/deviceIdentity/**',
   'src/services/documentLanguage/**',
   'src/services/graphHelper/load-plotly.ts',
+  'src/services/nfcService/nfc-tag-link.ts',
   'src/services/preImportBackup/pre-import-backup.service.ts',
   'src/services/tabletLayout/**',
   'src/services/textToSpeech/**',
