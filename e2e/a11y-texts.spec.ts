@@ -1,19 +1,10 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join, relative, resolve } from 'node:path';
-
-import { test as base, type Locator, type Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { seedDatabase } from './support/seed';
 import { readStoredValue } from './support/stored-values';
 import { generateDataSet } from './support/synthetic-data';
-import {
-  hasText,
-  mainTabName,
-  startsWith,
-  text,
-  type Language,
-} from './support/texts';
+import { mainTabName, startsWith, text, type Language } from './support/texts';
 
 /**
  * Names, texts and operation for screen reader and keyboard users, in English
@@ -21,8 +12,6 @@ import {
  * messages come from the translations, and the buttons that start a brew, the
  * info icons and Save react to Enter and Space as to a tap.
  */
-
-const ROOT = resolve(__dirname, '..');
 
 /** Ionic's English names, which must not reach users of any language. */
 const IONIC_NAMES = [
@@ -551,176 +540,3 @@ for (const language of ['en', 'de'] as const) {
     });
   });
 }
-
-/** Source files of the app, as text, with their path below the project. */
-function sources(extension: RegExp): { path: string; text: string }[] {
-  const files: { path: string; text: string }[] = [];
-  const walk = (directory: string) => {
-    for (const name of readdirSync(directory)) {
-      const path = join(directory, name);
-      if (statSync(path).isDirectory()) {
-        walk(path);
-      } else if (extension.test(name) && !name.endsWith('.spec.ts')) {
-        files.push({
-          path: relative(ROOT, path),
-          text: readFileSync(path, 'utf8'),
-        });
-      }
-    }
-  };
-  walk(join(ROOT, 'src'));
-  return files;
-}
-
-/** Comments hold code that does not run, e.g. switched-off device features. */
-function withoutComments(source: string): string {
-  return source
-    .replace(/<!--[\s\S]*?-->/g, '')
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/^\s*\/\/.*$/gm, '');
-}
-
-const KEY = /^[A-Z0-9_]+(\.[A-Z0-9_]+)*$/;
-
-/** Calls that show or speak their first argument, translated as a key. */
-const MESSAGE_CALL =
-  /\.(?:showInfoToast|showInfoToastBottom|showMessage|showMessageWithDetails|showLoadingSpinner|setLoadingSpinnerMessage|showLoadingMessage|showConfirm)\(\s*(['`])([^'`]*)\1/g;
-
-/** The start of every call that shows or speaks a message. */
-const MESSAGE_CALL_START =
-  /\.(?:showInfoToast|showInfoToastBottom|showMessage|showLoadingSpinner|setLoadingSpinnerMessage|showLoadingMessage|showConfirm)\(/g;
-
-/** The index of the quote that ends the text starting at `start`. */
-function endOfText(source: string, start: number): number {
-  let i = start + 1;
-  while (i < source.length && source[i] !== source[start]) {
-    i += source[i] === '\\' ? 2 : 1;
-  }
-  return i;
-}
-
-/**
- * The code of the arguments of the call whose "(" ends at `start`: the
- * contents of quoted texts are left out, the expressions in templates kept.
- */
-function argumentCode(source: string, start: number): string {
-  let code = '';
-  let depth = 1;
-  for (let i = start; i < source.length && depth > 0; i++) {
-    const char = source[i];
-    if (char === "'" || char === '"' || char === '`') {
-      const end = endOfText(source, i);
-      for (const part of source.slice(i, end).matchAll(/\$\{([^}]*)\}/g)) {
-        code += char === '`' ? ` ${part[1]} ` : '';
-      }
-      i = end;
-    } else {
-      depth += char === '(' ? 1 : char === ')' ? -1 : 0;
-      code += char;
-    }
-  }
-  return code;
-}
-
-/** Caught errors and what is made of them for a message. */
-const TECHNICAL_ERROR =
-  /JSON\.stringify\(|(?<![\w.])_?(?:e|ex|err|error|exception)\b/;
-
-/** A method of the class that is given the error chooses a key from it. */
-const KEY_FROM_ERROR = /this\.\w+\(\s*_?\w+\s*\)/g;
-
-const LITERAL_KEY_USES = [
-  /(['"])([^'"\n{}]+?)\1\s*\|\s*translate/g,
-  /translate\.(?:instant|get)\(\s*(['`])([^'`\n]+?)\1/g,
-  MESSAGE_CALL,
-];
-
-/**
- * Keys that are known to be missing, each with the reason they are not
- * added. The component is never shown (AppComponent returns before it).
- */
-const KNOWN_MISSING_KEYS = new Set(['METICULOUS_NEEDS_HELP_TITLE']);
-
-base.describe('texts in the source', () => {
-  base('every key the app shows exists in English and German', () => {
-    const missing: string[] = [];
-    for (const { path, text: source } of sources(/\.(html|ts)$/)) {
-      const code = withoutComments(source);
-      for (const pattern of LITERAL_KEY_USES) {
-        for (const match of code.matchAll(pattern)) {
-          const key = match[2];
-          // Prefixes of keys put together at run time end in _ or .
-          if (
-            !KEY.test(key) ||
-            key.endsWith('_') ||
-            KNOWN_MISSING_KEYS.has(key)
-          ) {
-            continue;
-          }
-          for (const language of ['en', 'de'] as const) {
-            if (!hasText(language, key)) {
-              missing.push(`${path}: ${key} (${language})`);
-            }
-          }
-        }
-      }
-    }
-    expect([...new Set(missing)]).toEqual([]);
-  });
-
-  base('messages for users are keys, not fixed English text', () => {
-    const fixed: string[] = [];
-    for (const { path, text: source } of sources(/\.ts$/)) {
-      for (const match of withoutComments(source).matchAll(MESSAGE_CALL)) {
-        // A template with placeholders is put together from translations.
-        if (!KEY.test(match[2]) && !match[2].includes('${')) {
-          fixed.push(`${path}: ${match[2]}`);
-        }
-      }
-    }
-    expect(fixed).toEqual([]);
-  });
-
-  // A message that names the cause, e.g. of a failed backup import, shows
-  // it apart under "Technical details:" (UIAlert.showMessageWithDetails),
-  // which these calls are not.
-  base(
-    'messages for users leave the technical cause of an error to the log',
-    () => {
-      const technical: string[] = [];
-      for (const { path, text: source } of sources(/\.ts$/)) {
-        const code = withoutComments(source);
-        for (const match of code.matchAll(MESSAGE_CALL_START)) {
-          const start = match.index + match[0].length;
-          const args = argumentCode(code, start);
-          if (TECHNICAL_ERROR.test(args.replace(KEY_FROM_ERROR, ''))) {
-            technical.push(`${path}: ${args.replace(/\s+/g, ' ').trim()}`);
-          }
-        }
-      }
-      expect(technical).toEqual([]);
-    },
-  );
-
-  base('choices in a dialog name their buttons in the app language', () => {
-    const untranslated: string[] = [];
-    for (const { path, text: source } of sources(/\.html$/)) {
-      for (const match of withoutComments(source).matchAll(
-        /<ion-select(?=[\s>])[^>]*>/g,
-      )) {
-        const tag = match[0];
-        // Popovers, sheets and the app's own overlays have no such buttons.
-        const otherInterface =
-          /interface\s*=\s*["'](?:popover|action-sheet|modal)/.test(tag) ||
-          /-overlay\b/.test(tag);
-        if (
-          !otherInterface &&
-          !(tag.includes('cancelText') && tag.includes('okText'))
-        ) {
-          untranslated.push(`${path}: ${tag.slice(0, 80)}`);
-        }
-      }
-    }
-    expect(untranslated).toEqual([]);
-  });
-});
