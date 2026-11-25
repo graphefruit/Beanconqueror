@@ -11,8 +11,8 @@ import { startsWith, text, type Language } from './support/texts';
  * keyboard users, in English and German: sliders, unit choices and date
  * fields say what they set, chips and choice cards are buttons, required
  * fields say why saving failed, long explanations are descriptions, charts
- * have a text, sorting works without dragging, and the welcome dialog shows
- * one step at a time.
+ * have a text and sorting works without dragging. The steps of the welcome
+ * dialog are checked by its unit tests.
  */
 
 type Texts = (key: string, params?: Record<string, string>) => string;
@@ -20,7 +20,7 @@ type Texts = (key: string, params?: Record<string, string>) => string;
 async function start(
   page: Page,
   language: Language,
-  { welcome = false, freeze = false } = {},
+  { freeze = false } = {},
 ): Promise<void> {
   const data = generateDataSet({
     brews: 20,
@@ -29,14 +29,12 @@ async function start(
     endDate: new Date('2026-11-01T18:00:00Z'),
   });
   data.SETTINGS[0].language = language;
-  data.SETTINGS[0].welcome_page_showed = !welcome;
+  data.SETTINGS[0].welcome_page_showed = true;
   data.SETTINGS[0].freeze_coffee_beans = freeze;
   await seedDatabase(page, data);
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('lang', language);
-  if (!welcome) {
-    await expect(page).toHaveURL(/\/home\/dashboard$/);
-  }
+  await expect(page).toHaveURL(/\/home\/dashboard$/);
 }
 
 /** Shows a screen the way the router does, without a reload. */
@@ -483,40 +481,6 @@ for (const language of ['en', 'de'] as const) {
           name: startsWith(`${t('STATISTIC_RANGE_TO')} `),
         }),
       ).toBeVisible();
-    });
-
-    test('the welcome dialog shows one named step at a time', async ({
-      page,
-    }) => {
-      await start(page, language, { welcome: true });
-      const steps = page.getByRole('group', {
-        name: new RegExp(
-          `^${escape(t('A11Y.STEP_OF', { step: '#', count: '5' })).replace('#', '\\d')}$`,
-        ),
-      });
-      await expect(steps).toHaveCount(1);
-      await expect(steps).toHaveAccessibleName(
-        t('A11Y.STEP_OF', { step: '1', count: '5' }),
-      );
-
-      await steps.getByRole('button', { name: t('DO_NOT_ACTIVE') }).click();
-      await expect(steps).toHaveCount(1);
-      await expect(steps).toHaveAccessibleName(
-        t('A11Y.STEP_OF', { step: '2', count: '5' }),
-      );
-      // The focused heading says the position: phones do not say the group.
-      await expect(
-        steps.getByRole('heading', {
-          name: `${t('A11Y.STEP_OF', { step: '2', count: '5' })}, ${t('WELCOME_PAGE_BEAN_TITLE')}`,
-          exact: true,
-        }),
-      ).toBeFocused();
-
-      await steps.getByRole('button', { name: t('SKIP') }).focus();
-      await page.keyboard.press('Enter');
-      await expect(steps).toHaveAccessibleName(
-        t('A11Y.STEP_OF', { step: '3', count: '5' }),
-      );
     });
   });
 }

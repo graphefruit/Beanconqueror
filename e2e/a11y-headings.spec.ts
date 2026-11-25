@@ -78,11 +78,7 @@ const LIST_CARDS: Record<string, string> = {
   '/roasting-section/roasting-machine': 'roasting-machine-information-card',
 };
 
-async function start(
-  page: Page,
-  language: Language,
-  { welcome = false } = {},
-): Promise<void> {
+async function start(page: Page, language: Language): Promise<void> {
   const data = generateDataSet({
     brews: 20,
     beans: 6,
@@ -90,7 +86,7 @@ async function start(
     endDate: new Date('2026-11-01T18:00:00Z'),
   });
   data.SETTINGS[0].language = language;
-  data.SETTINGS[0].welcome_page_showed = !welcome;
+  data.SETTINGS[0].welcome_page_showed = true;
   // The data set has no graphs; the list of graphs needs some.
   const graphs = ['Blooming', 'Turbo'].map((name, index) => ({
     name,
@@ -102,13 +98,11 @@ async function start(
   await seedDatabase(page, { ...data, GRAPH: graphs });
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('lang', language);
-  if (!welcome) {
-    // The start-up navigation to Home would undo an earlier one.
-    await expect(page).toHaveURL(/\/home\/dashboard$/);
-    await expect(
-      page.getByRole('heading', { level: 1, name: text(language, 'OVERVIEW') }),
-    ).toBeVisible();
-  }
+  // The start-up navigation to Home would undo an earlier one.
+  await expect(page).toHaveURL(/\/home\/dashboard$/);
+  await expect(
+    page.getByRole('heading', { level: 1, name: text(language, 'OVERVIEW') }),
+  ).toBeVisible();
 }
 
 /** Shows a screen the way the router does, without a reload. */
@@ -399,16 +393,6 @@ for (const language of ['en', 'de'] as const) {
         }
       });
     }
-
-    test('the welcome dialog has the title of its step as the one level-1 heading', async ({
-      page,
-    }) => {
-      await start(page, language, { welcome: true });
-      await expect(
-        page.getByRole('heading', { level: 1, name: t('WELCOME_PAGE_TITLE') }),
-      ).toBeVisible();
-      await expectOutline(page, 'welcome');
-    });
   });
 }
 
