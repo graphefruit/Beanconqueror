@@ -151,7 +151,7 @@ for (const language of ['en', 'de'] as const) {
         await tabBar(page)
           .getByRole('tab', { name: t(tab) })
           .click();
-        const tabs = visible(page.getByRole('main').getByRole('tab'));
+        const tabs = visible(page.getByRole('banner').getByRole('tab'));
         await expect(tabs.first()).toHaveAccessibleName(countedTab(t, label));
         for (const each of await tabs.all()) {
           await expect(each).not.toHaveAccessibleName(/[(/)]/);
