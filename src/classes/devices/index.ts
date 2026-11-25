@@ -27,6 +27,7 @@ import { InkbirdInt11IBThermometer } from './inkbirdInt11IBThermometer';
 import { InkbirdInt11PBThermometer } from './inkbirdInt11PBThermometer';
 import { InkbirdTnt11BThermometer } from './inkbirdTnt11BThermometer';
 import { JimmyScale } from './jimmyScale';
+import { LefuCoffeeScale } from './lefuCoffeeScale';
 import { LunarScale } from './lunarScale';
 import { MeaterThermometer } from './meaterThermometer';
 import { PopsiclePressure } from './popsiclePressure';
@@ -110,6 +111,8 @@ export function makeDevice(
       return new WeighMyBruScale(data, type);
     case ScaleType.WEIGHMASTER:
       return new WeighMasterScale(data, type);
+    case ScaleType.LEFU_COFFEE:
+      return new LefuCoffeeScale(data, type);
     default:
       return null;
   }

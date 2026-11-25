@@ -57,6 +57,7 @@ import { InkbirdInt11IBThermometer } from '../../classes/devices/inkbirdInt11IBT
 import { InkbirdInt11PBThermometer } from '../../classes/devices/inkbirdInt11PBThermometer';
 import { InkbirdTnt11BThermometer } from '../../classes/devices/inkbirdTnt11BThermometer';
 import { JimmyScale } from '../../classes/devices/jimmyScale';
+import { LefuCoffeeScale } from '../../classes/devices/lefuCoffeeScale';
 import { LunarScale } from '../../classes/devices/lunarScale';
 import { PopsiclePressure } from '../../classes/devices/popsiclePressure';
 import { SkaleScale } from '../../classes/devices/skale';
@@ -811,6 +812,13 @@ export class CoffeeBluetoothDevicesService {
       return {
         id: deviceScale.id,
         type: ScaleType.WEIGHMASTER,
+      };
+    }
+    if (LefuCoffeeScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a Lefu coffee scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.LEFU_COFFEE,
       };
     }
 
