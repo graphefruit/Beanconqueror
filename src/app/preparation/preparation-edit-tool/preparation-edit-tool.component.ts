@@ -86,10 +86,12 @@ export class PreparationEditToolComponent {
       PREPARATION_TRACKING.TITLE,
       PREPARATION_TRACKING.ACTIONS.EDIT_TOOL,
     );
-    // This is a bug reported on discord, when editing a preparation tool, it resetted the default params
-    // I Don't know why, but making a copy of the object helped.
+    // A copy of the stored entry, not of the form that opened this dialog:
+    // what is stored here must not take along the form's unsaved changes.
     if (this.preparation !== undefined) {
-      this.clonedPreparation.initializeByObject(this.preparation);
+      this.clonedPreparation.initializeByObject(
+        this.uiPreparationStorage.getByUUID(this.preparation.config.uuid),
+      );
     }
     this.data = this.uiHelper.cloneData(this.preparationTool);
   }
@@ -199,8 +201,11 @@ export class PreparationEditToolComponent {
     const preparation = new Preparation();
     preparation.initializeByObject(this.clonedPreparation);
     preparation.tools = [...preparation.tools];
+    if (!preparation.updateTool(this.data)) {
+      // A tool added in the form and not stored yet.
+      preparation.tools.push(this.data);
+    }
     if (
-      !preparation.updateTool(this.data) ||
       !(await storedOrReported(this.uiAlert, () =>
         this.uiPreparationStorage.update(preparation),
       ))

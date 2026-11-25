@@ -133,6 +133,9 @@ export class PreparationEditComponent implements OnInit {
     );
     if (this.preparation !== undefined) {
       this.data.initializeByObject(this.preparation);
+      // A list of the dialog's own: tools added, removed or sorted here stay
+      // out of the stored entry until saved.
+      this.data.tools = [...this.data.tools];
     }
   }
 
@@ -207,9 +210,19 @@ export class PreparationEditComponent implements OnInit {
 
   public async editTool(_tool: PreparationTool) {
     if (await this.uiPreparationHelper.editPreparationTool(this.data, _tool)) {
-      //Reinitialize
-      const prep = this.uiPreparationStorage.getByUUID(this.data.config.uuid);
-      this.data.initializeByObject(prep);
+      // Takes over only what the tool dialog stored; the other changes made
+      // here stay unsaved.
+      const stored: IPreparation = this.uiPreparationStorage.getByUUID(
+        this.data.config.uuid,
+      );
+      const tool = stored?.tools.find(
+        (_stored) => _stored.config.uuid === _tool.config.uuid,
+      );
+      if (tool === undefined) {
+        this.data.deleteTool(_tool);
+      } else {
+        this.data.updateTool(tool);
+      }
     }
   }
 

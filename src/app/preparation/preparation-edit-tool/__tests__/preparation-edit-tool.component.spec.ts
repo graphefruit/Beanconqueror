@@ -488,27 +488,132 @@ describe('PreparationEditToolComponent changing a tool', () => {
       PreparationEditToolComponent.COMPONENT_ID,
     );
   });
+});
 
-  for (const stored of [true, false]) {
-    it(`the form ${stored ? 'takes over the stored preparation' : 'keeps what was entered'} when the dialog has ${stored ? '' : 'not '}stored`, async () => {
-      const data = new Preparation();
-      data.name = 'V60 typed by user';
-      const storedEntry = new Preparation();
-      storedEntry.name = 'V60';
-      const form: PreparationEditComponent = Object.assign(
-        Object.create(PreparationEditComponent.prototype),
-        {
-          data,
-          uiPreparationHelper: {
-            editPreparationTool: () => Promise.resolve(stored),
+describe('PreparationEditToolComponent opened from a form with unsaved changes', () => {
+  let device: Device;
+
+  beforeEach(() => {
+    spyOn(Date, 'now').and.returnValue(T0);
+    spyOn(UIAlert, 'getInstance').and.returnValue(undefined);
+    device = createDevice({ PREPARATION: [storedPreparation()], BREWS: [] });
+  });
+
+  const toolNames = (_preparation: { tools: PreparationTool[] }) =>
+    _preparation.tools.map(
+      (_tool) => `${_tool.name}${_tool.archived ? ' archived' : ''}`,
+    );
+
+  /**
+   * Opens the form of the stored preparation, renames it and adds a tool
+   * without saving, then does `_action` in the dialog of the tool at
+   * `_toolIndex`, as the app does.
+   */
+  async function changeToolFromForm(
+    _toolIndex: number,
+    _action: (_dialog: PreparationEditToolComponent) => unknown,
+  ) {
+    const app = await startApp(device);
+    const form: PreparationEditComponent = Object.assign(
+      Object.create(PreparationEditComponent.prototype),
+      {
+        data: new Preparation(),
+        nextToolName: '',
+        preparation: app.preparationStorage.getAllEntries()[0],
+        uiAnalytics: TestBed.inject(UIAnalytics),
+        uiPreparationStorage: app.preparationStorage,
+        uiPreparationHelper: {
+          editPreparationTool: async (
+            _preparation: Preparation,
+            _tool: PreparationTool,
+          ) => {
+            const dialog = TestBed.inject(PreparationEditToolComponent);
+            Object.assign(dialog, {
+              preparation: _preparation,
+              preparationTool: _tool,
+            });
+            dialog.ionViewWillEnter();
+            await _action(dialog);
+            return app.dismiss.calls.mostRecent()?.args[1] === 'saved';
           },
-          uiPreparationStorage: { getByUUID: () => storedEntry },
         },
-      );
+      },
+    );
+    form.ionViewWillEnter();
+    form.data.name = 'V60 typed by user';
+    form.nextToolName = 'Grinder';
+    form.addTool();
 
-      await form.editTool(new PreparationTool());
+    await form.editTool(form.data.tools[_toolIndex]);
 
-      expect(data.name).toBe(stored ? 'V60' : 'V60 typed by user');
+    const [stored] = device.data.get('PREPARATION') as Preparation[];
+    return { app, form, stored };
+  }
+
+  for (const [name, action, storedTools] of [
+    [
+      'renamed',
+      async (_dialog: PreparationEditToolComponent) => {
+        _dialog.data.name = 'Scale renamed';
+        await _dialog.editTool();
+      },
+      ['Paper filter', 'Kettle', 'Scale renamed'],
+    ],
+    [
+      'archived',
+      (_dialog: PreparationEditToolComponent) => _dialog.archiveTool(),
+      ['Paper filter', 'Kettle', 'Scale archived'],
+    ],
+    [
+      'deleted',
+      (_dialog: PreparationEditToolComponent) => _dialog.deleteTool(),
+      ['Paper filter', 'Kettle'],
+    ],
+  ] as const) {
+    it(`stores only the ${name} tool, and the form keeps its unsaved changes`, async () => {
+      const { app, form, stored } = await changeToolFromForm(2, action);
+
+      expect(stored.name).toBe('V60');
+      expect(toolNames(stored)).toEqual([...storedTools]);
+      expect(
+        toolNames(app.preparationStorage.getByUUID(PREPARATION_UUID)),
+      ).toEqual([...storedTools]);
+      expect(form.data.name).toBe('V60 typed by user');
+      expect(toolNames(form.data)).toEqual([...storedTools, 'Grinder']);
     });
   }
+
+  it('stores a tool added in the form when it is changed in its dialog', async () => {
+    const { form, stored } = await changeToolFromForm(3, async (_dialog) => {
+      _dialog.data.name = 'Grinder renamed';
+      await _dialog.editTool();
+    });
+
+    expect(stored.name).toBe('V60');
+    expect(toolNames(stored)).toEqual([
+      'Paper filter',
+      'Kettle',
+      'Scale',
+      'Grinder renamed',
+    ]);
+    expect(form.data.name).toBe('V60 typed by user');
+    expect(toolNames(form.data)).toEqual(toolNames(stored));
+  });
+
+  it('changes nothing when the dialog is closed without storing', async () => {
+    const before = structuredClone(Object.fromEntries(device.data));
+
+    const { form } = await changeToolFromForm(2, (_dialog) =>
+      _dialog.dismiss(),
+    );
+
+    expect(Object.fromEntries(device.data)).toEqual(before);
+    expect(form.data.name).toBe('V60 typed by user');
+    expect(toolNames(form.data)).toEqual([
+      'Paper filter',
+      'Kettle',
+      'Scale',
+      'Grinder',
+    ]);
+  });
 });
