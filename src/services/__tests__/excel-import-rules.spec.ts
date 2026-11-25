@@ -1,25 +1,24 @@
 import { readBeanMix, readExcelDate } from '../excel-import-rules';
 
 describe('readExcelDate', () => {
+  // A day typed as text is local midnight, as the app stores a roast date.
+  const localMidnight = new Date(2022, 1, 2).toISOString();
   const cases: [string, unknown, string | null][] = [
     ['an Excel day number', 44594, '2022-02-02T00:00:00.000Z'],
     ['an Excel day number with a time', 44594.5, '2022-02-02T12:00:00.000Z'],
     ['an Excel day number as text', '44594', '2022-02-02T00:00:00.000Z'],
-    ['an ISO date', '2022-02-02', '2022-02-02T00:00:00.000Z'],
+    ['an ISO date', '2022-02-02', localMidnight],
     [
       'an ISO date with a time',
       '2022-02-02T10:30:00Z',
       '2022-02-02T10:30:00.000Z',
     ],
-    ['a date as DD.MM.YYYY', '02.02.2022', '2022-02-02T00:00:00.000Z'],
-    [
-      'a date as D.M.YYYY with spaces',
-      ' 2.2.2022 ',
-      '2022-02-02T00:00:00.000Z',
-    ],
+    ['a date as DD.MM.YYYY', '02.02.2022', localMidnight],
+    ['a date as D.M.YYYY with spaces', ' 2.2.2022 ', localMidnight],
     ['an empty cell', undefined, ''],
     ['null', null, ''],
     ['empty text', '  ', ''],
+    ['what older exports wrote for no date', 'Invalid date', ''],
     ['0, which Excel writes for an empty date', 0, ''],
     ['a negative number', -3, null],
     ['a number too large for a date', 1e12, null],

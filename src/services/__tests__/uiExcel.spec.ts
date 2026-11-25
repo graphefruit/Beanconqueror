@@ -179,8 +179,9 @@ describe('UIExcel', () => {
             // UTC keeps the exported texts the same in every time zone.
             formateDate: (unix: number, format: string) =>
               moment.unix(unix).utc().format(format),
+            // Local, as in the app: a roast date is a local day.
             formateDatestr: (date: string, format: string) =>
-              moment.utc(date).format(format),
+              moment(date).format(format),
           },
         },
         { provide: UIBrewStorage, useValue: brewStorage },
@@ -358,10 +359,12 @@ describe('UIExcel', () => {
         { Name: 'German', 'Roast date': '02.02.2022' },
       ]);
 
-      expect(beans.map((bean) => bean.roastingDate)).toEqual([
-        '2022-02-02T00:00:00.000Z',
-        '2022-02-02T00:00:00.000Z',
-      ]);
+      // A day typed as text is local midnight, as the app stores a roast date.
+      expect(
+        beans.map((bean) =>
+          moment(bean.roastingDate).format('YYYY-MM-DD HH:mm'),
+        ),
+      ).toEqual(['2022-02-02 00:00', '2022-02-02 00:00']);
       expect(issues).toEqual([]);
     });
 
@@ -960,12 +963,13 @@ describe('UIExcel', () => {
         { Name: 'Not a date', 'Buy Date': 'soon' },
       ]);
 
-      expect(beans.map((bean) => bean.date)).toEqual([
-        '2022-02-02T00:00:00.000Z',
-        '2022-02-02T00:00:00.000Z',
-        '2022-02-02T00:00:00.000Z',
-        '',
-      ]);
+      expect(beans[0].date).toBe('2022-02-02T00:00:00.000Z');
+      expect(
+        beans
+          .slice(1, 3)
+          .map((bean) => moment(bean.date).format('YYYY-MM-DD HH:mm')),
+      ).toEqual(['2022-02-02 00:00', '2022-02-02 00:00']);
+      expect(beans[3].date).toBe('');
       expect(issues).toEqual([{ row: 5, field: 'Buy Date' }]);
       expect(uiLog.warn).toHaveBeenCalledOnceWith(
         'Excel import - row 5, Buy Date: not read',
@@ -1135,7 +1139,8 @@ describe('UIExcel', () => {
       const entry = createBean({
         name: 'Gesha Village',
         roaster: 'Roastery',
-        roastingDate: '2022-02-02T00:00:00.000Z',
+        // Local midnight, as the app stores a roast date.
+        roastingDate: moment('2022-02-02').format(),
         bean_roasting_type: 'FILTER' as BEAN_ROASTING_TYPE_ENUM,
         roast: 'CUSTOM_ROAST' as ROASTS_ENUM,
         roast_range: 2,
@@ -1697,8 +1702,11 @@ describe('UIExcel', () => {
         expect(imported.note).toBe('Very sweet');
         expect(imported.rating).toBe(4);
         expect(imported.finished).toBeTrue();
-        // The date is exported as text in the date format of the settings.
-        expect(imported.roastingDate).toBe('2022-02-02T00:00:00.000Z');
+        // The date is exported as text in the date format of the settings
+        // and comes back as the same local day.
+        expect(moment(imported.roastingDate).format('YYYY-MM-DD')).toBe(
+          '2022-02-02',
+        );
         // The export writes display texts, the import expects the enum keys.
         expect(imported.bean_roasting_type as string).toBe('Filter');
         // "Degree of Roast" holds the roast range, so the degree is lost.
@@ -1711,6 +1719,23 @@ describe('UIExcel', () => {
           'Brazil',
         ]);
         expect(imported.config.uuid).not.toBe('bean-1');
+      });
+
+      it('keeps a bean without a roast date without noting it', async () => {
+        setup(ENGLISH);
+        const exported = bean();
+        exported.roastingDate = '';
+        beanStorage.entries = [exported];
+        await excel.export();
+        const { buffer } = await exportedFile();
+
+        issues = await excel.importBeansByExcel(buffer);
+
+        expect(beanStorage.stored.map((entry) => entry.roastingDate)).toEqual([
+          '',
+        ]);
+        expect(issues).toEqual([]);
+        expect(uiLog.warn).not.toHaveBeenCalled();
       });
 
       for (const beanMix of ['SINGLE_ORIGIN', 'BLEND', 'UNKNOWN']) {

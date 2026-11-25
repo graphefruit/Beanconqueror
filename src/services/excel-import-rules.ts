@@ -12,12 +12,15 @@ export interface ExcelImportIssue {
 const EXCEL_DAY_OF_1970 = 25569;
 const DAY_IN_MS = 86_400_000;
 
-/** Midnight UTC of the day, or null when the day does not exist. */
-function utcDay(year: number, month: number, day: number): string | null {
-  const date = new Date(Date.UTC(year, month - 1, day));
-  return date.getUTCFullYear() === year &&
-    date.getUTCMonth() === month - 1 &&
-    date.getUTCDate() === day
+/**
+ * Local midnight of the day, or null when the day does not exist. Local, as
+ * the app stores a roast date and the export writes it in local time.
+ */
+function localDay(year: number, month: number, day: number): string | null {
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
     ? date.toISOString()
     : null;
 }
@@ -34,8 +37,8 @@ function excelDay(days: number): string | null {
 /**
  * A date cell as ISO text. Excel stores a date as a day number; dates typed
  * as text come as ISO date (with or without a time) or as DD.MM.YYYY, the
- * date format of the export. '' for an empty cell and for 0, null for a value
- * that is no date.
+ * date format of the export; a day without a time is local midnight. '' for an
+ * empty cell and for 0, null for a value that is no date.
  */
 export function readExcelDate(value: unknown): string | null {
   if (typeof value === 'number') {
@@ -45,7 +48,8 @@ export function readExcelDate(value: unknown): string | null {
     return value === undefined || value === null ? '' : null;
   }
   const text = value.trim();
-  if (text === '') {
+  // Older exports wrote 'Invalid date' for a bean without the date.
+  if (text === '' || text === 'Invalid date') {
     return '';
   }
   if (/^\d+(\.\d+)?$/.test(text)) {
@@ -53,13 +57,13 @@ export function readExcelDate(value: unknown): string | null {
   }
   const german = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec(text);
   if (german) {
-    return utcDay(Number(german[3]), Number(german[2]), Number(german[1]));
+    return localDay(Number(german[3]), Number(german[2]), Number(german[1]));
   }
   const iso = /^(\d{4})-(\d{2})-(\d{2})(T.+)?$/.exec(text);
   if (!iso) {
     return null;
   }
-  const day = utcDay(Number(iso[1]), Number(iso[2]), Number(iso[3]));
+  const day = localDay(Number(iso[1]), Number(iso[2]), Number(iso[3]));
   if (day === null || iso[4] === undefined) {
     return day;
   }

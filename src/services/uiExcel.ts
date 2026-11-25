@@ -491,10 +491,12 @@ export class UIExcel {
       const entry: Array<any> = [
         bean.name,
         bean.roaster,
-        this.uiHelper.formateDatestr(
-          bean.roastingDate,
-          this.settings.date_format,
-        ),
+        bean.roastingDate
+          ? this.uiHelper.formateDatestr(
+              bean.roastingDate,
+              this.settings.date_format,
+            )
+          : '',
         BEAN_ROASTING_TYPE_ENUM[bean.bean_roasting_type],
         bean.roast_range,
         bean.getRoastName(),
