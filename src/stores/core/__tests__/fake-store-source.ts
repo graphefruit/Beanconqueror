@@ -48,9 +48,13 @@ export class FakeStoreSource implements StoreSource {
   }
 
   /** Like `StorageClass.applyChanges`, without change info and journal. */
-  public async applyChanges<E>(
+  public applyChanges<E>(
     changes: StorageChanges<E>,
   ): Promise<StorageChangesResult<E>> {
+    return Promise.resolve(this.apply(changes));
+  }
+
+  private apply<E>(changes: StorageChanges<E>): StorageChangesResult<E> {
     const copy = <V>(value: V): V => JSON.parse(JSON.stringify(value)) as V;
     const entries = [...this.entries] as StoredEntry[];
     const at = (uuid: string) =>

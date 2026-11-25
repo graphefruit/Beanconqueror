@@ -116,6 +116,7 @@ function spies(names: string[]): Record<string, jasmine.Spy> {
 
 describe('BeanInformationComponent', () => {
   let beans: FakeBeanStorage;
+  let beanWrites: jasmine.Spy;
   let brews: FakeBrewStorage;
   let commands: Record<string, jasmine.Spy>;
   let analytics: Record<string, jasmine.Spy>;
@@ -153,6 +154,7 @@ describe('BeanInformationComponent', () => {
     spyOn(Date, 'now').and.returnValue(NOW);
 
     beans = new FakeBeanStorage();
+    beanWrites = spyOn(beans, 'applyChanges').and.callThrough();
     brews = new FakeBrewStorage();
     settings = new Settings();
     for (const key of Object.keys(settings.bean_visible_list_view_parameters)) {
@@ -652,6 +654,7 @@ describe('BeanInformationComponent', () => {
         alert.showConfirm,
         uiHelper.copyToClipboard,
         beans.update,
+        beanWrites,
         commands.deleteBean,
       ]) {
         expect(spy).not.toHaveBeenCalled();
@@ -850,31 +853,51 @@ describe('BeanInformationComponent', () => {
       );
     });
 
-    it('toggle the favourite and save the copy', async () => {
+    it('toggle the favourite with the same toasts and tracking', async () => {
+      const stored = () => beans.entries[0] as IBean;
+      const tracked = (): unknown[] =>
+        analytics.trackEvent.calls.mostRecent().args;
       choose(BEAN_ACTION.TOGGLE_FAVOURITE);
       await card.showBeanActions(event());
 
-      expect(handed(beans.update).favourite).toBeTrue();
-      expect(toast.showInfoToast).toHaveBeenCalledWith(
-        'TOAST_BEAN_FAVOURITE_ADDED',
-      );
+      expect(stored().favourite).toBeTrue();
+      expect(stored().name).toBe('Alpha');
+      expect(beanWrites).toHaveBeenCalledTimes(1);
+      expect(toast.showInfoToast.calls.allArgs()).toEqual([
+        ['TOAST_BEAN_FAVOURITE_ADDED'],
+      ]);
+      expect(tracked()).toEqual([
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.ADD_FAVOURITE,
+      ]);
 
       await card.showBeanActions(event());
 
-      expect(handed(beans.update).favourite).toBeFalse();
-      expect(toast.showInfoToast).toHaveBeenCalledWith(
+      expect(stored().favourite).toBeFalse();
+      expect(toast.showInfoToast.calls.mostRecent().args).toEqual([
         'TOAST_BEAN_FAVOURITE_REMOVED',
-      );
+      ]);
+      expect(tracked()).toEqual([
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.REMOVE_FAVOURITE,
+      ]);
     });
 
-    it('take an archived bean back', async () => {
+    it('take an archived bean back with the same toast and tracking', async () => {
       beans.change([storedBean('alpha', { ...alpha, finished: true })]);
       choose(BEAN_ACTION.UNARCHIVE);
       await card.showBeanActions(event());
 
-      expect(handed(beans.update).finished).toBeFalse();
       expect((beans.entries[0] as IBean).finished).toBeFalse();
-      expect(settings.bean_filter).toBeDefined();
+      expect(beanWrites).toHaveBeenCalledTimes(1);
+      expect(toast.showInfoToast.calls.allArgs()).toEqual([
+        ['TOAST_BEAN_UNARCHIVED_SUCCESSFULLY'],
+      ]);
+      expect(analytics.trackEvent).toHaveBeenCalledWith(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.UNARCHIVE,
+      );
+      expect(settingsStorage.saveSettings.calls.count()).toBe(1);
     });
 
     it('thaw a bean without weight at once', async () => {

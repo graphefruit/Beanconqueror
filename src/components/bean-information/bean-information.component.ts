@@ -81,6 +81,7 @@ import {
   beanActions,
   pickRepeatBrew,
 } from '../../stores/beans/bean-action-rules';
+import { BeanCommands } from '../../stores/beans/bean-commands';
 import {
   beanAgeInDays,
   beanEntryName,
@@ -156,6 +157,7 @@ export class BeanInformationComponent {
   private readonly currencyService = inject(CurrencyService);
   private readonly beanStore = inject(BeanStore);
   private readonly deleteCommands = inject(DeleteCommands);
+  private readonly beanCommands = inject(BeanCommands);
   private readonly beanUsageStore = inject(BeanUsageStore);
 
   /**
@@ -437,8 +439,7 @@ export class BeanInformationComponent {
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.UNARCHIVE,
     );
-    this.actionBean.finished = false;
-    await this.uiBeanStorage.update(this.actionBean);
+    await this.beanCommands.unarchive(this.actionBean.config.uuid);
     this.uiToast.showInfoToast('TOAST_BEAN_UNARCHIVED_SUCCESSFULLY');
     await this.resetSettings();
   }
@@ -465,22 +466,24 @@ export class BeanInformationComponent {
   }
 
   public async toggleFavourite() {
-    if (!this.actionBean.favourite) {
+    const favourite = !this.actionBean.favourite;
+    if (favourite) {
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.ADD_FAVOURITE,
       );
       this.uiToast.showInfoToast('TOAST_BEAN_FAVOURITE_ADDED');
-      this.actionBean.favourite = true;
     } else {
       this.uiAnalytics.trackEvent(
         BEAN_TRACKING.TITLE,
         BEAN_TRACKING.ACTIONS.REMOVE_FAVOURITE,
       );
-      this.actionBean.favourite = false;
       this.uiToast.showInfoToast('TOAST_BEAN_FAVOURITE_REMOVED');
     }
-    await this.uiBeanStorage.update(this.actionBean);
+    await this.beanCommands.setFavourite(
+      this.actionBean.config.uuid,
+      favourite,
+    );
   }
 
   public async longPressEditBean(event) {
