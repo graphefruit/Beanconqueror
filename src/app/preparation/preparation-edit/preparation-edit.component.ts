@@ -132,17 +132,11 @@ export class PreparationEditComponent implements OnInit {
       PREPARATION_TRACKING.ACTIONS.EDIT,
     );
     if (this.preparation !== undefined) {
-      this.takeOver(this.preparation);
+      this.data.initializeByObject(this.preparation);
+      // A list of the dialog's own: tools added, removed or sorted here stay
+      // out of the stored entry until saved.
+      this.data.tools = [...this.data.tools];
     }
-  }
-
-  /**
-   * The tools of the stored entry in a list of the dialog's own: tools
-   * added, removed or sorted here stay out of the stored entry until saved.
-   */
-  private takeOver(_preparation: IPreparation): void {
-    this.data.initializeByObject(_preparation);
-    this.data.tools = [...this.data.tools];
   }
 
   public getActiveTools() {
@@ -216,8 +210,19 @@ export class PreparationEditComponent implements OnInit {
 
   public async editTool(_tool: PreparationTool) {
     if (await this.uiPreparationHelper.editPreparationTool(this.data, _tool)) {
-      //Reinitialize
-      this.takeOver(this.uiPreparationStorage.getByUUID(this.data.config.uuid));
+      // Takes over only what the tool dialog stored; the other changes made
+      // here stay unsaved.
+      const stored: IPreparation = this.uiPreparationStorage.getByUUID(
+        this.data.config.uuid,
+      );
+      const tool = stored?.tools.find(
+        (_stored) => _stored.config.uuid === _tool.config.uuid,
+      );
+      if (tool === undefined) {
+        this.data.deleteTool(_tool);
+      } else {
+        this.data.updateTool(tool);
+      }
     }
   }
 
