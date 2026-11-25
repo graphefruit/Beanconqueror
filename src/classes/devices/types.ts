@@ -28,6 +28,7 @@ export enum ScaleType {
   ESPRESSI = 'ESPRESSI',
   WEIGHMYBRUSCALE = 'WEIGHMYBRUSCALE',
   WEIGHMASTER = 'WEIGHMASTER',
+  LEFU_COFFEE = 'LEFU_COFFEE',
 }
 
 export enum PressureType {
