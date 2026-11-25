@@ -266,3 +266,12 @@ describe('src/index.html', () => {
     );
   });
 });
+
+// How the directive behaves on an ion-button: its unit test.
+test('Save of the add-bean form ignores a second tap', () => {
+  const save = read('src/app/beans/beans-add/beans-add.component.html').match(
+    /<ion-button\b[^>]*\(click\)="addBean\(\)"[^>]*>/,
+  )?.[0];
+
+  assert.match(save ?? '', /\sdisable-double-click\s/);
+});

@@ -508,35 +508,5 @@ for (const language of ['en', 'de'] as const) {
       await expect(checkbox).not.toBeChecked();
       await expect.poll(stored).toBe(false);
     });
-
-    test('Save ignores a second tap without becoming disabled', async ({
-      page,
-    }) => {
-      await start(page, language);
-      await openTab(page, language, 'NAV_BEANS');
-      await visible(
-        page.getByRole('button', { name: t('ADD_BEAN'), exact: true }),
-      ).click();
-      const save = visible(
-        page.getByRole('button', { name: t('SAVE'), exact: true }),
-      );
-
-      // Without a name, the bean is not saved, the dialog stays open and the
-      // focus moves to the name, which says why.
-      await save.press('Enter');
-
-      // Read at once, while further taps are ignored (half a second).
-      const state = await save.evaluate((button) => {
-        const host = (button.getRootNode() as ShadowRoot).host;
-        return {
-          disabled: host.hasAttribute('disabled'),
-          unavailable: button.getAttribute('aria-disabled'),
-        };
-      });
-      expect(state).toEqual({ disabled: false, unavailable: 'true' });
-      await expect(
-        page.getByRole('textbox', { name: startsWith(t('BEAN_DATA_NAME')) }),
-      ).toBeFocused();
-    });
   });
 }
