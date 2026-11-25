@@ -112,7 +112,11 @@ import { ToFixedPipe } from '../../pipes/toFixed';
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
-import { backupFormatProblem } from '../../services/backup-format-rules';
+import {
+  backupFormatProblem,
+  NotABackupError,
+  splitExportPartProblem,
+} from '../../services/backup-format-rules';
 import { BrewReferencesService } from '../../services/brewReferences/brew-references.service';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { CurrencyService } from '../../services/currencyService/currency.service';
@@ -805,6 +809,10 @@ export class SettingsPage {
               );
             await this.__importJSON(parsedJSON, '', file.name);
           } catch (error) {
+            if (error instanceof NotABackupError) {
+              await this.__refuseImport('IMPORT_NOT_A_BACKUP', error.message);
+              return;
+            }
             this.uiLog.error('Error while importing ZIP on web:', error);
             await this.uiAlert.hideLoadingSpinner();
             await this.uiAlert.showMessageWithDetails(
@@ -881,9 +889,18 @@ export class SettingsPage {
       } else {
         // A Beanconqueror.json, as older versions exported it.
         const parsedJSON = await this.uiFileHelper.readJSONFile(mainFileUri);
+        const partProblem = splitExportPartProblem(parsedJSON);
+        if (partProblem !== null) {
+          await this.__refuseImport('IMPORT_ONLY_PART_OF_BACKUP', partProblem);
+          return;
+        }
         await this.__importJSON(parsedJSON, directoryUri, fileName);
       }
     } catch (error) {
+      if (error instanceof NotABackupError) {
+        await this.__refuseImport('IMPORT_NOT_A_BACKUP', error.message);
+        return;
+      }
       this.uiLog.error(
         'Error while importing file',
         mainFileUri,
@@ -1595,6 +1612,16 @@ export class SettingsPage {
     }
   }
 
+  /** Tells why the chosen file is not imported, before anything is asked. */
+  private async __refuseImport(
+    _messageKey: string,
+    _problem: string,
+  ): Promise<void> {
+    this.uiLog.error(`Import - refused: ${_problem}`);
+    await this.uiAlert.hideLoadingSpinner();
+    await this.uiAlert.showMessageWithDetails(_messageKey, _problem);
+  }
+
   /**
    * `_fileName` is the name of the backup file chosen, which the note about
    * the import keeps (UIExportImportHelper.importBackup).
@@ -1606,12 +1633,7 @@ export class SettingsPage {
   ) {
     const formatProblem = backupFormatProblem(_parsedJSON);
     if (formatProblem !== null) {
-      this.uiLog.error(`Import - not a backup: ${formatProblem}`);
-      await this.uiAlert.hideLoadingSpinner();
-      await this.uiAlert.showMessageWithDetails(
-        'IMPORT_NOT_A_BACKUP',
-        formatProblem,
-      );
+      await this.__refuseImport('IMPORT_NOT_A_BACKUP', formatProblem);
       return;
     }
     try {

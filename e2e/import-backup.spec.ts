@@ -219,7 +219,7 @@ test.describe('a file that cannot be read', () => {
 });
 
 test.describe('a file that is no backup', () => {
-  test.use({ allowedConsoleErrors: [/^Import - not a backup:/] });
+  test.use({ allowedConsoleErrors: [/^Import - refused:/] });
 
   test('is refused before the question, with the reason set apart below', async ({
     page,
