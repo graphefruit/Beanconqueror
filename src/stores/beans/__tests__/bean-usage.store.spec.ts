@@ -147,18 +147,25 @@ describe('BeanUsageStore', () => {
       lastBrewAt: 2,
     });
     expect(store.usage().get('a')).toBe(store.usage().get('a'));
-    expect(read).toHaveBeenCalledTimes(3);
+    // Not before the brews were read: they are not known to be none.
+    expect(read).toHaveBeenCalledTimes(2);
   });
 
-  it('shows no usage when the brews cannot be read', async () => {
+  it('shows no usage when the brews could not be read', async () => {
     const store = TestBed.inject(BeanUsageStore);
-    // Reading the brews again empties them before the read fails.
-    source.entries = [storedBrew({ bean: 'a', grind_weight: 10 }, 1)];
-    expect(store.usage().size).toBe(1);
-    source.entries = [];
 
     await source.fail();
 
     expect(store.usage().size).toBe(0);
+  });
+
+  it('keeps the usage when the brews could not be read anew', async () => {
+    const store = TestBed.inject(BeanUsageStore);
+    await source.load([storedBrew({ bean: 'a', grind_weight: 10 }, 1)]);
+    const before = store.usage();
+
+    source.reread('unreadable');
+
+    expect(store.usage()).toBe(before);
   });
 });

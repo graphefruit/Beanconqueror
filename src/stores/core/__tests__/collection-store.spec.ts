@@ -4,6 +4,7 @@ import { StorageClass } from '../../../classes/storageClass';
 import { UIAlert } from '../../../services/uiAlert';
 import { MemoryDatabase } from '../../../test-utils/memory-database';
 import { CollectionStore, StoreSource } from '../collection-store';
+import { StoreHub } from '../store-hub';
 import { FakeStoreSource } from './fake-store-source';
 
 interface Entry {
@@ -21,8 +22,10 @@ describe('CollectionStore', () => {
   let ingested: string[];
   let store: CollectionStore<Entry>;
   let logError: jasmine.Spy;
+  let hub: StoreHub;
 
   beforeEach(() => {
+    hub = new StoreHub();
     source = new FakeStoreSource();
     ingested = [];
     logError = jasmine.createSpy('error');
@@ -34,6 +37,7 @@ describe('CollectionStore', () => {
       },
       { error: logError },
       (entry) => entry,
+      hub,
     );
   });
 
@@ -45,14 +49,55 @@ describe('CollectionStore', () => {
     expect(store.entries()).toEqual([entry('a'), entry('b')]);
   });
 
-  it('follows a collection that could not be read', async () => {
-    source.entries = [entry('a')];
-    expect(store.entries()).toEqual([entry('a')]);
-    source.entries = [];
-
+  it('stays empty when the collection could not be read', async () => {
     await source.fail();
 
     expect(store.entries()).toEqual([]);
+  });
+
+  it('keeps its entries when the collection could not be read anew', async () => {
+    await source.load([entry('a')]);
+    const before = store.entries();
+
+    source.reread('unreadable');
+
+    expect(store.entries()).toBe(before);
+
+    source.reread([entry('b')]);
+
+    expect(store.entries()).toEqual([entry('b')]);
+  });
+
+  it('keeps its entries while the stores reload and changes once at the end', async () => {
+    await source.load([entry('a')]);
+    const before = store.entries();
+    let during: unknown;
+
+    await hub.reload(async () => {
+      source.reread([]);
+      source.reread([entry('b'), entry('c')]);
+      during = store.entries();
+      await Promise.resolve();
+    });
+
+    expect(during).toBe(before);
+    expect(store.entries().map((e) => e.name)).toEqual(['b', 'c']);
+    expect(ingested.length).toBe(3);
+  });
+
+  it('shows the last entries read after a reload that failed', async () => {
+    await source.load([entry('a')]);
+    expect(store.entries().length).toBe(1);
+
+    await expectAsync(
+      hub.reload(() => {
+        source.reread('unreadable');
+        return Promise.reject(new Error('not read again'));
+      }),
+    ).toBeRejectedWithError('not read again');
+
+    expect(hub.loadState()).toBe('ready');
+    expect(store.entries().map((e) => e.name)).toEqual(['a']);
   });
 
   it('hands out frozen copies that nothing shares with the storage', async () => {
@@ -310,7 +355,13 @@ describeWrites('the fake collection', async (entries) => {
   const source = new FakeStoreSource();
   await source.load(entries);
   return {
-    store: new CollectionStore<Entry>(source, parse, logOnly, (e) => e),
+    store: new CollectionStore<Entry>(
+      source,
+      parse,
+      logOnly,
+      (e) => e,
+      new StoreHub(),
+    ),
     stored: () => source.entries as Entry[],
     failSaves: () => (source.failSaves = true),
   };
@@ -323,7 +374,13 @@ describeWrites('a legacy storage', async (entries) => {
   const storage = TestBed.runInInjectionContext(() => new TestStorage());
   await storage.initializeStorage();
   return {
-    store: new CollectionStore<Entry>(storage, parse, logOnly, (e) => e),
+    store: new CollectionStore<Entry>(
+      storage,
+      parse,
+      logOnly,
+      (e) => e,
+      new StoreHub(),
+    ),
     stored: () => db.values.get('BEANS') as Entry[],
     failSaves: () => db.failingWrites.add('BEANS'),
   };
@@ -337,7 +394,13 @@ describe('CollectionStore on a legacy storage that cannot save', () => {
     const storage = TestBed.runInInjectionContext(() => new TestStorage());
     await storage.initializeStorage();
     const source: StoreSource = storage;
-    const store = new CollectionStore<Entry>(source, parse, logOnly, (e) => e);
+    const store = new CollectionStore<Entry>(
+      source,
+      parse,
+      logOnly,
+      (e) => e,
+      new StoreHub(),
+    );
     db.failingWrites.add('BEANS');
 
     expect(await store.update('a', (d) => (d.name = 'lost'))).toBeFalse();

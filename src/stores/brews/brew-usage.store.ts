@@ -1,7 +1,8 @@
-import { computed, inject, Service, signal } from '@angular/core';
+import { inject, Service, Signal, signal } from '@angular/core';
 
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { field } from '../beans/bean-usage.store';
+import { readSettled, StoreHub } from '../core/store-hub';
 
 /** What the brews made with one grinder or one preparation method add up to. */
 export interface EquipmentUsage {
@@ -78,20 +79,11 @@ export function buildEquipmentUsage(
 @Service()
 export class BrewUsageStore {
   private readonly brews = inject(UIBrewStorage);
+  private readonly hub = inject(StoreHub);
   private readonly version = signal(0);
 
-  public readonly byMill = computed(() => {
-    this.version();
-    return buildEquipmentUsage(this.brews.getRawEntries(), 'mill');
-  });
-
-  public readonly byPreparation = computed(() => {
-    this.version();
-    return buildEquipmentUsage(
-      this.brews.getRawEntries(),
-      'method_of_preparation',
-    );
-  });
+  public readonly byMill = this.usageBy('mill');
+  public readonly byPreparation = this.usageBy('method_of_preparation');
 
   public constructor() {
     const markStale = () => this.version.update((version) => version + 1);
@@ -99,5 +91,17 @@ export class BrewUsageStore {
     this.brews.attachOnEvent().subscribe(markStale);
     // The first read of the brews sends no event.
     this.brews.storageReady().then(markStale, markStale);
+  }
+
+  private usageBy(
+    key: 'mill' | 'method_of_preparation',
+  ): Signal<ReadonlyMap<string, EquipmentUsage>> {
+    return readSettled(
+      this.hub,
+      this.brews,
+      this.version,
+      () => buildEquipmentUsage(this.brews.getRawEntries(), key),
+      new Map<string, EquipmentUsage>(),
+    );
   }
 }

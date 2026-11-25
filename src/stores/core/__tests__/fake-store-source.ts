@@ -11,6 +11,7 @@ export class FakeStoreSource implements StoreSource {
   public entries: unknown[] = [];
   /** While set, every save fails and nothing changes. */
   public failSaves = false;
+  private read = false;
   private readonly events = new Subject<unknown>();
   private settle!: { resolve: () => void; reject: () => void };
   private readonly ready = new Promise<void>((resolve, reject) => {
@@ -29,16 +30,33 @@ export class FakeStoreSource implements StoreSource {
     return this.ready;
   }
 
+  public isRead(): boolean {
+    return this.read;
+  }
+
   /** The first read of the collection, which sends no event. */
   public async load(entries: unknown[]): Promise<void> {
     this.entries = entries;
+    this.read = true;
     this.settle.resolve();
     await this.ready;
   }
 
+  /** The first read fails; the collection looks empty. */
   public async fail(): Promise<void> {
+    this.entries = [];
     this.settle.reject();
     await this.ready.catch(() => undefined);
+  }
+
+  /**
+   * Reads the collection anew, as `StorageClass.reinitializeStorage` does:
+   * the event comes at the end, also when `entries` could not be read.
+   */
+  public reread(entries: unknown[] | 'unreadable'): void {
+    this.read = entries !== 'unreadable';
+    this.entries = this.read ? (entries as unknown[]) : [];
+    this.events.next({ type: 'REINITIALIZE' });
   }
 
   /** A change as legacy code makes it: new array content, then the event. */

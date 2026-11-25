@@ -1,7 +1,8 @@
-import { computed, inject, Service, signal } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
 
 import { usedBeanWeight } from '../../services/beanUsage/used-bean-weight';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { readSettled, StoreHub } from '../core/store-hub';
 
 /** What the brews of one bean add up to. */
 export interface BeanUsage {
@@ -80,10 +81,13 @@ export class BeanUsageStore {
   private readonly brews = inject(UIBrewStorage);
   private readonly version = signal(0);
 
-  public readonly usage = computed(() => {
-    this.version();
-    return buildBeanUsage(this.brews.getRawEntries());
-  });
+  public readonly usage = readSettled(
+    inject(StoreHub),
+    this.brews,
+    this.version,
+    () => buildBeanUsage(this.brews.getRawEntries()),
+    new Map<string, BeanUsage>(),
+  );
 
   public constructor() {
     const markStale = () => this.version.update((version) => version + 1);

@@ -1,4 +1,4 @@
-import { computed, linkedSignal, signal, Signal } from '@angular/core';
+import { computed, signal, Signal } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
@@ -8,6 +8,7 @@ import type {
 } from '../../classes/storageClass';
 import type { UILog } from '../../services/uiLog';
 import { DeepReadonly, freezeInDev } from './read-only';
+import { readSettled, StoreHub } from './store-hub';
 
 /** What a store reads from a legacy collection; every `StorageClass` has it. */
 export interface StoreSource {
@@ -17,6 +18,8 @@ export interface StoreSource {
   attachOnEvent(): Observable<unknown>;
   /** Settles once the collection has been read, or could not be. */
   storageReady(): Promise<unknown>;
+  /** Whether the stored entries were read. */
+  isRead(): boolean;
   /**
    * Saves the changes with one write. When the save fails, the entries in
    * memory are the ones from before and the user has been told.
@@ -48,22 +51,15 @@ interface Snapshot<T> {
  */
 export class CollectionStore<T extends StoredEntry> {
   private readonly version = signal(0);
-  private readonly snapshot = linkedSignal<number, Snapshot<T>>({
-    source: this.version,
-    computation: (_version, previous) =>
-      reconcile(
-        previous?.value ?? { entries: [], prints: [] },
-        this.storedObjects(),
-        this.ingest,
-      ),
-  });
+  private readonly snapshot: Signal<Snapshot<T>>;
   private skipped = 0;
   private lastWrite: Promise<unknown> = Promise.resolve();
 
-  /** In stored order. Empty until the collection has been read. */
-  public readonly entries: Signal<readonly DeepReadonly<T>[]> = computed(
-    () => this.snapshot().entries,
-  );
+  /**
+   * In stored order. Empty until the collection has been read; while it is
+   * read anew, the entries read before.
+   */
+  public readonly entries: Signal<readonly DeepReadonly<T>[]>;
 
   /**
    * Emits after every change of the collection, before `entries` is read
@@ -82,7 +78,18 @@ export class CollectionStore<T extends StoredEntry> {
     private readonly ingest: (json: string) => T,
     private readonly uiLog: Pick<UILog, 'error'>,
     private readonly toStored: (entry: T) => unknown,
+    hub: StoreHub,
   ) {
+    const empty: Snapshot<T> = { entries: [], prints: [] };
+    this.snapshot = readSettled(
+      hub,
+      source,
+      this.version,
+      (previous) =>
+        reconcile(previous ?? empty, this.storedObjects(), this.ingest),
+      empty,
+    );
+    this.entries = computed(() => this.snapshot().entries);
     const markStale = () => this.version.update((version) => version + 1);
     this.changes = source.attachOnEvent();
     // Stores live as long as the app, so there is nothing to unsubscribe.

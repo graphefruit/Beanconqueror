@@ -23,6 +23,7 @@ import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIRoastingMachineStorage } from '../../../services/uiRoastingMachineStorage';
 import { UIWaterStorage } from '../../../services/uiWaterStorage';
+import { StoreHub } from '../../../stores/core/store-hub';
 import { MemoryDatabase } from '../../../test-utils/memory-database';
 import { SettingsPage } from '../settings.page';
 
@@ -292,6 +293,7 @@ describe('SettingsPage files of an export and an import', () => {
       translate: { instant: (_key: string) => _key },
       uiFileHelper: TestBed.inject(UIFileHelper),
       uiExportImportHelper: { buildExportZIP },
+      storeHub: new StoreHub(),
       uiExcel: { exportBrewByWeightsSmall },
       // The standard grinder after an import has tests of its own.
       brewReferences: { addStandardMill: () => Promise.resolve(true) },

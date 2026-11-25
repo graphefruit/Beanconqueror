@@ -29,6 +29,9 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIStorage } from '../../../services/uiStorage';
 import { UIUpdate } from '../../../services/uiUpdate';
 import { UiVersionStorage } from '../../../services/uiVersionStorage';
+import { FakeStoreSource } from '../../../stores/core/__tests__/fake-store-source';
+import { CollectionStore } from '../../../stores/core/collection-store';
+import { StoreHub } from '../../../stores/core/store-hub';
 import { createLegacyData } from '../../../test-utils/legacy-data-fixture';
 import { SettingsPage } from '../settings.page';
 
@@ -67,67 +70,69 @@ describe('SettingsPage standard mill after an import', () => {
   });
 });
 
+function pageWith(_options: {
+  savesBackup: boolean;
+  choice: 'YES' | 'NO';
+  importBackup?: jasmine.Spy;
+  reinitializeStorage?: (_path: string) => Promise<void>;
+  storeHub?: StoreHub;
+}) {
+  const storage = (_path: string) => ({
+    getDBPath: () => _path,
+    reinitializeStorage: () =>
+      _options.reinitializeStorage?.(_path) ?? Promise.resolve(),
+    storageReady: () => Promise.resolve(),
+    getAllEntries: () => [],
+  });
+  const uiAlert = jasmine.createSpyObj('UIAlert', {
+    showLoadingSpinner: Promise.resolve(),
+    hideLoadingSpinner: Promise.resolve(),
+    showMessage: Promise.resolve(),
+    showMessageWithDetails: Promise.resolve(),
+    showConfirm: Promise.resolve(_options.choice),
+  });
+  const uiExportImportHelper = {
+    savesBackupBeforeImport: () => _options.savesBackup,
+    // A rolled back import ends the import without reloading the storages.
+    importBackup:
+      _options.importBackup ??
+      jasmine.createSpy('importBackup').and.resolveTo({ BACKUP: true }),
+  };
+  // Only what the import of a parsed file uses; the page is not rendered.
+  const page = Object.create(SettingsPage.prototype);
+  Object.assign(page, {
+    uiAlert,
+    uiExportImportHelper,
+    storeHub: _options.storeHub ?? new StoreHub(),
+    uiLog: { log: () => undefined, error: () => undefined },
+    platform: { is: () => false },
+    translate: { instant: (_key: string) => _key },
+    uiHelper: { copyData: <T>(_value: T): T => structuredClone(_value) },
+    settings: new Settings(),
+    uiPreparationStorage: storage('PREPARATION'),
+    uiBeanStorage: storage('BEANS'),
+    uiBrewStorage: storage('BREWS'),
+    uiSettingsStorage: storage('SETTINGS'),
+    uiRoastingMachineStorage: storage('ROASTING_MACHINES'),
+    uiGreenBeanStorage: storage('GREEN_BEANS'),
+    uiWaterStorage: storage('WATER'),
+    uiVersionStorage: storage('VERSION'),
+    uiGraphStorage: storage('GRAPH'),
+    uiMillStorage: storage('MILL'),
+    uiBaristamodeBrewStorage: storage('BARISTAMODE_BREWS'),
+    uiUpdate: { checkUpdate: () => Promise.resolve() },
+  });
+  return { page, uiAlert, importBackup: uiExportImportHelper.importBackup };
+}
+
+function parsedBackup() {
+  return {
+    SETTINGS: [{ brew_view: 0, brew_order: { before: {} } }],
+    BREWS: [],
+  };
+}
+
 describe('SettingsPage importing a backup file', () => {
-  function pageWith(_options: {
-    savesBackup: boolean;
-    choice: 'YES' | 'NO';
-    importBackup?: jasmine.Spy;
-    reinitializeStorage?: (_path: string) => Promise<void>;
-  }) {
-    const storage = (_path: string) => ({
-      getDBPath: () => _path,
-      reinitializeStorage: () =>
-        _options.reinitializeStorage?.(_path) ?? Promise.resolve(),
-      storageReady: () => Promise.resolve(),
-      getAllEntries: () => [],
-    });
-    const uiAlert = jasmine.createSpyObj('UIAlert', {
-      showLoadingSpinner: Promise.resolve(),
-      hideLoadingSpinner: Promise.resolve(),
-      showMessage: Promise.resolve(),
-      showMessageWithDetails: Promise.resolve(),
-      showConfirm: Promise.resolve(_options.choice),
-    });
-    const uiExportImportHelper = {
-      savesBackupBeforeImport: () => _options.savesBackup,
-      // A rolled back import ends the import without reloading the storages.
-      importBackup:
-        _options.importBackup ??
-        jasmine.createSpy('importBackup').and.resolveTo({ BACKUP: true }),
-    };
-    // Only what the import of a parsed file uses; the page is not rendered.
-    const page = Object.create(SettingsPage.prototype);
-    Object.assign(page, {
-      uiAlert,
-      uiExportImportHelper,
-      uiLog: { log: () => undefined, error: () => undefined },
-      platform: { is: () => false },
-      translate: { instant: (_key: string) => _key },
-      uiHelper: { copyData: <T>(_value: T): T => structuredClone(_value) },
-      settings: new Settings(),
-      uiPreparationStorage: storage('PREPARATION'),
-      uiBeanStorage: storage('BEANS'),
-      uiBrewStorage: storage('BREWS'),
-      uiSettingsStorage: storage('SETTINGS'),
-      uiRoastingMachineStorage: storage('ROASTING_MACHINES'),
-      uiGreenBeanStorage: storage('GREEN_BEANS'),
-      uiWaterStorage: storage('WATER'),
-      uiVersionStorage: storage('VERSION'),
-      uiGraphStorage: storage('GRAPH'),
-      uiMillStorage: storage('MILL'),
-      uiBaristamodeBrewStorage: storage('BARISTAMODE_BREWS'),
-      uiUpdate: { checkUpdate: () => Promise.resolve() },
-    });
-    return { page, uiAlert, importBackup: uiExportImportHelper.importBackup };
-  }
-
-  function parsedBackup() {
-    return {
-      SETTINGS: [{ brew_view: 0, brew_order: { before: {} } }],
-      BREWS: [],
-    };
-  }
-
   it('asks before the import and says where the current data is saved', async () => {
     const { page, uiAlert, importBackup } = pageWith({
       savesBackup: true,
@@ -333,6 +338,124 @@ describe('SettingsPage importing a backup file', () => {
       'IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED',
       error,
     );
+  });
+});
+
+describe('SettingsPage keeping the stores while it imports', () => {
+  interface Entry {
+    config: { uuid: string };
+  }
+  let hub: StoreHub;
+  let beans: FakeStoreSource;
+  let store: CollectionStore<Entry>;
+  /** What the stored beans were read as when the import ran. */
+  let seenDuring: string[];
+
+  const stored = (uuid: string): Entry => ({ config: { uuid } });
+  const shown = () => store.entries().map((e) => e.config.uuid);
+
+  beforeEach(async () => {
+    hub = new StoreHub();
+    beans = new FakeStoreSource();
+    await beans.load([stored('old')]);
+    store = new CollectionStore<Entry>(
+      beans,
+      (json) => JSON.parse(json) as Entry,
+      { error: () => undefined },
+      (e) => e,
+      hub,
+    );
+    expect(shown()).toEqual(['old']);
+    seenDuring = [];
+  });
+
+  function importing(
+    _result: { BACKUP: boolean } | Error,
+    _reread?: () => void,
+  ) {
+    const importBackup = jasmine.createSpy('importBackup').and.callFake(() => {
+      seenDuring.push(hub.loadState(), ...shown());
+      return _result instanceof Error
+        ? Promise.reject(_result)
+        : Promise.resolve(_result);
+    });
+    return pageWith({
+      savesBackup: true,
+      choice: 'YES',
+      importBackup,
+      storeHub: hub,
+      reinitializeStorage: (_path) => {
+        if (_path === 'BEANS') {
+          _reread?.();
+          seenDuring.push(...shown());
+          return beans.isRead()
+            ? Promise.resolve()
+            : Promise.reject(new Error('BEANS not read'));
+        }
+        return Promise.resolve();
+      },
+    });
+  }
+
+  it('shows the beans from before while the import runs, and the imported ones after it', async () => {
+    const { page } = importing({ BACKUP: false }, () =>
+      beans.reread([stored('imported')]),
+    );
+    // What follows the reload has tests of its own.
+    spyOn(page, '__initializeSettings');
+    spyOn(page, '__addStandardMillAfterImport').and.resolveTo();
+    spyOn(page, 'setLanguage');
+    spyOn(page, '__reportFilesNotCopied').and.resolveTo();
+    spyOn(page, 'showAnalyticsInformation').and.resolveTo();
+    Object.assign(page, {
+      uiAnalytics: { disableTracking: () => undefined },
+      themeService: { adjustTheme: () => Promise.resolve() },
+      uiExportImportHelper: {
+        ...page.uiExportImportHelper,
+        allCollectionsRead: () => undefined,
+      },
+    });
+    page.uiSettingsStorage.saveSettings = () => Promise.resolve();
+
+    await page.__importJSON(parsedBackup(), '');
+
+    expect(seenDuring).toEqual(['reloading', 'old', 'old']);
+    expect(hub.loadState()).toBe('ready');
+    expect(shown()).toEqual(['imported']);
+  });
+
+  it('keeps showing the beans when they cannot be read after the import', async () => {
+    const { page, uiAlert } = importing({ BACKUP: false }, () =>
+      beans.reread('unreadable'),
+    );
+
+    await page.__importJSON(parsedBackup(), '');
+
+    expect(uiAlert.showMessageWithDetails).toHaveBeenCalledWith(
+      'IMPORT_STORED_RELOAD_FAILED',
+      jasmine.any(Error),
+    );
+    expect(hub.loadState()).toBe('ready');
+    expect(shown()).toEqual(['old']);
+  });
+
+  it('keeps showing the beans when the import was rolled back', async () => {
+    const { page } = importing({ BACKUP: true });
+
+    await page.__importJSON(parsedBackup(), '');
+
+    expect(seenDuring).toEqual(['reloading', 'old']);
+    expect(hub.loadState()).toBe('ready');
+    expect(shown()).toEqual(['old']);
+  });
+
+  it('ends the reload when the import fails', async () => {
+    const { page } = importing(new Error('current data not readable'));
+
+    await page.__importJSON(parsedBackup(), '');
+
+    expect(hub.loadState()).toBe('ready');
+    expect(shown()).toEqual(['old']);
   });
 });
 
