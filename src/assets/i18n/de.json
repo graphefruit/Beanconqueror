@@ -1509,8 +1509,8 @@
         "BLUETOOTH": "Um Bluetooth-Geräte zu finden, benötigt die App Zugriff auf Bluetooth."
     },
     "BLUETOOTH_DEVICE_CHOOSER_HINT": {
-        "PERMISSION_MISSING": "Beanconqueror darf Bluetooth oder den Standort nicht nutzen und findet deshalb keine Geräte. Erlaube beides für Beanconqueror in den Systemeinstellungen und suche dann erneut.",
-        "BLUETOOTH_OFF": "Bluetooth ist ausgeschaltet oder für Beanconqueror nicht erlaubt. Schalte Bluetooth ein, erlaube es für Beanconqueror in den Systemeinstellungen und suche dann erneut."
+        "PERMISSION_MISSING": "BeanConqueror darf Bluetooth oder den Standort nicht nutzen und findet deshalb keine Geräte. Erlaube beides für BeanConqueror in den Systemeinstellungen und suche dann erneut.",
+        "BLUETOOTH_OFF": "Bluetooth ist ausgeschaltet oder für BeanConqueror nicht erlaubt. Schalte Bluetooth ein, erlaube es für BeanConqueror in den Systemeinstellungen und suche dann erneut."
     },
     "POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE": "Generiere QR-Code \/ NFC",
     "BEAN_CODE_ACTION": {

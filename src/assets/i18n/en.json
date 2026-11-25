@@ -1509,8 +1509,8 @@
         "BLUETOOTH": "To find bluetooth devices, the app needs access to bluetooth"
     },
     "BLUETOOTH_DEVICE_CHOOSER_HINT": {
-        "PERMISSION_MISSING": "Beanconqueror may not use Bluetooth or the location, so it cannot find devices. Allow both for Beanconqueror in the system settings, then search again.",
-        "BLUETOOTH_OFF": "Bluetooth is turned off or Beanconqueror may not use it. Turn Bluetooth on and allow it for Beanconqueror in the system settings, then search again."
+        "PERMISSION_MISSING": "BeanConqueror may not use Bluetooth or the location, so it cannot find devices. Allow both for BeanConqueror in the system settings, then search again.",
+        "BLUETOOTH_OFF": "Bluetooth is turned off or BeanConqueror may not use it. Turn Bluetooth on and allow it for BeanConqueror in the system settings, then search again."
     },
     "POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE": "Generate share code \/ nfc",
     "BEAN_CODE_ACTION": {
