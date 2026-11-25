@@ -114,6 +114,7 @@ import { EventQueueService } from '../../../services/queueService/queue-service.
 import {
   brewTimeToSay,
   spokenBrewValues,
+  spokenWeight,
 } from '../../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
@@ -700,7 +701,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private speakCurrentScaleWeight(_value: number) {
     if (this.settings.text_to_speech_active) {
       this.textToSpeech.speak(
-        this.translate.instant('BREW_FLOW_WEIGHT') + ' ' + _value.toString(),
+        this.translate.instant('BREW_FLOW_WEIGHT') +
+          ' ' +
+          spokenWeight(_value, 1, this.settings.language),
         true,
       );
     }
