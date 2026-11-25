@@ -1,10 +1,16 @@
 import { Subject } from 'rxjs';
 
-import { StoreSource } from '../collection-store';
+import type {
+  StorageChanges,
+  StorageChangesResult,
+} from '../../../classes/storageClass';
+import { StoredEntry, StoreSource } from '../collection-store';
 
 /** A collection in memory that announces its changes like `StorageClass`. */
 export class FakeStoreSource implements StoreSource {
   public entries: unknown[] = [];
+  /** While set, every save fails and nothing changes. */
+  public failSaves = false;
   private readonly events = new Subject<unknown>();
   private settle!: { resolve: () => void; reject: () => void };
   private readonly ready = new Promise<void>((resolve, reject) => {
@@ -39,5 +45,39 @@ export class FakeStoreSource implements StoreSource {
   public change(entries: unknown[]): void {
     this.entries = entries;
     this.events.next({ type: 'UPDATE' });
+  }
+
+  /** Like `StorageClass.applyChanges`, without change info and journal. */
+  public async applyChanges<E>(
+    changes: StorageChanges<E>,
+  ): Promise<StorageChangesResult<E>> {
+    const copy = <V>(value: V): V => JSON.parse(JSON.stringify(value)) as V;
+    const entries = [...this.entries] as StoredEntry[];
+    const at = (uuid: string) =>
+      entries.findIndex((entry) => entry.config.uuid === uuid);
+    for (const update of (changes.update ?? []) as StoredEntry[]) {
+      if (at(update.config.uuid) < 0) {
+        return { saved: false, added: [] };
+      }
+      entries[at(update.config.uuid)] = copy(update);
+    }
+    for (const uuid of changes.remove ?? []) {
+      if (at(uuid) >= 0) {
+        entries.splice(at(uuid), 1);
+      }
+    }
+    const added = (changes.add ?? []).map((entry) => {
+      const stored = copy(entry) as E & {
+        config: { uuid: string; unix_timestamp: number };
+      };
+      stored.config.uuid = crypto.randomUUID();
+      stored.config.unix_timestamp = Math.floor(Date.now() / 1000);
+      return stored;
+    });
+    if (this.failSaves) {
+      return { saved: false, added: [] };
+    }
+    this.change([...entries, ...added]);
+    return { saved: true, added: copy(added) };
   }
 }
