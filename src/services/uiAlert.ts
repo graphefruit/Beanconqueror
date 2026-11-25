@@ -185,8 +185,6 @@ export class UIAlert {
   /**
    * Shows `_message`, a key, with the technical cause of the error below it,
    * set apart under "Technical details:", for users to pass on to support.
-   * Ionic shows the message of an alert as text only, so the details are
-   * added as elements of their own, after the message in reading order.
    * Without details (undefined) only the message is shown.
    * Resolves after the alert was dismissed.
    */
@@ -199,20 +197,59 @@ export class UIAlert {
       buttons: [{ text: this.translate.instant('OK') }],
     });
     if (_details !== undefined) {
-      const doc = alert.ownerDocument;
-      const details = doc.createElement('div');
-      details.className = 'alert-details';
-      const label = doc.createElement('p');
-      label.className = 'alert-details-label';
-      label.textContent = this.translate.instant('TECHNICAL_DETAILS');
-      const cause = doc.createElement('p');
+      const cause = alert.ownerDocument.createElement('p');
       cause.textContent = describeError(_details);
-      details.append(label, cause);
-      // Without the element (a changed Ionic) the message alone is still shown.
-      alert.querySelector('.alert-message')?.append(details);
+      this.appendBelowMessage(alert, 'TECHNICAL_DETAILS', cause);
     }
     await alert.present();
     await alert.onDidDismiss();
+  }
+
+  /**
+   * Shows `_message` under `_title`, both keys, and below it `_label`, a key,
+   * with `_items` as a list, which a screen reader announces as a list with
+   * the number of its items. Resolves after the alert was dismissed.
+   */
+  public async showMessageWithList(
+    _message: string,
+    _title: string,
+    _label: string,
+    _items: string[],
+  ): Promise<void> {
+    const alert = await this.alertController.create({
+      header: this.translate.instant(_title),
+      message: this.translate.instant(_message),
+      buttons: [{ text: this.translate.instant('OK') }],
+    });
+    const list = alert.ownerDocument.createElement('ul');
+    for (const item of _items) {
+      const entry = alert.ownerDocument.createElement('li');
+      entry.textContent = item;
+      list.append(entry);
+    }
+    this.appendBelowMessage(alert, _label, list);
+    await alert.present();
+    await alert.onDidDismiss();
+  }
+
+  /**
+   * Adds `_content` under `_label`, a key, set apart below the message of the
+   * alert. Ionic shows the message as text only, so they are elements of
+   * their own, after the message in reading order.
+   */
+  private appendBelowMessage(
+    _alert: HTMLIonAlertElement,
+    _label: string,
+    _content: HTMLElement,
+  ): void {
+    const details = _alert.ownerDocument.createElement('div');
+    details.className = 'alert-details';
+    const label = _alert.ownerDocument.createElement('p');
+    label.className = 'alert-details-label';
+    label.textContent = this.translate.instant(_label);
+    details.append(label, _content);
+    // Without the element (a changed Ionic) the message alone is still shown.
+    _alert.querySelector('.alert-message')?.append(details);
   }
 
   /**
