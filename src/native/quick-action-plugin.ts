@@ -1,4 +1,8 @@
-import { registerPlugin, type PluginListenerHandle } from '@capacitor/core';
+import {
+  registerPlugin,
+  WebPlugin,
+  type PluginListenerHandle,
+} from '@capacitor/core';
 
 interface QuickActionPlugin {
   addListener(
@@ -7,4 +11,7 @@ interface QuickActionPlugin {
   ): Promise<PluginListenerHandle>;
 }
 
-export const QuickAction = registerPlugin<QuickActionPlugin>('QuickAction');
+// Home screen quick actions exist only in the iOS app; in Safari the listener never fires.
+export const QuickAction = registerPlugin<QuickActionPlugin>('QuickAction', {
+  web: new WebPlugin(),
+});

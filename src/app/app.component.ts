@@ -292,7 +292,7 @@ export class AppComponent implements AfterViewInit {
       }
       Logger.disableLog();
 
-      if (this.platform.is('capacitor') && this.platform.is('ios')) {
+      if (this.platform.is('ios')) {
         // A quick action that started the app is kept natively until this listener exists.
         void QuickAction.addListener('quickAction', ({ type }) => {
           void this.handleQuickAction(type);

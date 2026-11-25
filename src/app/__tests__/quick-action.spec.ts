@@ -1,3 +1,4 @@
+import { QuickAction } from '../../native/quick-action-plugin';
 import { AppComponent } from '../app.component';
 
 function quickActionComponent(options: { canOpenBrewForm?: boolean } = {}) {
@@ -72,5 +73,13 @@ describe('AppComponent quick actions', () => {
     await component.handleQuickAction('Mill');
 
     expect(helpers.addMill).not.toHaveBeenCalled();
+  });
+
+  it('lets the web build listen without the native plugin', async () => {
+    const listener = await QuickAction.addListener(
+      'quickAction',
+      () => undefined,
+    );
+    await listener.remove();
   });
 });
