@@ -233,10 +233,10 @@ test.describe('a file that is no backup', () => {
 
     const alert = page
       .getByRole('alertdialog')
-      .filter({ hasText: 'This file is not a Beanconqueror backup.' });
+      .filter({ hasText: 'This file is not a BeanConqueror backup.' });
     await expect(alert).toBeVisible();
     await expect(alert).toHaveAccessibleDescription(
-      /^This file is not a Beanconqueror backup\. Nothing was imported, your data is unchanged\..*Technical details:\s*The file holds no list SETTINGS, BEANS, BREWS$/,
+      /^This file is not a BeanConqueror backup\. Nothing was imported, your data is unchanged\..*Technical details:\s*The file holds no list SETTINGS, BEANS, BREWS$/,
     );
     await expect(importQuestion(page)).toHaveCount(0);
 
