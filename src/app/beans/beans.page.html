@@ -5,37 +5,37 @@
       <ion-icon class="ion-color-accent" name="settings-outline" slot="icon-only" aria-hidden="true" />
     </ion-button>
   </app-header>
+  <div class="list-head">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
+      <ion-segment-button value="open">
+        <ion-label>
+          <app-segment-label [label]="'PAGE_BEANS_LIST_OBTAINABLE' | translate" [shown]="rows.open().length" [total]="beanCount().open" />
+        </ion-label>
+      </ion-segment-button>
+      @if (showFrozen()) {
+      <ion-segment-button value="frozen">
+        <ion-label>
+          <app-segment-label [label]="'FROZEN_BEANS' | translate" [shown]="rows.frozen().length" [total]="beanCount().frozen" />
+        </ion-label>
+      </ion-segment-button>
+      }
+      @if (showArchive()) {
+      <ion-segment-button value="archive">
+        <ion-label>
+          <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="rows.archive().length" [total]="beanCount().archive" />
+        </ion-label>
+      </ion-segment-button>
+      }
+    </ion-segment>
+    @if (segmentShown() && showToolbar()) {
+    <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+      <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
+    </div>
+    }
+  </div>
 </ion-header>
 <ion-content>
   <app-virtual-list [items]="shownRows()" [itemKey]="rowKey" [estimateSize]="isCollapseActive() ? 69 : 300">
-    <div virtualListHead>
-      <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
-        <ion-segment-button value="open">
-          <ion-label>
-            <app-segment-label [label]="'PAGE_BEANS_LIST_OBTAINABLE' | translate" [shown]="rows.open().length" [total]="beanCount().open" />
-          </ion-label>
-        </ion-segment-button>
-        @if (showFrozen()) {
-        <ion-segment-button value="frozen">
-          <ion-label>
-            <app-segment-label [label]="'FROZEN_BEANS' | translate" [shown]="rows.frozen().length" [total]="beanCount().frozen" />
-          </ion-label>
-        </ion-segment-button>
-        }
-        @if (showArchive()) {
-        <ion-segment-button value="archive">
-          <ion-label>
-            <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="rows.archive().length" [total]="beanCount().archive" />
-          </ion-label>
-        </ion-segment-button>
-        }
-      </ion-segment>
-      @if (segmentShown() && showToolbar()) {
-      <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-        <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
-      </div>
-      }
-    </div>
     @if (segmentShown() && shownRows().length === 0) {
     <div class="ion-padding ion-text-center">
       <div>
