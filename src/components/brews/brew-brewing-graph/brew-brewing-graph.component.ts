@@ -100,6 +100,7 @@ import {
 } from '../../../services/graphHelper/graph-helper.service';
 import { drawWhenPlotlyLoaded } from '../../../services/graphHelper/load-plotly';
 import {
+  brewWeightDecimals,
   spokenBrewValues,
   spokenWeight,
 } from '../../../services/textToSpeech/speech-options';
@@ -1257,6 +1258,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
       // Always attach flow.
       this.attachToFlowChange();
+      this.attachToTextToSpeechBeforeStart();
 
       this.checkChanges();
     }
@@ -1711,6 +1713,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.deattachToTextToSpeedChange();
         // 551 - Always attach to flow change, even when reset is triggerd
         this.attachToFlowChange();
+        this.attachToTextToSpeechBeforeStart();
       }
 
       if (pressureDevice) {
@@ -2934,8 +2937,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               this.textToSpeech.speak(
                 spokenWeight(
                   actualScaleWeight,
-                  isEspressoBrew,
-                  this.settings.text_to_speech_whole_grams,
+                  brewWeightDecimals(
+                    isEspressoBrew,
+                    this.settings.text_to_speech_whole_grams,
+                  ),
+                  this.settings.language,
                 ),
               );
             }
@@ -2943,6 +2949,28 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         }, this.settings.text_to_speech_interval_rate);
       });
     }
+  }
+
+  /**
+   * Before the brew the weight is said with one decimal, to weigh the beans;
+   * the brew start ends this and says the brew weight instead.
+   */
+  public attachToTextToSpeechBeforeStart() {
+    this.deattachToTextToSpeedChange();
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (!scale || !spokenBrewValues(this.settings).weight) {
+      return;
+    }
+    this.ngZone.runOutsideAngular(() => {
+      this.textToSpeechWeightInterval = setInterval(() => {
+        // A paused brew has started; its weight is not said again.
+        if (this.brewComponent.timer?.timer?.hasStarted !== true) {
+          this.textToSpeech.speak(
+            spokenWeight(scale.getWeight(), 1, this.settings.language),
+          );
+        }
+      }, this.settings.text_to_speech_interval_rate);
+    });
   }
 
   public attachToPressureChange() {

@@ -94,13 +94,30 @@ export function brewTimeToSay(
 }
 
 /**
- * The weight as it is said: one decimal for espresso, whole grams otherwise or
- * when chosen, as a decimal takes the Android voice noticeably longer to say.
+ * The decimals of the weight said while brewing: one for espresso, whole grams
+ * otherwise or when chosen, as a decimal takes the Android voice noticeably
+ * longer to say. Before the brew the weight is said with one decimal.
+ */
+export function brewWeightDecimals(
+  espresso: boolean,
+  wholeGrams: boolean,
+): number {
+  return espresso && !wholeGrams ? 1 : 0;
+}
+
+/**
+ * The weight as it is said, with the decimal separator of the app language,
+ * so a German voice says "18,3" as a decimal and not as a date or ordinal.
  */
 export function spokenWeight(
   grams: number,
-  espresso: boolean,
-  wholeGrams: boolean,
+  decimals: number,
+  appLanguage: string | undefined,
 ): string {
-  return String(+grams.toFixed(espresso && !wholeGrams ? 1 : 0));
+  // `|| 0` says a weight rounded to -0 as 0.
+  const rounded = +grams.toFixed(decimals) || 0;
+  return new Intl.NumberFormat(speechLanguageTag(appLanguage), {
+    maximumFractionDigits: decimals,
+    useGrouping: false,
+  }).format(rounded);
 }
