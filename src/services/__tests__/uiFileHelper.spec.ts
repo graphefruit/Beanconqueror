@@ -134,11 +134,9 @@ describe('UIFileHelper', () => {
           'a.bin.part',
           Directory.Data,
         ),
-      writeExternalFileFromBase64ForSharing: () =>
-        fileHelper.writeExternalFileFromBase64ForSharing(BYTES_BASE64, 'a.bin'),
+      writeFileForSharing: () =>
+        fileHelper.writeFileForSharing(BYTES_BASE64, 'a.bin'),
       deleteFile: () => fileHelper.deleteFile('a.txt', Directory.Data),
-      deleteExternalSharedFile: () =>
-        fileHelper.deleteExternalSharedFile('a.txt'),
       listAutomaticBackupFiles: () => fileHelper.listAutomaticBackupFiles(),
       deleteOldAutomaticBackups: () => fileHelper.deleteOldAutomaticBackups(),
       duplicateInternalFile: () => fileHelper.duplicateInternalFile('a.txt'),
@@ -328,22 +326,6 @@ describe('UIFileHelper', () => {
       expect(await namesIn('photos/2026', Directory.Data)).toEqual([
         'photo.png',
       ]);
-    });
-
-    it('writes the file for sharing into the external directory', async () => {
-      const result = await fileHelper.writeExternalFileFromBase64ForSharing(
-        BYTES_BASE64,
-        'share.png',
-      );
-
-      expect(result).toEqual({
-        path: 'share.png',
-        fullpath: '/EXTERNAL/share.png',
-      });
-      expect(
-        await fileHelper.readFileAsBase64('share.png', Directory.External),
-      ).toBe(BYTES_BASE64);
-      expect(await namesIn('', Directory.Data)).toEqual([]);
     });
 
     it('gives the bytes of a file', async () => {
@@ -571,19 +553,6 @@ describe('UIFileHelper', () => {
         }),
       ).toBeFalse();
       expect(await namesIn('', Directory.Data)).toEqual(['b.txt']);
-    });
-
-    it('deletes a shared file from the external directory only', async () => {
-      await fileHelper.writeExternalFileFromBase64ForSharing(
-        BYTES_BASE64,
-        'share.png',
-      );
-      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'share.png');
-
-      await fileHelper.deleteExternalSharedFile('share.png');
-
-      expect(await namesIn('', Directory.External)).toEqual([]);
-      expect(await namesIn('', Directory.Data)).toEqual(['share.png']);
     });
 
     it('rejects deleting a file that does not exist', async () => {
@@ -1548,6 +1517,68 @@ describe('UIFileHelper', () => {
         fileHelper.getInternalFileSrc('missing.png'),
       ).toBeRejectedWithError('Entry does not exist.');
       expect(uiLog.error).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('files to share', () => {
+    for (const [platform, setupPlatform] of [
+      ['Android', setupAndroid],
+      ['iOS', setupIos],
+    ] as const) {
+      it(`writes them into the share folder of the cache on ${platform}`, async () => {
+        setupPlatform();
+
+        const result = await fileHelper.writeFileForSharing(
+          BYTES_BASE64,
+          'Beanconqueror_1.png',
+        );
+
+        expect(result).toEqual({
+          path: 'share/Beanconqueror_1.png',
+          fullpath: '/CACHE/share/Beanconqueror_1.png',
+        });
+        expect(
+          await fileHelper.readFileAsBase64(result.path, Directory.Cache),
+        ).toBe(BYTES_BASE64);
+        expect(await namesIn('', Directory.Data)).toEqual([]);
+      });
+    }
+
+    it('keeps each file until the share folder is cleared', async () => {
+      setupAndroid();
+      await fileHelper.writeFileForSharing(BYTES_BASE64, 'a.png');
+      await fileHelper.writeFileForSharing(BYTES_BASE64, 'b.json');
+
+      expect(await namesIn('share', Directory.Cache)).toEqual([
+        'a.png',
+        'b.json',
+      ]);
+    });
+
+    it('clears only the share folder and leaves the rest of the cache', async () => {
+      setupAndroid();
+      const other = await fileHelper.createTempCacheDirectory('import');
+      await Filesystem.writeFile({
+        path: other.path + '/Beanconqueror.json',
+        data: '{}',
+        directory: Directory.Cache,
+        encoding: Encoding.UTF8,
+      });
+      await fileHelper.writeFileForSharing(BYTES_BASE64, 'a.png');
+
+      await fileHelper.clearShareDirectory();
+
+      expect(await namesIn('', Directory.Cache)).toEqual([other.path]);
+      expect(await namesIn(other.path, Directory.Cache)).toEqual([
+        'Beanconqueror.json',
+      ]);
+    });
+
+    it('does not fail when there is nothing to clear', async () => {
+      setupAndroid();
+
+      await expectAsync(fileHelper.clearShareDirectory()).toBeResolved();
+      expect(uiLog.info).toHaveBeenCalled();
     });
   });
 
