@@ -193,6 +193,8 @@ export class AppComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     this.uiLog.log('Platform ready, init app');
+    // Not awaited: the start does not wait for the earlier log to be read.
+    void this.uiLog.startFileLog();
 
     Chart.register(...registerables);
     this.__appReady();

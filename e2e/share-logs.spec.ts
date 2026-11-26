@@ -64,6 +64,29 @@ test('the log page asks before it shares the log', async ({ page }) => {
   ).toHaveCount(1);
 });
 
+test('the question names what is shared and gives the focus back', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await openLogs(page);
+  const send = page.getByRole('button', { name: 'Send logs' });
+
+  await send.focus();
+  await page.keyboard.press('Enter');
+  const question = page.getByRole('alertdialog', { name: 'Share log?' });
+  await expect(
+    question.getByText(
+      'A file with the app and system version, the device model, the types of your Bluetooth devices and your Bluetooth settings comes with it.',
+      { exact: false },
+    ),
+  ).toBeVisible();
+
+  await question.getByRole('button', { name: 'Cancel' }).click();
+  await expect(question).toHaveCount(0);
+  await expect(send).toBeFocused();
+});
+
 test('the question to share the log lies above the loading dialog', async ({
   page,
 }) => {

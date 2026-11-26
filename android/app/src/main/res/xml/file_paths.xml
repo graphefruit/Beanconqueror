@@ -3,4 +3,5 @@
     <external-path name="my_images" path="." />
     <cache-path name="my_cache_images" path="." />
     <files-path name="app_files" path="." />
+    <files-path name="logs" path="logs/" />
 </paths>
