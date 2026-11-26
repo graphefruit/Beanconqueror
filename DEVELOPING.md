@@ -536,17 +536,29 @@ pnpm build && pnpm run -- cap run android
 
 #### Live Reload in Native Apps
 
-If you want to use live reload for your native app, it's actually a little easier to use the `ionic` CLI.
-However, you need to understand a small quirk about our Capacitor configuration: We currently need to supply the mobile platform using an environment variable.
-To do that, run the following command: (The example is for a typical `bash`-like shell)
+Start the development server in one terminal and the native app in a second one:
+
+```shell
+pnpm start
+pnpm run live:android   # Android emulator or a device connected via USB
+pnpm run live:ios       # iOS simulator
+```
+
+`live:android` forwards port 4200 to the device (`adb reverse`), so the app loads `http://localhost:4200` and the development server stays private to your machine.
+The app reloads whenever you save a file.
+Quit with Ctrl+C; Capacitor then removes the development server URL from the native configuration again.
+If it was not removed (for example after a crash), run `pnpm run cap sync <platform>`.
+The installed app keeps loading `http://localhost:4200` until you install a normal build again (`pnpm run cap run <platform>`).
+
+For a physical iOS device, the development server has to listen on your network interface:
 
 > [!WARNING]
 > This will open the development server on your external network interface.
 > Proceed with caution, especially if you are currently on an untrusted network!
 
 ```shell
-# <platform> is either 'android' or 'ios'.
-CAPACITOR_PLATFORM_OVERRIDE=<platform> pnpm run -- ionic capacitor run <platform> --livereload --external
+pnpm start --host 0.0.0.0
+pnpm exec cap run ios --live-reload --host <your-computer-ip> --port 4200
 ```
 
 ## Capacitor Configuration Hack
@@ -555,10 +567,10 @@ To support existing installations, we need to use very specific URL schemes and 
 To make matters worse, these differ between Android and iOS.
 In order to make this happen, we need to employ a terrible hack in our Capacitor configuration, at least until https://github.com/ionic-team/capacitor/issues/3976 is resolved.
 
-For you as a developer, this means that almost all commands involving the `capacitor` CLI (either directly or indirectly, for example through the `ionic` CLI) need to supply the current mobile platform as an environment variable.
+For you as a developer, this means that almost all commands involving the `capacitor` CLI need to supply the current mobile platform as an environment variable.
 That variable is called `CAPACITOR_PLATFORM_OVERRIDE` and valid values are `android` or `ios`.
 
-Keep this in mind if `capacitor` or `ionic` CLI commands fail in mysterious ways.
+Keep this in mind if `capacitor` CLI commands fail in mysterious ways.
 
 ## Create a Production build
 
