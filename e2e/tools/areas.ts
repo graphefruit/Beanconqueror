@@ -61,6 +61,7 @@ export const SPEC_AREAS: Readonly<Record<string, readonly Area[]>> = {
   'e2e/fonts.spec.ts': ['@layout'],
   'e2e/form-controls.spec.ts': ['@a11y', '@bean', '@settings'],
   'e2e/graph-card.spec.ts': ['@brew'],
+  'e2e/graph-detail.spec.ts': ['@brew'],
   'e2e/graph-library.spec.ts': ['@brew'],
   'e2e/import-backup.spec.ts': ['@import'],
   'e2e/keyboard-focus.spec.ts': ['@a11y', '@settings'],
