@@ -6,6 +6,7 @@ import { Device } from '@capacitor/device';
 import { Encoding, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { TranslateService } from '@ngx-translate/core';
+import { toPng } from 'html-to-image';
 import { stringify } from 'safe-stable-stringify';
 
 import { Bean } from '../../classes/bean/bean';
@@ -59,6 +60,35 @@ export class ShareService {
     try {
       await this.shareFile('', _dataUrl);
     } catch (ex) {}
+  }
+
+  /**
+   * Shares an element as a PNG `width` pixels wide, its height in proportion.
+   * Resolves false when it could not be drawn or written; the cause is logged.
+   */
+  public async shareElementAsImage(
+    _element: HTMLElement,
+    _width: number,
+  ): Promise<boolean> {
+    let dataUrl: string;
+    try {
+      const started = performance.now();
+      const options = { pixelRatio: _width / _element.offsetWidth };
+      if (Capacitor.getPlatform() === 'ios') {
+        // WebKit leaves out the images inside the element (the graph) the
+        // first time it draws it.
+        await toPng(_element, options);
+      }
+      dataUrl = await toPng(_element, options);
+      this.uiLog.info(
+        `Share - image drawn in ${Math.round(performance.now() - started)} ms, ` +
+          `${Math.round((dataUrl.length * 3) / 4 / 1024)} KB`,
+      );
+    } catch (ex) {
+      this.uiLog.error('Share - could not draw the image', ex);
+      return false;
+    }
+    return this.shareFile('', dataUrl);
   }
 
   /**
