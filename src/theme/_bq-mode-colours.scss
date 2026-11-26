@@ -1,0 +1,27 @@
+// The colours that change with light and dark mode. They are mixins with
+// plain values, not only values on :root, because the shared picture of a
+// brew is drawn in either mode, whichever the app shows
+// (brew-share.component.scss).
+
+$espresso-900: #211914;
+$espresso-1000: #2a211a;
+$cream-300: #e1d1bf;
+$cream-200: #ead9c4;
+$white: #ffffff;
+
+@mixin light {
+  --bq-surface-page: #{$cream-200};
+  --bq-surface-card: #{$white};
+  --bq-text-primary: #{$espresso-900};
+  --bq-text-secondary: #4a382c;
+  --bq-text-accent: #9e2d45;
+}
+
+@mixin dark {
+  --bq-surface-page: #{$espresso-900};
+  --bq-surface-card: #{$espresso-1000};
+  --bq-text-primary: #{$white};
+  --bq-text-secondary: #{$cream-300};
+  // #EA495B misses AA on dark cards (4.2:1); #FF7A88 reaches 6.3:1.
+  --bq-text-accent: #ff7a88;
+}

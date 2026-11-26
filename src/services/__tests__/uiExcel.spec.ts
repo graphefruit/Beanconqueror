@@ -129,6 +129,7 @@ describe('UIExcel', () => {
   let preparationStorage: FakeStorage<Preparation>;
   let saveSettings: jasmine.Spy;
   let showMessage: jasmine.Spy;
+  let showMessageWithList: jasmine.Spy;
   let showLoadingSpinner: jasmine.Spy;
   let hideLoadingSpinner: jasmine.Spy;
   let showBeans: jasmine.Spy;
@@ -148,6 +149,9 @@ describe('UIExcel', () => {
     preparationStorage = new FakeStorage<Preparation>();
     saveSettings = jasmine.createSpy('saveSettings').and.resolveTo(undefined);
     showMessage = jasmine.createSpy('showMessage').and.resolveTo(undefined);
+    showMessageWithList = jasmine
+      .createSpy('showMessageWithList')
+      .and.resolveTo(undefined);
     showLoadingSpinner = jasmine
       .createSpy('showLoadingSpinner')
       .and.resolveTo(undefined);
@@ -192,7 +196,12 @@ describe('UIExcel', () => {
         { provide: TranslateService, useValue: translate },
         {
           provide: UIAlert,
-          useValue: { showMessage, showLoadingSpinner, hideLoadingSpinner },
+          useValue: {
+            showMessage,
+            showMessageWithList,
+            showLoadingSpinner,
+            hideLoadingSpinner,
+          },
         },
         { provide: UIFileHelper, useValue: { exportFileToDefaultDirectory } },
         {
@@ -315,6 +324,7 @@ describe('UIExcel', () => {
 
       expect(beans.map((bean) => bean.name)).toEqual(['First', 'Third']);
       expect(beans.map((bean) => bean.roaster)).toEqual(['A', 'C']);
+      expect(issues).toEqual([{ row: 3, field: 'Name' }]);
     });
 
     it('turns numbers in text columns into text', async () => {
@@ -406,9 +416,55 @@ describe('UIExcel', () => {
         ['Excel import - row 3, Unfrozen Date: not read'],
       ]);
       // The bean is imported all the same.
-      expect(showMessage.calls.mostRecent().args[0]).toBe(
+      expect(showMessageWithList.calls.mostRecent().args[0]).toBe(
         'BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
       );
+    });
+
+    it('names every row and field not taken over in the message, as a list', async () => {
+      translateInstant.and.callFake(
+        (key: string, params?: { row: number; field: string }) =>
+          params ? `${key}: ${params.row}, ${params.field}` : key,
+      );
+
+      const beans = await importBeans([
+        { Name: 'Fine' },
+        { Roaster: 'Nameless' },
+        { Name: '   ', Roaster: 'Blank' },
+        { Name: 'Typo', 'Roast date': 'soon', Blend: 'Mixed' },
+      ]);
+
+      // No bean without a name.
+      expect(beans.map((bean) => bean.name)).toEqual(['Fine', 'Typo']);
+      expect(showMessage).not.toHaveBeenCalled();
+      expect(showMessageWithList.calls.allArgs()).toEqual([
+        [
+          'BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
+          'IMPORT_SUCCESSFULLY',
+          'EXCEL_IMPORT_NOT_TAKEN_OVER',
+          [
+            'EXCEL_IMPORT_ROW_WITHOUT_NAME: 3, Name',
+            'EXCEL_IMPORT_ROW_WITHOUT_NAME: 4, Name',
+            'EXCEL_IMPORT_FIELD_NOT_READ: 5, Roast date',
+            'EXCEL_IMPORT_FIELD_NOT_READ: 5, Blend',
+          ],
+        ],
+      ]);
+    });
+
+    it('names the rows when the beans could not be saved', async () => {
+      beanStorage.failure = 'rejects';
+
+      await importBeans([{ Name: 'Lost' }, { Roaster: 'Nameless' }]);
+
+      expect(showMessageWithList.calls.allArgs()).toEqual([
+        [
+          'BEANS_IMPORTED_UNSUCCESSFULLY_NOT_SAVED',
+          'IMPORT_UNSUCCESSFULLY',
+          'EXCEL_IMPORT_NOT_TAKEN_OVER',
+          ['EXCEL_IMPORT_ROW_WITHOUT_NAME'],
+        ],
+      ]);
     });
 
     it('stores the key of the blend for its key and its English and German text', async () => {
@@ -797,11 +853,19 @@ describe('UIExcel', () => {
         expect(showBeans).not.toHaveBeenCalled();
       });
 
-      it('reports a wrong file when no row has a name', async () => {
+      it('reports a wrong file when no row has a name, with the rows', async () => {
         const beans = await importBeans([{ Roaster: 'A' }, { Weight: 250 }]);
 
         expect(beans).toEqual([]);
-        expect(showMessage.calls.allArgs()).toEqual([importFailedMessage]);
+        expect(showMessage).not.toHaveBeenCalled();
+        expect(showMessageWithList.calls.allArgs()).toEqual([
+          [
+            'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
+            'IMPORT_UNSUCCESSFULLY',
+            'EXCEL_IMPORT_NOT_TAKEN_OVER',
+            ['EXCEL_IMPORT_ROW_WITHOUT_NAME', 'EXCEL_IMPORT_ROW_WITHOUT_NAME'],
+          ],
+        ]);
       });
 
       it('reports a failure instead of crashing when the sheet "Beans" is missing', async () => {
@@ -987,9 +1051,14 @@ describe('UIExcel', () => {
         { Name: 'First' },
         { Weight: 500 },
         { Name: 'Third' },
+        { Name: ' ', Weight: 250 },
       ]);
 
       expect(beans.map((bean) => bean.name)).toEqual(['First', 'Third']);
+      expect(issues).toEqual([
+        { row: 3, field: 'Name' },
+        { row: 5, field: 'Name' },
+      ]);
     });
 
     it('counts a variety that has only a percentage or only a purchasing price', async () => {
@@ -1088,7 +1157,10 @@ describe('UIExcel', () => {
     it('reports a wrong file for a sheet without a named green bean', async () => {
       await importGreenBeans([{ Weight: 250 }]);
 
-      expect(showMessage.calls.allArgs()).toEqual([importFailedMessage]);
+      expect(issues).toEqual([{ row: 2, field: 'Name' }]);
+      expect(showMessageWithList.calls.mostRecent().args[0]).toBe(
+        importFailedMessage[0],
+      );
     });
 
     it('reports a failure instead of crashing when the sheet "Green Beans" is missing', async () => {
@@ -1681,7 +1753,9 @@ describe('UIExcel', () => {
         const beans = await exportAndImport();
 
         expect(beans).toEqual([]);
-        expect(showMessage.calls.allArgs()).toEqual([importFailedMessage]);
+        expect(showMessageWithList.calls.mostRecent().args[0]).toBe(
+          importFailedMessage[0],
+        );
       });
 
       it('known gap: an English export comes back with changed and lost values', async () => {

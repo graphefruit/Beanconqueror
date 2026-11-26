@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
+import { FAILED_DATA_UPDATE_STORAGE_KEY } from '../../classes/changeTracking/localStorageKeys';
 import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Settings } from '../../classes/settings/settings';
@@ -15,6 +16,7 @@ import { MemoryDatabase } from '../../test-utils/memory-database';
 import { BrewReferencesService } from '../brewReferences/brew-references.service';
 import { ChangeTrackingMigrationService } from '../changeTracking/change-tracking-migration.service';
 import { DuplicateEntriesMigrationService } from '../changeTracking/duplicate-entries-migration.service';
+import { ShareService } from '../shareService/share-service.service';
 import { UIAlert } from '../uiAlert';
 import { UIBeanStorage } from '../uiBeanStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
@@ -989,11 +991,18 @@ describe('UIUpdate standard grinder', () => {
 
 describe('UIUpdate backup before the data updates 16 to 19', () => {
   let version: Version;
-  let hasData: boolean;
+  let dataState: 'data' | 'empty' | 'unknown';
+  let saveVersion: jasmine.Spy;
   let uiUpdate: UIUpdate;
   /** The backup and the four updates, in the order they were called. */
   let calls: string[];
   let backedUp: boolean;
+  let backup: jasmine.Spy;
+  let update16Done: boolean;
+  /** The values of UIStorage. */
+  let stored: Map<string, unknown>;
+  let confirm: jasmine.Spy;
+  let shareLogs: jasmine.Spy;
 
   function step(_name: string, _result: () => boolean) {
     return jasmine.createSpy(_name).and.callFake(() => {
@@ -1004,9 +1013,15 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
 
   beforeEach(() => {
     version = new Version();
-    hasData = true;
+    dataState = 'data';
+    saveVersion = jasmine.createSpy('saveVersion').and.resolveTo();
     calls = [];
     backedUp = true;
+    backup = step('backup', () => backedUp);
+    update16Done = true;
+    stored = new Map();
+    confirm = jasmine.createSpy('confirm').and.resolveTo('NO');
+    shareLogs = jasmine.createSpy('shareLogs').and.resolveTo();
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
@@ -1014,12 +1029,12 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
         {
           provide: UIExportImportHelper,
           useValue: {
-            writeBackupBeforeMigration: step('backup', () => backedUp),
+            writeBackupBeforeMigration: backup,
           },
         },
         {
           provide: ChangeTrackingMigrationService,
-          useValue: { run: step('UPDATE_16', () => true) },
+          useValue: { run: step('UPDATE_16', () => update16Done) },
         },
         {
           provide: DuplicateEntriesMigrationService,
@@ -1036,7 +1051,7 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
           provide: UiVersionStorage,
           useValue: {
             getVersion: () => version,
-            saveVersion: () => Promise.resolve(),
+            saveVersion,
           },
         },
         {
@@ -1061,13 +1076,24 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
             showLoadingSpinner: () => Promise.resolve(),
             hideLoadingSpinner: () => Promise.resolve(),
             isLoadingSpinnerShown: () => false,
+            showConfirmWithYesNoTranslation: confirm,
           },
         },
+        { provide: ShareService, useValue: { shareLogs } },
         { provide: TranslateService, useValue: {} },
         {
           provide: UIStorage,
           useValue: {
-            getDataState: () => Promise.resolve(hasData ? 'data' : 'empty'),
+            getDataState: () => Promise.resolve(dataState),
+            get: (_key: string) => Promise.resolve(stored.get(_key) ?? null),
+            set: (_key: string, _value: unknown) => {
+              stored.set(_key, structuredClone(_value));
+              return Promise.resolve(true);
+            },
+            remove: (_key: string) => {
+              stored.delete(_key);
+              return Promise.resolve();
+            },
           },
         },
         { provide: UIHelper, useValue: {} },
@@ -1103,6 +1129,7 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
     await uiUpdate.checkUpdate();
 
     expect(calls).toEqual(['backup', 'UPDATE_19']);
+    expect(backup).toHaveBeenCalledOnceWith('UPDATE_19');
   });
 
   it('runs none of them when the backup could not be written, and tries again at the next start', async () => {
@@ -1115,9 +1142,25 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
     for (const update of UPDATES) {
       expect(version.checkIfDataVersionWasUpdated(update)).toBeFalse();
     }
+    expect(saveVersion).not.toHaveBeenCalled();
 
     backedUp = true;
     calls = [];
+    await uiUpdate.checkUpdate();
+
+    expect(calls).toEqual(['backup', ...UPDATES]);
+  });
+
+  it('backs up and updates nothing when the data cannot be read, and tries again at the next start', async () => {
+    markDone(15);
+    dataState = 'unknown';
+
+    await uiUpdate.checkUpdate();
+
+    expect(calls).toEqual([]);
+    expect(saveVersion).not.toHaveBeenCalled();
+
+    dataState = 'data';
     await uiUpdate.checkUpdate();
 
     expect(calls).toEqual(['backup', ...UPDATES]);
@@ -1133,7 +1176,7 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
 
   it('writes no backup for an empty database', async () => {
     markDone(15);
-    hasData = false;
+    dataState = 'empty';
 
     await uiUpdate.checkUpdate();
 
@@ -1154,6 +1197,108 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
     await uiUpdate.checkUpdate(true);
 
     expect(calls).toEqual(['backup', 'UPDATE_17', 'UPDATE_18', 'UPDATE_19']);
+  });
+
+  it('tells the user once when the same update stayed open at the second start in a row', async () => {
+    markDone(15);
+    update16Done = false;
+
+    await uiUpdate.checkUpdate();
+    expect(confirm).not.toHaveBeenCalled();
+    expect(stored.get(FAILED_DATA_UPDATE_STORAGE_KEY)).toEqual({
+      update: 'UPDATE_16',
+      starts: 1,
+    });
+
+    await uiUpdate.checkUpdate();
+    expect(confirm).toHaveBeenCalledOnceWith(
+      'DATA_UPDATE_FAILED',
+      'DATA_UPDATE_FAILED_TITLE',
+      'SHARE_LOGS',
+      'OK',
+      true,
+    );
+    expect(shareLogs).not.toHaveBeenCalled();
+
+    await uiUpdate.checkUpdate();
+    expect(confirm).toHaveBeenCalledTimes(1);
+    // One backup for all these starts: the first open update stayed the same.
+    expect(backup).toHaveBeenCalledTimes(3);
+    expect(backup.calls.allArgs()).toEqual([
+      ['UPDATE_16'],
+      ['UPDATE_16'],
+      ['UPDATE_16'],
+    ]);
+
+    update16Done = true;
+    await uiUpdate.checkUpdate();
+    expect(stored.has(FAILED_DATA_UPDATE_STORAGE_KEY)).toBeFalse();
+  });
+
+  it('gives no hint for an update before UPDATE_16, no backup holds the data before it', async () => {
+    markDone(14);
+    spyOn(
+      uiUpdate as unknown as {
+        __checkUpdateForDataVersion: (_update: string) => Promise<boolean>;
+      },
+      '__checkUpdateForDataVersion',
+    ).and.callFake((_update: string) =>
+      Promise.resolve(_update !== 'UPDATE_15'),
+    );
+
+    await uiUpdate.checkUpdate();
+    await uiUpdate.checkUpdate();
+
+    expect(backup).not.toHaveBeenCalled();
+    expect(confirm).not.toHaveBeenCalled();
+    expect(stored.has(FAILED_DATA_UPDATE_STORAGE_KEY)).toBeFalse();
+  });
+
+  it('shares the logs from the hint when the user wants to', async () => {
+    markDone(15);
+    update16Done = false;
+    stored.set(FAILED_DATA_UPDATE_STORAGE_KEY, {
+      update: 'UPDATE_16',
+      starts: 1,
+    });
+    confirm.and.resolveTo('YES');
+
+    await uiUpdate.checkUpdate();
+
+    expect(shareLogs).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not count a start at which the backup failed, the user was told then', async () => {
+    markDone(15);
+    backedUp = false;
+    stored.set(FAILED_DATA_UPDATE_STORAGE_KEY, {
+      update: 'UPDATE_16',
+      starts: 1,
+    });
+
+    await uiUpdate.checkUpdate();
+
+    expect(confirm).not.toHaveBeenCalled();
+    expect(stored.get(FAILED_DATA_UPDATE_STORAGE_KEY)).toEqual({
+      update: 'UPDATE_16',
+      starts: 1,
+    });
+  });
+
+  it('keeps the start going when the count cannot be stored', async () => {
+    markDone(15);
+    update16Done = false;
+    stored.set(FAILED_DATA_UPDATE_STORAGE_KEY, {
+      update: 'UPDATE_16',
+      starts: 1,
+    });
+    spyOn(TestBed.inject(UIStorage), 'set').and.rejectWith(
+      new Error('write failed'),
+    );
+
+    await expectAsync(uiUpdate.checkUpdate()).toBeResolved();
+
+    expect(confirm).not.toHaveBeenCalled();
   });
 });
 
