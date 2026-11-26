@@ -2481,7 +2481,7 @@
       "count": 2
     },
     "eqeqeq": {
-      "count": 7
+      "count": 5
     },
     "no-async-promise-executor": {
       "count": 1
@@ -2490,7 +2490,7 @@
       "count": 3
     },
     "no-empty": {
-      "count": 24
+      "count": 23
     },
     "no-unsafe-optional-chaining": {
       "count": 1

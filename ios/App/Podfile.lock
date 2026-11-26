@@ -1,6 +1,4 @@
 PODS:
-  - AparajitaCapacitorDarkMode (6.0.0):
-    - Capacitor
   - Capacitor (8.6.2):
     - CapacitorCordova
   - CapacitorApp (8.1.2):
@@ -112,7 +110,6 @@ PODS:
   - PromisesObjC (2.4.1)
 
 DEPENDENCIES:
-  - "AparajitaCapacitorDarkMode (from `../../node_modules/.pnpm/@aparajita+capacitor-dark-mode@6.0.0/node_modules/@aparajita/capacitor-dark-mode`)"
   - "Capacitor (from `../../node_modules/.pnpm/@capacitor+ios@8.6.2_@capacitor+core@8.6.2/node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/.pnpm/@capacitor+app@8.1.2_@capacitor+core@8.6.2/node_modules/@capacitor/app`)"
   - "CapacitorAppLauncher (from `../../node_modules/.pnpm/@capacitor+app-launcher@8.0.1_@capacitor+core@8.6.2/node_modules/@capacitor/app-launcher`)"
@@ -159,8 +156,6 @@ SPEC REPOS:
     - PromisesObjC
 
 EXTERNAL SOURCES:
-  AparajitaCapacitorDarkMode:
-    :path: "../../node_modules/.pnpm/@aparajita+capacitor-dark-mode@6.0.0/node_modules/@aparajita/capacitor-dark-mode"
   Capacitor:
     :path: "../../node_modules/.pnpm/@capacitor+ios@8.6.2_@capacitor+core@8.6.2/node_modules/@capacitor/ios"
   CapacitorApp:
@@ -209,7 +204,6 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/.pnpm/@pantrist+capacitor-plugin-ml-kit-text-recognition@8.1.1_@capacitor+core@8.6.2/node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition"
 
 SPEC CHECKSUMS:
-  AparajitaCapacitorDarkMode: d5f43e08965abdddef0d03deebf11ab3e8bfe75b
   Capacitor: 0a406b8a50b1ddcfe49fbc5795515918d5294708
   CapacitorApp: 7b7e43debe505bc61beedb83796aa1368c86078b
   CapacitorAppLauncher: 43949ccc5aaa5139a1ebe27a98c0a4d76c883fa7
@@ -252,6 +246,6 @@ SPEC CHECKSUMS:
   PantristCapacitorPluginMlKitTextRecognition: 22330573cd47ebbe1370bab03cfde514cedb9f4a
   PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
 
-PODFILE CHECKSUM: 2769d2c552c13d3115030a65f82010fbe6a4d61d
+PODFILE CHECKSUM: dac39eb2fd740df24a1e29d616be167332d3bb03
 
 COCOAPODS: 1.16.2
