@@ -23,8 +23,8 @@ import { isShareCancelled, ShareService } from './share-service.service';
 
 const LOGS = [{ level: 'INFO', message: 'Started', params: [] }];
 const SHARED_FILE = {
-  path: 'sharefile.json',
-  fullpath: 'file:///sharefile.json',
+  path: 'share/Beanconqueror_logs_1700000000000.json',
+  fullpath: 'file:///cache/share/Beanconqueror_logs_1700000000000.json',
 };
 
 describe('ShareService', () => {
@@ -33,18 +33,13 @@ describe('ShareService', () => {
     Pick<UIAlert, 'showConfirmWithYesNoTranslation' | 'copyLogfiles'>
   >;
   let fileHelper: jasmine.SpyObj<
-    Pick<
-      UIFileHelper,
-      | 'writeExternalFileFromBase64ForSharing'
-      | 'writeInternalFileFromBase64'
-      | 'deleteExternalSharedFile'
-      | 'deleteInternalFile'
-    >
+    Pick<UIFileHelper, 'clearShareDirectory' | 'writeFileForSharing'>
   >;
   let share: jasmine.Spy;
   let uiLog: {
     getLogs: () => unknown[];
     error: jasmine.Spy;
+    info: jasmine.Spy;
     writeToFile: jasmine.Spy;
   };
   let flush: jasmine.Spy;
@@ -57,19 +52,16 @@ describe('ShareService', () => {
     uiAlert.showConfirmWithYesNoTranslation.and.resolveTo(answer);
     uiAlert.copyLogfiles.and.resolveTo();
     fileHelper = jasmine.createSpyObj('UIFileHelper', [
-      'writeExternalFileFromBase64ForSharing',
-      'writeInternalFileFromBase64',
-      'deleteExternalSharedFile',
-      'deleteInternalFile',
+      'clearShareDirectory',
+      'writeFileForSharing',
     ]);
-    fileHelper.writeExternalFileFromBase64ForSharing.and.resolveTo(SHARED_FILE);
-    fileHelper.writeInternalFileFromBase64.and.resolveTo(SHARED_FILE);
-    fileHelper.deleteExternalSharedFile.and.resolveTo();
-    fileHelper.deleteInternalFile.and.resolveTo();
+    fileHelper.clearShareDirectory.and.resolveTo();
+    fileHelper.writeFileForSharing.and.resolveTo(SHARED_FILE);
     share = spyOn(ShareWeb.prototype, 'share').and.resolveTo({});
     uiLog = {
       getLogs: () => LOGS,
       error: jasmine.createSpy('error'),
+      info: jasmine.createSpy('info'),
       writeToFile: jasmine.createSpy('writeToFile').and.resolveTo(),
     };
 
@@ -98,6 +90,8 @@ describe('ShareService', () => {
       flush,
     };
   }
+
+  afterEach(() => jasmine.clock().uninstall());
 
   function file(_name: string): FileInfo {
     return {
@@ -168,9 +162,7 @@ describe('ShareService', () => {
         ],
       });
       expect(flush).not.toHaveBeenCalled();
-      expect(
-        fileHelper.writeExternalFileFromBase64ForSharing,
-      ).not.toHaveBeenCalled();
+      expect(fileHelper.writeFileForSharing).not.toHaveBeenCalled();
       expect(uiAlert.copyLogfiles).not.toHaveBeenCalled();
     });
 
@@ -248,15 +240,11 @@ describe('ShareService', () => {
     it('shares the log in memory when there is no log file, else shows it as text', async () => {
       setup('android', 'YES');
       readdir.and.resolveTo({ files: [file('other.txt')] });
-      fileHelper.writeExternalFileFromBase64ForSharing.and.rejectWith(
-        new Error('disk full'),
-      );
+      fileHelper.writeFileForSharing.and.rejectWith(new Error('disk full'));
 
       await service.shareLogs();
 
-      expect(
-        fileHelper.writeExternalFileFromBase64ForSharing,
-      ).toHaveBeenCalledTimes(1);
+      expect(fileHelper.writeFileForSharing).toHaveBeenCalledTimes(1);
       expect(uiAlert.copyLogfiles).toHaveBeenCalledTimes(1);
       expect(share).not.toHaveBeenCalled();
     });
@@ -268,9 +256,7 @@ describe('ShareService', () => {
       await service.shareLogs();
 
       expect(share).toHaveBeenCalledTimes(1);
-      expect(
-        fileHelper.writeExternalFileFromBase64ForSharing,
-      ).not.toHaveBeenCalled();
+      expect(fileHelper.writeFileForSharing).not.toHaveBeenCalled();
       expect(uiAlert.copyLogfiles).not.toHaveBeenCalled();
     });
   });
@@ -288,27 +274,27 @@ describe('ShareService', () => {
         'CANCEL',
         true,
       );
-      expect(
-        fileHelper.writeExternalFileFromBase64ForSharing,
-      ).not.toHaveBeenCalled();
+      expect(fileHelper.writeFileForSharing).not.toHaveBeenCalled();
       expect(share).not.toHaveBeenCalled();
     });
 
-    it('shares the log as a JSON file after the user agreed and removes the file', async () => {
+    it('shares the log as a JSON file after the user agreed and keeps the file for the receiving app', async () => {
       setup('android', 'YES');
+      jasmine.clock().install();
+      jasmine.clock().mockDate(new Date(1700000000000));
 
       await service.shareLogs();
 
       const [dataUrl, name] =
-        fileHelper.writeExternalFileFromBase64ForSharing.calls.mostRecent()
-          .args;
-      expect(name).toBe('sharefile.json');
+        fileHelper.writeFileForSharing.calls.mostRecent().args;
+      expect(name).toBe('Beanconqueror_logs_1700000000000.json');
       expect(dataUrl).toMatch(/^data:application\/json;base64,/);
       expect(JSON.parse(atob(dataUrl.split(',')[1]))).toEqual(LOGS);
       expect(share).toHaveBeenCalledOnceWith({ url: SHARED_FILE.fullpath });
-      expect(fileHelper.deleteExternalSharedFile).toHaveBeenCalledOnceWith(
-        SHARED_FILE.path,
+      expect(fileHelper.clearShareDirectory).toHaveBeenCalledBefore(
+        fileHelper.writeFileForSharing,
       );
+      expect(fileHelper.clearShareDirectory).toHaveBeenCalledTimes(1);
     });
 
     it('shows the log as text when it cannot be turned into a file', async () => {
@@ -325,22 +311,15 @@ describe('ShareService', () => {
       expect(share).not.toHaveBeenCalled();
     });
 
-    for (const platform of ['android', 'ios'] as const) {
-      it(`shows the log as text when the file cannot be written on ${platform}`, async () => {
-        setup(platform, 'YES');
-        fileHelper.writeExternalFileFromBase64ForSharing.and.rejectWith(
-          new Error('disk full'),
-        );
-        fileHelper.writeInternalFileFromBase64.and.rejectWith(
-          new Error('disk full'),
-        );
+    it('shows the log as text when the file cannot be written', async () => {
+      setup('android', 'YES');
+      fileHelper.writeFileForSharing.and.rejectWith(new Error('disk full'));
 
-        await service.shareLogs();
+      await service.shareLogs();
 
-        expect(uiAlert.copyLogfiles).toHaveBeenCalledTimes(1);
-        expect(share).not.toHaveBeenCalled();
-      });
-    }
+      expect(uiAlert.copyLogfiles).toHaveBeenCalledTimes(1);
+      expect(share).not.toHaveBeenCalled();
+    });
 
     it('does not show the log as text when the user cancels the share dialog', async () => {
       setup('android', 'YES');
@@ -349,50 +328,96 @@ describe('ShareService', () => {
       await service.shareLogs();
 
       expect(uiAlert.copyLogfiles).not.toHaveBeenCalled();
+      expect(uiLog.error).not.toHaveBeenCalled();
     });
   });
 
   describe('sharing a file', () => {
-    it('removes the file when the share dialog fails or is cancelled', async () => {
+    it('names each file uniquely after its kind and time', async () => {
+      setup('android', 'YES');
+      jasmine.clock().install();
+      jasmine.clock().mockDate(new Date(1700000000000));
+
+      await service.shareFile('', 'data:image/jpeg;base64,AAEC');
+      jasmine.clock().tick(1);
+      await service.shareFile('', 'data:image/png;base64,AAEC');
+
+      expect(
+        fileHelper.writeFileForSharing.calls.allArgs().map(([, name]) => name),
+      ).toEqual([
+        'Beanconqueror_1700000000000.jpg',
+        'Beanconqueror_1700000000001.png',
+      ]);
+    });
+
+    it('keeps the file when the share dialog is cancelled, so it counts as shared', async () => {
       setup('android', 'YES');
       share.and.rejectWith(new Error('Share canceled'));
 
-      await service.shareFile(
-        'Beanconqueror_logs',
-        'data:application/json;base64,e30=',
-      );
-
-      expect(fileHelper.deleteExternalSharedFile).toHaveBeenCalledOnceWith(
-        SHARED_FILE.path,
-      );
-    });
-
-    it('uses the internal directory on iOS and removes the file there', async () => {
-      setup('ios', 'YES');
-      share.and.rejectWith(new Error('Share canceled'));
-
-      await service.shareFile(
-        'Beanconqueror_logs',
-        'data:application/json;base64,e30=',
-      );
-
-      expect(fileHelper.writeInternalFileFromBase64).toHaveBeenCalledTimes(1);
-      expect(fileHelper.deleteInternalFile).toHaveBeenCalledOnceWith(
-        SHARED_FILE.path,
-      );
-    });
-
-    it('does not fail when the file cannot be removed', async () => {
-      setup('android', 'YES');
-      fileHelper.deleteExternalSharedFile.and.rejectWith(new Error('gone'));
-
-      await expectAsync(
-        service.shareFile(
+      expect(
+        await service.shareFile(
           'Beanconqueror_logs',
           'data:application/json;base64,e30=',
         ),
-      ).toBeResolved();
-      expect(uiLog.error).toHaveBeenCalledTimes(1);
+      ).toBeTrue();
+      expect(fileHelper.clearShareDirectory).toHaveBeenCalledTimes(1);
+    });
+
+    it('logs a failed write without the content of the file', async () => {
+      setup('android', 'YES');
+      const failure = new Error('disk full');
+      fileHelper.writeFileForSharing.and.rejectWith(failure);
+      const dataUrl = 'data:application/json;base64,c2VjcmV0';
+
+      expect(
+        await service.shareFile('Beanconqueror_logs', dataUrl),
+      ).toBeFalse();
+      expect(uiLog.error).toHaveBeenCalledOnceWith(
+        'Share - could not write the file',
+        failure,
+      );
+      expect(share).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('sharing an element as a picture', () => {
+    let element: HTMLElement;
+
+    beforeEach(() => {
+      setup('android', 'YES');
+      element = document.createElement('div');
+      element.style.cssText =
+        'width: 100px; height: 125px; background: #825634';
+      document.body.appendChild(element);
+    });
+
+    afterEach(() => element.remove());
+
+    it('draws it at the width asked for and shares it as a PNG', async () => {
+      expect(await service.shareElementAsImage(element, 1080)).toBeTrue();
+
+      const [dataUrl, name] =
+        fileHelper.writeFileForSharing.calls.mostRecent().args;
+      expect(name).toMatch(/^Beanconqueror_\d+\.png$/);
+      const image = new Image();
+      image.src = dataUrl;
+      await image.decode();
+      expect([image.width, image.height]).toEqual([1080, 1350]);
+      expect(uiLog.info).toHaveBeenCalledOnceWith(
+        jasmine.stringMatching(/^Share - image drawn in \d+ ms, \d+ KB$/),
+      );
+    });
+
+    it('logs and reports an element it cannot draw, and shares nothing', async () => {
+      const broken = { offsetWidth: 100 } as HTMLElement;
+
+      expect(await service.shareElementAsImage(broken, 1080)).toBeFalse();
+
+      expect(uiLog.error).toHaveBeenCalledOnceWith(
+        'Share - could not draw the image',
+        jasmine.anything(),
+      );
+      expect(fileHelper.writeFileForSharing).not.toHaveBeenCalled();
     });
   });
 

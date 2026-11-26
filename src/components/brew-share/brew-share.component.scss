@@ -1,0 +1,225 @@
+// The picture is sized in cqw (hundredths of its width), never in rem or px:
+// the app's text size and the screen width must not change what is shared.
+.share-preview {
+  container-type: inline-size;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.share-frame {
+  display: flex;
+  flex-direction: column;
+  // 4:5 at least; a long brew card makes the picture taller instead of
+  // cutting it off.
+  aspect-ratio: 4 / 5;
+  padding: 6cqw 6cqw 0;
+  background: var(--share-frame);
+  color: var(--share-text);
+  font-family: var(--bq-font-family-brand);
+  font-size: 3.9cqw;
+  line-height: 1.35;
+}
+
+.share-card {
+  padding: 5cqw;
+  border-radius: 4cqw;
+  background: var(--share-card);
+}
+
+.share-head {
+  display: flex;
+  gap: 3cqw;
+  align-items: center;
+  padding-bottom: 3.5cqw;
+  border-bottom: 0.3cqw solid
+    color-mix(in srgb, var(--share-muted) 35%, transparent);
+}
+
+.share-icon {
+  flex: none;
+  width: 14cqw;
+  height: 14cqw;
+  background: var(--share-text);
+  mask: var(--share-icon) center / contain no-repeat;
+  -webkit-mask: var(--share-icon) center / contain no-repeat;
+}
+
+.share-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.share-date {
+  font-size: 4.6cqw;
+
+  span {
+    margin-inline-start: 2cqw;
+    color: var(--share-muted);
+    white-space: nowrap;
+  }
+}
+
+.share-mark {
+  width: 1em;
+  height: 1em;
+  margin-inline-end: 1cqw;
+  vertical-align: -0.125em;
+  fill: currentColor;
+}
+
+.share-bean {
+  margin-top: 1cqw;
+  color: var(--share-accent);
+  font-size: 5.4cqw;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.share-roaster {
+  display: block;
+  color: var(--share-muted);
+  font-size: 4.2cqw;
+  font-weight: 400;
+}
+
+.share-rating {
+  flex: none;
+  align-self: flex-start;
+  color: var(--share-accent);
+  font-size: 4.6cqw;
+  font-weight: 700;
+  letter-spacing: 0.3cqw;
+}
+
+.share-star-empty {
+  opacity: 0.3;
+}
+
+.share-imported {
+  width: fit-content;
+  margin-top: 3.5cqw;
+  padding: 1cqw 3cqw;
+  border: 0.3cqw solid var(--share-muted);
+  border-radius: 4cqw;
+  color: var(--share-muted);
+  font-size: 3.2cqw;
+  overflow-wrap: anywhere;
+}
+
+.share-rows {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3cqw 4cqw;
+  padding-top: 3.5cqw;
+}
+
+.share-row {
+  min-width: 0;
+}
+
+.share-row-wide {
+  grid-column: 1 / -1;
+}
+
+.share-label {
+  color: var(--share-muted);
+  font-size: 3.2cqw;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15cqw;
+}
+
+.share-value {
+  overflow-wrap: anywhere;
+}
+
+.share-note {
+  display: -webkit-box;
+  overflow: hidden;
+  white-space: pre-wrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 8;
+}
+
+.share-graph {
+  display: block;
+  width: 100%;
+  margin-top: 4cqw;
+  border-radius: 2cqw;
+}
+
+.share-stamp {
+  margin-top: auto;
+  padding: 4cqw 0;
+  color: var(--share-stamp);
+  font-size: 4cqw;
+  font-weight: 700;
+  letter-spacing: 0.4cqw;
+  text-align: center;
+}
+
+.share-hint {
+  text-align: center;
+}
+
+.share-colours {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  justify-content: center;
+  margin: 24px 0 8px;
+  padding: 0;
+  border: 0;
+
+  legend {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 0;
+    font-weight: 600;
+    text-align: center;
+  }
+}
+
+.share-colour {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  min-width: 64px;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+}
+
+.share-swatch {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--bq-border-strong);
+  border-radius: 50%;
+}
+
+.share-colour input:checked + .share-swatch {
+  outline: 3px solid var(--bq-focus-ring);
+  outline-offset: 3px;
+}
+
+.share-colour input:focus-visible + .share-swatch {
+  outline: 3px solid var(--bq-focus-ring);
+  outline-offset: 6px;
+}
+
+.share-note-toggle {
+  margin-top: 16px;
+}
+
+// Not by colour alone: the chosen name is bold as well.
+.share-colour input:checked ~ span:last-child {
+  font-weight: 700;
+}

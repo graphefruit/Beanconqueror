@@ -78,6 +78,7 @@ import { UIBeanStorage } from '../services/uiBeanStorage';
 import { UIBrewHelper } from '../services/uiBrewHelper';
 import { UIBrewStorage } from '../services/uiBrewStorage';
 import { UIExportImportHelper } from '../services/uiExportImportHelper';
+import { UIFileHelper } from '../services/uiFileHelper';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIGreenBeanStorage } from '../services/uiGreenBeanStorage';
 import { UIHelper } from '../services/uiHelper';
@@ -140,6 +141,7 @@ export class AppComponent implements AfterViewInit {
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly bleManager = inject(CoffeeBluetoothDevicesService);
   private readonly uiExportImportHelper = inject(UIExportImportHelper);
+  private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly uiStorage = inject(UIStorage);
   private readonly deviceIdentity = inject(DeviceIdentityService);
@@ -302,6 +304,9 @@ export class AppComponent implements AfterViewInit {
       }
 
       if (this.platform.is('capacitor')) {
+        // Not awaited, it never rejects. Only the own folder: the cache also
+        // holds the folders of imports and exports.
+        void this.uiFileHelper.clearShareDirectory();
         try {
           await this.uiExportImportHelper.checkBackup();
         } catch (ex) {}

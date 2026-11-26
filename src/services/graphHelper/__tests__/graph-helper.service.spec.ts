@@ -9,6 +9,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { CoffeeBluetoothDevicesService } from '../../coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { ThemeService } from '../../theme/theme.service';
+import { UIFileHelper } from '../../uiFileHelper';
 import { UISettingsStorage } from '../../uiSettingsStorage';
 import {
   expandLiveAxisRangeForSample,
@@ -521,6 +522,140 @@ function layoutFor(
   );
 }
 
+const LIGHT = { dark: false, ink: '#4a382c' };
+
+describe('GraphHelperService graph picture', () => {
+  let service: GraphHelperService;
+  let platform: jasmine.SpyObj<Platform>;
+  let files: Record<'readInternalJSONFile', jasmine.Spy>;
+  let toImage: jasmine.Spy;
+  let originalPlotly: unknown;
+
+  beforeEach(() => {
+    service = buildService();
+    platform = TestBed.inject(Platform) as jasmine.SpyObj<Platform>;
+    platform.is.and.returnValue(true);
+    files = TestBed.inject(UIFileHelper) as unknown as typeof files;
+    originalPlotly = Reflect.get(window, 'Plotly');
+    toImage = jasmine.createSpy('toImage').and.resolveTo('data:image/png;x');
+    Reflect.set(window, 'Plotly', { toImage });
+  });
+
+  afterEach(() => {
+    if (originalPlotly === undefined) {
+      Reflect.deleteProperty(window, 'Plotly');
+    } else {
+      Reflect.set(window, 'Plotly', originalPlotly);
+    }
+  });
+
+  it('has no picture for a brew without graph and reads nothing', async () => {
+    expect(
+      await service.brewGraphImage({ flow_profile: '' }, 300, 150, LIGHT),
+    ).toBe(undefined);
+    expect(files.readInternalJSONFile).not.toHaveBeenCalled();
+    expect(toImage).not.toHaveBeenCalled();
+  });
+
+  it('draws the graph file of a brew off screen at the size asked for', async () => {
+    const flow = new BrewFlow();
+    addGraphSample(flow);
+    files.readInternalJSONFile.and.resolveTo(flow);
+
+    const image = await service.brewGraphImage(
+      { flow_profile: 'brews/1_flow_profile.json' },
+      300,
+      150,
+      LIGHT,
+    );
+
+    expect(image).toBe('data:image/png;x');
+    expect(files.readInternalJSONFile).toHaveBeenCalledWith(
+      'brews/1_flow_profile.json',
+    );
+    const [figure, options] = toImage.calls.mostRecent().args;
+    expect(options).toEqual({
+      format: 'png',
+      width: 300,
+      height: 150,
+      scale: 3,
+    });
+    expect(figure.layout.width).toBe(300);
+    expect(figure.layout.height).toBe(150);
+    expect(figure.layout.paper_bgcolor).toBe('rgba(0,0,0,0)');
+    expect(figure.layout.plot_bgcolor).toBe('rgba(0,0,0,0)');
+    expect(figure.data.length).toBe(9);
+  });
+
+  it('draws the graph dark when asked, in a light app, with the axes in the ink given', async () => {
+    const flow = new BrewFlow();
+    addGraphSample(flow);
+    flow.customMetrics.extra = [
+      { value: 4, timestamp: '00:00:01.000', brew_time: '1.000' },
+    ];
+    files.readInternalJSONFile.and.resolveTo(flow);
+    const colors = new Settings().graph_colors;
+
+    await service.brewGraphImage({ flow_profile: 'b.json' }, 300, 150, {
+      dark: true,
+      ink: '#e1d1bf',
+    });
+
+    const { data, layout } = toImage.calls.mostRecent().args[0];
+    expect(data[0].line.color).toBe(colors.weight.active.dark);
+    expect(data.at(-1).line.color).toBe('#ffffff');
+    expect(layout.xaxis.gridcolor).toBe('#8e8e8e');
+    expect(layout.font.color).toBe('#e1d1bf');
+    const axes = Object.keys(layout).filter((key) => /^[xy]axis/.test(key));
+    expect(axes.length).toBeGreaterThan(2);
+    for (const axis of axes) {
+      expect(layout[axis].tickfont.color).withContext(axis).toBe('#e1d1bf');
+    }
+
+    await service.brewGraphImage({ flow_profile: 'b.json' }, 300, 150, LIGHT);
+    const light = toImage.calls.mostRecent().args[0];
+    expect(light.data[0].line.color).toBe(colors.weight.active.light);
+    expect(light.layout.xaxis.gridcolor).toBeUndefined();
+  });
+
+  it('passes on a graph file that cannot be read', async () => {
+    files.readInternalJSONFile.and.rejectWith(new Error('gone'));
+
+    await expectAsync(
+      service.brewGraphImage({ flow_profile: 'brews/1.json' }, 300, 150, LIGHT),
+    ).toBeRejectedWithError('gone');
+    expect(toImage).not.toHaveBeenCalled();
+  });
+
+  it('draws a sample in the browser, which has no files', async () => {
+    platform.is.and.returnValue(false);
+
+    const flow = await service.readFlowProfile('brews/1.json');
+
+    expect(flow.weight.length).toBeGreaterThan(0);
+    expect(files.readInternalJSONFile).not.toHaveBeenCalled();
+  });
+
+  it('adds the lines of imported custom axes to the figure', () => {
+    const flow = new BrewFlow();
+    addGraphSample(flow);
+    flow.customMetrics.extra = [
+      { value: 4, timestamp: '00:00:01.000', brew_time: '1.000' },
+    ];
+    flow.customAxes = [
+      {
+        key: 'extra',
+        name: 'Extra',
+        unit: 'x',
+        colorLight: '#000000',
+        colorDark: '#ffffff',
+      },
+    ];
+
+    expect(service.staticFlowFigure(flow, 200, 100).data.length).toBe(10);
+  });
+});
+
 function buildService(): GraphHelperService {
   const translate = jasmine.createSpyObj('TranslateService', ['instant']);
   translate.instant.and.callFake((key: string | undefined) => {
@@ -561,6 +696,12 @@ function buildService(): GraphHelperService {
         useValue: jasmine.createSpyObj('ThemeService', {
           isDarkMode: false,
         }),
+      },
+      {
+        provide: UIFileHelper,
+        useValue: jasmine.createSpyObj('UIFileHelper', [
+          'readInternalJSONFile',
+        ]),
       },
     ],
   });

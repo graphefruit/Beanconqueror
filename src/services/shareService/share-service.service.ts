@@ -8,6 +8,7 @@ import { Device } from '@capacitor/device';
 import { Encoding, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { TranslateService } from '@ngx-translate/core';
+import { toPng } from 'html-to-image';
 import { stringify } from 'safe-stable-stringify';
 
 import { Bean } from '../../classes/bean/bean';
@@ -52,9 +53,9 @@ export class ShareService {
   private readonly uiHelper = inject(UIHelper);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiFileHelper = inject(UIFileHelper);
-  private readonly platform = inject(Platform);
   private readonly uiLog = inject(UILog);
   private readonly uiAlert = inject(UIAlert);
+  private readonly platform = inject(Platform);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly nativeLog = NativeLog;
 
@@ -64,52 +65,69 @@ export class ShareService {
     } catch (ex) {}
   }
 
-  /** Resolves false when the file could not be written, so nothing was shared. */
+  /**
+   * Shares an element as a PNG `width` pixels wide, its height in proportion.
+   * Resolves false when it could not be drawn or written; the cause is logged.
+   */
+  public async shareElementAsImage(
+    _element: HTMLElement,
+    _width: number,
+  ): Promise<boolean> {
+    let dataUrl: string;
+    try {
+      const started = performance.now();
+      const options = { pixelRatio: _width / _element.offsetWidth };
+      if (this.platform.is('ios')) {
+        // WebKit leaves out the images inside the element (the graph) the
+        // first time it draws it.
+        await toPng(_element, options);
+      }
+      dataUrl = await toPng(_element, options);
+      this.uiLog.info(
+        `Share - image drawn in ${Math.round(performance.now() - started)} ms, ` +
+          `${Math.round((dataUrl.length * 3) / 4 / 1024)} KB`,
+      );
+    } catch (ex) {
+      this.uiLog.error('Share - could not draw the image', ex);
+      return false;
+    }
+    return this.shareFile('', dataUrl);
+  }
+
+  /**
+   * Resolves false when the file could not be written, so nothing was shared.
+   * A share dialog the user cancels is no failure.
+   */
   public async shareFile(
     _filename: string,
     _dataUrl: string,
   ): Promise<boolean> {
-    let file: { path: string; fullpath: string } | undefined;
+    let extensionEnding = '.jpg';
+    if (_dataUrl.indexOf('image/png') > 0) {
+      extensionEnding = '.png';
+    }
+    if (_dataUrl.indexOf('application/json') > 0) {
+      extensionEnding = '.json';
+    }
+    let file: { path: string; fullpath: string };
     try {
-      let extensionEnding = '.jpg';
-      if (_dataUrl.indexOf('image/png') > 0) {
-        extensionEnding = '.png';
-      }
-      if (_dataUrl.indexOf('application/json') > 0) {
-        extensionEnding = '.json';
-      }
-
-      /** We need to save the file before we can share, because base64 share is not supported**/
-      if (this.platform.is('android')) {
-        /** We need to save the file before we can share, because base64 share is not supported**/
-        file = await this.uiFileHelper.writeExternalFileFromBase64ForSharing(
-          _dataUrl,
-          'sharefile' + extensionEnding,
-        );
-      } else {
-        file = await this.uiFileHelper.writeInternalFileFromBase64(
-          _dataUrl,
-          'sharefile' + extensionEnding,
-        );
-      }
-
+      await this.uiFileHelper.clearShareDirectory();
+      // A unique name, so an app still holding an earlier file never reads
+      // this one in its place. Base64 cannot be shared, only a file.
+      file = await this.uiFileHelper.writeFileForSharing(
+        _dataUrl,
+        (_filename || 'Beanconqueror') + '_' + Date.now() + extensionEnding,
+      );
+    } catch (ex) {
+      this.uiLog.error('Share - could not write the file', ex);
+      return false;
+    }
+    try {
       await Share.share({
         url: file.fullpath,
       });
     } catch (ex) {}
-    // Also when sharing failed or was cancelled: the file can hold the log.
-    if (file) {
-      try {
-        if (this.platform.is('android')) {
-          await this.uiFileHelper.deleteExternalSharedFile(file.path);
-        } else {
-          await this.uiFileHelper.deleteInternalFile(file.path);
-        }
-      } catch (ex) {
-        this.uiLog.error('Share - could not remove the shared file', ex);
-      }
-    }
-    return file !== undefined;
+    return true;
   }
 
   /**
