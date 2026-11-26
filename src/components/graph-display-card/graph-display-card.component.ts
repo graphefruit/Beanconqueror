@@ -12,18 +12,14 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
-
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { MeticulousDevice } from '../../classes/preparationDevice/meticulous/meticulousDevice';
 import { Settings } from '../../classes/settings/settings';
-import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { GraphHelperService } from '../../services/graphHelper/graph-helper.service';
 import { drawWhenPlotlyLoaded } from '../../services/graphHelper/load-plotly';
-import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIHelper } from '../../services/uiHelper';
 
 declare var Plotly;
@@ -36,8 +32,6 @@ declare var Plotly;
 })
 export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
   private readonly uiHelper = inject(UIHelper);
-  private readonly uiFileHelper = inject(UIFileHelper);
-  private readonly platform = inject(Platform);
   private readonly graphHelper = inject(GraphHelperService);
 
   @Input() public flowProfileData: any;
@@ -152,74 +146,25 @@ export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
     }
     return config;
   }
-  private getChartLayout() {
-    /* Important - we use scatter instead of scattergl, because we can't have many openGL contexts
-     * - https://github.com/plotly/plotly.js/issues/2333 -
-     * */
-
-    let chartWidth: number = this.canvaContainer.nativeElement.offsetWidth - 10;
-    if (this.chartWidth && this.chartWidth > 0) {
-      chartWidth = this.chartWidth;
-    }
-    let chartHeight: number = 150;
-    if (this.chartHeight) {
-      chartHeight = this.chartHeight;
-    }
-
-    const layout = this.graphHelper.getChartLayout(
-      this.traces,
-      PREPARATION_STYLE_TYPE.FULL_IMMERSION,
-      false,
-      false,
-      true,
-      chartWidth,
-      chartHeight,
-      true,
-    );
-
-    return layout;
-  }
   public initializeFlowChart(): void {
     setTimeout(() => {
       try {
         Plotly.purge(this.profileDiv.nativeElement);
       } catch (ex) {}
 
-      this.traces = this.graphHelper.initializeTraces();
-      this.traces = this.graphHelper.fillTraces(this.traces, null, true);
-
-      this.graphHelper.fillDataIntoTraces(this.flow_profile_raw, this.traces);
-
-      const chartData = [
-        this.traces.weightTrace,
-        this.traces.flowPerSecondTrace,
-        this.traces.realtimeFlowTrace,
-      ];
-
-      const layout = this.getChartLayout();
-
-      chartData.push(this.traces.pressureTrace);
-      chartData.push(this.traces.temperatureTrace);
-      chartData.push(this.traces.waterDispensedTrace);
-      chartData.push(this.traces.waterDispensedFlowSecondTrace);
-      chartData.push(this.traces.weightTraceSecond);
-      chartData.push(this.traces.realtimeFlowTraceSecond);
-
-      if (this.traces.customTraces) {
-        for (const [key, trace] of Object.entries(this.traces.customTraces) as [
-          string,
-          any,
-        ][]) {
-          if (trace) {
-            chartData.push(trace);
-          }
-        }
-      }
+      const { traces, data, layout } = this.graphHelper.staticFlowFigure(
+        this.flow_profile_raw,
+        this.chartWidth > 0
+          ? this.chartWidth
+          : this.canvaContainer.nativeElement.offsetWidth - 10,
+        this.chartHeight || 150,
+      );
+      this.traces = traces;
 
       drawWhenPlotlyLoaded(() => {
         Plotly.newPlot(
           this.profileDiv.nativeElement,
-          chartData,
+          data,
           layout,
           this.getChartConfig(),
         );
@@ -230,23 +175,10 @@ export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private async readFlowProfile() {
-    if (!this.platform.is('capacitor')) {
-      const dummyData = (
-        await import('../../assets/BeanconquerorFlowTestDataFourth.json')
-      ).default;
-      this.flow_profile_raw = dummyData as any;
-      return;
-    }
-
-    if (this.flowProfilePath === '') {
-      return;
-    }
-
     try {
-      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
+      this.flow_profile_raw = await this.graphHelper.readFlowProfile(
         this.flowProfilePath,
       );
-      this.flow_profile_raw = jsonParsed;
     } catch (ex) {
       // ignore
     }
