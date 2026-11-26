@@ -470,6 +470,16 @@ How it works:
 - Every value is printed as a `DEVICE {…}` line with `build`, `brews` and `run`. No budget is
   checked: the budgets are set for the throttled browser.
 
+## Data updates change no files
+
+The data updates at a start (`UIUpdate.checkUpdate()`, `DATA_UPDATES` in
+`src/services/dataUpdates/data-update-rules.ts`) change stored entries only. They never delete,
+rename, move or copy a file, such as a photo, a flow profile or a backup. The backup written before
+them holds the entries alone, so a file an update changed could not be brought back with it.
+`src/services/__tests__/dataUpdateFiles.spec.ts` runs the updates of 9.0 on data of 8.8 and fails
+when a file is changed. A data update that has to change files needs its own backup of those files
+first and is planned as a change of its own.
+
 ## Building and Running Beanconqueror
 
 You can perform most development work in a browser instead of running on Android or iOS.

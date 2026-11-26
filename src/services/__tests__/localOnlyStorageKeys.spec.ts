@@ -8,6 +8,7 @@ import {
   ATTACHMENT_MANIFEST_STORAGE_KEY,
   DELETION_JOURNAL_STORAGE_KEY,
   DEVICE_STORAGE_KEY,
+  FAILED_DATA_UPDATE_STORAGE_KEY,
   LAST_RESTORE_STORAGE_KEY,
   PENDING_DELETION_STORAGE_KEY,
 } from '../../classes/changeTracking/localStorageKeys';
@@ -66,6 +67,7 @@ function localValues(prefix: string) {
       uuid: `${prefix}-pending-bean`,
       started_at: 6,
     },
+    [FAILED_DATA_UPDATE_STORAGE_KEY]: { update: 'UPDATE_16', starts: 1 },
   };
 }
 

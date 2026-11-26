@@ -14,6 +14,7 @@ import {
   IonContent,
   IonFooter,
   IonHeader,
+  IonIcon,
   IonItem,
   IonLabel,
   IonRadio,
@@ -21,6 +22,8 @@ import {
   IonRow,
   ModalController,
 } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { shareSocialOutline } from 'ionicons/icons';
 
 import { FileInfo } from '@capacitor/filesystem';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -28,7 +31,12 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Settings } from '../../classes/settings/settings';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FormatDatePipe } from '../../pipes/formatDate';
-import { PreImportBackupService } from '../../services/preImportBackup/pre-import-backup.service';
+import {
+  isMigrationBackup,
+  PreImportBackupService,
+} from '../../services/preImportBackup/pre-import-backup.service';
+import { ShareService } from '../../services/shareService/share-service.service';
+import { UIAlert } from '../../services/uiAlert';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
@@ -38,6 +46,13 @@ export function fileSize(bytes: number): string {
   return megabytes < 0.01
     ? `${Math.ceil(bytes / 1024)}kB`
     : `${+megabytes.toFixed(2)}MB`;
+}
+
+/** A backup file as the list shows it. */
+export interface BackupListEntry {
+  file: FileInfo;
+  /** Written before the data updates, shown with a label instead of its name. */
+  beforeDataUpdate: boolean;
 }
 
 @Component({
@@ -62,6 +77,7 @@ export function fileSize(bytes: number): string {
     IonRow,
     IonCol,
     IonButton,
+    IonIcon,
   ],
 })
 export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
@@ -69,16 +85,19 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly preImportBackup = inject(PreImportBackupService);
+  private readonly shareService = inject(ShareService);
+  private readonly uiAlert = inject(UIAlert);
 
   public static POPOVER_ID: string =
     'choose-automatic-backup-to-import-popover';
 
   public importChoosenURI: string = '';
 
-  public foundBackupFiles: Array<FileInfo> = [];
+  public foundBackupFiles: BackupListEntry[] = [];
   public settings: Settings;
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({ shareSocialOutline });
   }
 
   public async ngOnInit() {
@@ -93,10 +112,27 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
     ].sort((a: FileInfo, b: FileInfo) => {
       return b.mtime - a.mtime;
     });
-    this.foundBackupFiles = internalBackup ? [internalBackup, ...files] : files;
+    this.foundBackupFiles = (
+      internalBackup ? [internalBackup, ...files] : files
+    ).map((_file) => ({
+      file: _file,
+      beforeDataUpdate: isMigrationBackup(_file.name),
+    }));
   }
 
   protected readonly fileSize = fileSize;
+
+  /** Lets the user keep the backup at `_uri` outside the app, for example in a cloud. */
+  public async share(_uri: string): Promise<void> {
+    if (!(await this.shareService.shareStoredFile(_uri))) {
+      await this.uiAlert.showMessage(
+        'BACKUP_NOT_SHARED',
+        undefined,
+        undefined,
+        true,
+      );
+    }
+  }
 
   public async saveSettings() {}
 
