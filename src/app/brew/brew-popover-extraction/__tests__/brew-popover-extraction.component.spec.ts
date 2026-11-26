@@ -73,6 +73,10 @@ describe('BrewPopoverExtractionComponent', () => {
       'Extraction chart: TDS 1.35 %, extraction yield 22.5 %',
     );
     expect(element.querySelectorAll('.zone').length).toBe(9);
+    // Screen readers get the name only, not every tick and zone name.
+    expect(chart.querySelector(':scope > g').getAttribute('aria-hidden')).toBe(
+      'true',
+    );
     const strong = Array.from(element.querySelectorAll('.zone tspan')).map(
       (line) => line.textContent,
     );

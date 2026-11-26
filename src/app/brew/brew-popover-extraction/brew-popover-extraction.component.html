@@ -8,7 +8,8 @@
     <div #chartBox class="chart-box">
       <svg role="img" [attr.aria-label]="'A11Y.EXTRACTION_GRAPH' | translate: extractionValues()">
         @if (layout(); as chart) {
-          <g [attr.transform]="chart.transform">
+          <!-- The name carries TDS and yield; the drawing stays out of the reading order. -->
+          <g aria-hidden="true" [attr.transform]="chart.transform">
             @for (tick of chart.yieldTicks; track tick.label) {
               <line class="grid" [attr.x1]="tick.x" [attr.x2]="tick.x" y1="0" [attr.y2]="chart.height" />
               <text class="tick" [attr.x]="tick.x" [attr.y]="chart.yieldTickY" dy="0.9em" text-anchor="middle">{{ tick.label }}</text>
