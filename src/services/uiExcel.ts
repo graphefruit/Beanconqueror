@@ -927,44 +927,69 @@ export class UIExcel {
   }
 
   /**
-   * Tells the user whether the beans read from the file were stored. After
-   * `_storageReported` the storage has told that they were not, and no
-   * second message is put on top.
+   * Tells the user whether the beans read from the file were stored, with
+   * the rows and cells that were not taken over. After `_storageReported`
+   * the storage has told that they were not, and no second message is put
+   * on top.
    */
   private async reportImport(
     _read: number,
     _stored: number,
     _successMessage: string,
     _storageReported: boolean,
+    _issues: ExcelImportIssue[],
   ): Promise<void> {
     try {
       if (_read === 0) {
-        await this.uiAlert.showMessage(
+        await this.showImportMessage(
           'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
           'IMPORT_UNSUCCESSFULLY',
-          undefined,
-          true,
+          _issues,
         );
       } else if (_stored === 0) {
         if (!_storageReported) {
-          await this.uiAlert.showMessage(
+          await this.showImportMessage(
             'BEANS_IMPORTED_UNSUCCESSFULLY_NOT_SAVED',
             'IMPORT_UNSUCCESSFULLY',
-            undefined,
-            true,
+            _issues,
           );
         }
       } else {
-        await this.uiAlert.showMessage(
+        await this.showImportMessage(
           _successMessage,
           'IMPORT_SUCCESSFULLY',
-          undefined,
-          true,
+          _issues,
         );
       }
     } catch (ex) {
       this.uiLog.error(`Excel import - Message not shown: ${ex?.message}`);
     }
+  }
+
+  /** Shows the message, with a list of the issues when there are any. */
+  private async showImportMessage(
+    _message: string,
+    _title: string,
+    _issues: ExcelImportIssue[],
+  ): Promise<void> {
+    if (_issues.length === 0) {
+      await this.uiAlert.showMessage(_message, _title, undefined, true);
+      return;
+    }
+    await this.uiAlert.showMessageWithList(
+      _message,
+      _title,
+      'EXCEL_IMPORT_NOT_TAKEN_OVER',
+      _issues.map(
+        (issue): string =>
+          this.translate.instant(
+            issue.field === 'Name'
+              ? 'EXCEL_IMPORT_ROW_WITHOUT_NAME'
+              : 'EXCEL_IMPORT_FIELD_NOT_READ',
+            issue,
+          ) as string,
+      ),
+    );
   }
 
   /**
@@ -1037,10 +1062,12 @@ export class UIExcel {
 
         const bean: GreenBean = new GreenBean();
 
-        const nameEntry = entry['Name'];
-        if (nameEntry) {
-          bean.name = nameEntry.toString();
+        // A name of blanks would be an entry the lists show without a name.
+        const name = String(entry['Name'] ?? '').trim();
+        if (name) {
+          bean.name = name;
         } else {
+          this.noteIssue(entry, 'Name', issues);
           continue;
         }
 
@@ -1205,6 +1232,7 @@ export class UIExcel {
         addedBeans.length,
         'GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
         storageReported,
+        issues,
       );
     } catch (ex) {
       this.uiLog.error(`Excel import - Failed: ${ex?.message}`);
@@ -1265,10 +1293,12 @@ export class UIExcel {
 
         const bean: Bean = new Bean();
 
-        const nameEntry = entry['Name'];
-        if (nameEntry) {
-          bean.name = nameEntry.toString();
+        // A name of blanks would be an entry the lists show without a name.
+        const name = String(entry['Name'] ?? '').trim();
+        if (name) {
+          bean.name = name;
         } else {
+          this.noteIssue(entry, 'Name', issues);
           continue;
         }
 
@@ -1481,6 +1511,7 @@ export class UIExcel {
         addedBeans.length,
         'BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
         storageReported,
+        issues,
       );
       if (addedBeans.length > 0) {
         this.uiBeanHelper.showBeans(addedBeans);

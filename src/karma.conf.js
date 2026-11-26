@@ -38,6 +38,7 @@ const NEW_CODE = [
   'src/services/a11y/**',
   'src/services/attachmentManifest/**',
   'src/services/automaticBackup/**',
+  'src/services/backup-format-rules.ts',
   'src/services/beanUsage/**',
   'src/services/brewReferences/**',
   'src/services/changeTracking/**',

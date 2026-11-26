@@ -31,6 +31,7 @@ import {
 } from '../interfaces/changeTracking/iRestoreNote';
 import { DataCorruptionFoundComponent } from '../popover/data-corruption-found/data-corruption-found.component';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import { EXPORT_CHUNKING_CONFIG, NotABackupError } from './backup-format-rules';
 import {
   canBeImportedAgain,
   PreImportBackupError,
@@ -65,24 +66,6 @@ interface InternalBackupSummary {
   mtime: number;
   counts: BackupCounts;
 }
-
-const EXPORT_CHUNKING_CONFIG = [
-  {
-    propertyName: 'BREWS',
-    fileName: 'Brews',
-    chunkSize: 500,
-  },
-  {
-    propertyName: 'BEANS',
-    fileName: 'Beans',
-    chunkSize: 500,
-  },
-  {
-    propertyName: 'BARISTAMODE_BREWS',
-    fileName: 'Baristamode',
-    chunkSize: 250,
-  },
-];
 
 function chunkFileName(fileName: string, index: number): string {
   return `Beanconqueror_${fileName}_${index}.json`;
@@ -531,7 +514,8 @@ export class UIExportImportHelper {
 
     const entries = await zipReader.getEntries();
     if (entries.length == 0) {
-      throw new Error('Attempted to import empty zip file');
+      await zipReader.close();
+      throw new NotABackupError('The zip file is empty');
     }
     const foundGeneralEntry = entries.find(
       (e) => e.filename === EXPORT_MAIN_FILE_NAME,
@@ -541,8 +525,8 @@ export class UIExportImportHelper {
       !this.isFileEntry(foundGeneralEntry)
     ) {
       await zipReader.close();
-      throw new Error(
-        `ZIP file does not contain a ${EXPORT_MAIN_FILE_NAME} file`,
+      throw new NotABackupError(
+        `The zip file holds no ${EXPORT_MAIN_FILE_NAME}`,
       );
     }
 
