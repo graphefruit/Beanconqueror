@@ -78,10 +78,20 @@ export class UIUpdate {
    * them runs and the next start tries again. Not for an empty database,
    * and not for UPDATE_18 opened again by an import: the imported file holds
    * that data, and the data before the import was backed up already.
+   *
+   * When the stored data cannot be read, neither the backup nor an update
+   * runs; the next start tries again.
    */
   public async checkUpdate(_afterImport: boolean = false) {
     this.uiLog.info('Check updates');
-    const hasData: boolean = (await this.uiStorage.getDataState()) === 'data';
+    const dataState = await this.uiStorage.getDataState();
+    if (dataState === 'unknown') {
+      this.uiLog.error(
+        'Check updates - the data could not be read, nothing is backed up or updated',
+      );
+      return;
+    }
+    const hasData = dataState === 'data';
 
     try {
       let backupPending =

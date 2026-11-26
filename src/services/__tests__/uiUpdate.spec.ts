@@ -989,7 +989,8 @@ describe('UIUpdate standard grinder', () => {
 
 describe('UIUpdate backup before the data updates 16 to 19', () => {
   let version: Version;
-  let hasData: boolean;
+  let dataState: 'data' | 'empty' | 'unknown';
+  let saveVersion: jasmine.Spy;
   let uiUpdate: UIUpdate;
   /** The backup and the four updates, in the order they were called. */
   let calls: string[];
@@ -1004,7 +1005,8 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
 
   beforeEach(() => {
     version = new Version();
-    hasData = true;
+    dataState = 'data';
+    saveVersion = jasmine.createSpy('saveVersion').and.resolveTo();
     calls = [];
     backedUp = true;
     TestBed.resetTestingModule();
@@ -1036,7 +1038,7 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
           provide: UiVersionStorage,
           useValue: {
             getVersion: () => version,
-            saveVersion: () => Promise.resolve(),
+            saveVersion,
           },
         },
         {
@@ -1067,7 +1069,7 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
         {
           provide: UIStorage,
           useValue: {
-            getDataState: () => Promise.resolve(hasData ? 'data' : 'empty'),
+            getDataState: () => Promise.resolve(dataState),
           },
         },
         { provide: UIHelper, useValue: {} },
@@ -1123,6 +1125,21 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
     expect(calls).toEqual(['backup', ...UPDATES]);
   });
 
+  it('backs up and updates nothing when the data cannot be read, and tries again at the next start', async () => {
+    markDone(15);
+    dataState = 'unknown';
+
+    await uiUpdate.checkUpdate();
+
+    expect(calls).toEqual([]);
+    expect(saveVersion).not.toHaveBeenCalled();
+
+    dataState = 'data';
+    await uiUpdate.checkUpdate();
+
+    expect(calls).toEqual(['backup', ...UPDATES]);
+  });
+
   it('writes no backup when they are all done', async () => {
     markDone(19);
 
@@ -1133,7 +1150,7 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
 
   it('writes no backup for an empty database', async () => {
     markDone(15);
-    hasData = false;
+    dataState = 'empty';
 
     await uiUpdate.checkUpdate();
 
