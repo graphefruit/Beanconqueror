@@ -10,11 +10,18 @@ import { UIAlert } from '../uiAlert';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
 import { UIToast } from '../uiToast';
-import { appLinkFromNdefMessage } from './nfc-tag-link';
+import { appLinkFromNdefMessage, INdefRecord } from './nfc-tag-link';
 
 /**https://github.com/EYALIN/community-cordova-plugin-nfc**/
 /** The plugin only clobbers NfcPlugin globally (not nfc/ndef). Use NfcPlugin.**/
 declare var NfcPlugin;
+
+/** An event of the NFC plugin; see www/phonegap-nfc.js. */
+interface INfcEvent {
+  tag?: { ndefMessage?: INdefRecord[] };
+  launch?: boolean;
+}
+
 @Service()
 export class NfcService {
   private readonly platform = inject(Platform);
@@ -104,8 +111,13 @@ export class NfcService {
     /**The issue with the plugin is that we can deattach but if we reattach the old handling instance is still given, therefore we make our own implemenntation logic, just attach once, and toggle.**/
     if (this.didAndroidAttachToListener === false) {
       NfcPlugin.addNdefListener(
-        (_data) => {
-          this.androidMessageSubject.next({ tag: _data.tag });
+        (_data: INfcEvent) => {
+          // The plugin hands the tag that started the app to the first listener, marked as launch.
+          if (_data.launch) {
+            this.__handleNFCData(_data.tag);
+          } else {
+            this.androidMessageSubject.next({ tag: _data.tag });
+          }
         },
         () => {
           this.didAndroidAttachToListener = true;
@@ -114,9 +126,15 @@ export class NfcService {
           this.didAndroidAttachToListener = false;
         },
       );
+      // Tags of our NDEF_DISCOVERED filter (AndroidManifest) while the app is in the background.
+      document.addEventListener('ndef-mime', (_event: Event & INfcEvent) => {
+        if (!_event.launch) {
+          this.__handleNFCData(_event.tag);
+        }
+      });
     }
   }
-  private __handleNFCData(_tag) {
+  private __handleNFCData(_tag: INfcEvent['tag']) {
     // The tag carries its serial number; its link is logged when it is opened.
     this.uiLog.log('We read NFC-Tag');
     const link = appLinkFromNdefMessage(_tag?.ndefMessage);

@@ -1,10 +1,13 @@
 import { Subject } from 'rxjs';
 
+import de from '../../assets/i18n/de.json';
+import en from '../../assets/i18n/en.json';
 import { NfcService } from './nfc-service.service';
 
 interface NfcInternals {
   __handleNFCData(tag: unknown): void;
   __writeInternal(link: string): void;
+  listenToNFCAndroid(): void;
   writeNFCData(link: string): void;
 }
 
@@ -89,6 +92,41 @@ describe('NfcService', () => {
     expect(log.calls.allArgs()).toEqual([['NFC tag written']]);
   });
 
+  for (const [name, written, key] of [
+    ['success', true, 'NFC.WRITE_COMPLETED'],
+    ['failure', false, 'NFC.WRITE_UNCOMPLETED'],
+  ] as const) {
+    it(`reports the ${name} of writing on Android`, () => {
+      service = Object.assign(service, {
+        platform: { is: (os: string) => os === 'android' },
+      });
+      write.and.callFake(
+        (_record: unknown, success: () => void, failure: () => void) =>
+          written ? success() : failure(),
+      );
+
+      service.__writeInternal(TAG_LINK);
+
+      expect(showMessage).toHaveBeenCalledOnceWith(
+        `${key}_DESCRIPTION`,
+        `${key}_TITLE`,
+        'OK',
+        true,
+      );
+    });
+  }
+
+  for (const [language, texts] of [
+    ['en', en],
+    ['de', de],
+  ] as const) {
+    it(`titles a written tag differently from a failed one in ${language}`, () => {
+      expect(texts.NFC.WRITE_COMPLETED_TITLE).not.toBe(
+        texts.NFC.WRITE_UNCOMPLETED_TITLE,
+      );
+    });
+  }
+
   it('keeps the link out of the log when writing fails', () => {
     write.and.callFake(
       (_record: unknown, _success: () => void, failure: () => void) =>
@@ -122,5 +160,62 @@ describe('NfcService', () => {
     expect(write.calls.allArgs().map((args): unknown => args[0])).toEqual([
       [{ uri: TAG_LINK }],
     ]);
+  });
+
+  describe('tags the OS hands to the app', () => {
+    const tag = { id: SERIAL, ndefMessage: [uriRecord(TAG_LINK)] };
+    let ndefListener: (event: unknown) => void;
+    let mimeListener: (event: unknown) => void;
+    let tags: Subject<unknown>;
+    let next: jasmine.Spy;
+
+    beforeEach(() => {
+      Object.assign(globals.NfcPlugin as object, {
+        addNdefListener: (callback: (event: unknown) => void) => {
+          ndefListener = callback;
+        },
+      });
+      spyOn(document, 'addEventListener').and.callFake(((
+        type: string,
+        callback: (event: unknown) => void,
+      ) => {
+        if (type === 'ndef-mime') {
+          mimeListener = callback;
+        }
+      }) as typeof document.addEventListener);
+      tags = new Subject<unknown>();
+      next = spyOn(tags, 'next');
+      Object.assign(service, {
+        didAndroidAttachToListener: false,
+        androidMessageSubject: tags,
+      });
+      service.listenToNFCAndroid();
+    });
+
+    it('opens the link of the tag that started the app', () => {
+      ndefListener({ type: 'ndef-mime', tag, launch: true });
+
+      expect(handleDeepLink).toHaveBeenCalledOnceWith(TAG_LINK);
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it('opens the link of a tag read while the app is in the background', () => {
+      mimeListener({ type: 'ndef-mime', tag });
+
+      expect(handleDeepLink).toHaveBeenCalledOnceWith(TAG_LINK);
+    });
+
+    it('leaves the launch tag to the NDEF listener, so it opens once', () => {
+      mimeListener({ type: 'ndef-mime', tag, launch: true });
+
+      expect(handleDeepLink).not.toHaveBeenCalled();
+    });
+
+    it('hands a tag held to the reader in the app to reading or writing', () => {
+      ndefListener({ type: 'ndef', tag });
+
+      expect(next).toHaveBeenCalledOnceWith({ tag });
+      expect(handleDeepLink).not.toHaveBeenCalled();
+    });
   });
 });
