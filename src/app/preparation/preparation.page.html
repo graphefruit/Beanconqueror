@@ -1,32 +1,32 @@
+@let preparations = segment === 'open' ? openPreparationsView : archivePreparationsView;
 <ion-header>
   <app-header [title]="'NAV_PREPARATION' | translate">
     <ion-back-button header-slot="start" icon="beanconqueror-back" [attr.aria-label]="'BACK' | translate" defaultHref="/home/profile" />
   </app-header>
-</ion-header>
-<ion-content>
-  @let preparations = segment === 'open' ? openPreparationsView : archivePreparationsView;
-  <app-virtual-list [items]="preparations" [itemKey]="preparationKey" [estimateSize]="186">
-    <div virtualListHead>
-      <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
-        <ion-segment-button value="open">
+  <div class="list-head">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
+      <ion-segment-button value="open">
+        <ion-label>
+          <app-segment-label [label]="'CURRENT' | translate" [shown]="openPreparationsView?.length" [total]="openPreparationsLength" />
+        </ion-label>
+      </ion-segment-button>
+      @if (settings?.show_archived_preparations) {
+        <ion-segment-button value="archive">
           <ion-label>
-            <app-segment-label [label]="'CURRENT' | translate" [shown]="openPreparationsView?.length" [total]="openPreparationsLength" />
+            <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="archivePreparationsView?.length" [total]="archivePreparationsLength" />
           </ion-label>
         </ion-segment-button>
-        @if (settings?.show_archived_preparations) {
-          <ion-segment-button value="archive">
-            <ion-label>
-              <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="archivePreparationsView?.length" [total]="archivePreparationsLength" />
-            </ion-label>
-          </ion-segment-button>
-        }
-      </ion-segment>
-      @if (preparations.length > 0 || uiShallBarBeDisplayed || uiIsTextSearchActive || uiIsSortActive) {
-        <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-          <ng-container [ngTemplateOutlet]="preparationSearchToolbar" />
-        </div>
       }
-    </div>
+    </ion-segment>
+    @if (preparations.length > 0 || uiShallBarBeDisplayed || uiIsTextSearchActive || uiIsSortActive) {
+      <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+        <ng-container [ngTemplateOutlet]="preparationSearchToolbar" />
+      </div>
+    }
+  </div>
+</ion-header>
+<ion-content>
+  <app-virtual-list [items]="preparations" [itemKey]="preparationKey" [estimateSize]="186">
     @if (preparations.length === 0) {
       <div class="ion-padding ion-text-center">
         <div>
