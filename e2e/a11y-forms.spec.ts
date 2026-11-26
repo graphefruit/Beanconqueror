@@ -10,9 +10,10 @@ import { startsWith, text, type Language } from './support/texts';
  * Form controls, charts and the remaining roles for screen reader and
  * keyboard users, in English and German: sliders, unit choices and date
  * fields say what they set, chips and choice cards are buttons, required
- * fields say why saving failed, long explanations are descriptions, charts
- * have a text, sorting works without dragging, and the welcome dialog shows
- * one step at a time.
+ * fields say why saving failed, charts have a text and sorting works without
+ * dragging. The steps of the welcome dialog and the checkboxes of the settings,
+ * named by their title and described by their explanation, are checked by
+ * unit tests.
  */
 
 type Texts = (key: string, params?: Record<string, string>) => string;
@@ -20,7 +21,7 @@ type Texts = (key: string, params?: Record<string, string>) => string;
 async function start(
   page: Page,
   language: Language,
-  { welcome = false, freeze = false } = {},
+  { freeze = false } = {},
 ): Promise<void> {
   const data = generateDataSet({
     brews: 20,
@@ -29,14 +30,12 @@ async function start(
     endDate: new Date('2026-11-01T18:00:00Z'),
   });
   data.SETTINGS[0].language = language;
-  data.SETTINGS[0].welcome_page_showed = !welcome;
+  data.SETTINGS[0].welcome_page_showed = true;
   data.SETTINGS[0].freeze_coffee_beans = freeze;
   await seedDatabase(page, data);
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('lang', language);
-  if (!welcome) {
-    await expect(page).toHaveURL(/\/home\/dashboard$/);
-  }
+  await expect(page).toHaveURL(/\/home\/dashboard$/);
 }
 
 /** Shows a screen the way the router does, without a reload. */
@@ -384,26 +383,6 @@ for (const language of ['en', 'de'] as const) {
       ).toHaveValue('18 g basket');
     });
 
-    test('checkboxes are named by their title and described by their explanation', async ({
-      page,
-    }) => {
-      await start(page, language);
-      await show(page, '/home/profile/settings');
-      const checkbox = page.locator('settings').getByRole('checkbox', {
-        name: t('PAGE_SETTINGS_TRACK_BREW_COORDINATES'),
-        exact: true,
-      });
-      await expect(checkbox).toHaveAccessibleDescription(
-        t('PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION'),
-      );
-      for (const each of await visible(
-        page.locator('settings').getByRole('checkbox'),
-      ).all()) {
-        const name = (await each.getAttribute('aria-label')) ?? '';
-        expect(name.length, name).toBeLessThanOrEqual(80);
-      }
-    });
-
     test('sorting works by keyboard and says the new position', async ({
       page,
     }) => {
@@ -483,40 +462,6 @@ for (const language of ['en', 'de'] as const) {
           name: startsWith(`${t('STATISTIC_RANGE_TO')} `),
         }),
       ).toBeVisible();
-    });
-
-    test('the welcome dialog shows one named step at a time', async ({
-      page,
-    }) => {
-      await start(page, language, { welcome: true });
-      const steps = page.getByRole('group', {
-        name: new RegExp(
-          `^${escape(t('A11Y.STEP_OF', { step: '#', count: '5' })).replace('#', '\\d')}$`,
-        ),
-      });
-      await expect(steps).toHaveCount(1);
-      await expect(steps).toHaveAccessibleName(
-        t('A11Y.STEP_OF', { step: '1', count: '5' }),
-      );
-
-      await steps.getByRole('button', { name: t('DO_NOT_ACTIVE') }).click();
-      await expect(steps).toHaveCount(1);
-      await expect(steps).toHaveAccessibleName(
-        t('A11Y.STEP_OF', { step: '2', count: '5' }),
-      );
-      // The focused heading says the position: phones do not say the group.
-      await expect(
-        steps.getByRole('heading', {
-          name: `${t('A11Y.STEP_OF', { step: '2', count: '5' })}, ${t('WELCOME_PAGE_BEAN_TITLE')}`,
-          exact: true,
-        }),
-      ).toBeFocused();
-
-      await steps.getByRole('button', { name: t('SKIP') }).focus();
-      await page.keyboard.press('Enter');
-      await expect(steps).toHaveAccessibleName(
-        t('A11Y.STEP_OF', { step: '3', count: '5' }),
-      );
     });
   });
 }

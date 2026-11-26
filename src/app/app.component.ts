@@ -50,6 +50,7 @@ import TrackContentImpression from '../data/tracking/trackContentImpression/trac
 import { STARTUP_VIEW_ENUM } from '../enums/settings/startupView';
 import { environment } from '../environments/environment';
 import { beanconquerorIcons } from '../generated/icon-registry';
+import { QuickAction } from '../native/quick-action-plugin';
 import { AnalyticsPopoverComponent } from '../popover/analytics-popover/analytics-popover.component';
 import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
 import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
@@ -294,32 +295,10 @@ export class AppComponent implements AfterViewInit {
       Logger.disableLog();
 
       if (this.platform.is('ios')) {
-        this.uiLog.log(`iOS Device - attach to home icon pressed`);
-        // Thanks to the solution here: https://forum.ionicframework.com/t/how-to-implement-quick-actions-home-screen-for-ionic-capacitor-app/235690/2
-        window.handleQuickAction = (type: any) => {
-          this.uiHelper.isBeanconqurorAppReady().then(async () => {
-            const payloadType = type;
-            try {
-              this.uiAnalytics.trackEvent(
-                STARTUP_TRACKING.TITLE,
-                STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.CATEGORY,
-                payloadType.toUpperCase(),
-              );
-              this.uiLog.log(`iOS Device - Home icon was pressed`);
-            } catch (ex) {}
-            if (payloadType === 'Brew') {
-              await this.__trackNewBrew();
-            } else if (!this.uiBrewHelper.canOpenBrewFormIfNotShowMessage()) {
-              // A new form and the change of tab would cover the open brew.
-            } else if (payloadType === 'Bean') {
-              await this.__trackNewBean();
-            } else if (payloadType === 'Preparation') {
-              await this.__trackNewPreparation();
-            } else if (payloadType === 'Mill') {
-              await this.__trackNewMill();
-            }
-          });
-        };
+        // A quick action that started the app is kept natively until this listener exists.
+        void QuickAction.addListener('quickAction', ({ type }) => {
+          void this.handleQuickAction(type);
+        });
       }
 
       if (this.platform.is('capacitor')) {
@@ -961,6 +940,29 @@ export class AppComponent implements AfterViewInit {
       });
       await modal.present();
       await modal.onWillDismiss();
+    }
+  }
+
+  private async handleQuickAction(type: string) {
+    await this.uiHelper.isBeanconqurorAppReady();
+    try {
+      this.uiAnalytics.trackEvent(
+        STARTUP_TRACKING.TITLE,
+        STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.CATEGORY,
+        type.toUpperCase(),
+      );
+      this.uiLog.log(`iOS Device - Home icon was pressed`);
+    } catch {}
+    if (type === 'Brew') {
+      await this.__trackNewBrew();
+    } else if (!this.uiBrewHelper.canOpenBrewFormIfNotShowMessage()) {
+      // A new form and the change of tab would cover the open brew.
+    } else if (type === 'Bean') {
+      await this.__trackNewBean();
+    } else if (type === 'Preparation') {
+      await this.__trackNewPreparation();
+    } else if (type === 'Mill') {
+      await this.__trackNewMill();
     }
   }
 

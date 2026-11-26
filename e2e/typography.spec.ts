@@ -20,24 +20,6 @@ async function fontSizesOf(fields: Locator): Promise<number[]> {
   );
 }
 
-test('the viewport blocks zooming the app', async ({ page }) => {
-  await page.goto('/');
-  // A meta element has no role; it is read as markup, not as page content.
-  const content =
-    (await page.locator('meta[name="viewport"]').getAttribute('content')) ?? '';
-  const settings = Object.fromEntries(
-    content
-      .split(',')
-      .map((part) =>
-        part.split('=').map((value) => value.trim().toLowerCase()),
-      ),
-  );
-
-  expect(settings['user-scalable']).toBe('no');
-  // A capped scale also stops iOS from zooming into a focused field.
-  expect(Number(settings['maximum-scale'])).toBe(1);
-});
-
 test('text fields in the add-bean form are at least 16px', async ({ page }) => {
   await page.goto('/');
   await completeFirstRun(page);

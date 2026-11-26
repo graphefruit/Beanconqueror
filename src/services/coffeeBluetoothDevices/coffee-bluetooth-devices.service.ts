@@ -134,96 +134,67 @@ export class CoffeeBluetoothDevicesService {
   }
 
   public async hasLocationPermission(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      try {
-        if (Capacitor.getPlatform() === 'android') {
-          this.androidPermissions.hasPermission(
-            this.androidPermissions.ACCESS_FINE_LOCATION,
-            (_status: any) => {
-              if (_status.hasPermission === false) {
-                resolve(false);
-              } else {
-                resolve(true);
-              }
-            },
-            () => {
-              resolve(false);
-            },
-          );
-        } else {
-          resolve(true);
-        }
-      } catch (ex) {
-        resolve(true);
-      }
-    });
+    if (Capacitor.getPlatform() !== 'android') {
+      return true;
+    }
+    return this.hasAndroidPermission(
+      this.androidPermissions?.ACCESS_FINE_LOCATION,
+    );
   }
 
   public async hasBluetoothPermission(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+    if (Capacitor.getPlatform() !== 'android') {
+      return true;
+    }
+    // BLUETOOTH_ADMIN is declared up to Android 11 only and granted on install. Android 12 and
+    // later grant BLUETOOTH_SCAN and BLUETOOTH_CONNECT instead, which the user can deny.
+    const permissions = this.androidPermissions;
+    return (
+      (await this.hasAndroidPermission(permissions?.BLUETOOTH_ADMIN)) ||
+      ((await this.hasAndroidPermission(permissions?.BLUETOOTH_SCAN)) &&
+        (await this.hasAndroidPermission(permissions?.BLUETOOTH_CONNECT)))
+    );
+  }
+
+  private hasAndroidPermission(permission: string): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
       try {
-        if (Capacitor.getPlatform() === 'android') {
-          this.androidPermissions.hasPermission(
-            this.androidPermissions.BLUETOOTH_ADMIN,
-            (_status: any) => {
-              if (_status.hasPermission === false) {
-                resolve(false);
-              } else {
-                resolve(true);
-              }
-            },
-            () => {
-              resolve(false);
-            },
-          );
-        } else {
-          resolve(true);
-        }
-      } catch (ex) {
+        this.androidPermissions.hasPermission(
+          permission,
+          (_status: { hasPermission: boolean }) =>
+            resolve(_status.hasPermission !== false),
+          () => resolve(false),
+        );
+      } catch {
         resolve(true);
       }
     });
   }
 
-  public async requestBluetoothPermissions() {
-    return new Promise<boolean>((resolve, reject) => {
-      try {
-        this.androidPermissions.requestPermission(
-          this.androidPermissions.BLUETOOTH_ADMIN,
-          (_status: any) => {
-            if (_status.hasPermission === false) {
-              resolve(false);
-            } else {
-              resolve(true);
-            }
-          },
-          () => {
-            resolve(false);
-          },
-        );
-      } catch (ex) {
-        resolve(true);
-      }
-    });
+  /** Only asked when hasBluetoothPermission() is false, i.e. on Android 12 and later. */
+  public async requestBluetoothPermissions(): Promise<boolean> {
+    return this.requestAndroidPermissions([
+      this.androidPermissions?.BLUETOOTH_SCAN,
+      this.androidPermissions?.BLUETOOTH_CONNECT,
+    ]);
   }
 
-  public async requestLocationPermissions() {
-    return new Promise<boolean>((resolve, reject) => {
+  public async requestLocationPermissions(): Promise<boolean> {
+    return this.requestAndroidPermissions([
+      this.androidPermissions?.ACCESS_FINE_LOCATION,
+    ]);
+  }
+
+  private requestAndroidPermissions(permissions: string[]): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
       try {
-        this.androidPermissions.requestPermission(
-          this.androidPermissions.ACCESS_FINE_LOCATION,
-          (_status: any) => {
-            if (_status.hasPermission === false) {
-              resolve(false);
-            } else {
-              resolve(true);
-            }
-          },
-          () => {
-            resolve(false);
-          },
+        this.androidPermissions.requestPermissions(
+          permissions,
+          (_status: { hasPermission: boolean }) =>
+            resolve(_status.hasPermission !== false),
+          () => resolve(false),
         );
-      } catch (ex) {
+      } catch {
         resolve(true);
       }
     });

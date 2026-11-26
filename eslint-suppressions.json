@@ -7,7 +7,7 @@
       "count": 10
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 25
+      "count": 24
     },
     "@typescript-eslint/no-misused-promises": {
       "count": 4

@@ -86,6 +86,12 @@ export interface BCAndroidNativeCalls {
   moveFileDirectoryToSafDirectory(
     options: CopyFileDirectoryToSafDirectoryOptions,
   ): Promise<void>;
+
+  /**
+   * Paint the area behind the WebView, visible beside a display cutout, in
+   * the given #rrggbb colour.
+   */
+  setBackgroundColor(options: { color: string }): Promise<void>;
 }
 
 const AndroidNativeCalls = registerPlugin<BCAndroidNativeCalls>(

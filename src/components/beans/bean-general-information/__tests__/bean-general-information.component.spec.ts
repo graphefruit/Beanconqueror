@@ -1,7 +1,9 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { TranslateModule } from '@ngx-translate/core';
+import { defineCustomElement as defineInput } from '@ionic/core/components/ion-input.js';
+
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { Bean } from '../../../../classes/bean/bean';
 import { Settings } from '../../../../classes/settings/settings';
@@ -22,10 +24,11 @@ import { BeanGeneralInformationComponent } from '../bean-general-information.com
 describe('BeanGeneralInformationComponent', () => {
   let component: BeanGeneralInformationComponent;
   let fixture: ComponentFixture<BeanGeneralInformationComponent>;
+  let settings: Settings;
 
   beforeEach(waitForAsync(() => {
     // Only the mix field is shown: the other fields play no part here.
-    const settings = new Settings();
+    settings = new Settings();
     for (const key of Object.keys(settings.bean_manage_parameters)) {
       if (typeof settings.bean_manage_parameters[key] === 'boolean') {
         settings.bean_manage_parameters[key] = false;
@@ -154,5 +157,64 @@ describe('BeanGeneralInformationComponent', () => {
     TestBed.inject(UIBeanStorage).getAllEntries = () => [named, unnamed];
 
     expect(component.storedRoasters()).toEqual(['Rösterei Nord']);
+  });
+
+  describe('the required name', () => {
+    beforeAll(() => {
+      defineInput();
+    });
+
+    beforeEach(() => {
+      settings.bean_manage_parameters.name = true;
+      TestBed.inject(TranslateService).setTranslation('en', {
+        BEAN: {
+          VALIDATION: {
+            NAME_REQUIRED: 'Please enter a name for these beans.',
+          },
+        },
+      });
+      TestBed.inject(TranslateService).use('en');
+    });
+
+    /** Ionic marks the field in its next render. */
+    async function rendered(): Promise<void> {
+      fixture.detectChanges();
+      await fixture.whenStable();
+      for (let frame = 0; frame < 3; frame++) {
+        await new Promise((next) => requestAnimationFrame(next));
+      }
+    }
+
+    it('is marked as an error with its reason once it is left empty, and no longer once filled', async () => {
+      setBean('SINGLE_ORIGIN' as BEAN_MIX_ENUM, ['']);
+      const field = (
+        fixture.nativeElement as HTMLElement
+      ).querySelector<HTMLIonInputElement>('ion-input[name="name"]');
+      const native = await field.getInputElement();
+      await rendered();
+
+      expect(native.required).toBeTrue();
+      expect(native.hasAttribute('aria-invalid')).toBeFalse();
+
+      native.dispatchEvent(new FocusEvent('focus'));
+      native.dispatchEvent(new FocusEvent('blur'));
+      await rendered();
+
+      expect(native.getAttribute('aria-invalid')).toBe('true');
+      const description = native
+        .getAttribute('aria-describedby')
+        .split(' ')
+        .map((id) => document.getElementById(id)?.textContent.trim())
+        .filter(Boolean);
+      expect(description).toEqual(['Please enter a name for these beans.']);
+
+      native.value = 'Ethiopia Guji';
+      native.dispatchEvent(new InputEvent('input'));
+      native.dispatchEvent(new FocusEvent('blur'));
+      await rendered();
+
+      expect(component.data.name).toBe('Ethiopia Guji');
+      expect(native.hasAttribute('aria-invalid')).toBeFalse();
+    });
   });
 });

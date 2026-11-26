@@ -2,12 +2,8 @@
   <app-header [title]="'NAV_MILL' | translate">
     <ion-back-button header-slot="start" icon="beanconqueror-back" [attr.aria-label]="'BACK' | translate" defaultHref="/home/profile" />
   </app-header>
-</ion-header>
-
-<ion-content>
-  @let mills = segment === 'open' ? openMillsView : archiveMillsView;
-  <app-virtual-list [items]="mills" [itemKey]="millKey" [estimateSize]="263">
-    <ion-segment virtualListHead (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
+  <div class="list-head">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical tabs">
       <ion-segment-button value="open">
         <ion-label>
           {{"CURRENT" | translate }}
@@ -21,6 +17,12 @@
         </ion-segment-button>
       }
     </ion-segment>
+  </div>
+</ion-header>
+
+<ion-content>
+  @let mills = segment === 'open' ? openMillsView : archiveMillsView;
+  <app-virtual-list [items]="mills" [itemKey]="millKey" [estimateSize]="263">
     @if (mills.length === 0) {
       <div class="ion-padding ion-text-center">
         <div>

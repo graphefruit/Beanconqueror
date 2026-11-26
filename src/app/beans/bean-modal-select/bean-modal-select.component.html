@@ -3,31 +3,31 @@
     <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
     <app-header-button header-slot="end" icon="beanconqueror-add" [ariaLabel]="'ADD_BEAN' | translate" (clicked)="add()" />
   </app-header>
+  <div class="list-head">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]='bean_segment'>
+      <ion-segment-button value='open'>
+        <ion-label>{{ "CURRENT" | translate }}
+        </ion-label>
+      </ion-segment-button>
+      @if (settings.freeze_coffee_beans && frozenBeansLength) {
+        <ion-segment-button value='frozen'>
+          <ion-label>{{ "FROZEN_BEANS" | translate }}
+          </ion-label>
+        </ion-segment-button>
+      }
+      @if (showFinished===true && finishedBeansLength > 0) {
+        <ion-segment-button value='archive'>
+          <ion-label>{{ "TAB_ARCHIVE" | translate }}
+          </ion-label>
+        </ion-segment-button>
+      }
+    </ion-segment>
+    <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
+  </div>
 </ion-header>
 <ion-content>
   <ion-radio-group [(ngModel)]='radioSelection'>
     <app-virtual-list class="card" [items]="shownBeans" [itemKey]="beanKey" [estimateSize]="60" [clearOfAddButton]="false">
-      <div virtualListHead>
-        <ion-segment (ionChange)="segmentChanged()" [(ngModel)]='bean_segment'>
-          <ion-segment-button value='open'>
-            <ion-label>{{ "CURRENT" | translate }}
-            </ion-label>
-          </ion-segment-button>
-          @if (settings.freeze_coffee_beans && frozenBeansLength) {
-            <ion-segment-button value='frozen'>
-              <ion-label>{{ "FROZEN_BEANS" | translate }}
-              </ion-label>
-            </ion-segment-button>
-          }
-          @if (showFinished===true && finishedBeansLength > 0) {
-            <ion-segment-button value='archive'>
-              <ion-label>{{ "TAB_ARCHIVE" | translate }}
-              </ion-label>
-            </ion-segment-button>
-          }
-        </ion-segment>
-        <ng-container [ngTemplateOutlet]="beanSearchToolbar" />
-      </div>
       @if (shownBeans.length === 0) {
         <div class='ion-padding ion-text-center'>
           <div>

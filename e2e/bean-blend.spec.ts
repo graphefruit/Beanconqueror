@@ -3,7 +3,6 @@ import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import { BEANS } from './support/bean-data';
 import {
-  beanCardValue,
   beanField,
   findBean,
   openAddBean,
@@ -58,57 +57,28 @@ async function editBean(page: Page, name: string): Promise<void> {
   await expect(beanField(page, /^Name/)).toHaveValue(name);
 }
 
-test('varieties of a blend are added, copied and deleted in the form', async ({
-  page,
-}) => {
+test('varieties added to a blend in the form are stored', async ({ page }) => {
+  // Which buttons a variety has and what they do is checked by unit tests.
   await startWithBeans(page);
   await openAddBean(page);
   await beanField(page, /^Name/).fill('Hausmischung');
-
-  // A single origin bean has one variety without the tools of a blend.
-  await showTab(varietyTab(page));
-  const countries = suggestionField(page, 'Country');
-  const percentages = beanField(page, 'Percentage');
-  const copy = page.getByRole('button', { name: 'Copy variety information' });
-  const remove = page.getByRole('button', { name: 'Delete variety' });
-  const add = page.getByRole('button', { name: 'Add another bean type' });
-  await expect(countries).toHaveCount(1);
-  await expect(percentages).toHaveCount(0);
-  await expect(copy).toHaveCount(0);
-  await expect(add).toHaveCount(0);
-
-  await showTab(page.getByRole('tab', { name: 'General' }));
   await chooseMix(page, 'Blend');
   await showTab(varietyTab(page));
-  await expect(page.getByText(/^1\.\sBean Type$/)).toBeVisible();
-  await expect(percentages).toHaveCount(1);
-  // The only variety cannot be deleted.
-  await expect(remove).toHaveCount(0);
 
-  await add.click();
+  await page.getByRole('button', { name: 'Add another bean type' }).click();
+  const countries = suggestionField(page, 'Country');
+  const percentages = beanField(page, 'Percentage');
   await expect(countries).toHaveCount(2);
-  await expect(remove).toHaveCount(1);
   await countries.nth(0).fill('Kenya');
   await percentages.nth(0).fill('60');
   await countries.nth(1).fill('Peru');
   await percentages.nth(1).fill('40');
   await percentages.nth(1).blur();
-
-  // A copy is added at the end.
-  await copy.nth(0).click();
-  await expect(countries).toHaveCount(3);
-  await expect(countries.nth(2)).toHaveValue('Kenya');
-  await expect(percentages.nth(2)).toHaveValue('60');
-  // Every variety but the first can be deleted; this deletes the second.
-  await expect(remove).toHaveCount(2);
-  await remove.nth(0).click();
-  await expect(countries).toHaveCount(2);
-  await expect(countries.nth(1)).toHaveValue('Kenya');
   await saveBean(page);
 
   expect(await storedVarieties(page, 'Hausmischung')).toEqual([
     ['Kenya', 60],
-    ['Kenya', 60],
+    ['Peru', 40],
   ]);
   expect((await storedBean(page, 'Hausmischung')).beanMix).toBe('BLEND');
 });
@@ -147,7 +117,4 @@ test('a blend turned into a single origin bean keeps its first variety only', as
   // The percentage of the blend stays with it.
   expect(await storedVarieties(page, BEANS.blend)).toEqual([['Ethiopia', 50]]);
   expect((await storedBean(page, BEANS.blend)).beanMix).toBe('SINGLE_ORIGIN');
-  const card = await findBean(page, BEANS.blend);
-  await expect(beanCardValue(card, 'Country')).toHaveText('Ethiopia');
-  await expect(beanCardValue(card, '2. Country')).toHaveCount(0);
 });

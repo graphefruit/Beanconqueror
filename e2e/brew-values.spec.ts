@@ -36,41 +36,6 @@ async function start(page: Page): Promise<void> {
   await completeFirstRunWithBrew(page);
 }
 
-test('number fields accept a decimal comma and clean up other input when left', async ({
-  page,
-}) => {
-  await start(page);
-  await openAddBrew(page);
-  const dose = brewField(page, 'Ground Coffee (gr)');
-
-  // The field is cleared on focus while it holds 0 …
-  await expect(dose).toHaveValue('0');
-  await dose.focus();
-  await expect(dose).toHaveValue('');
-  // … and an empty field becomes 0 again.
-  await dose.blur();
-  await expect(dose).toHaveValue('0');
-
-  await fillBrewField(page, 'Ground Coffee (gr)', '15,5');
-  await expect(dose).toHaveValue('15.5');
-  await fillBrewField(page, 'Ground Coffee (gr)', '16.25');
-  await expect(dose).toHaveValue('16.25');
-  // Trailing text is cut off, text alone empties the field.
-  await fillBrewField(page, 'Ground Coffee (gr)', '17g');
-  await expect(dose).toHaveValue('17');
-  await fillBrewField(page, 'Ground Coffee (gr)', 'abc');
-  await expect(dose).toHaveValue('');
-  // A leading comma is not converted (indexOf returns 0), so ",5" is dropped.
-  await fillBrewField(page, 'Ground Coffee (gr)', ',5');
-  await expect(dose).toHaveValue('');
-  await fillBrewField(page, 'Ground Coffee (gr)', '0,5');
-  await expect(dose).toHaveValue('0.5');
-
-  // Grind setting is free text by default.
-  await fillBrewField(page, 'Grind Setting', '2,5 clicks');
-  await expect(brewField(page, 'Grind Setting')).toHaveValue('2,5 clicks');
-});
-
 test('the brew ratio follows dose and water live and ignores the water unit', async ({
   page,
 }) => {
@@ -79,12 +44,26 @@ test('the brew ratio follows dose and water live and ignores the water unit', as
   const water = brewField(page, WATER);
   await expect(water).toHaveAccessibleName('Amount of water (1 / ? , ? g/l)');
 
+  // The number fields clean up their input; the rules are component tests
+  // of the directives, this checks they are on the dose field.
+  const dose = brewField(page, 'Ground Coffee (gr)');
+  await expect(dose).toHaveValue('0');
+  await dose.focus();
+  await expect(dose).toHaveValue('');
+  await dose.blur();
+  await expect(dose).toHaveValue('0');
+  // Grind setting is free text by default.
+  await fillBrewField(page, 'Grind Setting', '2,5 clicks');
+  await expect(brewField(page, 'Grind Setting')).toHaveValue('2,5 clicks');
+
   await fillBrewField(page, 'Ground Coffee (gr)', '15');
   await fillBrewField(page, WATER, '250');
   await expect(water).toHaveAccessibleName(
     'Amount of water (1 / 16.67 , 60 g/l)',
   );
+  // A decimal comma is read as a point.
   await fillBrewField(page, 'Ground Coffee (gr)', '16,5');
+  await expect(dose).toHaveValue('16.5');
   await expect(water).toHaveAccessibleName(
     'Amount of water (1 / 15.15 , 66 g/l)',
   );

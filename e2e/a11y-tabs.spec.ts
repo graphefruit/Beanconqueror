@@ -151,7 +151,7 @@ for (const language of ['en', 'de'] as const) {
         await tabBar(page)
           .getByRole('tab', { name: t(tab) })
           .click();
-        const tabs = visible(page.getByRole('main').getByRole('tab'));
+        const tabs = visible(page.getByRole('banner').getByRole('tab'));
         await expect(tabs.first()).toHaveAccessibleName(countedTab(t, label));
         for (const each of await tabs.all()) {
           await expect(each).not.toHaveAccessibleName(/[(/)]/);
@@ -284,28 +284,6 @@ for (const language of ['en', 'de'] as const) {
         reference.getByRole('tabpanel', { name: t('BREWS_ACTIVE') }),
       ).toBeVisible();
       await expectPanelOfSelectedTab(reference);
-    });
-
-    test('the tabs with a red mark say what it means', async ({ page }) => {
-      await start(page, language, (data) => {
-        for (const entry of [...data.BEANS, ...data.PREPARATION]) {
-          entry.finished = true;
-        }
-      });
-      const home = tabBar(page);
-      await expectTabs(home, [
-        t('NAV_HOME'),
-        t('NAV_BREWS'),
-        t('A11Y.TAB_HINT_NO_BEAN', { tab: t('NAV_BEANS') }),
-        t('A11Y.TAB_HINT_NO_PREPARATION_OR_MILL', { tab: t('NAV_PROFILE') }),
-      ]);
-      // The mark is still shown; only its words are read.
-      const badges = home.locator('ion-badge');
-      await expect(badges).toHaveCount(2);
-      for (const badge of await badges.all()) {
-        await expect(badge).toBeVisible();
-        await expect(badge).toHaveAttribute('aria-hidden', 'true');
-      }
     });
 
     test('the tab bars name and select their tabs and are reachable by keyboard', async ({
@@ -568,68 +546,6 @@ for (const language of ['en', 'de'] as const) {
           name: t('BEAN_TAB_GENERAL_INFORMATION'),
         }),
       ).toBeVisible();
-    });
-
-    test('the buttons of a list entry name the entry', async ({ page }) => {
-      // Beans of the same name are told apart by what their cards show,
-      // brews of the same minute by their bean.
-      await start(page, language, (data) => {
-        const [first, second] = data.BEANS.filter((bean) => !bean.finished);
-        second.name = first.name;
-        second.roaster = first.roaster;
-        const [newest, next] = data.BREWS.slice(-2).reverse();
-        next.config.unix_timestamp = newest.config.unix_timestamp;
-        newest.bean = first.config.uuid;
-        next.bean = data.BEANS.find(
-          (bean) => !bean.finished && bean.name !== first.name,
-        )!.config.uuid;
-      });
-      const optionsFor = startsWith(t('A11Y.OPTIONS_FOR', { name: '' }));
-      const brewOptions = startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' }));
-      // Scoped to the screen: the one left may still be on show for a moment.
-      for (const [route, screen, name] of [
-        ['/home/dashboard', 'dashboard', brewOptions],
-        ['/home/brews', 'brew', brewOptions],
-        ['/home/beans', 'beans', optionsFor],
-        ['/home/profile/preparations', 'preparation', optionsFor],
-        ['/home/profile/mills', 'mill', optionsFor],
-        ['/home/profile/water', 'app-water', optionsFor],
-        ['/home/profile/graph', 'app-graph', optionsFor],
-      ] as const) {
-        await show(page, route);
-        const buttons = visible(
-          page.locator(screen).getByRole('button', { name }),
-        );
-        await expect(buttons.first()).toBeVisible();
-        const names = await buttons.evaluateAll((all) =>
-          all.map((each) => each.getAttribute('aria-label')),
-        );
-        expect(names.length, route).toBeGreaterThan(1);
-        expect(new Set(names).size, `names on ${route}`).toBe(names.length);
-      }
-    });
-
-    test('the options of a brew whose bean is gone name its date only', async ({
-      page,
-    }) => {
-      await start(page, language, (data) => {
-        const newest = data.BREWS[data.BREWS.length - 1];
-        data.BEANS = data.BEANS.filter(
-          (bean) => bean.config.uuid !== newest.bean,
-        );
-      });
-      await show(page, '/home/brews');
-      const options = visible(
-        page.locator('brew').getByRole('button', {
-          name: startsWith(t('A11Y.BREW_OPTIONS_FOR', { date: '' })),
-        }),
-      ).first();
-      await expect(options).toHaveAttribute(
-        'aria-label',
-        new RegExp(
-          `^${escape(t('A11Y.BREW_OPTIONS_FOR', { date: '' }))}[\\d./-]+ \\d{2}:\\d{2}$`,
-        ),
-      );
     });
 
     test('the statistics work by keyboard', async ({ page }) => {

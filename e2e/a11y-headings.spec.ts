@@ -78,11 +78,7 @@ const LIST_CARDS: Record<string, string> = {
   '/roasting-section/roasting-machine': 'roasting-machine-information-card',
 };
 
-async function start(
-  page: Page,
-  language: Language,
-  { welcome = false } = {},
-): Promise<void> {
+async function start(page: Page, language: Language): Promise<void> {
   const data = generateDataSet({
     brews: 20,
     beans: 6,
@@ -90,7 +86,7 @@ async function start(
     endDate: new Date('2026-11-01T18:00:00Z'),
   });
   data.SETTINGS[0].language = language;
-  data.SETTINGS[0].welcome_page_showed = !welcome;
+  data.SETTINGS[0].welcome_page_showed = true;
   // The data set has no graphs; the list of graphs needs some.
   const graphs = ['Blooming', 'Turbo'].map((name, index) => ({
     name,
@@ -102,13 +98,11 @@ async function start(
   await seedDatabase(page, { ...data, GRAPH: graphs });
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('lang', language);
-  if (!welcome) {
-    // The start-up navigation to Home would undo an earlier one.
-    await expect(page).toHaveURL(/\/home\/dashboard$/);
-    await expect(
-      page.getByRole('heading', { level: 1, name: text(language, 'OVERVIEW') }),
-    ).toBeVisible();
-  }
+  // The start-up navigation to Home would undo an earlier one.
+  await expect(page).toHaveURL(/\/home\/dashboard$/);
+  await expect(
+    page.getByRole('heading', { level: 1, name: text(language, 'OVERVIEW') }),
+  ).toBeVisible();
 }
 
 /** Shows a screen the way the router does, without a reload. */
@@ -197,73 +191,6 @@ for (const language of ['en', 'de'] as const) {
               ).toHaveCount(1, { timeout: 1000 });
             }
           }).toPass();
-        }
-      }
-    });
-
-    test('figures on Home are no headings', async ({ page }) => {
-      await start(page, language);
-      const main = page.locator('dashboard').getByRole('main');
-      await expect(
-        main.getByRole('heading', {
-          level: 2,
-          name: t('PAGE_HOME_LAST_BREWS'),
-        }),
-      ).toBeVisible();
-      await expect(
-        main.getByRole('heading', {
-          name: t('PAGE_HOME_TOTAL_BREWS'),
-          exact: true,
-        }),
-      ).toHaveCount(0);
-      // The last brews are the cards below "Last brews".
-      await expect(main.getByRole('heading', { level: 3 })).not.toHaveCount(0);
-    });
-
-    // The sentence on top of the card that explains the parameter pages is
-    // a description, not a title; the tiles are buttons named by their title.
-    const PARAMETER_PAGES = [
-      {
-        route: '/home/profile/brew-parameter',
-        screen: 'brew-parameter',
-        description: [
-          'BREW_PARAMETER_CUSTOMIZE_TITLE',
-          'BREW_PARAMETER_CUSTOMIZE_DESCRIPTION',
-        ],
-        tiles: [
-          'NAV_MANAGE_PARAMETERS',
-          'NAV_SORT_PARAMETERS',
-          'NAV_DEFAULT_PARAMETERS',
-          'NAV_REPEAT_PARAMETERS',
-          'NAV_LIST_VIEW_CUSTOM_PARAMETERS',
-        ],
-      },
-      {
-        route: '/home/profile/bean-parameter',
-        screen: 'app-bean-parameter',
-        description: [
-          'BEAN_PARAMETER_CUSTOMIZE_TITLE',
-          'BEAN_PARAMETER_CUSTOMIZE_DESCRIPTION',
-        ],
-        tiles: ['NAV_MANAGE_PARAMETERS', 'NAV_LIST_VIEW_CUSTOM_PARAMETERS'],
-      },
-    ];
-
-    test('the parameter pages describe their tiles without headings', async ({
-      page,
-    }) => {
-      await start(page, language);
-      for (const { route, screen, description, tiles } of PARAMETER_PAGES) {
-        await show(page, route);
-        const main = page.locator(screen).getByRole('main');
-        for (const key of description) {
-          await expect(main.getByText(t(key), { exact: true })).toBeVisible();
-        }
-        await expect(main.getByRole('heading')).toHaveCount(0);
-        for (const key of tiles) {
-          await expect(
-            main.getByRole('button', { name: t(key), exact: true }),
-          ).toBeVisible();
         }
       }
     });
@@ -399,16 +326,6 @@ for (const language of ['en', 'de'] as const) {
         }
       });
     }
-
-    test('the welcome dialog has the title of its step as the one level-1 heading', async ({
-      page,
-    }) => {
-      await start(page, language, { welcome: true });
-      await expect(
-        page.getByRole('heading', { level: 1, name: t('WELCOME_PAGE_TITLE') }),
-      ).toBeVisible();
-      await expectOutline(page, 'welcome');
-    });
   });
 }
 

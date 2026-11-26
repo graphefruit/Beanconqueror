@@ -21,6 +21,7 @@ describe('ThemeService', () => {
   let statusBar: jasmine.SpyObj<ThemePlugins['statusBar']>;
   let systemBars: jasmine.SpyObj<ThemePlugins['systemBars']>;
   let edgeToEdge: jasmine.SpyObj<ThemePlugins['edgeToEdge']>;
+  let androidNativeCalls: jasmine.SpyObj<ThemePlugins['androidNativeCalls']>;
   let keyboard: jasmine.SpyObj<ThemePlugins['keyboard']>;
   let tokens: HTMLStyleElement;
   let metas: HTMLMetaElement[];
@@ -59,6 +60,9 @@ describe('ThemeService', () => {
       setStatusBarColor: Promise.resolve(),
       setNavigationBarColor: Promise.resolve(),
     });
+    androidNativeCalls = jasmine.createSpyObj('BCAndroidNativeCalls', {
+      setBackgroundColor: Promise.resolve(),
+    });
     keyboard = jasmine.createSpyObj('Keyboard', {
       setStyle: Promise.resolve(),
     });
@@ -73,6 +77,7 @@ describe('ThemeService', () => {
       statusBar,
       systemBars,
       edgeToEdge,
+      androidNativeCalls,
       keyboard,
     };
 
@@ -114,6 +119,10 @@ describe('ThemeService', () => {
     expect(edgeToEdge.setNavigationBarColor).toHaveBeenCalledWith({
       color: LIGHT_BAR,
     });
+    // The strip beside a display cutout shows what lies behind the web view.
+    expect(androidNativeCalls.setBackgroundColor).toHaveBeenCalledWith({
+      color: LIGHT_BAR,
+    });
     expect(keyboard.setStyle).not.toHaveBeenCalled();
     expect(service.isDarkMode()).toBeFalse();
     expect(
@@ -130,6 +139,9 @@ describe('ThemeService', () => {
       color: DARK_BAR,
     });
     expect(edgeToEdge.setNavigationBarColor).toHaveBeenCalledWith({
+      color: DARK_BAR,
+    });
+    expect(androidNativeCalls.setBackgroundColor).toHaveBeenCalledWith({
       color: DARK_BAR,
     });
     expect(service.isDarkMode()).toBeTrue();
@@ -163,6 +175,7 @@ describe('ThemeService', () => {
     });
     expect(edgeToEdge.setStatusBarColor).not.toHaveBeenCalled();
     expect(edgeToEdge.setNavigationBarColor).not.toHaveBeenCalled();
+    expect(androidNativeCalls.setBackgroundColor).not.toHaveBeenCalled();
   });
 
   it('applies the system appearance before the settings are loaded', async () => {
@@ -204,6 +217,7 @@ describe('ThemeService', () => {
     expect(statusBar.setBackgroundColor).not.toHaveBeenCalled();
     expect(edgeToEdge.setStatusBarColor).not.toHaveBeenCalled();
     expect(edgeToEdge.setNavigationBarColor).not.toHaveBeenCalled();
+    expect(androidNativeCalls.setBackgroundColor).not.toHaveBeenCalled();
     expect(metas.map((meta) => meta.content)).toEqual(['initial', 'initial']);
   });
 });

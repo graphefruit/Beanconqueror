@@ -21,7 +21,8 @@ import { readStoredValue } from './support/stored-values';
 /**
  * Characterization of searching, filtering and sorting the bean list as it
  * works today. Each segment has its own search text, filter and sort order;
- * filter and sort order are stored, the search text is not.
+ * filter and sort order are stored, the search text is not. Which fields
+ * the search reads and how it splits the text are checked by unit tests.
  */
 
 const BY_NAME = [
@@ -49,41 +50,6 @@ async function storedBeanSort(page: Page): Promise<unknown> {
 function searchField(page: Page) {
   return page.getByRole('searchbox').filter({ visible: true });
 }
-
-test('the search finds beans by parts of their name, roaster or varieties', async ({
-  page,
-}) => {
-  await startWithBeans(page);
-  await page.getByRole('button', { name: 'Collapse bean list items' }).click();
-
-  // The roaster, whatever the case.
-  await searchBeans(page, 'NORD');
-  await available(page, '( 1 / 7 )');
-  expect(await beanNames(page)).toEqual([BEANS.alpha]);
-
-  // The country of a variety.
-  await searchBeans(page, 'ethiopia');
-  await expect.poll(() => beanNames(page)).toEqual([BEANS.blend]);
-  await available(page, '( 1 / 7 )');
-
-  // A comma separates alternatives.
-  await searchBeans(page, 'nord, süd');
-  await available(page, '( 2 / 7 )');
-  expect(await beanNames(page)).toEqual([BEANS.alpha, BEANS.blend]);
-
-  // Accents do not matter: "sud" finds the roaster "Süd".
-  await searchBeans(page, 'sud');
-  await available(page, '( 1 / 7 )');
-  expect(await beanNames(page)).toEqual([BEANS.blend]);
-
-  await searchBeans(page, 'a,');
-  await available(page, '( 6 / 7 )');
-  expect(await beanNames(page)).not.toContain(BEANS.small);
-  // Known defect: with a blank after the comma every bean is found.
-  await searchBeans(page, 'a, ');
-  await available(page, '( 7 )');
-  expect(await beanNames(page)).toEqual(BY_NAME);
-});
 
 test('each segment has its own search text, which is not stored', async ({
   page,

@@ -14,7 +14,6 @@ import {
   storedBeanFilters,
   tabName,
 } from './support/beans';
-import { topDialog } from './support/brew-form';
 import { toast } from './support/toast';
 
 /**
@@ -35,18 +34,8 @@ test('a bean is archived with a rating and a note and can be brought back', asyn
 
   await beanAction(page, BEANS.alpha, 'Archive');
   await expect(page.getByText('Average Brew Rating')).toBeVisible();
-  // The brews are rated 4 and 2; their average is offered as the rating of
-  // the bean, which has none yet.
-  await expect(topDialog(page)).toMatchAriaSnapshot(`
-    - dialog:
-      - text: "Name: Alpha Filter Average Brew Rating 3 Rating 3"
-      - slider "Rating"
-      - 'img "Rating: 3 of 5 stars"'
-      - text: Notes
-      - textbox "Notes"
-      - button "Cancel"
-      - button "Archive"
-  `);
+  // The rating offered and the fields of the dialog are checked by unit
+  // tests.
   await page.getByRole('textbox', { name: 'Notes' }).fill('Leer getrunken');
   await page.getByRole('button', { name: 'Archive', exact: true }).click();
 
