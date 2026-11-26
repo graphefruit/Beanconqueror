@@ -3,14 +3,13 @@ import type { Locator, Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import { contrast, firstColour } from './support/colour';
 import { completeFirstRun } from './support/first-run';
-import { openFromProfile } from './support/profile';
 
 /**
  * The basic form controls stay operable by role and expose their state to
- * assistive technology: checkboxes and radios report checked, sliders move
- * with the arrow keys, and text fields have a visible label. The required
- * bean name and the favourites switch of the bean filter are checked by
- * their unit tests. In light and dark, every state of a
+ * assistive technology: radios report checked, sliders move with the arrow
+ * keys, and text fields have a visible label. The required bean name, the
+ * favourites switch of the bean filter and the settings checkboxes are checked
+ * by their unit tests. In light and dark, every state of a
  * control stands out from its surroundings (WCAG 1.4.11, 3:1) and the choice
  * is never marked by colour alone.
  */
@@ -68,17 +67,6 @@ async function segmentColours(tab: Locator) {
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
   await completeFirstRun(page);
-});
-
-test('a settings checkbox can be switched on and off', async ({ page }) => {
-  await openFromProfile(page, 'Settings');
-
-  const fastRepeat = page.getByRole('checkbox', { name: /^Fast brew repeat/ });
-  await expect(fastRepeat).not.toBeChecked();
-  await fastRepeat.click();
-  await expect(fastRepeat).toBeChecked();
-  await fastRepeat.click();
-  await expect(fastRepeat).not.toBeChecked();
 });
 
 test('a choice list marks the picked option as checked', async ({ page }) => {

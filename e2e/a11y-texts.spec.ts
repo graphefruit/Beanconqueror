@@ -9,8 +9,9 @@ import { mainTabName, startsWith, text, type Language } from './support/texts';
 /**
  * Names, texts and operation for screen reader and keyboard users, in English
  * and German: Ionic's built-in English names are replaced by the app's texts,
- * messages come from the translations, and the buttons that start a brew, the
- * info icons and Save react to Enter and Space as to a tap.
+ * messages come from the translations, and the buttons that start a brew and
+ * Save react to Enter and Space as to a tap. The info icons and the names of
+ * the settings checkboxes are checked by the unit tests of the settings page.
  */
 
 /** Ionic's English names, which must not reach users of any language. */
@@ -238,32 +239,6 @@ for (const language of ['en', 'de'] as const) {
       ).toBeVisible();
     });
 
-    test('an info icon is a button named after its topic that opens by keyboard', async ({
-      page,
-    }) => {
-      await start(page, language);
-      await openFromProfile(page, language, 'NAV_SETTINGS');
-
-      const info = page.getByRole('button', {
-        name: t('A11Y.MORE_INFORMATION_ABOUT', {
-          topic: t('PAGE_SETTINGS_IMAGE_QUALITY'),
-        }),
-      });
-      await info.press('Enter');
-      const alert = page.getByRole('alertdialog');
-      await expect(alert).toContainText(
-        t('PAGE_SETTINGS_IMAGE_QUALITY_TOOLTIP'),
-      );
-      await alert.getByRole('button', { name: t('OK') }).click();
-      await expect(alert).toHaveCount(0);
-
-      await info.press(' ');
-      await expect(alert).toBeVisible();
-      await expect(
-        page.getByRole('img', { name: t('MORE_INFORMATION') }),
-      ).toHaveCount(0);
-    });
-
     for (const key of ['Enter', ' ']) {
       const keyName = key === ' ' ? 'Space' : key;
 
@@ -385,46 +360,6 @@ for (const language of ['en', 'de'] as const) {
       await page.mouse.click(box!.x + box!.width / 2, box!.y + box!.height / 2);
       await expect(page).toHaveURL(/\/home\/dashboard$/);
       await expect(openDialog(page)).toHaveCount(1);
-    });
-
-    test('settings: analytics is one checkbox, the statistics name their checkboxes', async ({
-      page,
-    }) => {
-      await start(page, language);
-      await openFromProfile(page, language, 'NAV_SETTINGS');
-      const settings = page.locator('settings');
-      const analytics = t('PAGE_SETTINGS_ANALYTICS_INFORMATION');
-      await expect(
-        settings.getByRole('checkbox', { name: analytics, exact: true }),
-      ).toHaveCount(1);
-      await expect(
-        settings.getByRole('button', { name: analytics }),
-      ).toHaveCount(0);
-      // TalkBack and VoiceOver read a description; aria-haspopup is not allowed on a checkbox.
-      const checkbox = settings.getByRole('checkbox', {
-        name: analytics,
-        exact: true,
-      });
-      await expect(checkbox).toHaveAccessibleDescription(
-        t('A11Y.OPENS_QUESTION'),
-      );
-      await expect(checkbox).not.toHaveAttribute('aria-haspopup');
-      await expect(checkbox).toHaveAttribute('aria-checked', 'false');
-
-      for (const key of [
-        'PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS',
-        'PAGE_SETTINGS_SHOW_ARCHIVED_MILLS',
-      ]) {
-        await expect(
-          settings.getByRole('checkbox', { name: t(key), exact: true }),
-        ).toHaveCount(1);
-        await expect(
-          settings.getByRole('checkbox', {
-            name: `${t(key)}, ${t('PAGE_SETTINGS_MANAGE_STATISTICS')}`,
-            exact: true,
-          }),
-        ).toHaveCount(1);
-      }
     });
 
     test('settings: only the choice in the analytics question is stored', async ({

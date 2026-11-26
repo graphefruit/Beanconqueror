@@ -9,6 +9,8 @@ import { mainTabName } from './support/texts';
 /**
  * The optional sections are switched on a page of their own in the profile:
  * roasting, water and graphs. Grinders are always there and have no switch.
+ * That the settings no longer repeat the switches is checked by their unit
+ * tests.
  */
 
 interface StoredSettings {
@@ -100,20 +102,6 @@ test('a section switched off leaves the profile again', async ({ page }) => {
   await page.goBack();
   await expect(page).toHaveURL(/\/home\/profile$/);
   await expect(page.getByRole('link', { name: /^Graphs/ })).toHaveCount(0);
-});
-
-test('the settings no longer repeat the switches', async ({ page }) => {
-  await page.goto('/');
-  await completeFirstRun(page);
-  await openFromProfile(page, 'Settings');
-  await expect(
-    page.getByRole('button', { name: /^Language Settings/ }),
-  ).toBeVisible();
-
-  await expect(page.getByText('More sections', { exact: true })).toHaveCount(0);
-  await expect(
-    page.getByRole('checkbox', { name: /^Activate .* section$/ }),
-  ).toHaveCount(0);
 });
 
 test('the switches are not cut off at 200 % text size', async ({ page }) => {
