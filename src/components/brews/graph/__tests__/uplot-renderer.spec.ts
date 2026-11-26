@@ -419,6 +419,35 @@ describe('UplotRenderer', () => {
       .toBeGreaterThan(50);
   });
 
+  it('draws the lines of a picture in its theme, not in the app theme', async () => {
+    await mount('static', false);
+    renderer.setSeries(
+      defs('live', 'weight').map((def) => ({
+        ...def,
+        colour: { light: '#ff0000', dark: '#00ff00' },
+      })),
+    );
+    feed(buffer, 0, 30);
+    renderer.attach(buffer);
+    await frames.run();
+
+    const image = await decode(
+      await renderer.exportImage({
+        width: 300,
+        height: 150,
+        theme: 'dark',
+        transparent: true,
+        scale: 1,
+      }),
+    );
+
+    const all = pixels(image, 0, 0, image.width, image.height);
+    const green = all.filter(([r, g, b]) => g > 200 && r < 60 && b < 60);
+    const red = all.filter(([r, g, b]) => r > 200 && g < 60 && b < 60);
+    expect(green.length).withContext('dark line pixels').toBeGreaterThan(50);
+    expect(red.length).withContext('light line pixels').toBe(0);
+  });
+
   it('draws the overlays of a picture in its theme, the graph keeps the app theme', async () => {
     const theme = new ThemeProbe();
     renderer = new UplotRenderer([theme], {
