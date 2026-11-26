@@ -1,4 +1,5 @@
 @use 'sass:color';
+@use 'bq-mode-colours' as mode;
 
 // Call-to-action fill (coral). Change it here and every accent button, checked
 // control and range fill follows in both modes.
@@ -12,18 +13,19 @@ $bq-on-action-primary: #ffffff;
 
 :root {
   // Palette
-  --bq-palette-espresso-900: #211914;
-  --bq-palette-espresso-1000: #2a211a;
+  --bq-palette-espresso-900: #{mode.$espresso-900};
+  --bq-palette-espresso-1000: #{mode.$espresso-1000};
   --bq-palette-sand-400: #d4c4b0;
-  --bq-palette-cream-300: #e1d1bf;
-  --bq-palette-cream-200: #ead9c4;
-  --bq-palette-white: #ffffff;
+  --bq-palette-cream-300: #{mode.$cream-300};
+  --bq-palette-cream-200: #{mode.$cream-200};
+  --bq-palette-white: #{mode.$white};
   --bq-palette-coral-aa: #{$bq-action-primary};
   --bq-palette-caramel-aa: #825634;
 
+  // Surfaces and text that change with the mode
+  @include mode.light;
+
   // Surfaces
-  --bq-surface-page: var(--bq-palette-cream-200);
-  --bq-surface-card: var(--bq-palette-white);
   --bq-surface-mid: var(--bq-palette-sand-400);
   // Tile behind a decorative row icon (caramel tint, handoff settings rows).
   // The icon on it carries the contrast, not the tile.
@@ -37,10 +39,7 @@ $bq-on-action-primary: #ffffff;
   --bq-system-bar-dark: var(--bq-palette-espresso-900);
 
   // Text
-  --bq-text-primary: var(--bq-palette-espresso-900);
-  --bq-text-secondary: #4a382c;
   --bq-text-link: #9e2d45;
-  --bq-text-accent: #9e2d45;
   --bq-text-on-accent: #{$bq-on-action-primary};
   --bq-nav-inactive: #75604f;
 
@@ -285,15 +284,11 @@ brew-timer,
 // winning once they are mapped onto Ionic variables.
 :root.ion-palette-dark.md,
 :root.ion-palette-dark.ios {
-  --bq-surface-page: var(--bq-palette-espresso-900);
-  --bq-surface-card: var(--bq-palette-espresso-1000);
+  @include mode.dark;
   --bq-surface-icon: rgba(194, 133, 89, 0.2);
 
-  --bq-text-primary: var(--bq-palette-white);
-  --bq-text-secondary: var(--bq-palette-cream-300);
-  // #EA495B misses AA on dark cards (4.2:1); #FF7A88 reaches 6.3:1.
+  // As the text accent: #EA495B misses AA on dark cards.
   --bq-text-link: #ff7a88;
-  --bq-text-accent: #ff7a88;
   // 8.66:1 on the page, 7.89:1 on the tab bar.
   --bq-nav-inactive: #c4b5a6;
 

@@ -243,6 +243,32 @@ describe('DuplicateEntriesMigrationService', () => {
     expect(device.data.get('SETTINGS')).toEqual(legacy.SETTINGS);
   });
 
+  it('removes exactly the identical copies: each count after is the count before minus them', async () => {
+    const legacy = createDuplicatedData();
+    legacy.MILL.push(structuredClone(legacy.MILL[0]));
+    legacy.BREWS.push(
+      structuredClone(legacy.BREWS[3]),
+      structuredClone(legacy.BREWS[3]),
+    );
+    const device = createDeviceDatabase(legacy);
+    const app = await startApp(device);
+
+    expect(await app.migration.run()).toBeTrue();
+
+    for (const collection of ['BEANS', 'BREWS', 'MILL']) {
+      const before = (legacy[collection] as StoredEntry[]).map((_entry) =>
+        JSON.stringify(_entry),
+      );
+      const identicalCopies = before.filter(
+        (_entry, i) => before.indexOf(_entry) < i,
+      ).length;
+      expect(identicalCopies).withContext(collection).toBeGreaterThan(0);
+      expect(stored(device, collection).length)
+        .withContext(collection)
+        .toBe(before.length - identicalCopies);
+    }
+  });
+
   it('keeps the change info and writes no deletion notes', async () => {
     const legacy = createDuplicatedData();
     for (const collection of CHANGE_TRACKED_COLLECTIONS) {
