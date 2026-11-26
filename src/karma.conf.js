@@ -20,6 +20,7 @@ const NEW_CODE = [
   'src/classes/log/**',
   'src/components/actions-popover/actions-popover.component.ts',
   'src/components/bean-information/bean-information.component.ts',
+  'src/components/brews/graph/**',
   'src/components/segment-label/**',
   'src/components/reorder-buttons/**',
   'src/components/virtual-list/**',

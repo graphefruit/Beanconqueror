@@ -1,3 +1,4 @@
+import { effect, Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { SystemBarsStyle } from '@capacitor/core';
@@ -186,6 +187,33 @@ describe('ThemeService', () => {
     expect(
       document.documentElement.classList.contains('ion-palette-dark'),
     ).toBeTrue();
+  });
+
+  it('signals a change of the device appearance after the palette class is set', async () => {
+    platform = 'web';
+    themeMode = THEME_MODE_ENUM.DEVICE;
+    await service.initialize();
+    expect(service.dark()).toBeFalse();
+
+    const seen: boolean[] = [];
+    const watcher = effect(
+      () => {
+        seen.push(
+          service.dark() ===
+            document.documentElement.classList.contains('ion-palette-dark'),
+        );
+      },
+      { injector: TestBed.inject(Injector) },
+    );
+    TestBed.tick();
+    systemDark = true;
+    colorSchemeListeners[0]();
+    await new Promise((resolve) => setTimeout(resolve));
+    TestBed.tick();
+
+    expect(service.dark()).toBeTrue();
+    expect(seen).toEqual([true, true]);
+    watcher.destroy();
   });
 
   it('keeps the chosen mode when the device appearance changes', async () => {
