@@ -658,7 +658,6 @@ Developers prepare builds, watch the signals and write a daily summary for him.
 - [ ] The fallback build (see below) is built once and installed over data migrated by 9.0 on a
       Pixel and an iPad, both builds with the same signature: it starts, counts match, and entries
       added and changed in it are still there after updating to the next 9.0 build.
-- [ ] Test purchase and restore of the subscription in the beta build, on Android and iOS.
 - [ ] English and German texts are complete; other languages fall back to English.
 
 ### Beta
