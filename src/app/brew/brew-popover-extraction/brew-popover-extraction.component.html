@@ -1,12 +1,42 @@
 <ion-header>
-  <app-header [title]="(brew.getPreparation().style_type === 'ESPRESSO' ? ('PREPARATION_STYLE_ESPRESSO' | translate) : ('PREPARATION_STYLE_POUR_OVER' | translate)) + ' - ' + ('EXTRACTION_CHART_TITLE' | translate)">
+  <app-header [title]="(espresso() ? ('PREPARATION_STYLE_ESPRESSO' | translate) : ('PREPARATION_STYLE_POUR_OVER' | translate)) + ' - ' + ('EXTRACTION_CHART_TITLE' | translate)">
     <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
   </app-header>
 </ion-header>
-<ion-content #extractionChartContent>
-  <ion-card style='padding:10px;'>
-      <div id="extractionChart" role="img" [attr.aria-label]="'A11Y.EXTRACTION_GRAPH' | translate: extractionValues"></div>
+<ion-content>
+  <ion-card>
+    <div #chartBox class="chart-box">
+      <svg role="img" [attr.aria-label]="'A11Y.EXTRACTION_GRAPH' | translate: extractionValues()">
+        @if (layout(); as chart) {
+          <g [attr.transform]="chart.transform">
+            @for (tick of chart.yieldTicks; track tick.label) {
+              <line class="grid" [attr.x1]="tick.x" [attr.x2]="tick.x" y1="0" [attr.y2]="chart.height" />
+              <text class="tick" [attr.x]="tick.x" [attr.y]="chart.yieldTickY" dy="0.9em" text-anchor="middle">{{ tick.label }}</text>
+            }
+            @for (tick of chart.tdsTicks; track tick.label) {
+              <line class="grid" x1="0" [attr.x2]="chart.width" [attr.y1]="tick.y" [attr.y2]="tick.y" />
+              <text class="tick" x="-6" [attr.y]="tick.y" dy="0.35em" text-anchor="end">{{ tick.label }}</text>
+            }
+            <text class="title" [attr.x]="chart.yieldTitle.x" [attr.y]="chart.yieldTitle.y" text-anchor="middle">{{ 'BREW_DATA_CALCULATED_EXTRACTION_YIELD' | translate }}</text>
+            <text class="title" [attr.transform]="chart.tdsTitleTransform" text-anchor="middle">{{ 'BREW_DATA_TDS' | translate }}</text>
+            <!-- A nested svg clips what lies outside the ranges, e.g. a brew far off the scale. -->
+            <svg [attr.width]="chart.width" [attr.height]="chart.height">
+              <rect class="ideal" [attr.x]="chart.ideal.x" [attr.y]="chart.ideal.y" [attr.width]="chart.ideal.width" [attr.height]="chart.ideal.height" />
+              @for (zone of chart.zones; track zone.key) {
+                <text class="zone" [attr.x]="zone.x" [attr.y]="zone.y" text-anchor="middle">
+                  @for (line of zone.lines; track $index) {
+                    <tspan [attr.x]="zone.x" [attr.dy]="line.dy">{{ line.text }}</tspan>
+                  }
+                </text>
+              }
+              @if (chart.point; as point) {
+                <circle class="point" [attr.cx]="point.x" [attr.cy]="point.y" r="7.5" />
+              }
+            </svg>
+          </g>
+        }
+      </svg>
+    </div>
   </ion-card>
 </ion-content>
 <ion-footer />
-
