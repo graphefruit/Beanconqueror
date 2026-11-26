@@ -4,6 +4,8 @@
     "outDir": "../out-tsc/app",
     "types": []
   },
+  // Local Capacitor plugins ship TypeScript sources that are type-checked here.
+  "include": ["**/*.ts", "../capacitor-plugins/*/src/**/*.ts"],
   "exclude": ["test.ts", "**/*.spec.ts", "**/*.worker.ts", "**/test-utils/**"],
   "angularCompilerOptions": {
     "extendedDiagnostics": {

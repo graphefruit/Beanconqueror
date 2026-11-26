@@ -53,6 +53,15 @@ import { UIStorage } from '../uiStorage';
 const BACKUP_FILE_PATTERN =
   /^pre-import\/Beanconqueror_pre_import_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}Z(_imported)?\.zip$/;
 
+const MIGRATION_BACKUP_FILE_PATTERN =
+  /^pre-import\/Beanconqueror_pre_migration_UPDATE_16_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}Z\.zip$/;
+
+function migrationBackups(_device: Device): string[] {
+  return [..._device.directory.stored.keys()].filter((_path) =>
+    _path.startsWith('pre-import/Beanconqueror_pre_migration_'),
+  );
+}
+
 /** Ends the name of a backup of data an import had stored, unchanged since. */
 const UNCHANGED_IMPORT_ENDING = '_imported.zip';
 
@@ -2060,10 +2069,13 @@ describe('The backup before a start migration', () => {
     const before = storedData('own');
     const device = await startDevice(before);
 
-    expect(await device.helper.writeBackupBeforeMigration()).toBeTrue();
+    expect(
+      await device.helper.writeBackupBeforeMigration('UPDATE_16'),
+    ).toBeTrue();
 
-    const [file] = writtenBackups(device);
-    expect(file).toMatch(BACKUP_FILE_PATTERN);
+    expect(writtenBackups(device)).toEqual([]);
+    const [file] = migrationBackups(device);
+    expect(file).toMatch(MIGRATION_BACKUP_FILE_PATTERN);
     const saved = await readBackupFile(device, file);
     expect(saved.BREWS).toEqual(before.BREWS);
     expect(saved.BEANS).toEqual(before.BEANS);
@@ -2071,13 +2083,50 @@ describe('The backup before a start migration', () => {
     expect(device.uiAlert.showMessageWithDetails).not.toHaveBeenCalled();
   });
 
+  it('writes one backup for starts whose updates do not finish, and one more when another update is the first open one', async () => {
+    const device = await startDevice(storedData('own'));
+
+    for (let start = 0; start < 10; start++) {
+      expect(
+        await device.helper.writeBackupBeforeMigration('UPDATE_16'),
+      ).toBeTrue();
+    }
+    expect(migrationBackups(device).length).toBe(1);
+
+    expect(
+      await device.helper.writeBackupBeforeMigration('UPDATE_17'),
+    ).toBeTrue();
+    expect(migrationBackups(device).length).toBe(2);
+  });
+
+  it('keeps the backup before the data updates through several imports', async () => {
+    const before = storedData('own');
+    const device = await startDevice(before);
+    await device.helper.writeBackupBeforeMigration('UPDATE_16');
+    const [file] = migrationBackups(device);
+
+    for (const name of ['a', 'b', 'c', 'd']) {
+      await device.helper.importBackup(
+        { SETTINGS: [{ language: 'en' }], BREWS: entries(`tried-${name}`, 3) },
+        'import',
+      );
+      // A new millisecond, so the next backup gets a name of its own.
+      await new Promise((_resolve) => setTimeout(_resolve, 2));
+    }
+
+    expect(migrationBackups(device)).toEqual([file]);
+    expect((await readBackupFile(device, file)).BREWS).toEqual(before.BREWS);
+  });
+
   it('resolves false when the file cannot be written', async () => {
     const device = await startDevice(storedData('own'));
     device.directory.failing.write = true;
 
-    expect(await device.helper.writeBackupBeforeMigration()).toBeFalse();
+    expect(
+      await device.helper.writeBackupBeforeMigration('UPDATE_16'),
+    ).toBeFalse();
 
-    expect(writtenBackups(device)).toEqual([]);
+    expect([...device.directory.stored.keys()]).toEqual([]);
     expect(device.uiLog.error).toHaveBeenCalled();
     expect(device.uiAlert.showMessageWithDetails).toHaveBeenCalledOnceWith(
       'MIGRATION_BACKUP_FAILED',
@@ -2089,7 +2138,9 @@ describe('The backup before a start migration', () => {
     const device = await startDevice(storedData('own'));
     device.failingReads.count = 1;
 
-    expect(await device.helper.writeBackupBeforeMigration()).toBeFalse();
+    expect(
+      await device.helper.writeBackupBeforeMigration('UPDATE_16'),
+    ).toBeFalse();
 
     expect(device.directory.files.write).not.toHaveBeenCalled();
     expect(device.uiAlert.showMessageWithDetails).toHaveBeenCalledOnceWith(
@@ -2103,13 +2154,17 @@ describe('The backup before a start migration', () => {
     device.directory.failing.write = true;
     device.uiAlert.showMessageWithDetails.and.rejectWith(new Error('no alert'));
 
-    expect(await device.helper.writeBackupBeforeMigration()).toBeFalse();
+    expect(
+      await device.helper.writeBackupBeforeMigration('UPDATE_16'),
+    ).toBeFalse();
   });
 
   it('writes no file in the browser and lets the migration run', async () => {
     const device = await startDevice(storedData('own'), { fileSystem: false });
 
-    expect(await device.helper.writeBackupBeforeMigration()).toBeTrue();
+    expect(
+      await device.helper.writeBackupBeforeMigration('UPDATE_16'),
+    ).toBeTrue();
 
     expect(device.directory.files.write).not.toHaveBeenCalled();
   });
