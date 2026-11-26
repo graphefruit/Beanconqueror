@@ -16,6 +16,7 @@ import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
 import { StorageClass } from '../../../classes/storageClass';
+import { BREW_ACTION } from '../../../enums/brews/brewAction';
 import { BeanFunction } from '../../../pipes/bean/beanFunction';
 import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
@@ -23,7 +24,6 @@ import { FormatDatePipe } from '../../../pipes/formatDate';
 import { PreparationFunction } from '../../../pipes/preparation/preparationFunction';
 import { ToFixedPipe } from '../../../pipes/toFixed';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
-import { ShareService } from '../../../services/shareService/share-service.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
@@ -40,6 +40,8 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
+import { ActionsPopoverComponent } from '../../actions-popover/actions-popover.component';
+import { BrewShareComponent } from '../../brew-share/brew-share.component';
 import { BrewInformationComponent } from '../brew-information.component';
 
 describe('BrewInformationComponent', () => {
@@ -131,10 +133,6 @@ describe('BrewInformationComponent', () => {
           useValue: jasmine.createSpyObj('ModalController', ['create']),
         },
         { provide: UIHelper, useValue: uiHelper },
-        {
-          provide: ShareService,
-          useValue: jasmine.createSpyObj('ShareService', ['shareImage']),
-        },
         {
           provide: BrewTrackingService,
           useValue: jasmine.createSpyObj('BrewTrackingService', ['trackBrew']),
@@ -629,6 +627,32 @@ describe('BrewInformationComponent', () => {
       );
       expect(tracking.trackBrew).not.toHaveBeenCalled();
       expect(toast.showInfoToast).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('share as image', () => {
+    it('offers the picture in the menu and opens it with the brew', async () => {
+      const brew = makeBrew();
+      render(brew);
+      (TestBed.inject(UIBrewHelper) as any).fieldVisible = () => true;
+      const pick = spyOn(ActionsPopoverComponent, 'pick').and.resolveTo(
+        BREW_ACTION.SHARE,
+      );
+      const open = spyOn(BrewShareComponent, 'open').and.resolveTo();
+
+      await fixture.componentInstance.showBrewActions(new MouseEvent('click'));
+
+      const share = pick.calls
+        .mostRecent()
+        .args[1].items.find(
+          (item) =>
+            item.itemType === 'action' &&
+            item.role === (BREW_ACTION.SHARE as string),
+        );
+      expect(share).toEqual(
+        jasmine.objectContaining({ translationKey: 'SHARE_CARD.MENU' }),
+      );
+      expect(open).toHaveBeenCalledOnceWith(jasmine.anything(), brew);
     });
   });
 

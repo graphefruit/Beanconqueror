@@ -24,9 +24,34 @@ const UNCHANGED_IMPORT_SUFFIX = '_imported';
  */
 const UNFINISHED_SUFFIX = '.part';
 
-/** Only files with exactly this name are backups of this service. */
-const FILE_NAME_PATTERN =
-  /^Beanconqueror_pre_import_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}Z(_imported)?\.zip$/;
+const MIGRATION_FILE_NAME_PREFIX = 'Beanconqueror_pre_migration_';
+
+/** The time in UTC in the name of a backup, see fileTimestamp(). */
+const TIMESTAMP = /\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-\d{3}Z/;
+
+/**
+ * Only files with exactly this name are backups written before an import.
+ * The rotation (removeOldBackups) only ever deletes these.
+ */
+const FILE_NAME_PATTERN = new RegExp(
+  `^${FILE_NAME_PREFIX}${TIMESTAMP.source}(_imported)?\\.zip$`,
+);
+
+/**
+ * Only files with exactly this name are backups written before the data
+ * updates at a start; the name holds the first update that was still open.
+ */
+const MIGRATION_FILE_NAME_PATTERN = new RegExp(
+  `^${MIGRATION_FILE_NAME_PREFIX}(UPDATE_\\d+)_${TIMESTAMP.source}\\.zip$`,
+);
+
+/**
+ * Whether the file named `_name` is a backup written before the data
+ * updates. The app never deletes it.
+ */
+export function isMigrationBackup(_name: string): boolean {
+  return MIGRATION_FILE_NAME_PATTERN.test(_name);
+}
 
 /** Options of PreImportBackupService.write(). */
 export interface PreImportBackupWriteOptions {
@@ -128,10 +153,14 @@ function isBackupFile(_file: FileInfo): boolean {
   return FILE_NAME_PATTERN.test(_file.name);
 }
 
+function isAnyBackupFile(_name: string): boolean {
+  return FILE_NAME_PATTERN.test(_name) || isMigrationBackup(_name);
+}
+
 function isUnfinishedBackupFile(_file: FileInfo): boolean {
   return (
     _file.name.endsWith(UNFINISHED_SUFFIX) &&
-    FILE_NAME_PATTERN.test(
+    isAnyBackupFile(
       _file.name.substring(0, _file.name.length - UNFINISHED_SUFFIX.length),
     )
   );
@@ -143,10 +172,12 @@ function isUnchangedImport(_name: string): boolean {
 
 /** The names hold the time in UTC with fixed digits, so they sort by time. */
 function newestFirst(_a: FileInfo, _b: FileInfo): number {
-  if (_a.name === _b.name) {
+  const a = TIMESTAMP.exec(_a.name)?.[0] ?? '';
+  const b = TIMESTAMP.exec(_b.name)?.[0] ?? '';
+  if (a === b) {
     return 0;
   }
-  return _a.name < _b.name ? 1 : -1;
+  return a < b ? 1 : -1;
 }
 
 /**
@@ -184,7 +215,50 @@ export class PreImportBackupService {
   ): Promise<string> {
     const suffix = _options.unchangedImport ? UNCHANGED_IMPORT_SUFFIX : '';
     const time = fileTimestamp(_options.now ?? new Date());
-    const path = `${PRE_IMPORT_BACKUP_FOLDER}/${FILE_NAME_PREFIX}${time}${suffix}.zip`;
+    return this.writeComplete(
+      `${PRE_IMPORT_BACKUP_FOLDER}/${FILE_NAME_PREFIX}${time}${suffix}.zip`,
+      _zip,
+    );
+  }
+
+  /**
+   * Writes `_zip` as the backup before the data updates, of which `_update`
+   * is the first one still open, and resolves its path. Rejects when the
+   * file could not be written; it is written like those of write().
+   */
+  public async writeBeforeMigration(
+    _zip: Blob,
+    _update: string,
+    _now: Date = new Date(),
+  ): Promise<string> {
+    return this.writeComplete(
+      `${PRE_IMPORT_BACKUP_FOLDER}/${MIGRATION_FILE_NAME_PREFIX}${_update}_${fileTimestamp(_now)}.zip`,
+      _zip,
+    );
+  }
+
+  /**
+   * Whether a complete backup before the data updates, with `_update` as
+   * the first one still open, was written already, at an earlier start
+   * whose updates did not all finish. False when the backups cannot be
+   * listed, so one is written then; never rejects.
+   */
+  public async hasMigrationBackup(_update: string): Promise<boolean> {
+    try {
+      return (await this.files.list(PRE_IMPORT_BACKUP_FOLDER)).some(
+        (_file) =>
+          MIGRATION_FILE_NAME_PATTERN.exec(_file.name)?.[1] === _update,
+      );
+    } catch (ex) {
+      this.uiLog.error(
+        'PreImportBackupService - backups before the data updates could not be listed',
+        ex,
+      );
+      return false;
+    }
+  }
+
+  private async writeComplete(path: string, _zip: Blob): Promise<string> {
     const unfinished = `${path}${UNFINISHED_SUFFIX}`;
     await this.removeUnfinishedBackups();
     try {
@@ -282,14 +356,17 @@ export class PreImportBackupService {
     }
   }
 
-  /** The backups, newest first. None when they cannot be listed; never rejects. */
+  /**
+   * The backups before an import and before the data updates, newest first.
+   * None when they cannot be listed; never rejects.
+   */
   public async list(): Promise<FileInfo[]> {
     if (!this.files.isAvailable()) {
       return [];
     }
     try {
       return (await this.files.list(PRE_IMPORT_BACKUP_FOLDER))
-        .filter(isBackupFile)
+        .filter((_file) => isAnyBackupFile(_file.name))
         .sort(newestFirst);
     } catch (ex) {
       this.uiLog.error(

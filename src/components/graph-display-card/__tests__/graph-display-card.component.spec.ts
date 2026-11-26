@@ -1,15 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Platform } from '@ionic/angular';
-
 import { provideTranslateService } from '@ngx-translate/core';
 
 import { BrewFlow } from '../../../classes/brew/brewFlow';
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { Settings } from '../../../classes/settings/settings';
+import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
 import { ThemeService } from '../../../services/theme/theme.service';
-import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UILog } from '../../../services/uiLog';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UplotRenderer } from '../../brews/graph/uplot-renderer';
@@ -80,9 +78,8 @@ class HostComponent {
 describe('GraphDisplayCardComponent', () => {
   let fixture: ComponentFixture<HostComponent>;
   let host: HostComponent;
-  let capacitor: boolean;
   let dark: ReturnType<typeof signal<boolean>>;
-  let readInternalJSONFile: jasmine.Spy;
+  let readFlowProfile: jasmine.Spy;
   let logError: jasmine.Spy;
 
   function element(): HTMLElement {
@@ -122,19 +119,17 @@ describe('GraphDisplayCardComponent', () => {
   }
 
   beforeEach(() => {
-    capacitor = true;
     dark = signal(false);
-    readInternalJSONFile = jasmine
-      .createSpy('readInternalJSONFile')
+    readFlowProfile = jasmine
+      .createSpy('readFlowProfile')
       .and.callFake(() => Promise.resolve(flow()));
     logError = jasmine.createSpy('error');
     TestBed.configureTestingModule({
       imports: [HostComponent],
       providers: [
         provideTranslateService(),
-        { provide: Platform, useValue: { is: () => capacitor } },
+        { provide: GraphHelperService, useValue: { readFlowProfile } },
         { provide: ThemeService, useValue: { dark } },
-        { provide: UIFileHelper, useValue: { readInternalJSONFile } },
         { provide: UILog, useValue: { error: logError } },
         {
           provide: UISettingsStorage,
@@ -153,21 +148,12 @@ describe('GraphDisplayCardComponent', () => {
     create((h) => h.path.set('brews/flow.json'));
     await until(() => !!drawn());
 
-    expect(readInternalJSONFile).toHaveBeenCalledOnceWith('brews/flow.json');
+    expect(readFlowProfile).toHaveBeenCalledOnceWith('brews/flow.json');
     expect(drawn()).not.toBeNull();
     expect(chart().getAttribute('aria-label')).toBe('A11Y.FLOW_PROFILE_GRAPH');
     expect(chart().querySelector('.uplot').getAttribute('aria-hidden')).toBe(
       'true',
     );
-  });
-
-  it('draws the bundled sample profile in the browser', async () => {
-    capacitor = false;
-    create((h) => h.path.set('brews/flow.json'));
-    await until(() => !!drawn());
-
-    expect(readInternalJSONFile).not.toHaveBeenCalled();
-    expect(drawn()).not.toBeNull();
   });
 
   it('draws given flow data as wide as its container and 150 px high', async () => {
@@ -248,12 +234,12 @@ describe('GraphDisplayCardComponent', () => {
     });
     await settle();
 
-    expect(readInternalJSONFile).not.toHaveBeenCalled();
+    expect(readFlowProfile).not.toHaveBeenCalled();
     expect(mount).not.toHaveBeenCalled();
 
     host.width.set(300);
     await until(() => !!drawn());
-    expect(readInternalJSONFile).toHaveBeenCalledTimes(1);
+    expect(readFlowProfile).toHaveBeenCalledTimes(1);
     expect(drawn()).not.toBeNull();
   });
 
@@ -263,11 +249,11 @@ describe('GraphDisplayCardComponent', () => {
       h.path.set('brews/flow.json');
     });
     await settle();
-    expect(readInternalJSONFile).not.toHaveBeenCalled();
+    expect(readFlowProfile).not.toHaveBeenCalled();
 
     host.offset.set(0);
     await until(() => !!drawn());
-    expect(readInternalJSONFile).toHaveBeenCalledTimes(1);
+    expect(readFlowProfile).toHaveBeenCalledTimes(1);
     expect(drawn()).not.toBeNull();
   });
 
@@ -283,7 +269,7 @@ describe('GraphDisplayCardComponent', () => {
   });
 
   it('shows no graph and does not fail for a broken or empty profile', async () => {
-    readInternalJSONFile.and.rejectWith(new Error('not found'));
+    readFlowProfile.and.rejectWith(new Error('not found'));
     create((h) => h.path.set('brews/missing.json'));
     await settle();
 
@@ -332,7 +318,7 @@ describe('GraphDisplayCardComponent', () => {
 
   it('drops a read that a newer profile overtook', async () => {
     let finishFirst: (value: BrewFlow) => void;
-    readInternalJSONFile.and.returnValues(
+    readFlowProfile.and.returnValues(
       new Promise<BrewFlow>((resolve) => (finishFirst = resolve)),
       Promise.resolve(flow()),
     );

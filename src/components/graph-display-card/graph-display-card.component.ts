@@ -13,8 +13,6 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
-
 import {
   HistoryDataPoint,
   HistoryListingEntry,
@@ -23,8 +21,8 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { MeticulousDevice } from '../../classes/preparationDevice/meticulous/meticulousDevice';
+import { GraphHelperService } from '../../services/graphHelper/graph-helper.service';
 import { ThemeService } from '../../services/theme/theme.service';
-import { UIFileHelper } from '../../services/uiFileHelper';
 import { UILog } from '../../services/uiLog';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { FlowSeriesBuffer } from '../brews/graph/flow-series-buffer';
@@ -60,10 +58,9 @@ interface FlowSource {
   imports: [TranslatePipe],
 })
 export class GraphDisplayCardComponent {
-  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly graphHelper = inject(GraphHelperService);
   private readonly uiLog = inject(UILog);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
-  private readonly platform = inject(Platform);
   private readonly theme = inject(ThemeService);
   private readonly translate = inject(TranslateService);
 
@@ -206,7 +203,7 @@ export class GraphDisplayCardComponent {
   private async readFlow(source: FlowSource): Promise<BrewFlow | null> {
     try {
       if (source.path) {
-        return await this.readFlowProfile(source.path);
+        return await this.graphHelper.readFlowProfile(source.path);
       }
       if (source.data) {
         return source.data;
@@ -249,15 +246,5 @@ export class GraphDisplayCardComponent {
     } catch {
       // ignore - no graph is drawn
     }
-  }
-
-  private async readFlowProfile(path: string): Promise<BrewFlow> {
-    if (!this.platform.is('capacitor')) {
-      const dummyData = (
-        await import('../../assets/BeanconquerorFlowTestDataFourth.json')
-      ).default;
-      return dummyData as unknown as BrewFlow;
-    }
-    return (await this.uiFileHelper.readInternalJSONFile(path)) as BrewFlow;
   }
 }
