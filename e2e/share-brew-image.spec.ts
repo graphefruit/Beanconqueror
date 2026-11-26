@@ -50,7 +50,7 @@ test('a brew is shared as a picture of its card, in a colour of choice', async (
     page.getByRole('heading', { level: 1, name: 'Share brew' }),
   ).toBeVisible();
   await expect(picture(page)).toHaveAccessibleName(
-    /^Image of the brew: Ethiopia Yirgacheffe Natural\. .*Grinder: Comandante C40\. In\/Out \(BR\): 18gr \/ 300gr \(1 \/ 16\.67\)\..* BeanConqueror$/,
+    /^Image of the brew: [\d.]+ [\d:]+\. Ethiopia Yirgacheffe Natural\. .*Grinder: Comandante C40\. In\/Out \(BR\): 18gr \/ 300gr \(1 \/ 16\.67\)\..* BeanConqueror$/,
   );
   await expect(picture(page)).toContainText('BeanConqueror');
   expect(await aspect(picture(page))).toBeGreaterThanOrEqual(1.249);
