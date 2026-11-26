@@ -4,13 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@aparajita/capacitor-dark-mode>@capacitor/android': ^8.6.2
-  '@aparajita/capacitor-dark-mode>@capacitor/app': ^8.1.2
-  '@aparajita/capacitor-dark-mode>@capacitor/core': ^8.6.2
-  '@aparajita/capacitor-dark-mode>@capacitor/ios': ^8.6.2
-  '@aparajita/capacitor-dark-mode>@capacitor/status-bar': ^8.0.4
-
 patchedDependencies:
   '@angular/build@22.3.0':
     hash: f560f53bc1ad83f8bb4c85958b0cfabc1f01a7303249061a26b3c5dc2c7e952d
@@ -44,9 +37,6 @@ importers:
       '@angular/router':
         specifier: ^22.3.0
         version: 22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3)))(rxjs@7.8.2)
-      '@aparajita/capacitor-dark-mode':
-        specifier: ^6.0.0
-        version: 6.0.0
       '@awesome-cordova-plugins/android-permissions':
         specifier: ^9.7.0
         version: 9.7.0(@awesome-cordova-plugins/core@9.7.0(rxjs@7.8.2))(rxjs@7.8.2)
@@ -541,10 +531,6 @@ packages:
       '@angular/core': 22.3.0
       '@angular/platform-browser': 22.3.0
       rxjs: ^6.5.3 || ^7.4.0
-
-  '@aparajita/capacitor-dark-mode@6.0.0':
-    resolution: {integrity: sha512-/YwsSilGWnK6otokoMlraca8IydHKzqLAkUHzi3qPO5WjP2RDBqDbGeK/naVWw3iP0UKX4RnSshrUKxZThh6iw==}
-    engines: {node: '>=20.0.0'}
 
   '@awesome-cordova-plugins/android-permissions@9.7.0':
     resolution: {integrity: sha512-/F1dP1sL0eAi9HRX+sjnFKowlMYYuZFhxZ6vNgGZIlcjRHkW0HXWBDCVpK6DEk1mBgaKuI6GO99ziG0jPC9tEQ==}
@@ -5239,14 +5225,6 @@ snapshots:
       '@angular/platform-browser': 22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))
       rxjs: 7.8.2
       tslib: 2.9.1
-
-  '@aparajita/capacitor-dark-mode@6.0.0':
-    dependencies:
-      '@capacitor/android': 8.6.2(@capacitor/core@8.6.2)
-      '@capacitor/app': 8.1.2(@capacitor/core@8.6.2)
-      '@capacitor/core': 8.6.2
-      '@capacitor/ios': 8.6.2(@capacitor/core@8.6.2)
-      '@capacitor/status-bar': 8.0.4(@capacitor/core@8.6.2)
 
   '@awesome-cordova-plugins/android-permissions@9.7.0(@awesome-cordova-plugins/core@9.7.0(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
