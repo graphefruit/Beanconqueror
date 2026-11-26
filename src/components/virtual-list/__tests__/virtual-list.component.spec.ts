@@ -818,7 +818,9 @@ describe('VirtualListComponent', () => {
 
       // The fling ends 150ms after its last scroll event. A slow runner
       // can take that long between two of them, so the time stands still
-      // until the list rests.
+      // until the list rests. The end of the scroll before is waited for
+      // first: the held clock cannot cancel a timer started before it.
+      await new Promise((resolve) => setTimeout(resolve, 200));
       jasmine.clock().install();
       let held: number;
       try {
