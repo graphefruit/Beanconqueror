@@ -25,6 +25,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { Bean } from '../../../classes/bean/bean';
 import { Settings } from '../../../classes/settings/settings';
+import { StorageClass } from '../../../classes/storageClass';
 import { storedOrReported } from '../../../classes/storedOrReported';
 import { BeanFreezeInformationComponent } from '../../../components/beans/bean-freeze-information/bean-freeze-information.component';
 import { BeanGeneralInformationComponent } from '../../../components/beans/bean-general-information/bean-general-information.component';
@@ -45,6 +46,12 @@ import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIImage } from '../../../services/uiImage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
+import {
+  aloneInFrozenGroup,
+  hasBeanName,
+  needsFrozenId,
+} from '../../../stores/beans/bean-form-rules';
+import { hasFrozenInformation } from '../../../stores/beans/bean-rules';
 
 @Component({
   selector: 'beans-edit',
@@ -104,11 +111,15 @@ export class BeansEditComponent implements OnInit {
     );
     this.data = new Bean();
     this.data.initializeByObject(this.bean);
+    // The form edits the sorts in place; the stored bean keeps its own until saved.
+    this.data.bean_information = StorageClass.cloneData(
+      this.data.bean_information,
+    );
     this.initialBeanData = JSON.stringify(this.data);
   }
 
   public async editBean() {
-    if (this.__formValid()) {
+    if (hasBeanName(this.data)) {
       await this.__editBean();
     } else {
       await this.requiredFields.report(
@@ -132,24 +143,14 @@ export class BeansEditComponent implements OnInit {
     );
   }
 
-  private __formValid(): boolean {
-    let valid: boolean = true;
-    const name: string = this.data.name;
-    if (name === undefined || name.trim() === '') {
-      valid = false;
-    }
-
-    return valid;
-  }
-
   private async __editBean() {
     const originalFrozenGroupId = this.bean.frozenGroupId;
-    if (!this.data.frozenDate && !this.data.unfrozenDate) {
+    if (!hasFrozenInformation(this.data)) {
       this.data.frozenGroupId = '';
       this.data.frozenId = '';
       this.data.frozenStorageType = BEAN_FREEZING_STORAGE_ENUM.UNKNOWN;
     }
-    if (this.data.frozenDate && this.data.frozenId === '') {
+    if (needsFrozenId(this.data)) {
       this.data.frozenId = this.uiBeanHelper.generateFrozenId();
     }
     if (
@@ -162,15 +163,12 @@ export class BeansEditComponent implements OnInit {
     await this.uiImage.deleteRemovedPhotos(this.data);
 
     if (originalFrozenGroupId && !this.data.frozenGroupId) {
-      const remainingBeans = this.uiBeanStorage
-        .getAllEntries()
-        .filter(
-          (b) =>
-            b.frozenGroupId === originalFrozenGroupId &&
-            b.config.uuid !== this.data.config.uuid,
-        );
-      if (remainingBeans.length === 1) {
-        const lastBean = remainingBeans[0];
+      const lastBean = aloneInFrozenGroup<Bean>(
+        this.uiBeanStorage.getAllEntries(),
+        originalFrozenGroupId,
+        this.data.config.uuid,
+      );
+      if (lastBean) {
         lastBean.frozenGroupId = '';
         await this.uiBeanStorage.update(lastBean);
       }

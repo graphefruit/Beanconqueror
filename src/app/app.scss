@@ -552,6 +552,12 @@ ion-alert {
       --padding-end: 2.5%;
     }
 
+    // The tabs and search of a list, in the header, line up with the list.
+    ion-header .list-head {
+      padding-left: 2.5%;
+      padding-right: 2.5%;
+    }
+
     ion-footer {
       padding-left: 2.5%;
       padding-right: 2.5%;
@@ -584,7 +590,8 @@ ion-alert {
           --padding-end: var(--bq-content-inset);
         }
 
-        > ion-footer {
+        > ion-footer,
+        > ion-header .list-head {
           padding-left: var(--bq-content-inset);
           padding-right: var(--bq-content-inset);
         }

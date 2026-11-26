@@ -1,16 +1,16 @@
 import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
-import { suggestionField } from './support/beans';
 import { contrast, firstColour } from './support/colour';
 import { completeFirstRun } from './support/first-run';
 import { openFromProfile } from './support/profile';
 
 /**
  * The basic form controls stay operable by role and expose their state to
- * assistive technology: checkboxes, radios and switches report checked,
- * sliders move with the arrow keys, and text fields have a visible label and
- * announce a missing required value. In light and dark, every state of a
+ * assistive technology: checkboxes and radios report checked, sliders move
+ * with the arrow keys, and text fields have a visible label. The required
+ * bean name and the favourites switch of the bean filter are checked by
+ * their unit tests. In light and dark, every state of a
  * control stands out from its surroundings (WCAG 1.4.11, 3:1) and the choice
  * is never marked by colour alone.
  */
@@ -117,46 +117,6 @@ test('the add-bean form labels its fields and its rating slider follows the arro
   await expect(rating).toHaveAttribute('aria-valuetext', '2 of 5');
   await page.keyboard.press('ArrowLeft');
   await expect(rating).toHaveAttribute('aria-valuenow', '1');
-});
-
-test('leaving the required bean name empty is announced as an error', async ({
-  page,
-}) => {
-  await openAddBean(page);
-
-  const name = textField(page, /^Name/);
-  await expect(name).not.toHaveAttribute('aria-invalid', 'true');
-  await name.click();
-  await suggestionField(page, 'Roaster').click();
-
-  await expect(name).toHaveAttribute('aria-invalid', 'true');
-  await expect(name).toHaveAccessibleDescription(
-    'Please enter a name for these beans.',
-  );
-
-  await name.fill('Ethiopia Guji');
-  await suggestionField(page, 'Roaster').click();
-  await expect(name).not.toHaveAttribute('aria-invalid', 'true');
-});
-
-test('the favourites filter switch can be turned on and off', async ({
-  page,
-}) => {
-  await openAddBean(page);
-  await textField(page, /^Name/).fill('Ethiopia Guji');
-  await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
-
-  await page
-    .getByRole('button', { name: /filter/i })
-    .first()
-    .click();
-  const favourites = page.getByRole('switch', { name: 'Only favorites' });
-  await expect(favourites).not.toBeChecked();
-  await favourites.click();
-  await expect(favourites).toBeChecked();
-  await favourites.click();
-  await expect(favourites).not.toBeChecked();
 });
 
 for (const dark of [false, true]) {

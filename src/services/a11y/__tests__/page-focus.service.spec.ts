@@ -66,17 +66,22 @@ describe('PageFocusService', () => {
     return new Promise((resolve) => setTimeout(resolve));
   }
 
-  beforeEach(() => {
+  beforeEach(async () => {
     root = document.createElement('div');
     document.body.append(root);
     profile = screen('Profile', 'Settings');
     settingsLink = profile.querySelector('button');
     settings = screen('Settings', 'Back');
     show(settings, false);
-    const tabBar = document.createElement('ion-tab-bar');
+    const tabBar = document.createElement('ion-tab-bar') as HTMLElement & {
+      componentOnReady?: () => Promise<unknown>;
+    };
     homeTab = document.createElement('button');
     tabBar.append(homeTab);
     root.append(tabBar);
+    // Once another test has rendered Ionic's tab bar, its tabs can only take
+    // focus after it has rendered here, too.
+    await tabBar.componentOnReady?.();
     TestBed.inject(PageFocusService).start();
   });
 

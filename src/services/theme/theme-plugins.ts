@@ -6,6 +6,11 @@ import { Keyboard } from '@capacitor/keyboard';
 import { StatusBar } from '@capacitor/status-bar';
 import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
 
+import {
+  AndroidNativeCalls,
+  BCAndroidNativeCalls,
+} from '../../native/android-native-calls-plugin';
+
 /**
  * Native plugins the theme service talks to. Capacitor plugin proxies cannot
  * be spied on, so the service receives them through this token and unit tests
@@ -23,6 +28,7 @@ export interface ThemePlugins {
     typeof EdgeToEdge,
     'setStatusBarColor' | 'setNavigationBarColor'
   >;
+  androidNativeCalls: Pick<BCAndroidNativeCalls, 'setBackgroundColor'>;
   keyboard: Pick<typeof Keyboard, 'setStyle'>;
 }
 
@@ -34,6 +40,7 @@ export const THEME_PLUGINS = new InjectionToken<ThemePlugins>('THEME_PLUGINS', {
     statusBar: StatusBar,
     systemBars: SystemBars,
     edgeToEdge: EdgeToEdge,
+    androidNativeCalls: AndroidNativeCalls,
     keyboard: Keyboard,
   }),
 });

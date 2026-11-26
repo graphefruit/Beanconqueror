@@ -128,10 +128,9 @@ test('an espresso method replaces the amount of water by first drip and coffee b
     'Preparation method, Espresso Machine',
   );
 
+  // Which fields an espresso method shows is a component test of the brew
+  // field layout; the brew ratio moves to the beverage quantity.
   await expect(brewField(page, WATER)).toHaveCount(0);
-  await expect(brewField(page, 'First drip time')).toBeVisible();
-  await expect(page.getByText(/Coffee Brew Time:/)).toBeVisible();
-  // The brew ratio moves to the beverage quantity.
   await fillBrewField(page, 'Ground Coffee (gr)', '18');
   await fillBrewField(page, BEVERAGE, '36');
   await expect(brewField(page, BEVERAGE)).toHaveAccessibleName(
@@ -189,19 +188,6 @@ test('managed parameters hide and show fields in the brew form', async ({
   await expect(page.getByText('Grind Setting:', { exact: true })).toHaveCount(
     0,
   );
-});
-
-test('the first drip time of the global parameters only appears for espresso methods', async ({
-  page,
-}) => {
-  // It is switched on by default, but a V60 form does not show it.
-  await openBrewParameterPage(page, 'Manage parameters');
-  await expect(
-    page.getByRole('checkbox', { name: /^First drip time/ }),
-  ).toBeChecked();
-  await backToBrews(page);
-  await openAddBrew(page);
-  await expect(brewField(page, 'First drip time')).toHaveCount(0);
 });
 
 test('sorted parameters change the order of the brew form', async ({
