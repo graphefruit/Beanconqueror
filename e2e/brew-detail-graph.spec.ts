@@ -72,7 +72,8 @@ test('the brew details draw the graph, hide a line by its chip and maximize it',
   await expect(weight).toHaveAttribute('aria-pressed', 'false');
   await expect(graph).not.toHaveAccessibleName(/Weight \(g\)/);
 
-  await details.getByRole('button', { name: 'Maximize flow graph' }).click();
+  const maximize = details.getByRole('button', { name: 'Maximize flow graph' });
+  await maximize.click();
   const large = page.locator('app-graph-detail');
   await expect(
     large
@@ -88,6 +89,8 @@ test('the brew details draw the graph, hide a line by its chip and maximize it',
 
   await large.getByRole('button', { name: 'Close' }).click();
   await expect(large).toHaveCount(0);
+  // Keyboard and screen reader users go on where they left the details.
+  await expect(maximize).toBeFocused();
   await expect(graph.locator('.uplot canvas')).toBeVisible();
   expect(plotly).toEqual([]);
 });
