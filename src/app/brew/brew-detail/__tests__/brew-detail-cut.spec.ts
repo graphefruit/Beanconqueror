@@ -52,7 +52,7 @@ describe('BrewDetailComponent cut flow profile', () => {
     readFile.and.resolveTo(new BrewFlow());
     replaceFile = jasmine.createSpy('replaceInternalFileKeepingCopy');
     replaceFile.and.resolveTo();
-    restoreFile = jasmine.createSpy('restoreInternalFileCopy');
+    restoreFile = jasmine.createSpy('renameInternalFile');
     restoreFile.and.resolveTo();
     update = jasmine.createSpy('update');
     update.and.resolveTo(true);
@@ -102,7 +102,7 @@ describe('BrewDetailComponent cut flow profile', () => {
           useValue: {
             readInternalJSONFile: readFile,
             replaceInternalFileKeepingCopy: replaceFile,
-            restoreInternalFileCopy: restoreFile,
+            renameInternalFile: restoreFile,
           },
         },
         { provide: UIBrewStorage, useValue: { update } },

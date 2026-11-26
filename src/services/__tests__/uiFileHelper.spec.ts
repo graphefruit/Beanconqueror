@@ -328,6 +328,34 @@ describe('UIFileHelper', () => {
       expect((await namesIn('brews', Directory.Data)).length).toBe(2);
     });
 
+    it('replaces an older copy where copying refuses an existing file', async () => {
+      await fileHelper.replaceInternalFileKeepingCopy('first cut', PATH, COPY);
+      // As on iOS: copying onto a file that exists fails.
+      spyOn(FilesystemWeb.prototype, 'copy').and.callFake(async (options) => {
+        const name = options.to.split('/').pop();
+        if ((await namesIn('brews', Directory.Data)).includes(name)) {
+          throw new Error('file exists');
+        }
+        const { data } = await Filesystem.readFile({
+          path: options.from,
+          directory: options.directory,
+          encoding: Encoding.UTF8,
+        });
+        await Filesystem.writeFile({
+          path: options.to,
+          directory: options.toDirectory,
+          data,
+          encoding: Encoding.UTF8,
+        });
+        return { uri: options.to };
+      });
+
+      await fileHelper.replaceInternalFileKeepingCopy('second cut', PATH, COPY);
+
+      expect(await fileHelper.readInternalFileAsText(PATH)).toBe('second cut');
+      expect(await fileHelper.readInternalFileAsText(COPY)).toBe('first cut');
+    });
+
     it('leaves the file as it was when the copy cannot be made', async () => {
       spyOn(FilesystemWeb.prototype, 'copy').and.rejectWith(
         new Error('disk full'),
@@ -364,18 +392,8 @@ describe('UIFileHelper', () => {
       ).toBeRejectedWithError('rename failed');
       expect(await fileHelper.readInternalFileAsText(PATH)).toBe('original');
       expect(await namesIn('brews', Directory.Data)).toEqual([
-        'a_flow_profile.before-cut.json',
         'a_flow_profile.json',
       ]);
-    });
-
-    it('puts a copy back in place of the file', async () => {
-      await fileHelper.replaceInternalFileKeepingCopy('cut', PATH, COPY);
-
-      await fileHelper.restoreInternalFileCopy(COPY, PATH);
-
-      expect(await fileHelper.readInternalFileAsText(PATH)).toBe('original');
-      expect(await fileHelper.readInternalFileAsText(COPY)).toBe('original');
     });
   });
 

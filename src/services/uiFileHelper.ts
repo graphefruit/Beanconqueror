@@ -354,7 +354,7 @@ export class UIFileHelper extends InstanceClass {
    * Replaces the text file at `path` as replaceFileFromBlob does and keeps the
    * file from before at `copyPath`, in place of an older copy. Rejects
    * without touching `path` when the copy cannot be made. When the replacing
-   * fails and leaves no file at `path`, the copy is put back there.
+   * fails and leaves no file at `path`, the copy is moved back there.
    */
   public async replaceInternalFileKeepingCopy(
     text: string,
@@ -373,22 +373,13 @@ export class UIFileHelper extends InstanceClass {
       );
     } catch (error) {
       if (!(await this.fileExists({ path, directory }))) {
-        await this.restoreInternalFileCopy(copyPath, path).catch(
-          () => undefined,
-        );
+        // When moving fails too, the file from before stays at copyPath.
+        await this.renameInternalFile(copyPath, path)
+          .then(() => this.deleteFile(unfinishedPath, directory))
+          .catch(() => undefined);
       }
       throw error;
     }
-  }
-
-  /** Puts the copy at `copyPath` back at `path`, in place of the file there. */
-  public async restoreInternalFileCopy(
-    copyPath: string,
-    path: string,
-  ): Promise<void> {
-    const unfinishedPath = path + '.part';
-    await this.__copyInternalFile(copyPath, unfinishedPath);
-    await this.renameInternalFile(unfinishedPath, path);
   }
 
   private async __copyInternalFile(from: string, to: string): Promise<void> {

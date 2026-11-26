@@ -663,7 +663,9 @@ export class BrewDetailComponent {
     if (!(await this.uiBrewStorage.update(updatedData))) {
       if (writesFile) {
         try {
-          await this.uiFileHelper.restoreInternalFileCopy(beforeCutPath, path);
+          // A move, not a copy: it needs no space on a full disk, where
+          // saving the brew most likely failed.
+          await this.uiFileHelper.renameInternalFile(beforeCutPath, path);
         } catch (ex) {
           this.uiLog.error(
             'Failed to restore cut flow profile: ' + ex?.message,
