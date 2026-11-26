@@ -19,6 +19,7 @@ import {
   RangeNameDirective,
   RangeValue,
   rangeValueText,
+  steppedRangeValue,
 } from '../range-name.directive';
 
 /**
@@ -33,12 +34,18 @@ import {
     [rangeLabel]="label()"
     [rangeUnit]="unit()"
     [rangeOfMax]="ofMax()"
+    [rangeKeyStep]="keyStep()"
+    [rangeSummary]="summary()"
   />`,
 })
 class HostComponent {
   public readonly label = signal('Bildqualität');
   public readonly unit = signal('%');
   public readonly ofMax = signal(false);
+  public readonly keyStep = signal<number | undefined>(undefined);
+  public readonly summary = signal<
+    ((value: { lower: number; upper: number }) => string) | undefined
+  >(undefined);
 }
 
 function knob(value: number, extraPart = ''): string {
@@ -56,7 +63,12 @@ class FakeLiveRegion implements LiveRegion {
 
 describe('RangeNameDirective', () => {
   let fixture: ComponentFixture<HostComponent>;
-  let range: HTMLElement & { step?: number; max?: number };
+  let range: HTMLElement & {
+    step?: number;
+    min?: number;
+    max?: number;
+    value?: RangeValue;
+  };
   let liveRegion: FakeLiveRegion;
 
   async function create(knobs: string, step = 1): Promise<void> {
@@ -300,6 +312,123 @@ describe('RangeNameDirective', () => {
     });
   });
 
+  describe('with a key step finer than the touch step', () => {
+    let events: string[];
+
+    beforeEach(async () => {
+      fixture = TestBed.createComponent(HostComponent);
+      fixture.componentInstance.keyStep.set(0.1);
+      fixture.componentInstance.unit.set('s');
+      fixture.componentInstance.summary.set(
+        ({ lower, upper }) => `Dauer ${+(upper - lower).toFixed(3)}`,
+      );
+      range = (fixture.nativeElement as HTMLElement).querySelector(
+        'test-range',
+      );
+      Object.assign(range, {
+        step: 0.001,
+        min: 0,
+        max: 30.025,
+        value: { lower: 0, upper: 30.025 },
+      });
+      range.attachShadow({ mode: 'open' }).innerHTML =
+        knob(0, 'knob-handle-lower') + knob(30.025, 'knob-handle-upper');
+      await settle();
+      events = [];
+      for (const type of ['ionKnobMoveStart', 'ionChange', 'ionKnobMoveEnd']) {
+        range.addEventListener(type, () => events.push(type));
+      }
+    });
+
+    function press(key: string, which: 0 | 1): KeyboardEvent {
+      const event = new KeyboardEvent('keydown', {
+        key,
+        bubbles: true,
+        composed: true,
+        cancelable: true,
+      });
+      knobs()[which].dispatchEvent(event);
+      return event;
+    }
+
+    it('moves a knob by the key step and says the summary with its value', () => {
+      const event = press('ArrowRight', 0);
+
+      expect(event.defaultPrevented).toBe(true);
+      expect(range.value).toEqual({ lower: 0.1, upper: 30.025 });
+      expect(events).toEqual([
+        'ionKnobMoveStart',
+        'ionChange',
+        'ionKnobMoveEnd',
+      ]);
+      expect(knobs()[0].getAttribute('aria-valuenow')).toBe('0.1');
+      expect(knobs()[0].getAttribute('aria-valuetext')).toBe(
+        '0,1 s, Dauer 29.925',
+      );
+      expect(knobs()[1].getAttribute('aria-valuetext')).toBe(
+        '30,025 s, Dauer 29.925',
+      );
+    });
+
+    it('moves ten key steps with PageUp and PageDown', () => {
+      press('PageDown', 1);
+      expect(range.value).toEqual({ lower: 0, upper: 29.025 });
+
+      press('PageUp', 0);
+      expect(range.value).toEqual({ lower: 1, upper: 29.025 });
+    });
+
+    it('leaves other keys to the knob', () => {
+      const event = press('Home', 0);
+
+      expect(event.defaultPrevented).toBe(false);
+      expect(events).toEqual([]);
+    });
+
+    it('leaves the arrows to Ionic without a key step', async () => {
+      fixture.componentInstance.keyStep.set(undefined);
+      await settle();
+
+      const event = press('ArrowLeft', 1);
+
+      expect(event.defaultPrevented).toBe(false);
+      expect(range.value).toEqual({ lower: 0, upper: 30.025 });
+    });
+  });
+
+  it('says the summary of a range after each knob value', async () => {
+    await create(
+      knob(1.5, 'knob-handle-lower') + knob(3, 'knob-handle-upper'),
+      0.5,
+    );
+    fixture.componentInstance.summary.set(
+      ({ lower, upper }) => `Länge ${upper - lower}`,
+    );
+    await settle();
+
+    expect(knobs().map((each) => each.getAttribute('aria-valuetext'))).toEqual([
+      '1,5 %, Länge 1.5',
+      '3 %, Länge 1.5',
+    ]);
+  });
+
+  it('says the summary while a knob of a range is dragged', async () => {
+    await create(
+      knob(1.5, 'knob-handle-lower') + knob(3, 'knob-handle-upper'),
+      0.5,
+    );
+    fixture.componentInstance.summary.set(
+      ({ lower, upper }) => `Länge ${upper - lower}`,
+    );
+    await settle();
+
+    await startDrag({ lower: 1.5, upper: 3 });
+    fire('ionInput', { lower: 1.5, upper: 4 });
+    fire('ionKnobMoveEnd', { lower: 1.5, upper: 4 });
+
+    expect(liveRegion.heard).toEqual(['bis 4 %, Länge 2.5']);
+  });
+
   describe('with rangeOfMax, as on a rating', () => {
     async function createRating(value: number, max?: number): Promise<void> {
       fixture = TestBed.createComponent(HostComponent);
@@ -459,6 +588,42 @@ describe('movedKnob', () => {
     const before = { lower: 2, upper: 4 };
     expect(movedKnob(before, { lower: 4, upper: 5 })).toBe('upper');
     expect(movedKnob(before, { lower: 1, upper: 2 })).toBe('lower');
+  });
+});
+
+describe('steppedRangeValue', () => {
+  const bounds = { min: 0, max: 30.025, step: 0.001 };
+
+  it('moves the given knob and rounds to the step', () => {
+    const range = { lower: 0.2, upper: 30.025 };
+    expect(steppedRangeValue(range, 'lower', 0.1, bounds)).toEqual({
+      lower: 0.3,
+      upper: 30.025,
+    });
+    expect(steppedRangeValue(range, 'upper', -0.1, bounds)).toEqual({
+      lower: 0.2,
+      upper: 29.925,
+    });
+  });
+
+  it('stops at the ends and at the other knob', () => {
+    expect(
+      steppedRangeValue({ lower: 0.05, upper: 30 }, 'lower', -0.1, bounds),
+    ).toEqual({ lower: 0, upper: 30 });
+    expect(
+      steppedRangeValue({ lower: 1, upper: 30 }, 'upper', 1, bounds),
+    ).toEqual({ lower: 1, upper: 30.025 });
+    expect(
+      steppedRangeValue({ lower: 5, upper: 5.05 }, 'lower', 0.1, bounds),
+    ).toEqual({ lower: 5.05, upper: 5.05 });
+    expect(
+      steppedRangeValue({ lower: 5, upper: 5.05 }, 'upper', -0.1, bounds),
+    ).toEqual({ lower: 5, upper: 5 });
+  });
+
+  it('moves a single knob', () => {
+    expect(steppedRangeValue(30, 'lower', 1, bounds)).toBe(30.025);
+    expect(steppedRangeValue(3, 'upper', -0.1, bounds)).toBe(2.9);
   });
 });
 

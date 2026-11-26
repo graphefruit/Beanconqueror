@@ -16,13 +16,25 @@ import { TranslateService } from '@ngx-translate/core';
 import { Announcer } from '../services/a11y/announcer.service';
 
 type RangeElement = HTMLElement & {
+  value?: RangeValue;
   step?: number;
+  min?: number | string;
   max?: number | string;
   componentOnReady?: () => Promise<unknown>;
 };
 
 /** The value of an ion-range: a number, or both ends with two knobs. */
 export type RangeValue = number | { lower: number; upper: number };
+
+/** Keys that move a knob by key steps, and by how many. */
+const KEY_STEPS: Readonly<Record<string, number>> = {
+  ArrowRight: 1,
+  ArrowUp: 1,
+  ArrowLeft: -1,
+  ArrowDown: -1,
+  PageUp: 10,
+  PageDown: -10,
+};
 
 type KnobMoveEvent = CustomEvent<{ value: RangeValue }>;
 
@@ -53,6 +65,27 @@ export function movedKnob(
   const old =
     typeof before === 'number' ? [before] : [before.lower, before.upper];
   return old.includes(after.lower) ? 'upper' : 'lower';
+}
+
+/**
+ * The value after `knob` moved by `delta`, rounded to the decimals of `step`.
+ * A knob stops at the other knob and at the ends of the range.
+ */
+export function steppedRangeValue(
+  value: RangeValue,
+  knob: 'lower' | 'upper',
+  delta: number,
+  bounds: { min: number; max: number; step: number },
+): RangeValue {
+  const decimals = decimalsOf(bounds.step);
+  const move = (from: number, min: number, max: number) =>
+    Math.min(max, Math.max(min, Number((from + delta).toFixed(decimals))));
+  if (typeof value === 'number') {
+    return move(value, bounds.min, bounds.max);
+  }
+  return knob === 'lower'
+    ? { ...value, lower: move(value.lower, bounds.min, value.upper) }
+    : { ...value, upper: move(value.upper, value.lower, bounds.max) };
 }
 
 /** Decimal places of `step`, so 0.05 gives 2 and 1 gives 0. */
@@ -121,6 +154,14 @@ export class RangeNameDirective {
   public readonly rangeUnit = input<string>('');
   /** Says the value against the maximum, e.g. "4 of 5" on a rating. */
   public readonly rangeOfMax = input(false, { transform: booleanAttribute });
+  /**
+   * What an arrow key moves a knob by, ten of them for PageUp/PageDown, when
+   * the range's own step is too fine for the keyboard.
+   */
+  public readonly rangeKeyStep = input<number>();
+  /** Said after the value of a two-knob range, e.g. what the range gives. */
+  public readonly rangeSummary =
+    input<(value: { lower: number; upper: number }) => string>();
 
   private readonly rendered = signal(false);
   private readonly language = toSignal(this.translate.onLangChange);
@@ -166,6 +207,11 @@ export class RangeNameDirective {
       listen('ionKnobMoveStart', (event) => this.onKnobMoveStart(event));
       listen('ionInput', (event) => this.onInput(event));
       listen('ionKnobMoveEnd', (event) => this.onKnobMoveEnd(event));
+      // Before the knob's own handler, which steps by the range's step.
+      this.host.addEventListener('keydown', (event) => this.onKeyDown(event), {
+        capture: true,
+        signal: listening.signal,
+      });
     });
     destroyRef.onDestroy(() => {
       observer?.disconnect();
@@ -177,11 +223,44 @@ export class RangeNameDirective {
       this.rangeLabel();
       this.rangeUnit();
       this.rangeOfMax();
+      this.rangeSummary();
       this.language();
       if (this.rendered()) {
         this.describeKnobs();
       }
     });
+  }
+
+  /** Moves the focused knob by key steps, with the events of an Ionic step. */
+  private onKeyDown(event: KeyboardEvent): void {
+    const keyStep = this.rangeKeyStep();
+    const steps = KEY_STEPS[event.key];
+    const knob = event.composedPath()[0];
+    if (!keyStep || !steps || !(knob instanceof HTMLElement)) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    const before = this.host.value ?? 0;
+    const after = steppedRangeValue(
+      before,
+      knob.part.contains('knob-handle-upper') ? 'upper' : 'lower',
+      steps * keyStep,
+      {
+        min: Number(this.host.min ?? 0),
+        max: Number(this.host.max ?? 100),
+        step: this.host.step,
+      },
+    );
+    const emit = (type: string) =>
+      this.host.dispatchEvent(
+        new CustomEvent(type, { detail: { value: after } }),
+      );
+    emit('ionKnobMoveStart');
+    // Ionic emits ionInput for the new value.
+    this.host.value = after;
+    emit('ionChange');
+    emit('ionKnobMoveEnd');
   }
 
   private onKnobMoveStart(event: KnobMoveEvent): void {
@@ -263,14 +342,26 @@ export class RangeNameDirective {
       this.dragKnob = movedKnob(this.dragValue, value);
       this.dragValue = value;
     }
-    return String(
-      this.translate.instant(
-        this.dragKnob === 'upper'
-          ? 'A11Y.RANGE_TO_VALUE'
-          : 'A11Y.RANGE_FROM_VALUE',
-        { value: say(value[this.dragKnob]) },
+    return this.withSummary(
+      String(
+        this.translate.instant(
+          this.dragKnob === 'upper'
+            ? 'A11Y.RANGE_TO_VALUE'
+            : 'A11Y.RANGE_FROM_VALUE',
+          { value: say(value[this.dragKnob]) },
+        ),
       ),
+      value,
     );
+  }
+
+  /** `text`, followed by the summary of a two-knob `value` if there is one. */
+  private withSummary(
+    text: string,
+    value: { lower: number; upper: number } | undefined,
+  ): string {
+    const summary = value ? this.rangeSummary()?.(value) : undefined;
+    return summary ? `${text}, ${summary}` : text;
   }
 
   /** What a screen reader says for a knob at `value`, e.g. "80 %" or "4 of 5". */
@@ -307,6 +398,18 @@ export class RangeNameDirective {
       this.host.shadowRoot?.querySelectorAll<HTMLElement>('[role="slider"]') ??
       [];
     const label = this.rangeLabel()?.trim();
+    let both: { lower: number; upper: number } | undefined;
+    if (typeof value === 'object') {
+      both = value;
+    } else if (knobs.length === 2) {
+      const [lower, upper] = [...knobs]
+        .map((knob) => Number(knob.getAttribute('aria-valuenow')))
+        .sort((a, b) => a - b);
+      both =
+        Number.isFinite(lower) && Number.isFinite(upper)
+          ? { lower, upper }
+          : undefined;
+    }
     for (const knob of knobs) {
       if (label) {
         const name =
@@ -340,7 +443,7 @@ export class RangeNameDirective {
       }
       const knobValue = Number(knob.getAttribute('aria-valuenow'));
       if (Number.isFinite(knobValue)) {
-        const text = this.valueText(knobValue);
+        const text = this.withSummary(this.valueText(knobValue), both);
         if (knob.getAttribute('aria-valuetext') !== text) {
           knob.setAttribute('aria-valuetext', text);
         }
