@@ -40,9 +40,12 @@ public final class NativeLog {
   static final long MAX_BYTES = 1024 * 1024;
   static final int KEEP_FILES = 3;
   static final Pattern FILE_NAME = Pattern.compile("^native_\\d{8}_\\d{9}\\.log$");
+  // Per packet, per scan result or per heartbeat (scales write about once a second).
   private static final String[] NOISE = {
     "onCharacteristicChanged", "onCharacteristicRead", "onCharacteristicWrite", "Queuing Command",
     "Processing Command", "Processing Complete", "Command Queue is empty", "--------- beginning of",
+    "Peripheral: Read ", "Peripheral: Write ", "BLEPlugin: Scan Result", "BLEPlugin: action = read",
+    "BLEPlugin: action = write",
   };
   private static final long[] RESTART_DELAYS_MS = {1000, 5000, 30000};
   private static boolean started;
@@ -94,7 +97,8 @@ public final class NativeLog {
     // Newest first; logged oldest first so the file reads in order.
     for (int i = exits.size() - 1; i >= 0; i--) {
       ApplicationExitInfo exit = exits.get(i);
-      if (exit.getTimestamp() > last) {
+      // The WebView's sandbox processes report their own exits under our package.
+      if (exit.getTimestamp() > last && app.getPackageName().equals(exit.getProcessName())) {
         Log.println(exitLevel(exit.getReason()), TAG, "exit " + exit);
         newest = Math.max(newest, exit.getTimestamp());
       }
@@ -126,7 +130,7 @@ public final class NativeLog {
             }
           }
         } catch (IOException e) {
-          Log.w(OWN_TAG, "write failed", e);
+          Log.w(OWN_TAG, "write failed: " + e);
         }
       }
     } finally {
@@ -175,6 +179,7 @@ public final class NativeLog {
     private Writer writer;
     private String day;
     private long bytes;
+    private boolean failed;
 
     Sink(File dir) {
       this.dir = dir;
@@ -188,9 +193,9 @@ public final class NativeLog {
       try {
         writer.write(line);
         writer.write('\n');
-        bytes += line.length() + 1;
+        bytes += line.getBytes(StandardCharsets.UTF_8).length + 1;
       } catch (IOException e) {
-        close();
+        fail();
         throw e;
       }
     }
@@ -200,7 +205,7 @@ public final class NativeLog {
         try {
           writer.flush();
         } catch (IOException e) {
-          close();
+          fail();
           throw e;
         }
       }
@@ -217,6 +222,12 @@ public final class NativeLog {
       }
     }
 
+    /** The file that failed may stay broken, so the next line goes to a new one. */
+    private void fail() {
+      close();
+      failed = true;
+    }
+
     private void open(long now, String today) throws IOException {
       close();
       if (!dir.isDirectory() && !dir.mkdirs()) {
@@ -224,10 +235,12 @@ public final class NativeLog {
       }
       String[] names = nativeFiles();
       File file = names.length > 0 ? new File(dir, names[names.length - 1]) : null;
-      if (file == null || !file.getName().startsWith("native_" + today) || file.length() >= MAX_BYTES) {
+      if (file == null || failed || !file.getName().startsWith("native_" + today) || file.length() >= MAX_BYTES) {
         file = new File(dir, "native_" + new SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.ROOT).format(new Date(now)) + ".log");
       }
+      failed = true;
       writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8));
+      failed = false;
       day = today;
       bytes = file.length();
       String[] all = nativeFiles();

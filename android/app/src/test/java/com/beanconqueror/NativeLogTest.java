@@ -4,6 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import android.app.ApplicationExitInfo;
 import android.util.Log;
@@ -93,6 +94,41 @@ public class NativeLogTest {
   }
 
   @Test
+  public void startsNewFileAfterWriteFailure() throws IOException {
+    File dir = tmp.getRoot();
+    File broken = new File(dir, "native_20261126_090000000.log");
+    assertTrue(broken.mkdir());
+    NativeLog.Sink sink = new NativeLog.Sink(dir);
+    try {
+      sink.write("lost", at(26, 10));
+      fail("expected the broken file to fail");
+    } catch (IOException expected) {
+      // The sink rethrows so the caller can report it.
+    }
+    sink.write("kept", at(26, 10));
+    sink.close();
+
+    String[] names = nativeFiles(dir);
+    assertEquals(2, names.length);
+    assertEquals("kept\n", new String(Files.readAllBytes(new File(dir, names[1]).toPath()), StandardCharsets.UTF_8));
+  }
+
+  @Test
+  public void countsBytesNotCharacters() throws IOException {
+    File dir = tmp.getRoot();
+    char[] chunk = new char[32 * 1024];
+    Arrays.fill(chunk, '\u00e4');
+    NativeLog.Sink sink = new NativeLog.Sink(dir);
+    for (int i = 0; i < 16; i++) {
+      sink.write(new String(chunk), at(26, 10));
+    }
+    sink.write("next", at(26, 11));
+    sink.close();
+
+    assertEquals(2, nativeFiles(dir).length);
+  }
+
+  @Test
   public void keepsOnlyNewestNativeFilesAndLeavesJsLogs() throws IOException {
     File dir = tmp.getRoot();
     File jsLog = new File(dir, "log_20261101_100000000.jsonl");
@@ -114,6 +150,12 @@ public class NativeLogTest {
     assertTrue(NativeLog.isNoise("2026-11-26 10:15:03.123 +0100  1234  1250 D Peripheral: onCharacteristicChanged 0000ffe1"));
     assertTrue(NativeLog.isNoise("2026-11-26 10:15:03.123 +0100  1234  1250 D Peripheral: Queuing Command Write"));
     assertTrue(NativeLog.isNoise("--------- beginning of main"));
+    assertTrue(NativeLog.isNoise("2026-11-26 10:15:03.123 +0100  1234  1250 D Peripheral: Write No Response 0000fff2"));
+    assertTrue(NativeLog.isNoise("2026-11-26 10:15:03.123 +0100  1234  1250 D Peripheral: Write 0000fff2"));
+    assertTrue(NativeLog.isNoise("2026-11-26 10:15:03.123 +0100  1234  1250 W BLEPlugin: Scan Result"));
+    assertTrue(NativeLog.isNoise("2026-11-26 10:15:03.123 +0100  1234  1250 D BLEPlugin: action = writeWithoutResponse"));
+    assertFalse(NativeLog.isNoise("2026-11-26 10:15:03.123 +0100  1234  1250 D BLEPlugin: action = connect"));
+    assertFalse(NativeLog.isNoise("2026-11-26 10:15:03.123 +0100  1234  1250 D Peripheral: Register Notify 0000fff4"));
     assertFalse(NativeLog.isNoise("2026-11-26 10:15:03.123 +0100  1234  1250 D Peripheral: onConnectionStateChange CONNECTED"));
     assertFalse(NativeLog.isNoise("2026-11-26 10:15:03.123 +0100  1234  1250 D Peripheral: mtu=247, status=0"));
   }
