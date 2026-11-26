@@ -21,9 +21,9 @@ interface Entry {
 @Component({
   selector: 'graph-display-card',
   template: '<div style="height: 100px"></div>',
+  host: { style: 'display: block' },
 })
 class GraphStubComponent {
-  public readonly chartWidth = input<number>();
   public readonly meticulousHistoryData = input<unknown>();
   public readonly meticulousDevice = input<unknown>();
 }
@@ -180,13 +180,16 @@ describe('BrewModalImportShotMeticulousComponent', () => {
     expect(component.history.length).toBe(2 * PAGE);
   });
 
-  it('draws the charts as wide as an entry', async () => {
+  it('keeps the charts within an entry', async () => {
     getHistory.and.callFake(() => answer(page(2)));
     await open();
 
     const item = fixture.nativeElement.querySelector('ion-item') as HTMLElement;
-    expect(item.offsetWidth).toBeGreaterThan(50);
-    expect(component.chartWidth()).toBe(item.offsetWidth - 50);
+    const chart = item
+      .querySelector('graph-display-card')
+      .getBoundingClientRect();
+    expect(chart.width).toBeGreaterThan(50);
+    expect(chart.right).toBeLessThanOrEqual(item.getBoundingClientRect().right);
   });
 
   it('tells when the shots cannot be read', async () => {
@@ -279,7 +282,6 @@ describe('BrewModalImportShotMeticulousComponent', () => {
         const item = fixture.nativeElement.querySelector(
           'ion-item',
         ) as HTMLElement;
-        expect(component.chartWidth()).toBe(item.offsetWidth - 50);
         expect(item.getBoundingClientRect().right).toBeLessThanOrEqual(
           element.getBoundingClientRect().left + element.clientWidth,
         );

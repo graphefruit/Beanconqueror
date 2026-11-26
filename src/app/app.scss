@@ -1160,6 +1160,16 @@ ion-chip.trace-chip.trace-active {
   }
 }
 
+// A graph that opens its large view: a plain button around the picture.
+.graph-preview-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+}
+
 .no-overflow-ellipsis {
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1287,7 +1297,8 @@ $bq-focus-double-ring:
   ion-input.has-focus,
   ion-textarea.has-focus,
   ion-chip:focus-visible,
-  ion-icon[role='button']:focus-visible {
+  ion-icon[role='button']:focus-visible,
+  .graph-preview-button:focus-visible {
     @include bq-focus-outline;
   }
 

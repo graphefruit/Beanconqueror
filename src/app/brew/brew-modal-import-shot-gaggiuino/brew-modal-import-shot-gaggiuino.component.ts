@@ -1,11 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   inject,
   Input,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -76,9 +74,6 @@ export class BrewModalImportShotGaggiuinoComponent implements OnInit {
   public history: Array<GaggiuinoShotData> = [];
   public readonly entryKey = (entry: GaggiuinoShotData): number => entry.id;
 
-  @ViewChild('ionItemEl', { read: ElementRef, static: false })
-  public ionItemEl: ElementRef;
-
   public ngOnInit() {
     this.readHistory();
   }
@@ -117,13 +112,6 @@ export class BrewModalImportShotGaggiuinoComponent implements OnInit {
     }
     /**We need to grab all data before we can push it else the virtual scrolling has issues **/
     this.history = alldatatoPush;
-  }
-
-  public getElementOffsetWidth() {
-    if (this.ionItemEl?.nativeElement?.offsetWidth) {
-      return this.ionItemEl?.nativeElement?.offsetWidth - 50;
-    }
-    return 0;
   }
 
   public dismiss(): void {
