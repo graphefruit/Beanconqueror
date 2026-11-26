@@ -1117,6 +1117,7 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
     for (const update of UPDATES) {
       expect(version.checkIfDataVersionWasUpdated(update)).toBeFalse();
     }
+    expect(saveVersion).not.toHaveBeenCalled();
 
     backedUp = true;
     calls = [];

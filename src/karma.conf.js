@@ -40,6 +40,7 @@ const NEW_CODE = [
   'src/services/beanUsage/**',
   'src/services/brewReferences/**',
   'src/services/changeTracking/**',
+  'src/services/dataUpdates/**',
   'src/services/deletionJournal/**',
   'src/services/deviceIdentity/**',
   'src/services/documentLanguage/**',

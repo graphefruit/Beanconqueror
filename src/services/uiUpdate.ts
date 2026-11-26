@@ -21,6 +21,10 @@ import { UpdatePopoverComponent } from '../popover/update-popover/update-popover
 import { BrewReferencesService } from './brewReferences/brew-references.service';
 import { ChangeTrackingMigrationService } from './changeTracking/change-tracking-migration.service';
 import { DuplicateEntriesMigrationService } from './changeTracking/duplicate-entries-migration.service';
+import {
+  DATA_UPDATES,
+  isBackedUpBefore,
+} from './dataUpdates/data-update-rules';
 import { UIAlert } from './uiAlert';
 import { UIBeanStorage } from './uiBeanStorage';
 import { UIBrewStorage } from './uiBrewStorage';
@@ -33,14 +37,6 @@ import { UIPreparationStorage } from './uiPreparationStorage';
 import { UISettingsStorage } from './uiSettingsStorage';
 import { UIStorage } from './uiStorage';
 import { UiVersionStorage } from './uiVersionStorage';
-
-/** The data updates that the current data is backed up for, once, before the first of them runs. */
-const UPDATES_AFTER_BACKUP = [
-  'UPDATE_16',
-  'UPDATE_17',
-  'UPDATE_18',
-  'UPDATE_19',
-];
 
 @Service()
 export class UIUpdate {
@@ -73,7 +69,7 @@ export class UIUpdate {
    * it comes from had run, but UPDATE_18 runs on each of these backups. A
    * backup restored at the start goes by its VERSION entry alone.
    *
-   * Before the first open update of UPDATES_AFTER_BACKUP the current data is
+   * Before the first open update that isBackedUpBefore() the current data is
    * written into a backup file, once. When it cannot be written, none of
    * them runs and the next start tries again. Not for an empty database,
    * and not for UPDATE_18 opened again by an import: the imported file holds
@@ -96,8 +92,9 @@ export class UIUpdate {
     try {
       let backupPending =
         hasData &&
-        UPDATES_AFTER_BACKUP.some(
+        DATA_UPDATES.some(
           (_update) =>
+            isBackedUpBefore(_update) &&
             !this.uiVersionStorage
               .getVersion()
               .checkIfDataVersionWasUpdated(_update),
@@ -105,30 +102,9 @@ export class UIUpdate {
       if (_afterImport) {
         await this.__reopenDataVersion('UPDATE_18');
       }
-      const updateVersions: Array<string> = [
-        'UPDATE_1',
-        'UPDATE_2',
-        'UPDATE_3',
-        'UPDATE_4',
-        'UPDATE_5',
-        'UPDATE_6',
-        'UPDATE_7',
-        'UPDATE_8',
-        'UPDATE_9',
-        'UPDATE_10',
-        'UPDATE_11',
-        'UPDATE_12',
-        'UPDATE_13',
-        'UPDATE_14',
-        'UPDATE_15',
-        'UPDATE_16',
-        'UPDATE_17',
-        'UPDATE_18',
-        'UPDATE_19',
-      ];
       const version: Version = this.uiVersionStorage.getVersion();
       const _silentUpdate = hasData;
-      for (const updateVersion of updateVersions) {
+      for (const updateVersion of DATA_UPDATES) {
         if (version.checkIfDataVersionWasUpdated(updateVersion) === false) {
           if (!_silentUpdate) {
             // Something needs to be updated, so show loading spinner
@@ -138,10 +114,10 @@ export class UIUpdate {
         }
       }
 
-      for (const updateVersion of updateVersions) {
+      for (const updateVersion of DATA_UPDATES) {
         if (
           backupPending &&
-          UPDATES_AFTER_BACKUP.includes(updateVersion) &&
+          isBackedUpBefore(updateVersion) &&
           !version.checkIfDataVersionWasUpdated(updateVersion)
         ) {
           backupPending = false;
