@@ -91,6 +91,7 @@
     "serialize-error": "^13.1.0",
     "swiper": "^12.2.0",
     "tslib": "^2.9.1",
+    "uplot": "1.6.32",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zone.js": "^0.16.3"
   },
