@@ -56,8 +56,11 @@ export class LogComponent implements OnInit {
     addIcons({ sendOutline });
   }
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     this.logs = this.uiLog.getLogs();
+    void this.uiLog.loadEarlier().then(() => {
+      this.logs = this.uiLog.getLogs();
+    });
   }
 
   public levelToColor(level: LogLevel): string {

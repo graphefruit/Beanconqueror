@@ -1,5 +1,246 @@
 import UIKit
 import Capacitor
+import OSLog
+
+/// Copies what this binary logs (ble-central's NSLog among it) and uncaught exceptions into
+/// rotating native_*.log files next to the JS log, so a shared log also covers the native side.
+enum NativeLog {
+    private static let queue = DispatchQueue(label: "NativeLog", qos: .utility)
+    private static let maxBytes = 1024 * 1024
+    private static let filesKept = 3
+    private static let interval = 30.0
+    // "Discovered" carries name and advertising data of every device in range, also strangers'.
+    private static let noise = ["didUpdateValueForCharacteristic", "writeWithoutResponse", "Discovered ", "[CapgoLLM]"]
+    private static let binary = Bundle.main.executableURL?.lastPathComponent ?? "App"
+    // Its own messages carry this subsystem, so collecting never reads them back into the file.
+    private static let logger = Logger(subsystem: "\(Bundle.main.bundleIdentifier ?? "App").nativelog",
+                                       category: "NativeLog")
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS Z"
+        return formatter
+    }()
+    private static let nameFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyyMMdd_HHmmssSSS"
+        return formatter
+    }()
+    private static let directory = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)[0]
+        .appendingPathComponent("NoCloud/logs", isDirectory: true)
+    // Read by the exception handler without the queue, which may be the crashing thread.
+    private static let crashPath = OSAllocatedUnfairLock<String?>(initialState: nil)
+    private static var previousHandler: (@convention(c) (NSException) -> Void)?
+    private static var started = false
+    private static var file: (url: URL, size: Int)?
+    private static var lastDate: Date?
+    private static var timer: DispatchSourceTimer?
+
+    static func start() {
+        guard !started else { return }
+        started = true
+        previousHandler = NSGetUncaughtExceptionHandler()
+        NSSetUncaughtExceptionHandler { exception in
+            let text = ([NativeLog.line(Date(), "F", "BeanConqueror",
+                                        "uncaught \(exception.name.rawValue): \(exception.reason ?? "")")]
+                        + exception.callStackSymbols).joined(separator: "\n") + "\n"
+            let path = NativeLog.crashPath.withLock { $0 }
+                ?? NativeLog.directory.appendingPathComponent(NativeLog.newName(Date())).path
+            let fd = open(path, O_WRONLY | O_APPEND | O_CREAT, 0o644)
+            if fd >= 0 {
+                _ = text.withCString { write(fd, $0, strlen($0)) }
+                close(fd)
+            }
+            NativeLog.previousHandler?(exception)
+        }
+        let center = NotificationCenter.default
+        center.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil) { _ in
+            queue.async { startTimer() }
+        }
+        center.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: nil) { _ in
+            queue.async {
+                timer?.cancel()
+                timer = nil
+                collect()
+            }
+        }
+        // Keeps the app awake until the collect queued on resigning active is written. A second
+        // collect here would cost as much again, since every collect reads the whole process log.
+        center.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { _ in
+            var task = UIBackgroundTaskIdentifier.invalid
+            let end = {
+                guard task != .invalid else { return }
+                UIApplication.shared.endBackgroundTask(task)
+                task = .invalid
+            }
+            task = UIApplication.shared.beginBackgroundTask(withName: "NativeLog", expirationHandler: end)
+            queue.async { DispatchQueue.main.async(execute: end) }
+        }
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = info?["CFBundleVersion"] as? String ?? "?"
+        let system = UIDevice.current.systemVersion
+        queue.async {
+            do {
+                try prepareDirectory()
+                append([line(Date(), "I", "BeanConqueror", "start \(version) (\(build)) iOS \(system)")])
+            } catch {
+                logger.warning("NativeLog: \(error.localizedDescription, privacy: .public)")
+            }
+        }
+    }
+
+    /// Collects the pending entries before the log files are shared.
+    static func flush(_ done: @escaping () -> Void) {
+        queue.async {
+            collect()
+            done()
+        }
+    }
+
+    private static func startTimer() {
+        guard timer == nil else { return }
+        let source = DispatchSource.makeTimerSource(queue: queue)
+        source.schedule(deadline: .now() + interval, repeating: interval)
+        source.setEventHandler {
+            // getEntries reads every entry of the process, so a collect gets slower the longer
+            // the app runs (ble-central logs each notification); stay below 1 % of the time.
+            let seconds = collect()
+            let next = max(interval, seconds * 100)
+            source.schedule(deadline: .now() + next, repeating: next)
+        }
+        source.resume()
+        timer = source
+    }
+
+    private static func prepareDirectory() throws {
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        var url = directory
+        var values = URLResourceValues()
+        values.isExcludedFromBackup = true
+        try url.setResourceValues(values)
+    }
+
+    @discardableResult
+    private static func collect() -> Double {
+        let started = Date()
+        do {
+            let store = try OSLogStore(scope: .currentProcessIdentifier)
+            let entries = try store.getEntries(at: lastDate.map { store.position(date: $0) })
+            var lines: [String] = []
+            for case let entry as OSLogEntryLog in entries where entry.date > (lastDate ?? .distantPast) {
+                lastDate = entry.date
+                // NSLog (ble-central, Cordova plugins) is logged by Foundation without a subsystem.
+                let isNSLog = entry.sender == "Foundation" && entry.subsystem.isEmpty
+                let isOwn = entry.sender == binary && !entry.subsystem.hasPrefix("com.apple")
+                    && !entry.subsystem.hasSuffix(".nativelog")
+                let message = entry.composedMessage
+                // A bare object dump (scan service data, NFC payloads) starts with a bracket.
+                let isDump = isNSLog && message.first.map { "{(<".contains($0) } ?? false
+                if (isNSLog || isOwn) && !isDump && !noise.contains(where: { message.contains($0) }) {
+                    lines.append(line(entry.date, level(entry.level), isNSLog ? "NSLog" : entry.sender, message))
+                }
+            }
+            append(lines)
+        } catch {
+            logger.warning("NativeLog: \(error.localizedDescription, privacy: .public)")
+        }
+        let seconds = Date().timeIntervalSince(started)
+        logger.debug("NativeLog: collect took \(seconds, privacy: .public) s")
+        if seconds > 0.2 {
+            append([line(Date(), "W", "BeanConqueror", String(format: "slow log collect %.2f s", seconds))])
+        }
+        return seconds
+    }
+
+    private static func append(_ lines: [String]) {
+        guard !lines.isEmpty else { return }
+        let data = Data((lines.joined(separator: "\n") + "\n").utf8)
+        do {
+            let now = Date()
+            let today = String(nameFormatter.string(from: now).prefix(8))
+            if file == nil {
+                file = try newestFile()
+            }
+            let fits = file.map { $0.url.lastPathComponent.dropFirst(7).hasPrefix(today)
+                && $0.size + data.count <= maxBytes } ?? false
+            if !fits {
+                try prepareDirectory()
+                let url = directory.appendingPathComponent(newName(now))
+                FileManager.default.createFile(atPath: url.path, contents: nil)
+                file = (url, 0)
+                crashPath.withLock { $0 = url.path }
+                try deleteOldestFiles()
+            }
+            guard let current = file else { return }
+            let handle = try FileHandle(forWritingTo: current.url)
+            defer { try? handle.close() }
+            try handle.seekToEnd()
+            try handle.write(contentsOf: data)
+            file = (current.url, current.size + data.count)
+        } catch {
+            // The next block starts a new file in case this one is gone.
+            file = nil
+            crashPath.withLock { $0 = nil }
+            logger.warning("NativeLog: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
+    private static func newestFile() throws -> (url: URL, size: Int)? {
+        guard let name = try fileNames().last else { return nil }
+        let url = directory.appendingPathComponent(name)
+        let size = try FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int ?? 0
+        crashPath.withLock { $0 = url.path }
+        return (url, size)
+    }
+
+    private static func deleteOldestFiles() throws {
+        for name in try fileNames().dropLast(filesKept) {
+            try FileManager.default.removeItem(at: directory.appendingPathComponent(name))
+        }
+    }
+
+    /// The native log files, oldest first; the JS log files are left alone.
+    private static func fileNames() throws -> [String] {
+        guard FileManager.default.fileExists(atPath: directory.path) else { return [] }
+        return try FileManager.default.contentsOfDirectory(atPath: directory.path)
+            .filter { $0.range(of: #"^native_\d{8}_\d{9}\.log$"#, options: .regularExpression) != nil }
+            .sorted()
+    }
+
+    private static func newName(_ date: Date) -> String {
+        "native_\(nameFormatter.string(from: date)).log"
+    }
+
+    private static func line(_ date: Date, _ level: String, _ sender: String, _ message: String) -> String {
+        "\(dateFormatter.string(from: date)) \(level) \(sender): \(message)"
+    }
+
+    private static func level(_ level: OSLogEntryLog.Level) -> String {
+        switch level {
+        case .debug: return "D"
+        case .info: return "I"
+        case .notice: return "N"
+        case .error: return "E"
+        case .fault: return "F"
+        default: return "-"
+        }
+    }
+}
+
+@objc(NativeLogPlugin)
+class NativeLogPlugin: CAPPlugin, CAPBridgedPlugin {
+    let identifier = "NativeLogPlugin"
+    let jsName = "NativeLog"
+    let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "flush", returnType: CAPPluginReturnPromise)
+    ]
+
+    @objc func flush(_ call: CAPPluginCall) {
+        NativeLog.flush { call.resolve() }
+    }
+}
 
 @objc(VoiceOverMagicTapPlugin)
 class VoiceOverMagicTapPlugin: CAPPlugin, CAPBridgedPlugin {
@@ -46,6 +287,7 @@ class QuickActionPlugin: CAPPlugin, CAPBridgedPlugin {
 class MagicTapContainerViewController: UIViewController {
     let capacitorViewController: CAPBridgeViewController
     private let magicTapPlugin = VoiceOverMagicTapPlugin()
+    private let nativeLogPlugin = NativeLogPlugin()
     let quickActionPlugin = QuickActionPlugin()
 
     init(capacitorViewController: CAPBridgeViewController) {
@@ -70,6 +312,7 @@ class MagicTapContainerViewController: UIViewController {
         capacitorViewController.didMove(toParent: self)
         capacitorViewController.bridge?.registerPluginInstance(magicTapPlugin)
         capacitorViewController.bridge?.registerPluginInstance(quickActionPlugin)
+        capacitorViewController.bridge?.registerPluginInstance(nativeLogPlugin)
     }
 
     override var childForStatusBarStyle: UIViewController? {
@@ -102,7 +345,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        NativeLog.start()
         return true
     }
 

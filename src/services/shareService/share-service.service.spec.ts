@@ -1,7 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 
-// The plugin object is a proxy that cannot be spied on; the web
-// implementation behind it can.
+import { Capacitor } from '@capacitor/core';
+import { FileInfo } from '@capacitor/filesystem';
+// The plugin objects are proxies that cannot be spied on; the web
+// implementations behind them can.
+import { FilesystemWeb } from '@capacitor/filesystem/dist/esm/web';
 import { ShareWeb } from '@capacitor/share/dist/esm/web';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -27,7 +30,12 @@ describe('ShareService', () => {
     Pick<UIFileHelper, 'clearShareDirectory' | 'writeFileForSharing'>
   >;
   let share: jasmine.Spy;
-  let uiLog: { getLogs: () => unknown[]; error: jasmine.Spy };
+  let uiLog: {
+    getLogs: () => unknown[];
+    error: jasmine.Spy;
+    writeToFile: jasmine.Spy;
+  };
+  let flush: jasmine.Spy;
 
   function setup(answer: 'YES' | 'NO'): void {
     uiAlert = jasmine.createSpyObj('UIAlert', [
@@ -43,7 +51,11 @@ describe('ShareService', () => {
     fileHelper.clearShareDirectory.and.resolveTo();
     fileHelper.writeFileForSharing.and.resolveTo(SHARED_FILE);
     share = spyOn(ShareWeb.prototype, 'share').and.resolveTo({});
-    uiLog = { getLogs: () => LOGS, error: jasmine.createSpy('error') };
+    uiLog = {
+      getLogs: () => LOGS,
+      error: jasmine.createSpy('error'),
+      writeToFile: jasmine.createSpy('writeToFile').and.resolveTo(),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -57,11 +69,129 @@ describe('ShareService', () => {
       ],
     });
     service = TestBed.inject(ShareService);
+    flush = jasmine.createSpy('flush').and.resolveTo();
+    (service as unknown as { nativeLog: { flush: jasmine.Spy } }).nativeLog = {
+      flush,
+    };
   }
 
   afterEach(() => jasmine.clock().uninstall());
 
-  describe('sharing the log', () => {
+  function file(_name: string): FileInfo {
+    return {
+      name: _name,
+      type: 'file',
+      size: 1,
+      ctime: 0,
+      mtime: 0,
+      uri: `file:///logs/${_name}`,
+    };
+  }
+
+  describe('sharing the log files in the app', () => {
+    let readdir: jasmine.Spy;
+    let getPlatform: jasmine.Spy;
+
+    beforeEach(() => {
+      spyOn(Capacitor, 'isNativePlatform').and.returnValue(true);
+      getPlatform = spyOn(Capacitor, 'getPlatform').and.returnValue('android');
+      readdir = spyOn(FilesystemWeb.prototype, 'readdir').and.resolveTo({
+        files: [
+          file('native_20261126_080000000.log'),
+          file('log_20261126_080000000.jsonl'),
+          file('other.txt'),
+          file('log_20261125_080000000.jsonl'),
+        ],
+      });
+    });
+
+    it('writes the log first and shares the log files themselves, sorted', async () => {
+      setup('YES');
+      share.and.callFake(() => {
+        expect(uiLog.writeToFile).toHaveBeenCalledTimes(1);
+        return Promise.resolve({});
+      });
+
+      await service.shareLogs();
+
+      expect(readdir).toHaveBeenCalledOnceWith({
+        path: 'logs',
+        directory: 'LIBRARY_NO_CLOUD',
+      });
+      expect(share).toHaveBeenCalledOnceWith({
+        files: [
+          'file:///logs/log_20261125_080000000.jsonl',
+          'file:///logs/log_20261126_080000000.jsonl',
+          'file:///logs/native_20261126_080000000.log',
+        ],
+      });
+      expect(flush).not.toHaveBeenCalled();
+      expect(fileHelper.writeFileForSharing).not.toHaveBeenCalled();
+      expect(uiAlert.copyLogfiles).not.toHaveBeenCalled();
+    });
+
+    it('fetches the native log on iOS before reading the files', async () => {
+      setup('YES');
+      getPlatform.and.returnValue('ios');
+      readdir.and.callFake(() => {
+        expect(flush).toHaveBeenCalledTimes(1);
+        return Promise.resolve({
+          files: [file('log_20261126_080000000.jsonl')],
+        });
+      });
+
+      await service.shareLogs();
+
+      expect(share).toHaveBeenCalledOnceWith({
+        files: ['file:///logs/log_20261126_080000000.jsonl'],
+      });
+    });
+
+    it('still shares the files when the native log cannot be fetched', async () => {
+      setup('YES');
+      getPlatform.and.returnValue('ios');
+      flush.and.rejectWith(new Error('UNIMPLEMENTED'));
+
+      await service.shareLogs();
+
+      expect(share).toHaveBeenCalledTimes(1);
+      expect(share.calls.mostRecent().args[0].files.length).toBe(3);
+    });
+
+    it('shares the log in memory when the folder cannot be read', async () => {
+      setup('YES');
+      readdir.and.rejectWith(new Error('no folder'));
+
+      await service.shareLogs();
+
+      expect(share).toHaveBeenCalledOnceWith({ url: SHARED_FILE.fullpath });
+    });
+
+    it('shares the log in memory when there is no log file, else shows it as text', async () => {
+      setup('YES');
+      readdir.and.resolveTo({ files: [file('other.txt')] });
+      fileHelper.writeFileForSharing.and.rejectWith(new Error('disk full'));
+
+      await service.shareLogs();
+
+      expect(fileHelper.writeFileForSharing).toHaveBeenCalledTimes(1);
+      expect(uiAlert.copyLogfiles).toHaveBeenCalledTimes(1);
+      expect(share).not.toHaveBeenCalled();
+    });
+
+    it('shares nothing else when the user cancels the share dialog', async () => {
+      setup('YES');
+      share.and.rejectWith(new Error('Share canceled'));
+
+      await service.shareLogs();
+
+      expect(share).toHaveBeenCalledTimes(1);
+      expect(fileHelper.writeFileForSharing).not.toHaveBeenCalled();
+      expect(uiAlert.copyLogfiles).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('sharing the log in the browser', () => {
     it('asks first and shares nothing when the user cancels', async () => {
       setup('NO');
 
