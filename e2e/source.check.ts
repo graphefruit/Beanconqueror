@@ -146,6 +146,11 @@ describe('texts in the source', () => {
     assert.deepEqual([...new Set(missing)], []);
   });
 
+  // Lokalise starts from the English keys; German is kept by hand alongside.
+  test('English and German have the same keys', () => {
+    assert.deepEqual([...KEYS_OF.de].sort(), [...KEYS_OF.en].sort());
+  });
+
   test('messages for users are keys, not fixed English text', () => {
     const fixed: string[] = [];
     for (const { path, text: source } of sources(/\.ts$/)) {
