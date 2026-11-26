@@ -10,7 +10,6 @@ import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import { MeticulousDevice } from '../../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { Settings } from '../../../../classes/settings/settings';
 import { CutMarkersPlugin } from '../../../../components/brews/graph/overlays/cut-markers';
-import type { UplotOverlayState } from '../../../../components/brews/graph/overlays/uplot-plugin';
 import type { SeriesDef } from '../../../../components/brews/graph/series-def';
 import { UplotRenderer } from '../../../../components/brews/graph/uplot-renderer';
 import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
@@ -234,6 +233,31 @@ describe('BrewPopoverCutComponent', () => {
     expect(drawn().querySelector('canvas')).toBe(canvas);
     expect(mount).toHaveBeenCalledTimes(1);
     expect(setSeries).toHaveBeenCalledTimes(1);
+  });
+
+  it('draws at the width the dialog has once uPlot is loaded', async () => {
+    let release: () => void = () => undefined;
+    const loading = new Promise<void>((resolve) => (release = resolve));
+    const started = spyOn(UplotRenderer.prototype, 'mount');
+    started.and.callFake(async function (
+      this: UplotRenderer,
+      ...args: Parameters<UplotRenderer['mount']>
+    ): Promise<void> {
+      await loading;
+      started.and.callThrough();
+      await this.mount(...args);
+    });
+    create(legacyShot());
+    await until(() => started.calls.count() > 0);
+
+    element().style.width = '400px';
+    await frame();
+    await frame();
+    release();
+    await until(() => !!drawn()?.querySelector('canvas'));
+
+    const wrap = drawn().querySelector<HTMLElement>('.u-wrap');
+    expect(wrap.style.width).toBe('400px');
   });
 
   it('ignores a range event without two knobs', () => {

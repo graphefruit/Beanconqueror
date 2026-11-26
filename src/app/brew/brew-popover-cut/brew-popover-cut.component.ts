@@ -205,6 +205,8 @@ export class BrewPopoverCutComponent {
       this.uiLog.error('Cut graph could not be drawn', error);
       return;
     }
+    // A resize while uPlot loaded went to the renderer before its mount.
+    renderer.resize(this.width(), CHART_HEIGHT);
     renderer.setSeries(
       seriesDefsFor(buffer, 'live', settings.graph_colors, (key): string =>
         String(this.translate.instant(key)),
