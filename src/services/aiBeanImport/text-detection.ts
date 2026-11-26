@@ -28,13 +28,7 @@ function toBoundingBox(value: unknown): BoundingBox | null {
   if (![left, top, right, bottom].every(Number.isFinite)) {
     return null;
   }
-  const [x1, y1, x2, y2] = [left, top, right, bottom] as number[];
-  return {
-    left: Math.min(x1, x2),
-    top: Math.min(y1, y2),
-    right: Math.max(x1, x2),
-    bottom: Math.max(y1, y2),
-  };
+  return { left, top, right, bottom } as BoundingBox;
 }
 
 /**

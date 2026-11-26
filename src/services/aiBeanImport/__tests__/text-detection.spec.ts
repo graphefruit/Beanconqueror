@@ -54,21 +54,6 @@ describe('toTextDetectionResult', () => {
     });
   });
 
-  it('orders the box edges so a flipped Y axis still gives top above bottom', () => {
-    const result = toTextDetectionResult({
-      text: 'x',
-      blocks: [
-        {
-          text: 'x',
-          boundingBox: { left: 30, top: 12, right: 1, bottom: 2 },
-          lines: [],
-        },
-      ],
-    });
-
-    expect(result.blocks[0].boundingBox).toEqual(box);
-  });
-
   it('drops entries without a usable box but keeps the full text', () => {
     const result = toTextDetectionResult({
       text: 'kept',

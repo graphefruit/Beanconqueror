@@ -93,7 +93,7 @@ describe('CameraOcrService', () => {
           blocks: [
             {
               text: 'front',
-              boundingBox: { left: 10, top: 10, right: 0, bottom: 0 },
+              boundingBox: box,
               recognizedLanguage: 'en',
               lines: [],
             },

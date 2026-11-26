@@ -16,18 +16,6 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 
-// The app already shrinks photos to 2560 px; this only bounds decode memory for other input.
-internal const val MAX_IMAGE_EDGE = 4096
-
-/** Smallest power-of-two sample size that brings the longer edge to at most maxEdge. */
-internal fun sampleSizeFor(width: Int, height: Int, maxEdge: Int): Int {
-  var sampleSize = 1
-  while (maxOf(width, height) / sampleSize > maxEdge) {
-    sampleSize *= 2
-  }
-  return sampleSize
-}
-
 @CapacitorPlugin(name = "TextRecognition")
 class TextRecognitionPlugin : Plugin() {
   private val recognizerHolder = lazy {
@@ -49,12 +37,8 @@ class TextRecognitionPlugin : Plugin() {
       return
     }
 
-    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-    BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
-    val sampleSize = sampleSizeFor(bounds.outWidth, bounds.outHeight, MAX_IMAGE_EDGE)
     val bitmap: Bitmap? = try {
-      val options = BitmapFactory.Options().apply { inSampleSize = sampleSize }
-      BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
+      BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
     } catch (e: OutOfMemoryError) {
       null
     }
@@ -64,7 +48,7 @@ class TextRecognitionPlugin : Plugin() {
     }
 
     recognizer.process(InputImage.fromBitmap(bitmap, 0))
-      .addOnSuccessListener { text -> call.resolve(toJson(text, sampleSize)) }
+      .addOnSuccessListener { text -> call.resolve(toJson(text)) }
       .addOnFailureListener { e -> call.reject("Unable to process image", e) }
       .addOnCompleteListener { bitmap.recycle() }
   }
@@ -76,8 +60,7 @@ class TextRecognitionPlugin : Plugin() {
   }
 
   // Same shape as the former ML Kit plugin, so block order and boxes stay as before.
-  // Boxes are scaled back by the sample size, so they are in pixels of the given image.
-  private fun toJson(text: Text, scale: Int): JSObject {
+  private fun toJson(text: Text): JSObject {
     val blocks = JSArray()
     text.textBlocks.forEach { block ->
       val lines = JSArray()
@@ -85,30 +68,30 @@ class TextRecognitionPlugin : Plugin() {
         val elements = JSArray()
         line.elements.forEach { element ->
           // The former plugin reported the line's language on each element.
-          elements.put(textObject(element.text, element.boundingBox, line.recognizedLanguage, scale))
+          elements.put(textObject(element.text, element.boundingBox, line.recognizedLanguage))
         }
         lines.put(
-          textObject(line.text, line.boundingBox, line.recognizedLanguage, scale)
+          textObject(line.text, line.boundingBox, line.recognizedLanguage)
             .put("elements", elements),
         )
       }
       blocks.put(
-        textObject(block.text, block.boundingBox, block.recognizedLanguage, scale)
+        textObject(block.text, block.boundingBox, block.recognizedLanguage)
           .put("lines", lines),
       )
     }
     return JSObject().put("text", text.text).put("blocks", blocks)
   }
 
-  private fun textObject(text: String, box: Rect?, language: String, scale: Int): JSObject =
+  private fun textObject(text: String, box: Rect?, language: String): JSObject =
     JSObject()
       .put("text", text)
       .put("boundingBox", box?.let {
         JSObject()
-          .put("left", it.left * scale)
-          .put("top", it.top * scale)
-          .put("right", it.right * scale)
-          .put("bottom", it.bottom * scale)
+          .put("left", it.left)
+          .put("top", it.top)
+          .put("right", it.right)
+          .put("bottom", it.bottom)
       })
       .put("recognizedLanguage", language)
 }
