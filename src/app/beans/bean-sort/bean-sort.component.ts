@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   Input,
   OnInit,
@@ -25,14 +26,12 @@ import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { Settings } from '../../../classes/settings/settings';
 import { SheetCloseButtonComponent } from '../../../components/sheet-close-button/sheet-close-button.component';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
-import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
 import { UIHelper } from '../../../services/uiHelper';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { SettingsStore } from '../../../stores/settings/settings.store';
 
 @Component({
   selector: 'app-bean-sort',
@@ -41,7 +40,6 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TranslatePipe,
-    BeanFieldVisiblePipe,
     IonHeader,
     IonContent,
     IonList,
@@ -59,7 +57,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 export class BeanSortComponent implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly uiHelper = inject(UIHelper);
-  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly settingsStore = inject(SettingsStore);
 
   public static readonly COMPONENT_ID = 'bean-sort';
   public beanSortAfterEnum = BEAN_SORT_AFTER;
@@ -73,14 +71,21 @@ export class BeanSortComponent implements OnInit {
 
   public extendedSortActive: boolean = false;
 
-  public settings: Settings;
+  /** The dates a bean can be sorted by: those the bean form asks for. */
+  protected readonly sortableDates = computed(() => {
+    const shown = this.settingsStore.settings().bean_manage_parameters;
+    return {
+      buyDate: shown.buyDate === true,
+      openDate: shown.openDate === true,
+      bestDate: shown.bestDate === true,
+    };
+  });
 
   constructor() {
     addIcons({ chevronDownOutline, chevronUpOutline });
   }
 
   public ngOnInit() {
-    this.settings = this.uiSettingsStorage.getSettings();
     this.filter = this.uiHelper.copyData(this.bean_sort);
     this.__reloadFilterSettings();
   }

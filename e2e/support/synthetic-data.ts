@@ -441,7 +441,7 @@ export function withBrewsLeftWithoutStandardMill(
         ...standard,
         name: 'Standard',
         finished: false,
-        config: { ...standard.config, unix_timestamp: newest + 1 },
+        config: trackedConfig(standard.config.uuid, newest + 1),
       },
       ...others,
     ],
@@ -451,6 +451,62 @@ export function withBrewsLeftWithoutStandardMill(
         ...version,
         updatedDataVersions: version.updatedDataVersions.filter(
           (update) => update !== 'UPDATE_19',
+        ),
+      },
+    ],
+  };
+}
+
+/** The data updates of the relaunch: an installation of 8.8 has run every update before them. */
+export const UPDATES_SINCE_8_8 = [
+  'UPDATE_16',
+  'UPDATE_17',
+  'UPDATE_18',
+  'UPDATE_19',
+];
+
+type WithoutChangeInfo<T> = T extends { config: TrackedEntryConfig }
+  ? Omit<T, 'config'> & { config: EntryConfig }
+  : T;
+
+/** The data set as 8.8 stores it, see `asEightEightData`. */
+export type EightEightDataSet = {
+  [K in keyof SyntheticDataSet]: K extends 'SETTINGS'
+    ? Omit<SyntheticSettings, 'user'>[]
+    : WithoutChangeInfo<SyntheticDataSet[K][number]>[];
+};
+
+/**
+ * The data as 8.8 left it, so that a start runs the updates of the relaunch on it: those are
+ * open, the entries carry no change info and the settings no user profile, the first bean and
+ * the two oldest brews are stored twice under their uuid, and the brews have the empty grinder
+ * of `withBrewsLeftWithoutStandardMill`. Once the updates have run, the collections equal that
+ * data set again.
+ */
+export function asEightEightData(data: SyntheticDataSet): EightEightDataSet {
+  const left = withBrewsLeftWithoutStandardMill(data);
+  const untracked = <T extends { config: EntryConfig }>(entries: T[]) =>
+    entries.map((entry) => ({
+      ...entry,
+      config: {
+        uuid: entry.config.uuid,
+        unix_timestamp: entry.config.unix_timestamp,
+      },
+    }));
+  const [version] = left.VERSION;
+  return {
+    ...left,
+    BEANS: untracked([...left.BEANS, left.BEANS[0]]),
+    BREWS: untracked([...left.BREWS, left.BREWS[0], left.BREWS[1]]),
+    PREPARATION: untracked(left.PREPARATION),
+    MILL: untracked(left.MILL),
+    WATER: untracked(left.WATER),
+    SETTINGS: left.SETTINGS.map(({ user: _user, ...settings }) => settings),
+    VERSION: [
+      {
+        ...version,
+        updatedDataVersions: version.updatedDataVersions.filter(
+          (update) => !UPDATES_SINCE_8_8.includes(update),
         ),
       },
     ],

@@ -158,7 +158,9 @@ describe('BrewUsageStore', () => {
     expect(store.byMill().size).toBe(0);
 
     await source.fail();
-    source.entries = [storedBrew({ mill: 'm' })];
+    expect(store.byMill().size).toBe(0);
+
+    source.reread([storedBrew({ mill: 'm' })]);
 
     expect(store.byMill().get('m')?.brews).toBe(1);
   });

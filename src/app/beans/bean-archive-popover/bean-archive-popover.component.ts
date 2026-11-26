@@ -33,10 +33,10 @@ import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { StarsNameDirective } from '../../../directive/stars-name.directive';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { ToFixedPipe } from '../../../pipes/toFixed';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
+import { BeanCommands } from '../../../stores/beans/bean-commands';
 
 @Component({
   selector: 'app-bean-archive-popover',
@@ -64,7 +64,7 @@ import { UIToast } from '../../../services/uiToast';
   ],
 })
 export class BeanArchivePopoverComponent implements OnInit {
-  private readonly uiBeanStorage = inject(UIBeanStorage);
+  private readonly beanCommands = inject(BeanCommands);
   private readonly modalController = inject(ModalController);
   private readonly uiToast = inject(UIToast);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
@@ -99,8 +99,11 @@ export class BeanArchivePopoverComponent implements OnInit {
   }
 
   public async archive() {
-    this.data.finished = true;
-    await this.uiBeanStorage.update(this.data);
+    await this.beanCommands.archive(
+      this.data.config.uuid,
+      this.data.rating,
+      this.data.note,
+    );
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
     this.dismiss();
   }

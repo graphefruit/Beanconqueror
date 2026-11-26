@@ -148,6 +148,7 @@ import { UIUpdate } from '../../services/uiUpdate';
 import { UiVersionStorage } from '../../services/uiVersionStorage';
 import { UIWaterStorage } from '../../services/uiWaterStorage';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
+import { StoreHub } from '../../stores/core/store-hub';
 
 @Component({
   selector: 'settings',
@@ -223,6 +224,7 @@ export class SettingsPage {
   private readonly eventQueue = inject(EventQueueService);
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiExportImportHelper = inject(UIExportImportHelper);
+  private readonly storeHub = inject(StoreHub);
   private readonly visualizerService = inject(VisualizerService);
   private readonly textToSpeech = inject(TextToSpeechService);
   private readonly themeService = inject(ThemeService);
@@ -1669,16 +1671,21 @@ export class SettingsPage {
       await this.uiAlert.showLoadingSpinner();
       // A failure after the data was stored must not say that no data was
       // changed, or the file may be imported again.
-      let phase: 'storing' | 'reloading' | 'reported' = 'storing';
+      let phase = 'storing' as 'storing' | 'reloading' | 'reported';
       try {
-        const _data = await this.uiExportImportHelper.importBackup(
-          parsedContent,
-          'import',
-          _fileName,
-        );
+        const _data = await this.storeHub.reload(async () => {
+          const imported = await this.uiExportImportHelper.importBackup(
+            parsedContent,
+            'import',
+            _fileName,
+          );
+          if (imported.BACKUP === false) {
+            phase = 'reloading';
+            await this.__reinitializeStorages();
+          }
+          return imported;
+        });
         if (_data.BACKUP === false) {
-          phase = 'reloading';
-          await this.__reinitializeStorages();
           // Show loadingspinner again, because the reintializestorages hides it.
           await this.uiAlert.showLoadingSpinner();
           this.uiAnalytics.disableTracking();
