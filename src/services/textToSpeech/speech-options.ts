@@ -94,8 +94,8 @@ export function brewTimeToSay(
 }
 
 /**
- * The decimals of the scale weight said in the brew graph, before and during
- * the brew: tenths, or whole grams when chosen, as a decimal takes the Android
+ * The decimals of every scale weight that is said, for all preparation
+ * methods: tenths, or whole grams when chosen, as a decimal takes the Android
  * voice noticeably longer to say.
  */
 export function spokenWeightDecimals(wholeGrams: boolean): number {

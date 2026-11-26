@@ -115,6 +115,7 @@ import {
   brewTimeToSay,
   spokenBrewValues,
   spokenWeight,
+  spokenWeightDecimals,
 } from '../../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
@@ -703,7 +704,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.textToSpeech.speak(
         this.translate.instant('BREW_FLOW_WEIGHT') +
           ' ' +
-          spokenWeight(_value, 1, this.settings.language),
+          spokenWeight(
+            _value,
+            spokenWeightDecimals(this.settings.text_to_speech_whole_grams),
+            this.settings.language,
+          ),
         true,
       );
     }

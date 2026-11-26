@@ -4,7 +4,7 @@ import { Settings } from '../../../../classes/settings/settings';
 import { BrewBrewingComponent } from '../brew-brewing.component';
 
 describe('BrewBrewingComponent weight taken from the scale', () => {
-  function brewing(language: string, weight: number) {
+  function brewing(language: string, weight: number, wholeGrams = false) {
     const speech = jasmine.createSpyObj<{
       speak: (text: string, force: boolean) => void;
     }>('TextToSpeechService', ['speak']);
@@ -12,7 +12,11 @@ describe('BrewBrewingComponent weight taken from the scale', () => {
       Object.create(BrewBrewingComponent.prototype),
       {
         textToSpeech: speech,
-        settings: { text_to_speech_active: true, language } as Settings,
+        settings: {
+          text_to_speech_active: true,
+          text_to_speech_whole_grams: wholeGrams,
+          language,
+        } as Settings,
         data: {},
         translate: { instant: (key: string) => key } as TranslateService,
         getActualBluetoothWeight: () => weight,
@@ -37,5 +41,13 @@ describe('BrewBrewingComponent weight taken from the scale', () => {
     component.bluetoothScaleSetBeanWeightIn();
 
     expect(said()).toEqual(['BREW_FLOW_WEIGHT 18.3']);
+  });
+
+  it('says whole grams when they are chosen', () => {
+    const { component, said } = brewing('de', 18.27, true);
+
+    component.bluetoothScaleSetGrindWeight();
+
+    expect(said()).toEqual(['BREW_FLOW_WEIGHT 18']);
   });
 });
