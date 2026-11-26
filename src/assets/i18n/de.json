@@ -1434,11 +1434,13 @@
     "NFC": {
         "PLEASE_ENABLED_NFC_DESCRIPTION": "Bitte aktivieren Sie NFC, sonst kann diese Funktion nicht genutzt werden",
         "WRITE_COMPLETED_DESCRIPTION": "NFC-Tag wurde erfolgreich geschrieben",
-        "WRITE_COMPLETED_TITLE": "Schreiben fehlgeschlagen",
+        "WRITE_COMPLETED_TITLE": "Schreiben abgeschlossen",
         "WRITE_UNCOMPLETED_DESCRIPTION": "NFC-Tag konnte nicht geschrieben werden",
         "WRITE_UNCOMPLETED_TITLE": "Schreiben fehlgeschlagen",
         "SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER": "Bitte halten Sie Ihren Anhänger an das Lesegerät",
-        "WRITE_NFC_TAG": "NFC-Tag schreiben"
+        "WRITE_NFC_TAG": "NFC-Tag schreiben",
+        "TAG_WITHOUT_APP_LINK_DESCRIPTION": "Dieser NFC-Tag enthält keinen BeanConqueror-Link.",
+        "TAG_WITHOUT_APP_LINK_TITLE": "Tag nicht erkannt"
     },
     "BREW_FLOW_WEIGHT_REALTIME_SECOND": "Fluss (Echtzeit, raus)",
     "BREW_FLOW_WEIGHT_SECOND": "Gewicht (raus)",
@@ -1467,6 +1469,8 @@
     "BEAN_DATA_CO2E_KG_TOOLTIP": "Das freigesetzte CO2e (kg) pro kg geröstetem Kaffee",
     "BEAN_SORT_RECENTLY_USED": "Zuletzt verwendet",
     "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Aktion auswählen",
+    "BEAN_CODE_NOT_FOUND_TITLE": "Bohne nicht gefunden",
+    "BEAN_CODE_NOT_FOUND_DESCRIPTION": "Dieser Code verweist auf eine Bohne, die in BeanConqueror auf diesem Gerät nicht vorhanden ist. Vielleicht wurde die Bohne gelöscht oder der Code auf einem anderen Gerät erstellt.",
     "GRAPH_UPDATE_INTERVAL_TITLE": "Intervall für die Aktualisierung des Diagramms",
     "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Benutze dies nur, wenn dein Graph beim Streaming ruckelt, was hauptsächlich bei älteren Tablets oder Handys vorkommt. Wenn du keine Probleme hast, kannst du diese Funktion ignorieren.",
     "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Intervall für die Aktualisierung des Diagramms",

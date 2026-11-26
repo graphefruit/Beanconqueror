@@ -47,6 +47,7 @@ const NEW_CODE = [
   'src/services/documentLanguage/**',
   'src/services/excel-import-rules.ts',
   'src/services/graphHelper/load-plotly.ts',
+  'src/services/nfcService/nfc-tag-link.ts',
   'src/services/preImportBackup/pre-import-backup.service.ts',
   'src/services/tabletLayout/**',
   'src/services/textToSpeech/**',

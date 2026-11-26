@@ -68,6 +68,7 @@ import { DeviceIdentityService } from '../services/deviceIdentity/device-identit
 import { DocumentLanguageService } from '../services/documentLanguage/document-language.service';
 import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
 import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
+import { NfcService } from '../services/nfcService/nfc-service.service';
 import { TabletLayoutService } from '../services/tabletLayout/tablet-layout.service';
 import { ThemeService } from '../services/theme/theme.service';
 import { UIAlert } from '../services/uiAlert';
@@ -149,6 +150,8 @@ export class AppComponent implements AfterViewInit {
   private readonly iosPlatformService = inject(IosPlatformService);
   private readonly themeService = inject(ThemeService);
   private readonly deleteCommands = inject(DeleteCommands);
+  // Created at start so a tag that opens the app is handled before the beans tab is visited.
+  private readonly nfcService = inject(NfcService);
 
   @ViewChild(IonRouterOutlet, { static: false })
   public routerOutlet: IonRouterOutlet;
