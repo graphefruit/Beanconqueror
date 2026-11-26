@@ -473,7 +473,7 @@
       "count": 1
     },
     "no-empty": {
-      "count": 7
+      "count": 6
     },
     "no-var": {
       "count": 1
@@ -590,7 +590,7 @@
       "count": 2
     },
     "no-empty": {
-      "count": 8
+      "count": 2
     },
     "no-var": {
       "count": 1
