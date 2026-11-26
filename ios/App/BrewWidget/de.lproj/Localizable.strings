@@ -1,4 +1,4 @@
-"widget_name" = "Beanconqueror";
+"widget_name" = "BeanConqueror";
 "widget_description" = "Brühungen heute und diese Woche, offene Bohnen und deine letzte Brühung";
 "widget_today" = "Heute";
 "widget_week" = "Diese Woche";
@@ -6,7 +6,7 @@
 "widget_today_description" = "Brühungen heute: %d";
 "widget_week_description" = "Brühungen diese Woche: %d";
 "widget_beans_description" = "Offene Bohnen: %d";
-"widget_start_brew" = "Brühung starten";
+"widget_start_brew" = "Neue Brühung";
 "widget_last_brew %@" = "Letzte Brühung vor %@";
 "widget_no_brew" = "Noch keine Brühung";
-"widget_empty" = "Speichere eine Brühung in Beanconqueror, um das Widget zu füllen.";
+"widget_empty" = "Speichere eine Brühung in BeanConqueror, um das Widget zu füllen.";

@@ -1,4 +1,4 @@
-"widget_name" = "Beanconqueror";
+"widget_name" = "BeanConqueror";
 "widget_description" = "Brews today and this week, open beans and your last brew";
 "widget_today" = "Today";
 "widget_week" = "This week";
@@ -6,7 +6,7 @@
 "widget_today_description" = "Brews today: %d";
 "widget_week_description" = "Brews this week: %d";
 "widget_beans_description" = "Open beans: %d";
-"widget_start_brew" = "Start brew";
+"widget_start_brew" = "New brew";
 "widget_last_brew %@" = "Last brew %@ ago";
 "widget_no_brew" = "No brew yet";
-"widget_empty" = "Save a brew in Beanconqueror to fill the widget.";
+"widget_empty" = "Save a brew in BeanConqueror to fill the widget.";
