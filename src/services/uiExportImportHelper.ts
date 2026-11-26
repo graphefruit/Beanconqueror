@@ -31,6 +31,7 @@ import {
 } from '../interfaces/changeTracking/iRestoreNote';
 import { DataCorruptionFoundComponent } from '../popover/data-corruption-found/data-corruption-found.component';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import { EXPORT_CHUNKING_CONFIG, NotABackupError } from './backup-format-rules';
 import {
   canBeImportedAgain,
   PreImportBackupError,
@@ -65,24 +66,6 @@ interface InternalBackupSummary {
   mtime: number;
   counts: BackupCounts;
 }
-
-const EXPORT_CHUNKING_CONFIG = [
-  {
-    propertyName: 'BREWS',
-    fileName: 'Brews',
-    chunkSize: 500,
-  },
-  {
-    propertyName: 'BEANS',
-    fileName: 'Beans',
-    chunkSize: 500,
-  },
-  {
-    propertyName: 'BARISTAMODE_BREWS',
-    fileName: 'Baristamode',
-    chunkSize: 250,
-  },
-];
 
 function chunkFileName(fileName: string, index: number): string {
   return `Beanconqueror_${fileName}_${index}.json`;
@@ -415,23 +398,34 @@ export class UIExportImportHelper {
   }
 
   /**
-   * Writes the current data into a backup file before a start migration
-   * changes entries: the same file as before an import
-   * (PreImportBackupService), listed with the backups to import. Resolves
-   * false when the data could not be read or the file not written, after
-   * telling the user; the caller then changes nothing. True in the browser,
-   * where no file can be written (see importBackup()).
+   * Writes the current data into a backup file before the data updates at
+   * a start change entries, of which `_update` is the first one still open:
+   * the same content as before an import, in a file of its own that is
+   * listed with the backups to import and never deleted by the app
+   * (PreImportBackupService.writeBeforeMigration). When an earlier start
+   * wrote one for the same `_update` and its updates did not finish, that
+   * one is kept and no other is written. Resolves false when the data could
+   * not be read or the file not written, after telling the user; the caller
+   * then changes nothing. True in the browser, where no file can be written
+   * (see importBackup()).
    */
-  public async writeBackupBeforeMigration(): Promise<boolean> {
+  public async writeBackupBeforeMigration(_update: string): Promise<boolean> {
     if (!this.preImportBackup.isAvailable()) {
       this.uiLog.info(
         'Backup before migration - skipped, there is no file system in the browser',
       );
       return true;
     }
+    if (await this.preImportBackup.hasMigrationBackup(_update)) {
+      this.uiLog.info(
+        `Backup before migration - kept the one written before ${_update} at an earlier start`,
+      );
+      return true;
+    }
     try {
-      const written = await this.preImportBackup.write(
+      const written = await this.preImportBackup.writeBeforeMigration(
         await this.buildExportZIP((await this.uiStorage.readValues()).values),
+        _update,
       );
       this.uiLog.log(`Backup before migration - written to ${written}`);
       return true;
@@ -520,7 +514,8 @@ export class UIExportImportHelper {
 
     const entries = await zipReader.getEntries();
     if (entries.length == 0) {
-      throw new Error('Attempted to import empty zip file');
+      await zipReader.close();
+      throw new NotABackupError('The zip file is empty');
     }
     const foundGeneralEntry = entries.find(
       (e) => e.filename === EXPORT_MAIN_FILE_NAME,
@@ -530,8 +525,8 @@ export class UIExportImportHelper {
       !this.isFileEntry(foundGeneralEntry)
     ) {
       await zipReader.close();
-      throw new Error(
-        `ZIP file does not contain a ${EXPORT_MAIN_FILE_NAME} file`,
+      throw new NotABackupError(
+        `The zip file holds no ${EXPORT_MAIN_FILE_NAME}`,
       );
     }
 

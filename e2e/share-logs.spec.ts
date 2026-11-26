@@ -9,6 +9,9 @@ import { openFromProfile } from './support/profile';
  * the share dialog, the app says so and asks; nothing is shared on Cancel.
  */
 
+// The browser cannot write the file to share; the app logs that as an error.
+test.use({ allowedConsoleErrors: [/^Share - could not write the file /] });
+
 const HINT = /^The log helps to find errors\..*do not post it publicly\.$/;
 
 async function openLogs(page: Page): Promise<void> {
@@ -59,9 +62,32 @@ test('the log page asks before it shares the log', async ({ page }) => {
     .click();
   await expect(
     page.getByText(
-      /writeExternalFileFromBase64 for path - \["sharefile\.json"\]/,
+      /writeFileForSharing for path - \["share\/Beanconqueror_logs_\d+\.json"\]/,
     ),
   ).toHaveCount(1);
+});
+
+test('the question names what is shared and gives the focus back', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+  await openLogs(page);
+  const send = page.getByRole('button', { name: 'Send logs' });
+
+  await send.focus();
+  await page.keyboard.press('Enter');
+  const question = page.getByRole('alertdialog', { name: 'Share log?' });
+  await expect(
+    question.getByText(
+      'A file with the app and system version, the device model, the types of your Bluetooth devices and your Bluetooth settings comes with it.',
+      { exact: false },
+    ),
+  ).toBeVisible();
+
+  await question.getByRole('button', { name: 'Cancel' }).click();
+  await expect(question).toHaveCount(0);
+  await expect(send).toBeFocused();
 });
 
 test('the question to share the log lies above the loading dialog', async ({

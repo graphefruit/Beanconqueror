@@ -407,47 +407,24 @@ export class BrewDetailComponent {
   }
 
   public async shareFlowProfile() {
-    await loadPlotly();
-    /* const fileShare: string = this.flowProfileChartEl.toBase64Image(
-          'image/jpeg',
-          1
-        );*/
-    if (this.platform.is('ios')) {
-      //#544 - we need to do it twice... don't know why, ios issue
-      Plotly.Snapshot.toImage(
+    let shared = false;
+    try {
+      await loadPlotly();
+      const image: string = await Plotly.toImage(
         this.brewBrewingGraphEl.profileDiv.nativeElement,
-        {
-          format: 'jpeg',
-        },
-      ).once('success', async (url) => {
-        setTimeout(() => {
-          Plotly.Snapshot.toImage(
-            this.brewBrewingGraphEl.profileDiv.nativeElement,
-            {
-              format: 'jpeg',
-            },
-          ).once('success', async (urlNew) => {
-            try {
-              this.shareService.shareFile('', urlNew);
-            } catch (err) {
-              this.uiLog.error('Cant share profilechart ' + err.message);
-            }
-          });
-        }, 750);
-      });
-    } else {
-      Plotly.Snapshot.toImage(
-        this.brewBrewingGraphEl.profileDiv.nativeElement,
-        {
-          format: 'jpeg',
-        },
-      ).once('success', async (url) => {
-        try {
-          this.shareService.shareFile('', url);
-        } catch (err) {
-          this.uiLog.error('Cant share profilechart ' + err.message);
-        }
-      });
+        { format: 'jpeg' },
+      );
+      shared = await this.shareService.shareFile('', image);
+    } catch (err) {
+      this.uiLog.error('Cant share profilechart', err);
+    }
+    if (!shared) {
+      await this.uiAlert.showMessage(
+        'SHARE_FLOW_PROFILE_FAILED',
+        undefined,
+        undefined,
+        true,
+      );
     }
   }
 

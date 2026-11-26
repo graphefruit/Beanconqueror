@@ -30,6 +30,9 @@ const AUTOMATIC_BACKUPS_KEPT = AUTOMATIC_BACKUP_DAYS_KEPT + 1;
 const AUTOMATIC_BACKUP_FILE_NAME =
   /^Beanconqueror_automatic_export_(\d{2}_\d{2}_\d{4})\.zip$/;
 
+/** Only files to share are kept in this folder of the cache. */
+const SHARE_DIRECTORY = 'share';
+
 export interface CreateTempCacheDirectoryResult {
   path: string;
   directory: Directory;
@@ -248,17 +251,31 @@ export class UIFileHelper extends InstanceClass {
   }
 
   /**
-   * This function is just for ANDROID uses and share plugin.
-   * The share plugin cant access internal files, so we need to write it external
-   * @param base64
-   * @param path
+   * Writes a file the share dialog hands to another app. It stays in the
+   * cache until the next share or app start, because the receiving app, for
+   * example a mail app, can read it after the dialog has closed.
    */
-  public async writeExternalFileFromBase64ForSharing(
+  public async writeFileForSharing(
     base64: string,
-    path: string,
+    name: string,
   ): Promise<{ path: string; fullpath: string }> {
-    this.uiLog.debug('writeExternalFileFromBase64 for path', path);
-    return this.writeFileFromBase64(base64, path, Directory.External);
+    const path = SHARE_DIRECTORY + '/' + name;
+    this.uiLog.debug('writeFileForSharing for path', path);
+    return this.writeFileFromBase64(base64, path, Directory.Cache);
+  }
+
+  /** Removes what earlier shares left behind. Never rejects. */
+  public async clearShareDirectory(): Promise<void> {
+    try {
+      await Filesystem.rmdir({
+        path: SHARE_DIRECTORY,
+        directory: Directory.Cache,
+        recursive: true,
+      });
+    } catch (ex) {
+      // Also when there was nothing to remove.
+      this.uiLog.info('clearShareDirectory: nothing removed', ex);
+    }
   }
 
   public async writeFileFromBlob(
@@ -495,15 +512,6 @@ export class UIFileHelper extends InstanceClass {
   public async deleteInternalFile(path: string): Promise<void> {
     this.uiLog.debug('deleteInternalFile for path', path);
     await this.deleteFile(path, this.getDataDirectory());
-  }
-
-  /**
-   * This function is just used for android sharing
-   * @param path
-   */
-  public async deleteExternalSharedFile(path: string): Promise<void> {
-    this.uiLog.debug('deleteExternalSharedFile for path', path);
-    await this.deleteFile(path, Directory.External);
   }
 
   public async listAutomaticBackupFiles(): Promise<FileInfo[]> {

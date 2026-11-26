@@ -1,11 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 
+import { TextDetectionResult } from '@beanconqueror/text-recognition';
+
 import { MultiPassOcrResult } from '../camera-ocr.service';
-import {
-  Block,
-  OcrMetadataService,
-  TextDetectionResult,
-} from '../ocr-metadata.service';
+import { OcrMetadataService } from '../ocr-metadata.service';
 import {
   createBlock,
   createLine,

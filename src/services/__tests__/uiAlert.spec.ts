@@ -461,4 +461,34 @@ describe('UIAlert message with technical details', () => {
 
     expect(resolved).toBeTrue();
   }));
+
+  it('shows a list below the message, which a screen reader reads as one, its items as text', fakeAsync(() => {
+    let resolved = false;
+    void uiAlert
+      .showMessageWithList('DONE', 'TITLE', 'NOT_TAKEN_OVER', [
+        'Row 3: no name',
+        '<b>Row 4</b>',
+      ])
+      .then(() => (resolved = true));
+    flushMicrotasks();
+
+    expect(alerts[0].options.header).toBe('TITLE');
+    expect(alerts[0].options.message).toBe('DONE');
+    expect(alerts[0].options.buttons).toEqual([{ text: 'Ok' }]);
+    expect(texts()).toEqual(['DONE', 'NOT_TAKEN_OVER']);
+    const items = alerts[0].element.querySelectorAll(
+      '.alert-details > ul > li',
+    );
+    expect(Array.from(items, (_item) => _item.textContent)).toEqual([
+      'Row 3: no name',
+      '<b>Row 4</b>',
+    ]);
+    expect(alerts[0].element.querySelector('b')).toBeNull();
+    expect(resolved).toBeFalse();
+
+    dismiss();
+    flushMicrotasks();
+
+    expect(resolved).toBeTrue();
+  }));
 });
