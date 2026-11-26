@@ -1,0 +1,115 @@
+<ion-header>
+  <app-header [title]="'SHARE_CARD.TITLE' | translate">
+    <app-header-dismiss-button header-slot="start" (dismissed)="dismiss()" />
+  </app-header>
+</ion-header>
+<ion-content class="ion-padding">
+  @let colours = palette();
+  @let content = card();
+  <div class="share-preview">
+    <!-- The picture: plain elements only, sized relative to its width, so the
+         preview and the shared image look the same on every screen. -->
+    <div
+      #picture
+      class="share-frame"
+      role="img"
+      [attr.aria-label]="description()"
+      [style.--share-frame]="colours.frame"
+      [style.--share-card]="colours.card"
+      [style.--share-text]="colours.text"
+      [style.--share-muted]="colours.muted"
+      [style.--share-accent]="colours.accent"
+      [style.--share-stamp]="colours.stamp"
+    >
+      <div class="share-card">
+        <div class="share-head">
+          <span class="share-icon" [style.--share-icon]="icon()"></span>
+          <div class="share-title">
+            <div class="share-date">
+              <strong>{{ content.date }}</strong>
+              <span>{{ content.time }}</span>
+            </div>
+            <div class="share-bean">
+              {{ content.bean }}
+              @if (content.roaster) {
+                <span class="share-roaster">({{ content.roaster }})</span>
+              }
+            </div>
+          </div>
+          @if (content.rating; as rating) {
+            <div class="share-rating">
+              @if (rating.stars !== undefined) {
+                @for (star of [1, 2, 3, 4, 5]; track star) {
+                  <span [class.share-star-empty]="star > rating.stars">★</span>
+                }
+              } @else {
+                {{ rating.value }}
+              }
+            </div>
+          }
+        </div>
+        <div class="share-rows">
+          @for (row of content.rows; track row.labelKey) {
+            <div class="share-row" [class.share-row-wide]="row.wide">
+              <div class="share-label">{{ row.labelKey | translate }}</div>
+              <div class="share-value">{{ row.value }}</div>
+            </div>
+          }
+          @if (showNote() && content.note) {
+            <div class="share-row share-row-wide">
+              <div class="share-label">{{ 'BREW_DATA_NOTES' | translate }}</div>
+              <div class="share-value share-note">{{ content.note }}</div>
+            </div>
+          }
+        </div>
+        @if (graph(); as graphImage) {
+          <img class="share-graph" [src]="graphImage" alt="" />
+        }
+      </div>
+      <div class="share-stamp">BeanConqueror</div>
+    </div>
+  </div>
+
+  @if (graphFailed()) {
+    <p class="share-hint" role="status">{{ 'SHARE_CARD.GRAPH_FAILED' | translate }}</p>
+  }
+
+  <fieldset class="share-colours">
+    <legend>{{ 'SHARE_CARD.COLOURS' | translate }}</legend>
+    @for (option of palettes; track option.id) {
+      <label class="share-colour">
+        <input
+          type="radio"
+          name="share-colour"
+          [value]="option.id"
+          [checked]="option.id === colours.id"
+          (change)="palette.set(option)"
+        />
+        <span class="share-swatch" aria-hidden="true" [style.background]="option.frame"></span>
+        <span>{{ option.labelKey | translate }}</span>
+      </label>
+    }
+  </fieldset>
+
+  @if (content.note) {
+    <ion-toggle
+      class="share-note-toggle"
+      justify="space-between"
+      [checked]="showNote()"
+      (ionChange)="showNote.set($event.detail.checked)"
+    >
+      {{ 'SHARE_CARD.SHOW_NOTE' | translate }}
+    </ion-toggle>
+  }
+</ion-content>
+<ion-footer class="ion-padding">
+  <ion-button
+    expand="block"
+    color="accent"
+    [disabled]="busy()"
+    [attr.aria-busy]="busy()"
+    (click)="share()"
+  >
+    {{ 'SHARE' | translate }}
+  </ion-button>
+</ion-footer>

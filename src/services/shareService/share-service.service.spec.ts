@@ -27,7 +27,11 @@ describe('ShareService', () => {
     Pick<UIFileHelper, 'clearShareDirectory' | 'writeFileForSharing'>
   >;
   let share: jasmine.Spy;
-  let uiLog: { getLogs: () => unknown[]; error: jasmine.Spy };
+  let uiLog: {
+    getLogs: () => unknown[];
+    error: jasmine.Spy;
+    info: jasmine.Spy;
+  };
 
   function setup(answer: 'YES' | 'NO'): void {
     uiAlert = jasmine.createSpyObj('UIAlert', [
@@ -43,7 +47,11 @@ describe('ShareService', () => {
     fileHelper.clearShareDirectory.and.resolveTo();
     fileHelper.writeFileForSharing.and.resolveTo(SHARED_FILE);
     share = spyOn(ShareWeb.prototype, 'share').and.resolveTo({});
-    uiLog = { getLogs: () => LOGS, error: jasmine.createSpy('error') };
+    uiLog = {
+      getLogs: () => LOGS,
+      error: jasmine.createSpy('error'),
+      info: jasmine.createSpy('info'),
+    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -177,6 +185,47 @@ describe('ShareService', () => {
         failure,
       );
       expect(share).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('sharing an element as a picture', () => {
+    let element: HTMLElement;
+
+    beforeEach(() => {
+      setup('YES');
+      element = document.createElement('div');
+      element.style.cssText =
+        'width: 100px; height: 125px; background: #825634';
+      document.body.appendChild(element);
+    });
+
+    afterEach(() => element.remove());
+
+    it('draws it at the width asked for and shares it as a PNG', async () => {
+      expect(await service.shareElementAsImage(element, 1080)).toBeTrue();
+
+      const [dataUrl, name] =
+        fileHelper.writeFileForSharing.calls.mostRecent().args;
+      expect(name).toMatch(/^Beanconqueror_\d+\.png$/);
+      const image = new Image();
+      image.src = dataUrl;
+      await image.decode();
+      expect([image.width, image.height]).toEqual([1080, 1350]);
+      expect(uiLog.info).toHaveBeenCalledOnceWith(
+        jasmine.stringMatching(/^Share - image drawn in \d+ ms, \d+ KB$/),
+      );
+    });
+
+    it('logs and reports an element it cannot draw, and shares nothing', async () => {
+      const broken = { offsetWidth: 100 } as HTMLElement;
+
+      expect(await service.shareElementAsImage(broken, 1080)).toBeFalse();
+
+      expect(uiLog.error).toHaveBeenCalledOnceWith(
+        'Share - could not draw the image',
+        jasmine.anything(),
+      );
+      expect(fileHelper.writeFileForSharing).not.toHaveBeenCalled();
     });
   });
 });
