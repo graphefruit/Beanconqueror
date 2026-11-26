@@ -5,6 +5,7 @@ import {
   applyFlowCut,
   beforeCutPathOf,
   calculateCutBounds,
+  cutPreviewWeight,
   FlowCutSave,
   performFlowCut,
 } from '../flow-cut-rules';
@@ -280,5 +281,45 @@ describe('flow cut rules', () => {
       'brews/abc_flow_profile.before-cut.json',
     );
     expect(beforeCutPathOf('brews/abc')).toBe('brews/abc.before-cut.json');
+  });
+});
+
+describe('cutPreviewWeight', () => {
+  function weights(...samples: [string, number][]): BrewFlow['weight'] {
+    return samples.map(([brew_time, actual_weight]) => ({
+      brew_time,
+      timestamp: '',
+      actual_weight,
+      old_weight: 0,
+      actual_smoothed_weight: 0,
+      old_smoothed_weight: 0,
+      not_mutated_weight: 0,
+      calculated_real_flow: 0,
+    }));
+  }
+
+  it('shows the last weight up to the end of the cut', () => {
+    const flow = new BrewFlow();
+    flow.weight = weights(['0.0', 0], ['1.0', 10.004], ['2.0', 20]);
+
+    expect(cutPreviewWeight(flow, 1.5)).toBe(10);
+    expect(cutPreviewWeight(flow, 2)).toBe(20);
+    expect(cutPreviewWeight(flow, -1)).toBe(0);
+  });
+
+  it('falls back to the second scale and to 0', () => {
+    const flow = new BrewFlow();
+    flow.weightSecond = weights(['0.5', 7]);
+
+    expect(cutPreviewWeight(flow, 1)).toBe(7);
+    expect(cutPreviewWeight(new BrewFlow(), 1)).toBe(0);
+    expect(cutPreviewWeight(undefined, 1)).toBe(0);
+  });
+
+  it('never shows a negative weight', () => {
+    const flow = new BrewFlow();
+    flow.weight = weights(['0.0', -0.3]);
+
+    expect(cutPreviewWeight(flow, 1)).toBe(0);
   });
 });

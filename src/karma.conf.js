@@ -14,6 +14,7 @@ const path = require('node:path');
  * can be listed: the test build instruments nothing else.
  */
 const NEW_CODE = [
+  'src/app/brew/brew-popover-cut/brew-popover-cut.component.ts',
   'src/app/profile/**',
   'src/brew-session/**',
   'src/classes/changeTracking/**',

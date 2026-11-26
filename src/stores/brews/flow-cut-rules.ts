@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { BrewFlow } from '../../classes/brew/brewFlow';
+import { BrewFlow, IBrewWeightFlow } from '../../classes/brew/brewFlow';
 
 /** A brew's times that a cut moves along with the flow profile. */
 export interface FlowCutBrewTimes {
@@ -93,6 +93,30 @@ export function calculateCutBounds(flowProfile: BrewFlow | undefined): number {
     }
   }
   return Number(max.toFixed(3));
+}
+
+/**
+ * The weight the preview of a cut ending at `upper` seconds shows: the last
+ * weight up to then, from the second scale when the first has none.
+ */
+export function cutPreviewWeight(
+  flowProfile: BrewFlow | undefined,
+  upper: number,
+): number {
+  const endWeight = (samples: IBrewWeightFlow[] | undefined) => {
+    if (!samples?.length) {
+      return null;
+    }
+    for (let i = samples.length - 1; i >= 0; i--) {
+      if (parseFloat(samples[i].brew_time) <= upper) {
+        return samples[i].actual_weight;
+      }
+    }
+    return 0;
+  };
+  const weight =
+    endWeight(flowProfile?.weight) ?? endWeight(flowProfile?.weightSecond) ?? 0;
+  return Math.max(0, Number(weight.toFixed(2)));
 }
 
 /** A time in seconds and milliseconds, moved `shiftMs` earlier, not below 0. */

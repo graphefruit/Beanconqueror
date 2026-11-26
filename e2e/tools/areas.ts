@@ -43,6 +43,7 @@ export const SPEC_AREAS: Readonly<Record<string, readonly Area[]>> = {
   'e2e/bean-select.spec.ts': ['@bean'],
   'e2e/bean-varieties.spec.ts': ['@bean'],
   'e2e/brew-add-button.spec.ts': ['@brew', '@layout'],
+  'e2e/brew-cut.spec.ts': ['@brew', '@a11y'],
   'e2e/brew-foreign-tools.spec.ts': ['@brew', '@preparation', '@data'],
   'e2e/brew-journey.spec.ts': ['@brew'],
   'e2e/brew-list-toolbar.spec.ts': ['@brew'],
