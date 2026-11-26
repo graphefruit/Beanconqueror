@@ -77,6 +77,7 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
       'attachToFlowChange',
       'deattachToWeightChange',
       'deattachToFlowChange',
+      'deattachToPressureChange',
       'initializeFlowChart',
       'updateChart',
     ] as const) {
