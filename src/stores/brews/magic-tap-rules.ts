@@ -27,14 +27,3 @@ export function spokenStopTime(seconds: number): string {
   const whole = Math.floor(seconds);
   return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
 }
-
-/**
- * Outside the brew graph a weight is said with tenths, written the way the
- * app language writes them, so that the voice says "18 Komma 3".
- */
-export function spokenGrams(grams: number, language: string): string {
-  return new Intl.NumberFormat(language, {
-    maximumFractionDigits: 1,
-    useGrouping: false,
-  }).format(grams);
-}
