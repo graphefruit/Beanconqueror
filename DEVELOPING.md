@@ -655,6 +655,9 @@ Developers prepare builds, watch the signals and write a daily summary for him.
 - [ ] Device test on a Pixel and an iPad: update from the store version 8.8.2 with 30,000 brews.
       Counts of beans, brews and mills match before and after; note backup size and duration.
 - [ ] Way back: a 9.0 export imports into 8.8.2 with matching counts.
+- [ ] The fallback build (see below) is built once and installed over data migrated by 9.0 on a
+      Pixel and an iPad, both builds with the same signature: it starts, counts match, and entries
+      added and changed in it are still there after updating to the next 9.0 build.
 - [ ] Test purchase and restore of the subscription in the beta build, on Android and iOS.
 - [ ] English and German texts are complete; other languages fall back to English.
 
@@ -710,3 +713,31 @@ no crash reporting SDK.
 - [ ] A broken data update is fixed with a new update step or by reopening the broken one, never
       by changing an update step that has already run on user devices.
 - [ ] Merge the hotfix back into the development branch.
+
+### Fallback to 8.8
+
+Last resort when 9.0 is broken in the stores and no hotfix can ship in time: the 8.8 code is
+published with a version number above the broken 9.0, so users get it as a normal update. Only
+Lars decides to use it, and only if the fallback build passed its test before the start (see
+"Before the beta").
+
+- [ ] Halt the rollout first (Play Console: halt rollout; App Store Connect: pause phased release).
+- [ ] Branch `fallback/<version>` from the store tag `v8.8.2` plus the commits on `develop` after
+      it, with these patches, all about data safety:
+  - Before every import, write a backup file `pre-import/Beanconqueror_pre_import_<UTC>.zip`,
+    named like the 9.0 backups so that 9.0 lists and rotates it. 8.8 keeps the data before an
+    import only in memory, and the next change of the day overwrites the daily backup.
+  - List `pre-import/Beanconqueror_pre_import_*.zip` and `Beanconqueror_pre_migration_*.zip` with
+    the automatic backups, so the backup from before the data update can be restored on Android.
+  - Keep the credentials stored on the device when importing: files written by 9.0 hold them
+    empty, and 8.8 would overwrite the stored ones.
+  - Remove the `LAST_RESTORE` value on start. 8.8 does not stamp changed entries, so 9.0 could
+    take the data for an unchanged import and delete that backup first when rotating.
+- [ ] Version above the broken 9.0 in every number (`versionName`, `versionCode`,
+      `MARKETING_VERSION`, `CURRENT_PROJECT_VERSION`), for example 9.0.1. The fixed 9.0 gets the
+      next number again.
+- [ ] 8.8 keeps what it does not know: new fields, settings, storage keys, data update steps and
+      backup files stay. Entries added or changed in 8.8 have no or outdated change info.
+- [ ] The fixed 9.0 (for example 9.0.2) adds a new data update step that fills in the missing
+      change info, after the backup like every update step. UPDATE_16 to UPDATE_19 count as done
+      and do not run again.
