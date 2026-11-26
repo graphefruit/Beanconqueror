@@ -85,6 +85,12 @@ describe('shot end rules', () => {
       expect(hasShotEndedByWeight(early, dried, RULE)).toBeFalse();
     });
 
+    it('counts the minimum weight from the 16th reading on', () => {
+      const sixteenth = weights(...repeat(0, 15), 36, ...repeat(0, 34));
+
+      expect(hasShotEndedByWeight(sixteenth, dried, RULE)).toBeTrue();
+    });
+
     it('asks whether it may end below the minimum weight', () => {
       const light = weights(...repeat(10, 50));
       const endsBelow = jasmine.createSpy('endsBelow').and.returnValue(true);
@@ -133,6 +139,15 @@ describe('shot end rules', () => {
       expect(
         hasShotEndedByPressure(pressures(...repeat(9, 99), 2.1), RULE),
       ).toBeFalse();
+    });
+
+    it('counts a shot that reached exactly 1 bar', () => {
+      expect(
+        hasShotEndedByPressure(pressures(1, ...repeat(0.5, 99)), {
+          ...RULE,
+          thresholdBar: 0.5,
+        }),
+      ).toBeTrue();
     });
 
     it('keeps running when the pressure never reached 1 bar', () => {
