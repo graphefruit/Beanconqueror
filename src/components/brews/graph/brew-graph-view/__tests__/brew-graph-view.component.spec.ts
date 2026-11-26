@@ -177,6 +177,8 @@ describe('BrewGraphViewComponent', () => {
       'live:custom:ph',
       'reference:weight',
     ]);
+    // The slider reaches the end of the longer reference too.
+    expect((range() as HTMLElement & { max: number }).max).toBe(30);
   });
 
   it('offers a chip per series with data, its own metrics included, in the series colour', async () => {
@@ -347,12 +349,17 @@ describe('BrewGraphViewComponent', () => {
 
   it('releases the chart when it goes away', async () => {
     const destroy = spyOn(UplotRenderer.prototype, 'destroy').and.callThrough();
+    const disconnect = spyOn(
+      ResizeObserver.prototype,
+      'disconnect',
+    ).and.callThrough();
     create();
     await until(() => !!drawn());
 
     fixture.destroy();
 
     expect(destroy).toHaveBeenCalled();
+    expect(disconnect).toHaveBeenCalled();
   });
 
   it('moves the slider in its steps when the graph is dragged', async () => {
@@ -371,9 +378,7 @@ describe('BrewGraphViewComponent', () => {
     over.dispatchEvent(new PointerEvent('pointerup', { pointerId: 1 }));
     await settle();
 
-    const value = Number(
-      element().querySelector('ion-badge').textContent.replace('s', ''),
-    );
+    const value = (view() as unknown as { cursor: () => number }).cursor();
     expect(value).toBeGreaterThan(5);
     expect(value).toBeLessThan(8);
     expect(Math.round(value * 10)).toBe(value * 10);
