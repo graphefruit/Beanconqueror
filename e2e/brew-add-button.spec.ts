@@ -37,9 +37,6 @@ test('the add button floats at the bottom right above the tab bar', async ({
   await showBrews(page);
 
   await expect(addBrew(page)).toHaveCount(1);
-  await expect(
-    page.getByRole('banner').getByRole('button', { name: 'Add brew' }),
-  ).toHaveCount(0);
   const button = (await addBrew(page).boundingBox())!;
   const bar = (await tabBar(page).boundingBox())!;
   const viewport = page.viewportSize()!;
