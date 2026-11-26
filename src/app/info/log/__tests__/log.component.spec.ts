@@ -71,4 +71,16 @@ describe('Opening the log', () => {
       ),
     ).toEqual(['Yesterday', 'Now']);
   });
+
+  it('shows the current session in the log text while earlier ones load', () => {
+    const component = TestBed.inject(LogTextComponent);
+
+    component.ngOnInit();
+
+    expect(
+      (JSON.parse(component.logString) as LogEntry[]).map(
+        (_entry) => _entry.message,
+      ),
+    ).toEqual(['Now']);
+  });
 });

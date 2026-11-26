@@ -47,6 +47,7 @@ export class LogTextComponent implements OnInit {
   public logString: string = '';
 
   public ngOnInit(): void {
+    this.logString = JSON.stringify(this.uiLog.getLogs());
     void this.uiLog.loadEarlier().then(() => {
       this.logString = JSON.stringify(this.uiLog.getLogs());
     });

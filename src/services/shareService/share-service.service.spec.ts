@@ -4,11 +4,9 @@ import { Platform } from '@ionic/angular';
 
 import { Capacitor } from '@capacitor/core';
 import { FileInfo } from '@capacitor/filesystem';
-// The plugin object is a proxy that cannot be spied on; the web
-// implementation behind it can.
+// The plugin objects are proxies that cannot be spied on; the web
+// implementations behind them can.
 import { FilesystemWeb } from '@capacitor/filesystem/dist/esm/web';
-// The plugin object is a proxy that cannot be spied on; the web
-// implementation behind it can.
 import { ShareWeb } from '@capacitor/share/dist/esm/web';
 import { TranslateService } from '@ngx-translate/core';
 
