@@ -115,6 +115,14 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
+import {
+  hasShotEndedByPressure,
+  hasShotEndedByWeight,
+  latestWeightAndFlow,
+  machineFlow,
+  scaleShowsShotEnd,
+  shotEndMinimumWeight,
+} from '../../../stores/brews/shot-end-rules';
 import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
 
 declare let Plotly;
@@ -2040,31 +2048,14 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
                 );
                 return;
               } else if (this.baristamode) {
-                if (this.brewComponent.timer?.isTimerRunning() === true) {
-                  if (
-                    this.traces.weightTrace.y.length > 40 &&
-                    ((this.traces.weightTrace.y[
-                      this.traces.weightTrace.y.length - 1
-                    ] >= 0 &&
-                      this.traces.weightTrace.y[
-                        this.traces.weightTrace.y.length - 1
-                      ] <= 0.5) ||
-                      this.traces.weightTrace.y[
-                        this.traces.weightTrace.y.length - 1
-                      ] <= -2)
-                  ) {
-                    //Something happend, we tared... so we stop the timer
-                    this.brewComponent.timer?.pauseTimer('sanremo_you');
-                    this.stopFetchingDataFromSanremoYOU();
-                    this.updateChart();
-                    return;
-                  } else if (this.traces.weightTrace.y.length == 0) {
-                    //Something happend, it looked like  that we already paused, so we stop the timer again
-                    this.brewComponent.timer?.pauseTimer('sanremo_you');
-                    this.stopFetchingDataFromSanremoYOU();
-                    this.updateChart();
-                    return;
-                  }
+                if (
+                  this.brewComponent.timer?.isTimerRunning() === true &&
+                  scaleShowsShotEnd(this.flow_profile_raw.weight)
+                ) {
+                  this.brewComponent.timer?.pauseTimer('sanremo_you');
+                  this.stopFetchingDataFromSanremoYOU();
+                  this.updateChart();
+                  return;
                 }
               }
             }
@@ -2204,21 +2195,19 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               });
 
               // Override weight-based flow with Meticulous gravimetric flow if available
-              if (
-                shotData.gravimetric_flow != null &&
-                shotData.gravimetric_flow !== 0
-              ) {
+              const flow = machineFlow(shotData.gravimetric_flow);
+              if (flow !== undefined) {
                 const lastRealtimeFlow =
                   this.flow_profile_raw.realtimeFlow[
                     this.flow_profile_raw.realtimeFlow.length - 1
                   ];
                 if (lastRealtimeFlow) {
-                  lastRealtimeFlow.flow_value = shotData.gravimetric_flow;
+                  lastRealtimeFlow.flow_value = flow;
                 }
-                if (this.traces.realtimeFlowTrace.y.length > 0) {
-                  this.traces.realtimeFlowTrace.y[
-                    this.traces.realtimeFlowTrace.y.length - 1
-                  ] = shotData.gravimetric_flow;
+                // The drawn graph mirrors the measured series.
+                const drawnFlow = this.traces?.realtimeFlowTrace?.y;
+                if (drawnFlow?.length > 0) {
+                  drawnFlow[drawnFlow.length - 1] = flow;
                 }
               }
 
@@ -3626,18 +3615,16 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         if (this.baristamode) {
           //sendActualWeightAndFlowDataToMachine
 
-          const lastFlowEntry =
-            this.traces.realtimeFlowTrace.y[
-              this.traces.realtimeFlowTrace.y.length - 1
-            ];
-          const lastWeightEntry =
-            this.traces.weightTrace.y[this.traces.weightTrace.y.length - 1];
+          const { weight, flow } = latestWeightAndFlow(
+            this.flow_profile_raw.weight,
+            this.flow_profile_raw.realtimeFlow,
+          );
           (
             this.brewComponent.brewBrewingPreparationDeviceEl
               .preparationDevice as SanremoYOUDevice
           ).sendActualWeightAndFlowDataToMachine(
-            lastWeightEntry,
-            lastFlowEntry,
+            weight,
+            flow,
             this.baristaModeTargetWeight,
           );
         }
@@ -4193,15 +4180,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         actualFlowValue = 0;
       }
 
-      let lastFoundRightValue = 0;
-      for (let i = this.traces.weightTrace.y.length - 1; i >= 0; i--) {
-        const dataVal = this.traces.weightTrace.y[i];
-        if (dataVal !== null) {
-          lastFoundRightValue = dataVal;
-          break;
-        }
-      }
-
       for (const item of this.flowProfileArrObjs) {
         const waterFlow: IBrewWaterFlow = {} as IBrewWaterFlow;
 
@@ -4568,63 +4546,30 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (
-      this.settings.bluetooth_scale_espresso_stop_on_no_weight_change ===
-        false ||
-      this.traces.weightTrace.y.length < 50 ||
-      this.data.brew_time <= 5
-    ) {
-      return false; // Not enough readings or start time not set yet, or we didn't elapse 5 seconds
-    }
-
-    let grindWeight = this.data.grind_weight;
-    if (grindWeight && grindWeight > 0) {
-    } else {
-      grindWeight = 5;
-    }
-    if (this.baristamode) {
-      if (this.baristaModeTargetWeight !== undefined) {
-        //Set the desired weight of the baristamode
-        //We got the issue e.g. on blooming phase, we passed 10g because the bloom-flow, even with low preassure, reached over 10g, and so the shot ended, even so it wasn't finished
-        //We take 90% of the desired weight as minimum, to not have issues with lags, because lets say we take 36 grams, and we need to reach realy here 36 grams, it could take some time
-        grindWeight = this.baristaModeTargetWeight * 0.9;
-      } else {
-        /**A bit more threshold for preinfusion**/
-        grindWeight = 10;
-      }
-    }
-
-    //#875 - ignore the first 5 weights, because sometimes when starting with a pressure, weight reset is sometimes not zero
-    /**
-     * Edit - we don't take the last 5 entries, we take the last 15 entries, even the slowest scale with 3 values, would mean 5 seconds
-     * But some scales need longer to tare, so 15 weights are a saftey threshold
-     */
-    const slicedTraceWeight = this.traces.weightTrace.y.slice(15);
-    const valFound = slicedTraceWeight.find((v) => v >= grindWeight);
-    if (valFound === undefined || valFound === null) {
-      if (this.baristamode) {
-        if (
+    return hasShotEndedByWeight(
+      this.flow_profile_raw.weight,
+      this.flow_profile_raw.realtimeFlow,
+      {
+        stopOnSteadyWeight:
+          this.settings.bluetooth_scale_espresso_stop_on_no_weight_change,
+        minFlow:
+          this.settings
+            .bluetooth_scale_espresso_stop_on_no_weight_change_min_flow,
+        brewTime: this.data.brew_time,
+        minimumWeight: shotEndMinimumWeight(
+          this.data.grind_weight,
+          this.baristamode,
+          this.baristaModeTargetWeight,
+        ),
+        // A Sanremo YOU that stopped ends the shot below the minimum weight.
+        endsBelowMinimumWeight: () =>
+          this.baristamode &&
           (
             this.brewComponent.brewBrewingPreparationDeviceEl
               .preparationDevice as SanremoYOUDevice
-          ).getActualShotData().statusPhase === 0
-        ) {
-          //Means we stopped and we didn't find the right grindweight...
-        } else {
-          return false; // We want to be atleast a ratio of 1:1
-        }
-      } else {
-        return false; // We want to be atleast a ratio of 1:1
-      }
-    }
-    const flowThreshold: number =
-      this.settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow;
-    const slicedFlowTrace = this.traces.realtimeFlowTrace.y.slice(25);
-    if (slicedFlowTrace[slicedFlowTrace.length - 1] <= flowThreshold) {
-      return true;
-    } else {
-      return false;
-    }
+          ).getActualShotData().statusPhase === 0,
+      },
+    );
   }
 
   private hasEspressoShotEndedWithPressure(): boolean {
@@ -4635,30 +4580,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       return false;
     }
 
-    if (
-      this.settings.pressure_threshold_stop_shot_active === false ||
-      this.traces.pressureTrace.y.length < 100 ||
-      this.data.brew_time <= 10
-    ) {
-      return false; // Not enough readings or start time not set yet, or we didn't elapse 5 seconds
-    }
-
-    const barFoundAboveOne = this.traces.pressureTrace.y.find((v) => v >= 1);
-    if (barFoundAboveOne !== undefined) {
-      //User minimum got up to 1 bar
-
-      const pressureStopThreshold: number =
-        this.settings.pressure_threshold_stop_shot_bar;
-      if (
-        this.traces.pressureTrace.y[this.traces.pressureTrace.y.length - 1] <=
-        pressureStopThreshold
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    return false;
+    return hasShotEndedByPressure(this.flow_profile_raw.pressureFlow, {
+      active: this.settings.pressure_threshold_stop_shot_active,
+      thresholdBar: this.settings.pressure_threshold_stop_shot_bar,
+      brewTime: this.data.brew_time,
+    });
   }
 
   private pushFlowProfile(
