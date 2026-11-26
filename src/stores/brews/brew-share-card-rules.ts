@@ -4,6 +4,7 @@ import type { ListViewBrewParameter } from '../../classes/parameter/listViewBrew
 import type { Preparation } from '../../classes/preparation/preparation';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
+import { buildBrewImportProvenanceChip } from '../../services/brewImport/brew-import-provenance';
 
 /** Texts the brew only knows with the settings and the other stores. */
 export interface BrewShareTexts {
@@ -23,7 +24,10 @@ export interface BrewShareTexts {
 
 export interface BrewShareSource {
   readonly brew: Brew;
-  readonly bean?: Pick<Bean, 'name' | 'roaster' | 'roastingDate'>;
+  readonly bean?: Pick<
+    Bean,
+    'name' | 'roaster' | 'roastingDate' | 'isFrozen' | 'isUnfrozen'
+  >;
   readonly preparation?: Pick<
     Preparation,
     | 'name'
@@ -48,12 +52,18 @@ export interface BrewShareRow {
 }
 
 export interface BrewShareCard {
+  readonly best: boolean;
+  readonly favourite: boolean;
   readonly date: string;
   readonly time: string;
+  /** A snowflake before the bean; in brackets once the beans are thawed. */
+  readonly frozen?: 'frozen' | 'unfrozen';
   readonly bean: string;
   readonly roaster: string;
   /** Whole stars out of 5, or the number of a custom rating. */
   readonly rating?: { readonly stars?: number; readonly value?: string };
+  /** The chip of an imported brew: where it came from, and the device. */
+  readonly imported?: string;
   readonly rows: readonly BrewShareRow[];
   /** Offered with a switch, as it is the one part that can be personal. */
   readonly note: string;
@@ -185,9 +195,19 @@ export function brewShareCard(source: BrewShareSource): BrewShareCard {
   );
   add('BREW_DATA_FLAVOR', true, texts.flavors.join(', '), true);
 
+  const imported = buildBrewImportProvenanceChip(
+    brew.customInformation?.imported,
+  );
   return {
+    best: !!brew.best_brew,
+    favourite: !!brew.favourite,
     date: texts.date,
     time: texts.time,
+    frozen: source.bean?.isFrozen()
+      ? 'frozen'
+      : source.bean?.isUnfrozen()
+        ? 'unfrozen'
+        : undefined,
     bean: source.bean?.name ?? '',
     roaster: source.bean?.roaster ?? '',
     rating: brewShareRating(
@@ -195,6 +215,9 @@ export function brewShareCard(source: BrewShareSource): BrewShareCard {
       visible('rating'),
       source.customRating,
     ),
+    imported: imported
+      ? [imported.sourceName, imported.device].filter(Boolean).join(' · ')
+      : undefined,
     rows,
     note: brew.note ?? '',
     noteShown: visible('note'),
@@ -227,8 +250,15 @@ export function describeBrewShareCard(
   t: Translate,
 ): string {
   const parts = [
-    card.roaster ? `${card.bean} (${card.roaster})` : card.bean,
+    card.best ? t('POPOVER_BEST_BREW') : '',
+    card.favourite ? t('POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE') : '',
     `${card.date} ${card.time}`,
+    card.frozen === 'frozen'
+      ? t('FROZEN_BEANS')
+      : card.frozen === 'unfrozen'
+        ? t('A11Y.UNFROZEN')
+        : '',
+    card.roaster ? `${card.bean} (${card.roaster})` : card.bean,
   ];
   if (card.rating?.stars !== undefined) {
     parts.push(
@@ -240,6 +270,9 @@ export function describeBrewShareCard(
     );
   } else if (card.rating) {
     parts.push(`${t('BREW_DATA_RATING')}: ${card.rating.value}`);
+  }
+  if (card.imported) {
+    parts.push(`${t('BREW_IMPORTED_FROM')} ${card.imported}`);
   }
   for (const row of card.rows) {
     parts.push(`${t(row.labelKey)}: ${row.value}`);

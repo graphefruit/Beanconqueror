@@ -1,5 +1,5 @@
 import { contrast, Rgb } from '../../../../e2e/support/colour';
-import { SHARE_PALETTES } from '../share-palettes';
+import { GRAPH_INK, SHARE_PALETTES } from '../share-palettes';
 
 function rgb(hex: string): Rgb {
   const value = Number.parseInt(hex.slice(1), 16);
@@ -26,6 +26,15 @@ describe('share palettes', () => {
       }
       expect(contrast(rgb(palette.stamp), rgb(palette.frame)))
         .withContext(`stamp ${palette.stamp} on ${palette.frame}`)
+        .toBeGreaterThanOrEqual(4.5);
+    });
+
+    it(`draw the graph to suit the card, its axes at 4.5:1 (${palette.id})`, () => {
+      const white = contrast(rgb(palette.card), [255, 255, 255]);
+      const black = contrast(rgb(palette.card), [0, 0, 0]);
+      expect(palette.graph).toBe(white > black ? 'dark' : 'light');
+      expect(contrast(rgb(GRAPH_INK[palette.graph]), rgb(palette.card)))
+        .withContext(`axes on ${palette.card}`)
         .toBeGreaterThanOrEqual(4.5);
     });
   }

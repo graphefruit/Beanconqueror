@@ -59,6 +59,14 @@
   }
 }
 
+.share-mark {
+  width: 1em;
+  height: 1em;
+  margin-inline-end: 1cqw;
+  vertical-align: -0.125em;
+  fill: currentColor;
+}
+
 .share-bean {
   margin-top: 1cqw;
   color: var(--share-accent);
@@ -85,6 +93,17 @@
 
 .share-star-empty {
   opacity: 0.3;
+}
+
+.share-imported {
+  width: fit-content;
+  margin-top: 3.5cqw;
+  padding: 1cqw 3cqw;
+  border: 0.3cqw solid var(--share-muted);
+  border-radius: 4cqw;
+  color: var(--share-muted);
+  font-size: 3.2cqw;
+  overflow-wrap: anywhere;
 }
 
 .share-rows {

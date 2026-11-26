@@ -38,7 +38,7 @@ import {
 } from '../../stores/brews/brew-share-card-rules';
 import { HeaderDismissButtonComponent } from '../header/header-dismiss-button.component';
 import { HeaderComponent } from '../header/header.component';
-import { SHARE_PALETTES, SharePalette } from './share-palettes';
+import { GRAPH_INK, SHARE_PALETTES, SharePalette } from './share-palettes';
 
 /** Width of the shared picture; 4:5 gives 1080 × 1350, as feeds show it. */
 export const SHARE_IMAGE_WIDTH = 1080;
@@ -114,6 +114,8 @@ export class BrewShareComponent implements OnInit {
 
   private readonly picture =
     viewChild.required<ElementRef<HTMLElement>>('picture');
+  /** The mode of the graph last asked for; only its answer is shown. */
+  private graphMode?: SharePalette['graph'];
 
   public static async open(
     modalController: ModalController,
@@ -133,21 +135,41 @@ export class BrewShareComponent implements OnInit {
     void this.loadGraph();
   }
 
+  protected choose(palette: SharePalette): void {
+    this.palette.set(palette);
+    void this.loadGraph();
+  }
+
   private async loadGraph(): Promise<void> {
+    const mode = this.palette().graph;
+    if (mode === this.graphMode) {
+      return;
+    }
+    this.graphMode = mode;
+    this.busy.set(true);
+    const latest = () => mode === this.graphMode;
     try {
-      this.graph.set(
-        await this.graphHelper.brewGraphImage(
-          this.brew(),
-          GRAPH_WIDTH,
-          GRAPH_HEIGHT,
-        ),
+      const image = await this.graphHelper.brewGraphImage(
+        this.brew(),
+        GRAPH_WIDTH,
+        GRAPH_HEIGHT,
+        { dark: mode === 'dark', ink: GRAPH_INK[mode] },
       );
+      if (latest()) {
+        this.graph.set(image);
+        this.graphFailed.set(false);
+      }
     } catch (error) {
       // The picture is still worth sharing without the graph.
       this.uiLog.error('Share - could not draw the graph', error);
-      this.graphFailed.set(true);
+      if (latest()) {
+        this.graph.set(undefined);
+        this.graphFailed.set(true);
+      }
     } finally {
-      this.busy.set(false);
+      if (latest()) {
+        this.busy.set(false);
+      }
     }
   }
 

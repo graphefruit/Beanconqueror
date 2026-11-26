@@ -75,6 +75,43 @@ describe('brew share card rules', () => {
   const rows = (card = brewShareCard(source())) =>
     card.rows.map((row) => [row.labelKey, row.value]);
 
+  it('carries the marks of the brew card: best, favourite, frozen, imported', () => {
+    let card = brewShareCard(source());
+    expect([card.best, card.favourite, card.frozen, card.imported]).toEqual([
+      false,
+      false,
+      undefined,
+      undefined,
+    ]);
+
+    brew.best_brew = true;
+    brew.favourite = true;
+    bean.frozenDate = '2027-01-01';
+    brew.customInformation.imported = {
+      source: 'meticulous',
+      sourceName: ' Meticulous ',
+      device: 'Meticulous 1',
+      schema: 1,
+    };
+    card = brewShareCard(source());
+    expect([card.best, card.favourite, card.frozen, card.imported]).toEqual([
+      true,
+      true,
+      'frozen',
+      'Meticulous · Meticulous 1',
+    ]);
+
+    bean.unfrozenDate = '2027-01-10';
+    brew.customInformation.imported = {
+      source: 'x',
+      sourceName: '',
+      schema: 1,
+    };
+    card = brewShareCard(source());
+    expect(card.frozen).toBe('unfrozen');
+    expect(card.imported).toBeUndefined();
+  });
+
   it('shows what the brew card shows with the default settings, empty fields left out', () => {
     const card = brewShareCard(source());
 
@@ -253,6 +290,11 @@ describe('brew share card rules', () => {
         BREW_DATA_MILL: 'Grinder',
         BREW_DATA_IN_OUT_BR: 'In/Out (BR)',
         BREW_DATA_TIME: 'Time',
+        POPOVER_BEST_BREW: 'Best brew',
+        POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE: 'Favourite',
+        FROZEN_BEANS: 'Frozen',
+        'A11Y.UNFROZEN': 'Unfrozen',
+        BREW_IMPORTED_FROM: 'Imported from',
       },
       de: {
         'SHARE_CARD.DESCRIPTION': 'Bild der Brühung: {{content}}',
@@ -287,10 +329,32 @@ describe('brew share card rules', () => {
           translate('en'),
         ),
       ).toBe(
-        'Image of the brew: Yirgacheffe (Tonino). 15.01.2027 09:20. ' +
+        'Image of the brew: 15.01.2027 09:20. Yirgacheffe (Tonino). ' +
           'Rating: 4 of 5 stars. Preparation method: V60. Grinder: Comandante. ' +
           'In/Out (BR): 18gr / 300gr (1 / 16.67). Time: 02:47. Notes: Sweet. ' +
           'With graph. BeanConqueror',
+      );
+    });
+
+    it('names the marks of the brew card where the picture shows them', () => {
+      brew.best_brew = true;
+      brew.favourite = true;
+      bean.frozenDate = '2027-01-01';
+      bean.unfrozenDate = '2027-01-10';
+      brew.customInformation.imported = {
+        source: 'gaggiuino',
+        sourceName: 'Gaggiuino',
+        schema: 1,
+      };
+
+      expect(
+        describeBrewShareCard(
+          brewShareCard(source()),
+          { note: false, graph: false },
+          translate('en'),
+        ),
+      ).toMatch(
+        /^Image of the brew: Best brew\. Favourite\. 15\.01\.2027 09:20\. Unfrozen\. Yirgacheffe \(Tonino\)\. Rating: 4 of 5 stars\. Imported from Gaggiuino\. Preparation method/,
       );
     });
 
@@ -305,7 +369,7 @@ describe('brew share card rules', () => {
           translate('de'),
         ),
       ).toBe(
-        'Bild der Brühung: Yirgacheffe. 15.01.2027 09:20. Bewertung: 7.5. ' +
+        'Bild der Brühung: 15.01.2027 09:20. Yirgacheffe. Bewertung: 7.5. ' +
           'Zubereitungsmethode: V60. Mühle: Comandante. ' +
           'In/Out (BR): 18gr / 300gr (1 / 16.67). Zeit: 02:47. BeanConqueror',
       );

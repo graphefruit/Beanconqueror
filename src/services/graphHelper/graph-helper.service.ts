@@ -76,24 +76,36 @@ export class GraphHelperService {
   /**
    * The graph of a brew as a PNG data URL, drawn off screen at a fixed size;
    * undefined when the brew has none. Callers only get the picture, so the
-   * renderer behind it can change without them.
+   * renderer behind it can change without them. It is drawn light or dark as
+   * asked, not as the app is, with the axes in `ink` and a clear ground, so
+   * it takes the colour of whatever it is laid on.
    */
   public async brewGraphImage(
     brew: Pick<Brew, 'flow_profile'>,
     width: number,
     height: number,
+    look: { readonly dark: boolean; readonly ink: string },
   ): Promise<string | undefined> {
     if (!brew.flow_profile) {
       return undefined;
     }
     const flow = await this.readFlowProfile(brew.flow_profile);
     await loadPlotly();
-    const { data, layout } = this.staticFlowFigure(flow, width, height);
-    // Same ground as the brew card the graph is shown on in the app.
-    layout.paper_bgcolor = layout.plot_bgcolor =
-      getComputedStyle(document.documentElement)
-        .getPropertyValue('--bq-surface-card')
-        .trim() || '#ffffff';
+    const { data, layout } = this.staticFlowFigure(
+      flow,
+      width,
+      height,
+      look.dark,
+    );
+    layout.paper_bgcolor = layout.plot_bgcolor = 'rgba(0,0,0,0)';
+    // The axes otherwise take the colours of their lines, which are too pale
+    // to read on a light ground.
+    layout.font = { color: look.ink };
+    for (const axis of Object.keys(layout).filter((key) =>
+      /^[xy]axis/.test(key),
+    )) {
+      layout[axis].tickfont = { color: look.ink };
+    }
     return Plotly.toImage(
       { data, layout },
       { format: 'png', width, height, scale: 3 },
@@ -117,13 +129,22 @@ export class GraphHelperService {
     flow: BrewFlow,
     width: number,
     height: number,
+    dark = this.themeService.isDarkMode(),
   ): {
     traces: ReturnType<GraphHelperService['initializeTraces']>;
     data: unknown[];
     layout: ReturnType<GraphHelperService['getChartLayout']>;
   } {
-    const traces = this.fillTraces(this.initializeTraces(), null, true);
-    this.fillDataIntoTraces(flow, traces);
+    const traces = this.fillTraces(
+      this.initializeTraces(),
+      null,
+      true,
+      false,
+      undefined,
+      undefined,
+      dark,
+    );
+    this.fillDataIntoTraces(flow, traces, dark);
     const data = [
       traces.weightTrace,
       traces.flowPerSecondTrace,
@@ -145,6 +166,8 @@ export class GraphHelperService {
       width,
       height,
       true,
+      undefined,
+      dark,
     );
     return { traces, data, layout };
   }
@@ -171,11 +194,11 @@ export class GraphHelperService {
     _isReference: boolean = false,
     _rawData?: BrewFlow,
     _preparationDeviceType?: PreparationDeviceType,
+    isDarkMode = this.themeService.isDarkMode(),
   ) {
     const traces = _traces;
 
     const settings: Settings = this.uiSettingsStorage.getSettings();
-    const isDarkMode = this.themeService.isDarkMode();
     const colors = settings.graph_colors;
 
     const getColor = (key: keyof typeof colors, isRef: boolean) => {
@@ -385,7 +408,11 @@ export class GraphHelperService {
     return traces;
   }
 
-  public fillDataIntoTraces(_rawData: BrewFlow, _traces: any) {
+  public fillDataIntoTraces(
+    _rawData: BrewFlow,
+    _traces: any,
+    isDarkMode = this.themeService.isDarkMode(),
+  ) {
     const firstTimestamp = this.firstTraceTimestamp(_rawData);
     if (!firstTimestamp) {
       return;
@@ -539,9 +566,7 @@ export class GraphHelperService {
             mode: 'lines',
             line: {
               shape: 'linear',
-              color: this.themeService.isDarkMode()
-                ? customAxis.colorDark
-                : customAxis.colorLight,
+              color: isDarkMode ? customAxis.colorDark : customAxis.colorLight,
               width: 2,
             },
             visible: true,
@@ -686,9 +711,9 @@ export class GraphHelperService {
     _chartHeight: number = undefined,
     _disableClick: boolean = false,
     _traceReferences: any = undefined,
+    isDarkMode = this.themeService.isDarkMode(),
   ) {
     const settings: Settings = this.uiSettingsStorage.getSettings();
-    const isDarkMode = this.themeService.isDarkMode();
     const colors = settings.graph_colors;
 
     const getAxisColor = (key: keyof typeof colors) => {
@@ -1111,7 +1136,7 @@ export class GraphHelperService {
       }
     }
 
-    if (this.themeService.isDarkMode() === true) {
+    if (isDarkMode) {
       layout.xaxis.gridcolor = '#8e8e8e';
       layout.yaxis.gridcolor = '#8e8e8e';
     }

@@ -148,7 +148,7 @@ describe('BrewShareComponent', () => {
     expect(picture(host).textContent).toContain('BeanConqueror');
     expect(picture(host).textContent).not.toContain('17.9');
     expect(picture(host).getAttribute('aria-label')).toMatch(
-      /^Image of the brew: Yirgacheffe \(Tonino\)\. 15\.01\.2027 09:20\..*Grinder: Comandante\..*BeanConqueror$/,
+      /^Image of the brew: 15\.01\.2027 09:20\. Yirgacheffe \(Tonino\)\..*Grinder: Comandante\..*BeanConqueror$/,
     );
     expect(
       picture(host).querySelector<HTMLElement>('.share-icon').style.cssText,
@@ -212,9 +212,93 @@ describe('BrewShareComponent', () => {
 
     const host = await show(brew);
 
-    expect(graphHelper.brewGraphImage).toHaveBeenCalledWith(brew, 300, 150);
+    expect(graphHelper.brewGraphImage).toHaveBeenCalledOnceWith(
+      brew,
+      300,
+      150,
+      { dark: false, ink: '#4a382c' },
+    );
     expect(picture(host).querySelector('img').getAttribute('src')).toBe(GRAPH);
     expect(picture(host).querySelector('img').getAttribute('alt')).toBe('');
+  });
+
+  it('draws the graph again only when a colour needs the other mode, sharing nothing meanwhile', async () => {
+    const DARK = 'data:image/png;base64,DARK';
+    const pending: Array<(image: string) => void> = [];
+    graphHelper.brewGraphImage.and.callFake(
+      () => new Promise((resolve) => pending.push(resolve)),
+    );
+    const brew = makeBrew();
+    brew.flow_profile = 'brews/1_flow_profile.json';
+    fixture = TestBed.createComponent(BrewShareComponent);
+    fixture.componentRef.setInput('brew', brew);
+    fixture.detectChanges();
+    const host = fixture.nativeElement as HTMLElement;
+    const radios = host.querySelectorAll<HTMLInputElement>(
+      'fieldset input[type="radio"]',
+    );
+    // Ionic moves aria-busy into the button once drawn, so the state is read.
+    const busy = () => String((fixture.componentInstance as any).busy());
+    pending.shift()(GRAPH);
+    await fixture.whenStable();
+    expect(busy()).toBe('false');
+
+    radios[1].click(); // cream: light as well
+    expect(graphHelper.brewGraphImage).toHaveBeenCalledTimes(1);
+    expect(busy()).toBe('false');
+
+    radios[2].click(); // espresso: dark
+    expect(graphHelper.brewGraphImage).toHaveBeenCalledWith(brew, 300, 150, {
+      dark: true,
+      ink: '#e1d1bf',
+    });
+    expect(busy()).toBe('true');
+    await (fixture.componentInstance as any).share();
+    expect(shareService.shareElementAsImage).not.toHaveBeenCalled();
+
+    // Back to light before the dark graph is in: the late dark one is dropped.
+    radios[0].click();
+    pending.shift()(DARK);
+    await fixture.whenStable();
+    expect(busy()).toBe('true');
+    pending.shift()(GRAPH);
+    await fixture.whenStable();
+    expect(busy()).toBe('false');
+    expect(picture(host).querySelector('img').getAttribute('src')).toBe(GRAPH);
+    expect(graphHelper.brewGraphImage).toHaveBeenCalledTimes(3);
+  });
+
+  it('shows the marks of the brew card and names them', async () => {
+    const brew = makeBrew();
+    brew.best_brew = true;
+    brew.favourite = true;
+    brew.customInformation.imported = {
+      source: 'gaggiuino',
+      sourceName: 'Gaggiuino',
+      device: 'Gaggia Classic',
+      schema: 1,
+    };
+    brew.getBean().frozenDate = '2027-01-01';
+    TestBed.inject(TranslateService).setTranslation(
+      'en',
+      {
+        POPOVER_BEST_BREW: 'Best brew',
+        POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE: 'Favourite',
+        FROZEN_BEANS: 'Frozen',
+        BREW_IMPORTED_FROM: 'Imported from',
+      },
+      true,
+    );
+
+    const host = await show(brew);
+
+    expect(picture(host).querySelectorAll('svg.share-mark').length).toBe(3);
+    expect(picture(host).textContent).toContain(
+      'Imported from Gaggiuino · Gaggia Classic',
+    );
+    expect(picture(host).getAttribute('aria-label')).toMatch(
+      /^Image of the brew: Best brew\. Favourite\. 15\.01\.2027 09:20\. Frozen\. Yirgacheffe \(Tonino\)\. Imported from Gaggiuino · Gaggia Classic\./,
+    );
   });
 
   it('shares only once the graph is in', async () => {

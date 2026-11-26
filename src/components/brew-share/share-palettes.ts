@@ -15,7 +15,15 @@ export interface SharePalette {
   /** Stars and the bean name. */
   readonly accent: string;
   readonly stamp: string;
+  /** How the graph is drawn on the card, whatever mode the app is in. */
+  readonly graph: 'light' | 'dark';
 }
+
+/** The axes of the graph; one per mode, so a new colour keeps the graph. */
+export const GRAPH_INK: Readonly<Record<SharePalette['graph'], string>> = {
+  light: '#4a382c',
+  dark: '#e1d1bf',
+};
 
 export const SHARE_PALETTES: readonly SharePalette[] = [
   {
@@ -27,6 +35,7 @@ export const SHARE_PALETTES: readonly SharePalette[] = [
     muted: '#4a382c',
     accent: '#825634',
     stamp: '#ffffff',
+    graph: 'light',
   },
   {
     id: 'cream',
@@ -37,6 +46,7 @@ export const SHARE_PALETTES: readonly SharePalette[] = [
     muted: '#4a382c',
     accent: '#9e2d45',
     stamp: '#211914',
+    graph: 'light',
   },
   {
     id: 'espresso',
@@ -47,6 +57,7 @@ export const SHARE_PALETTES: readonly SharePalette[] = [
     muted: '#e1d1bf',
     accent: '#e0a87a',
     stamp: '#ead9c4',
+    graph: 'dark',
   },
   {
     id: 'sage',
@@ -57,5 +68,6 @@ export const SHARE_PALETTES: readonly SharePalette[] = [
     muted: '#3d4a43',
     accent: '#2f5e4c',
     stamp: '#ffffff',
+    graph: 'light',
   },
 ];
