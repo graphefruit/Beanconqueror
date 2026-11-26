@@ -8,6 +8,9 @@
   <ion-card>
     <ion-card-content>
 
+      @if(searchHint) {
+        <div class="field-label ion-padding-bottom">{{ searchHint | translate }}</div>
+      }
       @if(foundDevices.length <=0 && searchRunning === false) {
         <div class="field-label">{{'NO_DEVICES_FOUND_PLEASE_TRY_AGAIN' |translate}}</div>
       }
