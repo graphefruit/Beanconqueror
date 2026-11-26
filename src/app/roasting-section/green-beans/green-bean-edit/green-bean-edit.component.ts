@@ -24,6 +24,7 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
+import { StorageClass } from '../../../../classes/storageClass';
 import { storedOrReported } from '../../../../classes/storedOrReported';
 import { BeanSortInformationComponent } from '../../../../components/beans/bean-sort-information/bean-sort-information.component';
 import { GreenBeanGeneralInformationComponent } from '../../../../components/beans/green-bean-general-information/green-bean-general-information.component';
@@ -94,6 +95,10 @@ export class GreenBeanEditComponent implements OnInit {
     );
     this.data = new GreenBean();
     this.data.initializeByObject(this.greenBean);
+    // The form edits the sorts in place; the stored green bean keeps its own until saved.
+    this.data.bean_information = StorageClass.cloneData(
+      this.data.bean_information,
+    );
   }
 
   public async editBean() {

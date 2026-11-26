@@ -5,30 +5,30 @@
       <ion-icon class="ion-color-accent" name="settings-outline" slot="icon-only" aria-hidden="true" />
     </ion-button>
   </app-header>
+  <div class="list-head">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical tabs">
+      <ion-segment-button value="open">
+        <ion-label>
+          <app-segment-label [label]="'CURRENT' | translate" [shown]="openBrewsView?.length" [total]="openBrewsLength" />
+        </ion-label>
+      </ion-segment-button>
+      @if (settings?.show_archived_brews) {
+        <ion-segment-button value="archive">
+          <ion-label>
+            <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="archiveBrewsView?.length" [total]="archiveBrewsLength" />
+          </ion-label>
+        </ion-segment-button>
+      }
+    </ion-segment>
+    @if (uiSegmentShown && (shownBrews.length > 0 || uiShallBarBeDisplayed || uiIsFilterActive === true)) {
+      <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+        <ng-container [ngTemplateOutlet]="brewSearchToolbar" />
+      </div>
+    }
+  </div>
 </ion-header>
 <ion-content>
   <app-virtual-list [items]="shownBrews" [itemKey]="brewKey" [estimateSize]="uiIsCollapseActive ? 98 : 280">
-    <div virtualListHead>
-      <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical tabs">
-        <ion-segment-button value="open">
-          <ion-label>
-            <app-segment-label [label]="'CURRENT' | translate" [shown]="openBrewsView?.length" [total]="openBrewsLength" />
-          </ion-label>
-        </ion-segment-button>
-        @if (settings?.show_archived_brews) {
-          <ion-segment-button value="archive">
-            <ion-label>
-              <app-segment-label [label]="'TAB_ARCHIVE' | translate" [shown]="archiveBrewsView?.length" [total]="archiveBrewsLength" />
-            </ion-label>
-          </ion-segment-button>
-        }
-      </ion-segment>
-      @if (uiSegmentShown && (shownBrews.length > 0 || uiShallBarBeDisplayed || uiIsFilterActive === true)) {
-        <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-          <ng-container [ngTemplateOutlet]="brewSearchToolbar" />
-        </div>
-      }
-    </div>
     @if (uiSegmentShown && shownBrews.length === 0) {
       <div class="ion-padding ion-text-center">
         <div>

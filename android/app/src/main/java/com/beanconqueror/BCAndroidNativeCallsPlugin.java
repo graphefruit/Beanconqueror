@@ -2,8 +2,10 @@ package com.beanconqueror;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
 import android.webkit.MimeTypeMap;
 
 import androidx.activity.result.ActivityResult;
@@ -66,6 +68,33 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
     JSObject result = new JSObject();
     result.put("safTreeUri", uri.toString());
     call.resolve(result);
+  }
+
+  /**
+   * The edge-to-edge plugin keeps the WebView clear of a display cutout with a margin but only
+   * colours the status and navigation bar, so the strip beside the cutout shows what lies behind
+   * the WebView. The web app paints it in its page colour whenever its theme changes. The WebView
+   * parent is used rather than the window background, which the system splash screen resets to
+   * the theme's value when it hides.
+   */
+  @PluginMethod()
+  public void setBackgroundColor(PluginCall call) {
+    String color = call.getString("color");
+    if (color == null) {
+      call.reject("color was null");
+      return;
+    }
+    int parsedColor;
+    try {
+      parsedColor = Color.parseColor(color);
+    } catch (IllegalArgumentException ex) {
+      call.reject("color is not a valid colour", ex);
+      return;
+    }
+    getActivity().runOnUiThread(() -> {
+      ((View) getBridge().getWebView().getParent()).setBackgroundColor(parsedColor);
+      call.resolve();
+    });
   }
 
   @PluginMethod()

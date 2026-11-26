@@ -33,6 +33,7 @@ const NEW_CODE = [
   'src/directive/picker-field.directive.ts',
   'src/directive/range-name.directive.ts',
   'src/directive/tab-panel.directive.ts',
+  'src/native/quick-action-plugin.ts',
   'src/services/a11y/**',
   'src/services/attachmentManifest/**',
   'src/services/automaticBackup/**',
@@ -42,12 +43,14 @@ const NEW_CODE = [
   'src/services/deletionJournal/**',
   'src/services/deviceIdentity/**',
   'src/services/documentLanguage/**',
+  'src/services/excel-import-rules.ts',
   'src/services/graphHelper/load-plotly.ts',
   'src/services/nfcService/nfc-tag-link.ts',
   'src/services/preImportBackup/pre-import-backup.service.ts',
   'src/services/tabletLayout/**',
   'src/services/textToSpeech/**',
   'src/services/theme/theme-plugins.ts',
+  'src/services/translate/**',
   'src/stores/**',
 ];
 const NEW_CODE_MIN_COVERAGE = 80;

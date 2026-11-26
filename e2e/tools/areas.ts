@@ -66,6 +66,12 @@ export const SPEC_AREAS: Readonly<Record<string, readonly Area[]>> = {
   'e2e/language.spec.ts': ['@a11y', '@settings'],
   'e2e/list-add-button.spec.ts': ['@a11y', '@bean', '@brew'],
   'e2e/list-dialog-head.spec.ts': ['@layout', '@bean', '@brew'],
+  'e2e/list-head-phone-landscape.spec.ts': [
+    '@layout',
+    '@a11y',
+    '@bean',
+    '@brew',
+  ],
   'e2e/list-fields-link.spec.ts': ['@a11y', '@bean', '@brew'],
   'e2e/list-turn.spec.ts': ['@layout', '@bean', '@brew'],
   'e2e/navigation.spec.ts': ['@app', '@profile'],
