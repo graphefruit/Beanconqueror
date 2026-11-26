@@ -379,11 +379,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 8.8.2;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-weak_framework",
-					SwiftUICore,
-				);
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.beanconqueror.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -411,11 +406,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 8.8.2;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-weak_framework",
-					SwiftUICore,
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.beanconqueror.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
