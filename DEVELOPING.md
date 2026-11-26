@@ -642,3 +642,71 @@ Credentials are read from environment variables and must be stored outside the r
 | `SUPPLY_JSON_KEY`                                                         | Path to the Google Play service account JSON key  |
 
 Run the script's tests with `python3 -m unittest discover -s tools/tests`.
+
+## Rolling out a major release
+
+Checklist for a release with data updates (such as 9.0). Store consoles (Google Play Console, App
+Store Connect) are operated by Lars only: he moves stages, pauses a rollout and requests reviews.
+Developers prepare builds, watch the signals and write a daily summary for him.
+
+### Before the beta
+
+- [ ] CI is green on the release branch (unit tests, both E2E time zones).
+- [ ] Device test on a Pixel and an iPad: update from the store version 8.8.2 with 30,000 brews.
+      Counts of beans, brews and mills match before and after; note backup size and duration.
+- [ ] Way back: a 9.0 export imports into 8.8.2 with matching counts.
+- [ ] Test purchase and restore of the subscription in the beta build, on Android and iOS.
+- [ ] English and German texts are complete; other languages fall back to English.
+
+### Beta
+
+- [ ] External TestFlight group and closed Play test track with the store signature, so the
+      real update path from the installed store version is tested.
+- [ ] At least 14 days and 2 builds; 20 to 50 testers, at least 3 with more than 9,000 brews,
+      several scales and machines, both platforms and one older Android phone.
+- [ ] Testers export their data in 8.8 and keep the file outside the app before updating.
+- [ ] Feedback goes through the existing Discord groups; testers share logs from the app.
+
+The beta ends when all of these hold; otherwise it is extended, never skipped:
+
+- [ ] No confirmed data loss.
+- [ ] At least 15 completed updates with more than 1,000 brews, 3 of them with more than 9,000.
+- [ ] No open crash or data bug.
+
+### Staged rollout
+
+- [ ] Start on a Tuesday or Wednesday, not between 20 December and 6 January, with Lars reachable
+      for the first 72 hours. Planned for mid to late January 2027.
+- [ ] Android staged rollout 5 % → 20 % → 50 % → 100 %, each stage at least 72 hours (Android
+      vitals lag one to two days).
+- [ ] iOS: submit for review at least 3 days ahead with manual release. Release only after a
+      clean 20 % stage on Android, then use phased release over 7 days. Manual updates in the App
+      Store skip the phased release, so Android goes first.
+- [ ] Daily: summarise Android vitals, App Store crashes, store reviews and Discord.
+
+### Stop criteria
+
+Halt at once (Play Console: halt rollout; App Store Connect: pause phased release) on:
+
+- a confirmed data loss (counts differ and are not explained by removed exact duplicates);
+- Android user-perceived crash rate above 1.09 % or more than twice that of 8.8.2, ANR rate above
+  0.47 %; iOS crashes per session more than twice those of 8.8.2;
+- 3 or more independent reports of the same blocking bug (start, saving, scale) within 24 hours.
+
+Do not move to the next stage while:
+
+- a single crash or data bug is not yet reproduced;
+- many users report that the backup before the data update failed;
+- start time with more than 9,000 brews is more than twice that of 8.8.
+
+Analytics are opt-in and send nothing without consent, so they are not a stop signal. There is
+no crash reporting SDK.
+
+### Hotfix
+
+- [ ] Branch `hotfix/<version>` from the release tag; fix, test, tag.
+- [ ] Android: publish the new version on the current stage.
+- [ ] iOS: pause the phased release and request an expedited review in App Store Connect.
+- [ ] A broken data update is fixed with a new update step or by reopening the broken one, never
+      by changing an update step that has already run on user devices.
+- [ ] Merge the hotfix back into the development branch.
