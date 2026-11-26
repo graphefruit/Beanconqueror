@@ -260,6 +260,23 @@ sits at the plugin boundary, below all app code; nothing of it is part of the ap
   devices, native storage/SQLite, file system paths, OS permission dialogs, background timing or
   plugin behavior on Android/iOS; check those on a device for the relevant feature.
 
+#### Device ports for Cordova plugins
+
+Capacitor plugins need no port: unit tests replace them through a token like `THEME_PLUGINS`,
+and E2E tests through the `native` fixture above. Cordova plugins are globals, so each gets a
+port; today that is NFC (`src/services/ports/nfc-port.ts`), BLE follows with the brew session.
+
+- `NFC_PORT` is the app's only way to NFC. Its default, `CordovaNfcAdapter`, is the only code
+  that reads the `NfcPlugin` global, and it reads it at each call, so in the browser it simply
+  reports NFC as unavailable. Failures arrive as a `PortResult`; messages and explanations stay
+  in `NfcService`.
+- Unit tests provide `FakeNfcPort` (`src/test-utils/`, not part of the app build) for
+  `NFC_PORT`. The contract in `src/test-utils/contracts/nfc-port.contract.ts` runs against the
+  fake and against the adapter over a plugin stub, so both answer alike.
+- There is no separate E2E build and no fake in the app bundle. The `native` fixture records
+  reads of `NfcPlugin`; NFC flows sit behind `platform.is('capacitor')` and are checked on a
+  device (see [Device tests](#device-tests)).
+
 ### Synthetic test data
 
 `e2e/support/synthetic-data.ts` generates the data of a long-time user: 1,000 beans (about 40 %
