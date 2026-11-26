@@ -1,6 +1,7 @@
 <ion-content #updateContent class="ion-padding-top">
 
-  <swiper-container  class='swiper' #slider allow-touch-move='false'  [pagination]="{ draggable: false, clickable: false }" pager="true">
+  <!-- Swiping is off, so Swiper must not drop taps on a button while a slide moves in. -->
+  <swiper-container  class='swiper' #slider allow-touch-move='false' prevent-clicks='false' prevent-clicks-propagation='false' [pagination]="{ draggable: false, clickable: false }" pager="true">
     @for (version of versions; track version; let last = $last; let i = $index) {
       <swiper-slide >
         <div [style.display]="i+1===this.slide?'block':'none'" class="ion-padding-horizontal" style='text-align:center;'>
