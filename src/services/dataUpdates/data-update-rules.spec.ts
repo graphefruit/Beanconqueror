@@ -1,4 +1,9 @@
-import { DATA_UPDATES, isBackedUpBefore } from './data-update-rules';
+import {
+  DATA_UPDATES,
+  isBackedUpBefore,
+  nextFailedDataUpdate,
+  showsFailedDataUpdateHint,
+} from './data-update-rules';
 
 describe('Data update rules', () => {
   it('backs the data up before every update from UPDATE_16 on', () => {
@@ -20,5 +25,40 @@ describe('Data update rules', () => {
     expect(isBackedUpBefore('UPDATE_1')).toBeFalse();
     expect(isBackedUpBefore('UPDATE_16_FIX')).toBeFalse();
     expect(isBackedUpBefore('')).toBeFalse();
+  });
+
+  it('counts the starts in a row at which the same update stayed open', () => {
+    const first = nextFailedDataUpdate(null, 'UPDATE_16');
+    const second = nextFailedDataUpdate(first, 'UPDATE_16');
+    const third = nextFailedDataUpdate(second, 'UPDATE_16');
+
+    expect([first, second, third]).toEqual([
+      { update: 'UPDATE_16', starts: 1 },
+      { update: 'UPDATE_16', starts: 2 },
+      { update: 'UPDATE_16', starts: 3 },
+    ]);
+    expect([first, second, third].map(showsFailedDataUpdateHint)).toEqual([
+      false,
+      true,
+      false,
+    ]);
+  });
+
+  it('starts counting again for another update and forgets once all finished', () => {
+    expect(
+      nextFailedDataUpdate({ update: 'UPDATE_16', starts: 2 }, 'UPDATE_17'),
+    ).toEqual({ update: 'UPDATE_17', starts: 1 });
+    expect(
+      nextFailedDataUpdate({ update: 'UPDATE_16', starts: 2 }, undefined),
+    ).toBeUndefined();
+    expect(showsFailedDataUpdateHint(undefined)).toBeFalse();
+  });
+
+  it('starts counting again when what was stored has another shape', () => {
+    for (const stored of [undefined, 'UPDATE_16', { update: 'UPDATE_16' }]) {
+      expect(nextFailedDataUpdate(stored, 'UPDATE_16'))
+        .withContext(JSON.stringify(stored))
+        .toEqual({ update: 'UPDATE_16', starts: 1 });
+    }
   });
 });

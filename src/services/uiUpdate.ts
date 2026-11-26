@@ -9,6 +9,7 @@ import { keys, maxBy } from 'lodash';
 
 import { Bean } from '../classes/bean/bean';
 import { Brew } from '../classes/brew/brew';
+import { FAILED_DATA_UPDATE_STORAGE_KEY } from '../classes/changeTracking/localStorageKeys';
 import { Mill } from '../classes/mill/mill';
 import { RepeatBrewParameter } from '../classes/parameter/repeatBrewParameter';
 import { Preparation } from '../classes/preparation/preparation';
@@ -24,7 +25,10 @@ import { DuplicateEntriesMigrationService } from './changeTracking/duplicate-ent
 import {
   DATA_UPDATES,
   isBackedUpBefore,
+  nextFailedDataUpdate,
+  showsFailedDataUpdateHint,
 } from './dataUpdates/data-update-rules';
+import { ShareService } from './shareService/share-service.service';
 import { UIAlert } from './uiAlert';
 import { UIBeanStorage } from './uiBeanStorage';
 import { UIBrewStorage } from './uiBrewStorage';
@@ -62,6 +66,7 @@ export class UIUpdate {
   );
   private readonly brewReferences = inject(BrewReferencesService);
   private readonly uiExportImportHelper = inject(UIExportImportHelper);
+  private readonly shareService = inject(ShareService);
 
   /**
    * `_afterImport`: the stored data was just replaced by a backup chosen
@@ -114,6 +119,8 @@ export class UIUpdate {
         }
       }
 
+      let backedUp = true;
+      let failedUpdate: string | undefined;
       for (const updateVersion of DATA_UPDATES) {
         if (
           backupPending &&
@@ -121,11 +128,11 @@ export class UIUpdate {
           !version.checkIfDataVersionWasUpdated(updateVersion)
         ) {
           backupPending = false;
-          if (
-            !(await this.uiExportImportHelper.writeBackupBeforeMigration(
+          backedUp =
+            await this.uiExportImportHelper.writeBackupBeforeMigration(
               updateVersion,
-            ))
-          ) {
+            );
+          if (!backedUp) {
             break;
           }
         }
@@ -134,8 +141,13 @@ export class UIUpdate {
         if (
           !(await this.__checkUpdateForDataVersion(updateVersion, !hasData))
         ) {
+          failedUpdate = updateVersion;
           break;
         }
+      }
+      // The user was told already when the backup failed.
+      if (backedUp && hasData && !_afterImport) {
+        await this.__noteFailedUpdate(failedUpdate);
       }
     } catch (ex) {
       if (this.uiAlert.isLoadingSpinnerShown()) {
@@ -775,6 +787,41 @@ export class UIUpdate {
       }
     });
     return promise;
+  }
+
+  /**
+   * Counts the starts in a row at which `_failed`, the update that did not
+   * finish, stayed open, on this installation only. At the second one the
+   * user is told once that the data before it is backed up, and can share
+   * the logs. Never rejects: the count is only a reason for the hint.
+   */
+  private async __noteFailedUpdate(_failed: string | undefined): Promise<void> {
+    try {
+      const previous: unknown = await this.uiStorage.get(
+        FAILED_DATA_UPDATE_STORAGE_KEY,
+      );
+      const next = nextFailedDataUpdate(previous, _failed);
+      if (next) {
+        await this.uiStorage.set(FAILED_DATA_UPDATE_STORAGE_KEY, next);
+      } else if (previous !== null && previous !== undefined) {
+        await this.uiStorage.remove(FAILED_DATA_UPDATE_STORAGE_KEY);
+      }
+      // Only on a device is the data backed up before the updates.
+      if (showsFailedDataUpdateHint(next) && this.platform.is('capacitor')) {
+        const choice = await this.uiAlert.showConfirmWithYesNoTranslation(
+          'DATA_UPDATE_FAILED',
+          'DATA_UPDATE_FAILED_TITLE',
+          'SHARE_LOGS',
+          'OK',
+          true,
+        );
+        if (choice === 'YES') {
+          await this.shareService.shareLogs();
+        }
+      }
+    } catch (ex) {
+      this.uiLog.error('Data updates - failed update not noted', ex);
+    }
   }
 
   /**
