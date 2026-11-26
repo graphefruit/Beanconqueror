@@ -2427,7 +2427,7 @@
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 7
+      "count": 4
     },
     "no-empty": {
       "count": 1
@@ -2597,10 +2597,10 @@
       "count": 1
     },
     "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 3
+      "count": 2
     },
     "@typescript-eslint/no-unsafe-return": {
-      "count": 2
+      "count": 1
     },
     "no-empty": {
       "count": 2

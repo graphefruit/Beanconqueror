@@ -217,6 +217,35 @@ describe('BrewShareComponent', () => {
     expect(picture(host).querySelector('img').getAttribute('alt')).toBe('');
   });
 
+  it('shares only once the graph is in', async () => {
+    let drawn: (image: string) => void;
+    graphHelper.brewGraphImage.and.returnValue(
+      new Promise((resolve) => (drawn = resolve)),
+    );
+    const brew = makeBrew();
+    brew.flow_profile = 'brews/1_flow_profile.json';
+    fixture = TestBed.createComponent(BrewShareComponent);
+    fixture.componentRef.setInput('brew', brew);
+    fixture.detectChanges();
+    const host = fixture.nativeElement as HTMLElement;
+    const component = fixture.componentInstance as any;
+
+    expect(host.querySelector('ion-button').getAttribute('aria-busy')).toBe(
+      'true',
+    );
+    await component.share();
+    expect(shareService.shareElementAsImage).not.toHaveBeenCalled();
+
+    drawn(GRAPH);
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(host.querySelector('ion-button').getAttribute('aria-busy')).toBe(
+      'false',
+    );
+    await component.share();
+    expect(shareService.shareElementAsImage).toHaveBeenCalledTimes(1);
+  });
+
   it('tells and logs when the graph cannot be drawn and keeps the card', async () => {
     const error = new Error('no file');
     graphHelper.brewGraphImage.and.rejectWith(error);

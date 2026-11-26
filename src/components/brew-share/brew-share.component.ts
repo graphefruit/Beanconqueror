@@ -94,7 +94,8 @@ export class BrewShareComponent implements OnInit {
   protected readonly showNote = signal(false);
   protected readonly graph = signal<string | undefined>(undefined);
   protected readonly graphFailed = signal(false);
-  protected readonly busy = signal(false);
+  // Until the graph is in, a picture shared would silently lack it.
+  protected readonly busy = signal(true);
 
   protected readonly card = computed(() =>
     brewShareCard(this.source(this.brew())),
@@ -145,6 +146,8 @@ export class BrewShareComponent implements OnInit {
       // The picture is still worth sharing without the graph.
       this.uiLog.error('Share - could not draw the graph', error);
       this.graphFailed.set(true);
+    } finally {
+      this.busy.set(false);
     }
   }
 
