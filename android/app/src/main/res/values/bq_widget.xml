@@ -11,10 +11,10 @@
   <string name="widget_today">Today</string>
   <string name="widget_week">This week</string>
   <string name="widget_beans">Open beans</string>
-  <string name="widget_start_brew">Start brew</string>
+  <string name="widget_start_brew">New brew</string>
   <string name="widget_last_brew">Last brew %1$s</string>
   <string name="widget_no_brew">No brew yet</string>
-  <string name="widget_empty">Save a brew in Beanconqueror to fill the widget.</string>
+  <string name="widget_empty">Save a brew in BeanConqueror to fill the widget.</string>
   <plurals name="widget_today_description">
     <item quantity="one">%1$d brew today</item>
     <item quantity="other">%1$d brews today</item>
