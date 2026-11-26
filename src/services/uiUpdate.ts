@@ -145,9 +145,14 @@ export class UIUpdate {
           break;
         }
       }
-      // The user was told already when the backup failed.
+      // The user was told already when the backup failed. The hint says the
+      // data is backed up, which only holds for an update backed up before.
       if (backedUp && hasData && !_afterImport) {
-        await this.__noteFailedUpdate(failedUpdate);
+        await this.__noteFailedUpdate(
+          failedUpdate !== undefined && isBackedUpBefore(failedUpdate)
+            ? failedUpdate
+            : undefined,
+        );
       }
     } catch (ex) {
       if (this.uiAlert.isLoadingSpinnerShown()) {

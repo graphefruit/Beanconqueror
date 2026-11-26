@@ -1235,6 +1235,25 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
     expect(stored.has(FAILED_DATA_UPDATE_STORAGE_KEY)).toBeFalse();
   });
 
+  it('gives no hint for an update before UPDATE_16, no backup holds the data before it', async () => {
+    markDone(14);
+    spyOn(
+      uiUpdate as unknown as {
+        __checkUpdateForDataVersion: (_update: string) => Promise<boolean>;
+      },
+      '__checkUpdateForDataVersion',
+    ).and.callFake((_update: string) =>
+      Promise.resolve(_update !== 'UPDATE_15'),
+    );
+
+    await uiUpdate.checkUpdate();
+    await uiUpdate.checkUpdate();
+
+    expect(backup).not.toHaveBeenCalled();
+    expect(confirm).not.toHaveBeenCalled();
+    expect(stored.has(FAILED_DATA_UPDATE_STORAGE_KEY)).toBeFalse();
+  });
+
   it('shares the logs from the hint when the user wants to', async () => {
     markDone(15);
     update16Done = false;

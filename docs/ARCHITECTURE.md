@@ -862,7 +862,8 @@ imported file holds that data, and the data before the import was backed up
 already. When `getDataState()` is `'unknown'` (the database could not be
 read), neither the backup nor an update runs at that start.
 
-When the same update stays open at two starts in a row, the user is told
+When the same update from `UPDATE_16` on stays open at two starts in a row
+(only these are backed up before they run), the user is told
 once that the data from before it is backed up, with the choice to share the
 logs (`DATA_UPDATE_FAILED`). The count is stored under `FAILED_DATA_UPDATE`,
 a key of this installation only that is never exported
