@@ -60,7 +60,7 @@ struct BrewWidgetView: View {
             }
             if family != .systemSmall {
                 Spacer(minLength: 0)
-                // The small widget only opens the app; it can hold no further link.
+                // The small widget can hold no link besides its widgetURL.
                 Link(destination: URL(string: "beanconqueror://START_BREW")!) {
                     Text("widget_start_brew")
                         .font(.subheadline.weight(.semibold))
@@ -74,6 +74,8 @@ struct BrewWidgetView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .containerBackground(Color.bqBackground, for: .widget)
+        // A tap outside the button shows the brews.
+        .widgetURL(URL(string: "beanconqueror://OPEN_BREWS"))
     }
 
     private func tile(_ count: Int, _ label: LocalizedStringKey, _ description: String) -> some View {

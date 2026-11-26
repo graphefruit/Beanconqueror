@@ -1,5 +1,6 @@
 package com.beanconqueror;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -19,7 +20,7 @@ import org.json.JSONObject;
 
 /**
  * The home screen widget. It only shows the snapshot the app wrote after its
- * last save and never changes data; a tap opens the app.
+ * last save and never changes data; a tap shows the brews, the button opens a new brew.
  */
 public class BrewWidgetProvider extends AppWidgetProvider {
   static final String SNAPSHOT = "snapshot";
@@ -34,23 +35,55 @@ public class BrewWidgetProvider extends AppWidgetProvider {
     AppWidgetManager manager = AppWidgetManager.getInstance(context);
     int[] ids = manager.getAppWidgetIds(new ComponentName(context, BrewWidgetProvider.class));
     if (ids.length > 0) {
-      manager.updateAppWidget(ids, views(context));
+      update(context, manager, ids);
     }
   }
 
   @Override
   public void onUpdate(Context context, AppWidgetManager manager, int[] ids) {
-    // Also every 30 minutes, so that "today" and the last brew stay current.
-    manager.updateAppWidget(ids, views(context));
+    // Also every 30 minutes, so that the last brew stays current.
+    update(context, manager, ids);
   }
 
-  private static RemoteViews views(Context context) {
+  @Override
+  public void onDisabled(Context context) {
+    alarms(context).cancel(refresh(context));
+  }
+
+  private static void update(Context context, AppWidgetManager manager, int[] ids) {
+    BrewWidgetCounts counts = readCounts(context);
+    manager.updateAppWidget(ids, views(context, counts));
+    // Inexact, as exact alarms need a permission; it fires a few minutes late at most while
+    // the screen is on.
+    AlarmManager alarms = alarms(context);
+    if (counts == null || counts.refreshAt() == null) {
+      alarms.cancel(refresh(context));
+    } else {
+      alarms.set(AlarmManager.RTC, counts.refreshAt() * 1000, refresh(context));
+    }
+  }
+
+  private static AlarmManager alarms(Context context) {
+    return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+  }
+
+  /** Redraws the widget when the day or the week ends, so that their counts show 0. */
+  private static PendingIntent refresh(Context context) {
+    Intent intent = new Intent(context, BrewWidgetProvider.class)
+      .setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+      .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, AppWidgetManager.getInstance(context)
+        .getAppWidgetIds(new ComponentName(context, BrewWidgetProvider.class)));
+    return PendingIntent.getBroadcast(context, 0, intent,
+      PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+  }
+
+  private static RemoteViews views(Context context, BrewWidgetCounts counts) {
     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.bq_widget);
-    views.setOnClickPendingIntent(R.id.bq_widget_root, openApp(context));
-    views.setOnClickPendingIntent(R.id.bq_widget_start_brew, startBrew(context));
+    views.setOnClickPendingIntent(R.id.bq_widget_root, link(context, 0, "beanconqueror://OPEN_BREWS"));
+    views.setOnClickPendingIntent(R.id.bq_widget_start_brew,
+      link(context, 1, "beanconqueror://START_BREW"));
 
     Resources res = context.getResources();
-    BrewWidgetCounts counts = readCounts(context);
     if (counts == null) {
       views.setViewVisibility(R.id.bq_widget_counts, View.GONE);
       views.setTextViewText(R.id.bq_widget_last_brew, res.getString(R.string.widget_empty));
@@ -106,16 +139,10 @@ public class BrewWidgetProvider extends AppWidgetProvider {
     }
   }
 
-  private static PendingIntent openApp(Context context) {
-    Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
-    return PendingIntent.getActivity(context, 0, intent,
-      PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-  }
-
-  private static PendingIntent startBrew(Context context) {
-    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("beanconqueror://START_BREW"))
+  private static PendingIntent link(Context context, int requestCode, String url) {
+    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
       .setPackage(context.getPackageName());
-    return PendingIntent.getActivity(context, 1, intent,
+    return PendingIntent.getActivity(context, requestCode, intent,
       PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
   }
 }

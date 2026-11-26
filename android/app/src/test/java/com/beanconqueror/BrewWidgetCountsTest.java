@@ -17,21 +17,36 @@ public class BrewWidgetCountsTest {
   public void showsTheCountsOfTheCurrentDayAndWeek() {
     BrewWidgetCounts counts = at(1, TODAY_ENDS - 1);
 
-    assertEquals(new BrewWidgetCounts(2, 9, 4, 900_000L), counts);
+    assertEquals(new BrewWidgetCounts(2, 9, 4, 900_000L, TODAY_ENDS), counts);
+  }
+
+  @Test
+  public void refreshesAtTheEndOfTheDayFirst() {
+    assertEquals(Long.valueOf(TODAY_ENDS), at(1, TODAY_ENDS - 1).refreshAt());
+  }
+
+  @Test
+  public void refreshesAtTheEndOfTheWeekOnceTheDayIsOver() {
+    assertEquals(Long.valueOf(WEEK_ENDS), at(1, TODAY_ENDS).refreshAt());
+  }
+
+  @Test
+  public void needsNoRefreshOnceTheWeekIsOver() {
+    assertNull(at(1, WEEK_ENDS).refreshAt());
   }
 
   @Test
   public void showsNoBrewsTodayOnceTheDayIsOver() {
     BrewWidgetCounts counts = at(1, TODAY_ENDS);
 
-    assertEquals(new BrewWidgetCounts(0, 9, 4, 900_000L), counts);
+    assertEquals(new BrewWidgetCounts(0, 9, 4, 900_000L, WEEK_ENDS), counts);
   }
 
   @Test
   public void showsNoBrewsThisWeekOnceTheWeekIsOver() {
     BrewWidgetCounts counts = at(1, WEEK_ENDS);
 
-    assertEquals(new BrewWidgetCounts(0, 0, 4, 900_000L), counts);
+    assertEquals(new BrewWidgetCounts(0, 0, 4, 900_000L, null), counts);
   }
 
   @Test
@@ -39,7 +54,7 @@ public class BrewWidgetCountsTest {
     BrewWidgetCounts counts =
       BrewWidgetCounts.at(1, 0, TODAY_ENDS, 0, WEEK_ENDS, 0, null, TODAY_ENDS - 1);
 
-    assertEquals(new BrewWidgetCounts(0, 0, 0, null), counts);
+    assertEquals(new BrewWidgetCounts(0, 0, 0, null, TODAY_ENDS), counts);
   }
 
   @Test
