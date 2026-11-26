@@ -31,6 +31,15 @@ export const GRAPH_INK: Readonly<Record<SharePalette['mode'], string>> = {
   dark: '#e1d1bf',
 };
 
+/**
+ * What the graph lines are held to 3:1 against: the dimmest card of each mode
+ * (sage among the light ones), so a line reads on every card of its mode.
+ */
+export const GRAPH_GROUND: Readonly<Record<SharePalette['mode'], string>> = {
+  light: '#fbfaf6',
+  dark: '#2a211a',
+};
+
 function app(mode: SharePalette['mode'], labelKey: string): SharePalette {
   return {
     id: mode,

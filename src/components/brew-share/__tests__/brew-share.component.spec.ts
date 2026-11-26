@@ -305,7 +305,7 @@ describe('BrewShareComponent', () => {
       brew,
       300,
       150,
-      { dark: false, ink: '#4a382c' },
+      { dark: false, ink: '#4a382c', ground: '#fbfaf6' },
     );
     expect(
       picture(host).querySelector('img.share-graph').getAttribute('src'),
@@ -344,6 +344,7 @@ describe('BrewShareComponent', () => {
     expect(graphHelper.brewGraphImage).toHaveBeenCalledWith(brew, 300, 150, {
       dark: true,
       ink: '#e1d1bf',
+      ground: '#2a211a',
     });
     expect(busy()).toBe('true');
     await (fixture.componentInstance as any).share();

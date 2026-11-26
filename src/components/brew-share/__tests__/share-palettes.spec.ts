@@ -1,5 +1,8 @@
 import { contrast, Rgb } from '../../../../e2e/support/colour';
+import { DEFAULT_GRAPH_COLORS } from '../../../data/defaultGraphColors';
+import { readableLine } from '../../../services/graphHelper/line-contrast';
 import {
+  GRAPH_GROUND,
   GRAPH_INK,
   initialSharePalette,
   SHARE_PALETTES,
@@ -50,6 +53,24 @@ describe('share palettes', () => {
       expect(contrast(rgb(GRAPH_INK[palette.mode]), rgb(palette.card)))
         .withContext(`axes on ${palette.card}`)
         .toBeGreaterThanOrEqual(4.5);
+    });
+  }
+
+  // The app's cards as the theme draws them; the component test holds them to it.
+  const CARD: Record<string, string> = { light: '#ffffff', dark: '#2a211a' };
+
+  for (const palette of SHARE_PALETTES) {
+    it(`keep every default graph line at 3:1 at least (${palette.id})`, () => {
+      const card = CARD[palette.id] ?? palette.card;
+      for (const [name, colours] of Object.entries(DEFAULT_GRAPH_COLORS)) {
+        const line = readableLine(
+          colours.active[palette.mode],
+          GRAPH_GROUND[palette.mode],
+        );
+        expect(contrast(rgb(line), rgb(card)))
+          .withContext(`${name} ${line} on ${card}`)
+          .toBeGreaterThanOrEqual(3);
+      }
     });
   }
 });

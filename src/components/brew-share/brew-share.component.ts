@@ -39,6 +39,7 @@ import {
 import { HeaderDismissButtonComponent } from '../header/header-dismiss-button.component';
 import { HeaderComponent } from '../header/header.component';
 import {
+  GRAPH_GROUND,
   GRAPH_INK,
   initialSharePalette,
   SHARE_PALETTES,
@@ -157,7 +158,11 @@ export class BrewShareComponent implements OnInit {
         this.brew(),
         GRAPH_WIDTH,
         GRAPH_HEIGHT,
-        { dark: mode === 'dark', ink: GRAPH_INK[mode] },
+        {
+          dark: mode === 'dark',
+          ink: GRAPH_INK[mode],
+          ground: GRAPH_GROUND[mode],
+        },
       );
       if (latest()) {
         this.graph.set(image);

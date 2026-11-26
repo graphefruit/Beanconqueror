@@ -15,6 +15,7 @@ import { CoffeeBluetoothDevicesService } from '../coffeeBluetoothDevices/coffee-
 import { ThemeService } from '../theme/theme.service';
 import { UIFileHelper } from '../uiFileHelper';
 import { UISettingsStorage } from '../uiSettingsStorage';
+import { readableLine } from './line-contrast';
 import { loadPlotly } from './load-plotly';
 
 declare const Plotly: {
@@ -78,13 +79,19 @@ export class GraphHelperService {
    * undefined when the brew has none. Callers only get the picture, so the
    * renderer behind it can change without them. It is drawn light or dark as
    * asked, not as the app is, with the axes in `ink` and a clear ground, so
-   * it takes the colour of whatever it is laid on.
+   * it takes the colour of whatever it is laid on. Lines too faint on
+   * `ground` are darkened (or lightened) to 3:1; the app's own graph keeps
+   * the colours as they were chosen.
    */
   public async brewGraphImage(
     brew: Pick<Brew, 'flow_profile'>,
     width: number,
     height: number,
-    look: { readonly dark: boolean; readonly ink: string },
+    look: {
+      readonly dark: boolean;
+      readonly ink: string;
+      readonly ground: string;
+    },
   ): Promise<string | undefined> {
     if (!brew.flow_profile) {
       return undefined;
@@ -98,6 +105,14 @@ export class GraphHelperService {
       look.dark,
     );
     layout.paper_bgcolor = layout.plot_bgcolor = 'rgba(0,0,0,0)';
+    for (const trace of data as { line?: { color?: string } }[]) {
+      if (trace.line?.color) {
+        trace.line = {
+          ...trace.line,
+          color: readableLine(trace.line.color, look.ground),
+        };
+      }
+    }
     // The axes otherwise take the colours of their lines, which are too pale
     // to read on a light ground.
     layout.font = { color: look.ink };

@@ -15,6 +15,7 @@ import {
   expandLiveAxisRangeForSample,
   GraphHelperService,
 } from '../graph-helper.service';
+import { contrastRatio } from '../line-contrast';
 
 describe('GraphHelperService custom axis names', () => {
   let service: GraphHelperService;
@@ -522,7 +523,7 @@ function layoutFor(
   );
 }
 
-const LIGHT = { dark: false, ink: '#4a382c' };
+const LIGHT = { dark: false, ink: '#4a382c', ground: '#fbfaf6' };
 
 describe('GraphHelperService graph picture', () => {
   let service: GraphHelperService;
@@ -599,11 +600,18 @@ describe('GraphHelperService graph picture', () => {
     await service.brewGraphImage({ flow_profile: 'b.json' }, 300, 150, {
       dark: true,
       ink: '#e1d1bf',
+      ground: '#2a211a',
     });
 
     const { data, layout } = toImage.calls.mostRecent().args[0];
     expect(data[0].line.color).toBe(colors.weight.active.dark);
     expect(data.at(-1).line.color).toBe('#ffffff');
+    // Too dark on the dark card, so lightened; the app's own colour stays.
+    expect(data[2].line.color).not.toBe(colors.realtimeFlow.active.dark);
+    expect(contrastRatio(data[2].line.color, '#2a211a')).toBeGreaterThanOrEqual(
+      3,
+    );
+    expect(colors.realtimeFlow.active.dark).toBe('#09485D');
     expect(layout.xaxis.gridcolor).toBe('#8e8e8e');
     expect(layout.font.color).toBe('#e1d1bf');
     const axes = Object.keys(layout).filter((key) => /^[xy]axis/.test(key));
@@ -614,7 +622,12 @@ describe('GraphHelperService graph picture', () => {
 
     await service.brewGraphImage({ flow_profile: 'b.json' }, 300, 150, LIGHT);
     const light = toImage.calls.mostRecent().args[0];
-    expect(light.data[0].line.color).toBe(colors.weight.active.light);
+    expect(light.data[0].line.color).not.toBe(colors.weight.active.light);
+    for (const trace of light.data) {
+      expect(contrastRatio(trace.line.color, '#fbfaf6'))
+        .withContext(trace.name)
+        .toBeGreaterThanOrEqual(3);
+    }
     expect(light.layout.xaxis.gridcolor).toBeUndefined();
   });
 
