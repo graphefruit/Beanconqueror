@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.author = package['author']
   s.source = { :git => 'https://github.com/graphefruit/Beanconqueror.git' }
   s.source_files = 'ios/Sources/**/*.swift'
-  s.ios.deployment_target = '16.0'
+  s.ios.deployment_target = '17.0'
   s.dependency 'Capacitor'
   s.frameworks = 'Vision'
   s.swift_version = '5.9'

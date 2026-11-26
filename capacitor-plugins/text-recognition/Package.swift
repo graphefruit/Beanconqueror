@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "BeanconquerorTextRecognition",
-    platforms: [.iOS(.v16)],
+    platforms: [.iOS(.v17)],
     products: [
         .library(
             name: "BeanconquerorTextRecognition",
@@ -19,6 +19,10 @@ let package = Package(
                 .product(name: "Capacitor", package: "capacitor-swift-pm"),
                 .product(name: "Cordova", package: "capacitor-swift-pm")
             ],
-            path: "ios/Sources/TextRecognitionPlugin")
+            path: "ios/Sources/TextRecognitionPlugin"),
+        .testTarget(
+            name: "TextRecognitionPluginTests",
+            dependencies: ["TextRecognitionPlugin"],
+            path: "ios/Tests/TextRecognitionPluginTests")
     ]
 )
