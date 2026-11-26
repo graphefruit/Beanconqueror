@@ -23,7 +23,7 @@ export interface SharePalette {
 }
 
 /**
- * The axes of the graph, the secondary text of each mode. Plotly takes no
+ * The axes of the graph, the secondary text of each mode. The canvas takes no
  * CSS variables, so the values are repeated; a test holds them to the theme.
  */
 export const GRAPH_INK: Readonly<Record<SharePalette['mode'], string>> = {

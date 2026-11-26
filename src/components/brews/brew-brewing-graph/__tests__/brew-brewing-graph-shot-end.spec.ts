@@ -578,7 +578,6 @@ describe('BrewBrewingGraphComponent shot end', () => {
       ).graphHelper.fillDataIntoTraces(
         internals().flow_profile_raw,
         internals().traces,
-        false,
       );
       press(1);
 

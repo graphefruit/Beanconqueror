@@ -320,6 +320,11 @@ export class UplotRenderer implements BrewChartPort {
       throw new Error('UplotRenderer: nothing to export');
     }
     this.prepare();
+    // The overlays are drawn in the picture's theme, the app's graph stays in its own.
+    this.applyOverlays({
+      ...this.overlayState(),
+      dark: options.theme === 'dark',
+    });
     const k = options.scale / (lib.pxRatio || window.devicePixelRatio || 1);
     const host = document.createElement('div');
     host.style.cssText = 'position:fixed;left:-100000px;top:0;';
@@ -358,6 +363,7 @@ export class UplotRenderer implements BrewChartPort {
     } finally {
       chart?.destroy();
       host.remove();
+      this.applyOverlays(this.overlayState());
     }
   }
 
@@ -694,10 +700,7 @@ export class UplotRenderer implements BrewChartPort {
       return;
     }
     this.prepare();
-    const state = this.overlayState();
-    for (const plugin of this.plugins) {
-      plugin.apply(state);
-    }
+    this.applyOverlays(this.overlayState());
     const data = this.buildData();
     u.batch(() => {
       if (this.sizeDirty) {
@@ -710,6 +713,12 @@ export class UplotRenderer implements BrewChartPort {
       }
     });
     this.stateDirty = false;
+  }
+
+  private applyOverlays(state: UplotOverlayState): void {
+    for (const plugin of this.plugins) {
+      plugin.apply(state);
+    }
   }
 
   private overlayState(): UplotOverlayState {

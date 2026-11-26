@@ -77,6 +77,18 @@ class Probe implements UplotOverlayPlugin {
   }
 }
 
+/** Records the theme the overlays had at each draw. */
+class ThemeProbe implements UplotOverlayPlugin {
+  public dark = false;
+  public readonly drawnDark: boolean[] = [];
+  public hooks(): uPlot.Plugin {
+    return { hooks: { draw: [() => this.drawnDark.push(this.dark)] } };
+  }
+  public apply(state: UplotOverlayState): void {
+    this.dark = state.dark;
+  }
+}
+
 describe('UplotRenderer', () => {
   let host: HTMLDivElement;
   let frames: FakeFrames;
@@ -380,6 +392,67 @@ describe('UplotRenderer', () => {
     expect(document.querySelectorAll('.uplot').length).toBe(1);
   });
 
+  it('draws ground, axes and their text in the ink given into the picture', async () => {
+    await mount('static');
+    feed(buffer, 0, 30);
+    renderer.attach(buffer);
+    await frames.run();
+
+    const image = await decode(
+      await renderer.exportImage({
+        width: 300,
+        height: 150,
+        theme: 'light',
+        ink: '#ff00ff',
+        transparent: false,
+        scale: 3,
+      }),
+    );
+
+    expect(image.width).toBe(900);
+    expect(image.height).toBe(450);
+    expect(pixel(image, 1, 1)).toEqual(rgb(CHART_PALETTE.light.background));
+    // uPlot draws its axes on the canvas, so the time labels at the bottom are in the picture.
+    const strip = pixels(image, 0, image.height - 28 * 3, image.width, 28 * 3);
+    expect(strip.filter(([r, g, b]) => r > 180 && g < 90 && b > 180).length)
+      .withContext('ink pixels of the time axis')
+      .toBeGreaterThan(50);
+  });
+
+  it('draws the overlays of a picture in its theme, the graph keeps the app theme', async () => {
+    const theme = new ThemeProbe();
+    renderer = new UplotRenderer([theme], {
+      requestFrame: frames.request,
+      cancelFrame: frames.cancel,
+    });
+    await renderer.mount(host, {
+      width: 300,
+      height: 150,
+      dark: false,
+      mode: 'static',
+      axisSettings: new Settings(),
+    });
+    renderer.setSeries(defs('live', 'weight'));
+    feed(buffer, 0, 2);
+    renderer.attach(buffer);
+    await frames.run();
+    expect(theme.drawnDark).not.toContain(true);
+    const before = theme.drawnDark.length;
+
+    await renderer.exportImage({
+      width: 150,
+      height: 75,
+      theme: 'dark',
+      transparent: true,
+      scale: 1,
+    });
+
+    const picture = theme.drawnDark.slice(before);
+    expect(picture.length).toBeGreaterThan(0);
+    expect(picture.every(Boolean)).toBeTrue();
+    expect(theme.dark).toBeFalse();
+  });
+
   it('refuses to export without series', async () => {
     renderer = new UplotRenderer([], {
       requestFrame: frames.request,
@@ -498,6 +571,26 @@ function pixel(image: HTMLImageElement, x: number, y: number): number[] {
   const ctx = canvas.getContext('2d');
   ctx.drawImage(image, 0, 0);
   return Array.from(ctx.getImageData(x, y, 1, 1).data);
+}
+
+function pixels(
+  image: HTMLImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+): number[][] {
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(image, 0, 0);
+  const data = ctx.getImageData(x, y, width, height).data;
+  const result: number[][] = [];
+  for (let i = 0; i < data.length; i += 4) {
+    result.push([data[i], data[i + 1], data[i + 2], data[i + 3]]);
+  }
+  return result;
 }
 
 function rgb(hex: string): number[] {

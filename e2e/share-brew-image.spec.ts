@@ -103,9 +103,26 @@ test('the graph of a brew goes below its card on the picture', async ({
   await expect(picture(page)).toHaveAccessibleName(
     /\. With graph\. BeanConqueror$/,
   );
-  await expect(picture(page).locator('img.share-graph')).toHaveAttribute(
-    'src',
-    /^data:image\/png;base64,/,
-  );
+  const graph = picture(page).locator('img.share-graph');
+  await expect(graph).toHaveAttribute('src', /^data:image\/png;base64,/);
+  // Drawn three times as sharp as it is shown, without the Plotly library.
+  await expect
+    .poll(() =>
+      graph.evaluate((img: HTMLImageElement) => [
+        img.naturalWidth,
+        img.naturalHeight,
+      ]),
+    )
+    .toEqual([900, 450]);
+  expect(await page.evaluate(() => 'Plotly' in window)).toBe(false);
   expect(await aspect(picture(page))).toBeGreaterThanOrEqual(1.249);
+
+  // A dark colour set draws the graph again, in its dark lines.
+  const light = await graph.getAttribute('src');
+  await page
+    .getByRole('group', { name: 'Colour' })
+    .getByRole('radio', { name: 'App dark' })
+    .check();
+  await expect(graph).not.toHaveAttribute('src', light!);
+  await expect(graph).toHaveAttribute('src', /^data:image\/png;base64,/);
 });
