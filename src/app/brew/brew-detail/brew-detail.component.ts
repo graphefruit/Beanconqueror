@@ -95,6 +95,11 @@ import { UIMillHelper } from '../../../services/uiMillHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import {
+  applyFlowCut,
+  beforeCutPathOf,
+  FlowCutSave,
+} from '../../../stores/brews/flow-cut-rules';
 import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
 import { BrewPopoverCutComponent } from '../brew-popover-cut/brew-popover-cut.component';
 import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-popover-extraction.component';
@@ -623,79 +628,69 @@ export class BrewDetailComponent {
     const result = await popover.onWillDismiss();
 
     if (result.role === 'save' && result.data) {
+      await this.saveFlowCut(result.data);
+    }
+  }
+
+  /**
+   * Writes the cut flow profile and then the brew, so that file and brew
+   * never disagree: when one of them fails, both stay as they were. The
+   * profile from before is kept beside it; it is no attachment of the brew,
+   * so export, sync and the attachment manifest leave it out.
+   */
+  private async saveFlowCut(cut: FlowCutSave): Promise<void> {
+    const path = this.data.flow_profile;
+    const beforeCutPath = beforeCutPathOf(path);
+    // The browser shows a sample profile and has no file to write.
+    const writesFile = this.platform.is('capacitor');
+    if (writesFile) {
       try {
-        try {
-          await this.uiFileHelper.writeInternalFileFromText(
-            JSON.stringify(result.data.flowProfile),
-            this.data.flow_profile,
-          );
-        } catch (ex) {}
-
-        this.data.brew_time = result.data.brew_time;
-        this.data.brew_time_milliseconds = result.data.brew_time_milliseconds;
-
-        if (result.data.finalWeight !== undefined) {
-          if (this.data.brew_beverage_quantity > 0) {
-            this.data.brew_beverage_quantity = result.data.finalWeight;
-          }
-          if (this.data.brew_quantity > 0) {
-            this.data.brew_quantity = result.data.finalWeight;
-          }
-        }
-
-        if (result.data.coffee_first_drip_time !== undefined) {
-          this.data.coffee_first_drip_time = result.data.coffee_first_drip_time;
-          this.data.coffee_first_drip_time_milliseconds =
-            result.data.coffee_first_drip_time_milliseconds;
-        }
-
-        if (result.data.coffee_blooming_time !== undefined) {
-          this.data.coffee_blooming_time = result.data.coffee_blooming_time;
-          this.data.coffee_blooming_time_milliseconds =
-            result.data.coffee_blooming_time_milliseconds;
-        }
-
-        if (this.brew) {
-          this.brew.brew_time = result.data.brew_time;
-          this.brew.brew_time_milliseconds = result.data.brew_time_milliseconds;
-          if (result.data.finalWeight !== undefined) {
-            if (this.brew.brew_beverage_quantity > 0) {
-              this.brew.brew_beverage_quantity = result.data.finalWeight;
-            }
-            if (this.brew.brew_quantity > 0) {
-              this.brew.brew_quantity = result.data.finalWeight;
-            }
-          }
-          if (result.data.coffee_first_drip_time !== undefined) {
-            this.brew.coffee_first_drip_time =
-              result.data.coffee_first_drip_time;
-            this.brew.coffee_first_drip_time_milliseconds =
-              result.data.coffee_first_drip_time_milliseconds;
-          }
-          if (result.data.coffee_blooming_time !== undefined) {
-            this.brew.coffee_blooming_time = result.data.coffee_blooming_time;
-            this.brew.coffee_blooming_time_milliseconds =
-              result.data.coffee_blooming_time_milliseconds;
-          }
-        }
-
-        const updatedData = new Brew();
-        updatedData.initializeByObject(this.data);
-        this.data = updatedData;
-
-        if (this.brew) {
-          const updatedBrew = new Brew();
-          updatedBrew.initializeByObject(this.brew as Brew);
-          this.brew = updatedBrew;
-        }
-
-        await this.uiBrewStorage.update(this.data);
-        await this.initializeFlowChartOnGraphEl();
-        this.cdr.detectChanges();
-      } catch (err) {
-        this.uiLog.error('Failed to save cut flow profile: ' + err.message);
+        await this.uiFileHelper.replaceInternalFileKeepingCopy(
+          JSON.stringify(cut.flowProfile),
+          path,
+          beforeCutPath,
+        );
+      } catch (ex) {
+        this.uiLog.error('Failed to write cut flow profile: ' + ex?.message);
+        await this.showFlowCutFailed();
+        return;
       }
     }
+
+    const updatedData = new Brew();
+    updatedData.initializeByObject(this.data);
+    applyFlowCut(updatedData, cut);
+    if (!(await this.uiBrewStorage.update(updatedData))) {
+      if (writesFile) {
+        try {
+          await this.uiFileHelper.restoreInternalFileCopy(beforeCutPath, path);
+        } catch (ex) {
+          this.uiLog.error(
+            'Failed to restore cut flow profile: ' + ex?.message,
+          );
+        }
+      }
+      await this.showFlowCutFailed();
+      return;
+    }
+    this.data = updatedData;
+    if (this.brew) {
+      const updatedBrew = new Brew();
+      updatedBrew.initializeByObject(this.brew as Brew);
+      applyFlowCut(updatedBrew, cut);
+      this.brew = updatedBrew;
+    }
+    await this.initializeFlowChartOnGraphEl();
+    this.cdr.detectChanges();
+  }
+
+  private showFlowCutFailed(): Promise<void> {
+    return this.uiAlert.showMessage(
+      'CUT_FLOW_PROFILE_SAVE_FAILED',
+      'ERROR_OCCURED',
+      undefined,
+      true,
+    );
   }
 
   protected readonly BREW_FUNCTION_PIPE_ENUM = BREW_FUNCTION_PIPE_ENUM;

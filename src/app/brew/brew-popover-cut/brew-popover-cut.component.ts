@@ -40,6 +40,11 @@ import { RangeNameDirective } from '../../../directive/range-name.directive';
 import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
 import { loadPlotly } from '../../../services/graphHelper/load-plotly';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import {
+  calculateCutBounds,
+  FlowCutSave,
+  performFlowCut,
+} from '../../../stores/brews/flow-cut-rules';
 
 declare var Plotly: any;
 
@@ -112,56 +117,7 @@ export class BrewPopoverCutComponent implements OnInit {
   }
 
   private calculateBounds() {
-    let max = 0;
-    if (this.flowProfile) {
-      const arraysToCheck = [
-        this.flowProfile.weight,
-        this.flowProfile.pressureFlow,
-        this.flowProfile.temperatureFlow,
-        this.flowProfile.weightSecond,
-        this.flowProfile.waterFlow,
-        this.flowProfile.realtimeFlow,
-        this.flowProfile.realtimeFlowSecond,
-        this.flowProfile.waterDispensed,
-        this.flowProfile.waterDispensedFlowSecond,
-        this.flowProfile.brewbyweight,
-        ...Object.values(this.flowProfile.customMetrics ?? {}),
-      ];
-
-      // Older imports stored timestamps but left brew_time empty.
-      const firstSample = arraysToCheck.find((arr) => arr?.length > 0)?.[0];
-      if (firstSample) {
-        const start = moment(firstSample.timestamp, 'HH:mm:ss.SSS', true);
-        const startTime = Number.parseFloat(firstSample.brew_time);
-        for (const arr of arraysToCheck) {
-          for (const sample of arr ?? []) {
-            if (!sample.brew_time?.trim()) {
-              const timestamp = moment(sample.timestamp, 'HH:mm:ss.SSS', true);
-              if (!start.isValid() || !timestamp.isValid()) {
-                throw new Error(
-                  'Cannot recover brew time from invalid timestamp',
-                );
-              }
-              sample.brew_time = (
-                timestamp.diff(start, 'seconds', true) +
-                (Number.isFinite(startTime) ? startTime : 0)
-              ).toFixed(3);
-            }
-          }
-        }
-      }
-
-      for (const arr of arraysToCheck) {
-        if (arr && arr.length > 0) {
-          const lastItem = arr[arr.length - 1];
-          const t = parseFloat(lastItem.brew_time);
-          if (!isNaN(t) && t > max) {
-            max = t;
-          }
-        }
-      }
-    }
-    this.maxTime = Number(max.toFixed(3));
+    this.maxTime = calculateCutBounds(this.flowProfile);
     this.cutRange = { lower: 0, upper: this.maxTime };
   }
 
@@ -341,27 +297,19 @@ export class BrewPopoverCutComponent implements OnInit {
       Plotly.purge('cutChart');
     } catch (ex) {}
 
-    const cutResult = this.performCut(
-      this.flowProfile,
-      this.cutRange.lower,
-      this.cutRange.upper,
-      this.brew,
-    );
     const duration = this.cutRange.upper - this.cutRange.lower;
-
+    const cut: FlowCutSave = {
+      ...performFlowCut(
+        this.flowProfile,
+        this.cutRange.lower,
+        this.cutRange.upper,
+        this.brew,
+      ),
+      brew_time: Math.round(duration),
+      brew_time_milliseconds: Math.round(duration * 1000),
+    };
     this.modalController.dismiss(
-      {
-        flowProfile: cutResult.flowProfile,
-        brew_time: Math.round(duration),
-        brew_time_milliseconds: Math.round(duration * 1000),
-        finalWeight: cutResult.finalWeight,
-        coffee_first_drip_time: cutResult.coffee_first_drip_time,
-        coffee_first_drip_time_milliseconds:
-          cutResult.coffee_first_drip_time_milliseconds,
-        coffee_blooming_time: cutResult.coffee_blooming_time,
-        coffee_blooming_time_milliseconds:
-          cutResult.coffee_blooming_time_milliseconds,
-      },
+      cut,
       'save',
       BrewPopoverCutComponent.COMPONENT_ID,
     );
@@ -377,308 +325,5 @@ export class BrewPopoverCutComponent implements OnInit {
       'cancel',
       BrewPopoverCutComponent.COMPONENT_ID,
     );
-  }
-
-  private performCut(
-    flowProfile: BrewFlow,
-    lower: number,
-    upper: number,
-    brew: Brew = this.brew,
-  ): {
-    flowProfile: BrewFlow;
-    finalWeight?: number;
-    coffee_first_drip_time?: number;
-    coffee_first_drip_time_milliseconds?: number;
-    coffee_blooming_time?: number;
-    coffee_blooming_time_milliseconds?: number;
-  } {
-    let globalMinTime = lower;
-    let found = false;
-    let minTime = Infinity;
-
-    const arraysToCheck = [
-      flowProfile.weight,
-      flowProfile.weightSecond,
-      flowProfile.waterFlow,
-      flowProfile.realtimeFlow,
-      flowProfile.realtimeFlowSecond,
-      flowProfile.pressureFlow,
-      flowProfile.temperatureFlow,
-      flowProfile.waterDispensed,
-      flowProfile.waterDispensedFlowSecond,
-      flowProfile.brewbyweight,
-    ];
-
-    for (const arr of arraysToCheck) {
-      if (arr && arr.length > 0) {
-        const firstItem = arr.find(
-          (item) => parseFloat(item.brew_time) >= lower,
-        );
-        if (firstItem) {
-          const t = parseFloat(firstItem.brew_time);
-          if (t < minTime) {
-            minTime = t;
-            found = true;
-          }
-        }
-      }
-    }
-
-    if (flowProfile.customMetrics) {
-      for (const val of Object.values(flowProfile.customMetrics)) {
-        if (val && val.length > 0) {
-          const firstItem = val.find(
-            (item) => parseFloat(item.brew_time) >= lower,
-          );
-          if (firstItem) {
-            const t = parseFloat(firstItem.brew_time);
-            if (t < minTime) {
-              minTime = t;
-              found = true;
-            }
-          }
-        }
-      }
-    }
-
-    if (found) {
-      globalMinTime = minTime;
-    }
-
-    const shiftSeconds = globalMinTime;
-    const shiftMs = Math.round(shiftSeconds * 1000);
-
-    const processArray = <T extends { brew_time: string; timestamp: string }>(
-      arr: T[],
-    ): T[] => {
-      if (!arr) return [];
-      return arr
-        .filter((item) => {
-          const t = parseFloat(item.brew_time);
-          return t >= lower && t <= upper;
-        })
-        .map((item) => {
-          const t = parseFloat(item.brew_time);
-          const newTime = (t - shiftSeconds).toFixed(1);
-
-          let newTimestamp = item.timestamp;
-          try {
-            newTimestamp = moment(item.timestamp, 'HH:mm:ss.SSS')
-              .subtract(shiftMs, 'milliseconds')
-              .format('HH:mm:ss.SSS');
-          } catch (ex) {}
-
-          return {
-            ...item,
-            brew_time: newTime,
-            timestamp: newTimestamp,
-          };
-        });
-    };
-
-    const processWeightArray = (arr: IBrewWeightFlow[]): IBrewWeightFlow[] => {
-      if (!arr) return [];
-      return arr
-        .filter((item) => {
-          const t = parseFloat(item.brew_time);
-          return t >= lower && t <= upper;
-        })
-        .map((item) => {
-          const t = parseFloat(item.brew_time);
-          const newTime = (t - shiftSeconds).toFixed(1);
-
-          let newTimestamp = item.timestamp;
-          try {
-            newTimestamp = moment(item.timestamp, 'HH:mm:ss.SSS')
-              .subtract(shiftMs, 'milliseconds')
-              .format('HH:mm:ss.SSS');
-          } catch (ex) {}
-
-          return {
-            ...item,
-            brew_time: newTime,
-            timestamp: newTimestamp,
-            actual_weight: item.actual_weight,
-            old_weight: item.old_weight,
-            actual_smoothed_weight: item.actual_smoothed_weight,
-            old_smoothed_weight: item.old_smoothed_weight,
-            not_mutated_weight: item.not_mutated_weight,
-          };
-        });
-    };
-
-    const newProfile = new BrewFlow();
-
-    newProfile.weight = processWeightArray(flowProfile.weight);
-    newProfile.weightSecond = processWeightArray(flowProfile.weightSecond);
-
-    newProfile.waterFlow = processArray(flowProfile.waterFlow);
-
-    if (flowProfile.realtimeFlow) {
-      newProfile.realtimeFlow = flowProfile.realtimeFlow
-        .filter((item) => {
-          const t = parseFloat(item.brew_time);
-          return t >= lower && t <= upper;
-        })
-        .map((item) => {
-          const t = parseFloat(item.brew_time);
-          const newTime = (t - shiftSeconds).toFixed(1);
-
-          let newTimestamp = item.timestamp;
-          try {
-            newTimestamp = moment(item.timestamp, 'HH:mm:ss.SSS')
-              .subtract(shiftMs, 'milliseconds')
-              .format('HH:mm:ss.SSS');
-          } catch (ex) {}
-
-          return {
-            ...item,
-            brew_time: newTime,
-            timestamp: newTimestamp,
-            smoothed_weight: item.smoothed_weight,
-          };
-        });
-    }
-
-    if (flowProfile.realtimeFlowSecond) {
-      newProfile.realtimeFlowSecond = flowProfile.realtimeFlowSecond
-        .filter((item) => {
-          const t = parseFloat(item.brew_time);
-          return t >= lower && t <= upper;
-        })
-        .map((item) => {
-          const t = parseFloat(item.brew_time);
-          const newTime = (t - shiftSeconds).toFixed(1);
-
-          let newTimestamp = item.timestamp;
-          try {
-            newTimestamp = moment(item.timestamp, 'HH:mm:ss.SSS')
-              .subtract(shiftMs, 'milliseconds')
-              .format('HH:mm:ss.SSS');
-          } catch (ex) {}
-
-          return {
-            ...item,
-            brew_time: newTime,
-            timestamp: newTimestamp,
-            smoothed_weight: item.smoothed_weight,
-          };
-        });
-    }
-
-    newProfile.pressureFlow = processArray(flowProfile.pressureFlow);
-    newProfile.temperatureFlow = processArray(flowProfile.temperatureFlow);
-
-    if (flowProfile.waterDispensed) {
-      newProfile.waterDispensed = flowProfile.waterDispensed
-        .filter((item) => {
-          const t = parseFloat(item.brew_time);
-          return t >= lower && t <= upper;
-        })
-        .map((item) => {
-          const t = parseFloat(item.brew_time);
-          const newTime = (t - shiftSeconds).toFixed(1);
-          let newTimestamp = item.timestamp;
-          try {
-            newTimestamp = moment(item.timestamp, 'HH:mm:ss.SSS')
-              .subtract(shiftMs, 'milliseconds')
-              .format('HH:mm:ss.SSS');
-          } catch (ex) {}
-          return {
-            ...item,
-            brew_time: newTime,
-            timestamp: newTimestamp,
-            actual: item.actual,
-            old: item.old,
-          };
-        });
-    }
-
-    if (flowProfile.waterDispensedFlowSecond) {
-      newProfile.waterDispensedFlowSecond = flowProfile.waterDispensedFlowSecond
-        .filter((item) => {
-          const t = parseFloat(item.brew_time);
-          return t >= lower && t <= upper;
-        })
-        .map((item) => {
-          const t = parseFloat(item.brew_time);
-          const newTime = (t - shiftSeconds).toFixed(1);
-          let newTimestamp = item.timestamp;
-          try {
-            newTimestamp = moment(item.timestamp, 'HH:mm:ss.SSS')
-              .subtract(shiftMs, 'milliseconds')
-              .format('HH:mm:ss.SSS');
-          } catch (ex) {}
-          return {
-            ...item,
-            brew_time: newTime,
-            timestamp: newTimestamp,
-            actual: item.actual,
-            old: item.old,
-          };
-        });
-    }
-
-    newProfile.brewbyweight = processArray(flowProfile.brewbyweight);
-
-    if (flowProfile.customMetrics) {
-      for (const [key, val] of Object.entries(flowProfile.customMetrics)) {
-        newProfile.customMetrics[key] = processArray(val);
-      }
-    }
-
-    newProfile.customAxes = flowProfile.customAxes || [];
-
-    let finalWeight = 0;
-    if (newProfile.weight && newProfile.weight.length > 0) {
-      finalWeight =
-        newProfile.weight[newProfile.weight.length - 1].actual_weight;
-    } else if (newProfile.weightSecond && newProfile.weightSecond.length > 0) {
-      finalWeight =
-        newProfile.weightSecond[newProfile.weightSecond.length - 1]
-          .actual_weight;
-    }
-
-    let coffee_first_drip_time = brew?.coffee_first_drip_time ?? 0;
-    let coffee_first_drip_time_milliseconds =
-      brew?.coffee_first_drip_time_milliseconds ?? 0;
-    let coffee_blooming_time = brew?.coffee_blooming_time ?? 0;
-    let coffee_blooming_time_milliseconds =
-      brew?.coffee_blooming_time_milliseconds ?? 0;
-
-    if (coffee_first_drip_time > 0 || coffee_first_drip_time_milliseconds > 0) {
-      const currentFirstDripMs =
-        coffee_first_drip_time * 1000 + coffee_first_drip_time_milliseconds;
-      const newFirstDripMs = currentFirstDripMs - shiftMs;
-      if (newFirstDripMs <= 0) {
-        coffee_first_drip_time = 0;
-        coffee_first_drip_time_milliseconds = 0;
-      } else {
-        coffee_first_drip_time = Math.floor(newFirstDripMs / 1000);
-        coffee_first_drip_time_milliseconds = Math.round(newFirstDripMs % 1000);
-      }
-    }
-
-    if (coffee_blooming_time > 0 || coffee_blooming_time_milliseconds > 0) {
-      const currentBloomingMs =
-        coffee_blooming_time * 1000 + coffee_blooming_time_milliseconds;
-      const newBloomingMs = currentBloomingMs - shiftMs;
-      if (newBloomingMs <= 0) {
-        coffee_blooming_time = 0;
-        coffee_blooming_time_milliseconds = 0;
-      } else {
-        coffee_blooming_time = Math.floor(newBloomingMs / 1000);
-        coffee_blooming_time_milliseconds = Math.round(newBloomingMs % 1000);
-      }
-    }
-
-    return {
-      flowProfile: newProfile,
-      finalWeight: finalWeight,
-      coffee_first_drip_time,
-      coffee_first_drip_time_milliseconds,
-      coffee_blooming_time,
-      coffee_blooming_time_milliseconds,
-    };
   }
 }

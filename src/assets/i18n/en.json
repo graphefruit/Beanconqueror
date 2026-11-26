@@ -1835,6 +1835,7 @@
     "CUT_FLOW_PROFILE_NEW_WEIGHT": "New Weight Preview",
     "CUT_FLOW_PROFILE_NEW_DURATION": "New Duration",
     "CUT_FLOW_PROFILE_LEFT_RIGHT": "Cut from left and right (Start and End)",
+    "CUT_FLOW_PROFILE_SAVE_FAILED": "The cut could not be saved. The brew and its flow profile are unchanged.",
     "STATISTIC_RANGE_ALL_TIME": "All time",
     "STATISTIC_RANGE_THIS_MONTH": "This month",
     "STATISTIC_RANGE_LAST_MONTH": "Last month",
