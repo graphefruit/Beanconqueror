@@ -1164,8 +1164,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Setting ini hanya digunakan untuk brews jenis 'espresso'. Minuman akan berhenti secara otomatis ketika tidak ada aliran yang terdeteksi.",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "Rasio minuman akan dihitung dengan nilai ini untuk semua seduhan, tetapi tidak untuk jenis 'espresso'",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Rasio seduhan akan dihitung dengan nilai ini hanya untuk jenis 'espresso'",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Sepertinya timbangan bluetooth tidak tersambung dengan benar. Ini biasanya terjadi pada Perangkat iOS dengan timbangan Acaia, harap sambungkan kembali timbangan dan pastikan kotak bagian berat diperbarui",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Tidak data berat?",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Flow rate di mana seduhan harus dihentikan. Penyeduhan hanya akan dihentikan ketika minimal 5 detik telah berlalu, 5 gram ada di dalam cangkir atau jika Anda memasukkan berat kopi bubuk - setidaknya tercapai rasio penyeduhan 1:1 (misalnya: 18g masuk, 18g keluar). Setelah kondisi tersebut terpenuhi, flow rate minimum yang ditetapkan di sini akan dicek",
     "ONLY_BEST_BREWS": "Hanya seduhan terbaik",
     "POPOVER_BEST_BREW": "Seduhan terbaik",
@@ -1673,8 +1671,6 @@
     "CLOUD_AI_MODELS_LOADING": "Memuat model yang tersedia...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "Model tidak dapat dimuat. Masukkan nama model secara manual.",
     "CLOUD_AI_MODELS_NONE": "Tidak ada model yang ditemukan.",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "Belum ada beratnya",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "Timbangan ini mulai mengirim data hanya setelah berat berubah. Letakkan cangkir di atas timbangan untuk memastikan semuanya siap sebelum Anda mulai menyeduh.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Ethiopia, Kolombia, Brasil, Kenya, Guatemala, Kosta Rika, Honduras, Peru, Rwanda, Burundi, Tanzania, Uganda, Yaman, Indonesia, India, Panama, El Salvador, Nikaragua, Meksiko, Bolivia, Ekuador, Papua Nugini, Hawaii, Jamaika",
         "PROCESSING_METHODS": "Washed, Natural, Honey, Anaerobik, Karbonasi Maserasi, Wet-Hulled, Semi-Washed, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey, Giling Basah",

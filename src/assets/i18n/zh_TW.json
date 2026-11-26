@@ -1164,8 +1164,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "此設置僅適用於'濃縮咖啡'類型的萃取方式。當不再檢測到流量變化時，萃取將自動停止。",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "該值將用於計算所有萃取方式的萃取比例，但不適用於'濃縮咖啡'類型。",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "該值僅用於計算'濃縮咖啡'類型的萃取方式的萃取比例。",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "看起來你的藍牙秤沒有正確連接到 Beanconqueror。這在大多數情況下發生在使用帶有Acaia電子秤的iOS設備上，請重新連接秤，並確保重量資料已更新。",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "沒有重量數值？",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "停止萃取所需的最小流量？萃取將僅在達到至少5秒和5克或研磨重量的1:1萃取比例時停止。之後，將檢查設置的最小流量。",
     "ONLY_BEST_BREWS": "只顯示最佳萃取",
     "POPOVER_BEST_BREW": "最佳萃取",
@@ -1673,8 +1671,6 @@
     "CLOUD_AI_MODELS_LOADING": "正在載入可用模型...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "模型載入失敗。請手動輸入模型名稱。",
     "CLOUD_AI_MODELS_NONE": "未找到模型。",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "尚未稱重",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "這款電子秤在重量有變化時才會開始傳送數據。開始萃取前將一個杯子放在電子秤上以確保一切準備就緒。",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "衣索比亞, 哥倫比亞, 巴西, 肯亞, 瓜地馬拉, 哥斯大黎加, 洪都拉斯, 秘魯, 盧旺達, 布隆迪, 坦尚尼亞, 烏干達, 葉門, 印尼, 印度, 巴拿馬, 薩爾瓦多, 尼加拉瓜, 墨西哥, 玻利維亞, 厄瓜多爾, 巴布亞紐幾內亞, 夏威夷, 牙買加",
         "PROCESSING_METHODS": "水洗, 日曬, 蜜處理, 厭氧發酵, 二氧化碳浸漬, 濕刨法, 半水洗, Pulped Natural, 黑蜜, 紅蜜, 黃蜜, 白蜜",

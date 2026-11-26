@@ -1164,8 +1164,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Deze instelling wordt alleen gebruikt voor brouwsels van het type 'espresso'. Het brouwsel wordt automatisch gestopt wanneer er geen flow wordt gedetecteerd.",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "De zetverhouding wordt berekend met deze waarde voor alle brouwsels, maar niet voor type 'espresso'.",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "De zetverhouding wordt alleen met deze waarde berekend voor brouwsels van het type 'espresso'",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Het lijkt erop dat de bluetooth weegschaal niet goed is aangesloten. Dit gebeurt meestal op iOS-apparaten met Acaia weegschalen, sluit de weegschaal opnieuw aan en zorg ervoor dat de gewichtstegel wordt bijgewerkt.",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Geen gewichtswaarden?",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "De stroomsnelheid waarbij het zetten moet worden gestopt. Het zetten wordt pas gestopt als er minimaal 5 seconden zijn verstreken, er 5 gram in de kop zit of als u het gewicht van de gemalen koffie hebt ingevoerd - er is minimaal een zetverhouding van 1:1 bereikt (bijv.: 18 g erin, 18 g eruit). Nadat aan deze voorwaarden is voldaan, wordt de hier ingestelde minimale stroomsnelheid gecontroleerd",
     "ONLY_BEST_BREWS": "Alleen de beste brouwsels",
     "POPOVER_BEST_BREW": "Beste brouwsel",
@@ -1673,8 +1671,6 @@
     "CLOUD_AI_MODELS_LOADING": "Beschikbare modellen worden geladen...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "De modellen konden niet worden geladen. Voer de modelnaam handmatig in.",
     "CLOUD_AI_MODELS_NONE": "Er zijn geen modellen gevonden.",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "Nog geen gewicht",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "Deze weegschaal begint pas gegevens door te sturen als het gewicht verandert. Zet een kopje op de weegschaal om te controleren of alles klaar is voordat je begint met het zetten van koffie.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Ethiopië, Colombia, Brazilië, Kenia, Guatemala, Costa Rica, Honduras, Peru, Rwanda, Burundi, Tanzania, Oeganda, Jemen, Indonesië, India, Panama, El Salvador, Nicaragua, Mexico, Bolivia, Ecuador, Papoea-Nieuw-Guinea, Hawaï, Jamaica",
         "PROCESSING_METHODS": "Gewassen, Natural, Honey, Anaeroob, Koolzuurmaceratie, Wet-Hulled, Semi-Gewassen, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",
