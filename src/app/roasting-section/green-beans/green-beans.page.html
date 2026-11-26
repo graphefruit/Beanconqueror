@@ -1,44 +1,44 @@
+@let shown = bean_segment === 'open' || settings?.show_archived_beans;
+@let beans = bean_segment === 'open' ? openBeans : shown ? finishedBeans : [];
 <ion-header>
   <app-header [title]="'ROASTING_SECTION.NAV_GREEN_BEANS' | translate">
     <ion-back-button header-slot="start" icon="beanconqueror-back" [attr.aria-label]="'BACK' | translate" defaultHref="/home/profile" />
     <app-header-button header-slot="end" icon="beanconqueror-add" [ariaLabel]="'A11Y.ADD_GREEN_BEAN' | translate" (clicked)="add()" />
   </app-header>
+  <div class="list-head">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
+      <ion-segment-button value="open">
+        <ion-label>{{"ROASTING_SECTION.GREEN_BEAN.ROASTABLE" | translate}}
+        </ion-label>
+      </ion-segment-button>
+      @if (settings?.show_archived_green_beans) {
+        <ion-segment-button value="archiv">
+          <ion-label>{{"TAB_ARCHIVE" | translate}}
+          </ion-label>
+        </ion-segment-button>
+      }
+    </ion-segment>
+    @if (shown && (beans.length > 0 || isFilterActive())) {
+      <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+        @if (bean_segment === 'open') {
+          <ion-searchbar [searchName]="'A11Y.SEARCH_GREEN_BEANS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
+        } @else {
+          <ion-searchbar [searchName]="'A11Y.SEARCH_GREEN_BEANS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
+        }
+        <ion-button (click)="showFilter()" [attr.aria-label]="(isFilterActive() ? 'A11Y.SORT_GREEN_BEANS_ACTIVE' : 'A11Y.SORT_GREEN_BEANS') | translate" fill="clear" size="small" tappable>
+          @if (isFilterActive()) {
+            <ion-icon aria-hidden="true" name="beanconqueror-sort-active" slot="icon-only" />
+          } @else {
+            <ion-icon aria-hidden="true" name="beanconqueror-sort-inactive" slot="icon-only" />
+          }
+        </ion-button>
+      </div>
+    }
+  </div>
 </ion-header>
 
 <ion-content>
-  @let shown = bean_segment === 'open' || settings?.show_archived_beans;
-  @let beans = bean_segment === 'open' ? openBeans : shown ? finishedBeans : [];
   <app-virtual-list [items]="beans" [itemKey]="greenBeanKey" [estimateSize]="165" [clearOfAddButton]="false">
-    <div virtualListHead>
-      <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
-        <ion-segment-button value="open">
-          <ion-label>{{"ROASTING_SECTION.GREEN_BEAN.ROASTABLE" | translate}}
-          </ion-label>
-        </ion-segment-button>
-        @if (settings?.show_archived_green_beans) {
-          <ion-segment-button value="archiv">
-            <ion-label>{{"TAB_ARCHIVE" | translate}}
-            </ion-label>
-          </ion-segment-button>
-        }
-      </ion-segment>
-      @if (shown && (beans.length > 0 || isFilterActive())) {
-        <div class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
-          @if (bean_segment === 'open') {
-            <ion-searchbar [searchName]="'A11Y.SEARCH_GREEN_BEANS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
-          } @else {
-            <ion-searchbar [searchName]="'A11Y.SEARCH_GREEN_BEANS' | translate" (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never" />
-          }
-          <ion-button (click)="showFilter()" [attr.aria-label]="(isFilterActive() ? 'A11Y.SORT_GREEN_BEANS_ACTIVE' : 'A11Y.SORT_GREEN_BEANS') | translate" fill="clear" size="small" tappable>
-            @if (isFilterActive()) {
-              <ion-icon aria-hidden="true" name="beanconqueror-sort-active" slot="icon-only" />
-            } @else {
-              <ion-icon aria-hidden="true" name="beanconqueror-sort-inactive" slot="icon-only" />
-            }
-          </ion-button>
-        </div>
-      }
-    </div>
     @if (shown && beans.length === 0) {
       <div class="ion-padding ion-text-center">
         <div>

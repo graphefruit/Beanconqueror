@@ -3,12 +3,8 @@
     <ion-back-button header-slot="start" icon="beanconqueror-back" [attr.aria-label]="'BACK' | translate" defaultHref="/home/profile" />
     <app-header-button header-slot="end" icon="beanconqueror-add" [ariaLabel]="'ADD_GRAPH' | translate" (clicked)="add()" />
   </app-header>
-</ion-header>
-
-<ion-content>
-  @let graphs = segment === 'open' ? openGraphs : settings?.show_archived_beans ? finishedGraphs : [];
-  <app-virtual-list [items]="graphs" [itemKey]="graphKey" [estimateSize]="165" [clearOfAddButton]="false">
-    <ion-segment virtualListHead (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
+  <div class="list-head">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
       <ion-segment-button value="open">
         <ion-label>{{"CURRENT" | translate}}
         </ion-label>
@@ -20,6 +16,12 @@
         </ion-segment-button>
       }
     </ion-segment>
+  </div>
+</ion-header>
+
+<ion-content>
+  @let graphs = segment === 'open' ? openGraphs : settings?.show_archived_beans ? finishedGraphs : [];
+  <app-virtual-list [items]="graphs" [itemKey]="graphKey" [estimateSize]="165" [clearOfAddButton]="false">
     @if (graphs.length === 0 && (segment === 'open' || settings?.show_archived_beans)) {
       <div class="ion-padding ion-text-center">
         <div>

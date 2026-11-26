@@ -14,13 +14,19 @@ interface FlowProfile {
   readonly temperatureFlow?: readonly unknown[];
 }
 
+/** How many values the brew graph holds. */
+export function flowPoints(flow?: FlowProfile): number {
+  return (
+    (flow?.weight?.length ?? 0) +
+    (flow?.pressureFlow?.length ?? 0) +
+    (flow?.temperatureFlow?.length ?? 0)
+  );
+}
+
 export function brewFormState(brew: object, flow?: FlowProfile): BrewFormState {
   return {
     data: JSON.stringify({ ...brew, coordinates: undefined }),
-    flowPoints:
-      (flow?.weight?.length ?? 0) +
-      (flow?.pressureFlow?.length ?? 0) +
-      (flow?.temperatureFlow?.length ?? 0),
+    flowPoints: flowPoints(flow),
   };
 }
 
