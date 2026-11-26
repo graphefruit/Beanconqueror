@@ -646,8 +646,8 @@ Run the script's tests with `python3 -m unittest discover -s tools/tests`.
 ## Rolling out a major release
 
 Checklist for a release with data updates (such as 9.0). Store consoles (Google Play Console, App
-Store Connect) are operated by Lars only: he moves stages, pauses a rollout and requests reviews.
-Developers prepare builds, watch the signals and write a daily summary for him.
+Store Connect) are operated by the maintainer only: moving stages, pausing a rollout and requesting
+reviews. Developers prepare builds, watch the signals and write a daily summary.
 
 ### Before the beta
 
@@ -677,8 +677,8 @@ The beta ends when all of these hold; otherwise it is extended, never skipped:
 
 ### Staged rollout
 
-- [ ] Start on a Tuesday or Wednesday, not between 20 December and 6 January, with Lars reachable
-      for the first 72 hours. Planned for mid to late January 2027.
+- [ ] Start on a Tuesday or Wednesday, not between 20 December and 6 January, with the maintainer
+      reachable for the first 72 hours.
 - [ ] Android staged rollout 5 % → 20 % → 50 % → 100 %, each stage at least 72 hours (Android
       vitals lag one to two days).
 - [ ] iOS: submit for review at least 3 days ahead with manual release. Release only after a
@@ -717,7 +717,7 @@ no crash reporting SDK.
 
 Last resort when 9.0 is broken in the stores and no hotfix can ship in time: the 8.8 code is
 published with a version number above the broken 9.0, so users get it as a normal update. Only
-Lars decides to use it, and only if the fallback build passed its test before the start (see
+the maintainer decides to use it, and only if the fallback build passed its test before the start (see
 "Before the beta").
 
 - [ ] Halt the rollout first (Play Console: halt rollout; App Store Connect: pause phased release).
