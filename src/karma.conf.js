@@ -36,6 +36,7 @@ const NEW_CODE = [
   'src/directive/range-name.directive.ts',
   'src/directive/tab-panel.directive.ts',
   'src/native/quick-action-plugin.ts',
+  'src/native/widget-plugin.ts',
   'src/services/a11y/**',
   'src/services/attachmentManifest/**',
   'src/services/automaticBackup/**',
@@ -51,10 +52,12 @@ const NEW_CODE = [
   'src/services/graphHelper/load-plotly.ts',
   'src/services/nfcService/nfc-tag-link.ts',
   'src/services/preImportBackup/pre-import-backup.service.ts',
+  'src/services/quickAction/**',
   'src/services/tabletLayout/**',
   'src/services/textToSpeech/**',
   'src/services/theme/theme-plugins.ts',
   'src/services/translate/**',
+  'src/services/widgetSnapshot/**',
   'src/stores/**',
 ];
 const NEW_CODE_MIN_COVERAGE = 80;

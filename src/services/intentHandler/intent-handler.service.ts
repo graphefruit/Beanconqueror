@@ -1,5 +1,4 @@
 import { inject, NgZone, Service } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { App, URLOpenListenerEvent } from '@capacitor/app';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,6 +16,10 @@ import {
   beanCodeLink,
   internalLinkFromNfcTagLink,
 } from '../nfcService/nfc-tag-link';
+import {
+  QuickActionService,
+  type QuickActionType,
+} from '../quickAction/quick-action.service';
 import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
 import { UIAlert } from '../uiAlert';
 import { UIAnalytics } from '../uiAnalytics';
@@ -33,6 +36,14 @@ import {
   decodeHandoffBatchPayload,
   decodeHandoffPayload,
 } from './brew-handoff.decoder';
+
+/** Each link opens the form of the same quick action. */
+const QUICK_ACTION_LINKS: readonly (readonly [string, QuickActionType])[] = [
+  ['START_BREW', 'Brew'],
+  ['NEW_BEAN', 'Bean'],
+  ['NEW_PREPARATION', 'Preparation'],
+  ['NEW_MILL', 'Mill'],
+];
 
 interface ICreatedHandoffBean {
   uuid: string;
@@ -76,7 +87,7 @@ export class IntentHandlerService {
   private readonly visualizerService = inject(VisualizerService);
   private readonly brewImportService = inject(BrewImportService);
   private readonly zone = inject(NgZone);
-  private readonly router = inject(Router);
+  private readonly quickActions = inject(QuickActionService);
 
   public static SUPPORTED_INTENTS = {
     ADD_BEAN_ONLINE: 'ADD_BEAN_ONLINE',
@@ -131,6 +142,7 @@ export class IntentHandlerService {
             this.uiLog.log('Handle deeplink: ' + url);
           }
           const urlParams = new URLSearchParams(url.split('?')[1]);
+          const quickAction = this.quickActionOfLink(url);
           if (
             url.indexOf('https://beanconqueror.com/?qr=') === 0 ||
             url.indexOf('https://beanconqueror.com?qr=') === 0 ||
@@ -190,12 +202,8 @@ export class IntentHandlerService {
             await this.addBrewsFromHandoff(url);
           } else if (this.matchesIntent(url, 'ADD_BREW')) {
             await this.addBrewFromHandoff(url);
-          } else if (this.matchesIntent(url, 'START_BREW')) {
-            // As the quick action: the tab only changes when the form opens,
-            // not under a brew form that is already open.
-            if (await this.uiBrewHelper.addBrew()) {
-              await this.router.navigate(['/home/brews'], { replaceUrl: true });
-            }
+          } else if (quickAction !== undefined) {
+            await this.quickActions.open(quickAction);
           } else if (
             url
               .toLowerCase()
@@ -294,6 +302,13 @@ export class IntentHandlerService {
       }
       this.uiLog.error('Handle Deep link failed: ' + ex.message);
     }
+  }
+
+  /** The links of the Android shortcuts and of the widget's button. */
+  private quickActionOfLink(url: string): QuickActionType | undefined {
+    return QUICK_ACTION_LINKS.find(([intent]) =>
+      this.matchesIntent(url, intent),
+    )?.[1];
   }
 
   private matchesIntent(url: string, intent: string): boolean {
