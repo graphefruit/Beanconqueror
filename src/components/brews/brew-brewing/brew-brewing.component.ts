@@ -699,9 +699,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.brewBrewingGraphEl.setFirstDripFromMachine();
   }
 
+  /**
+   * Said after the live weight still being said, not by stopping it: on
+   * Android a weight taken while the voice spoke was not heard.
+   */
   private speakCurrentScaleWeight(_value: number) {
     if (this.settings.text_to_speech_active) {
-      this.textToSpeech.speak(
+      this.textToSpeech.speakInFull(
         this.translate.instant('BREW_FLOW_WEIGHT') +
           ' ' +
           spokenWeight(
@@ -709,7 +713,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             spokenWeightDecimals(this.settings.text_to_speech_whole_grams),
             this.settings.language,
           ),
-        true,
       );
     }
   }
