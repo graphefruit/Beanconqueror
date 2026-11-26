@@ -727,8 +727,9 @@ Lars decides to use it, and only if the fallback build passed its test before th
   - Before every import, write a backup file `pre-import/Beanconqueror_pre_import_<UTC>.zip`,
     named like the 9.0 backups so that 9.0 lists and rotates it. 8.8 keeps the data before an
     import only in memory, and the next change of the day overwrites the daily backup.
-  - List `pre-import/Beanconqueror_pre_import_*.zip` and `Beanconqueror_pre_migration_*.zip` with
-    the automatic backups, so the backup from before the data update can be restored on Android.
+  - List `pre-import/Beanconqueror_pre_import_*.zip` and `pre-import/Beanconqueror_pre_migration_*.zip`
+    with the automatic backups, so the backup from before the data update can be restored on
+    Android.
   - Keep the credentials stored on the device when importing: files written by 9.0 hold them
     empty, and 8.8 would overwrite the stored ones.
   - Remove the `LAST_RESTORE` value on start. 8.8 does not stamp changed entries, so 9.0 could
@@ -737,7 +738,8 @@ Lars decides to use it, and only if the fallback build passed its test before th
       `MARKETING_VERSION`, `CURRENT_PROJECT_VERSION`), for example 9.0.1. The fixed 9.0 gets the
       next number again.
 - [ ] 8.8 keeps what it does not know: new fields, settings, storage keys, data update steps and
-      backup files stay. Entries added or changed in 8.8 have no or outdated change info.
+      the backups in `pre-import/` stay. Unlike 9.0, 8.8 deletes daily backups older than eight
+      days. Entries added or changed in 8.8 have no or outdated change info.
 - [ ] The fixed 9.0 (for example 9.0.2) adds a new data update step that fills in the missing
       change info, after the backup like every update step. UPDATE_16 to UPDATE_19 count as done
       and do not run again.
