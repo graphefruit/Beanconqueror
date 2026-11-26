@@ -1260,6 +1260,7 @@
     "SEND_LOGS": "Send logs",
     "SHARE_LOGS_TITLE": "Share log?",
     "SHARE_LOGS_HINT": "The log helps to find errors. It also contains entries from earlier sessions of BeanConqueror. A file with the app and system version, the device model, the types of your Bluetooth devices and your Bluetooth settings comes with it. The log can contain things you entered, such as names of beans, roasters and grinders, text from scanned labels, file and folder names, links you opened and the IDs of your Bluetooth devices. Only share it with people you trust, and do not post it publicly.",
+    "SHARE_LOGS_PREPARING": "Preparing the log for sharing...",
     "SHARE_FLOW_PROFILE_FAILED": "The graph could not be shared. Please try again.",
     "SHARE_CARD": {
         "MENU": "Share as image",

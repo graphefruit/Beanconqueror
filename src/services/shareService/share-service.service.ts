@@ -162,8 +162,21 @@ export class ShareService {
     if (choice !== 'YES') {
       return;
     }
+    // Gathering the files takes seconds on a phone; the spinner stays behind
+    // the share dialog until it closes, as for the export.
+    const shared = await this.uiAlert.withLoadingSpinner(
+      () => this.shareLogFilesOrMemory(),
+      'SHARE_LOGS_PREPARING',
+    );
+    if (!shared) {
+      await this.uiAlert.copyLogfiles();
+    }
+  }
+
+  /** Resolves false when neither the files nor the log in memory were shared. */
+  private async shareLogFilesOrMemory(): Promise<boolean> {
     if (await this.shareLogFiles()) {
-      return;
+      return true;
     }
     let dataUrl: string;
     try {
@@ -174,12 +187,9 @@ export class ShareService {
         }),
       );
     } catch {
-      await this.uiAlert.copyLogfiles();
-      return;
+      return false;
     }
-    if (!(await this.shareFile('Beanconqueror_logs', dataUrl))) {
-      await this.uiAlert.copyLogfiles();
-    }
+    return this.shareFile('Beanconqueror_logs', dataUrl);
   }
 
   /** Resolves false when there were no log files to share. */
