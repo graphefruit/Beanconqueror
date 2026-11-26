@@ -2010,4 +2010,85 @@ describe('IntentHandlerService', () => {
       true,
     ]);
   });
+
+  describe('internal bean links', () => {
+    const notFound: [string, string, undefined, boolean] = [
+      'BEAN_CODE_NOT_FOUND_DESCRIPTION',
+      'BEAN_CODE_NOT_FOUND_TITLE',
+      undefined,
+      true,
+    ];
+
+    beforeEach(() => {
+      beanStorage.getAllEntries.and.returnValue([
+        { internal_share_code: '3E95E1' },
+      ] as never);
+      uiBeanHelper.detailBeanByInternalShareCode.and.resolveTo();
+    });
+
+    for (const link of [
+      'https://beanconqueror.com/app/nfc/#3E95E1/DETAIL',
+      'beanconqueror://int/bean/3E95E1/DETAIL',
+      'beanconqueror://int/bean/3E95E1/DETAIL\u0000',
+    ]) {
+      it(`opens the bean of ${JSON.stringify(link)} without logging its code`, async () => {
+        await service.handleDeepLink(link);
+
+        expect(
+          uiBeanHelper.detailBeanByInternalShareCode.calls.allArgs(),
+        ).toEqual([['3E95E1']]);
+        expect(uiAlert.showMessage.calls.count()).toBe(0);
+        expect(JSON.stringify(uiLog.log.calls.allArgs())).not.toContain(
+          '3E95E1',
+        );
+      });
+    }
+
+    it('lets the user choose the action of a tag link', async () => {
+      uiBeanHelper.chooseNFCTagAction.and.resolveTo('EDIT');
+      uiBeanHelper.editBeanByInternalShareCode.and.resolveTo();
+
+      await service.handleDeepLink(
+        'https://beanconqueror.com/app/nfc/#3E95E1/CHOOSE_ACTION',
+      );
+
+      expect(uiBeanHelper.editBeanByInternalShareCode.calls.allArgs()).toEqual([
+        ['3E95E1'],
+      ]);
+    });
+
+    it('rejects the NFC page without a bean code', async () => {
+      await service.handleDeepLink('https://beanconqueror.com/app/nfc/');
+
+      expect(uiBeanHelper.detailBeanByInternalShareCode.calls.count()).toBe(0);
+      expect(uiAlert.showMessage.calls.allArgs()).toEqual([
+        [
+          'QR.WRONG_QRCODE_DESCRIPTION',
+          'QR.WRONG_QRCODE_TITLE',
+          undefined,
+          true,
+        ],
+      ]);
+    });
+
+    for (const [name, link] of [
+      ['a deleted bean', 'beanconqueror://int/bean/0DE1E7/CHOOSE_ACTION'],
+      [
+        'a deleted bean on a new tag',
+        'https://beanconqueror.com/app/nfc/#0DE1E7/DETAIL',
+      ],
+      ['an unknown action', 'beanconqueror://int/bean/3E95E1/BREW'],
+      ['a missing code', 'beanconqueror://int/bean/'],
+    ]) {
+      it(`tells the user about ${name} instead of doing nothing`, async () => {
+        await service.handleDeepLink(link);
+
+        expect(uiBeanHelper.chooseNFCTagAction.calls.count()).toBe(0);
+        expect(uiBeanHelper.detailBeanByInternalShareCode.calls.count()).toBe(
+          0,
+        );
+        expect(uiAlert.showMessage.calls.allArgs()).toEqual([notFound]);
+      });
+    }
+  });
 });

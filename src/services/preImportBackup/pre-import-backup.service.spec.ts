@@ -9,6 +9,7 @@ import {
 } from './pre-import-backup-files';
 import {
   canBeImportedAgain,
+  isMigrationBackup,
   PRE_IMPORT_BACKUP_FOLDER,
   PRE_IMPORT_BACKUPS_KEPT,
   PreImportBackupService,
@@ -22,6 +23,11 @@ function backupPath(_time: string): string {
 /** Path of the backup of an unchanged import written at the given time in UTC. */
 function importedBackupPath(_time: string): string {
   return `${PRE_IMPORT_BACKUP_FOLDER}/Beanconqueror_pre_import_${_time}Z_imported.zip`;
+}
+
+/** Path of the backup before the data updates, `_update` the first open one. */
+function migrationBackupPath(_update: string, _time: string): string {
+  return `${PRE_IMPORT_BACKUP_FOLDER}/Beanconqueror_pre_migration_${_update}_${_time}Z.zip`;
 }
 
 /** A file system that keeps the files of the app data directory in memory. */
@@ -413,6 +419,85 @@ describe('PreImportBackupService', () => {
     );
   });
 
+  it('writes the backup before the data updates under its own name, with the first open update', async () => {
+    const fake = createFakeFiles();
+    const { service } = setUp(fake.files);
+    const zip = new Blob(['zip content']);
+
+    const path = await service.writeBeforeMigration(
+      zip,
+      'UPDATE_16',
+      new Date(Date.UTC(2026, 10, 3, 9, 5, 7, 42)),
+    );
+
+    expect(path).toBe(
+      migrationBackupPath('UPDATE_16', '2026-11-03_09-05-07-042'),
+    );
+    expect(fake.stored.get(path)).toBe(zip);
+    expect(isMigrationBackup(path.substring(path.indexOf('/') + 1))).toBe(true);
+  });
+
+  it('leaves no file and rejects when the backup before the data updates cannot be written', async () => {
+    const fake = createFakeFiles();
+    fake.failing.write = true;
+    const { service } = setUp(fake.files);
+
+    await expectAsync(
+      service.writeBeforeMigration(new Blob(['zip']), 'UPDATE_16'),
+    ).toBeRejectedWithError('disk full');
+    expect(fake.stored.size).toBe(0);
+  });
+
+  it('tells whether a complete backup before the data updates is there for the first open update', async () => {
+    const fake = createFakeFiles([
+      migrationBackupPath('UPDATE_16', '2026-11-01_10-00-00-000'),
+      `${migrationBackupPath('UPDATE_17', '2026-11-02_10-00-00-000')}.part`,
+    ]);
+    const { service, uiLog } = setUp(fake.files);
+
+    expect(await service.hasMigrationBackup('UPDATE_16')).toBeTrue();
+    expect(await service.hasMigrationBackup('UPDATE_17')).toBeFalse();
+    expect(await service.hasMigrationBackup('UPDATE_1')).toBeFalse();
+
+    // Then one is written: rather one too many than none.
+    fake.failing.list = true;
+    expect(await service.hasMigrationBackup('UPDATE_16')).toBeFalse();
+    expect(uiLog.error).toHaveBeenCalledTimes(1);
+  });
+
+  it('never deletes a backup before the data updates in the rotation and lists it by its time', async () => {
+    const migration = migrationBackupPath(
+      'UPDATE_16',
+      '2026-11-01_12-00-00-000',
+    );
+    const unfinishedMigration = `${migrationBackupPath('UPDATE_17', '2026-11-02_12-00-00-000')}.part`;
+    const fake = createFakeFiles([
+      migration,
+      unfinishedMigration,
+      backupPath('2026-10-31_10-00-00-000'),
+    ]);
+    const { service } = setUp(fake.files);
+
+    const written: string[] = [];
+    for (let day = 2; day <= 5; day++) {
+      const path = await service.write(new Blob(['zip']), {
+        now: new Date(Date.UTC(2026, 10, day, 10, 0, 0, 0)),
+      });
+      written.push(path);
+      await service.removeOldBackups(path);
+    }
+
+    expect([...fake.stored.keys()].sort()).toEqual(
+      [migration, ...written.slice(-PRE_IMPORT_BACKUPS_KEPT)].sort(),
+    );
+    expect((await service.list()).map((_file) => _file.name)).toEqual([
+      'Beanconqueror_pre_import_2026-11-05_10-00-00-000Z.zip',
+      'Beanconqueror_pre_import_2026-11-04_10-00-00-000Z.zip',
+      'Beanconqueror_pre_import_2026-11-03_10-00-00-000Z.zip',
+      'Beanconqueror_pre_migration_UPDATE_16_2026-11-01_12-00-00-000Z.zip',
+    ]);
+  });
+
   it('lists nothing when the backups cannot be listed', async () => {
     const fake = createFakeFiles([backupPath('2026-11-01_10-00-00-000')]);
     fake.failing.list = true;
@@ -506,6 +591,11 @@ describe('Whether an imported file can be imported again', () => {
         .withContext(name)
         .toBe(false);
     }
+  });
+
+  it('holds for a backup written before the data updates, which the app never deletes', () => {
+    const path = migrationBackupPath('UPDATE_16', '2026-11-13_08-00-00-000');
+    expect(canBeImportedAgain(path, at(13, 11, 9), NOW)).toBe(true);
   });
 
   it('never holds when the name is not known', () => {

@@ -1224,7 +1224,7 @@ Somehow i've found out that ionic is rendering this media-tags and setting box-s
   }
 
   // The technical cause of an error, set apart below the message
-  // (UIAlert.showMessageWithDetails).
+  // (UIAlert.showMessageWithDetails), or a list (showMessageWithList).
   .alert-details {
     margin-top: 12px;
     padding-top: 8px;
@@ -1232,8 +1232,13 @@ Somehow i've found out that ionic is rendering this media-tags and setting box-s
     font-size: 0.875em;
     overflow-wrap: anywhere;
 
-    p {
+    p,
+    ul {
       margin: 0;
+    }
+
+    ul {
+      padding-inline-start: 1.25em;
     }
   }
 
