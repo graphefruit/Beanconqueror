@@ -302,6 +302,28 @@ describe('BrewBrewingGraphComponent shot end', () => {
 
       expect(shotEnded()).toBeTrue();
     });
+
+    it('waits for 50 weight readings', () => {
+      // A slow scale averages its flow over seconds; a high minimum isolates the count.
+      settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow = 5;
+
+      weighEvery(300, [...rise(0, 36, 1.8), ...repeat(36, 29)]);
+
+      expect(data.brew_time).toBeGreaterThan(5);
+      expect(shotEnded()).toBeFalse();
+
+      weighEvery(300, [36]);
+
+      expect(shotEnded()).toBeTrue();
+    });
+
+    it('keeps running for a brew that is not an espresso', () => {
+      preparation.style_type = PREPARATION_STYLE_TYPE.POUR_OVER;
+
+      weigh(...repeat(0, 60), ...rise(0, 36), ...repeat(36, 12));
+
+      expect(shotEnded()).toBeFalse();
+    });
   });
 
   describe('in barista mode with a Sanremo YOU', () => {
@@ -367,6 +389,17 @@ describe('BrewBrewingGraphComponent shot end', () => {
       weigh(...repeat(32, 12));
 
       expect(shotEnded()).toBeFalse();
+    });
+
+    it('stops from 10 g when the machine runs no program weight', () => {
+      shotData.groupStatus = 0;
+      weigh(...repeat(0, 60), ...rise(0, 12));
+      prepDeviceEl.preparationDeviceConnected.and.returnValue(false);
+
+      weigh(...repeat(12, 12));
+
+      expect(component.baristaModeTargetWeight).toBeUndefined();
+      expect(shotEnded()).toBeTrue();
     });
 
     it('sends the latest weight and flow with the program weight', () => {
@@ -495,6 +528,26 @@ describe('BrewBrewingGraphComponent shot end', () => {
       press(1);
 
       expect(shotEnded()).toBeTrue();
+    });
+
+    it('waits for 10 seconds of brew time', () => {
+      // A fast sensor passes the 100 readings within 6 s.
+      pressEvery(50, [...repeat(9, 110), 1]);
+
+      expect(data.brew_time).toBeLessThanOrEqual(10);
+      expect(shotEnded()).toBeFalse();
+
+      pressEvery(50, repeat(1, 150));
+
+      expect(shotEnded()).toBeTrue();
+    });
+
+    it('keeps running for a brew that is not an espresso', () => {
+      preparation.style_type = PREPARATION_STYLE_TYPE.POUR_OVER;
+
+      press(...repeat(9, 110), 1);
+
+      expect(shotEnded()).toBeFalse();
     });
 
     it('keeps running when stopping by pressure is turned off', () => {
