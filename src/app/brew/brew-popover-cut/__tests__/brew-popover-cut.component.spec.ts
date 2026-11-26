@@ -255,9 +255,12 @@ describe('BrewPopoverCutComponent', () => {
     await frame();
     release();
     await until(() => !!drawn()?.querySelector('canvas'));
+    await frame();
 
+    // Ionic's padding and card margins settle late; compare with the box itself.
     const wrap = drawn().querySelector<HTMLElement>('.u-wrap');
-    expect(wrap.style.width).toBe('400px');
+    const width = Math.floor(chart().getBoundingClientRect().width);
+    expect(wrap.style.width).toBe(`${width}px`);
   });
 
   it('ignores a range event without two knobs', () => {
