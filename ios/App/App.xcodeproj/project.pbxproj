@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1CA9B275A3686497E5F76E0B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = CA47AA3AC79C0B699A2F82AF /* PrivacyInfo.xcprivacy */; };
+		7A1C5E0B2EC5A00100B3D001 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7A1C5E0C2EC5A00100B3D001 /* InfoPlist.strings */; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
 		446EDD8A4FF939EBA0E3C1A8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2EA703FEFD9E151CF86D9716 /* Localizable.strings */; };
 		4632627A77B765ACFA129D97 /* BrewWidgetCounts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4A415EE95EDB8EF89CCBD8 /* BrewWidgetCounts.swift */; };
@@ -72,6 +73,8 @@
 		CA47AA3AC79C0B699A2F82AF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		CEF897CC4DDA4BABC56F8C02 /* de */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
+		7A1C5E0D2EC5A00100B3D001 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		7A1C5E0E2EC5A00100B3D001 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +135,7 @@
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
 				504EC3131FED79650016851F /* Info.plist */,
+				7A1C5E0C2EC5A00100B3D001 /* InfoPlist.strings */,
 				2FAD9762203C412B000D30F8 /* config.xml */,
 				50B271D01FEDC1A000F3C39B /* public */,
 				A34A65EC7533B24E473878B3 /* WidgetPlugin.swift */,
@@ -260,6 +264,7 @@
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
 				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
+				7A1C5E0B2EC5A00100B3D001 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -348,6 +353,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		7A1C5E0C2EC5A00100B3D001 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7A1C5E0D2EC5A00100B3D001 /* en */,
+				7A1C5E0E2EC5A00100B3D001 /* de */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		2EA703FEFD9E151CF86D9716 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
