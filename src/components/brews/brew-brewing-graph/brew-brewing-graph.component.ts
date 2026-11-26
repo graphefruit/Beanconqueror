@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   ElementRef,
   EventEmitter,
   HostListener,
@@ -11,6 +12,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  signal,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -46,6 +48,11 @@ import regression from 'regression';
 import { Subscription } from 'rxjs';
 
 import { BrewChooseGraphReferenceComponent } from '../../../app/brew/brew-choose-graph-reference/brew-choose-graph-reference.component';
+import {
+  DEVICE_SILENCE_MS,
+  deviceSilenceHint,
+  SilentDevice,
+} from '../../../brew-session/rules/deviceSilenceHint';
 import { timeParameterHintDue } from '../../../brew-session/rules/timeParameterHint';
 import { Brew } from '../../../classes/brew/brew';
 import {
@@ -90,6 +97,7 @@ import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremo
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
+import { Announcer } from '../../../services/a11y/announcer.service';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
@@ -162,6 +170,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly textToSpeech = inject(TextToSpeechService);
   private readonly graphHelper = inject(GraphHelperService);
+  private readonly announcer = inject(Announcer);
 
   @ViewChild('smartScaleWeight', { read: ElementRef })
   public smartScaleWeightEl: ElementRef;
@@ -289,6 +298,20 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   public tileContainerEl: ElementRef;
 
   public chartData = [];
+
+  private readonly silenceTimers: Record<
+    SilentDevice,
+    ReturnType<typeof setTimeout> | undefined
+  > = { scale: undefined, pressure: undefined };
+  private readonly silenceHints = {
+    scale: signal<string | null>(null),
+    pressure: signal<string | null>(null),
+  };
+  public readonly deviceSilenceHints = computed(() =>
+    [this.silenceHints.scale(), this.silenceHints.pressure()].filter(
+      (_key) => _key !== null,
+    ),
+  );
 
   public textToSpeechWeightInterval: any = undefined;
 
@@ -2838,6 +2861,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.scaleFlowChangeSecondSubscription.unsubscribe();
       this.scaleFlowChangeSecondSubscription = undefined;
     }
+    this.endSilenceWatch('scale');
   }
 
   public deattachToTextToSpeedChange() {
@@ -2864,6 +2888,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.pressureDeviceSubscription.unsubscribe();
       this.pressureDeviceSubscription = undefined;
     }
+    this.endSilenceWatch('pressure');
   }
 
   public deattachToTemperatureChange() {
@@ -2878,11 +2903,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     if (scale) {
       this.deattachToFlowChange();
 
-      let didWeReceiveAnyFlow = false;
-
       this.scaleFlowChangeSubscription = scale.flowChange.subscribe((_val) => {
         this.setActualSmartInformation();
-        didWeReceiveAnyFlow = true;
+        this.endSilenceWatch('scale');
       });
 
       const isEspressoBrew: boolean =
@@ -2895,27 +2918,52 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           });
       }
 
-      /** on iPad and connecting an acaia lunar 2021, the popup was display always, even so after it had values after 3 seconds
-       * thats why we update to 4 seconds
-       * **/
-      setTimeout(() => {
-        if (
-          didWeReceiveAnyFlow === false &&
-          this.brewComponent.timer?.isTimerRunning() !== true
-        ) {
-          const isFutula = scale?.getScaleType?.() === ScaleType.FUTULA;
+      this.startSilenceWatch(
+        'scale',
+        scale.device_name,
+        scale.getScaleType?.() === ScaleType.FUTULA,
+      );
+    }
+  }
 
-          const titleKey = isFutula
-            ? 'SMART_SCALE_FUTULA_NO_WEIGHT_TITLE'
-            : 'SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE';
+  /**
+   * Shows a hint when the device sends nothing within DEVICE_SILENCE_MS. The
+   * first value, a disconnect, a new attach and leaving the page end the watch.
+   */
+  private startSilenceWatch(
+    _device: SilentDevice,
+    _deviceName: string,
+    _sendsOnlyOnChange: boolean,
+  ) {
+    this.endSilenceWatch(_device);
+    this.silenceTimers[_device] = setTimeout(() => {
+      this.silenceTimers[_device] = undefined;
+      const hint = deviceSilenceHint({
+        device: _device,
+        sendsOnlyOnChange: _sendsOnlyOnChange,
+        timerRunning: this.brewComponent.timer?.isTimerRunning() === true,
+      });
+      if (hint === null) {
+        return;
+      }
+      this.uiLog.warn(
+        `Device silence - ${_device} "${_deviceName}" sent no value within ${DEVICE_SILENCE_MS} ms on ${this.platform.platforms().join(',')}`,
+      );
+      this.silenceHints[_device].set(hint);
+      // Said once; the first value removes the hint without a word.
+      this.announcer.announce(
+        this.translate.instant(hint),
+        'polite',
+        `device-silence-${_device}`,
+      );
+    }, DEVICE_SILENCE_MS);
+  }
 
-          const descriptionKey = isFutula
-            ? 'SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION'
-            : 'SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION';
-
-          this.uiAlert.showMessage(descriptionKey, titleKey, undefined, true);
-        }
-      }, 5000);
+  private endSilenceWatch(_device: SilentDevice) {
+    clearTimeout(this.silenceTimers[_device]);
+    this.silenceTimers[_device] = undefined;
+    if (this.silenceHints[_device]() !== null) {
+      this.silenceHints[_device].set(null);
     }
   }
 
@@ -2960,6 +3008,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
       this.pressureDeviceSubscription = pressureDevice.pressureChange.subscribe(
         (_val) => {
+          this.endSilenceWatch('pressure');
           const actual: number = _val.actual;
           //Reset to 0, as a temporary fix to exclude the "451" bar
           if (actual > 15) {
@@ -3003,6 +3052,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           }
         },
       );
+      this.startSilenceWatch('pressure', pressureDevice.device_name, false);
     }
   }
 

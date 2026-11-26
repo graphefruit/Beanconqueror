@@ -1164,8 +1164,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Este ajusta es sólo válido para métodos de preparación de tipo 'espresso'. El temporizador se detendrá automáticamente cuando no se detecte flujo.",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "El ratio se calculará con este valor para todos los métodos de preparación salvo los de tipo 'espresso'",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "El ratio se calculará con este valor para métodos de preparación de tipo 'espresso'",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Parece que la báscula bluetooth no se conectó correctamente a Beanconqueror. Suele suceder en dispositivos iOS y básculas Acaia. Por favor, conecta la báscula de nuevo y verifica que el peso se transfiere correctamente.",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "¿No hay peso?",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "¿Con qué valor mínimo de flujo debería detenerse el temporizador? El temporizador se detendrá únicamente si han transcurrido 5 segundos y se han superado los 5 gramos o si se han superado los gramos del café molido, consiguiendo así un ratio mínimo de 1:1. Tras eso, se comprobará el valor mínimo de flujo configurado",
     "ONLY_BEST_BREWS": "Sólo mejores preparaciones",
     "POPOVER_BEST_BREW": "Mejor preparación",
@@ -1673,8 +1671,6 @@
     "CLOUD_AI_MODELS_LOADING": "Cargando modelos disponibles...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "No se han podido cargar los modelos. Introduce el nombre del modelo de manualmente",
     "CLOUD_AI_MODELS_NONE": "No se han encontrado modelos",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "Aún no se ha detectado peso",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "Esta báscula solo empieza a enviar datos cuando detecta cambio de peso. Coloca una taza sobre la báscula para asegurarte de que todo está listo antes de empezar a preparar el café.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Etiopía, Colombia, Brasil, Kenia, Guatemala, Costa Rica, Honduras, Perú, Ruanda, Burundi, Tanzania, Uganda, Yemen, Indonesia, India, Panamá, El Salvador, Nicaragua, México, Bolivia, Ecuador, Papúa Nueva Guinea, Hawái, Jamaica",
         "PROCESSING_METHODS": "Lavado, Natural, Honey, Anaeróbico, Maceración Carbónica, Wet-Hulled, Semi-Lavado, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

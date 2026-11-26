@@ -1164,8 +1164,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Toto nastavení se používá pouze pro nápoje typu „espresso“. Extrakce se automaticky zastaví, jakmile není detekován žádný průtok.",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "Poměr přípravy se pro všechny nápoje vypočítá s touto hodnotou, ale ne pro typ „espresso“",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Poměr extrakce bude vypočítán s touto hodnotou pouze u nápojů typu „espresso“",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Vypadá to, že bluetooth váha nebyla správně připojena. To se obvykle stává na zařízeních s iOS u vah Acaia, zkuste váhu znovu připojit a ujistěte se, že se dlaždice s hmotností aktualizovala.",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Žádné hodnoty hmotnosti?",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Průtok, při kterém by se měl nálev zastavit. Nálev bude zastaven pouze tehdy, když uplynulo alespoň 5 sekund, v šálku je alespoň 5 g nebo – pokud jste zadali hmotnost mleté kávy – je dosaženo alespoň poměru extrakce 1:1 (např. 18 g dovnitř, 18 g ven). Jakmile jsou tyto podmínky splněny, zkontroluje se zde nastavený minimální průtok.",
     "ONLY_BEST_BREWS": "Jen ty nejlepší přípravy vaření",
     "POPOVER_BEST_BREW": "Nejlepší příprava vaření",
@@ -1673,8 +1671,6 @@
     "CLOUD_AI_MODELS_LOADING": "Načítání dostupných modelů...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "Modely se nepodařilo načíst. Zadejte název modelu ručně.",
     "CLOUD_AI_MODELS_NONE": "Nebyly nalezeny žádné modely.",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "Zatím žádná váha",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "Tato váha začne odesílat data až poté, co se změní hmotnost. Před zahájením přípravy kávy položte šálek na váhu, abyste se ujistili, že je vše připraveno.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Etiopie, Kolumbie, Brazílie, Keňa, Guatemala, Kostarika, Honduras, Peru, Rwanda, Burundi, Tanzanie, Uganda, Jemen, Indonésie, Indie, Panama, Salvador, Nikaragua, Mexiko, Bolívie, Ekvádor, Papua-Nová Guinea, Havaj, Jamajka",
         "PROCESSING_METHODS": "Promyté, přírodní, medové, anaerobní, macerace v oxidu uhličitém, mokré loupání, částečně promyté, přírodní s odstraněnou dužinou, černé medové, červené medové, žluté medové, bílé medové",
