@@ -18,9 +18,35 @@ class VoiceOverMagicTapPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 }
 
+@objc(QuickActionPlugin)
+class QuickActionPlugin: CAPPlugin, CAPBridgedPlugin {
+    let identifier = "QuickActionPlugin"
+    let jsName = "QuickAction"
+    let pluginMethods: [CAPPluginMethod] = []
+    private var pendingType: String?
+
+    override func load() {
+        if let type = pendingType {
+            pendingType = nil
+            perform(type)
+        }
+    }
+
+    // A quick action can start the app before the bridge loads this plugin, and the web app adds
+    // its listener only later; Capacitor keeps a retained event until that listener exists.
+    func perform(_ type: String) {
+        guard bridge != nil else {
+            pendingType = type
+            return
+        }
+        notifyListeners("quickAction", data: ["type": type], retainUntilConsumed: true)
+    }
+}
+
 class MagicTapContainerViewController: UIViewController {
     let capacitorViewController: CAPBridgeViewController
     private let magicTapPlugin = VoiceOverMagicTapPlugin()
+    let quickActionPlugin = QuickActionPlugin()
 
     init(capacitorViewController: CAPBridgeViewController) {
         self.capacitorViewController = capacitorViewController
@@ -43,6 +69,7 @@ class MagicTapContainerViewController: UIViewController {
         capacitorViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         capacitorViewController.didMove(toParent: self)
         capacitorViewController.bridge?.registerPluginInstance(magicTapPlugin)
+        capacitorViewController.bridge?.registerPluginInstance(quickActionPlugin)
     }
 
     override var childForStatusBarStyle: UIViewController? {
@@ -75,11 +102,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        if let capacitorViewController = window?.rootViewController as? CAPBridgeViewController {
-            window?.rootViewController = MagicTapContainerViewController(
-                capacitorViewController: capacitorViewController
-            )
-        }
+        // Override point for customization after application launch.
         return true
     }
 
@@ -105,31 +128,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        // Called when the app was launched with a url. Feel free to add additional processing here,
-        // but if you want the App API to support tracking app url opens, make sure to keep this call
-        return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
+    func application(_ application: UIApplication,
+                     configurationForConnecting connectingSceneSession: UISceneSession,
+                     options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        let config = UISceneConfiguration(name: "Default Configuration",
+                                          sessionRole: connectingSceneSession.role)
+        config.delegateClass = SceneDelegate.self
+        return config
     }
-
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        // Called when the app was launched with an activity, including Universal Links.
-        // Feel free to add additional processing here, but if you want the App API to support
-        // tracking app url opens, make sure to keep this call
-        return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
-    }
-
-    func application(_ application: UIApplication, performActionFor shortcutItem:
-          UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
-          let rootViewController = window?.rootViewController
-          let capacitorViewController =
-              (rootViewController as? MagicTapContainerViewController)?.capacitorViewController
-              ?? (rootViewController as? CAPBridgeViewController)
-          guard let bridge = capacitorViewController?.bridge else {
-              completionHandler(false)
-              return
-          }
-          bridge.webView?.evaluateJavaScript("handleQuickAction('"+shortcutItem.type+"')")
-          completionHandler(true)
-      }
-
 }
