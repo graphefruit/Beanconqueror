@@ -38,7 +38,12 @@ import {
 } from '../../stores/brews/brew-share-card-rules';
 import { HeaderDismissButtonComponent } from '../header/header-dismiss-button.component';
 import { HeaderComponent } from '../header/header.component';
-import { GRAPH_INK, SHARE_PALETTES, SharePalette } from './share-palettes';
+import {
+  GRAPH_INK,
+  initialSharePalette,
+  SHARE_PALETTES,
+  SharePalette,
+} from './share-palettes';
 
 /** Width of the shared picture; 4:5 gives 1080 × 1350, as feeds show it. */
 export const SHARE_IMAGE_WIDTH = 1080;
@@ -83,13 +88,9 @@ export class BrewShareComponent implements OnInit {
   public readonly brew = input.required<Brew>();
 
   protected readonly palettes = SHARE_PALETTES;
-  // The app's mode picks the first colour; the picture does not follow it later.
+  // The picture does not follow the app's mode once it is open.
   protected readonly palette = signal<SharePalette>(
-    SHARE_PALETTES.find(
-      (palette) =>
-        palette.id ===
-        (inject(ThemeService).isDarkMode() ? 'espresso' : 'caramel'),
-    ),
+    initialSharePalette(inject(ThemeService).isDarkMode()),
   );
   protected readonly showNote = signal(false);
   protected readonly graph = signal<string | undefined>(undefined);
@@ -112,13 +113,13 @@ export class BrewShareComponent implements OnInit {
   );
   protected readonly icon = computed(
     () =>
-      `url(assets/custom-ion-icons/${this.brew().getPreparation().getIcon()}.svg)`,
+      `assets/custom-ion-icons/${this.brew().getPreparation().getIcon()}.svg`,
   );
 
   private readonly picture =
     viewChild.required<ElementRef<HTMLElement>>('picture');
   /** The mode of the graph last asked for; only its answer is shown. */
-  private graphMode?: SharePalette['graph'];
+  private graphMode?: SharePalette['mode'];
 
   public static async open(
     modalController: ModalController,
@@ -144,7 +145,7 @@ export class BrewShareComponent implements OnInit {
   }
 
   private async loadGraph(): Promise<void> {
-    const mode = this.palette().graph;
+    const mode = this.palette().mode;
     if (mode === this.graphMode) {
       return;
     }

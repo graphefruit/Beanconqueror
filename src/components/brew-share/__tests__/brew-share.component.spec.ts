@@ -9,6 +9,7 @@ import {
   TranslateService,
 } from '@ngx-translate/core';
 
+import { contrast, firstColour, Rgb } from '../../../../e2e/support/colour';
 import { Bean } from '../../../classes/bean/bean';
 import { Brew, BrewInstanceHelper } from '../../../classes/brew/brew';
 import { Mill } from '../../../classes/mill/mill';
@@ -25,6 +26,7 @@ import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { BrewShareComponent, SHARE_IMAGE_WIDTH } from '../brew-share.component';
+import { GRAPH_INK } from '../share-palettes';
 
 const GRAPH = 'data:image/png;base64,AAAA';
 
@@ -86,7 +88,8 @@ describe('BrewShareComponent', () => {
       SHARE_CARD: {
         DESCRIPTION: 'Image of the brew: {{content}}',
         CARAMEL: 'Caramel',
-        ESPRESSO: 'Espresso',
+        APP_LIGHT: 'App light',
+        APP_DARK: 'App dark',
         GRAPH_FAILED: 'The graph could not be added to the image.',
       },
     });
@@ -150,26 +153,36 @@ describe('BrewShareComponent', () => {
     expect(picture(host).getAttribute('aria-label')).toMatch(
       /^Image of the brew: 15\.01\.2027 09:20\. Yirgacheffe \(Tonino\)\..*Grinder: Comandante\..*BeanConqueror$/,
     );
-    expect(
-      picture(host).querySelector<HTMLElement>('.share-icon').style.cssText,
-    ).toContain('beanconqueror-preparation-v60.svg');
+    // The icon as it is, not a silhouette: some are photos of the device.
+    const icon =
+      picture(host).querySelector<HTMLImageElement>('img.share-icon');
+    expect(icon.getAttribute('src')).toBe(
+      'assets/custom-ion-icons/beanconqueror-preparation-v60.svg',
+    );
+    expect(icon.getAttribute('alt')).toBe('');
+    const look = getComputedStyle(icon);
+    expect([look.filter, look.maskImage, look.mixBlendMode]).toEqual([
+      'none',
+      'none',
+      'normal',
+    ]);
   });
 
-  it('starts in caramel, or in espresso when the app is dark, and changes with the choice', async () => {
+  it('starts in the colours of the app, light or dark as it is, and changes with the choice', async () => {
     let host = await show();
     const radios = host.querySelectorAll<HTMLInputElement>(
       'fieldset input[type="radio"]',
     );
     expect(radios.length).toBe(4);
-    expect(radios[0].checked).toBeTrue();
-    expect(picture(host).style.getPropertyValue('--share-frame')).toBe(
-      '#825634',
+    expect(radios[1].checked).toBeTrue();
+    expect(getComputedStyle(picture(host)).backgroundColor).toBe(
+      'rgb(234, 217, 196)',
     );
 
-    radios[2].click();
+    radios[0].click();
     fixture.detectChanges();
     expect(picture(host).style.getPropertyValue('--share-frame')).toBe(
-      '#211914',
+      '#825634',
     );
 
     theme.isDarkMode.and.returnValue(true);
@@ -177,6 +190,82 @@ describe('BrewShareComponent', () => {
     expect(
       host.querySelectorAll<HTMLInputElement>('fieldset input')[2].checked,
     ).toBeTrue();
+  });
+
+  it("draws the app's light and dark colours whatever mode the app shows, every text at 4.5:1", async () => {
+    // As the brew card in either mode: page, card, text, secondary text.
+    const APP: Record<string, Rgb[]> = {
+      light: [
+        [234, 217, 196],
+        [255, 255, 255],
+        [33, 25, 20],
+        [74, 56, 44],
+      ],
+      dark: [
+        [33, 25, 20],
+        [42, 33, 26],
+        [255, 255, 255],
+        [225, 209, 191],
+      ],
+    };
+    const brew = makeBrew();
+    brew.rating = 4;
+    for (const appIsDark of [false, true]) {
+      theme.isDarkMode.and.returnValue(appIsDark);
+      const host = await show(brew);
+      const radios = host.querySelectorAll<HTMLInputElement>(
+        'fieldset input[type="radio"]',
+      );
+      for (const [index, id] of [
+        'caramel',
+        'light',
+        'dark',
+        'sage',
+      ].entries()) {
+        radios[index].click();
+        fixture.detectChanges();
+        const colour = (selector: string, property = 'color') =>
+          firstColour(
+            getComputedStyle(
+              picture(host).querySelector(selector) ?? picture(host),
+            ).getPropertyValue(property),
+          );
+        const frame = colour(':scope', 'background-color');
+        const card = colour('.share-card', 'background-color');
+        const text = colour(':scope');
+        const muted = colour('.share-roaster');
+        const context = `${id} in an app that is ${appIsDark ? 'dark' : 'light'}`;
+        for (const [name, ink] of Object.entries({
+          text,
+          muted,
+          accent: colour('.share-bean'),
+          stars: colour('.share-rating'),
+        })) {
+          expect(contrast(ink, card))
+            .withContext(`${name}, ${context}`)
+            .toBeGreaterThanOrEqual(4.5);
+        }
+        expect(contrast(colour('.share-stamp'), frame))
+          .withContext(`stamp, ${context}`)
+          .toBeGreaterThanOrEqual(4.5);
+        if (APP[id]) {
+          expect([frame, card, text, muted])
+            .withContext(context)
+            .toEqual(APP[id]);
+          const ink = Number.parseInt(
+            GRAPH_INK[id === 'dark' ? 'dark' : 'light'].slice(1),
+            16,
+          );
+          expect([(ink >> 16) & 255, (ink >> 8) & 255, ink & 255])
+            .withContext('graph axes as the secondary text')
+            .toEqual(muted);
+        }
+        const swatch = host.querySelectorAll('.share-swatch')[index];
+        expect(firstColour(getComputedStyle(swatch).backgroundColor))
+          .withContext(`swatch, ${context}`)
+          .toEqual(frame);
+      }
+    }
   });
 
   it('offers the note only when there is one and shows it as the brew card does', async () => {
@@ -218,8 +307,12 @@ describe('BrewShareComponent', () => {
       150,
       { dark: false, ink: '#4a382c' },
     );
-    expect(picture(host).querySelector('img').getAttribute('src')).toBe(GRAPH);
-    expect(picture(host).querySelector('img').getAttribute('alt')).toBe('');
+    expect(
+      picture(host).querySelector('img.share-graph').getAttribute('src'),
+    ).toBe(GRAPH);
+    expect(
+      picture(host).querySelector('img.share-graph').getAttribute('alt'),
+    ).toBe('');
   });
 
   it('draws the graph again only when a colour needs the other mode, sharing nothing meanwhile', async () => {
@@ -243,7 +336,7 @@ describe('BrewShareComponent', () => {
     await fixture.whenStable();
     expect(busy()).toBe('false');
 
-    radios[1].click(); // cream: light as well
+    radios[0].click(); // caramel: light as well
     expect(graphHelper.brewGraphImage).toHaveBeenCalledTimes(1);
     expect(busy()).toBe('false');
 
@@ -264,7 +357,9 @@ describe('BrewShareComponent', () => {
     pending.shift()(GRAPH);
     await fixture.whenStable();
     expect(busy()).toBe('false');
-    expect(picture(host).querySelector('img').getAttribute('src')).toBe(GRAPH);
+    expect(
+      picture(host).querySelector('img.share-graph').getAttribute('src'),
+    ).toBe(GRAPH);
     expect(graphHelper.brewGraphImage).toHaveBeenCalledTimes(3);
   });
 
@@ -379,7 +474,7 @@ describe('BrewShareComponent', () => {
     expect(host.querySelector('[role="status"]').textContent).toContain(
       'The graph could not be added to the image.',
     );
-    expect(picture(host).querySelector('img')).toBeNull();
+    expect(picture(host).querySelector('img.share-graph')).toBeNull();
   });
 
   it('shares the picture 1080 pixels wide', async () => {

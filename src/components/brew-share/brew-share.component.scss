@@ -1,3 +1,5 @@
+@use '../../theme/bq-mode-colours' as mode;
+
 // The picture is sized in cqw (hundredths of its width), never in rem or px:
 // the app's text size and the screen width must not change what is shared.
 .share-preview {
@@ -39,9 +41,16 @@
   flex: none;
   width: 14cqw;
   height: 14cqw;
-  background: var(--share-text);
-  mask: var(--share-icon) center / contain no-repeat;
-  -webkit-mask: var(--share-icon) center / contain no-repeat;
+  object-fit: contain;
+}
+
+// The app's own colours of either mode, for the colours taken from its theme.
+.share-mode-light {
+  @include mode.light;
+}
+
+.share-mode-dark {
+  @include mode.dark;
 }
 
 .share-title {

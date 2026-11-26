@@ -57,7 +57,14 @@ test('a brew is shared as a picture of its card, in a colour of choice', async (
 
   const colours = page.getByRole('group', { name: 'Colour' });
   await expect(colours.getByRole('radio')).toHaveCount(4);
-  await expect(colours.getByRole('radio', { name: 'Caramel' })).toBeChecked();
+  // The app is light, so the picture starts in the app's light colours.
+  await expect(colours.getByRole('radio', { name: 'App light' })).toBeChecked();
+  await expect(picture(page)).toHaveCSS(
+    'background-color',
+    'rgb(234, 217, 196)',
+  );
+  await colours.getByRole('radio', { name: 'App dark' }).check();
+  await expect(picture(page)).toHaveCSS('background-color', 'rgb(33, 25, 20)');
   await colours.getByRole('radio', { name: 'Sage' }).check();
   await expect(picture(page)).toHaveCSS('background-color', 'rgb(47, 94, 76)');
   // The keyboard moves through the colours with the arrow keys.
@@ -96,7 +103,7 @@ test('the graph of a brew goes below its card on the picture', async ({
   await expect(picture(page)).toHaveAccessibleName(
     /\. With graph\. BeanConqueror$/,
   );
-  await expect(picture(page).locator('img')).toHaveAttribute(
+  await expect(picture(page).locator('img.share-graph')).toHaveAttribute(
     'src',
     /^data:image\/png;base64,/,
   );

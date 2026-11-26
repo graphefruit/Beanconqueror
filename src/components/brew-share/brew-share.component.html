@@ -13,6 +13,7 @@
       #picture
       class="share-frame"
       role="img"
+      [class]="'share-mode-' + colours.mode"
       [attr.aria-label]="description()"
       [style.--share-frame]="colours.frame"
       [style.--share-card]="colours.card"
@@ -23,7 +24,8 @@
     >
       <div class="share-card">
         <div class="share-head">
-          <span class="share-icon" [style.--share-icon]="icon()"></span>
+          <!-- As the brew card shows it: some icons are photos of the device. -->
+          <img class="share-icon" [src]="icon()" alt="" />
           <div class="share-title">
             <div class="share-date">
               <!-- The marks of the brew card, drawn inline: an ion-icon would
@@ -116,7 +118,11 @@
           [checked]="option.id === colours.id"
           (change)="choose(option)"
         />
-        <span class="share-swatch" aria-hidden="true" [style.background]="option.frame"></span>
+        <span
+          aria-hidden="true"
+          [class]="'share-swatch share-mode-' + option.mode"
+          [style.background]="option.frame"
+        ></span>
         <span>{{ option.labelKey | translate }}</span>
       </label>
     }
