@@ -8,7 +8,9 @@ enum NativeLog {
     private static let queue = DispatchQueue(label: "NativeLog", qos: .utility)
     private static let maxBytes = 1024 * 1024
     private static let filesKept = 3
-    private static let noise = ["didUpdateValueForCharacteristic", "writeWithoutResponse", "[CapgoLLM]"]
+    private static let interval = 30.0
+    // "Discovered" carries name and advertising data of every device in range, also strangers'.
+    private static let noise = ["didUpdateValueForCharacteristic", "writeWithoutResponse", "Discovered ", "[CapgoLLM]"]
     private static let binary = Bundle.main.executableURL?.lastPathComponent ?? "App"
     // Its own messages carry this subsystem, so collecting never reads them back into the file.
     private static let logger = Logger(subsystem: "\(Bundle.main.bundleIdentifier ?? "App").nativelog",
@@ -63,12 +65,17 @@ enum NativeLog {
                 collect()
             }
         }
-        center.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil) { _ in
-            let task = UIApplication.shared.beginBackgroundTask(withName: "NativeLog")
-            queue.async {
-                collect()
-                DispatchQueue.main.async { UIApplication.shared.endBackgroundTask(task) }
+        // Keeps the app awake until the collect queued on resigning active is written. A second
+        // collect here would cost as much again, since every collect reads the whole process log.
+        center.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { _ in
+            var task = UIBackgroundTaskIdentifier.invalid
+            let end = {
+                guard task != .invalid else { return }
+                UIApplication.shared.endBackgroundTask(task)
+                task = .invalid
             }
+            task = UIApplication.shared.beginBackgroundTask(withName: "NativeLog", expirationHandler: end)
+            queue.async { DispatchQueue.main.async(execute: end) }
         }
         let info = Bundle.main.infoDictionary
         let version = info?["CFBundleShortVersionString"] as? String ?? "?"
@@ -95,8 +102,14 @@ enum NativeLog {
     private static func startTimer() {
         guard timer == nil else { return }
         let source = DispatchSource.makeTimerSource(queue: queue)
-        source.schedule(deadline: .now() + 30, repeating: 30)
-        source.setEventHandler { collect() }
+        source.schedule(deadline: .now() + interval, repeating: interval)
+        source.setEventHandler {
+            // getEntries reads every entry of the process, so a collect gets slower the longer
+            // the app runs (ble-central logs each notification); stay below 1 % of the time.
+            let seconds = collect()
+            let next = max(interval, seconds * 100)
+            source.schedule(deadline: .now() + next, repeating: next)
+        }
         source.resume()
         timer = source
     }
@@ -109,7 +122,9 @@ enum NativeLog {
         try url.setResourceValues(values)
     }
 
-    private static func collect() {
+    @discardableResult
+    private static func collect() -> Double {
+        let started = Date()
         do {
             let store = try OSLogStore(scope: .currentProcessIdentifier)
             let entries = try store.getEntries(at: lastDate.map { store.position(date: $0) })
@@ -121,7 +136,9 @@ enum NativeLog {
                 let isOwn = entry.sender == binary && !entry.subsystem.hasPrefix("com.apple")
                     && !entry.subsystem.hasSuffix(".nativelog")
                 let message = entry.composedMessage
-                if (isNSLog || isOwn) && !noise.contains(where: { message.contains($0) }) {
+                // A bare object dump (scan service data, NFC payloads) starts with a bracket.
+                let isDump = isNSLog && message.first.map { "{(<".contains($0) } ?? false
+                if (isNSLog || isOwn) && !isDump && !noise.contains(where: { message.contains($0) }) {
                     lines.append(line(entry.date, level(entry.level), isNSLog ? "NSLog" : entry.sender, message))
                 }
             }
@@ -129,6 +146,12 @@ enum NativeLog {
         } catch {
             logger.warning("NativeLog: \(error.localizedDescription, privacy: .public)")
         }
+        let seconds = Date().timeIntervalSince(started)
+        logger.debug("NativeLog: collect took \(seconds, privacy: .public) s")
+        if seconds > 0.2 {
+            append([line(Date(), "W", "BeanConqueror", String(format: "slow log collect %.2f s", seconds))])
+        }
+        return seconds
     }
 
     private static func append(_ lines: [String]) {
