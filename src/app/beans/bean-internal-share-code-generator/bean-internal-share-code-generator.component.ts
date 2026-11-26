@@ -35,6 +35,7 @@ import { SelectLabelDirective } from '../../../directive/select-label.directive'
 import { BEAN_CODE_ACTION } from '../../../enums/beans/beanCodeAction';
 import { environment } from '../../../environments/environment';
 import { NfcService } from '../../../services/nfcService/nfc-service.service';
+import { nfcTagLink } from '../../../services/nfcService/nfc-tag-link';
 import { ShareService } from '../../../services/shareService/share-service.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -146,7 +147,9 @@ export class BeanInternalShareCodeGeneratorComponent implements OnInit {
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.NFC_WRITE,
     );
-    this.nfcService.writeNFCData(this.qrData);
+    this.nfcService.writeNFCData(
+      nfcTagLink(this.bean.internal_share_code, this.action),
+    );
   }
 
   public copyNotesToClipboard() {

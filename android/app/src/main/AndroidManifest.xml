@@ -77,8 +77,19 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:host="beanconqueror.com" android:pathPrefix="/app/roaster/bean" android:scheme="https" />
+                <data android:host="beanconqueror.com" android:pathPrefix="/app/nfc" android:scheme="https" />
             </intent-filter>
             <!-- ionic-plugin-deeplinks end -->
+            <!-- NFC tags written by the app. Android checks this filter before it opens the link in
+                 the browser, so it needs no verified App Link and also works for debug builds.
+                 The NFC plugin hands the tag to NfcService. -->
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:host="beanconqueror.com" android:pathPrefix="/app/nfc" android:scheme="https" />
+            </intent-filter>
         </activity>
 
         <provider
