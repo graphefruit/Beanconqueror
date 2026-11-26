@@ -2,7 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { seedDatabase } from './support/seed';
-import { generateDataSet } from './support/synthetic-data';
+import { generateDataSet, isOpenBrew } from './support/synthetic-data';
 
 const PLOTLY_SCRIPT = '/assets/js/plotly.min.js';
 
@@ -18,10 +18,13 @@ async function start(page: Page, plotly: string[]): Promise<void> {
       plotly.push(request.url());
     }
   });
-  const data = generateDataSet({ brews: 3, beans: 2 });
-  data.BREWS.forEach((brew, index) => {
+  const data = generateDataSet({ brews: 3, beans: 2, archivedBeanShare: 0 });
+  // One brew under "Current" has a flow profile.
+  const withGraph = data.BREWS.find((brew) => isOpenBrew(data, brew));
+  expect(withGraph).toBeDefined();
+  data.BREWS.forEach((brew) => {
     brew.flow_profile =
-      index === 0 ? `brews/${brew.config.uuid}_flow_profile.json` : '';
+      brew === withGraph ? `brews/${brew.config.uuid}_flow_profile.json` : '';
   });
   const graphs = [
     {
