@@ -353,8 +353,9 @@ describe('IntentHandlerService', () => {
       ['beanconqueror://NEW_BEAN', 'Bean'],
       ['beanconqueror://NEW_PREPARATION', 'Preparation'],
       ['beanconqueror://NEW_MILL', 'Mill'],
+      ['beanconqueror://OPEN_BREWS', 'Brews'],
     ]) {
-      it(`${link} opens the ${type} form`, async () => {
+      it(`${link} opens the ${type} quick action`, async () => {
         await service.handleDeepLink(link);
 
         expect(open).toHaveBeenCalledOnceWith(type);

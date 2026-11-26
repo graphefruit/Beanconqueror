@@ -37,12 +37,13 @@ import {
   decodeHandoffPayload,
 } from './brew-handoff.decoder';
 
-/** Each link opens the form of the same quick action. */
+/** Each link opens the form or page of the same quick action. */
 const QUICK_ACTION_LINKS: readonly (readonly [string, QuickActionType])[] = [
   ['START_BREW', 'Brew'],
   ['NEW_BEAN', 'Bean'],
   ['NEW_PREPARATION', 'Preparation'],
   ['NEW_MILL', 'Mill'],
+  ['OPEN_BREWS', 'Brews'],
 ];
 
 interface ICreatedHandoffBean {
@@ -304,7 +305,7 @@ export class IntentHandlerService {
     }
   }
 
-  /** The links of the Android shortcuts and of the widget's button. */
+  /** The links of the Android shortcuts and of the widget. */
   private quickActionOfLink(url: string): QuickActionType | undefined {
     return QUICK_ACTION_LINKS.find(([intent]) =>
       this.matchesIntent(url, intent),

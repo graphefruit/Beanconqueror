@@ -6,12 +6,16 @@ import { UIBrewHelper } from '../uiBrewHelper';
 import { UIMillHelper } from '../uiMillHelper';
 import { UIPreparationHelper } from '../uiPreparationHelper';
 
-/** The forms the home screen offers: iOS quick actions, Android shortcuts and the widget. */
+/**
+ * What the home screen offers: the forms of the iOS quick actions, Android
+ * shortcuts and the widget's button, and the brews a tap on the widget shows.
+ */
 export const QUICK_ACTION_TYPES = [
   'Brew',
   'Bean',
   'Preparation',
   'Mill',
+  'Brews',
 ] as const;
 export type QuickActionType = (typeof QUICK_ACTION_TYPES)[number];
 
@@ -20,9 +24,9 @@ export function isQuickActionType(_type: string): _type is QuickActionType {
 }
 
 /**
- * Opens the form of a quick action. While a brew form is open, nothing else
- * opens and the tab stays: a new form and the change of tab would cover the
- * open brew.
+ * Opens the form or page of a quick action. While a brew form is open,
+ * nothing else opens and the tab stays: a new form and the change of tab
+ * would cover the open brew.
  */
 @Service()
 export class QuickActionService {
@@ -40,6 +44,10 @@ export class QuickActionService {
       return;
     }
     if (!this.uiBrewHelper.canOpenBrewFormIfNotShowMessage()) {
+      return;
+    }
+    if (_type === 'Brews') {
+      await this.router.navigate(['/home/brews'], { replaceUrl: true });
       return;
     }
     if (_type === 'Bean') {

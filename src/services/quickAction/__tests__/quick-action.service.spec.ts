@@ -47,7 +47,7 @@ describe('QuickActionService', () => {
     service = TestBed.inject(QuickActionService);
   });
 
-  const cases: [QuickActionType, string][] = [
+  const cases: [Exclude<QuickActionType, 'Brews'>, string][] = [
     ['Brew', 'addBrew'],
     ['Bean', 'addBean'],
     ['Preparation', 'addPreparation'],
@@ -94,9 +94,28 @@ describe('QuickActionService', () => {
     expect(navigate).not.toHaveBeenCalled();
   });
 
-  it('knows the four kinds and no other', () => {
+  it('shows the brews without opening a form', async () => {
+    await service.open('Brews');
+
+    expect(navigate).toHaveBeenCalledOnceWith(['/home/brews'], {
+      replaceUrl: true,
+    });
+    for (const [, form] of cases) {
+      expect(forms[form]).not.toHaveBeenCalled();
+    }
+  });
+
+  it('keeps the open brew form instead of showing the brews', async () => {
+    canOpenBrewForm = false;
+
+    await service.open('Brews');
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('knows the five kinds and no other', () => {
     expect(
-      ['Brew', 'Bean', 'Preparation', 'Mill'].every(isQuickActionType),
+      ['Brew', 'Bean', 'Preparation', 'Mill', 'Brews'].every(isQuickActionType),
     ).toBeTrue();
     expect(isQuickActionType('brew')).toBeFalse();
     expect(isQuickActionType('Water')).toBeFalse();
