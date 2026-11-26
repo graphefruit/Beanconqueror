@@ -18,7 +18,7 @@ include ':capacitor-app-launcher'
 project(':capacitor-app-launcher').projectDir = new File('../node_modules/.pnpm/@capacitor+app-launcher@8.0.1_@capacitor+core@8.6.2/node_modules/@capacitor/app-launcher/android')
 
 include ':capacitor-barcode-scanner'
-project(':capacitor-barcode-scanner').projectDir = new File('../node_modules/.pnpm/@capacitor+barcode-scanner@3.1.3_@capacitor+core@8.6.2/node_modules/@capacitor/barcode-scanner/android')
+project(':capacitor-barcode-scanner').projectDir = new File('../node_modules/.pnpm/@capacitor+barcode-scanner@3.1.4_@capacitor+core@8.6.2/node_modules/@capacitor/barcode-scanner/android')
 
 include ':capacitor-camera'
 project(':capacitor-camera').projectDir = new File('../node_modules/.pnpm/@capacitor+camera@8.2.6_@capacitor+core@8.6.2/node_modules/@capacitor/camera/android')
@@ -33,7 +33,7 @@ include ':capacitor-filesystem'
 project(':capacitor-filesystem').projectDir = new File('../node_modules/.pnpm/@capacitor+filesystem@8.1.5_@capacitor+core@8.6.2/node_modules/@capacitor/filesystem/android')
 
 include ':capacitor-geolocation'
-project(':capacitor-geolocation').projectDir = new File('../node_modules/.pnpm/@capacitor+geolocation@8.2.4_@capacitor+core@8.6.2/node_modules/@capacitor/geolocation/android')
+project(':capacitor-geolocation').projectDir = new File('../node_modules/.pnpm/@capacitor+geolocation@8.2.5_@capacitor+core@8.6.2/node_modules/@capacitor/geolocation/android')
 
 include ':capacitor-haptics'
 project(':capacitor-haptics').projectDir = new File('../node_modules/.pnpm/@capacitor+haptics@8.0.2_@capacitor+core@8.6.2/node_modules/@capacitor/haptics/android')

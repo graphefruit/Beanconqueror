@@ -31,6 +31,6 @@ overrides:
 patchedDependencies:
   # Keys code instrumented for coverage by its path too: git worktrees share the
   # build cache, and a cached file would otherwise report another checkout's path.
-  '@angular/build@22.2.7': patches/@angular__build@22.2.7.patch
+  '@angular/build@22.3.0': patches/@angular__build@22.3.0.patch
   # Settles the speech calls cut off by stop() on Android, as iOS does.
   '@capacitor-community/text-to-speech@8.0.2': patches/@capacitor-community__text-to-speech@8.0.2.patch
