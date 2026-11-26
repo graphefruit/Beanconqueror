@@ -9,8 +9,9 @@ import { isUncovered, scrollToEnd, VIRTUAL_LIST } from './support/virtual-list';
 
 /**
  * Every list adds its entries from a floating button at the bottom right, as
- * the Brews tab does (brew-add-button.spec.ts). Beans keep their import
- * button in the header.
+ * the Brews tab does (brew-add-button.spec.ts). Its names in English and
+ * German and the import of beans in the header are checked in
+ * src/app/__tests__/list-buttons.spec.ts.
  */
 
 interface List {
@@ -104,9 +105,6 @@ for (const list of LISTS) {
     await list.open(page);
 
     await expect(addButton(page, list.add)).toHaveCount(1);
-    await expect(
-      page.getByRole('banner').getByRole('button', { name: list.add }),
-    ).toHaveCount(0);
     const viewport = page.viewportSize()!;
     // Measured again until the page has finished sliding in.
     await expect(async () => {
@@ -163,42 +161,3 @@ for (const list of LISTS) {
     await expect.poll(() => isUncovered(options)).toBe(true);
   });
 }
-
-test('beans keep the import in the header', async ({ page }) => {
-  await startWithData(page);
-  await LISTS[0].open(page);
-
-  await page
-    .getByRole('banner')
-    .getByRole('button', { name: 'Import beans' })
-    .click();
-  await expect(page.getByRole('dialog')).toBeVisible();
-});
-
-test('the add buttons are named in the app language', async ({ page }) => {
-  await startWithData(page);
-  await openFromProfile(page, 'Settings');
-  await page.getByRole('button', { name: /^Language Settings/ }).press('Enter');
-  await page.getByRole('radio', { name: 'German' }).click();
-  await page.getByRole('button', { name: 'Choose' }).click();
-  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
-  await page.goBack();
-
-  await page.getByRole('tab', { name: mainTabName('Bohnen') }).click();
-  await expect(addButton(page, 'Bohne hinzufügen')).toHaveCount(1);
-  for (const [entry, add] of [
-    ['Mühlen', 'Mühle hinzufügen'],
-    ['Zubereitungsmethoden', 'Brühmethode hinzufügen'],
-    ['Wasser', 'Wasserrezept hinzufügen'],
-  ]) {
-    // The tab shows the page it was left on; tapping it again goes back to
-    // the hub.
-    const profile = page.getByRole('tab', { name: mainTabName('Profil') });
-    await expect(async () => {
-      await profile.click();
-      await expect(page).toHaveURL(/\/home\/profile$/, { timeout: 2000 });
-    }).toPass();
-    await page.getByRole('link', { name: new RegExp(`^${entry}`) }).click();
-    await expect(addButton(page, add)).toHaveCount(1);
-  }
-});
