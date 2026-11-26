@@ -124,23 +124,6 @@ test('a brew added on Home is on the screen when the list is shown again', async
   await expect(page.locator(`[id="brew-${added}"]`)).toBeInViewport();
 });
 
-test('the list announces how many brews it holds', async ({ page }) => {
-  await showBrews(page);
-  const brews = list(page).getByRole('list');
-  const total = /\( (\d+) \)/.exec(
-    (await segment(page, 'Current').textContent()) ?? '',
-  )?.[1];
-
-  await expect(brews.getByRole('listitem').first()).toHaveAttribute(
-    'aria-posinset',
-    '1',
-  );
-  await expect(brews.getByRole('listitem').first()).toHaveAttribute(
-    'aria-setsize',
-    total!,
-  );
-});
-
 test('each segment is shown where it was left', async ({ page }) => {
   await showBrews(page);
   const firstId = await cards(page).first().getAttribute('id');

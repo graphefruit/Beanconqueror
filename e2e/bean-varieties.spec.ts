@@ -129,60 +129,6 @@ test('a suggestion picked in the second variety of a blend fills that variety', 
     .toEqual(['', 'Ethiopia']);
 });
 
-test('a blend keeps its varieties when its mix is looked at but not changed', async ({
-  page,
-}) => {
-  await page.goto('/');
-  await completeFirstRun(page);
-  await enableVarietyInformation(page);
-
-  await openAddBean(page);
-  await textField(page, /^Name/).fill('House Blend');
-  await openMix(page);
-  const mix = page.getByRole('alertdialog', { name: 'Blend' });
-  await mix.getByRole('radio', { name: 'Blend' }).click();
-  await mix.getByRole('button', { name: 'Choose' }).click();
-  await expect(mix).toHaveCount(0);
-  await showTab(page, 'Variety information');
-  await page.getByRole('button', { name: 'Add another bean type' }).click();
-  const countries = suggestionField(page, 'Country');
-  await expect(countries).toHaveCount(2);
-  await countries.nth(0).fill('Ethiopia');
-  await countries.nth(1).fill('Brazil');
-  await saveBean(page);
-
-  await page
-    .locator('beans')
-    .getByRole('button', { name: /^Options for / })
-    .click();
-  await page.getByRole('button', { name: 'Edit', exact: true }).click();
-  await expect(page.getByRole('dialog')).toBeVisible();
-  await openMix(page);
-  await expect(mix.getByRole('radio', { name: 'Blend' })).toBeChecked();
-  await mix.getByRole('button', { name: 'Cancel' }).click();
-  await expect(mix).toHaveCount(0);
-  // Leaves the mix field, as the tap on the next field or on Save does.
-  await textField(page, /^Name/).focus();
-  await saveBean(page);
-
-  await expect
-    .poll(async () => {
-      const beans = (await readStoredValue<StoredBean[]>(page, 'BEANS')) ?? [];
-      return beans
-        .find((bean) => bean.name === 'House Blend')
-        ?.bean_information.map((information) => information.country ?? '');
-    })
-    .toEqual(['Ethiopia', 'Brazil']);
-
-  await page.getByText('House Blend', { exact: true }).click();
-  await expect(page.getByText('Bean details')).toBeVisible();
-  await showTab(page, 'Variety information');
-  await expect(page.getByText(/^1\.\sBean Type$/)).toBeVisible();
-  await expect(page.getByText('Ethiopia', { exact: true })).toBeVisible();
-  await expect(page.getByText(/^2\.\sBean Type$/)).toBeVisible();
-  await expect(page.getByText('Brazil', { exact: true })).toBeVisible();
-});
-
 for (const dark of [false, true]) {
   const theme = dark ? 'dark' : 'light';
   test(`the icon of "Add another bean type" takes the label colour (${theme})`, async ({

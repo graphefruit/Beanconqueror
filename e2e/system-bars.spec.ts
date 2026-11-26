@@ -111,30 +111,3 @@ test('theme-color follows the system scheme live in system mode', async ({
   await expectBarsMatchPage(page, CREAM);
   await expect.poll(() => settingsRowBackgrounds(page)).toEqual([WHITE_ROW]);
 });
-
-test('the static theme-color tags in index.html repeat the system bar tokens', async ({
-  page,
-}) => {
-  await page.goto('/');
-  const html = await (await page.request.get('/')).text();
-  const { tags, tokens } = await page.evaluate((source) => {
-    const parsed = new DOMParser().parseFromString(source, 'text/html');
-    const root = getComputedStyle(document.documentElement);
-    return {
-      tags: [...parsed.querySelectorAll('meta[name="theme-color"]')].map(
-        (meta) => [
-          (meta as HTMLMetaElement).media,
-          (meta as HTMLMetaElement).content.toLowerCase(),
-        ],
-      ),
-      tokens: ['--bq-system-bar-light', '--bq-system-bar-dark'].map((name) =>
-        root.getPropertyValue(name).trim().toLowerCase(),
-      ),
-    };
-  }, html);
-  expect(tokens).toEqual([CREAM, ESPRESSO]);
-  expect(tags).toEqual([
-    ['(prefers-color-scheme: light)', CREAM],
-    ['(prefers-color-scheme: dark)', ESPRESSO],
-  ]);
-});

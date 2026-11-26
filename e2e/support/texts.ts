@@ -30,10 +30,6 @@ function readTexts(language: Language): Map<string, string> {
   );
 }
 
-export function hasText(language: Language, key: string): boolean {
-  return TEXTS[language].has(key);
-}
-
 export function text(
   language: Language,
   key: string,

@@ -15,6 +15,7 @@ import { NavController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, firstValueFrom } from 'rxjs';
 
+import { accessibleName } from '../../../test-utils';
 import { BeanParameterPage } from '../../bean-parameter/bean-parameter.page';
 import { BrewParameterPage } from '../brew-parameter.page';
 
@@ -110,4 +111,63 @@ describe('the parameter pages', () => {
       '/home/beans/bean-parameter/listview',
     );
   });
+});
+
+// A sentence on top explains the page; it is no title. The tiles are buttons
+// named by their title.
+describe('the parameter pages, as read', () => {
+  const pages: [string, Type<unknown>, string[], string[]][] = [
+    [
+      'brew',
+      BrewParameterPage,
+      [
+        'BREW_PARAMETER_CUSTOMIZE_TITLE',
+        'BREW_PARAMETER_CUSTOMIZE_DESCRIPTION',
+      ],
+      [
+        'NAV_MANAGE_PARAMETERS',
+        'NAV_SORT_PARAMETERS',
+        'NAV_DEFAULT_PARAMETERS',
+        'NAV_REPEAT_PARAMETERS',
+        'NAV_LIST_VIEW_CUSTOM_PARAMETERS',
+      ],
+    ],
+    [
+      'bean',
+      BeanParameterPage,
+      [
+        'BEAN_PARAMETER_CUSTOMIZE_TITLE',
+        'BEAN_PARAMETER_CUSTOMIZE_DESCRIPTION',
+      ],
+      ['NAV_MANAGE_PARAMETERS', 'NAV_LIST_VIEW_CUSTOM_PARAMETERS'],
+    ],
+  ];
+
+  for (const [name, page, description, tiles] of pages) {
+    it(`describes the tiles of the ${name} parameters without headings`, () => {
+      TestBed.configureTestingModule({
+        imports: [page, TranslateModule.forRoot()],
+        providers: [
+          provideRouter([]),
+          { provide: NavController, useValue: {} },
+        ],
+      });
+      const fixture = TestBed.createComponent(page);
+      fixture.detectChanges();
+      const content = (fixture.nativeElement as HTMLElement).querySelector(
+        'ion-content',
+      );
+
+      expect(
+        content.querySelectorAll('[role="heading"], h1, h2, h3, h4, h5, h6')
+          .length,
+      ).toBe(0);
+      for (const key of description) {
+        expect(content.textContent).toContain(key);
+      }
+      expect(
+        [...content.querySelectorAll('ion-card[button]')].map(accessibleName),
+      ).toEqual(tiles);
+    });
+  }
 });
