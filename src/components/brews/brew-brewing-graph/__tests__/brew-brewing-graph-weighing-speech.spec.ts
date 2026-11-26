@@ -163,6 +163,21 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
     expect(said()).toEqual(['18,3', '31,5', '31,5']);
   }));
 
+  it('is silent while paused and says the brew weight again on resume', fakeAsync(() => {
+    create();
+    Object.assign(component, { flowProfileTempAll: [{ weight: 31.46 }] });
+    void component.timerStarted(undefined);
+    timer.hasStarted = true;
+    tick(500);
+
+    void component.timerPaused(undefined);
+    tick(1000);
+    void component.timerResumed(undefined);
+    tick(500);
+
+    expect(said()).toEqual(['31,5', '31,5']);
+  }));
+
   it('starts again after a reset', fakeAsync(() => {
     create();
     void component.timerStarted(undefined);

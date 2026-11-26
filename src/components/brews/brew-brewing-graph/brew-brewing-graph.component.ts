@@ -1930,6 +1930,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       if (scale) {
         this.attachToScaleWeightChange();
         this.attachToFlowChange();
+        this.attachToTextToSpeechChange();
       }
       if (pressureDevice) {
         this.attachToPressureChange();
