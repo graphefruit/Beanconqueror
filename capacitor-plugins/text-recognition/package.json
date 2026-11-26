@@ -1,0 +1,21 @@
+{
+  "name": "@beanconqueror/text-recognition",
+  "version": "1.0.0",
+  "private": true,
+  "description": "On-device text recognition: Apple Vision on iOS, bundled ML Kit on Android",
+  "license": "GPL-3.0",
+  "author": "Beanconqueror",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "peerDependencies": {
+    "@capacitor/core": ">=8.0.0"
+  },
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  }
+}

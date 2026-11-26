@@ -1,21 +1,25 @@
 import { inject, Service } from '@angular/core';
 
 import {
+  TextDetectionResult,
+  TextRecognition,
+} from '@beanconqueror/text-recognition';
+import {
   Camera,
   CameraDirection,
   CameraResultType,
   CameraSource,
 } from '@capacitor/camera';
 import { TranslateService } from '@ngx-translate/core';
-import { CapacitorPluginMlKitTextRecognition } from '@pantrist/capacitor-plugin-ml-kit-text-recognition';
 
 import { textSummary } from '../../classes/log/logSummary';
+import { OCR_MAX_IMAGE_EDGE } from '../../data/ai-import/ai-import-constants';
 import { UIAlert } from '../uiAlert';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIImage } from '../uiImage';
 import { UILog } from '../uiLog';
-import { rotateBase64Image } from './image-rotation';
-import { TextDetectionResult } from './ocr-metadata.service';
+import { downscaleBase64Image, rotateBase64Image } from './image-rotation';
+import { toTextDetectionResult } from './text-detection';
 
 /**
  * Result of multi-pass OCR on a single image.
@@ -55,6 +59,7 @@ export class CameraOcrService {
   private readonly translate = inject(TranslateService);
   private readonly uiLog = inject(UILog);
   private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly textRecognition = TextRecognition;
 
   /**
    * Capture a photo and run OCR on it.
@@ -170,24 +175,18 @@ export class CameraOcrService {
    * Returns the primary (0°) result and any rotated results that found text.
    */
   private async ocrWithRotations(base64: string): Promise<MultiPassOcrResult> {
-    // Primary pass (0°)
-    // ML Kit plugin returns this shape but its TS types are wider
-    const primary = (await CapacitorPluginMlKitTextRecognition.detectText({
-      base64Image: base64,
-    })) as TextDetectionResult;
+    const image = await downscaleBase64Image(base64, OCR_MAX_IMAGE_EDGE);
+    const primary = await this.detectText(image);
 
     const rotated: TextDetectionResult[] = [];
 
     // Rotated passes — only if primary succeeded (image is valid)
     for (const degrees of [90, 270] as const) {
       try {
-        const rotatedBase64 = await rotateBase64Image(base64, degrees);
-        // ML Kit plugin returns this shape but its TS types are wider
-        const result = (await CapacitorPluginMlKitTextRecognition.detectText({
-          base64Image: rotatedBase64,
-        })) as TextDetectionResult;
-
-        if (result.text && result.text.trim() !== '') {
+        const result = await this.detectText(
+          await rotateBase64Image(image, degrees),
+        );
+        if (result.text.trim() !== '') {
           rotated.push(result);
         }
       } catch (error: unknown) {
@@ -197,6 +196,12 @@ export class CameraOcrService {
     }
 
     return { primary, rotated };
+  }
+
+  private async detectText(base64Image: string): Promise<TextDetectionResult> {
+    return toTextDetectionResult(
+      await this.textRecognition.detectText({ base64Image }),
+    );
   }
 
   /**

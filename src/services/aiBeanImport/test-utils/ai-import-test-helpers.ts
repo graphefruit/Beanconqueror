@@ -1,5 +1,10 @@
+import {
+  Block,
+  Line,
+  TextDetectionResult,
+} from '@beanconqueror/text-recognition';
+
 import { MergedExamples } from '../ai-import-examples.service';
-import { Block, Line, TextDetectionResult } from '../ocr-metadata.service';
 
 interface CreateBlockOptions {
   recognizedLanguage?: string;

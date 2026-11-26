@@ -29,6 +29,13 @@ export const OCR_LARGE_TEXT_AVG_MULTIPLIER = 1.5;
 /** Text is "small" if height < this multiplier of average height */
 export const OCR_SMALL_TEXT_AVG_MULTIPLIER = 0.7;
 
+/**
+ * Longest image edge (px) passed to text recognition. Full camera photos,
+ * decoded up to 3 times each for up to 4 photos, can exhaust Android memory;
+ * label text stays well above the 16 px per character that ML Kit needs.
+ */
+export const OCR_MAX_IMAGE_EDGE = 2560;
+
 // === VALIDATION CONSTANTS ===
 /**
  * Maximum valid coffee growing elevation in meters.

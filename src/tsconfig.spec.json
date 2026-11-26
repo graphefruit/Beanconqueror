@@ -5,7 +5,11 @@
     "types": ["jasmine", "node"]
   },
   "files": ["test.ts", "zone-flags.ts", "polyfills.ts"],
-  "include": ["**/*.spec.ts", "**/*.d.ts"],
+  "include": [
+    "**/*.spec.ts",
+    "**/*.d.ts",
+    "../capacitor-plugins/*/src/**/*.ts"
+  ],
   "angularCompilerOptions": {
     "extendedDiagnostics": {
       "checks": {
