@@ -114,7 +114,7 @@
     "@types/node": "^25.9.9",
     "angular-eslint": "^22.6.0",
     "cordova-plugin-android-permissions": "^1.1.5",
-    "cordova-plugin-ble-central": "^2.0.0",
+    "cordova-plugin-ble-central": "2.0.0",
     "cordova-plugin-health": "^2.1.1",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
