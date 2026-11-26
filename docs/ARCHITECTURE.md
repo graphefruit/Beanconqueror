@@ -75,9 +75,10 @@ sequenceDiagram
     App->>App: (native only) UIExportImportHelper.checkBackup()
     App->>Storage: initializeStorage() for all 11 collections
     App->>Storage: Promise.all(storageReady())
+    App->>App: __setDeviceLanguage(), so messages of the migrations are in the app language
     App->>Update: __checkUpdate() → UIUpdate.checkUpdate() (migrations)
     App->>Storage: DeleteCommands.finishInterrupted()
-    App->>App: __initApp(): language, analytics, ThemeService.initialize(),<br/>welcome/update screens, Bluetooth reconnect (after 3 s), startup view
+    App->>App: __initApp(): analytics, ThemeService.initialize(),<br/>welcome/update screens, Bluetooth reconnect (after 3 s), startup view
     App->>Helper: setAppReady(1)
     App->>App: AttachmentManifestService.start() (background, native only)
 ```
@@ -834,24 +835,41 @@ is not recorded when the save failed. A second run finds nothing more to
 change. The log line carries numbers only (brews, repaired, grinders named
 "Standard").
 
-#### Backup before `UPDATE_16` … `UPDATE_19`
+#### Backup before `UPDATE_16` and every later update
 
-Before the first of `UPDATE_16` … `UPDATE_19` that is open runs,
-`checkUpdate()` writes the current data into a backup file, once for all of
-them (`UIExportImportHelper.writeBackupBeforeMigration()`): the same file as
-before an import (`PreImportBackupService`, folder `pre-import`), so it is
-listed with the backups to import. When it cannot be written, none of them
-runs, an alert says so and asks to check the free storage
-(`MIGRATION_BACKUP_FAILED`), and none is recorded; they run again, with the
-backup, at the next start. The updates before them have run. In the browser
+Before the first open update from `UPDATE_16` on runs, `checkUpdate()` writes
+the current data into a backup file, once for all of them
+(`UIExportImportHelper.writeBackupBeforeMigration()`). Which updates get the
+backup follows from their number (`isBackedUpBefore()` in
+`src/services/dataUpdates/data-update-rules.ts`), so a new update cannot run
+without it. The content is that of the backup before an import, the file is
+its own: `pre-import/Beanconqueror_pre_migration_<first open update>_<UTC>.zip`
+(`PreImportBackupService.writeBeforeMigration()`). It is listed with the
+backups to import as "Data before the update to 9.0", can be shared from
+there like every backup in that list, and is never deleted by the app: the
+rotation after an import (`removeOldBackups`) only deletes the backups before
+an import. When a file for the same first open update is there already, from
+a start whose updates did not finish, no other is written, so failing starts
+do not fill the storage. It is written under a name ending in `.part` and
+renamed when complete, so a full storage leaves no backup that looks complete.
+
+When it cannot be written, none of the updates runs, an alert says so and
+asks to check the free storage (`MIGRATION_BACKUP_FAILED`), and none is
+recorded; they run again, with the backup, at the next start. In the browser
 no file is written and the updates run (as an import does). No backup is
 written for an empty database (`getDataState()` not `'data'`), nor when the
 only open one is `UPDATE_18` opened again by an import in the settings: the
 imported file holds that data, and the data before the import was backed up
-already. No older backup is removed for it; the next completed import keeps
-the newest ones (`removeOldBackups`). When an update then cannot store, every
-start writes another backup until it is done: while the database does not
-store, those files can be the only copy of the data, so none is deleted.
+already. When `getDataState()` is `'unknown'` (the database could not be
+read), neither the backup nor an update runs at that start.
+
+When the same update from `UPDATE_16` on stays open at two starts in a row
+(only these are backed up before they run), the user is told
+once that the data from before it is backed up, with the choice to share the
+logs (`DATA_UPDATE_FAILED`). The count is stored under `FAILED_DATA_UPDATE`,
+a key of this installation only that is never exported
+(`LOCAL_ONLY_STORAGE_KEYS`); the rules are `nextFailedDataUpdate()` and
+`showsFailedDataUpdateHint()`.
 
 The backup runs during the start, before the home screen. On a Pixel 2 XL
 (debug build, 30,000 brews, three cold starts each) the home screen showed
@@ -865,9 +883,10 @@ grinder or a preparation that is not stored. It changes nothing, reads the
 stored entries once, logs no uuids or names and counts only when all four
 collections are read.
 
-A new migration touches two places in `src/services/uiUpdate.ts`: the
-`updateVersions` array in `checkUpdate()` and a new `case` in
-`__updateDataVersion()`. It writes entries with `{ touch: false }` (or
+A new migration touches two places: `DATA_UPDATES` in
+`src/services/dataUpdates/data-update-rules.ts` and a new `case` in
+`__updateDataVersion()` of `src/services/uiUpdate.ts`. It changes no files
+(see "Data updates change no files" in DEVELOPING.md). It writes entries with `{ touch: false }` (or
 `backfillWithoutTouch()`), so a migration does not count as a change by the
 user; `UPDATE_18` is the exception described above. It reads the answer of
 every write and is not recorded when one was not stored. The synthetic test data lists the migrations it counts as applied

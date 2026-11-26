@@ -24,6 +24,14 @@ import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
 
+/** Whether `_error`, from Share.share(), tells that the user closed the dialog. */
+export function isShareCancelled(_error: unknown): boolean {
+  return (
+    (_error as { message?: unknown })?.message === 'Share canceled' ||
+    (_error as { name?: unknown })?.name === 'AbortError'
+  );
+}
+
 @Service()
 export class ShareService {
   private readonly translate = inject(TranslateService);
@@ -86,6 +94,24 @@ export class ShareService {
       }
     }
     return file !== undefined;
+  }
+
+  /**
+   * Opens the share dialog for the stored file at `_uri`, so it can be kept
+   * outside the app. Resolves false when it could not be shared; closing the
+   * dialog counts as shared.
+   */
+  public async shareStoredFile(_uri: string): Promise<boolean> {
+    try {
+      await Share.share({ url: _uri });
+      return true;
+    } catch (ex) {
+      if (isShareCancelled(ex)) {
+        return true;
+      }
+      this.uiLog.error('Share - the stored file could not be shared', ex);
+      return false;
+    }
   }
 
   /**

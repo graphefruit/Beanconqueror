@@ -12,7 +12,7 @@ import { UIAnalytics } from '../uiAnalytics';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
-import { ShareService } from './share-service.service';
+import { isShareCancelled, ShareService } from './share-service.service';
 
 const LOGS = [{ level: 'INFO', message: 'Started', params: [] }];
 const SHARED_FILE = {
@@ -194,5 +194,56 @@ describe('ShareService', () => {
       ).toBeResolved();
       expect(uiLog.error).toHaveBeenCalledTimes(1);
     });
+  });
+
+  describe('sharing a stored file', () => {
+    const URI = 'file:///data/pre-import/backup.zip';
+
+    it('opens the share dialog for the file', async () => {
+      setup('android', 'YES');
+
+      expect(await service.shareStoredFile(URI)).toBeTrue();
+
+      expect(share).toHaveBeenCalledOnceWith({ url: URI });
+      expect(uiLog.error).not.toHaveBeenCalled();
+    });
+
+    it('counts a closed dialog as shared and logs nothing', async () => {
+      setup('ios', 'YES');
+      share.and.rejectWith(new Error('Share canceled'));
+
+      expect(await service.shareStoredFile(URI)).toBeTrue();
+
+      expect(uiLog.error).not.toHaveBeenCalled();
+    });
+
+    it('resolves false and logs when the file could not be shared', async () => {
+      setup('android', 'YES');
+      share.and.rejectWith(new Error('Unsupported url'));
+
+      expect(await service.shareStoredFile(URI)).toBeFalse();
+
+      expect(uiLog.error).toHaveBeenCalledTimes(1);
+    });
+  });
+});
+
+describe('Whether sharing was cancelled', () => {
+  it('holds for the cancel of the native dialogs and of the browser', () => {
+    expect(isShareCancelled(new Error('Share canceled'))).toBeTrue();
+    expect(
+      isShareCancelled(new DOMException('cancelled', 'AbortError')),
+    ).toBeTrue();
+  });
+
+  it('does not hold for other errors', () => {
+    for (const error of [
+      new Error('Unsupported url'),
+      undefined,
+      null,
+      'Share canceled',
+    ]) {
+      expect(isShareCancelled(error)).withContext(String(error)).toBeFalse();
+    }
   });
 });

@@ -1512,6 +1512,11 @@
     "PRE_IMPORT_BACKUP_HINT_BROWSER": "In the browser, no backup of your current data is saved first.",
     "PRE_IMPORT_BACKUP_FAILED": "Nothing was imported: your current data could not be saved as a backup first. Please check the free storage and try again.",
     "MIGRATION_BACKUP_FAILED": "An update of your data was not made: your current data could not be saved as a backup first. Please check the free storage. The update is tried again at the next start.",
+    "BACKUP_BEFORE_DATA_UPDATE": "Data before the update to 9.0",
+    "BACKUP_NOT_SHARED": "The backup could not be shared. Please try again.",
+    "DATA_UPDATE_FAILED_TITLE": "Data update incomplete",
+    "DATA_UPDATE_FAILED": "Part of your data could not be updated. Nothing is lost: your data from before the update is saved as a backup, and you can keep using the app. If you share the logs with us, we can find the cause.",
+    "SHARE_LOGS": "Share logs",
     "IMPORT_NOT_ROLLED_BACK": "Import unsuccessful, and your previous data could not be restored completely: your data may be incomplete. The backup saved before the import is in the app folder \"pre-import\" and can be imported in the settings via \"Find and import an automatic backup file\".",
     "IMPORT_NOT_ROLLED_BACK_NO_BACKUP": "Import unsuccessful, and your previous data could not be restored completely: your data may be incomplete. No backup of it was saved before the import.",
     "IMPORT_STORED_RELOAD_FAILED": "Import saved, but the app could not load the data again. Please close the app completely and start it again.",
@@ -1895,6 +1900,7 @@
         "PREDICTIVE_MODE_TOOLTIP": "Instead of firing at exactly the target weight, the app fires slightly early to compensate for drip-through. The lead time is learned automatically across shots — set 36g, first shot delivers 38g, next shot ~37g, converging to 36g."
     },
     "A11Y": {
+        "SHARE_BACKUP_FILE": "Share {{name}} from {{date}}",
         "CLOSE_DIALOG": "Close dialog",
         "FILTER_BREWS": "Filter brews",
         "FILTER_BREWS_ACTIVE": "Filter brews (active)",

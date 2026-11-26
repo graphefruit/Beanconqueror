@@ -11,6 +11,11 @@ export const LAST_RESTORE_STORAGE_KEY = 'LAST_RESTORE';
  * it, only stored while that runs (DeleteCommands).
  */
 export const PENDING_DELETION_STORAGE_KEY = 'PENDING_DELETION';
+/**
+ * The data update that stayed open at the last starts in a row
+ * (FailedDataUpdate), for the hint after the second one.
+ */
+export const FAILED_DATA_UPDATE_STORAGE_KEY = 'FAILED_DATA_UPDATE';
 
 /**
  * Storage keys whose values belong to exactly this installation.
@@ -27,6 +32,7 @@ export const LOCAL_ONLY_STORAGE_KEYS: readonly string[] = [
   ATTACHMENT_MANIFEST_STORAGE_KEY,
   LAST_RESTORE_STORAGE_KEY,
   PENDING_DELETION_STORAGE_KEY,
+  FAILED_DATA_UPDATE_STORAGE_KEY,
 ];
 
 export function isLocalOnlyStorageKey(_key: string): boolean {
