@@ -21,11 +21,35 @@ function createTestJpegBase64(width = 4, height = 2): string {
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d');
   ctx.fillStyle = '#ff0000';
   ctx.fillRect(0, 0, width, height);
   const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
   return dataUrl.replace(/^data:image\/jpeg;base64,/, '');
+}
+
+/** Fully transparent PNG; loadImage sniffs the real type, so the JPEG data URL prefix is fine. */
+function createTransparentPngBase64(width: number, height: number): string {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  return canvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '');
+}
+
+async function centerPixel(base64: string): Promise<number[]> {
+  const img = await loadImage(base64);
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  const x = Math.floor(img.naturalWidth / 2);
+  const y = Math.floor(img.naturalHeight / 2);
+  return Array.from(ctx.getImageData(x, y, 1, 1).data);
+}
+
+function expectWhite(pixel: number[]): void {
+  pixel.slice(0, 3).forEach((channel) => expect(channel).toBeGreaterThan(245));
 }
 
 describe('rotateBase64Image', () => {
@@ -46,6 +70,15 @@ describe('rotateBase64Image', () => {
       expect(img.naturalWidth).toBe(2);
       expect(img.naturalHeight).toBe(4);
     });
+  });
+
+  it('turns transparent pixels white instead of black', async () => {
+    const result = await rotateBase64Image(
+      createTransparentPngBase64(4, 2),
+      90,
+    );
+
+    expectWhite(await centerPixel(result));
   });
 
   it('should reject with an error when given invalid base64', async () => {
@@ -77,6 +110,15 @@ describe('downscaleBase64Image', () => {
     const img = await loadImage(result);
     expect(img.naturalWidth).toBe(10);
     expect(img.naturalHeight).toBe(5);
+  });
+
+  it('turns transparent pixels white instead of black', async () => {
+    const result = await downscaleBase64Image(
+      createTransparentPngBase64(40, 20),
+      10,
+    );
+
+    expectWhite(await centerPixel(result));
   });
 
   it('returns a small image unchanged', async () => {

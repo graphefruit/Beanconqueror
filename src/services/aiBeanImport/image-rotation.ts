@@ -9,6 +9,22 @@ function loadImage(base64: string): Promise<HTMLImageElement> {
   });
 }
 
+// JPEG has no alpha channel: without a white background, transparent pixels turn black.
+function whiteCanvas(
+  width: number,
+  height: number,
+): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D | null } {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, width, height);
+  }
+  return { canvas, ctx };
+}
+
 function canvasToBase64(canvas: HTMLCanvasElement): string {
   return canvas.toDataURL('image/jpeg', 0.92).replace(JPEG_PREFIX, '');
 }
@@ -45,10 +61,8 @@ export async function downscaleBase64Image(
   if (width === img.width && height === img.height) {
     return base64;
   }
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  canvas.getContext('2d')?.drawImage(img, 0, 0, width, height);
+  const { canvas, ctx } = whiteCanvas(width, height);
+  ctx?.drawImage(img, 0, 0, width, height);
   return canvasToBase64(canvas);
 }
 
@@ -64,10 +78,7 @@ export async function rotateBase64Image(
   degrees: 90 | 270,
 ): Promise<string> {
   const img = await loadImage(base64);
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = img.height;
-  canvas.height = img.width;
+  const { canvas, ctx } = whiteCanvas(img.height, img.width);
   ctx?.translate(canvas.width / 2, canvas.height / 2);
   ctx?.rotate((degrees * Math.PI) / 180);
   ctx?.drawImage(img, -img.width / 2, -img.height / 2);
