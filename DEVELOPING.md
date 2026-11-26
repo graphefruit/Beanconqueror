@@ -665,6 +665,35 @@ Credentials are read from environment variables and must be stored outside the r
 
 Run the script's tests with `python3 -m unittest discover -s tools/tests`.
 
+## Release checklist
+
+Before every store release, hotfixes included, with the release build on an iPhone and an Android
+phone. Automatic points run in CI or with the named command; manual points are checked by a person
+on the device. Browser tests replace native plugins (see [Native plugins](#native-plugins)), so
+they cover only the app's side. A release with data updates also follows
+[Rolling out a major release](#rolling-out-a-major-release).
+
+| Point                                                                                                                                                                                                        | Device          | Check                                                                                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Keyboard: the view moves up, so the focused field stays visible above the keyboard (brew form, bean form, search).                                                                                           | iPhone, Android | Manual                                                                                                                                                                   |
+| Status bar and navigation bar take the page colour in light and dark mode, also when the app setting differs from the system.                                                                                | iPhone, Android | Automatic for the colour: `e2e/system-bars.spec.ts`. Manual for the native bars                                                                                          |
+| Safe area: nothing lies under the notch, the camera cutout or the home indicator; tab bar and bottom buttons stay clear of them, upright and turned.                                                         | iPhone, Android | Manual                                                                                                                                                                   |
+| Bluetooth: pair a scale, its weight arrives during a brew, it connects again after a restart of the app.                                                                                                     | iPhone, Android | Manual                                                                                                                                                                   |
+| NFC: write a bean to a tag and open the bean by reading the tag.                                                                                                                                             | iPhone, Android | Automatic for the link: `src/services/nfcService/*.spec.ts`. Manual for the tag                                                                                          |
+| Backup and import: export, import the file again, counts match; a backup file is written before the import.                                                                                                  | iPhone, Android | Automatic: `e2e/import-backup.spec.ts`, `pnpm e2e:device` (export and import on Android, see [Device tests](#device-tests)). Manual on the iPhone and with a real backup |
+| Update over the installed store version with real data, not a fresh install: all entries and photos are there, and the web view keeps its origin (`capacitor.config.ts`), else the stored data is not found. | iPhone, Android | Automatic for the data: `e2e/update-from-8-8.spec.ts`, `src/services/__tests__/dataUpdateFiles.spec.ts`. Manual for the update itself                                    |
+| Native functions: app shortcuts (quick actions) and NFC links open the app where they should. Add widgets and Live Activities here once the app has them.                                                    | iPhone, Android | Automatic for the app's reaction: `e2e/brew-quick-action.spec.ts`. Manual from the home screen                                                                           |
+| Device checks still open for finished changes are done.                                                                                                                                                      | As noted there  | Manual                                                                                                                                                                   |
+| After the release: the fixes made on `develop` for the store version are taken over into `feature/relaunch`.                                                                                                 | None            | Manual                                                                                                                                                                   |
+
+Before a release in December, also check the year in review:
+
+| Point                                                                                               | Device          | Check                                                                                          |
+| --------------------------------------------------------------------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------- |
+| It appears in December and in January, both times with the data of the year that ends.              | iPhone, Android | Automatic: `src/app/dashboard/__tests__/dashboard.page.spec.ts`. Manual on the device          |
+| "Most expensive bean" compares the price per kg and counts the frozen portions of one bag together. | iPhone, Android | Automatic: `src/services/unwrapped/__tests__/unwrapped.service.spec.ts`. Manual with real data |
+| The country average in the statistics uses the bean rating and leaves unrated beans out.            | iPhone, Android | Automatic: `src/app/statistic/__tests__/statistic.page.spec.ts`. Manual with real data         |
+
 ## Rolling out a major release
 
 Checklist for a release with data updates (such as 9.0). Store consoles (Google Play Console, App
