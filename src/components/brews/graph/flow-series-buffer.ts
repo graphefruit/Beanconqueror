@@ -102,9 +102,13 @@ export function sampleTime(sample: Sample, start: number): number {
   const clock = parseClockSeconds(sample.timestamp);
   if (Number.isFinite(clock) && Number.isFinite(start)) {
     const delta = clock - start;
-    // Only a jump of more than half a day is the brew running past midnight;
-    // a few ms before the first sample stay slightly negative.
-    return delta < -DAY_SEC / 2 ? delta + DAY_SEC : delta;
+    // Only a jump of more than half a day crosses midnight, either way: the
+    // brew runs past it, or a series starts just before a first sample just
+    // after it. A few ms before the first sample stay slightly negative.
+    if (delta < -DAY_SEC / 2) {
+      return delta + DAY_SEC;
+    }
+    return delta > DAY_SEC / 2 ? delta - DAY_SEC : delta;
   }
   return finite(sample.brew_time);
 }

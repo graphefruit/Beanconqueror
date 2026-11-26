@@ -337,6 +337,13 @@ describe('FlowSeriesBuffer', () => {
       ).toBeCloseTo(-0.05, 6);
     });
 
+    it('keeps a sample just before midnight ahead of a first one just after it', () => {
+      const start = parseClockSeconds('00:00:00.100');
+      expect(
+        sampleTime({ timestamp: '23:59:59.950', brew_time: '' }, start),
+      ).toBeCloseTo(-0.15, 6);
+    });
+
     it('finds the first index at or above a value', () => {
       const t = Float64Array.from([0, 1, 1, 2]);
       expect(lowerBound(t, -1)).toBe(0);
