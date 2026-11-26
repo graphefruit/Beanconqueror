@@ -1557,6 +1557,8 @@
     "BEAN_DATA_CO2E_KG_TOOLTIP": "Das freigesetzte CO2e (kg) pro kg geröstetem Kaffee",
     "BEAN_SORT_RECENTLY_USED": "Zuletzt verwendet",
     "BEAN_CODE_ON_ACTION_SCANNED_TITLE": "Aktion auswählen",
+    "BEAN_CODE_NOT_FOUND_TITLE": "Bohne nicht gefunden",
+    "BEAN_CODE_NOT_FOUND_DESCRIPTION": "Dieser Code verweist auf eine Bohne, die in BeanConqueror auf diesem Gerät nicht vorhanden ist. Vielleicht wurde die Bohne gelöscht oder der Code auf einem anderen Gerät erstellt.",
     "GRAPH_UPDATE_INTERVAL_TITLE": "Intervall für die Aktualisierung des Diagramms",
     "GRAPH_UPDATE_INTERVAL_DESCRIPTION": "Benutze dies nur, wenn dein Graph beim Streaming ruckelt, was hauptsächlich bei älteren Tablets oder Handys vorkommt. Wenn du keine Probleme hast, kannst du diese Funktion ignorieren.",
     "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE": "Intervall für die Aktualisierung des Diagramms",

@@ -1,6 +1,7 @@
 import { BEAN_CODE_ACTION } from '../../enums/beans/beanCodeAction';
 import {
   appLinkFromNdefMessage,
+  beanCodeLink,
   INdefRecord,
   internalLinkFromNfcTagLink,
   nfcTagLink,
@@ -196,4 +197,34 @@ describe('internalLinkFromNfcTagLink', () => {
       );
     }
   });
+});
+
+describe('beanCodeLink', () => {
+  const cases: [string, string, ReturnType<typeof beanCodeLink>][] = [
+    [
+      'an old chip',
+      'beanconqueror://int/bean/3E95E1/START_BREW',
+      { code: '3E95E1', action: BEAN_CODE_ACTION.START_BREW },
+    ],
+    [
+      'a web link',
+      'https://beanconqueror.com/app/int/bean/3E95E1/DETAIL',
+      { code: '3E95E1', action: BEAN_CODE_ACTION.DETAIL },
+    ],
+    [
+      'trailing bytes after the action',
+      'beanconqueror://int/bean/3E95E1/CHOOSE_ACTION\u0000\n',
+      { code: '3E95E1', action: BEAN_CODE_ACTION.CHOOSE_ACTION },
+    ],
+    ['an unknown action', 'beanconqueror://int/bean/3E95E1/BREW', undefined],
+    ['a missing action', 'beanconqueror://int/bean/3E95E1', undefined],
+    ['a missing code', 'beanconqueror://int/bean//DETAIL', undefined],
+    ['another type', 'beanconqueror://int/mill/3E95E1/DETAIL', undefined],
+  ];
+
+  for (const [name, url, expected] of cases) {
+    it(`reads ${name}`, () => {
+      expect(beanCodeLink(url)).toEqual(expected);
+    });
+  }
 });
