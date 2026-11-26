@@ -1,6 +1,7 @@
 package com.beanconqueror;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.core.view.ViewCompat;
@@ -8,9 +9,14 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.getcapacitor.BridgeActivity;
 
+import org.apache.cordova.LOG;
+
 public class MainActivity extends BridgeActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    NativeLog.start(this);
+    // Cordova plugins (BLE) log through LOG, which drops everything below ERROR by default.
+    LOG.setLogLevel(Log.DEBUG);
     registerPlugin(BCAndroidNativeCallsPlugin.class);
 
     super.onCreate(savedInstanceState);
