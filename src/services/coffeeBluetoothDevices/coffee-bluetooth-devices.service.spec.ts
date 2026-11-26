@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
+import { Capacitor } from '@capacitor/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
@@ -94,5 +95,97 @@ describe('CoffeeBluetoothDevicesService logging', () => {
       jasmine.any(Function),
     );
     expectNoDeviceIdentity();
+  });
+});
+
+describe('CoffeeBluetoothDevicesService Android permissions', () => {
+  const ADMIN = 'android.permission.BLUETOOTH_ADMIN';
+  const SCAN = 'android.permission.BLUETOOTH_SCAN';
+  const CONNECT = 'android.permission.BLUETOOTH_CONNECT';
+  const LOCATION = 'android.permission.ACCESS_FINE_LOCATION';
+  const globalScope = window as unknown as { cordova?: unknown };
+  let granted: Set<string>;
+  let requestPermissions: jasmine.Spy;
+  let service: CoffeeBluetoothDevicesService;
+
+  beforeEach(() => {
+    granted = new Set();
+    requestPermissions = jasmine
+      .createSpy('requestPermissions')
+      .and.callFake(
+        (
+          permissions: string[],
+          success: (status: { hasPermission: boolean }) => void,
+        ) =>
+          success({ hasPermission: permissions.every((p) => granted.has(p)) }),
+      );
+    globalScope.cordova = {
+      plugins: {
+        permissions: {
+          BLUETOOTH_ADMIN: ADMIN,
+          BLUETOOTH_SCAN: SCAN,
+          BLUETOOTH_CONNECT: CONNECT,
+          ACCESS_FINE_LOCATION: LOCATION,
+          hasPermission: (
+            permission: string,
+            success: (status: { hasPermission: boolean }) => void,
+          ) => success({ hasPermission: granted.has(permission) }),
+          requestPermissions,
+        },
+      },
+    };
+    spyOn(Capacitor, 'getPlatform').and.returnValue('android');
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        CoffeeBluetoothDevicesService,
+        { provide: UISettingsStorage, useValue: { getSettings: () => ({}) } },
+        { provide: TranslateService, useValue: { instant: (k: string) => k } },
+        { provide: UIToast, useValue: {} },
+        { provide: UIHelper, useValue: {} },
+        { provide: UIAnalytics, useValue: {} },
+      ],
+    });
+    service = TestBed.inject(CoffeeBluetoothDevicesService);
+  });
+
+  afterEach(() => {
+    delete globalScope.cordova;
+  });
+
+  const cases: { name: string; granted: string[]; allowed: boolean }[] = [
+    { name: 'up to Android 11 (admin)', granted: [ADMIN], allowed: true },
+    {
+      name: 'from Android 12 on (scan and connect)',
+      granted: [SCAN, CONNECT],
+      allowed: true,
+    },
+    { name: 'not with scan only', granted: [SCAN], allowed: false },
+    { name: 'not with connect only', granted: [CONNECT], allowed: false },
+    { name: 'not without any', granted: [], allowed: false },
+  ];
+  for (const { name, granted: given, allowed } of cases) {
+    it(`allows Bluetooth ${name}`, async () => {
+      given.forEach((p) => granted.add(p));
+
+      expect(await service.hasBluetoothPermission()).toBe(allowed);
+    });
+  }
+
+  it('asks for scan and connect and reports the answer', async () => {
+    granted.add(SCAN);
+    granted.add(CONNECT);
+
+    expect(await service.requestBluetoothPermissions()).toBeTrue();
+    expect(requestPermissions.calls.mostRecent().args[0]).toEqual([
+      SCAN,
+      CONNECT,
+    ]);
+  });
+
+  it('reports a denied location', async () => {
+    expect(await service.hasLocationPermission()).toBeFalse();
+    expect(await service.requestLocationPermissions()).toBeFalse();
+    expect(requestPermissions.calls.mostRecent().args[0]).toEqual([LOCATION]);
   });
 });

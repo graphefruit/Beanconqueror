@@ -45,6 +45,21 @@ async function pageColour(page: Page): Promise<string> {
   });
 }
 
+/** Every distinct background of the settings rows (Ionic paints it inside the item), as rgb(). */
+async function settingsRowBackgrounds(page: Page): Promise<string[]> {
+  return page
+    .locator('settings ion-item')
+    .evaluateAll((items) => [
+      ...new Set(
+        items.map(
+          (item) =>
+            getComputedStyle(item.shadowRoot!.querySelector('.item-native')!)
+              .backgroundColor,
+        ),
+      ),
+    ]);
+}
+
 async function expectBarsMatchPage(page: Page, colour: string): Promise<void> {
   await expect.poll(() => themeColors(page)).toEqual([colour, colour]);
   expect(await pageColour(page)).toBe(colour);
@@ -52,6 +67,9 @@ async function expectBarsMatchPage(page: Page, colour: string): Promise<void> {
 
 const CREAM = '#ead9c4';
 const ESPRESSO = '#211914';
+// The card surface the settings rows sit on.
+const WHITE_ROW = 'rgb(255, 255, 255)';
+const DARK_ROW = 'rgb(42, 33, 26)';
 
 test('theme-color follows the page colour of the chosen mode', async ({
   page,
@@ -62,13 +80,17 @@ test('theme-color follows the page colour of the chosen mode', async ({
   await expectBarsMatchPage(page, CREAM);
 
   await openSettings(page);
+  await expect.poll(() => settingsRowBackgrounds(page)).toEqual([WHITE_ROW]);
   await chooseThemeMode(page, 'Dark mode');
   await expect(page.locator('html')).toHaveClass(/ion-palette-dark/);
   await expectBarsMatchPage(page, ESPRESSO);
+  // The open settings page takes the new colours at once, not after a restart.
+  await expect.poll(() => settingsRowBackgrounds(page)).toEqual([DARK_ROW]);
 
   await chooseThemeMode(page, 'Light mode');
   await expect(page.locator('html')).not.toHaveClass(/ion-palette-dark/);
   await expectBarsMatchPage(page, CREAM);
+  await expect.poll(() => settingsRowBackgrounds(page)).toEqual([WHITE_ROW]);
 });
 
 test('theme-color follows the system scheme live in system mode', async ({
@@ -83,9 +105,11 @@ test('theme-color follows the system scheme live in system mode', async ({
 
   await page.emulateMedia({ colorScheme: 'dark' });
   await expectBarsMatchPage(page, ESPRESSO);
+  await expect.poll(() => settingsRowBackgrounds(page)).toEqual([DARK_ROW]);
 
   await page.emulateMedia({ colorScheme: 'light' });
   await expectBarsMatchPage(page, CREAM);
+  await expect.poll(() => settingsRowBackgrounds(page)).toEqual([WHITE_ROW]);
 });
 
 test('the static theme-color tags in index.html repeat the system bar tokens', async ({

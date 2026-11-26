@@ -2,12 +2,8 @@
   <app-header [title]="'WATER_SECTION.NAV_WATER' | translate">
     <ion-back-button header-slot="start" icon="beanconqueror-back" [attr.aria-label]="'BACK' | translate" defaultHref="/home/profile" />
   </app-header>
-</ion-header>
-
-<ion-content>
-  @let waters = segment === 'open' ? openWaters : settings?.show_archived_beans ? finishedWaters : [];
-  <app-virtual-list [items]="waters" [itemKey]="waterKey" [estimateSize]="165">
-    <ion-segment virtualListHead (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
+  <div class="list-head">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
       <ion-segment-button value="open">
         <ion-label>{{"CURRENT" | translate}}
         </ion-label>
@@ -19,6 +15,12 @@
         </ion-segment-button>
       }
     </ion-segment>
+  </div>
+</ion-header>
+
+<ion-content>
+  @let waters = segment === 'open' ? openWaters : settings?.show_archived_beans ? finishedWaters : [];
+  <app-virtual-list [items]="waters" [itemKey]="waterKey" [estimateSize]="165">
     @if (waters.length === 0 && (segment === 'open' || settings?.show_archived_beans)) {
       <div class="ion-padding ion-text-center">
         <div>

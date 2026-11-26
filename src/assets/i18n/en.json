@@ -1387,6 +1387,10 @@
         "ACTIVATE": "Activate Text to speech",
         "BREW_STARTED": "Brew started",
         "BREW_ENDED": "Brew end",
+        "MAGIC_TAP_STARTED": "Started",
+        "MAGIC_TAP_RESET_AND_STARTED": "Reset and started",
+        "MAGIC_TAP_STOPPED": "Stopped at {{time}}",
+        "MAGIC_TAP_STOPPED_WITH_WEIGHT": "Stopped at {{time}}, {{weight}} grams",
         "TIME": "Time",
         "SPEAK_EVERY_MS": "Speak every selected millisecond",
         "FOLLOWING_NUMBERS_WILL_BE_TEST_SPOKEN": "Following numbers will be test spoken",
@@ -1502,11 +1506,15 @@
     "DISCONNECT_PRESSURE": "Disconnect pressure",
     "DISCONNECT_TEMPERATURE": "Disconnect temperature",
     "DISCONNECT_REFRACTOMETER": "Disconnect refractometer",
-    "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": "We didn't find any supported bluetooth devices, please try again",
+    "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": "We didn't find any supported Bluetooth devices. Check that the device is switched on and close by, that it is not connected to another app or phone, and that Bluetooth (on Android also the location) is turned on. Then search again.",
     "HIDE_VALUE_CARDS_ON_MAXIMIZED_SCREEN": "Hide value cards on maximized screen",
     "BLUETOOTH_REQUEST_PERMISSION": {
         "LOCATION": "To find bluetooth devices, the app needs access to the location.",
         "BLUETOOTH": "To find bluetooth devices, the app needs access to bluetooth"
+    },
+    "BLUETOOTH_DEVICE_CHOOSER_HINT": {
+        "PERMISSION_MISSING": "BeanConqueror may not use Bluetooth or the location, so it cannot find devices. Allow both for BeanConqueror in the system settings, then search again.",
+        "BLUETOOTH_OFF": "Bluetooth is turned off or BeanConqueror may not use it. Turn Bluetooth on and allow it for BeanConqueror in the system settings, then search again."
     },
     "POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE": "Generate share code \/ nfc",
     "BEAN_CODE_ACTION": {
