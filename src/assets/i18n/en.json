@@ -1258,6 +1258,7 @@
     "SEND_LOGS": "Send logs",
     "SHARE_LOGS_TITLE": "Share log?",
     "SHARE_LOGS_HINT": "The log helps to find errors. It can contain things you entered, such as names of beans, roasters and grinders, text from scanned labels, file and folder names, links you opened and the IDs of your Bluetooth devices. Only share it with people you trust, and do not post it publicly.",
+    "SHARE_FLOW_PROFILE_FAILED": "The graph could not be shared. Please try again.",
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Reconnect refractometer device",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
     "PAGE_SETTINGS_LANGUAGE_POLISH": "Polish",

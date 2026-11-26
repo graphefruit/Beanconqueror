@@ -9,6 +9,9 @@ import { openFromProfile } from './support/profile';
  * the share dialog, the app says so and asks; nothing is shared on Cancel.
  */
 
+// The browser cannot write the file to share; the app logs that as an error.
+test.use({ allowedConsoleErrors: [/^Share - could not write the file /] });
+
 const HINT = /^The log helps to find errors\..*do not post it publicly\.$/;
 
 async function openLogs(page: Page): Promise<void> {
@@ -59,7 +62,7 @@ test('the log page asks before it shares the log', async ({ page }) => {
     .click();
   await expect(
     page.getByText(
-      /writeExternalFileFromBase64 for path - \["sharefile\.json"\]/,
+      /writeFileForSharing for path - \["share\/Beanconqueror_logs_\d+\.json"\]/,
     ),
   ).toHaveCount(1);
 });
