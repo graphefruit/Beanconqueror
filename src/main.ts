@@ -17,13 +17,16 @@ import { Drivers } from '@ionic/storage';
 import { IonicStorageModule } from '@ionic/storage-angular';
 
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { provideTranslateService } from '@ngx-translate/core';
-import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import {
+  provideTranslateLoader,
+  provideTranslateService,
+} from '@ngx-translate/core';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { BeanconquerorErrorHandler } from './classes/angular/BeanconquerorErrorHandler';
 import { environment } from './environments/environment';
+import { NonEmptyTranslateLoader } from './services/translate/non-empty-translate-loader';
 
 if (environment.production) {
   enableProdMode();
@@ -47,10 +50,7 @@ bootstrapApplication(AppComponent, {
       // The app will never change the fallback language
       fallbackLang: 'en',
 
-      loader: provideTranslateHttpLoader({
-        prefix: './assets/i18n/',
-        suffix: '.json',
-      }),
+      loader: provideTranslateLoader(NonEmptyTranslateLoader),
     }),
     provideRouter(routes),
     provideZoneChangeDetection(),

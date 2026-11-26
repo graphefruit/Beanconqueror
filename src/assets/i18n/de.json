@@ -1506,11 +1506,15 @@
     "DISCONNECT_PRESSURE": "Druckgerät trennen",
     "DISCONNECT_TEMPERATURE": "Temperaturgerät trennen",
     "DISCONNECT_REFRACTOMETER": "Refraktometergerät trennen",
-    "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": "Wir haben keine unterstützten Bluetooth-Geräte gefunden, bitte erneut versuchen.",
+    "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": "Wir haben keine unterstützten Bluetooth-Geräte gefunden. Prüfe, ob das Gerät eingeschaltet und in der Nähe ist, ob es nicht mit einer anderen App oder einem anderen Telefon verbunden ist und ob Bluetooth (unter Android auch der Standort) eingeschaltet ist. Suche dann erneut.",
     "HIDE_VALUE_CARDS_ON_MAXIMIZED_SCREEN": "Wertkarten auf maximiertem Bildschirm ausblenden",
     "BLUETOOTH_REQUEST_PERMISSION": {
         "LOCATION": "Um Bluetooth-Geräte zu finden, benötigt die App Zugriff auf den Standort.",
         "BLUETOOTH": "Um Bluetooth-Geräte zu finden, benötigt die App Zugriff auf Bluetooth."
+    },
+    "BLUETOOTH_DEVICE_CHOOSER_HINT": {
+        "PERMISSION_MISSING": "BeanConqueror darf Bluetooth oder den Standort nicht nutzen und findet deshalb keine Geräte. Erlaube beides für BeanConqueror in den Systemeinstellungen und suche dann erneut.",
+        "BLUETOOTH_OFF": "Bluetooth ist ausgeschaltet oder für BeanConqueror nicht erlaubt. Schalte Bluetooth ein, erlaube es für BeanConqueror in den Systemeinstellungen und suche dann erneut."
     },
     "POPOVER_BEAN_OPTION_GENERATE_INTERNAL_SHARE_CODE": "Generiere QR-Code \/ NFC",
     "BEAN_CODE_ACTION": {

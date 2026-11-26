@@ -29,8 +29,8 @@ import {
 import { addIcons } from 'ionicons';
 import { refreshOutline } from 'ionicons/icons';
 
-import { TranslatePipe } from '@ngx-translate/core';
-import { finalize, Subscription } from 'rxjs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { finalize, Subscription, tap } from 'rxjs';
 
 import { BluetoothTypes, ScaleType, sleep } from '../../classes/devices';
 import { Preparation } from '../../classes/preparation/preparation';
@@ -39,6 +39,7 @@ import { HeaderButtonComponent } from '../../components/header/header-button.com
 import { HeaderComponent } from '../../components/header/header.component';
 import BLUETOOTH_TRACKING from '../../data/tracking/bluetoothTracking';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
+import { Announcer } from '../../services/a11y/announcer.service';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
@@ -81,6 +82,8 @@ export class BluetoothDeviceChooserPopoverComponent
   private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private ngZone = inject(NgZone);
+  private readonly announcer = inject(Announcer);
+  private readonly translate = inject(TranslateService);
 
   public static POPOVER_ID: string = 'bluetooth-device-chooser-popover';
   @Input() public bluetoothTypeSearch: BluetoothTypes = undefined;
@@ -90,6 +93,8 @@ export class BluetoothDeviceChooserPopoverComponent
   public foundDevices = [];
   private settings: Settings;
   public searchRunning: boolean = undefined;
+  /** Text key of why the search cannot find devices; the next search that passes the checks clears it. */
+  public searchHint: string | undefined;
 
   constructor() {
     addIcons({ refreshOutline });
@@ -106,14 +111,15 @@ export class BluetoothDeviceChooserPopoverComponent
     this.searchDevices();
   }
 
-  private async checkPermissions() {
+  /** Asks for what is missing and returns the text key of what is still missing then. */
+  private async checkPermissions(): Promise<string | undefined> {
     if (this.platform.is('ios')) {
       await this.uiAlert.showLoadingSpinner();
       await this.bleManager.enableIOSBluetooth();
       await this.uiAlert.hideLoadingSpinner();
     }
 
-    const hasLocationPermission: boolean =
+    let hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
       await this.uiAlert.showMessage(
@@ -122,10 +128,11 @@ export class BluetoothDeviceChooserPopoverComponent
         undefined,
         true,
       );
-      await this.bleManager.requestLocationPermissions();
+      hasLocationPermission =
+        await this.bleManager.requestLocationPermissions();
     }
 
-    const hasBluetoothPermission: boolean =
+    let hasBluetoothPermission: boolean =
       await this.bleManager.hasBluetoothPermission();
     if (!hasBluetoothPermission) {
       await this.uiAlert.showMessage(
@@ -134,7 +141,11 @@ export class BluetoothDeviceChooserPopoverComponent
         undefined,
         true,
       );
-      await this.bleManager.requestBluetoothPermissions();
+      hasBluetoothPermission =
+        await this.bleManager.requestBluetoothPermissions();
+    }
+    if (!hasLocationPermission || !hasBluetoothPermission) {
+      return 'BLUETOOTH_DEVICE_CHOOSER_HINT.PERMISSION_MISSING';
     }
 
     const bleEnabled: boolean = await this.bleManager.isBleEnabled();
@@ -145,12 +156,20 @@ export class BluetoothDeviceChooserPopoverComponent
         undefined,
         true,
       );
-      return;
+      return 'BLUETOOTH_DEVICE_CHOOSER_HINT.BLUETOOTH_OFF';
     }
+    return undefined;
+  }
+
+  private announce(key: string) {
+    this.announcer.announce(this.translate.instant(key));
   }
 
   private async searchDevices() {
-    await this.checkPermissions();
+    this.searchHint = await this.checkPermissions();
+    if (this.searchHint) {
+      this.announce(this.searchHint);
+    }
     await this.destroySearchSubscription();
 
     let connectedId = '';
@@ -168,6 +187,14 @@ export class BluetoothDeviceChooserPopoverComponent
     this.subscriptionToSearchDevices = this.bleManager
       .scanForDevicesAndReport(this.bluetoothTypeSearch)
       .pipe(
+        // complete comes only when a search ran to its end, not when it is stopped by closing or searching again.
+        tap({
+          complete: () => {
+            if (this.foundDevices.length === 0) {
+              this.announce('NO_DEVICES_FOUND_PLEASE_TRY_AGAIN');
+            }
+          },
+        }),
         finalize(() => {
           this.searchRunning = false;
         }),
