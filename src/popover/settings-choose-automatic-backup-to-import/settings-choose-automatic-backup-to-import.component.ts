@@ -14,6 +14,7 @@ import {
   IonContent,
   IonFooter,
   IonHeader,
+  IonIcon,
   IonItem,
   IonLabel,
   IonRadio,
@@ -21,6 +22,8 @@ import {
   IonRow,
   ModalController,
 } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { shareSocialOutline } from 'ionicons/icons';
 
 import { FileInfo } from '@capacitor/filesystem';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -32,6 +35,8 @@ import {
   isMigrationBackup,
   PreImportBackupService,
 } from '../../services/preImportBackup/pre-import-backup.service';
+import { ShareService } from '../../services/shareService/share-service.service';
+import { UIAlert } from '../../services/uiAlert';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
@@ -72,6 +77,7 @@ export interface BackupListEntry {
     IonRow,
     IonCol,
     IonButton,
+    IonIcon,
   ],
 })
 export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
@@ -79,6 +85,8 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly preImportBackup = inject(PreImportBackupService);
+  private readonly shareService = inject(ShareService);
+  private readonly uiAlert = inject(UIAlert);
 
   public static POPOVER_ID: string =
     'choose-automatic-backup-to-import-popover';
@@ -89,6 +97,7 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
   public settings: Settings;
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
+    addIcons({ shareSocialOutline });
   }
 
   public async ngOnInit() {
@@ -112,6 +121,18 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
   }
 
   protected readonly fileSize = fileSize;
+
+  /** Lets the user keep the backup at `_uri` outside the app, for example in a cloud. */
+  public async share(_uri: string): Promise<void> {
+    if (!(await this.shareService.shareStoredFile(_uri))) {
+      await this.uiAlert.showMessage(
+        'BACKUP_NOT_SHARED',
+        undefined,
+        undefined,
+        true,
+      );
+    }
+  }
 
   public async saveSettings() {}
 

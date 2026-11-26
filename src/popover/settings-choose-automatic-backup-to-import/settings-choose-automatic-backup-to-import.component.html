@@ -15,13 +15,18 @@
 
         @for (entry of foundBackupFiles; track entry.file.uri) {
           @let file = entry.file;
+          @let title = entry.beforeDataUpdate ? ('BACKUP_BEFORE_DATA_UPDATE' | translate) : file.name;
+          @let date = (file.mtime / 1000) | formatDate:[$safeNavigationMigration(settings?.date_format)];
           <ion-item tappable>
             <ion-radio [value]="file.uri" justify='start' label-placement='end'>
               <ion-label>
-                <div class="field-label">{{ entry.beforeDataUpdate ? ('BACKUP_BEFORE_DATA_UPDATE' | translate) : file.name }}</div>
-                <p>{{ fileSize(file.size) }} - {{ (file.mtime / 1000) | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</p>
+                <div class="field-label">{{ title }}</div>
+                <p>{{ fileSize(file.size) }} - {{ date }}</p>
               </ion-label>
             </ion-radio>
+            <ion-button slot="end" fill="clear" (click)="share(file.uri)" [attr.aria-label]="'A11Y.SHARE_BACKUP_FILE' | translate: { name: title, date: date }">
+              <ion-icon aria-hidden="true" name="share-social-outline" slot="icon-only" />
+            </ion-button>
           </ion-item>
         }
       </ion-radio-group>

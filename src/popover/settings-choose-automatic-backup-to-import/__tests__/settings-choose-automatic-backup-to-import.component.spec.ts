@@ -1,10 +1,14 @@
+import { provideZoneChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import { ModalController } from '@ionic/angular';
+import { ModalController, provideIonicAngular } from '@ionic/angular';
 
 import { FileInfo } from '@capacitor/filesystem';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 
 import { PreImportBackupService } from '../../../services/preImportBackup/pre-import-backup.service';
+import { ShareService } from '../../../services/shareService/share-service.service';
+import { UIAlert } from '../../../services/uiAlert';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import {
@@ -71,6 +75,8 @@ describe('Choosing an automatic backup file to import', () => {
           provide: PreImportBackupService,
           useValue: { list: () => Promise.resolve(_beforeImport) },
         },
+        { provide: ShareService, useValue: {} },
+        { provide: UIAlert, useValue: {} },
       ],
     });
     const component = TestBed.runInInjectionContext(
@@ -129,5 +135,127 @@ describe('Choosing an automatic backup file to import', () => {
     expect(fileSize(4410)).toBe('5kB');
     expect(fileSize(24718)).toBe('0.02MB');
     expect(fileSize(1021246)).toBe('0.97MB');
+  });
+});
+
+type StencilElement = HTMLElement & {
+  componentOnReady?: () => Promise<unknown>;
+};
+
+/** Ionic moves the name of ion-button to the button in its shadow root. */
+function nameOf(_button: HTMLElement): string | null {
+  return (
+    _button.shadowRoot?.querySelector('button')?.getAttribute('aria-label') ??
+    _button.getAttribute('aria-label')
+  );
+}
+
+describe('Sharing a backup file from the list', () => {
+  const beforeImport = file(
+    'Beanconqueror_pre_import_2026-11-12_10-00-00-000Z.zip',
+    500,
+    Date.UTC(2026, 10, 12, 10),
+  );
+  const beforeDataUpdate = file(
+    'Beanconqueror_pre_migration_UPDATE_16_2026-11-10_10-00-00-000Z.zip',
+    700,
+    Date.UTC(2026, 10, 10, 10),
+  );
+  let shareStoredFile: jasmine.Spy;
+  let showMessage: jasmine.Spy;
+
+  beforeEach(() => {
+    shareStoredFile = jasmine.createSpy('shareStoredFile').and.resolveTo(true);
+    showMessage = jasmine.createSpy('showMessage').and.resolveTo();
+    TestBed.configureTestingModule({
+      providers: [
+        provideZoneChangeDetection(),
+        provideIonicAngular(),
+        provideTranslateService(),
+        { provide: ModalController, useValue: {} },
+        {
+          provide: UIFileHelper,
+          useValue: {
+            listAutomaticBackupFiles: () => Promise.resolve([]),
+            statInternalFile: () => Promise.resolve(undefined),
+          },
+        },
+        {
+          provide: UISettingsStorage,
+          useValue: { getSettings: () => ({ date_format: 'DD.MM.YYYY' }) },
+        },
+        {
+          provide: PreImportBackupService,
+          useValue: {
+            list: () => Promise.resolve([beforeImport, beforeDataUpdate]),
+          },
+        },
+        { provide: ShareService, useValue: { shareStoredFile } },
+        { provide: UIAlert, useValue: { showMessage } },
+      ],
+    });
+    const translate = TestBed.inject(TranslateService);
+    translate.setTranslation('en', {
+      BACKUP_BEFORE_DATA_UPDATE: 'Data before the update to 9.0',
+      A11Y: { SHARE_BACKUP_FILE: 'Share {{name}} from {{date}}' },
+    });
+    translate.use('en');
+  });
+
+  let component: SettingsChooseAutomaticBackupToImportComponent;
+
+  async function render(): Promise<HTMLElement> {
+    const fixture = TestBed.createComponent(
+      SettingsChooseAutomaticBackupToImportComponent,
+    );
+    component = fixture.componentInstance;
+    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  it('names the share button of each backup by its label and day', async () => {
+    const element = await render();
+
+    const buttons = [
+      ...element.querySelectorAll<StencilElement>('ion-item ion-button'),
+    ];
+    await Promise.all(buttons.map((_button) => _button.componentOnReady?.()));
+    expect(buttons.map(nameOf)).toEqual([
+      `Share ${beforeImport.name} from 12.11.2026`,
+      'Share Data before the update to 9.0 from 10.11.2026',
+    ]);
+    expect(
+      element.querySelectorAll('ion-item .field-label')[1].textContent,
+    ).toBe('Data before the update to 9.0');
+  });
+
+  it('shares the file of the backup and says nothing more when it was shared or the dialog closed', async () => {
+    const element = await render();
+
+    (element.querySelectorAll('ion-item ion-button')[1] as HTMLElement).click();
+    await Promise.resolve();
+
+    expect(shareStoredFile).toHaveBeenCalledOnceWith(beforeDataUpdate.uri);
+    expect(showMessage).not.toHaveBeenCalled();
+    // Sharing does not choose the backup for the import.
+    expect(component.importChoosenURI).toBe('');
+  });
+
+  it('tells the user when the backup could not be shared', async () => {
+    shareStoredFile.and.resolveTo(false);
+    const component = TestBed.runInInjectionContext(
+      () => new SettingsChooseAutomaticBackupToImportComponent(),
+    );
+
+    await component.share(beforeImport.uri);
+
+    expect(showMessage).toHaveBeenCalledOnceWith(
+      'BACKUP_NOT_SHARED',
+      undefined,
+      undefined,
+      true,
+    );
   });
 });
