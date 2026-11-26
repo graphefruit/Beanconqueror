@@ -816,24 +816,34 @@ describe('VirtualListComponent', () => {
         },
       });
 
-      touch('touchstart');
-      for (let offset = 4700; offset >= 3500; offset -= 300) {
-        await scrollTo(offset);
+      // The fling ends 150ms after its last scroll event. A slow runner
+      // can take that long between two of them, so the time stands still
+      // until the list rests.
+      jasmine.clock().install();
+      let held: number;
+      try {
+        touch('touchstart');
+        for (let offset = 4700; offset >= 3500; offset -= 300) {
+          await scrollTo(offset);
+        }
+        touch('touchend');
+        for (let offset = 3200; offset >= 0; offset -= 400) {
+          await scrollTo(offset);
+        }
+        await scrollTo(0);
+        for (const offset of [-40, -15]) {
+          bounce = offset;
+          scroller().dispatchEvent(new Event('scroll'));
+          await frame();
+        }
+        // Held while it bounces: the rows measured lower above the screen.
+        held = top('item-0');
+        // Back at 0 with no further scroll event.
+        bounce = null;
+        jasmine.clock().tick(300);
+      } finally {
+        jasmine.clock().uninstall();
       }
-      touch('touchend');
-      for (let offset = 3200; offset >= 0; offset -= 400) {
-        await scrollTo(offset);
-      }
-      await scrollTo(0);
-      for (const offset of [-40, -15]) {
-        bounce = offset;
-        scroller().dispatchEvent(new Event('scroll'));
-        await frame();
-      }
-      // Held while it bounces: the rows measured lower above the screen.
-      const held = top('item-0');
-      // Back at 0 with no further scroll event.
-      bounce = null;
       await paintedTops('item-1', 30);
 
       expect(held).toBeGreaterThan(1000);
