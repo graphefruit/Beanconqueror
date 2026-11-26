@@ -3,14 +3,18 @@ import { TestBed } from '@angular/core/testing';
 import { ModalController, Platform } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
+import { omit } from 'lodash';
 
 import {
   APPLIED_DATA_VERSIONS,
+  asEightEightData,
   BREW_TIERS,
   generateDataSet,
   isOpenBrew,
   NOTE_SEARCH_TERM,
   SyntheticDataSet,
+  UPDATES_SINCE_8_8,
+  withBrewsLeftWithoutStandardMill,
 } from '../../../e2e/support/synthetic-data';
 import { Bean } from '../../classes/bean/bean';
 import { Brew } from '../../classes/brew/brew';
@@ -904,6 +908,79 @@ describe('synthetic data set', () => {
         }
       }
       expect(data.BEANS.some((b) => b.attachments.length > 0)).toBeFalse();
+    });
+  });
+
+  describe('as 8.8 left it', () => {
+    const small = () => generateDataSet({ brews: 20, beans: 4, endDate: END });
+
+    it('leaves the updates of the relaunch open, in the order the app runs them', () => {
+      const version = new Version();
+      version.initializeByObject(
+        structuredClone(asEightEightData(small()).VERSION[0]),
+      );
+
+      expect(
+        APPLIED_DATA_VERSIONS.filter(
+          (update) => !version.checkIfDataVersionWasUpdated(update),
+        ),
+      ).toEqual(UPDATES_SINCE_8_8);
+      expect(UPDATES_SINCE_8_8).toEqual(APPLIED_DATA_VERSIONS.slice(15));
+    });
+
+    it('stores entries without change info, settings without profile and an empty grinder', () => {
+      const eight = asEightEightData(small());
+      const collections: Record<string, { config: object }[]> = { ...eight };
+
+      for (const collection of CHANGE_TRACKED_COLLECTIONS) {
+        for (const entry of collections[collection]) {
+          expect(Object.keys(entry.config).sort()).toEqual([
+            'unix_timestamp',
+            'uuid',
+          ]);
+        }
+      }
+      expect(eight.SETTINGS.length).toBe(1);
+      expect('user' in eight.SETTINGS[0]).toBeFalse();
+      expect(eight.BREWS.every((brew) => brew.mill === '')).toBeTrue();
+    });
+
+    it('stores the first bean and the two oldest brews twice under their uuid', () => {
+      const eight = asEightEightData(small());
+      const copies = (entries: { config: { uuid: string } }[]) =>
+        entries.filter(
+          (entry, index) =>
+            entries.findIndex((e) => e.config.uuid === entry.config.uuid) !==
+            index,
+        );
+
+      expect(copies(eight.BEANS)).toEqual([eight.BEANS[0]]);
+      expect(copies(eight.BREWS)).toEqual([eight.BREWS[0], eight.BREWS[1]]);
+      expect(copies(eight.MILL)).toEqual([]);
+    });
+
+    it('equals the generated data with the grinder left empty once change info is filled in and the copies are gone', () => {
+      const data = small();
+      const eight = structuredClone(asEightEightData(data));
+      const left = withBrewsLeftWithoutStandardMill(data);
+
+      for (const collection of [
+        'BEANS',
+        'BREWS',
+        'MILL',
+        'PREPARATION',
+        'WATER',
+      ] as const) {
+        const entries: { config: { uuid: string } }[] = eight[collection];
+        fillMissingChangeInfo(entries);
+        const unique = entries.filter(
+          (entry, index) =>
+            entries.findIndex((e) => e.config.uuid === entry.config.uuid) ===
+            index,
+        );
+        expect(unique).withContext(collection).toEqual(left[collection]);
+      }
+      expect(eight.SETTINGS).toEqual([omit(left.SETTINGS[0], 'user')]);
     });
   });
 
