@@ -42,4 +42,7 @@ repositories {
 dependencies {
     implementation project(':capacitor-android')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    // Bundled Latin model: works offline, without Google Play services, and sends no device id.
+    implementation 'com.google.mlkit:text-recognition:16.0.1'
+    testImplementation "junit:junit:${project.hasProperty('junitVersion') ? rootProject.ext.junitVersion : '4.13.2'}"
 }
