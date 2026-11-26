@@ -357,6 +357,26 @@ describe('UIFileHelper', () => {
       ]);
     });
 
+    it('reads a photo stored with "Cloud/" in front of the name', async () => {
+      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'photo.png');
+
+      expect(await fileHelper.readInternalFileAsBase64('Cloud/photo.png')).toBe(
+        BYTES_BASE64,
+      );
+    });
+
+    it('asks for a "Cloud/" photo found nowhere as before', async () => {
+      const read = spyOn(FilesystemWeb.prototype, 'readFile').and.callThrough();
+
+      await expectAsync(
+        fileHelper.readInternalFileAsBase64('/Cloud/missing.png'),
+      ).toBeRejected();
+
+      expect(read.calls.allArgs().map(([options]) => options.path)).toEqual([
+        'Cloud/missing.png',
+      ]);
+    });
+
     it('rejects reading a file that does not exist', async () => {
       await expectAsync(
         fileHelper.readInternalFileAsBase64('missing.png'),
@@ -647,6 +667,17 @@ describe('UIFileHelper', () => {
 
       expect(copy).toMatch(new RegExp(`^duplicate_${UUID}s$`));
       expect(await fileHelper.readInternalFileAsText(copy)).toBe('text');
+    });
+
+    it('copies a photo stored with "Cloud/" in front of the name', async () => {
+      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'photo.png');
+
+      const copy = await fileHelper.duplicateInternalFile('/Cloud/photo.png');
+
+      expect(copy).toMatch(new RegExp(`^duplicate_${UUID}\\.png$`));
+      expect(await fileHelper.readInternalFileAsBase64(copy)).toBe(
+        BYTES_BASE64,
+      );
     });
 
     it('rejects and copies nothing when the file does not exist', async () => {
@@ -1494,20 +1525,33 @@ describe('UIFileHelper', () => {
       );
     });
 
-    it('keeps the "Cloud/" folder on Android', async () => {
+    it('finds a photo with the "Cloud/" in front of the name on Android, preferring the file as stored', async () => {
       setupAndroid();
       await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'photo.png');
+      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'other.png');
       await fileHelper.writeInternalFileFromBase64(
         BYTES_BASE64,
         'Cloud/other.png',
       );
 
       expect(
+        urlOf(await fileHelper.getInternalFileSrc('/Cloud/photo.png')),
+      ).toBe('/DATA/photo.png');
+      expect(
         urlOf(await fileHelper.getInternalFileSrc('Cloud/other.png')),
       ).toBe('/DATA/Cloud/other.png');
-      await expectAsync(
-        fileHelper.getInternalFileSrc('Cloud/photo.png'),
-      ).toBeRejected();
+    });
+
+    it('finds a photo kept in a "Cloud/" folder on iOS when there is none without it', async () => {
+      setupIos();
+      await fileHelper.writeInternalFileFromBase64(
+        BYTES_BASE64,
+        'Cloud/photo.png',
+      );
+
+      expect(
+        urlOf(await fileHelper.getInternalFileSrc('Cloud/photo.png')),
+      ).toBe('/DOCUMENTS/Cloud/photo.png');
     });
 
     it('logs and rejects when the file does not exist', async () => {

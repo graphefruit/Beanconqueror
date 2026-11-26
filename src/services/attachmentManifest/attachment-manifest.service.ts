@@ -532,17 +532,20 @@ export class AttachmentManifestService {
   ): Promise<IAttachmentManifestEntry> {
     const target = resolveForStat(_ref.path, _isIos);
     let size: number | null = null;
-    try {
-      const info = await this.statFile(
-        target.path,
-        target.absolute ? undefined : _directory,
-      );
-      size =
-        typeof info?.size === 'number' && Number.isFinite(info.size)
-          ? info.size
-          : null;
-    } catch {
-      size = null;
+    for (const path of target.paths) {
+      try {
+        const info = await this.statFile(
+          path,
+          target.absolute ? undefined : _directory,
+        );
+        size =
+          typeof info?.size === 'number' && Number.isFinite(info.size)
+            ? info.size
+            : null;
+        break;
+      } catch {
+        size = null;
+      }
     }
     return {
       path: _ref.path,

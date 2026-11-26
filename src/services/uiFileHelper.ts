@@ -15,6 +15,7 @@ import { Share } from '@capacitor/share';
 import moment from 'moment';
 
 import { InstanceClass } from './instanceClass';
+import { photoPathCandidates } from './photoPath/photo-path';
 import { UILog } from './uiLog';
 
 /**
@@ -147,7 +148,7 @@ export class UIFileHelper extends InstanceClass {
   public async readInternalFileAsBase64(fileName: string): Promise<string> {
     this.uiLog.debug('readInternalFileAsBase64 for fileName:', fileName);
     return this.readFileAsBase64(
-      this.normalizeFileName(fileName),
+      await this.resolvePhotoPath(fileName),
       this.getDataDirectory(),
     );
   }
@@ -715,7 +716,7 @@ export class UIFileHelper extends InstanceClass {
     );
     await this.makeParentDirsInternal(newPath);
     const result = await Filesystem.copy({
-      from: path,
+      from: await this.resolvePhotoPath(path),
       directory: this.getDataDirectory(),
       to: newPath,
       toDirectory: this.getDataDirectory(),
@@ -773,16 +774,7 @@ export class UIFileHelper extends InstanceClass {
       return '';
     }
     try {
-      let fileName = this.normalizeFileName(filePath);
-
-      if (this.platform.is('ios')) {
-        // After switching to iOS cloud, the fullPath saves the Cloud path actualy with, so we need to delete this one :)
-        const searchForCloud = 'Cloud/';
-        if (fileName.startsWith(searchForCloud)) {
-          fileName = fileName.substring(searchForCloud.length);
-        }
-      }
-
+      const fileName = await this.resolvePhotoPath(filePath);
       const fileOptions = {
         path: fileName,
         directory: this.getDataDirectory(),
@@ -802,6 +794,24 @@ export class UIFileHelper extends InstanceClass {
       // still reject after logging
       throw error;
     }
+  }
+
+  /**
+   * Where a stored photo path is found in the app data directory
+   * (photoPathCandidates). When it is found nowhere, the first candidate, so a
+   * missing file fails as before.
+   */
+  public async resolvePhotoPath(path: string): Promise<string> {
+    const candidates = photoPathCandidates(path, this.platform.is('ios'));
+    if (candidates.length > 1) {
+      const directory = this.getDataDirectory();
+      for (const candidate of candidates) {
+        if (await this.fileExists({ path: candidate, directory })) {
+          return candidate;
+        }
+      }
+    }
+    return candidates[0];
   }
 
   /** The file in the app data directory, nothing when there is none. */
