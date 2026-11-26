@@ -17,17 +17,6 @@ allowBuilds:
   msgpackr-extract: true
   sharp: false # As recommended by https://github.com/lovell/sharp/blob/7b4c4762432b14c62676e860c8034b5cd326f464/docs/src/content/docs/install.md?plain=1#L23
 
-# @aparajita/capacitor-dark-mode 6.0.0 (latest release) still declares the
-# Capacitor 7 packages as dependencies. Resolve them to the Capacitor 8 packages
-# of the app so that only one Capacitor runtime is bundled and the vulnerable
-# Capacitor 7 native packages are not installed.
-overrides:
-  '@aparajita/capacitor-dark-mode>@capacitor/android': '$@capacitor/android'
-  '@aparajita/capacitor-dark-mode>@capacitor/app': '$@capacitor/app'
-  '@aparajita/capacitor-dark-mode>@capacitor/core': '$@capacitor/core'
-  '@aparajita/capacitor-dark-mode>@capacitor/ios': '$@capacitor/ios'
-  '@aparajita/capacitor-dark-mode>@capacitor/status-bar': '$@capacitor/status-bar'
-
 patchedDependencies:
   # Keys code instrumented for coverage by its path too: git worktrees share the
   # build cache, and a cached file would otherwise report another checkout's path.

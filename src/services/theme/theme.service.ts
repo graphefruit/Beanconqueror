@@ -42,19 +42,12 @@ export class ThemeService {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly plugins = inject(THEME_PLUGINS);
 
-  private prefersDark: MediaQueryList;
-
   private _darkMode = false;
   public isDarkMode() {
     return this._darkMode;
   }
   public async initialize() {
-    this.prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-    this.prefersDark.addEventListener('change', () => {
-      void this.adjustTheme();
-    });
-
-    await this.plugins.darkMode.addAppearanceListener(() => {
+    this.plugins.colorScheme.addEventListener('change', () => {
       void this.adjustTheme();
     });
 
@@ -62,9 +55,9 @@ export class ThemeService {
   }
 
   public async initializeBeforeAppReady() {
-    await this.plugins.darkMode.init();
-    const { dark } = await this.plugins.darkMode.isDarkMode();
-    await this.applyTheme(dark ? DarkTheme : LightTheme);
+    await this.applyTheme(
+      this.plugins.colorScheme.matches ? DarkTheme : LightTheme,
+    );
   }
 
   public async adjustTheme() {
@@ -79,11 +72,7 @@ export class ThemeService {
         isDark = true;
         break;
       case THEME_MODE_ENUM.DEVICE:
-        if (this.plugins.getPlatform() === 'web') {
-          isDark = this.prefersDark.matches;
-        } else {
-          isDark = (await this.plugins.darkMode.isDarkMode()).dark;
-        }
+        isDark = this.plugins.colorScheme.matches;
         break;
     }
 
