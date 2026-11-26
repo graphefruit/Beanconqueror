@@ -163,11 +163,14 @@ export class ShareService {
       return;
     }
     // Gathering the files takes seconds on a phone; the spinner stays behind
-    // the share dialog until it closes, as for the export.
-    const shared = await this.uiAlert.withLoadingSpinner(
-      () => this.shareLogFilesOrMemory(),
-      'SHARE_LOGS_PREPARING',
-    );
+    // the share dialog until it closes, as for the export. A loading dialog
+    // that offers to share the logs while its step hangs is not closed here.
+    const shared = this.uiAlert.isLoadingSpinnerShown()
+      ? await this.shareLogFilesOrMemory()
+      : await this.uiAlert.withLoadingSpinner(
+          () => this.shareLogFilesOrMemory(),
+          'SHARE_LOGS_PREPARING',
+        );
     if (!shared) {
       await this.uiAlert.copyLogfiles();
     }

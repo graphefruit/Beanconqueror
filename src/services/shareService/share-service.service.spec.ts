@@ -30,7 +30,10 @@ describe('ShareService', () => {
   let uiAlert: jasmine.SpyObj<
     Pick<
       UIAlert,
-      'showConfirmWithYesNoTranslation' | 'copyLogfiles' | 'withLoadingSpinner'
+      | 'showConfirmWithYesNoTranslation'
+      | 'copyLogfiles'
+      | 'withLoadingSpinner'
+      | 'isLoadingSpinnerShown'
     >
   >;
   /** Whether the loading spinner is shown, as the work in it sees it. */
@@ -52,8 +55,10 @@ describe('ShareService', () => {
       'showConfirmWithYesNoTranslation',
       'copyLogfiles',
       'withLoadingSpinner',
+      'isLoadingSpinnerShown',
     ]);
     uiAlert.showConfirmWithYesNoTranslation.and.resolveTo(answer);
+    uiAlert.isLoadingSpinnerShown.and.returnValue(false);
     spinnerShown = false;
     uiAlert.copyLogfiles.and.callFake(() => {
       expect(spinnerShown).withContext('spinner over the log text').toBe(false);
@@ -202,6 +207,16 @@ describe('ShareService', () => {
       );
       expect(share).toHaveBeenCalledTimes(1);
       expect(spinnerShown).toBe(false);
+    });
+
+    it('keeps a loading dialog that offers to share the logs while its step hangs', async () => {
+      setup('YES');
+      uiAlert.isLoadingSpinnerShown.and.returnValue(true);
+
+      await service.shareLogs();
+
+      expect(uiAlert.withLoadingSpinner).not.toHaveBeenCalled();
+      expect(share).toHaveBeenCalledTimes(1);
     });
 
     it('fetches the native log on iOS before reading the files', async () => {
