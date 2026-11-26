@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
+import { AppWeb } from '@capacitor/app/dist/esm/web';
 import { Capacitor } from '@capacitor/core';
+import { DeviceWeb } from '@capacitor/device/dist/esm/web';
 import { FileInfo } from '@capacitor/filesystem';
 // The plugin objects are proxies that cannot be spied on; the web
 // implementations behind them can.
@@ -8,11 +10,13 @@ import { FilesystemWeb } from '@capacitor/filesystem/dist/esm/web';
 import { ShareWeb } from '@capacitor/share/dist/esm/web';
 import { TranslateService } from '@ngx-translate/core';
 
+import { Settings } from '../../classes/settings/settings';
 import { UIAlert } from '../uiAlert';
 import { UIAnalytics } from '../uiAnalytics';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
+import { UISettingsStorage } from '../uiSettingsStorage';
 import { isShareCancelled, ShareService } from './share-service.service';
 
 const LOGS = [{ level: 'INFO', message: 'Started', params: [] }];
@@ -66,6 +70,10 @@ describe('ShareService', () => {
         { provide: TranslateService, useValue: {} },
         { provide: UIHelper, useValue: {} },
         { provide: UIAnalytics, useValue: {} },
+        {
+          provide: UISettingsStorage,
+          useValue: { getSettings: () => new Settings() },
+        },
       ],
     });
     service = TestBed.inject(ShareService);
@@ -89,8 +97,10 @@ describe('ShareService', () => {
   }
 
   describe('sharing the log files in the app', () => {
+    const INFO = 'file:///logs/support-info.json';
     let readdir: jasmine.Spy;
     let getPlatform: jasmine.Spy;
+    let writeFile: jasmine.Spy;
 
     beforeEach(() => {
       spyOn(Capacitor, 'isNativePlatform').and.returnValue(true);
@@ -102,6 +112,25 @@ describe('ShareService', () => {
           file('other.txt'),
           file('log_20261125_080000000.jsonl'),
         ],
+      });
+      writeFile = spyOn(FilesystemWeb.prototype, 'writeFile').and.resolveTo({
+        uri: INFO,
+      });
+      spyOn(AppWeb.prototype, 'getInfo').and.resolveTo({
+        name: 'BeanConqueror',
+        id: 'com.beanconqueror.app',
+        build: '1',
+        version: '9.0.0',
+      });
+      spyOn(DeviceWeb.prototype, 'getInfo').and.resolveTo({
+        name: "Lars' phone",
+        model: 'Pixel 8',
+        platform: 'android',
+        operatingSystem: 'android',
+        osVersion: '16',
+        manufacturer: 'Google',
+        isVirtual: false,
+        webViewVersion: '142.0',
       });
     });
 
@@ -120,6 +149,7 @@ describe('ShareService', () => {
       });
       expect(share).toHaveBeenCalledOnceWith({
         files: [
+          INFO,
           'file:///logs/log_20261125_080000000.jsonl',
           'file:///logs/log_20261126_080000000.jsonl',
           'file:///logs/native_20261126_080000000.log',
@@ -143,8 +173,44 @@ describe('ShareService', () => {
       await service.shareLogs();
 
       expect(share).toHaveBeenCalledOnceWith({
-        files: ['file:///logs/log_20261126_080000000.jsonl'],
+        files: [INFO, 'file:///logs/log_20261126_080000000.jsonl'],
       });
+    });
+
+    it('puts app, system, device model and Bluetooth settings next to the log', async () => {
+      setup('YES');
+
+      await service.shareLogs();
+
+      const [options] = writeFile.calls.mostRecent().args;
+      expect(options).toEqual(
+        jasmine.objectContaining({
+          path: 'logs/support-info.json',
+          directory: 'LIBRARY_NO_CLOUD',
+          encoding: 'utf8',
+        }),
+      );
+      const info = JSON.parse(options.data);
+      expect(info.app_version).toBe('9.0.0');
+      expect(info.model).toBe('Pixel 8');
+      expect(info.bluetooth_settings.bluetooth_command_delay).toBe(50);
+      expect(options.data).not.toContain("Lars' phone");
+    });
+
+    it('still shares the log files when the support info cannot be written', async () => {
+      setup('YES');
+      writeFile.and.rejectWith(new Error('disk full'));
+
+      await service.shareLogs();
+
+      expect(share).toHaveBeenCalledOnceWith({
+        files: [
+          'file:///logs/log_20261125_080000000.jsonl',
+          'file:///logs/log_20261126_080000000.jsonl',
+          'file:///logs/native_20261126_080000000.log',
+        ],
+      });
+      expect(uiLog.error).toHaveBeenCalledTimes(1);
     });
 
     it('still shares the files when the native log cannot be fetched', async () => {
@@ -155,7 +221,7 @@ describe('ShareService', () => {
       await service.shareLogs();
 
       expect(share).toHaveBeenCalledTimes(1);
-      expect(share.calls.mostRecent().args[0].files.length).toBe(3);
+      expect(share.calls.mostRecent().args[0].files.length).toBe(4);
     });
 
     it('shares the log in memory when the folder cannot be read', async () => {
@@ -314,7 +380,7 @@ describe('ShareService', () => {
     const URI = 'file:///data/pre-import/backup.zip';
 
     it('opens the share dialog for the file', async () => {
-      setup('android', 'YES');
+      setup('YES');
 
       expect(await service.shareStoredFile(URI)).toBeTrue();
 
@@ -323,7 +389,7 @@ describe('ShareService', () => {
     });
 
     it('counts a closed dialog as shared and logs nothing', async () => {
-      setup('ios', 'YES');
+      setup('YES');
       share.and.rejectWith(new Error('Share canceled'));
 
       expect(await service.shareStoredFile(URI)).toBeTrue();
@@ -332,7 +398,7 @@ describe('ShareService', () => {
     });
 
     it('resolves false and logs when the file could not be shared', async () => {
-      setup('android', 'YES');
+      setup('YES');
       share.and.rejectWith(new Error('Unsupported url'));
 
       expect(await service.shareStoredFile(URI)).toBeFalse();

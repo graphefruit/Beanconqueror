@@ -1259,7 +1259,7 @@
     "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "ZIP-Datei konnte nicht gespeichert werden! Diese Meldung kann in den Einstellungen deaktiviert werden.",
     "SEND_LOGS": "Logs senden",
     "SHARE_LOGS_TITLE": "Log teilen?",
-    "SHARE_LOGS_HINT": "Das Log hilft bei der Fehlersuche. Es enthält auch Einträge aus früheren Sitzungen von BeanConqueror. Es kann Inhalte enthalten, die du eingegeben hast, zum Beispiel Namen von Bohnen, Röstern und Mühlen, Text von gescannten Etiketten, Datei- und Ordnernamen, geöffnete Links und die Kennungen deiner Bluetooth-Geräte. Teile es nur mit Personen, denen du vertraust, und stelle es nicht öffentlich ein.",
+    "SHARE_LOGS_HINT": "Das Log hilft bei der Fehlersuche. Es enthält auch Einträge aus früheren Sitzungen von BeanConqueror. Dazu kommt eine Datei mit App- und Systemversion, Gerätemodell, den Typen deiner Bluetooth-Geräte und deinen Bluetooth-Einstellungen. Das Log kann Inhalte enthalten, die du eingegeben hast, zum Beispiel Namen von Bohnen, Röstern und Mühlen, Text von gescannten Etiketten, Datei- und Ordnernamen, geöffnete Links und die Kennungen deiner Bluetooth-Geräte. Teile es nur mit Personen, denen du vertraust, und stelle es nicht öffentlich ein.",
     "SHARE_FLOW_PROFILE_FAILED": "Der Graph konnte nicht geteilt werden. Bitte versuche es noch einmal.",
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Refraktometer neu verbinden",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",

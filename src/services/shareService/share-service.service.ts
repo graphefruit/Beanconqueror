@@ -1,7 +1,9 @@
 import { inject, Service } from '@angular/core';
 
+import { App } from '@capacitor/app';
 import { Capacitor, registerPlugin } from '@capacitor/core';
-import { Filesystem } from '@capacitor/filesystem';
+import { Device } from '@capacitor/device';
+import { Encoding, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { TranslateService } from '@ngx-translate/core';
 import { stringify } from 'safe-stable-stringify';
@@ -18,11 +20,16 @@ import {
   BeanRoastingType,
   Roast,
 } from '../../generated/src/classes/bean/bean';
+import {
+  SUPPORT_INFO_FILE,
+  supportInfo,
+} from '../../stores/settings/support-info-rules';
 import { UIAlert } from '../uiAlert';
 import { UIAnalytics } from '../uiAnalytics';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
 import { LOG_DIRECTORY, LOG_FILE_NAME, LOG_FOLDER, UILog } from '../uiLog';
+import { UISettingsStorage } from '../uiSettingsStorage';
 
 const NATIVE_LOG_FILE_NAME = /^native_\d{8}_\d{9}\.log$/;
 
@@ -45,6 +52,7 @@ export class ShareService {
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiLog = inject(UILog);
   private readonly uiAlert = inject(UIAlert);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly nativeLog = NativeLog;
 
   public async shareImage(_dataUrl: string) {
@@ -108,10 +116,10 @@ export class ShareService {
   }
 
   /**
-   * Shares the log files after the user agreed to what they can contain. In
-   * the browser or without readable files, the log in memory is shared as one
-   * file instead; when that cannot be written either, it is shown as text to
-   * copy.
+   * Shares the log files and the support info after the user agreed to what
+   * they can contain. In the browser or without readable files, the log in
+   * memory is shared as one file instead; when that cannot be written either,
+   * it is shown as text to copy.
    */
   public async shareLogs(): Promise<void> {
     const choice = await this.uiAlert.showConfirmWithYesNoTranslation(
@@ -174,12 +182,35 @@ export class ShareService {
     if (files.length === 0) {
       return false;
     }
+    const info = await this.writeSupportInfo();
     try {
-      await Share.share({ files });
+      await Share.share({ files: info ? [info, ...files] : files });
     } catch {
       // Cancelling the share dialog is no error.
     }
     return true;
+  }
+
+  /** Resolves the file's uri, or undefined when it could not be written. */
+  private async writeSupportInfo(): Promise<string | undefined> {
+    try {
+      const info = supportInfo(
+        this.uiSettingsStorage.getSettings(),
+        await Device.getInfo(),
+        (await App.getInfo()).version,
+      );
+      const { uri } = await Filesystem.writeFile({
+        path: `${LOG_FOLDER}/${SUPPORT_INFO_FILE}`,
+        directory: LOG_DIRECTORY,
+        data: JSON.stringify(info, null, 2),
+        encoding: Encoding.UTF8,
+      });
+      return uri;
+    } catch (ex) {
+      // The log files alone still help.
+      this.uiLog.error('Share - could not write the support info', ex);
+      return undefined;
+    }
   }
 
   private readAsDataUrl(blob: Blob): Promise<string> {
