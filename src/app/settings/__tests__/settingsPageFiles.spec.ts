@@ -894,6 +894,60 @@ describe('SettingsPage files of an export and an import', () => {
       });
     });
 
+    it('does not count a file the backup lacks while the app still has it, but counts one missing in both', async () => {
+      await open(['capacitor', 'android']);
+      const texts = watchTexts();
+      // An automatic backup is only the ZIP: no photos or graphs next to it.
+      await Filesystem.rmdir({
+        path: 'picked/folder',
+        directory: Directory.Cache,
+        recursive: true,
+      });
+      for (const file of SEEDED_FILES) {
+        if (file !== 'photo_water.jpg') {
+          await write(file, `kept ${file}`, Directory.Data);
+        }
+      }
+
+      await page.__importJSON(parsed(), IMPORT_DIR, 'Beanconqueror.zip');
+
+      expect(await read('photo_bean.jpg', Directory.Data)).toBe(
+        'kept photo_bean.jpg',
+      );
+      expect(log.error.calls.allArgs()).toEqual([
+        [
+          'File to import with internal path',
+          'photo_water.jpg',
+          'does not exist at',
+          `${IMPORT_DIR}/photo_water.jpg`,
+          '; Skipping import.',
+        ],
+      ]);
+      expect(showMessage.calls.allArgs()).toEqual([
+        ['IMPORT_SUCCESSFULLY'],
+        ['FILES_NOT_COPIED'],
+      ]);
+      expect(texts).toHaveBeenCalledWith('FILES_NOT_COPIED', { count: 1 });
+    });
+
+    it('says nothing about files when the backup lacks them all but the app has them', async () => {
+      await open(['capacitor', 'android']);
+      await Filesystem.rmdir({
+        path: 'picked/folder',
+        directory: Directory.Cache,
+        recursive: true,
+      });
+      for (const file of SEEDED_FILES) {
+        await write(file, `kept ${file}`, Directory.Data);
+      }
+
+      await page.__importJSON(parsed(), IMPORT_DIR, 'Beanconqueror.zip');
+
+      expect(await filesIn('', Directory.Data)).toEqual(SEEDED_FILES);
+      expect(log.error).not.toHaveBeenCalled();
+      expect(showMessage.calls.allArgs()).toEqual([['IMPORT_SUCCESSFULLY']]);
+    });
+
     it('counts a file of the backup that cannot be copied', async () => {
       await open(['capacitor', 'android']);
       const texts = watchTexts();
