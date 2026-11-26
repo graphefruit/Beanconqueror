@@ -1575,6 +1575,21 @@ export class SettingsPage {
         path: fileToImport,
       });
       if (!fileToImportExists) {
+        // An automatic backup holds only the ZIP: the photos it names are
+        // still in the app, and only a file missing there too is lost.
+        if (
+          await this.uiFileHelper.fileExists({
+            path: internalPathToImportTo,
+            directory: this.uiFileHelper.getDataDirectory(),
+          })
+        ) {
+          this.uiLog.info(
+            'File to import with internal path',
+            internalPathToImportTo,
+            'is not in the backup, the app still has it',
+          );
+          return;
+        }
         this.uiLog.error(
           'File to import with internal path',
           internalPathToImportTo,
