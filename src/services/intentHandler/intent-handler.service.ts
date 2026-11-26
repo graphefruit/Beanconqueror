@@ -12,6 +12,7 @@ import {
   BrewImportRollbackError,
   BrewImportService,
 } from '../brewImport/brew-import.service';
+import { beanCodeLink } from '../nfcService/nfc-tag-link';
 import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
 import { UIAlert } from '../uiAlert';
 import { UIAnalytics } from '../uiAnalytics';
@@ -209,20 +210,30 @@ export class IntentHandlerService {
             const qrCodeId: string = urlParams.get('id');
             await this.addBeanFromServer(qrCodeId);
           } else if (url.indexOf('int/') > 0) {
-            //We got an internal call ihr right now :)
-            // Split into type, id, action ['bean', '3E95E1', 'START_BREW']
-            const data = url.split('int/')[1].split('/');
-            const actionType = data[0];
-            const id = data[1];
-            let action = data[2];
+            const link = beanCodeLink(url);
             try {
               this.uiAnalytics.trackEvent(
                 IntentHandlerTracking.TITLE,
                 IntentHandlerTracking.ACTIONS.INTERNAL_CALL,
-                action as BEAN_CODE_ACTION,
+                link?.action,
               );
             } catch (ex) {}
-            if (actionType === 'bean') {
+            // An old chip or code can point to a bean deleted since or created on another device.
+            if (
+              !link ||
+              !this.beanStorage
+                .getAllEntries()
+                .some((bean) => bean.internal_share_code === link.code)
+            ) {
+              void this.uiAlert.showMessage(
+                'BEAN_CODE_NOT_FOUND_DESCRIPTION',
+                'BEAN_CODE_NOT_FOUND_TITLE',
+                undefined,
+                true,
+              );
+            } else {
+              const id = link.code;
+              let action: string = link.action;
               if (
                 (action as BEAN_CODE_ACTION) === BEAN_CODE_ACTION.CHOOSE_ACTION
               ) {

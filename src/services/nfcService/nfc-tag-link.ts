@@ -1,3 +1,5 @@
+import { BEAN_CODE_ACTION } from '../../enums/beans/beanCodeAction';
+
 /** An NDEF record as the NFC plugin hands it over; Android sends signed bytes. */
 export interface INdefRecord {
   tnf?: number;
@@ -14,6 +16,22 @@ const LANGUAGE_LENGTH_MASK = 0x3f;
 const URI_PREFIXES = ['', 'http://www.', 'https://www.', 'http://', 'https://'];
 const APP_LINK =
   /^(beanconqueror:\/\/|https:\/\/(www\.)?beanconqueror\.com[/?])/i;
+// Not anchored at the end: some older chips carry trailing bytes after the action.
+const BEAN_CODE_LINK = /int\/bean\/([^/?#\s]+)\/([A-Z_]+)/;
+
+export interface IBeanCodeLink {
+  code: string;
+  action: BEAN_CODE_ACTION;
+}
+
+/** Code and action of an internal bean link, undefined if either is missing or unknown. */
+export function beanCodeLink(url: string): IBeanCodeLink | undefined {
+  const match = BEAN_CODE_LINK.exec(url);
+  if (!match || !Object.values<string>(BEAN_CODE_ACTION).includes(match[2])) {
+    return undefined;
+  }
+  return { code: match[1], action: match[2] as BEAN_CODE_ACTION };
+}
 
 /**
  * The first Beanconqueror link on a tag: older chips carry it in a text record,

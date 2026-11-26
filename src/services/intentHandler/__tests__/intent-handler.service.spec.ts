@@ -2010,4 +2010,47 @@ describe('IntentHandlerService', () => {
       true,
     ]);
   });
+
+  describe('internal bean links', () => {
+    const notFound: [string, string, undefined, boolean] = [
+      'BEAN_CODE_NOT_FOUND_DESCRIPTION',
+      'BEAN_CODE_NOT_FOUND_TITLE',
+      undefined,
+      true,
+    ];
+
+    beforeEach(() => {
+      beanStorage.getAllEntries.and.returnValue([
+        { internal_share_code: '3E95E1' },
+      ] as never);
+      uiBeanHelper.detailBeanByInternalShareCode.and.resolveTo();
+    });
+
+    it('opens the bean of an old chip with trailing bytes', async () => {
+      await service.handleDeepLink(
+        'beanconqueror://int/bean/3E95E1/DETAIL\u0000',
+      );
+
+      expect(
+        uiBeanHelper.detailBeanByInternalShareCode.calls.allArgs(),
+      ).toEqual([['3E95E1']]);
+      expect(uiAlert.showMessage.calls.count()).toBe(0);
+    });
+
+    for (const [name, link] of [
+      ['a deleted bean', 'beanconqueror://int/bean/0DE1E7/CHOOSE_ACTION'],
+      ['an unknown action', 'beanconqueror://int/bean/3E95E1/BREW'],
+      ['a missing code', 'beanconqueror://int/bean/'],
+    ]) {
+      it(`tells the user about ${name} instead of doing nothing`, async () => {
+        await service.handleDeepLink(link);
+
+        expect(uiBeanHelper.chooseNFCTagAction.calls.count()).toBe(0);
+        expect(uiBeanHelper.detailBeanByInternalShareCode.calls.count()).toBe(
+          0,
+        );
+        expect(uiAlert.showMessage.calls.allArgs()).toEqual([notFound]);
+      });
+    }
+  });
 });
