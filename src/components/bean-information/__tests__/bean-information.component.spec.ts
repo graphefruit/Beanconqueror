@@ -556,7 +556,7 @@ describe('BeanInformationComponent', () => {
 
     expect(value(fixture, 'Frozen date')).toBe('13.08.2025');
     expect(value(fixture, 'Roasted before')).toBe('12 days old');
-    expect(text(fixture)).toContain('Vakuumiert');
+    expect(value(fixture, 'Frozen notes')).toBe('Vakuumiert');
     expect(frozenIds(fixture)).toEqual(['EF1']);
     expect(symbols(fixture)).toEqual(['Frozen', 'Frozen id']);
   });
