@@ -217,3 +217,32 @@ test.describe('a file that cannot be read', () => {
     expect(await readStoredValue(page, 'BEANS')).toEqual(beansBefore);
   });
 });
+
+test.describe('a file that is no backup', () => {
+  test.use({ allowedConsoleErrors: [/^Import - refused:/] });
+
+  test('is refused before the question, with the reason set apart below', async ({
+    page,
+  }) => {
+    const beansBefore = await readStoredValue<StoredEntry[]>(page, 'BEANS');
+
+    await chooseFileToImport(
+      page,
+      createBackupZip({ recipes: [{ name: 'V60' }], version: 3 }),
+    );
+
+    const alert = page
+      .getByRole('alertdialog')
+      .filter({ hasText: 'This file is not a BeanConqueror backup.' });
+    await expect(alert).toBeVisible();
+    await expect(alert).toHaveAccessibleDescription(
+      /^This file is not a BeanConqueror backup\. Nothing was imported, your data is unchanged\..*Technical details:\s*The file holds no list SETTINGS, BEANS, BREWS$/,
+    );
+    await expect(importQuestion(page)).toHaveCount(0);
+
+    await alert.getByRole('button', { name: 'Ok' }).click();
+    await expect(alert).toBeHidden();
+    expect(await readStoredValue(page, 'BEANS')).toEqual(beansBefore);
+    expect(await readStoredValue(page, 'LAST_RESTORE')).toBeNull();
+  });
+});
