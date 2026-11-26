@@ -383,4 +383,35 @@ describe('BrewGraphViewComponent', () => {
     expect(value).toBeLessThan(8);
     expect(Math.round(value * 10)).toBe(value * 10);
   });
+
+  it('exports the shown graph as a sharp picture in the theme of the app', async () => {
+    const exportImage = spyOn(
+      UplotRenderer.prototype,
+      'exportImage',
+    ).and.callThrough();
+    dark.set(true);
+    create();
+    await until(() => !!drawn());
+    const box = chart().getBoundingClientRect();
+
+    const image = await view().exportImage();
+
+    expect(image).toMatch(/^data:image\/png;base64,/);
+    expect(exportImage).toHaveBeenCalledOnceWith({
+      width: Math.floor(box.width),
+      height: Math.floor(box.height),
+      theme: 'dark',
+      transparent: false,
+      scale: 3,
+    });
+  });
+
+  it('exports nothing while there is no graph drawn', async () => {
+    create((h) => h.flow.set(null));
+    await settle();
+
+    await expectAsync(view().exportImage()).toBeRejectedWithError(
+      'The graph is not drawn',
+    );
+  });
 });

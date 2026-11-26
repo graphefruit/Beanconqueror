@@ -9,6 +9,7 @@ import {
   Input,
   signal,
   ViewChild,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -55,17 +56,14 @@ import {
 } from '../../../brew-session/rules/brewFieldLayout';
 import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
-import {
-  IBrewRealtimeWaterFlow,
-  IBrewWaterFlow,
-} from '../../../classes/brew/brewFlow';
-import { sleep } from '../../../classes/devices';
+import { BrewFlow } from '../../../classes/brew/brewFlow';
 import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { Settings } from '../../../classes/settings/settings';
 import { Visualizer } from '../../../classes/visualizer/visualizer';
-import { BrewBrewingGraphComponent } from '../../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
+import { BrewGraphViewComponent } from '../../../components/brews/graph/brew-graph-view/brew-graph-view.component';
+import { FlowProfileReader } from '../../../components/brews/graph/flow-profile-reader.service';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
@@ -80,7 +78,6 @@ import { BrewFunction } from '../../../pipes/brew/brewFunction';
 import { FormatDatePipe } from '../../../pipes/formatDate';
 import { MillFunction } from '../../../pipes/mill/millFunction';
 import { ToFixedPipe } from '../../../pipes/toFixed';
-import { loadPlotly } from '../../../services/graphHelper/load-plotly';
 import { ShareService } from '../../../services/shareService/share-service.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -89,6 +86,7 @@ import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIExcel } from '../../../services/uiExcel';
 import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UIGraphHelper } from '../../../services/uiGraphHelper';
 import { UIHelper } from '../../../services/uiHelper';
 import { UILog } from '../../../services/uiLog';
 import { UIMillHelper } from '../../../services/uiMillHelper';
@@ -100,18 +98,17 @@ import {
   beforeCutPathOf,
   FlowCutSave,
 } from '../../../stores/brews/flow-cut-rules';
-import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
+import { averageFlow, peakFlow } from '../../../stores/brews/flow-stats-rules';
 import { BrewPopoverCutComponent } from '../brew-popover-cut/brew-popover-cut.component';
 import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-popover-extraction.component';
 
-declare var Plotly;
 @Component({
   selector: 'brew-detail',
   templateUrl: './brew-detail.component.html',
   styleUrls: ['./brew-detail.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    BrewBrewingGraphComponent,
+    BrewGraphViewComponent,
     PhotoViewComponent,
     DecimalPipe,
     KeyValuePipe,
@@ -162,6 +159,8 @@ export class BrewDetailComponent {
   private readonly shareService = inject(ShareService);
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly flowProfileReader = inject(FlowProfileReader);
+  private readonly uiGraphHelper = inject(UIGraphHelper);
 
   public static readonly COMPONENT_ID = 'brew-detail';
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
@@ -172,11 +171,12 @@ export class BrewDetailComponent {
   @Input('brew') public brew: IBrew;
   public loaded: boolean = false;
 
-  private maximizeFlowGraphIsShown: boolean = false;
-  public editActive: boolean = false;
-
-  @ViewChild('brewBrewingGraphEl', { static: false })
-  public brewBrewingGraphEl: BrewBrewingGraphComponent;
+  /** The graph of the brew as read from its file; undefined while it is read. */
+  protected readonly flow = signal<BrewFlow | null | undefined>(undefined);
+  protected readonly reference = signal<BrewFlow | null>(null);
+  protected readonly avgFlow = computed(() => averageFlow(this.flow()));
+  protected readonly peakFlow = computed(() => peakFlow(this.flow()));
+  private readonly graphView = viewChild(BrewGraphViewComponent);
 
   public bean: Bean;
   /**We named it that way, because the graph-componeneted access it aswell **/
@@ -266,18 +266,23 @@ export class BrewDetailComponent {
         this.__loadCuppingChart();
       }, 1000);
     }
-    this.initializeFlowChartOnGraphEl();
-
     this.loaded = true;
+    await this.loadFlow();
   }
 
-  private async initializeFlowChartOnGraphEl() {
-    await sleep(150);
-    if (this.editActive === false) {
-      if (this.brewBrewingGraphEl) {
-        await this.brewBrewingGraphEl?.instance();
-      }
+  /** Reads the graph of the brew with the reference it was made against. */
+  private async loadFlow(): Promise<void> {
+    if (!this.data.flow_profile) {
+      this.flow.set(null);
+      this.reference.set(null);
+      return;
     }
+    const [flow, reference] = await Promise.all([
+      this.flowProfileReader.read(this.data.flow_profile),
+      this.flowProfileReader.readReference(this.data),
+    ]);
+    this.flow.set(flow);
+    this.reference.set(reference.flow);
   }
 
   public copyNotesToClipboard() {
@@ -309,9 +314,6 @@ export class BrewDetailComponent {
     return this.uiBrewHelper.showSectionBeforeBrew(this.getPreparation());
   }
   public dismiss(): void {
-    try {
-      Plotly.purge(this.brewBrewingGraphEl.profileDiv.nativeElement);
-    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,
@@ -322,32 +324,10 @@ export class BrewDetailComponent {
   }
 
   public async repeat() {
-    try {
-      Plotly.purge(this.brewBrewingGraphEl.profileDiv.nativeElement);
-      // Remove the element just to make sure...
-      document.getElementById('canvasContainerBrew').remove();
-    } catch (ex) {}
-
-    this.editActive = true;
-    //Wait 100ms, so the dom will be new rendered and the id will be removed from the flowprofilechart
-    await sleep(100);
-    this.uiBrewHelper.repeatBrew(this.data).then(() => {
-      this.editActive = false;
-      this.initializeFlowChartOnGraphEl();
-    });
+    await this.uiBrewHelper.repeatBrew(this.data);
   }
   public async edit() {
-    try {
-      Plotly.purge(this.brewBrewingGraphEl.profileDiv.nativeElement);
-      // Remove the element just to make sure...
-      document.getElementById('canvasContainerBrew').remove();
-    } catch (ex) {}
-    this.editActive = true;
-    // Wait 50ms, so the dom will be new rendered and the id will be removed from the flowprofilechart
-    await sleep(50);
-
     const returningBrew: Brew = await this.uiBrewHelper.editBrew(this.data);
-    this.editActive = false;
     if (returningBrew) {
       this.data = returningBrew;
       this.bean = this.data.getBean();
@@ -355,7 +335,8 @@ export class BrewDetailComponent {
       this.layoutPreparation.set(this.choosenPreparation);
       this.mill = this.data.getMill();
       this.setUIParams();
-      this.initializeFlowChartOnGraphEl();
+      // Editing can replace the graph or its reference.
+      await this.loadFlow();
     }
   }
   public formatSeconds(seconds: number, milliseconds) {
@@ -382,39 +363,21 @@ export class BrewDetailComponent {
     );
   }
 
+  /** Shows the graph large, with its chips and the time slider. */
   public async maximizeFlowGraph() {
-    const modal = await this.modalController.create({
-      component: BrewFlowComponent,
-      id: BrewFlowComponent.COMPONENT_ID,
-      cssClass: 'popover-actions',
-      componentProps: {
-        brewComponent: this,
-        brew: this.data,
-        isDetail: true,
-      },
-    });
-    this.maximizeFlowGraphIsShown = true;
-    await modal.present();
-    await modal.onWillDismiss().then(async () => {
-      this.maximizeFlowGraphIsShown = false;
-      // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
-      try {
-        setTimeout(() => {
-          this.brewBrewingGraphEl.onOrientationChange();
-        }, 150);
-      } catch (ex) {}
-    });
+    await this.uiGraphHelper.detailBrewGraph(this.data);
   }
 
   public async shareFlowProfile() {
     let shared = false;
     try {
-      await loadPlotly();
-      const image: string = await Plotly.toImage(
-        this.brewBrewingGraphEl.profileDiv.nativeElement,
-        { format: 'jpeg' },
-      );
-      shared = await this.shareService.shareFile('', image);
+      const view = this.graphView();
+      if (view) {
+        shared = await this.shareService.shareFile(
+          '',
+          await view.exportImage(),
+        );
+      }
     } catch (err) {
       this.uiLog.error('Cant share profilechart', err);
     }
@@ -442,7 +405,7 @@ export class BrewDetailComponent {
     vS.mapWater(this.data.getWater());
     vS.mapPreparation(this.data.getPreparation());
     vS.mapMill(this.data.getMill());
-    vS.brewFlow = this.brewBrewingGraphEl.flow_profile_raw;
+    vS.brewFlow = this.flow() ?? new BrewFlow();
 
     try {
       await this.uiHelper.exportJSON(
@@ -481,65 +444,9 @@ export class BrewDetailComponent {
     }
   }
   public async downloadFlowProfile() {
-    await this.uiExcel.exportBrewFlowProfile(
-      this.brewBrewingGraphEl.flow_profile_raw,
-    );
+    await this.uiExcel.exportBrewFlowProfile(this.flow() ?? new BrewFlow());
   }
 
-  public getAvgFlow(): number {
-    if (
-      this.brewBrewingGraphEl?.flow_profile_raw.waterFlow &&
-      this.brewBrewingGraphEl?.flow_profile_raw.waterFlow.length > 0
-    ) {
-      const waterFlows: Array<IBrewWaterFlow> =
-        this.brewBrewingGraphEl?.flow_profile_raw.waterFlow;
-      let calculatedFlow: number = 0;
-      let foundEntries: number = 0;
-      for (const water of waterFlows) {
-        if (water.value > 0) {
-          calculatedFlow += water.value;
-          foundEntries += 1;
-        }
-      }
-      if (calculatedFlow > 0) {
-        return calculatedFlow / foundEntries;
-      }
-
-      return 0;
-    } else if (
-      this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow &&
-      this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow.length > 0
-    ) {
-      /** E.g. on the meticulous we don't have the calculcated water flow, so take the realtime flow **/
-      const waterFlows: Array<IBrewRealtimeWaterFlow> =
-        this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow;
-      let calculatedFlow: number = 0;
-      let foundEntries: number = 0;
-      for (const water of waterFlows) {
-        if (water.flow_value > 0) {
-          calculatedFlow += water.flow_value;
-          foundEntries += 1;
-        }
-      }
-      if (calculatedFlow > 0) {
-        return calculatedFlow / foundEntries;
-      }
-
-      return 0;
-    }
-  }
-
-  public getPeakFlow() {
-    if (
-      this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow &&
-      this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow.length > 0
-    ) {
-      const waterFlows: Array<IBrewRealtimeWaterFlow> =
-        this.brewBrewingGraphEl?.flow_profile_raw.realtimeFlow;
-      const maxWaterFlow = Math.max(...waterFlows.map((obj) => obj.flow_value));
-      return maxWaterFlow;
-    }
-  }
   public async showExtractionChart(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
@@ -659,7 +566,7 @@ export class BrewDetailComponent {
       applyFlowCut(updatedBrew, cut);
       this.brew = updatedBrew;
     }
-    await this.initializeFlowChartOnGraphEl();
+    this.flow.set(cut.flowProfile);
     this.cdr.detectChanges();
   }
 

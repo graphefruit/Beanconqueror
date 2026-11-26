@@ -16,7 +16,8 @@
 
 .chart {
   flex: 1 1 auto;
-  min-height: 0;
+  // Embedded in a page that grows with its content it keeps this height.
+  min-height: 150px;
   overflow: hidden;
   background: var(--ion-color-graph-background);
 }

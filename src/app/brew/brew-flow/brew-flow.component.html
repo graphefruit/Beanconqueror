@@ -4,30 +4,30 @@
 
       <ion-col size="11">
         <div style="margin-left:4px;">
-          @if( brewComponent.brewBrewingGraphEl.uiSmartScaleConnected || ( brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected &&  brewComponent.brewBrewingGraphEl.uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS) || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.weightTrace?.x?.length >0)) {
+          @if( brewComponent.brewBrewingGraphEl.uiSmartScaleConnected || ( brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected &&  brewComponent.brewBrewingGraphEl.uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
             <ion-chip chipButton [chipPressed]="!!brewComponent.brewBrewingGraphEl.traces.weightTrace?.visible" (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('weight')" [outline]="!brewComponent.brewBrewingGraphEl.traces.weightTrace?.visible" class="trace-chip" [class.trace-active]="brewComponent.brewBrewingGraphEl.traces.weightTrace?.visible" [style.--chip-color]="brewComponent.brewBrewingGraphEl.traces.weightTrace?.line?.color">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
             <ion-chip chipButton [chipPressed]="!!brewComponent.brewBrewingGraphEl.traces.flowPerSecondTrace?.visible" (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('calc_flow')" [outline]="!brewComponent.brewBrewingGraphEl.traces.flowPerSecondTrace?.visible" class="trace-chip" [class.trace-active]="brewComponent.brewBrewingGraphEl.traces.flowPerSecondTrace?.visible" [style.--chip-color]="brewComponent.brewBrewingGraphEl.traces.flowPerSecondTrace?.line?.color">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
             <ion-chip chipButton [chipPressed]="!!brewComponent.brewBrewingGraphEl.traces.realtimeFlowTrace?.visible" (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('realtime_flow')" [outline]="!brewComponent.brewBrewingGraphEl.traces.realtimeFlowTrace?.visible" class="trace-chip" [class.trace-active]="brewComponent.brewBrewingGraphEl.traces.realtimeFlowTrace?.visible" [style.--chip-color]="brewComponent.brewBrewingGraphEl.traces.realtimeFlowTrace?.line?.color">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
           }
           @if ((brewComponent.brewBrewingGraphEl.uiPressureConnected && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) ||
-          ( brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected) || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.pressureTrace?.x?.length >0)) {
+          ( brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected)) {
             <ion-chip chipButton [chipPressed]="!!brewComponent.brewBrewingGraphEl.traces.pressureTrace?.visible" (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('pressure')"
                       [outline]="!brewComponent.brewBrewingGraphEl.traces.pressureTrace?.visible" class="trace-chip" [class.trace-active]="brewComponent.brewBrewingGraphEl.traces.pressureTrace?.visible" [style.--chip-color]="brewComponent.brewBrewingGraphEl.traces.pressureTrace?.line?.color">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
           }
-          @if(brewComponent.brewBrewingGraphEl.uiTemperatureConnected || ( brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected &&  brewComponent.brewBrewingGraphEl.uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS) || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.temperatureTrace?.x?.length >0)) {
+          @if(brewComponent.brewBrewingGraphEl.uiTemperatureConnected || ( brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected &&  brewComponent.brewBrewingGraphEl.uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
             <ion-chip chipButton [chipPressed]="!!brewComponent.brewBrewingGraphEl.traces.temperatureTrace?.visible" (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('temperature')"
                       [outline]="!brewComponent.brewBrewingGraphEl.traces.temperatureTrace?.visible" class="trace-chip" [class.trace-active]="brewComponent.brewBrewingGraphEl.traces.temperatureTrace?.visible" [style.--chip-color]="brewComponent.brewBrewingGraphEl.traces.temperatureTrace?.line?.color">{{'BREW_TEMPERATURE_REALTIME' |
               translate}}</ion-chip>
           }
-          @if ((brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected && brewComponent.brewBrewingGraphEl.uiPreparationDeviceType === brewComponent.brewBrewingGraphEl.PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU) || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.waterDispensedTrace?.x?.length > 0)) {
+          @if ((brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected && brewComponent.brewBrewingGraphEl.uiPreparationDeviceType === brewComponent.brewBrewingGraphEl.PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU)) {
             <ion-chip chipButton [chipPressed]="!!brewComponent.brewBrewingGraphEl.traces.waterDispensedTrace?.visible" (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('waterDispensed')"
               [outline]="!brewComponent.brewBrewingGraphEl.traces.waterDispensedTrace?.visible" class="trace-chip" [class.trace-active]="brewComponent.brewBrewingGraphEl.traces.waterDispensedTrace?.visible" [style.--chip-color]="brewComponent.brewBrewingGraphEl.traces.waterDispensedTrace?.line?.color">{{'BREW_FLOW_WATER_DISPENSED_VOLUME' | translate}}</ion-chip>
           }
-          @if ((brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected && brewComponent.brewBrewingGraphEl.uiPreparationDeviceType === brewComponent.brewBrewingGraphEl.PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU) || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.waterDispensedFlowSecondTrace?.x?.length > 0)) {
+          @if ((brewComponent.brewBrewingGraphEl.uiPreparationDeviceConnected && brewComponent.brewBrewingGraphEl.uiPreparationDeviceType === brewComponent.brewBrewingGraphEl.PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU)) {
             <ion-chip chipButton [chipPressed]="!!brewComponent.brewBrewingGraphEl.traces.waterDispensedFlowSecondTrace?.visible" (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('waterDispensedFlowSecond')"
               [outline]="!brewComponent.brewBrewingGraphEl.traces.waterDispensedFlowSecondTrace?.visible" class="trace-chip" [class.trace-active]="brewComponent.brewBrewingGraphEl.traces.waterDispensedFlowSecondTrace?.visible" [style.--chip-color]="brewComponent.brewBrewingGraphEl.traces.waterDispensedFlowSecondTrace?.line?.color">{{'BREW_FLOW_WATER_DISPENSED_REALTIME' | translate}}</ion-chip>
           }
-          @if( brewComponent.brewBrewingGraphEl.uiSmartScaleConnectedSupportsTwoWeights || (isDetail === true && brewComponent.brewBrewingGraphEl.traces.weightTraceSecond?.x?.length >0)) {
+          @if( brewComponent.brewBrewingGraphEl.uiSmartScaleConnectedSupportsTwoWeights) {
             <ion-chip chipButton [chipPressed]="!!brewComponent.brewBrewingGraphEl.traces.weightTraceSecond?.visible" (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('weightSecond')" [outline]="!brewComponent.brewBrewingGraphEl.traces.weightTraceSecond?.visible" class="trace-chip" [class.trace-active]="brewComponent.brewBrewingGraphEl.traces.weightTraceSecond?.visible" [style.--chip-color]="brewComponent.brewBrewingGraphEl.traces.weightTraceSecond?.line?.color">{{'BREW_FLOW_WEIGHT_SECOND' | translate}}</ion-chip>
             <ion-chip chipButton [chipPressed]="!!brewComponent.brewBrewingGraphEl.traces.realtimeFlowTraceSecond?.visible" (click)="brewComponent.brewBrewingGraphEl.toggleChartLines('realtimeFlowSecond')" [outline]="!brewComponent.brewBrewingGraphEl.traces.realtimeFlowTraceSecond?.visible" class="trace-chip" [class.trace-active]="brewComponent.brewBrewingGraphEl.traces.realtimeFlowTraceSecond?.visible" [style.--chip-color]="brewComponent.brewBrewingGraphEl.traces.realtimeFlowTraceSecond?.line?.color">{{'BREW_FLOW_WEIGHT_REALTIME_SECOND' | translate}}</ion-chip>
           }
@@ -51,92 +51,90 @@
 <ion-content #brewFlowContent [class.camera-visible]="cameraIsVisible" class="brew-flow-content">
 
   <div id="main-content">
-    @if(isDetail===false) {
-      <div id="informationContainer" [hidden]="settings.maximize_hide_value_cards_on_maximize_screen">
-        <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
-          <ion-row style="padding-bottom:5px;">
-            @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected || ( brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected && brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
-              <ion-col size="{{graphIconColSize}}" style="padding-right:5px;">
-                <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="brewComponent?.brewBrewingGraphEl?.traces?.weightTrace?.line?.color || 'var(--ion-color-accent)'">
-                  <ion-card-header>
-                    <span class="visually-hidden">{{ 'BREW_FLOW_WEIGHT' | translate }}</span>
-                    <div #smartScaleWeightDetail>? g</div>
-                    @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnectedSupportsTwoWeights) {
-                      <div #smartScaleWeightSecondDetail>?g</div>
-                    }
-                    @if(brewComponent.timer?.timer?.runTimer) {
-                      <span class="smartScaleRatio" #smartScaleBrewRatio></span>
-                    } @else {
-                      <span class="smartScaleRatio" >({{brewComponent.brewBrewingGraphEl.data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,brewComponent.brewBrewingGraphEl.data.brew_beverage_quantity,brewComponent.brewBrewingGraphEl.data.brew_quantity]}})</span>
-                    }
-
-                  </ion-card-header>
-                  <ion-card-content>
-                    <ion-icon aria-hidden="true" name="beanconqueror-scale-outline" />
-                  </ion-card-content>
-                </ion-card>
-              </ion-col>
-              <ion-col
-                size="{{graphIconColSize}}" style="padding-right:5px;">
-                <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="brewComponent?.brewBrewingGraphEl?.traces?.realtimeFlowTrace?.line?.color || '#09485d'">
-                  <ion-card-header>
-                    <span class="visually-hidden">{{ 'A11Y.FLOW' | translate }}</span>
-                    <div class='information-tile-no-overflow'><span #smartScaleWeightPerSecondDetail>?</span> g/s</div>
-                    <div class='information-tile-no-overflow'><span #smartScaleAvgFlowPerSecondDetail>?</span> g/s</div>
-                    @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnectedSupportsTwoWeights) {
-                      <div class='information-tile-no-overflow'><span #smartScaleRealtimeFlowSecondDetail>?</span> g/s</div>
-                    }
-                  </ion-card-header>
-                  <ion-card-content>
-                    <ion-icon aria-hidden="true" name="water-outline" />
-                  </ion-card-content>
-                </ion-card>
-              </ion-col>
-            }
-            @if((brewComponent?.brewBrewingGraphEl?.uiPressureConnected || brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected) && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
-              <ion-col (click)="resetPressure()"
-                       size="{{graphIconColSize}}" style="padding-right:5px;">
-                <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="brewComponent?.brewBrewingGraphEl?.traces?.pressureTrace?.line?.color || '#05c793'">
-                  <ion-card-header>
-                  <span class="visually-hidden">{{ 'BREW_PRESSURE_FLOW' | translate }}</span>
-                  <div #pressureDetail>? bar</div>
-                  </ion-card-header>
-                  <ion-card-content>
-                    <ion-icon aria-hidden="true" name="beanconqueror-pressure" />
-                  </ion-card-content>
-                </ion-card>
-              </ion-col>
-            }
-            @if(brewComponent?.brewBrewingGraphEl?.uiTemperatureConnected || (brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected &&  brewComponent.brewBrewingGraphEl.uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
-              <ion-col
-                size="{{graphIconColSize}}" style="padding-right:5px;">
-                <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="brewComponent?.brewBrewingGraphEl?.traces?.temperatureTrace?.line?.color || '#cc3311'">
-                  <ion-card-header>
-                  <span class="visually-hidden">{{ 'BREW_TEMPERATURE_REALTIME' | translate }}</span>
-                  <div #temperatureDetail>? °C</div>
-                  </ion-card-header>
-                  <ion-card-content>
-                    <ion-icon aria-hidden="true" name="thermometer-outline" />
-                  </ion-card-content>
-                </ion-card>
-              </ion-col>
-            }
-            <ion-col
-              size="{{graphIconColSize}}" style="padding-right:5px;">
-              <ion-card class="flow-profile ion-text-center timer-card" style="height: 100%;">
+    <div id="informationContainer" [hidden]="settings.maximize_hide_value_cards_on_maximize_screen">
+      <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
+        <ion-row style="padding-bottom:5px;">
+          @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected || ( brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected && brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
+            <ion-col size="{{graphIconColSize}}" style="padding-right:5px;">
+              <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="brewComponent?.brewBrewingGraphEl?.traces?.weightTrace?.line?.color || 'var(--ion-color-accent)'">
                 <ion-card-header>
-                  <span class="visually-hidden">{{ 'BREW_DATA_TIME' | translate }}</span>
-                  <span class='information-tile-no-overflow' #timerElement></span>
+                  <span class="visually-hidden">{{ 'BREW_FLOW_WEIGHT' | translate }}</span>
+                  <div #smartScaleWeightDetail>? g</div>
+                  @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnectedSupportsTwoWeights) {
+                    <div #smartScaleWeightSecondDetail>?g</div>
+                  }
+                  @if(brewComponent.timer?.timer?.runTimer) {
+                    <span class="smartScaleRatio" #smartScaleBrewRatio></span>
+                  } @else {
+                    <span class="smartScaleRatio" >({{brewComponent.brewBrewingGraphEl.data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,brewComponent.brewBrewingGraphEl.data.brew_beverage_quantity,brewComponent.brewBrewingGraphEl.data.brew_quantity]}})</span>
+                  }
+
                 </ion-card-header>
                 <ion-card-content>
-                  <ion-icon aria-hidden="true" name="time-outline" />
+                  <ion-icon aria-hidden="true" name="beanconqueror-scale-outline" />
                 </ion-card-content>
               </ion-card>
             </ion-col>
-          </ion-row>
-        </ion-grid>
-      </div>
-    }
+            <ion-col
+              size="{{graphIconColSize}}" style="padding-right:5px;">
+              <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="brewComponent?.brewBrewingGraphEl?.traces?.realtimeFlowTrace?.line?.color || '#09485d'">
+                <ion-card-header>
+                  <span class="visually-hidden">{{ 'A11Y.FLOW' | translate }}</span>
+                  <div class='information-tile-no-overflow'><span #smartScaleWeightPerSecondDetail>?</span> g/s</div>
+                  <div class='information-tile-no-overflow'><span #smartScaleAvgFlowPerSecondDetail>?</span> g/s</div>
+                  @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnectedSupportsTwoWeights) {
+                    <div class='information-tile-no-overflow'><span #smartScaleRealtimeFlowSecondDetail>?</span> g/s</div>
+                  }
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-icon aria-hidden="true" name="water-outline" />
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          }
+          @if((brewComponent?.brewBrewingGraphEl?.uiPressureConnected || brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected) && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
+            <ion-col (click)="resetPressure()"
+                     size="{{graphIconColSize}}" style="padding-right:5px;">
+              <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="brewComponent?.brewBrewingGraphEl?.traces?.pressureTrace?.line?.color || '#05c793'">
+                <ion-card-header>
+                <span class="visually-hidden">{{ 'BREW_PRESSURE_FLOW' | translate }}</span>
+                <div #pressureDetail>? bar</div>
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-icon aria-hidden="true" name="beanconqueror-pressure" />
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          }
+          @if(brewComponent?.brewBrewingGraphEl?.uiTemperatureConnected || (brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected &&  brewComponent.brewBrewingGraphEl.uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
+            <ion-col
+              size="{{graphIconColSize}}" style="padding-right:5px;">
+              <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="brewComponent?.brewBrewingGraphEl?.traces?.temperatureTrace?.line?.color || '#cc3311'">
+                <ion-card-header>
+                <span class="visually-hidden">{{ 'BREW_TEMPERATURE_REALTIME' | translate }}</span>
+                <div #temperatureDetail>? °C</div>
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-icon aria-hidden="true" name="thermometer-outline" />
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          }
+          <ion-col
+            size="{{graphIconColSize}}" style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center timer-card" style="height: 100%;">
+              <ion-card-header>
+                <span class="visually-hidden">{{ 'BREW_DATA_TIME' | translate }}</span>
+                <span class='information-tile-no-overflow' #timerElement></span>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-icon aria-hidden="true" name="time-outline" />
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
     <ion-grid class="ion-no-padding ion-no-margin-important">
 
       <ion-row>
@@ -153,117 +151,91 @@
   </div>
 </ion-content>
 <!--The footer is min-height 72px, because if a scale e.g. doesn't support taring, the whole bar would disappear, and if the timer would start then, the graph is wrongly displayed-->
-@if(isDetail===false) {
-  <ion-footer class="ion-no-border" style="min-height:72px;">
-    <div class="ion-text-center flow-icon-buttons">
-      <!-- Without the brew time parameter the form has no timer to control. -->
-      @if(brewComponent.timer; as brewTimer) {
-        @if(!brewTimer.timer.hasStarted && brewTimer.showListeningButton) {
-          <ion-button (click)="startListening();"
-                      [attr.aria-label]="'A11Y.START_LISTENING_TO_SCALE' | translate"
-                      class="big-icon-only" fill="clear" slot="end" tappable>
-            <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-listening-start" slot="icon-only" />
-          </ion-button>
-        }
-        @if(brewTimer.timer.hasStarted && brewTimer.timer.runTimer && brewTimer.ignoreScaleWeightButtonVisible && brewTimer.ignoreWeightButtonActive === true) {
-          <ion-button (click)="brewTimer.ignoreScaleWeight();"
-                      [attr.aria-label]="'A11Y.IGNORE_SCALE_WEIGHT' | translate"
-                      class="big-icon-only" fill="clear" slot="end" tappable>
-            <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-scale-pause" slot="icon-only" />
-          </ion-button>
-        }
-        @if(brewTimer.timer.hasStarted && brewTimer.timer.runTimer && brewTimer.ignoreScaleWeightButtonVisible  && brewTimer.unignoreWeightButtonActive === true) {
-          <ion-button (click)="brewTimer.unignoreScaleWeight();"
-                      [attr.aria-label]="'A11Y.RESUME_SCALE_WEIGHT' | translate"
-                      class="big-icon-only" fill="clear" slot="end" tappable>
-            <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-scale-play" slot="icon-only" />
-          </ion-button>
-        }
-        @if(brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished && brewTimer.showBloomTimer) {
-          <ion-button (click)="brewTimer.bloomTime()"
-                      [attr.aria-label]="'A11Y.SET_BLOOM_TIME' | translate"
-                      class="big-icon-only" fill="clear" tappable>
-            <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only" />
-          </ion-button>
-        }
-        @if(brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished && brewTimer.showDripTimer) {
-          <ion-button (click)="brewTimer.dripTime()"
-                      [attr.aria-label]="'A11Y.SET_FIRST_DRIP_TIME' | translate"
-                      class="big-icon-only" fill="clear" tappable>
-            <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only" />
-          </ion-button>
-        }
-        @if(brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished) {
-          <ion-button (click)="pauseTimer()"
-                      [attr.aria-label]="'A11Y.PAUSE_TIMER' | translate"
-                      class="big-icon-only" fill="clear" tappable>
-            <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-pause" slot="icon-only" />
-          </ion-button>
-        }
-        @if((!brewTimer.timer.hasStarted || !brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished) && brewTimer.timer.seconds>0) {
-          <ion-button (click)="resetTimer($event)"
-                      [attr.aria-label]="'A11Y.RESET_TIMER' | translate"
-                      class="big-icon-only" fill="clear" tappable>
-            <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only" />
-          </ion-button>
-        }
-        @if(!brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished) {
-          <ion-button (click)="resumeTimer()"
-                      [attr.aria-label]="'A11Y.RESUME_TIMER' | translate"
-                      class="big-icon-only" fill="clear" tappable>
-            <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
-          </ion-button>
-        }
-        @if((brewTimer.showListeningButton === true && !brewTimer.timer.hasStarted) || ((settings.bluetooth_scale_listening_threshold_active === false || (brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected === false && settings.bluetooth_scale_listening_threshold_active === true)) && !brewTimer.timer.hasStarted)) {
-          <ion-button (click)="startTimer()"
-                      [attr.aria-label]="'A11Y.START_TIMER' | translate"
-                      class="big-icon-only" fill="clear"
-                      tappable>
-            <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
-          </ion-button>
-        }
-      }
-      @if(brewComponent.brewBrewingGraphEl.uiSmartScaleConnected && brewComponent?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring) {
-        <ion-button (click)="__tareScale()"
-                    [attr.aria-label]="'A11Y.TARE_SCALE' | translate"
-                    class="big-icon-only" fill="clear"
-                    tappable>
-          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only" />
+<ion-footer class="ion-no-border" style="min-height:72px;">
+  <div class="ion-text-center flow-icon-buttons">
+    <!-- Without the brew time parameter the form has no timer to control. -->
+    @if(brewComponent.timer; as brewTimer) {
+      @if(!brewTimer.timer.hasStarted && brewTimer.showListeningButton) {
+        <ion-button (click)="startListening();"
+                    [attr.aria-label]="'A11Y.START_LISTENING_TO_SCALE' | translate"
+                    class="big-icon-only" fill="clear" slot="end" tappable>
+          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-listening-start" slot="icon-only" />
         </ion-button>
       }
-      @if(isIOS()) {
-
-        <ion-button (click)="toggleCamera()"
-                    [attr.aria-label]="'A11Y.TOGGLE_CAMERA' | translate"
-                    class="big-icon-only" fill="clear"
-                    tappable>
-          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-camera" slot="icon-only" />
+      @if(brewTimer.timer.hasStarted && brewTimer.timer.runTimer && brewTimer.ignoreScaleWeightButtonVisible && brewTimer.ignoreWeightButtonActive === true) {
+        <ion-button (click)="brewTimer.ignoreScaleWeight();"
+                    [attr.aria-label]="'A11Y.IGNORE_SCALE_WEIGHT' | translate"
+                    class="big-icon-only" fill="clear" slot="end" tappable>
+          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-scale-pause" slot="icon-only" />
         </ion-button>
       }
-    </div>
-  </ion-footer>
-} @else {
-  <ion-footer class="ion-no-border" style="min-height:72px;">
-    <ion-grid class="no-margin ion-no-padding">
-      <ion-row>
-        <ion-col size="12">
-          <ion-item lines="none">
-            <ion-label>{{ "BREW_GRAPH_TIME_SLIDER" | translate }}&nbsp;<ion-badge
-              style="vertical-align: top; --color: black; color: black;">{{sliderValue | number:'1.3-3'  }}s
-            </ion-badge>
-            </ion-label>
-          </ion-item>
-          <ion-item style="top:-10px;" lines="none">
-            <ion-range [rangeLabel]="'BREW_GRAPH_TIME_SLIDER' | translate" rangeUnit="s" [min]="0"
-              [step]="0.001"
-              [max]="maxSliderTime"
-              [value]="sliderValue"
-              (ionInput)="onSliderChange($event)" />
-          </ion-item>
+      @if(brewTimer.timer.hasStarted && brewTimer.timer.runTimer && brewTimer.ignoreScaleWeightButtonVisible  && brewTimer.unignoreWeightButtonActive === true) {
+        <ion-button (click)="brewTimer.unignoreScaleWeight();"
+                    [attr.aria-label]="'A11Y.RESUME_SCALE_WEIGHT' | translate"
+                    class="big-icon-only" fill="clear" slot="end" tappable>
+          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-scale-play" slot="icon-only" />
+        </ion-button>
+      }
+      @if(brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished && brewTimer.showBloomTimer) {
+        <ion-button (click)="brewTimer.bloomTime()"
+                    [attr.aria-label]="'A11Y.SET_BLOOM_TIME' | translate"
+                    class="big-icon-only" fill="clear" tappable>
+          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only" />
+        </ion-button>
+      }
+      @if(brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished && brewTimer.showDripTimer) {
+        <ion-button (click)="brewTimer.dripTime()"
+                    [attr.aria-label]="'A11Y.SET_FIRST_DRIP_TIME' | translate"
+                    class="big-icon-only" fill="clear" tappable>
+          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only" />
+        </ion-button>
+      }
+      @if(brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished) {
+        <ion-button (click)="pauseTimer()"
+                    [attr.aria-label]="'A11Y.PAUSE_TIMER' | translate"
+                    class="big-icon-only" fill="clear" tappable>
+          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-pause" slot="icon-only" />
+        </ion-button>
+      }
+      @if((!brewTimer.timer.hasStarted || !brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished) && brewTimer.timer.seconds>0) {
+        <ion-button (click)="resetTimer($event)"
+                    [attr.aria-label]="'A11Y.RESET_TIMER' | translate"
+                    class="big-icon-only" fill="clear" tappable>
+          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only" />
+        </ion-button>
+      }
+      @if(!brewTimer.timer.runTimer && brewTimer.timer.hasStarted && !brewTimer.timer.hasFinished) {
+        <ion-button (click)="resumeTimer()"
+                    [attr.aria-label]="'A11Y.RESUME_TIMER' | translate"
+                    class="big-icon-only" fill="clear" tappable>
+          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
+        </ion-button>
+      }
+      @if((brewTimer.showListeningButton === true && !brewTimer.timer.hasStarted) || ((settings.bluetooth_scale_listening_threshold_active === false || (brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected === false && settings.bluetooth_scale_listening_threshold_active === true)) && !brewTimer.timer.hasStarted)) {
+        <ion-button (click)="startTimer()"
+                    [attr.aria-label]="'A11Y.START_TIMER' | translate"
+                    class="big-icon-only" fill="clear"
+                    tappable>
+          <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-play" slot="icon-only" />
+        </ion-button>
+      }
+    }
+    @if(brewComponent.brewBrewingGraphEl.uiSmartScaleConnected && brewComponent?.brewBrewingGraphEl?.uiSmartScaleSupportsTaring) {
+      <ion-button (click)="__tareScale()"
+                  [attr.aria-label]="'A11Y.TARE_SCALE' | translate"
+                  class="big-icon-only" fill="clear"
+                  tappable>
+        <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only" />
+      </ion-button>
+    }
+    @if(isIOS()) {
 
-        </ion-col>
-
-      </ion-row>
-    </ion-grid>
-  </ion-footer>
-}
+      <ion-button (click)="toggleCamera()"
+                  [attr.aria-label]="'A11Y.TOGGLE_CAMERA' | translate"
+                  class="big-icon-only" fill="clear"
+                  tappable>
+        <ion-icon aria-hidden="true" class="ion-color-accent" name="beanconqueror-camera" slot="icon-only" />
+      </ion-button>
+    }
+  </div>
+</ion-footer>

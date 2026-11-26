@@ -146,7 +146,6 @@ describe('BrewBrewingGraphComponent shot end', () => {
         data,
         settings,
         isEdit: false,
-        isDetail: false,
         baristamode: false,
         baristaModeTargetWeight: undefined,
         ignoreScaleWeight: false,

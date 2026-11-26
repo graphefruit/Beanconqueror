@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 
 import { Brew } from '../../../../classes/brew/brew';
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
+import { FlowProfileReader } from '../../../../components/brews/graph/flow-profile-reader.service';
 import { ShareService } from '../../../../services/shareService/share-service.service';
 import { UIAlert } from '../../../../services/uiAlert';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -16,6 +17,7 @@ import { UIBrewHelper } from '../../../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../../../services/uiBrewStorage';
 import { UIExcel } from '../../../../services/uiExcel';
 import { UIFileHelper } from '../../../../services/uiFileHelper';
+import { UIGraphHelper } from '../../../../services/uiGraphHelper';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UILog } from '../../../../services/uiLog';
 import { UIMillHelper } from '../../../../services/uiMillHelper';
@@ -128,13 +130,11 @@ describe('BrewDetailComponent cut flow profile', () => {
         { provide: TranslateService, useValue: {} },
         { provide: AlertController, useValue: {} },
         { provide: ShareService, useValue: {} },
+        { provide: FlowProfileReader, useValue: {} },
+        { provide: UIGraphHelper, useValue: {} },
       ],
     });
     component = TestBed.inject(BrewDetailComponent);
-    spyOn(
-      component as unknown as { initializeFlowChartOnGraphEl: () => void },
-      'initializeFlowChartOnGraphEl',
-    ).and.resolveTo();
 
     const brew = new Brew();
     brew.config.uuid = 'abc';
@@ -145,6 +145,11 @@ describe('BrewDetailComponent cut flow profile', () => {
     component.brew = new Brew();
     Object.assign(component.brew, brew);
   });
+
+  /** The graph the details show. */
+  function shownFlow(): BrewFlow | null | undefined {
+    return (component as unknown as { flow: () => BrewFlow | null }).flow();
+  }
 
   it('writes the cut profile, keeps the one from before and saves the brew', async () => {
     await component.cutFlowProfile(click);
@@ -160,6 +165,7 @@ describe('BrewDetailComponent cut flow profile', () => {
     expect(component.data).toBe(saved);
     expect(component.brew.brew_time).toBe(20);
     expect(component.brew.coffee_first_drip_time).toBe(2);
+    expect(shownFlow()).toBe(cut.flowProfile);
     expect(showMessage).not.toHaveBeenCalled();
   });
 
@@ -174,6 +180,7 @@ describe('BrewDetailComponent cut flow profile', () => {
     expect(component.data.brew_time).toBe(30);
     expect(component.data.brew_beverage_quantity).toBe(40);
     expect(component.brew.brew_time).toBe(30);
+    expect(shownFlow()).toBeUndefined();
     expect(showMessage).toHaveBeenCalledOnceWith(
       'CUT_FLOW_PROFILE_SAVE_FAILED',
       'ERROR_OCCURED',

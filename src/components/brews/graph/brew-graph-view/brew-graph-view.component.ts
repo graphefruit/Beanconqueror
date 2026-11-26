@@ -40,6 +40,8 @@ import { UplotRenderer } from '../uplot-renderer';
 
 /** Seconds PageUp and PageDown move the time slider; an arrow key moves it 0.1 s. */
 export const PAGE_STEP_SEC = 5;
+/** Bitmap pixels per CSS pixel of a shared graph, sharp on any screen. */
+const EXPORT_SCALE = 3;
 
 export interface SeriesChip {
   id: SeriesId;
@@ -234,6 +236,24 @@ export class BrewGraphViewComponent {
         next.add(id);
       }
       return next;
+    });
+  }
+
+  /**
+   * The graph as it is shown, as a PNG data URL three times its size. Fails
+   * while nothing is drawn.
+   */
+  public exportImage(): Promise<string> {
+    const renderer = this.ready() ? this.renderer : null;
+    if (!renderer) {
+      return Promise.reject(new Error('The graph is not drawn'));
+    }
+    const dark = this.theme.dark();
+    return renderer.exportImage({
+      ...this.size(),
+      theme: dark ? 'dark' : 'light',
+      transparent: false,
+      scale: EXPORT_SCALE,
     });
   }
 
