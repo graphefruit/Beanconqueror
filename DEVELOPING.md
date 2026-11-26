@@ -548,6 +548,7 @@ pnpm run live:ios       # iOS simulator
 The app reloads whenever you save a file.
 Quit with Ctrl+C; Capacitor then removes the development server URL from the native configuration again.
 If it was not removed (for example after a crash), run `pnpm run cap sync <platform>`.
+The installed app keeps loading `http://localhost:4200` until you install a normal build again (`pnpm run cap run <platform>`).
 
 For a physical iOS device, the development server has to listen on your network interface:
 
