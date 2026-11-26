@@ -91,6 +91,7 @@ export const SPEC_AREAS: Readonly<Record<string, readonly Area[]>> = {
   'e2e/system-bars.spec.ts': ['@layout', '@settings'],
   'e2e/tablet.spec.ts': ['@layout'],
   'e2e/typography.spec.ts': ['@layout'],
+  'e2e/update-from-8-8.spec.ts': ['@data', '@app'],
   'e2e/webview-unsupported.spec.ts': ['@app'],
 };
 
