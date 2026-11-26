@@ -12,12 +12,12 @@ import { LogEntry } from '../interfaces/log/log-entry';
 
 const MAX_ENTRIES = 3000;
 /** Not synced to iCloud and not shown in the Files app. */
-const LOG_DIRECTORY = Directory.LibraryNoCloud;
-const LOG_FOLDER = 'logs';
-const LOG_FILE_NAME = /^log_(\d{8})_\d{9}\.jsonl$/;
+export const LOG_DIRECTORY = Directory.LibraryNoCloud;
+export const LOG_FOLDER = 'logs';
+export const LOG_FILE_NAME = /^log_(\d{8})_\d{9}\.jsonl$/;
 export const LOG_FILE_MAX_BYTES = 1024 * 1024;
 export const LOG_FILES_KEPT = 3;
-const WRITE_INTERVAL_MS = 5000;
+const WRITE_INTERVAL_MS = 1000;
 
 export interface LogFile {
   name: string;
@@ -55,6 +55,9 @@ export class UILog {
   private fileLog: 'waiting' | 'on' | 'off' = 'waiting';
   private unwritten: LogEntry[] = [];
   private currentFile: LogFile | undefined;
+  /** The log files as the session found them, read by loadEarlier(). */
+  private earlierFiles: LogFile[] = [];
+  private earlierLoaded = false;
   private writing: Promise<void> = Promise.resolve();
   private readonly ngZone = inject(NgZone);
 
@@ -85,8 +88,9 @@ export class UILog {
   }
 
   /**
-   * Shows the entries of earlier sessions and keeps writing the log to files
-   * from now on. Only in the app: the browser has no app folder.
+   * Keeps writing the log to files from now on. Only in the app: the browser
+   * has no app folder. Earlier sessions are read only by loadEarlier(), so the
+   * start reads no file.
    */
   public async startFileLog(): Promise<void> {
     if (this.fileLog !== 'waiting') {
@@ -103,10 +107,13 @@ export class UILog {
         directory: LOG_DIRECTORY,
       });
       const names = logFileNames(files.map((_file) => _file.name));
-      await this.restore(names);
-      const newest = files.find((_file) => _file.name === names.at(-1));
+      this.earlierFiles = names.map((_name) => {
+        const { size } = files.find((_file) => _file.name === _name);
+        return { name: _name, size };
+      });
+      const newest = this.earlierFiles.at(-1);
       if (newest) {
-        this.currentFile = { name: newest.name, size: newest.size };
+        this.currentFile = { ...newest };
       }
     } catch {
       // No log written yet; the first write creates the folder.
@@ -135,20 +142,30 @@ export class UILog {
     return this.writing;
   }
 
-  private async restore(_names: string[]): Promise<void> {
+  /** Puts the entries of earlier sessions before the new ones, once. */
+  public async loadEarlier(): Promise<void> {
+    if (this.fileLog !== 'on' || this.earlierLoaded) {
+      return;
+    }
+    this.earlierLoaded = true;
     const room = MAX_ENTRIES - this.logs.length;
     let earlier: LogEntry[] = [];
-    for (const name of [..._names].reverse()) {
+    for (const file of [...this.earlierFiles].reverse()) {
       if (earlier.length >= room) {
         break;
       }
       try {
         const { data } = await Filesystem.readFile({
-          path: `${LOG_FOLDER}/${name}`,
+          path: `${LOG_FOLDER}/${file.name}`,
           directory: LOG_DIRECTORY,
           encoding: Encoding.UTF8,
         });
-        earlier = [...parseLogLines(data as string), ...earlier];
+        // This session may have appended to the file; those entries are
+        // already in the log.
+        const before = new TextDecoder().decode(
+          new TextEncoder().encode(data as string).slice(0, file.size),
+        );
+        earlier = [...parseLogLines(before), ...earlier];
       } catch {
         // An unreadable file only leaves out its entries.
       }
@@ -279,6 +296,10 @@ export class UILog {
       this.unwritten.push(logMessage);
       if (this.unwritten.length > MAX_ENTRIES) {
         this.unwritten.shift();
+      }
+      // An error is often the last thing before a crash.
+      if (_level === LogLevel.ERR && this.fileLog === 'on') {
+        void this.writeToFile();
       }
     }
   }

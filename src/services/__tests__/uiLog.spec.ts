@@ -162,16 +162,34 @@ describe('UILog', () => {
     expect(JSON.parse(lines[1]).params[0].message).toBe('broken');
   });
 
-  it('writes every few seconds without being asked', async () => {
+  it('writes every second without being asked', async () => {
     const uiLog = quietLog();
     await uiLog.startFileLog();
     const write = spyOn(uiLog, 'writeToFile').and.callThrough();
 
-    jasmine.clock().tick(4999);
+    jasmine.clock().tick(999);
     expect(write).not.toHaveBeenCalled();
     jasmine.clock().tick(1);
 
     expect(write).toHaveBeenCalledTimes(1);
+  });
+
+  it('writes an error at once, without waiting for the interval', async () => {
+    const uiLog = quietLog();
+    await uiLog.startFileLog();
+    const write = spyOn(uiLog, 'writeToFile').and.callThrough();
+    uiLog.log('Waits for the interval');
+    expect(write).not.toHaveBeenCalled();
+
+    uiLog.error('Broken');
+    uiLog.unhandledError(new Error('Also broken'));
+
+    expect(write).toHaveBeenCalledTimes(2);
+    await write.calls.mostRecent().returnValue;
+    const lines = (await readLog((await logFiles())[0])).trim().split('\n');
+    expect(
+      lines.map((_line) => (JSON.parse(_line) as LogEntry).message),
+    ).toEqual(['Waits for the interval', 'Broken', 'Unhandled error caught']);
   });
 
   it('writes outside Angular, so it runs no change detection', async () => {
@@ -247,6 +265,17 @@ describe('UILog', () => {
     ).toEqual(['First', 'Second']);
   });
 
+  it('reads no earlier session at the start', async () => {
+    await writeLog('log_20261124_080000000.jsonl', line('Yesterday'));
+    const read = spyOn(FilesystemWeb.prototype, 'readFile').and.callThrough();
+    const uiLog = quietLog();
+
+    await uiLog.startFileLog();
+
+    expect(read).not.toHaveBeenCalled();
+    expect(uiLog.getLogs()).toEqual([]);
+  });
+
   it('shows the entries of earlier sessions before the new ones', async () => {
     await writeLog('log_20261123_080000000.jsonl', line('Two days ago'));
     await writeLog(
@@ -255,8 +284,9 @@ describe('UILog', () => {
     );
     const uiLog = quietLog();
     uiLog.log('Now');
-
     await uiLog.startFileLog();
+
+    await uiLog.loadEarlier();
 
     expect(uiLog.getLogs().map((_entry) => _entry.message)).toEqual([
       'Two days ago',
@@ -275,14 +305,72 @@ describe('UILog', () => {
     const read = spyOn(FilesystemWeb.prototype, 'readFile').and.callThrough();
     const uiLog = quietLog();
     uiLog.log('Now');
-
     await uiLog.startFileLog();
+
+    await uiLog.loadEarlier();
 
     const messages = uiLog.getLogs().map((_entry) => _entry.message);
     expect(messages.length).toBe(3000);
     expect(messages[0]).toBe('Entry 1');
     expect(messages.at(-1)).toBe('Now');
     expect(read).toHaveBeenCalledTimes(1);
+  });
+
+  it('reads the earlier sessions only once', async () => {
+    await writeLog('log_20261124_080000000.jsonl', line('Yesterday'));
+    const uiLog = quietLog();
+    await uiLog.startFileLog();
+    await uiLog.loadEarlier();
+    const read = spyOn(FilesystemWeb.prototype, 'readFile').and.callThrough();
+
+    await uiLog.loadEarlier();
+
+    expect(read).not.toHaveBeenCalled();
+    expect(uiLog.getLogs().map((_entry) => _entry.message)).toEqual([
+      'Yesterday',
+    ]);
+  });
+
+  it('does not show the entries of this session twice', async () => {
+    await writeLog(`log_${today()}_080000000.jsonl`, line('This morning'));
+    const uiLog = quietLog();
+    await uiLog.startFileLog();
+    uiLog.log('Now');
+    await uiLog.writeToFile();
+
+    await uiLog.loadEarlier();
+
+    expect(uiLog.getLogs().map((_entry) => _entry.message)).toEqual([
+      'This morning',
+      'Now',
+    ]);
+  });
+
+  it('reads no earlier sessions in the browser', async () => {
+    native.and.returnValue(false);
+    const uiLog = quietLog();
+    await uiLog.startFileLog();
+    const read = spyOn(FilesystemWeb.prototype, 'readFile').and.callThrough();
+
+    await uiLog.loadEarlier();
+
+    expect(read).not.toHaveBeenCalled();
+  });
+
+  it('leaves the native log files to the native log', async () => {
+    await writeLog('native_20261120_080000000.log', 'native\n');
+    await writeLog('log_20261121_080000000.jsonl', line('Four days ago'));
+    await writeLog('log_20261122_080000000.jsonl', line('Three days ago'));
+    await writeLog('log_20261123_080000000.jsonl', line('Two days ago'));
+    const uiLog = quietLog();
+    await uiLog.startFileLog();
+    uiLog.log('Today');
+
+    await uiLog.writeToFile();
+
+    const names = await logFiles();
+    expect(names).toContain('native_20261120_080000000.log');
+    expect(names).not.toContain('log_20261121_080000000.jsonl');
   });
 
   it('starts a new file on a new day and deletes the oldest', async () => {
