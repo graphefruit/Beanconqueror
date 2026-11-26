@@ -280,3 +280,14 @@ test('Save of the add-bean form ignores a second tap', () => {
 
   assert.match(save ?? '', /\sdisable-double-click\s/);
 });
+
+// The start sequence needs a device: the messages of the data updates appear
+// on Android and iOS only.
+test('the start sets the app language before the data updates', () => {
+  const start = withoutComments(read('src/app/app.component.ts'));
+  const language = start.indexOf('await this.__setDeviceLanguage();');
+  const updates = start.indexOf('await this.__checkUpdate();');
+
+  assert.ok(language >= 0 && updates >= 0);
+  assert.ok(language < updates);
+});

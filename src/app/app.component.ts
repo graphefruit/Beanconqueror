@@ -356,6 +356,9 @@ export class AppComponent implements AfterViewInit {
           async () => {
             this.uiLog.log('App finished loading');
             this.uiExportImportHelper.allCollectionsRead();
+            // The data updates can show a message, which is then in the
+            // language of the app.
+            await this.__setDeviceLanguage();
             await this.__checkUpdate();
             this.brewReferences.logMissingReferences();
             // After the data updates, which can still change uuids.
@@ -569,8 +572,6 @@ export class AppComponent implements AfterViewInit {
 
   private async __initApp() {
     this.__registerBack();
-
-    await this.__setDeviceLanguage();
 
     await this.uiAnalytics.initializeTracking();
     await this.themeService.initialize();
