@@ -100,9 +100,9 @@ import {
 } from '../../../services/graphHelper/graph-helper.service';
 import { drawWhenPlotlyLoaded } from '../../../services/graphHelper/load-plotly';
 import {
-  brewWeightDecimals,
   spokenBrewValues,
   spokenWeight,
+  spokenWeightDecimals,
 } from '../../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
@@ -2925,9 +2925,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   public attachToTextToSpeechChange() {
     this.deattachToTextToSpeedChange();
     if (spokenBrewValues(this.settings).weight) {
-      const isEspressoBrew: boolean =
-        this.data.getPreparation().style_type ===
-        PREPARATION_STYLE_TYPE.ESPRESSO;
       this.ngZone.runOutsideAngular(() => {
         this.textToSpeechWeightInterval = setInterval(() => {
           if (this.flowProfileTempAll.length > 0) {
@@ -2937,8 +2934,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               this.textToSpeech.speak(
                 spokenWeight(
                   actualScaleWeight,
-                  brewWeightDecimals(
-                    isEspressoBrew,
+                  spokenWeightDecimals(
                     this.settings.text_to_speech_whole_grams,
                   ),
                   this.settings.language,
@@ -2952,8 +2948,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Before the brew the weight is said with one decimal, to weigh the beans;
-   * the brew start ends this and says the brew weight instead.
+   * Before the brew the scale weight is said to weigh the beans; the brew start
+   * ends this and says the brew weight instead.
    */
   public attachToTextToSpeechBeforeStart() {
     this.deattachToTextToSpeedChange();
@@ -2966,7 +2962,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         // A paused brew has started; its weight is not said again.
         if (this.brewComponent.timer?.timer?.hasStarted !== true) {
           this.textToSpeech.speak(
-            spokenWeight(scale.getWeight(), 1, this.settings.language),
+            spokenWeight(
+              scale.getWeight(),
+              spokenWeightDecimals(this.settings.text_to_speech_whole_grams),
+              this.settings.language,
+            ),
           );
         }
       }, this.settings.text_to_speech_interval_rate);

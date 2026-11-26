@@ -114,13 +114,13 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
     expect(said()).toEqual(['18,3']);
   }));
 
-  it('keeps tenths for whole grams and espresso, which apply to the brew only', fakeAsync(() => {
+  it('says whole grams when chosen', fakeAsync(() => {
     create({ language: 'en', text_to_speech_whole_grams: true });
 
     component.attachToTextToSpeechBeforeStart();
     tick(500);
 
-    expect(said()).toEqual(['18.3']);
+    expect(said()).toEqual(['18']);
   }));
 
   it('says nothing without a scale or without spoken weight', fakeAsync(() => {
@@ -150,7 +150,7 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
     expect(textToSpeech.speak.calls.count()).toBe(0);
   }));
 
-  it('ends at the brew start, which says the brew weight as before', fakeAsync(() => {
+  it('ends at the brew start, which says the brew weight with tenths too', fakeAsync(() => {
     create();
     component.attachToTextToSpeechBeforeStart();
     tick(500);
@@ -160,7 +160,7 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
     Object.assign(component, { flowProfileTempAll: [{ weight: 31.46 }] });
     tick(1000);
 
-    expect(said()).toEqual(['18,3', '31', '31']);
+    expect(said()).toEqual(['18,3', '31,5', '31,5']);
   }));
 
   it('starts again after a reset', fakeAsync(() => {

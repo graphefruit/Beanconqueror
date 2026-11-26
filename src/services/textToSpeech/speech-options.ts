@@ -94,15 +94,12 @@ export function brewTimeToSay(
 }
 
 /**
- * The decimals of the weight said while brewing: one for espresso, whole grams
- * otherwise or when chosen, as a decimal takes the Android voice noticeably
- * longer to say. Before the brew the weight is said with one decimal.
+ * The decimals of the scale weight said in the brew graph, before and during
+ * the brew: tenths, or whole grams when chosen, as a decimal takes the Android
+ * voice noticeably longer to say.
  */
-export function brewWeightDecimals(
-  espresso: boolean,
-  wholeGrams: boolean,
-): number {
-  return espresso && !wholeGrams ? 1 : 0;
+export function spokenWeightDecimals(wholeGrams: boolean): number {
+  return wholeGrams ? 0 : 1;
 }
 
 /**

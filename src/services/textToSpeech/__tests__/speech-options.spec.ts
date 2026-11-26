@@ -1,11 +1,11 @@
 import {
   brewTimeToSay,
-  brewWeightDecimals,
   pluginSpeechPitch,
   pluginSpeechRate,
   speechLanguageTag,
   spokenBrewValues,
   spokenWeight,
+  spokenWeightDecimals,
 } from '../speech-options';
 
 /** What WebKit asked AVSpeechUtterance for (default 0.5, fastest 1). */
@@ -126,11 +126,9 @@ describe('speech options', () => {
     });
   });
 
-  it('says one decimal for espresso unless whole grams are chosen', () => {
-    expect(brewWeightDecimals(true, false)).toBe(1);
-    expect(brewWeightDecimals(true, true)).toBe(0);
-    expect(brewWeightDecimals(false, false)).toBe(0);
-    expect(brewWeightDecimals(false, true)).toBe(0);
+  it('says tenths unless whole grams are chosen', () => {
+    expect(spokenWeightDecimals(false)).toBe(1);
+    expect(spokenWeightDecimals(true)).toBe(0);
   });
 
   it('says the weight rounded, with the decimal separator of the app language', () => {
