@@ -121,7 +121,11 @@ export class UIUpdate {
           !version.checkIfDataVersionWasUpdated(updateVersion)
         ) {
           backupPending = false;
-          if (!(await this.uiExportImportHelper.writeBackupBeforeMigration())) {
+          if (
+            !(await this.uiExportImportHelper.writeBackupBeforeMigration(
+              updateVersion,
+            ))
+          ) {
             break;
           }
         }

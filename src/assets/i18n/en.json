@@ -1512,6 +1512,7 @@
     "PRE_IMPORT_BACKUP_HINT_BROWSER": "In the browser, no backup of your current data is saved first.",
     "PRE_IMPORT_BACKUP_FAILED": "Nothing was imported: your current data could not be saved as a backup first. Please check the free storage and try again.",
     "MIGRATION_BACKUP_FAILED": "An update of your data was not made: your current data could not be saved as a backup first. Please check the free storage. The update is tried again at the next start.",
+    "BACKUP_BEFORE_DATA_UPDATE": "Data before the update to 9.0",
     "IMPORT_NOT_ROLLED_BACK": "Import unsuccessful, and your previous data could not be restored completely: your data may be incomplete. The backup saved before the import is in the app folder \"pre-import\" and can be imported in the settings via \"Find and import an automatic backup file\".",
     "IMPORT_NOT_ROLLED_BACK_NO_BACKUP": "Import unsuccessful, and your previous data could not be restored completely: your data may be incomplete. No backup of it was saved before the import.",
     "IMPORT_STORED_RELOAD_FAILED": "Import saved, but the app could not load the data again. Please close the app completely and start it again.",

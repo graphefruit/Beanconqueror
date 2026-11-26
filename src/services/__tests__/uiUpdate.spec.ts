@@ -995,6 +995,7 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
   /** The backup and the four updates, in the order they were called. */
   let calls: string[];
   let backedUp: boolean;
+  let backup: jasmine.Spy;
 
   function step(_name: string, _result: () => boolean) {
     return jasmine.createSpy(_name).and.callFake(() => {
@@ -1009,6 +1010,7 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
     saveVersion = jasmine.createSpy('saveVersion').and.resolveTo();
     calls = [];
     backedUp = true;
+    backup = step('backup', () => backedUp);
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
@@ -1016,7 +1018,7 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
         {
           provide: UIExportImportHelper,
           useValue: {
-            writeBackupBeforeMigration: step('backup', () => backedUp),
+            writeBackupBeforeMigration: backup,
           },
         },
         {
@@ -1105,6 +1107,7 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
     await uiUpdate.checkUpdate();
 
     expect(calls).toEqual(['backup', 'UPDATE_19']);
+    expect(backup).toHaveBeenCalledOnceWith('UPDATE_19');
   });
 
   it('runs none of them when the backup could not be written, and tries again at the next start', async () => {

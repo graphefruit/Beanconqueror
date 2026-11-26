@@ -13,11 +13,12 @@
 
       <ion-radio-group [(ngModel)]="importChoosenURI">
 
-        @for (file of foundBackupFiles; track file) {
+        @for (entry of foundBackupFiles; track entry.file.uri) {
+          @let file = entry.file;
           <ion-item tappable>
             <ion-radio [value]="file.uri" justify='start' label-placement='end'>
               <ion-label>
-                <div class="field-label">{{ file.name }}</div>
+                <div class="field-label">{{ entry.beforeDataUpdate ? ('BACKUP_BEFORE_DATA_UPDATE' | translate) : file.name }}</div>
                 <p>{{ fileSize(file.size) }} - {{ (file.mtime / 1000) | formatDate:[$safeNavigationMigration(settings?.date_format)]}}</p>
               </ion-label>
             </ion-radio>

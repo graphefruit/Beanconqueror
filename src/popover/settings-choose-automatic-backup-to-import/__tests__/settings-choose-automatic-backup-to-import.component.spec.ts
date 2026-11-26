@@ -43,7 +43,16 @@ describe('Choosing an automatic backup file to import', () => {
     ),
   ];
 
-  async function listedFiles(_internalBackup?: FileInfo): Promise<FileInfo[]> {
+  const beforeDataUpdate = file(
+    'Beanconqueror_pre_migration_UPDATE_16_2026-11-10_10-00-00-000Z.zip',
+    700,
+    Date.UTC(2026, 10, 10, 10),
+  );
+
+  async function listedEntries(
+    _internalBackup?: FileInfo,
+    _beforeImport: FileInfo[] = beforeImport,
+  ) {
     TestBed.configureTestingModule({
       providers: [
         { provide: ModalController, useValue: {} },
@@ -60,7 +69,7 @@ describe('Choosing an automatic backup file to import', () => {
         { provide: UISettingsStorage, useValue: { getSettings: () => ({}) } },
         {
           provide: PreImportBackupService,
-          useValue: { list: () => Promise.resolve(beforeImport) },
+          useValue: { list: () => Promise.resolve(_beforeImport) },
         },
       ],
     });
@@ -71,6 +80,26 @@ describe('Choosing an automatic backup file to import', () => {
     await component.ngOnInit();
     return component.foundBackupFiles;
   }
+
+  async function listedFiles(_internalBackup?: FileInfo): Promise<FileInfo[]> {
+    return (await listedEntries(_internalBackup)).map((_entry) => _entry.file);
+  }
+
+  it('labels the backup written before the data updates instead of showing its name', async () => {
+    const entries = await listedEntries(undefined, [
+      beforeDataUpdate,
+      ...beforeImport,
+    ]);
+
+    expect(
+      entries.map((_entry) => [_entry.file.name, _entry.beforeDataUpdate]),
+    ).toEqual([
+      [beforeImport[1].name, false],
+      [automatic[0].name, false],
+      [beforeImport[0].name, false],
+      [beforeDataUpdate.name, true],
+    ]);
+  });
 
   it('offers the backups saved before an import too, the newest file first', async () => {
     expect(await listedFiles()).toEqual([

@@ -28,7 +28,10 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Settings } from '../../classes/settings/settings';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FormatDatePipe } from '../../pipes/formatDate';
-import { PreImportBackupService } from '../../services/preImportBackup/pre-import-backup.service';
+import {
+  isMigrationBackup,
+  PreImportBackupService,
+} from '../../services/preImportBackup/pre-import-backup.service';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
@@ -38,6 +41,13 @@ export function fileSize(bytes: number): string {
   return megabytes < 0.01
     ? `${Math.ceil(bytes / 1024)}kB`
     : `${+megabytes.toFixed(2)}MB`;
+}
+
+/** A backup file as the list shows it. */
+export interface BackupListEntry {
+  file: FileInfo;
+  /** Written before the data updates, shown with a label instead of its name. */
+  beforeDataUpdate: boolean;
 }
 
 @Component({
@@ -75,7 +85,7 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
 
   public importChoosenURI: string = '';
 
-  public foundBackupFiles: Array<FileInfo> = [];
+  public foundBackupFiles: BackupListEntry[] = [];
   public settings: Settings;
   constructor() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -93,7 +103,12 @@ export class SettingsChooseAutomaticBackupToImportComponent implements OnInit {
     ].sort((a: FileInfo, b: FileInfo) => {
       return b.mtime - a.mtime;
     });
-    this.foundBackupFiles = internalBackup ? [internalBackup, ...files] : files;
+    this.foundBackupFiles = (
+      internalBackup ? [internalBackup, ...files] : files
+    ).map((_file) => ({
+      file: _file,
+      beforeDataUpdate: isMigrationBackup(_file.name),
+    }));
   }
 
   protected readonly fileSize = fileSize;
