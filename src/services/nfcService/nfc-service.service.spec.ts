@@ -1,7 +1,16 @@
+import { TestBed } from '@angular/core/testing';
+
+import { Platform } from '@ionic/angular';
+
 import { Subject } from 'rxjs';
 
 import de from '../../assets/i18n/de.json';
 import en from '../../assets/i18n/en.json';
+import { IntentHandlerService } from '../intentHandler/intent-handler.service';
+import { UIAlert } from '../uiAlert';
+import { UIHelper } from '../uiHelper';
+import { UILog } from '../uiLog';
+import { UIToast } from '../uiToast';
 import { NfcService } from './nfc-service.service';
 
 interface NfcInternals {
@@ -9,6 +18,8 @@ interface NfcInternals {
   __writeInternal(link: string): void;
   listenToNFCAndroid(): void;
   writeNFCData(link: string): void;
+  readNFCTag(): Promise<void>;
+  isNFCEnabled(): boolean;
 }
 
 const SERIAL = [4, 87, 51, 2, 202, 96, 128];
@@ -216,6 +227,149 @@ describe('NfcService', () => {
 
       expect(next).toHaveBeenCalledOnceWith({ tag });
       expect(handleDeepLink).not.toHaveBeenCalled();
+    });
+  });
+  describe('reading a tag', () => {
+    let error: jasmine.Spy;
+    let toast: jasmine.Spy;
+    let tags: Subject<unknown>;
+
+    beforeEach(() => {
+      error = jasmine.createSpy('error');
+      toast = jasmine.createSpy('toast');
+      tags = new Subject<unknown>();
+      Object.assign(service, {
+        nfcEnabled: true,
+        uiLog: { log, error },
+        uiToast: { showInfoToastBottom: toast },
+        androidMessageSubject: tags,
+      });
+    });
+
+    it('explains how to turn NFC on when it is off', async () => {
+      Object.assign(service, { nfcEnabled: false });
+
+      await service.readNFCTag();
+
+      expect(showMessage).toHaveBeenCalledOnceWith(
+        'NFC.PLEASE_ENABLED_NFC_DESCRIPTION',
+        'CARE',
+        'OK',
+        true,
+      );
+      expect(toast).not.toHaveBeenCalled();
+    });
+
+    it('asks on Android to hold a tag and opens the link of the next tag only', async () => {
+      Object.assign(service, {
+        platform: { is: (name: string) => name === 'android' },
+      });
+
+      await service.readNFCTag();
+      expect(toast).toHaveBeenCalledOnceWith(
+        'NFC.SCAN_IN_PROGRESS_PLEASE_HOLD_YOUR_TAG_TO_READER',
+      );
+      tags.next({ tag: { ndefMessage: [uriRecord(TAG_LINK)] } });
+      tags.next({ tag: { ndefMessage: [uriRecord(TAG_LINK)] } });
+
+      expect(handleDeepLink).toHaveBeenCalledOnceWith(TAG_LINK);
+    });
+
+    it('opens the link of the tag scanned on iOS', async () => {
+      Object.assign(globals.NfcPlugin as object, {
+        scanTag: () =>
+          Promise.resolve({ id: SERIAL, ndefMessage: [uriRecord(TAG_LINK)] }),
+      });
+
+      await service.readNFCTag();
+
+      expect(handleDeepLink).toHaveBeenCalledOnceWith(TAG_LINK);
+    });
+
+    it('logs a failed scan on iOS without an alert', async () => {
+      Object.assign(globals.NfcPlugin as object, {
+        scanTag: () => Promise.reject(new Error('Session invalidated')),
+      });
+
+      await service.readNFCTag();
+
+      expect(error).toHaveBeenCalledOnceWith(
+        "We couldn't read NFC-Tag: Session invalidated",
+      );
+      expect(handleDeepLink).not.toHaveBeenCalled();
+      expect(showMessage).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('at app start', () => {
+    let enabled: jasmine.Spy;
+    let addNdefListener: jasmine.Spy;
+
+    function start(platforms: string[]): NfcInternals {
+      TestBed.configureTestingModule({
+        providers: [
+          NfcService,
+          {
+            provide: Platform,
+            useValue: { is: (name: string) => platforms.includes(name) },
+          },
+          {
+            provide: UIHelper,
+            useValue: { isBeanconqurorAppReady: () => Promise.resolve() },
+          },
+          { provide: UIAlert, useValue: { showMessage } },
+          { provide: IntentHandlerService, useValue: { handleDeepLink } },
+          { provide: UIToast, useValue: {} },
+          { provide: UILog, useValue: { log, error: () => {} } },
+        ],
+      });
+      return TestBed.inject(NfcService) as unknown as NfcInternals;
+    }
+
+    beforeEach(() => {
+      enabled = jasmine.createSpy('enabled');
+      addNdefListener = jasmine.createSpy('addNdefListener');
+      Object.assign(globals.NfcPlugin as object, { enabled, addNdefListener });
+      spyOn(document, 'addEventListener');
+    });
+
+    it('listens for tags on Android when NFC is on', async () => {
+      enabled.and.callFake((success: () => void) => success());
+
+      const started = start(['capacitor', 'android']);
+      await new Promise((resolve) => setTimeout(resolve));
+
+      expect(started.isNFCEnabled()).toBeTrue();
+      expect(addNdefListener).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not listen on Android when NFC is off', async () => {
+      enabled.and.callFake((_success: () => void, failure: () => void) =>
+        failure(),
+      );
+
+      const started = start(['capacitor', 'android']);
+      await new Promise((resolve) => setTimeout(resolve));
+
+      expect(started.isNFCEnabled()).toBeFalse();
+      expect(addNdefListener).not.toHaveBeenCalled();
+    });
+
+    it('takes NFC as on for iOS without asking the plugin', async () => {
+      const started = start(['capacitor', 'ios']);
+      await new Promise((resolve) => setTimeout(resolve));
+
+      expect(started.isNFCEnabled()).toBeTrue();
+      expect(enabled).not.toHaveBeenCalled();
+      expect(addNdefListener).not.toHaveBeenCalled();
+    });
+
+    it('leaves NFC off in the browser', async () => {
+      const started = start([]);
+      await new Promise((resolve) => setTimeout(resolve));
+
+      expect(started.isNFCEnabled()).toBeFalse();
+      expect(enabled).not.toHaveBeenCalled();
     });
   });
 });
