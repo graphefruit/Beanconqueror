@@ -6,6 +6,7 @@ import { Keyboard } from '@capacitor/keyboard';
 import { StatusBar } from '@capacitor/status-bar';
 import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
 
+import { AndroidNativeCalls } from '../../../native/android-native-calls-plugin';
 import { THEME_PLUGINS, ThemePlugins } from '../theme-plugins';
 
 // The ThemeService tests replace the token; these check what the app gets.
@@ -17,6 +18,7 @@ describe('THEME_PLUGINS', () => {
       statusBar: StatusBar,
       systemBars: SystemBars,
       edgeToEdge: EdgeToEdge,
+      androidNativeCalls: AndroidNativeCalls,
       keyboard: Keyboard,
     };
 

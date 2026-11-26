@@ -156,6 +156,13 @@ export class ThemeService {
         promises.push(
           this.plugins.edgeToEdge.setStatusBarColor({ color: barColor }),
         );
+        // The edge-to-edge plugin leaves the strip beside a display cutout
+        // uncoloured; it shows what lies behind the web view.
+        promises.push(
+          this.plugins.androidNativeCalls.setBackgroundColor({
+            color: barColor,
+          }),
+        );
       }
 
       // Keyboard
