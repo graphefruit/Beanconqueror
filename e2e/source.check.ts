@@ -247,10 +247,20 @@ describe('src/index.html', () => {
         ([, name, value]) => [name, value.trim()],
       ),
     );
+    // The palette values that change with the mode live as Sass variables.
+    const sass = new Map(
+      [
+        ...read('src/theme/_bq-mode-colours.scss').matchAll(
+          /^\$([\w-]+):\s*([^;]+);/gm,
+        ),
+      ].map(([, name, value]) => [name, value.trim()]),
+    );
     const resolve = (name: string): string | undefined => {
       const value = declared.get(name);
       const reference = value?.match(/^var\((--[\w-]+)\)$/)?.[1];
-      return reference ? resolve(reference) : value?.toLowerCase();
+      const variable = value?.match(/^#\{mode\.\$([\w-]+)\}$/)?.[1];
+      if (reference) return resolve(reference);
+      return (variable ? sass.get(variable) : value)?.toLowerCase();
     };
     const cream = '#ead9c4';
     const espresso = '#211914';

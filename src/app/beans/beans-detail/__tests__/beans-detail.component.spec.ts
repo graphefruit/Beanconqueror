@@ -218,13 +218,15 @@ describe('BeansDetailComponent', () => {
         ?.querySelector('[role="slider"]')
         ?.getAttribute('aria-label'),
     ).toBe('Rating');
-    // The stars are set a moment after the details are shown; their name
-    // follows with the next check of the view.
+    // The stars are set a moment after the details are shown.
     const stars = fixture.debugElement.query(
       (node) => node.name === 'ngx-stars',
     ).componentInstance as NgxStarsComponent;
     await until(() => stars.rating === 5);
-    expect(stars.getAriaLabel()).toBe('Rating: 5 of 5 stars');
+    await fixture.whenStable();
+    expect(
+      panel.querySelector('ngx-stars [role="img"]').getAttribute('aria-label'),
+    ).toBe('Rating: 5 of 5 stars');
     expect(
       [...panel.querySelectorAll('ion-checkbox')].map((checkbox) => [
         readable(checkbox),

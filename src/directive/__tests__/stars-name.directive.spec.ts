@@ -1,8 +1,12 @@
-import { Component, signal } from '@angular/core';
+import {
+  Component,
+  provideZonelessChangeDetection,
+  signal,
+} from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { NgxStarsModule } from 'ngx-stars';
+import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 
 import { StarsNameDirective } from '../stars-name.directive';
 
@@ -34,6 +38,7 @@ describe('StarsNameDirective', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HostComponent, TranslateModule.forRoot()],
+      providers: [provideZonelessChangeDetection()],
     });
     translate = TestBed.inject(TranslateService);
     translate.setTranslation('de', {
@@ -61,6 +66,18 @@ describe('StarsNameDirective', () => {
 
   it('names stars that show something else than the rating after it', () => {
     expect(nameOf('roast')).toBe('Röstgrad: 2 von 5 Sternen');
+  });
+
+  // Without zones nothing else checks the stars again; ngx-stars takes its
+  // initial stars only once, so the pages set the stored rating from code.
+  it('follows a rating set from code', async () => {
+    const stars = fixture.debugElement.query(
+      (node) => node.name === 'ngx-stars',
+    ).componentInstance as NgxStarsComponent;
+    stars.setRating(4);
+    await fixture.whenStable();
+
+    expect(nameOf('rating')).toBe('Bewertung: 4 von 5 Sternen');
   });
 
   it('follows a change of the language', () => {

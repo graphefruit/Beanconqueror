@@ -1,6 +1,5 @@
 import { InjectionToken } from '@angular/core';
 
-import { DarkMode } from '@aparajita/capacitor-dark-mode';
 import { Capacitor, SystemBars } from '@capacitor/core';
 import { Keyboard } from '@capacitor/keyboard';
 import { StatusBar } from '@capacitor/status-bar';
@@ -12,16 +11,14 @@ import {
 } from '../../native/android-native-calls-plugin';
 
 /**
- * Native plugins the theme service talks to. Capacitor plugin proxies cannot
+ * Native plugins and browser APIs the theme service talks to. Capacitor plugin proxies cannot
  * be spied on, so the service receives them through this token and unit tests
  * replace them at this boundary.
  */
 export interface ThemePlugins {
   getPlatform: () => string;
-  darkMode: Pick<
-    typeof DarkMode,
-    'init' | 'isDarkMode' | 'addAppearanceListener'
-  >;
+  /** The system appearance; native web views follow it like browsers do. */
+  colorScheme: Pick<MediaQueryList, 'matches' | 'addEventListener'>;
   statusBar: Pick<typeof StatusBar, 'setStyle' | 'setBackgroundColor'>;
   systemBars: Pick<typeof SystemBars, 'setStyle'>;
   edgeToEdge: Pick<
@@ -36,7 +33,7 @@ export const THEME_PLUGINS = new InjectionToken<ThemePlugins>('THEME_PLUGINS', {
   providedIn: 'root',
   factory: () => ({
     getPlatform: () => Capacitor.getPlatform(),
-    darkMode: DarkMode,
+    colorScheme: window.matchMedia('(prefers-color-scheme: dark)'),
     statusBar: StatusBar,
     systemBars: SystemBars,
     edgeToEdge: EdgeToEdge,
