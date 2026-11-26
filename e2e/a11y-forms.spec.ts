@@ -10,9 +10,10 @@ import { startsWith, text, type Language } from './support/texts';
  * Form controls, charts and the remaining roles for screen reader and
  * keyboard users, in English and German: sliders, unit choices and date
  * fields say what they set, chips and choice cards are buttons, required
- * fields say why saving failed, long explanations are descriptions, charts
- * have a text and sorting works without dragging. The steps of the welcome
- * dialog are checked by its unit tests.
+ * fields say why saving failed, charts have a text and sorting works without
+ * dragging. The steps of the welcome dialog and the checkboxes of the settings,
+ * named by their title and described by their explanation, are checked by
+ * unit tests.
  */
 
 type Texts = (key: string, params?: Record<string, string>) => string;
@@ -380,26 +381,6 @@ for (const language of ['en', 'de'] as const) {
           page.getByRole('textbox', { name: startsWith(t('NAME')) }),
         ).last(),
       ).toHaveValue('18 g basket');
-    });
-
-    test('checkboxes are named by their title and described by their explanation', async ({
-      page,
-    }) => {
-      await start(page, language);
-      await show(page, '/home/profile/settings');
-      const checkbox = page.locator('settings').getByRole('checkbox', {
-        name: t('PAGE_SETTINGS_TRACK_BREW_COORDINATES'),
-        exact: true,
-      });
-      await expect(checkbox).toHaveAccessibleDescription(
-        t('PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION'),
-      );
-      for (const each of await visible(
-        page.locator('settings').getByRole('checkbox'),
-      ).all()) {
-        const name = (await each.getAttribute('aria-label')) ?? '';
-        expect(name.length, name).toBeLessThanOrEqual(80);
-      }
     });
 
     test('sorting works by keyboard and says the new position', async ({

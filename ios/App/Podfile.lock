@@ -1,6 +1,8 @@
 PODS:
   - AparajitaCapacitorDarkMode (6.0.0):
     - Capacitor
+  - BeanconquerorTextRecognition (1.0.0):
+    - Capacitor
   - Capacitor (8.6.2):
     - CapacitorCordova
   - CapacitorApp (8.1.2):
@@ -50,69 +52,17 @@ PODS:
     - MediaPipeTasksGenAIC
   - CordovaPlugins (8.6.2):
     - CapacitorCordova
-  - GoogleDataTransport (10.1.1):
-    - nanopb (~> 3.30910.0)
-    - PromisesObjC (~> 2.4)
-  - GoogleMLKit/MLKitCore (9.0.0):
-    - MLKitCommon (~> 14.0.0)
-  - GoogleMLKit/TextRecognition (9.0.0):
-    - GoogleMLKit/MLKitCore
-    - MLKitTextRecognition (~> 7.0.0)
-  - GoogleToolboxForMac/Defines (4.2.1)
-  - GoogleToolboxForMac/Logger (4.2.1):
-    - GoogleToolboxForMac/Defines (= 4.2.1)
-  - "GoogleToolboxForMac/NSData+zlib (4.2.1)":
-    - GoogleToolboxForMac/Defines (= 4.2.1)
-  - GoogleUtilities/Environment (8.1.5):
-    - GoogleUtilities/Privacy
-  - GoogleUtilities/Logger (8.1.5):
-    - GoogleUtilities/Environment
-    - GoogleUtilities/Privacy
-  - GoogleUtilities/Privacy (8.1.5)
-  - GoogleUtilities/UserDefaults (8.1.5):
-    - GoogleUtilities/Logger
-    - GoogleUtilities/Privacy
-  - GTMSessionFetcher/Core (3.5.0)
   - IONCameraLib (2.0.0)
   - IONFilesystemLib (2.0.1)
   - IONGeolocationLib (3.0.0)
   - MediaPipeTasksGenAI (0.10.36):
     - MediaPipeTasksGenAIC (= 0.10.36)
   - MediaPipeTasksGenAIC (0.10.36)
-  - MLImage (1.0.0-beta8)
-  - MLKitCommon (14.0.0):
-    - GoogleDataTransport (~> 10.0)
-    - GoogleToolboxForMac/Logger (< 5.0, >= 4.2.1)
-    - "GoogleToolboxForMac/NSData+zlib (< 5.0, >= 4.2.1)"
-    - GoogleUtilities/Logger (~> 8.0)
-    - GoogleUtilities/UserDefaults (~> 8.0)
-    - GTMSessionFetcher/Core (< 4.0, >= 3.3.2)
-  - MLKitTextRecognition (7.0.0):
-    - MLKitCommon (~> 14.0)
-    - MLKitTextRecognitionCommon (= 6.0.0)
-    - MLKitVision (~> 10.0)
-  - MLKitTextRecognitionCommon (6.0.0):
-    - MLKitCommon (~> 14.0)
-    - MLKitVision (~> 10.0)
-  - MLKitVision (10.0.0):
-    - GoogleToolboxForMac/Logger (< 5.0, >= 4.2.1)
-    - "GoogleToolboxForMac/NSData+zlib (< 5.0, >= 4.2.1)"
-    - GTMSessionFetcher/Core (< 4.0, >= 3.3.2)
-    - MLImage (= 1.0.0-beta8)
-    - MLKitCommon (~> 14.0)
-  - nanopb (3.30910.0):
-    - nanopb/decode (= 3.30910.0)
-    - nanopb/encode (= 3.30910.0)
-  - nanopb/decode (3.30910.0)
-  - nanopb/encode (3.30910.0)
   - OSBarcodeLib (3.0.1)
-  - PantristCapacitorPluginMlKitTextRecognition (8.1.1):
-    - Capacitor
-    - GoogleMLKit/TextRecognition (< 10.0.0, >= 8.0.0)
-  - PromisesObjC (2.4.1)
 
 DEPENDENCIES:
   - "AparajitaCapacitorDarkMode (from `../../node_modules/.pnpm/@aparajita+capacitor-dark-mode@6.0.0/node_modules/@aparajita/capacitor-dark-mode`)"
+  - BeanconquerorTextRecognition (from `../../capacitor-plugins/text-recognition`)
   - "Capacitor (from `../../node_modules/.pnpm/@capacitor+ios@8.6.2_@capacitor+core@8.6.2/node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/.pnpm/@capacitor+app@8.1.2_@capacitor+core@8.6.2/node_modules/@capacitor/app`)"
   - "CapacitorAppLauncher (from `../../node_modules/.pnpm/@capacitor+app-launcher@8.0.1_@capacitor+core@8.6.2/node_modules/@capacitor/app-launcher`)"
@@ -135,32 +85,21 @@ DEPENDENCIES:
   - "CapgoCameraPreview (from `../../node_modules/.pnpm/@capgo+camera-preview@8.15.4_@capacitor+core@8.6.2/node_modules/@capgo/camera-preview`)"
   - "CapgoCapacitorLlm (from `../../node_modules/.pnpm/@capgo+capacitor-llm@8.0.19_@capacitor+core@8.6.2_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
-  - "PantristCapacitorPluginMlKitTextRecognition (from `../../node_modules/.pnpm/@pantrist+capacitor-plugin-ml-kit-text-recognition@8.1.1_@capacitor+core@8.6.2/node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition`)"
 
 SPEC REPOS:
   trunk:
-    - GoogleDataTransport
-    - GoogleMLKit
-    - GoogleToolboxForMac
-    - GoogleUtilities
-    - GTMSessionFetcher
     - IONCameraLib
     - IONFilesystemLib
     - IONGeolocationLib
     - MediaPipeTasksGenAI
     - MediaPipeTasksGenAIC
-    - MLImage
-    - MLKitCommon
-    - MLKitTextRecognition
-    - MLKitTextRecognitionCommon
-    - MLKitVision
-    - nanopb
     - OSBarcodeLib
-    - PromisesObjC
 
 EXTERNAL SOURCES:
   AparajitaCapacitorDarkMode:
     :path: "../../node_modules/.pnpm/@aparajita+capacitor-dark-mode@6.0.0/node_modules/@aparajita/capacitor-dark-mode"
+  BeanconquerorTextRecognition:
+    :path: "../../capacitor-plugins/text-recognition"
   Capacitor:
     :path: "../../node_modules/.pnpm/@capacitor+ios@8.6.2_@capacitor+core@8.6.2/node_modules/@capacitor/ios"
   CapacitorApp:
@@ -205,11 +144,10 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/.pnpm/@capgo+capacitor-llm@8.0.19_@capacitor+core@8.6.2_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm"
   CordovaPlugins:
     :path: "../capacitor-cordova-ios-plugins"
-  PantristCapacitorPluginMlKitTextRecognition:
-    :path: "../../node_modules/.pnpm/@pantrist+capacitor-plugin-ml-kit-text-recognition@8.1.1_@capacitor+core@8.6.2/node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition"
 
 SPEC CHECKSUMS:
   AparajitaCapacitorDarkMode: d5f43e08965abdddef0d03deebf11ab3e8bfe75b
+  BeanconquerorTextRecognition: 6d345c3820f6904888a70c979dcf144df314fb62
   Capacitor: 0a406b8a50b1ddcfe49fbc5795515918d5294708
   CapacitorApp: 7b7e43debe505bc61beedb83796aa1368c86078b
   CapacitorAppLauncher: 43949ccc5aaa5139a1ebe27a98c0a4d76c883fa7
@@ -232,26 +170,13 @@ SPEC CHECKSUMS:
   CapgoCameraPreview: a6b7a282f60a259ef4873bb9182b1d03189af171
   CapgoCapacitorLlm: 49597eace2908bfed5a2624d1551e73ad1a4f3d4
   CordovaPlugins: 7dccbc1c4b2760d41a7d0f0dec0ec72eb4779e5b
-  GoogleDataTransport: a24e58982ab3ba2f64d79613e027fe7f57e88539
-  GoogleMLKit: b1eee21a41c57704fe72483b15c85cb2c0cd7444
-  GoogleToolboxForMac: d1a2cbf009c453f4d6ded37c105e2f67a32206d8
-  GoogleUtilities: 7dc09b3fa9ecb5c2298b952313d14628b61b9da3
-  GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   IONCameraLib: 729cae576e1a952602ce750a9790b6dc7d7e2e95
   IONFilesystemLib: 306469e4c563f61de82d7bca2bbfed9e64d1b2d2
   IONGeolocationLib: a125d4f91ea353652026e5da6e5bee0414a57d37
   MediaPipeTasksGenAI: 2d0239817c3b71ffb73bd2a8d47441c4696a4a27
   MediaPipeTasksGenAIC: 5856a044981b31d62be255dcc145774c6d667cef
-  MLImage: 0de5c6c2bf9e93b80ef752e2797f0836f03b58c0
-  MLKitCommon: 47d47b50a031d00db62f1b0efe5a1d8b09a3b2e6
-  MLKitTextRecognition: c0ad24510481dfc8893ad15dfcb8a5f05ed9e826
-  MLKitTextRecognitionCommon: 234ceb1cfdfb5fceb4fd664943046609a2961cc2
-  MLKitVision: 39a5a812db83c4a0794445088e567f3631c11961
-  nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   OSBarcodeLib: 49fdce5186b196d7782f264e28b080c8e81c95d6
-  PantristCapacitorPluginMlKitTextRecognition: 22330573cd47ebbe1370bab03cfde514cedb9f4a
-  PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
 
-PODFILE CHECKSUM: 2769d2c552c13d3115030a65f82010fbe6a4d61d
+PODFILE CHECKSUM: 9a348ab120830ca36e732ebf2e590a4c9658c034
 
 COCOAPODS: 1.16.2

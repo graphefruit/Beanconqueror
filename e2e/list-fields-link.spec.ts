@@ -8,7 +8,8 @@ import { mainTabName } from './support/texts';
  * The gear at the top right of the Beans and Brews tabs opens the page that
  * chooses which fields a bean or a brew records, the same page the profile
  * lists. The page opens in the list's tab, so the tab bar stays and back
- * returns to the list.
+ * returns to the list. Its names in English and German are checked in
+ * src/app/__tests__/list-buttons.spec.ts.
  */
 
 const LISTS = [
@@ -64,20 +65,3 @@ for (const list of LISTS) {
     await expect(tab(page, list.tab)).toHaveAttribute('aria-selected', 'true');
   });
 }
-
-test('the gears are named in the app language', async ({ page }) => {
-  await page.goto('/');
-  await completeFirstRun(page);
-  await tab(page, 'Profile').click();
-  await page.getByRole('link', { name: /^Settings/ }).click();
-  await page.getByRole('button', { name: /^Language Settings/ }).press('Enter');
-  await page.getByRole('radio', { name: 'German' }).click();
-  await page.getByRole('button', { name: 'Choose' }).click();
-  await expect(page.locator('html')).toHaveAttribute('lang', 'de');
-  await page.goBack();
-
-  await tab(page, 'Bohnen').click();
-  await expect(gear(page, 'Bohnenparameter')).toHaveCount(1);
-  await tab(page, 'Brühungen').click();
-  await expect(gear(page, 'Bezugsparameter')).toHaveCount(1);
-});

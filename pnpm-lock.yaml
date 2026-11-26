@@ -53,6 +53,9 @@ importers:
       '@awesome-cordova-plugins/core':
         specifier: ^9.7.0
         version: 9.7.0(rxjs@7.8.2)
+      '@beanconqueror/text-recognition':
+        specifier: link:capacitor-plugins/text-recognition
+        version: link:capacitor-plugins/text-recognition
       '@bufbuild/protobuf':
         specifier: ^2.17.0
         version: 2.17.0
@@ -152,9 +155,6 @@ importers:
       '@ngx-translate/http-loader':
         specifier: ^17.0.0
         version: 17.0.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))
-      '@pantrist/capacitor-plugin-ml-kit-text-recognition':
-        specifier: ^8.1.1
-        version: 8.1.1(@capacitor/core@8.6.2)
       '@tanstack/angular-virtual':
         specifier: 6.1.12
         version: 6.1.12(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))
@@ -1911,11 +1911,6 @@ packages:
 
   '@oxc-project/types@0.158.0':
     resolution: {integrity: sha512-xZ66qA4WmLbTLlxH3mqMd8f9UKbaOzOT0ATwFf4DH/14pMgpUrtqtjyYzOQmgfl2a0iRAAMbQ9G1th/67jRzGw==}
-
-  '@pantrist/capacitor-plugin-ml-kit-text-recognition@8.1.1':
-    resolution: {integrity: sha512-6Nkqj3YbGnR1KByf/PVo6IQFFJQCCaO2yVCGDA0Fs4ovYuMH6eClgbemeOJ6hdHsGPC19t9hOZxqZK+Ehr7dGg==}
-    peerDependencies:
-      '@capacitor/core': '>=8.0.0'
 
   '@paralleldrive/cuid2@2.3.1':
     resolution: {integrity: sha512-XO7cAxhnTZl0Yggq6jOgjiOHhbgcO4NqFqwSmQpjK3b6TEE6Uj/jfSk6wzYyemh3+I0sHirKSetjQwn5cZktFw==}
@@ -6900,10 +6895,6 @@ snapshots:
   '@oxc-project/types@0.157.0': {}
 
   '@oxc-project/types@0.158.0': {}
-
-  '@pantrist/capacitor-plugin-ml-kit-text-recognition@8.1.1(@capacitor/core@8.6.2)':
-    dependencies:
-      '@capacitor/core': 8.6.2
 
   '@paralleldrive/cuid2@2.3.1':
     dependencies:

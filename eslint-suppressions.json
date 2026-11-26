@@ -3181,11 +3181,6 @@
       "count": 3
     }
   },
-  "src/services/aiBeanImport/__tests__/image-rotation.spec.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    }
-  },
   "src/services/aiBeanImport/__tests__/text-normalization.service.spec.ts": {
     "@typescript-eslint/no-unnecessary-type-assertion": {
       "count": 2

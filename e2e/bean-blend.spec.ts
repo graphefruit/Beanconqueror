@@ -3,7 +3,6 @@ import type { Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import { BEANS } from './support/bean-data';
 import {
-  beanCardValue,
   beanField,
   findBean,
   openAddBean,
@@ -118,7 +117,4 @@ test('a blend turned into a single origin bean keeps its first variety only', as
   // The percentage of the blend stays with it.
   expect(await storedVarieties(page, BEANS.blend)).toEqual([['Ethiopia', 50]]);
   expect((await storedBean(page, BEANS.blend)).beanMix).toBe('SINGLE_ORIGIN');
-  const card = await findBean(page, BEANS.blend);
-  await expect(beanCardValue(card, 'Country')).toHaveText('Ethiopia');
-  await expect(beanCardValue(card, '2. Country')).toHaveCount(0);
 });

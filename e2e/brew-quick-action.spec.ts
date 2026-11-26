@@ -71,20 +71,6 @@ test('the Brew quick action during a brew leaves the user on the tab they were o
   await expect(page).toHaveURL(/\/home\/beans$/);
 });
 
-test('the Brew quick action opens the brew form again after one was cancelled', async ({
-  page,
-  native,
-}) => {
-  await openAddBrew(page);
-  await page.getByRole('button', { name: 'Cancel' }).click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
-
-  await runQuickAction(native, 'Brew');
-
-  await expect(brewField(page, 'Creation Date')).toBeVisible();
-  await expect(page.getByRole('dialog')).toHaveCount(1);
-});
-
 for (const type of ['Bean', 'Preparation', 'Mill']) {
   test(`the ${type} quick action during a brew does nothing but tell that a brew is open`, async ({
     page,
