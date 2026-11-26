@@ -95,7 +95,10 @@ export class BrewShareComponent implements OnInit {
   protected readonly graph = signal<string | undefined>(undefined);
   protected readonly graphFailed = signal(false);
   // Until the graph is in, a picture shared would silently lack it.
-  protected readonly busy = signal(true);
+  private readonly drawing = signal(true);
+  private readonly sharing = signal(false);
+  // Kept apart, so the end of one does not free the button while the other runs.
+  protected readonly busy = computed(() => this.drawing() || this.sharing());
 
   protected readonly card = computed(() =>
     brewShareCard(this.source(this.brew())),
@@ -146,7 +149,7 @@ export class BrewShareComponent implements OnInit {
       return;
     }
     this.graphMode = mode;
-    this.busy.set(true);
+    this.drawing.set(true);
     const latest = () => mode === this.graphMode;
     try {
       const image = await this.graphHelper.brewGraphImage(
@@ -168,7 +171,7 @@ export class BrewShareComponent implements OnInit {
       }
     } finally {
       if (latest()) {
-        this.busy.set(false);
+        this.drawing.set(false);
       }
     }
   }
@@ -177,7 +180,7 @@ export class BrewShareComponent implements OnInit {
     if (this.busy()) {
       return;
     }
-    this.busy.set(true);
+    this.sharing.set(true);
     try {
       const shared = await this.shareService.shareElementAsImage(
         this.picture().nativeElement,
@@ -192,7 +195,7 @@ export class BrewShareComponent implements OnInit {
         );
       }
     } finally {
-      this.busy.set(false);
+      this.sharing.set(false);
     }
   }
 

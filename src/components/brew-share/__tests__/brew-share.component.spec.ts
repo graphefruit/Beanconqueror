@@ -268,6 +268,42 @@ describe('BrewShareComponent', () => {
     expect(graphHelper.brewGraphImage).toHaveBeenCalledTimes(3);
   });
 
+  it('keeps sharing locked while either the share or a new graph still runs', async () => {
+    const pending: Array<(image: string) => void> = [];
+    graphHelper.brewGraphImage.and.callFake(
+      () => new Promise((resolve) => pending.push(resolve)),
+    );
+    let shared: (done: boolean) => void;
+    shareService.shareElementAsImage.and.returnValue(
+      new Promise((resolve) => (shared = resolve)),
+    );
+    const brew = makeBrew();
+    brew.flow_profile = 'brews/1_flow_profile.json';
+    fixture = TestBed.createComponent(BrewShareComponent);
+    fixture.componentRef.setInput('brew', brew);
+    fixture.detectChanges();
+    const component = fixture.componentInstance as any;
+    const radios = (
+      fixture.nativeElement as HTMLElement
+    ).querySelectorAll<HTMLInputElement>('fieldset input[type="radio"]');
+    pending.shift()(GRAPH);
+    await fixture.whenStable();
+
+    const sharing = component.share();
+    radios[2].click(); // espresso: dark, drawn while the share runs
+    pending.shift()('data:image/png;base64,DARK');
+    await fixture.whenStable();
+    expect(component.busy()).withContext('share still runs').toBe(true);
+
+    radios[0].click(); // caramel: light again, drawn after the share ends
+    shared(true);
+    await sharing;
+    expect(component.busy()).withContext('graph still drawn').toBe(true);
+    pending.shift()(GRAPH);
+    await fixture.whenStable();
+    expect(component.busy()).toBe(false);
+  });
+
   it('shows the marks of the brew card and names them', async () => {
     const brew = makeBrew();
     brew.best_brew = true;
