@@ -46,7 +46,9 @@ describe('buildWidgetSnapshot', () => {
     );
   });
 
-  it('takes a brew dated later today into the counts and as the last brew', () => {
+  // A brew dated ahead still belongs to its day, but the widgets show the
+  // last brew as "x ago", so it cannot be the last one.
+  it('counts a brew dated later today but takes the newest past one as the last brew', () => {
     const later = brewAt('2026-11-18 23:00');
     const snapshot = buildWidgetSnapshot(
       [brewAt('2026-11-18 08:00'), later],
@@ -56,8 +58,20 @@ describe('buildWidgetSnapshot', () => {
 
     expect(snapshot.brewsToday).toBe(2);
     expect(snapshot.lastBrewAt).toBe(
-      moment('2026-11-18 23:00', 'YYYY-MM-DD HH:mm').unix(),
+      moment('2026-11-18 08:00', 'YYYY-MM-DD HH:mm').unix(),
     );
+  });
+
+  it('takes a brew at this very moment as the last brew', () => {
+    const snapshot = buildWidgetSnapshot([brewAt('2026-11-18 10:30')], [], NOW);
+
+    expect(snapshot.lastBrewAt).toBe(Math.floor(NOW / 1000));
+  });
+
+  it('has no last brew when every brew is dated ahead', () => {
+    const snapshot = buildWidgetSnapshot([brewAt('2026-11-19 08:00')], [], NOW);
+
+    expect(snapshot.lastBrewAt).toBeNull();
   });
 
   it('skips stored brews without a usable time', () => {

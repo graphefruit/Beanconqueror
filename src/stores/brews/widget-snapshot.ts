@@ -19,6 +19,7 @@ export interface WidgetSnapshot {
   readonly weekEndsAt: number;
   /** Beans neither archived nor frozen, as in the "open" list. */
   readonly openBeans: number;
+  /** The newest brew up to the time of the snapshot. */
   readonly lastBrewAt: number | null;
 }
 
@@ -39,6 +40,7 @@ export function buildWidgetSnapshot(
   const weekEnd = week.add(1, 'week').unix();
   let brewsToday = 0;
   let brewsThisWeek = 0;
+  const nowSeconds = Math.floor(now / 1000);
   let lastBrewAt: number | null = null;
   for (const entry of storedBrews) {
     const config = field(entry as Record<string, unknown>, 'config', null) as {
@@ -54,7 +56,9 @@ export function buildWidgetSnapshot(
     if (at >= weekStart && at < weekEnd) {
       brewsThisWeek++;
     }
-    if (lastBrewAt === null || at > lastBrewAt) {
+    // The widgets show the last brew as "x ago", which a brew dated ahead
+    // cannot be.
+    if (at <= nowSeconds && (lastBrewAt === null || at > lastBrewAt)) {
       lastBrewAt = at;
     }
   }
