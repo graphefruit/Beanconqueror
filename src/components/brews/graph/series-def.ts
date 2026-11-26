@@ -58,7 +58,11 @@ interface FixedSeriesSpec {
   setting?: keyof IBrewGraphs;
 }
 
-/** Names, units and axes as GraphHelperService.fillTraces gives them. */
+/**
+ * Names, units and axes as GraphHelperService.fillTraces gives them; the
+ * second scale's series take the names of their chips, so they can be told
+ * apart from the first scale's.
+ */
 const FIXED_SERIES: readonly FixedSeriesSpec[] = [
   {
     id: 'weight',
@@ -69,7 +73,7 @@ const FIXED_SERIES: readonly FixedSeriesSpec[] = [
   },
   {
     id: 'weightSecond',
-    labelKey: 'BREW_FLOW_WEIGHT',
+    labelKey: 'BREW_FLOW_WEIGHT_SECOND',
     unit: 'g',
     axisId: 'weight',
     setting: 'weightSecond',
@@ -90,7 +94,7 @@ const FIXED_SERIES: readonly FixedSeriesSpec[] = [
   },
   {
     id: 'realtimeFlowSecond',
-    labelKey: 'BREW_FLOW_WEIGHT_REALTIME',
+    labelKey: 'BREW_FLOW_WEIGHT_REALTIME_SECOND',
     unit: 'g/s',
     axisId: 'flow',
     setting: 'realtime_flowSecond',

@@ -1,29 +1,17 @@
-import { DecimalPipe } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  HostListener,
   inject,
-  Input,
+  input,
   OnInit,
-  ViewChild,
+  signal,
 } from '@angular/core';
 
 import {
-  IonBadge,
   IonButton,
-  IonChip,
-  IonCol,
   IonContent,
-  IonFooter,
-  IonGrid,
-  IonHeader,
   IonIcon,
-  IonItem,
-  IonLabel,
-  IonRange,
-  IonRow,
   IonSpinner,
   ModalController,
   Platform,
@@ -31,480 +19,157 @@ import {
 import { addIcons } from 'ionicons';
 import { closeOutline } from 'ionicons/icons';
 
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
-import { Brew } from '../../../../classes/brew/brew';
-import { BrewFlow } from '../../../../classes/brew/brewFlow';
-import { Graph } from '../../../../classes/graph/graph';
-import { Settings } from '../../../../classes/settings/settings';
+import type { BrewFlow } from '../../../../classes/brew/brewFlow';
+import { BrewGraphViewComponent } from '../../../../components/brews/graph/brew-graph-view/brew-graph-view.component';
 import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
-import { ChipButtonDirective } from '../../../../directive/chip-button.directive';
-import { RangeNameDirective } from '../../../../directive/range-name.directive';
 import { BREW_GRAPH_TYPE } from '../../../../enums/brews/brewGraphType';
 import { REFERENCE_GRAPH_TYPE } from '../../../../enums/brews/referenceGraphType';
-import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
-import { IBrew } from '../../../../interfaces/brew/iBrew';
-import { IGraph } from '../../../../interfaces/graph/iGraph';
-import { AnnotationGraphHelperService } from '../../../../services/annotationGraphHelper/annotation-graph-helper.service';
-import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
-import { drawWhenPlotlyLoaded } from '../../../../services/graphHelper/load-plotly';
-import { UIAlert } from '../../../../services/uiAlert';
+import type { IBrew } from '../../../../interfaces/brew/iBrew';
+import type { IReferenceGraph } from '../../../../interfaces/brew/iReferenceGraph';
+import type { IGraph } from '../../../../interfaces/graph/iGraph';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIBrewStorage } from '../../../../services/uiBrewStorage';
 import { UIFileHelper } from '../../../../services/uiFileHelper';
 import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
-import { UIHelper } from '../../../../services/uiHelper';
-import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
+import { UILog } from '../../../../services/uiLog';
 
-declare var Plotly;
-
+/**
+ * The large graph of a stored graph, of a brew with its reference brew, or of
+ * flow data not stored yet. A missing or broken file shows a hint.
+ */
 @Component({
   selector: 'app-graph-detail',
   templateUrl: './graph-detail.component.html',
   styleUrls: ['./graph-detail.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    DecimalPipe,
+    NgTemplateOutlet,
     TranslatePipe,
-    IonHeader,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonChip,
-    ChipButtonDirective,
     IonButton,
-    IonIcon,
     IonContent,
+    IonIcon,
     IonSpinner,
-    IonFooter,
-    IonItem,
-    IonLabel,
-    IonBadge,
-    IonRange,
-    RangeNameDirective,
+    BrewGraphViewComponent,
   ],
 })
 export class GraphDetailComponent implements OnInit {
-  private readonly translate = inject(TranslateService);
   private readonly uiAnalytics = inject(UIAnalytics);
-  private readonly uiHelper = inject(UIHelper);
   private readonly platform = inject(Platform);
   private readonly uiFileHelper = inject(UIFileHelper);
-  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly uiLog = inject(UILog);
   private readonly modalController = inject(ModalController);
-  private readonly graphHelper = inject(GraphHelperService);
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiGraphStorage = inject(UIGraphStorage);
-  private readonly uiAlert = inject(UIAlert);
-
-  private readonly annotationGraphHelper = inject(AnnotationGraphHelperService);
 
   public static COMPONENT_ID = 'graph-detail';
-  public flow_profile_raw: BrewFlow = new BrewFlow();
 
-  public settings: Settings;
+  public readonly graph = input<IGraph>();
+  public readonly brew = input<IBrew>();
+  public readonly flowProfileData = input<BrewFlow>();
 
-  public traces: any = {};
-  public traceReferences: any = {};
-  public lastChartLayout: any = undefined;
-  public flowProfileLoading: boolean = true;
-
-  public maxSliderTime: number = 0;
-  public sliderValue: number = 0;
-  public sliderValueString: string = '0.0s';
-  public minTimeMs: number = 0;
-  public maxTimeMs: number = 0;
-  public chartData: any[] = [];
-
-  public reference_profile_raw: BrewFlow = new BrewFlow();
-
-  @ViewChild('canvaContainer', { read: ElementRef, static: true })
-  public canvaContainer: ElementRef;
-  @ViewChild('profileDiv', { read: ElementRef, static: true })
-  public profileDiv: ElementRef;
-
-  @Input() private graph: IGraph;
-  @Input() private brew: IBrew;
-
-  @Input() private flowProfileData: any;
+  protected readonly loading = signal(true);
+  protected readonly flow = signal<BrewFlow | null>(null);
+  protected readonly reference = signal<BrewFlow | null>(null);
+  protected readonly referenceMissing = signal(false);
 
   constructor() {
     addIcons({ closeOutline });
   }
 
-  public ngOnInit() {}
-
-  public async ionViewWillEnter() {
-    this.settings = this.uiSettingsStorage.getSettings();
-
+  public ngOnInit(): void {
     this.uiAnalytics.trackEvent(
       GRAPH_TRACKING.TITLE,
       GRAPH_TRACKING.ACTIONS.DETAIL,
     );
-    if (this.graph) {
-      await this.readFlowProfile(this.graph.flow_profile);
-    } else if (this.brew) {
-      await this.readFlowProfile(this.brew.flow_profile);
-      await this.readReferenceFlowProfile(this.brew);
-    } else {
-      this.flow_profile_raw = this.uiHelper.cloneData(this.flowProfileData);
-    }
-  }
-
-  public async ionViewDidEnter() {
-    setTimeout(() => {
-      this.initializeFlowChart();
-      setTimeout(() => {
-        // After the chips are not visible actually, we need to relayout, when we're in portrait format, else we get a scrolling bar, because the chips are higher
-        Plotly.relayout(this.profileDiv.nativeElement, this.getChartLayout());
-      }, 300);
-    }, 50);
-  }
-
-  public toggleChartLines(_type: string) {
-    if (_type === 'weight') {
-      this.traces.weightTrace.visible = !this.traces.weightTrace.visible;
-      if (this.traceReferences.weightTrace) {
-        this.traceReferences.weightTrace.visible =
-          !this.traceReferences.weightTrace.visible;
-      }
-    } else if (_type === 'calc_flow') {
-      this.traces.flowPerSecondTrace.visible =
-        !this.traces.flowPerSecondTrace.visible;
-      if (this.traceReferences.flowPerSecondTrace) {
-        this.traceReferences.flowPerSecondTrace.visible =
-          !this.traceReferences.flowPerSecondTrace.visible;
-      }
-    } else if (_type === 'realtime_flow') {
-      this.traces.realtimeFlowTrace.visible =
-        !this.traces.realtimeFlowTrace.visible;
-      if (this.traceReferences.realtimeFlowTrace) {
-        this.traceReferences.realtimeFlowTrace.visible =
-          !this.traceReferences.realtimeFlowTrace.visible;
-      }
-    } else if (_type === 'pressure') {
-      this.traces.pressureTrace.visible = !this.traces.pressureTrace.visible;
-      if (this.traceReferences.pressureTrace) {
-        this.traceReferences.pressureTrace.visible =
-          !this.traceReferences.pressureTrace.visible;
-      }
-    } else if (_type === 'temperature') {
-      this.traces.temperatureTrace.visible =
-        !this.traces.temperatureTrace.visible;
-      if (this.traceReferences.temperatureTrace) {
-        this.traceReferences.temperatureTrace.visible =
-          !this.traceReferences.temperatureTrace.visible;
-      }
-    } else if (_type === 'weightSecond') {
-      this.traces.weightTraceSecond.visible =
-        !this.traces.weightTraceSecond.visible;
-      if (this.traceReferences.weightTraceSecond) {
-        this.traceReferences.weightTraceSecond.visible =
-          !this.traceReferences.weightTraceSecond.visible;
-      }
-    } else if (_type === 'realtimeFlowSecond') {
-      this.traces.realtimeFlowTraceSecond.visible =
-        !this.traces.realtimeFlowTraceSecond.visible;
-      if (this.traceReferences.realtimeFlowTraceSecond) {
-        this.traceReferences.realtimeFlowTraceSecond.visible =
-          !this.traceReferences.realtimeFlowTraceSecond.visible;
-      }
-    } else if (_type === 'waterDispensed') {
-      this.traces.waterDispensedTrace.visible =
-        !this.traces.waterDispensedTrace.visible;
-      if (this.traceReferences.waterDispensedTrace) {
-        this.traceReferences.waterDispensedTrace.visible =
-          !this.traceReferences.waterDispensedTrace.visible;
-      }
-    } else if (_type === 'waterDispensedFlowSecond') {
-      this.traces.waterDispensedFlowSecondTrace.visible =
-        !this.traces.waterDispensedFlowSecondTrace.visible;
-      if (this.traceReferences.waterDispensedFlowSecondTrace) {
-        this.traceReferences.waterDispensedFlowSecondTrace.visible =
-          !this.traceReferences.waterDispensedFlowSecondTrace.visible;
-      }
-    } else {
-      if (this.traces.customTraces && this.traces.customTraces[_type]) {
-        this.traces.customTraces[_type].visible =
-          !this.traces.customTraces[_type].visible;
-        if (
-          this.traceReferences.customTraces &&
-          this.traceReferences.customTraces[_type]
-        ) {
-          this.traceReferences.customTraces[_type].visible =
-            !this.traceReferences.customTraces[_type].visible;
-        }
-      }
-    }
-
-    Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
-    this.updateSliderLineAndAnnotations();
-  }
-
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    setTimeout(() => {
-      this.initializeFlowChart();
-    }, 250);
-  }
-
-  private getChartConfig() {
-    const config = {
-      responsive: true,
-      displayModeBar: false, // this is the line that hides the bar.
-    };
-    return config;
-  }
-
-  private getChartLayout() {
-    /* Important - we use scatter instead of scattergl, because we can't have many openGL contexts
-     * - https://github.com/plotly/plotly.js/issues/2333 -
-     * */
-    const chartWidth: number = this.canvaContainer.nativeElement.offsetWidth;
-
-    const chartHeight: number = this.canvaContainer.nativeElement.offsetHeight;
-
-    const layout = this.graphHelper.getChartLayout(
-      this.traces,
-      PREPARATION_STYLE_TYPE.FULL_IMMERSION,
-      false,
-      false,
-      true,
-      chartWidth,
-      chartHeight,
-      false,
-      this.traceReferences,
-    );
-    this.lastChartLayout = layout;
-    return layout;
-  }
-
-  public initializeFlowChart(): void {
-    setTimeout(() => {
-      try {
-        Plotly.purge(this.profileDiv.nativeElement);
-      } catch (ex) {}
-      const graphSettings = this.settings.graph.FILTER;
-
-      this.traces = this.graphHelper.initializeTraces();
-      this.traces = this.graphHelper.fillTraces(
-        this.traces,
-        graphSettings,
-        true,
-        false,
-      );
-
-      this.traceReferences = this.graphHelper.initializeTraces();
-      this.traceReferences = this.graphHelper.fillTraces(
-        this.traceReferences,
-        graphSettings,
-        true,
-        true,
-      );
-
-      this.graphHelper.fillDataIntoTraces(
-        this.reference_profile_raw,
-        this.traceReferences,
-      );
-
-      this.graphHelper.fillDataIntoTraces(this.flow_profile_raw, this.traces);
-
-      const chartData = [
-        this.traces.weightTrace,
-        this.traces.flowPerSecondTrace,
-        this.traces.realtimeFlowTrace,
-      ];
-
-      const layout = this.getChartLayout();
-
-      chartData.push(this.traces.pressureTrace);
-      chartData.push(this.traces.temperatureTrace);
-      chartData.push(this.traces.weightTraceSecond);
-      chartData.push(this.traces.realtimeFlowTraceSecond);
-      chartData.push(this.traces.waterDispensedTrace);
-      chartData.push(this.traces.waterDispensedFlowSecondTrace);
-
-      if (
-        this.traceReferences.weightTrace &&
-        this.traceReferences.weightTrace.x?.length > 0
-      ) {
-        chartData.push(this.traceReferences.weightTrace);
-        chartData.push(this.traceReferences.flowPerSecondTrace);
-        chartData.push(this.traceReferences.realtimeFlowTrace);
-      }
-
-      if (
-        this.traceReferences.pressureTrace &&
-        this.traceReferences.pressureTrace.x?.length > 0
-      ) {
-        chartData.push(this.traceReferences.pressureTrace);
-      }
-      if (
-        this.traceReferences.temperatureTrace &&
-        this.traceReferences.temperatureTrace.x?.length > 0
-      ) {
-        chartData.push(this.traceReferences.temperatureTrace);
-      }
-      if (
-        this.traceReferences.waterDispensedTrace &&
-        this.traceReferences.waterDispensedTrace.x?.length > 0
-      ) {
-        chartData.push(this.traceReferences.waterDispensedTrace);
-        chartData.push(this.traceReferences.waterDispensedFlowSecondTrace);
-      }
-
-      if (this.traces.customTraces) {
-        for (const [key, trace] of Object.entries(this.traces.customTraces) as [
-          string,
-          any,
-        ][]) {
-          if (
-            this.traceReferences.customTraces &&
-            this.traceReferences.customTraces[key]
-          ) {
-            if (this.traceReferences.customTraces[key].x?.length > 0) {
-              chartData.push(this.traceReferences.customTraces[key]);
-            }
-          }
-          if (trace) {
-            chartData.push(trace);
-          }
-        }
-      }
-
-      this.chartData = chartData;
-
-      drawWhenPlotlyLoaded(() => {
-        Plotly.newPlot(
-          this.profileDiv.nativeElement,
-          chartData,
-          layout,
-          this.getChartConfig(),
-        );
-        this.flowProfileLoading = false;
-        this.initSliderRange();
-        this.updateSliderLineAndAnnotations();
-      });
-    }, 100);
-  }
-
-  private async readFlowProfile(_path) {
-    if (!this.platform.is('capacitor')) {
-      const dummyData = (
-        await import('../../../../assets/BeanconquerorFlowTestDataFourth.json')
-      ).default;
-      this.flow_profile_raw = dummyData as any;
-      return;
-    }
-
-    if (_path !== '') {
-      try {
-        const jsonParsed = await this.uiFileHelper.readInternalJSONFile(_path);
-        this.flow_profile_raw = jsonParsed;
-      } catch (ex) {}
-    }
-  }
-
-  private async readReferenceFlowProfile(_iBrew: IBrew) {
-    if (!this.platform.is('capacitor')) {
-      const dummyData = (
-        await import('../../../../assets/BeanconquerorFlowTestDataSecond.json')
-      ).default;
-      this.reference_profile_raw = dummyData as any;
-      return;
-    }
-
-    const _brew: Brew = this.uiBrewStorage.getEntryByUUID(_iBrew.config.uuid);
-    if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
-      let referencePath: string = '';
-      const uuid = _brew.reference_flow_profile.uuid;
-      let referenceObj: Brew | Graph = null;
-      if (
-        _brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW ||
-        _brew.reference_flow_profile.type ===
-          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-      ) {
-        referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
-
-        if (
-          _brew.reference_flow_profile.type ===
-          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-        ) {
-          referencePath = referenceObj.getGraphPath(
-            BREW_GRAPH_TYPE.IMPORTED_GRAPH,
-          );
-        } else {
-          referencePath = referenceObj.getGraphPath(BREW_GRAPH_TYPE.BREW);
-        }
-      } else {
-        referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
-        referencePath = referenceObj.getGraphPath();
-      }
-      if (referenceObj) {
-        await this.uiAlert.showLoadingSpinner();
-        try {
-          const jsonParsed =
-            await this.uiFileHelper.readInternalJSONFile(referencePath);
-          this.reference_profile_raw = jsonParsed;
-        } catch (ex) {
-          // Maybe the reference flow has been deleted.
-        }
-      }
-    }
-    await this.uiAlert.hideLoadingSpinner();
-  }
-
-  public initSliderRange() {
-    const range = this.annotationGraphHelper.getSliderRange(
-      this.chartData,
-      this.brew?.brew_time,
-    );
-
-    this.minTimeMs = range.minTimeMs;
-    this.maxTimeMs = range.maxTimeMs;
-    this.maxSliderTime = range.maxSliderTime;
-    this.sliderValue = 0;
-    this.sliderValueString = '0.0s';
-  }
-
-  public onSliderChange(event: any) {
-    this.sliderValue = event.detail.value;
-    this.sliderValueString = this.sliderValue.toFixed(1) + 's';
-    this.updateSliderLineAndAnnotations();
-  }
-
-  public updateSliderLineAndAnnotations() {
-    if (!this.profileDiv?.nativeElement || !this.lastChartLayout) return;
-
-    this.annotationGraphHelper.updateSliderLineAndAnnotations(
-      this.profileDiv.nativeElement,
-      this.lastChartLayout,
-      this.chartData,
-      this.traces,
-      this.traceReferences,
-      this.sliderValue,
-      this.minTimeMs,
-    );
-  }
-
-  public ngOnDestroy() {
-    this.annotationGraphHelper.clearSliderLineAndAnnotations(
-      this.profileDiv?.nativeElement,
-      this.lastChartLayout,
-    );
-    try {
-      Plotly.purge(this.profileDiv.nativeElement);
-    } catch (ex) {}
+    void this.load();
   }
 
   public dismiss(): void {
-    this.modalController.dismiss(
-      {
-        dismissed: true,
-      },
+    void this.modalController.dismiss(
+      { dismissed: true },
       undefined,
       GraphDetailComponent.COMPONENT_ID,
     );
+  }
+
+  private async load(): Promise<void> {
+    const graph = this.graph();
+    const brew = this.brew();
+    if (graph) {
+      this.flow.set(await this.readFlowProfile(graph.flow_profile));
+    } else if (brew) {
+      this.flow.set(await this.readFlowProfile(brew.flow_profile));
+      await this.readReferenceFlowProfile(brew);
+    } else {
+      this.flow.set(this.flowProfileData() ?? null);
+    }
+    this.loading.set(false);
+  }
+
+  private async readFlowProfile(path: string): Promise<BrewFlow | null> {
+    if (!this.platform.is('capacitor')) {
+      return (
+        await import('../../../../assets/BeanconquerorFlowTestDataFourth.json')
+      ).default as unknown as BrewFlow;
+    }
+    if (!path) {
+      return null;
+    }
+    try {
+      return (await this.uiFileHelper.readInternalJSONFile(path)) as BrewFlow;
+    } catch (error) {
+      this.uiLog.error('Graph detail could not read the flow profile', error);
+      return null;
+    }
+  }
+
+  private async readReferenceFlowProfile(brew: IBrew): Promise<void> {
+    if (!this.platform.is('capacitor')) {
+      this.reference.set(
+        (
+          await import('../../../../assets/BeanconquerorFlowTestDataSecond.json')
+        ).default as unknown as BrewFlow,
+      );
+      return;
+    }
+    const reference = this.uiBrewStorage.getEntryByUUID(
+      brew.config.uuid,
+    )?.reference_flow_profile;
+    if (!reference || reference.type === REFERENCE_GRAPH_TYPE.NONE) {
+      return;
+    }
+    const path = this.referencePath(reference);
+    if (!path) {
+      // The reference brew or graph has been deleted.
+      this.referenceMissing.set(true);
+      return;
+    }
+    try {
+      this.reference.set(
+        (await this.uiFileHelper.readInternalJSONFile(path)) as BrewFlow,
+      );
+    } catch (error) {
+      this.uiLog.error('Graph detail could not read the reference', error);
+      this.referenceMissing.set(true);
+    }
+  }
+
+  private referencePath(reference: IReferenceGraph): string | undefined {
+    switch (reference.type) {
+      case REFERENCE_GRAPH_TYPE.BREW:
+        return this.uiBrewStorage
+          .getEntryByUUID(reference.uuid)
+          ?.getGraphPath(BREW_GRAPH_TYPE.BREW);
+      case REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH:
+        return this.uiBrewStorage
+          .getEntryByUUID(reference.uuid)
+          ?.getGraphPath(BREW_GRAPH_TYPE.IMPORTED_GRAPH);
+      default:
+        return this.uiGraphStorage
+          .getEntryByUUID(reference.uuid)
+          ?.getGraphPath();
+    }
   }
 }

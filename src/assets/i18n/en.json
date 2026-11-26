@@ -1868,6 +1868,8 @@
     "PREPARATION_TYPE_GAGGIMATE": "GaggiMate",
     "IMPORT_SHOT_FROM_GAGGIMATE": "Import a shot from GaggiMate",
     "BREW_GRAPH_TIME_SLIDER": "Time slider",
+    "GRAPH_CANNOT_BE_SHOWN": "This graph cannot be shown: its file is missing or damaged.",
+    "GRAPH_REFERENCE_CANNOT_BE_SHOWN": "The reference graph cannot be shown: it has been deleted or its file is damaged.",
     "PAGE_SETTINGS_BREW_BY_WEIGHT_WEBHOOK_SECTION": "Brew by Weight Webhook",
     "BREW_BY_WEIGHT_WEBHOOK": {
         "ACTIVATE": "Enable webhook on target weight reached",

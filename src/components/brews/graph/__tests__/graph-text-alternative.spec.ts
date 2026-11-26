@@ -1,5 +1,5 @@
 import { FlowSeriesBuffer } from '../flow-series-buffer';
-import { describeFlowGraph } from '../graph-text-alternative';
+import { describeCursor, describeFlowGraph } from '../graph-text-alternative';
 import type { SeriesDef } from '../series-def';
 
 const TEXTS: Record<string, string> = {
@@ -63,5 +63,57 @@ describe('describeFlowGraph', () => {
     expect(
       describeFlowGraph('Graph', new FlowSeriesBuffer(), [], 'en', t),
     ).toBe('Graph. No data');
+  });
+});
+
+describe('describeCursor', () => {
+  function buffer(): FlowSeriesBuffer {
+    const b = new FlowSeriesBuffer();
+    b.append('weight', 0, 0);
+    b.append('weight', 10, 20.04);
+    b.append('weight', 12, 31.26);
+    b.append('pressure', 11.9, 8.95);
+    b.append('custom:ph', 0, 6.5);
+    return b;
+  }
+
+  it('says the time and the nearest value of each live series with its unit', () => {
+    expect(
+      describeCursor(
+        11.5,
+        buffer(),
+        [
+          def('weight', 'Weight', 'g'),
+          def('pressure', 'Pressure', 'bar'),
+          def('custom:ph', 'pH', ''),
+        ],
+        'en',
+      ),
+    ).toBe('11.5 s, Weight: 31.3 g, Pressure: 9.0 bar, pH: 6.5');
+  });
+
+  it('writes numbers the way the language does and leaves out references and empty series', () => {
+    const reference = {
+      ...def('weight', 'Weight', 'g'),
+      kind: 'reference' as const,
+    };
+    expect(
+      describeCursor(
+        10,
+        buffer(),
+        [
+          reference,
+          def('weight', 'Gewicht', 'g'),
+          def('temperature', 'Temperatur', '°C'),
+        ],
+        'de_DE',
+      ),
+    ).toBe('10,0 s, Gewicht: 20,0 g');
+  });
+
+  it('falls back to English numbers for an unknown language', () => {
+    expect(
+      describeCursor(1, new FlowSeriesBuffer(), [], 'not a language!'),
+    ).toBe('1.0 s');
   });
 });

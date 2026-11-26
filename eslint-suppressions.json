@@ -687,32 +687,6 @@
       "count": 2
     }
   },
-  "src/app/graph-section/graph/graph-detail/graph-detail.component.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
-      "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 1
-    },
-    "no-empty": {
-      "count": 3
-    },
-    "no-var": {
-      "count": 1
-    }
-  },
   "src/app/graph-section/graph/graph-edit/graph-edit.component.ts": {
     "@angular-eslint/no-empty-lifecycle-method": {
       "count": 1

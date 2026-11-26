@@ -1868,6 +1868,8 @@
     "PREPARATION_TYPE_GAGGIMATE": "GaggiMate",
     "IMPORT_SHOT_FROM_GAGGIMATE": "Eine Brühung aus GaggiMate importieren",
     "BREW_GRAPH_TIME_SLIDER": "Zeitschieber",
+    "GRAPH_CANNOT_BE_SHOWN": "Dieser Graph lässt sich nicht anzeigen: Die Datei fehlt oder ist beschädigt.",
+    "GRAPH_REFERENCE_CANNOT_BE_SHOWN": "Der Referenzgraph lässt sich nicht anzeigen: Er wurde gelöscht oder die Datei ist beschädigt.",
     "PAGE_SETTINGS_BREW_BY_WEIGHT_WEBHOOK_SECTION": "Webhook für Brew by Weight",
     "BREW_BY_WEIGHT_WEBHOOK": {
         "ACTIVATE": "Webhook bei Erreichen des Zielgewichts aktivieren",
