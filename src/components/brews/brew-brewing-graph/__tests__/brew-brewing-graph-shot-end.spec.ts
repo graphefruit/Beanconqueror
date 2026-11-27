@@ -1,3 +1,5 @@
+import { signal } from '@angular/core';
+
 import { Subject } from 'rxjs';
 
 import { Brew } from '../../../../classes/brew/brew';
@@ -164,6 +166,8 @@ describe('BrewBrewingGraphComponent shot end', () => {
         flowSecondTick: 0,
         flowNCalculation: 0,
         startingFlowTime: shotStart,
+        silenceTimers: { scale: undefined, pressure: undefined },
+        silenceHints: { scale: signal(null), pressure: signal(null) },
         platform: { is: () => isCapacitor },
         bleManager,
         uiHelper: Object.create(UIHelper.prototype),
