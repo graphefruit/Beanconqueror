@@ -34,7 +34,6 @@ let package = Package(
         .package(name: "CapgoCapacitorLlm", path: "../../../node_modules/.pnpm/@capgo+capacitor-llm@8.0.19_@capacitor+core@8.6.2_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm"),
         .package(name: "CommunityCordovaPluginNfc", path: "../../capacitor-cordova-ios-plugins/sources/CommunityCordovaPluginNfc"),
         .package(name: "CordovaPluginBleCentral", path: "../../capacitor-cordova-ios-plugins/sources/CordovaPluginBleCentral"),
-        .package(name: "CordovaPluginHealth", path: "../../capacitor-cordova-ios-plugins/sources/CordovaPluginHealth"),
         .package(name: "SkwasCordovaPluginDatetimepicker", path: "../../capacitor-cordova-ios-plugins/sources/SkwasCordovaPluginDatetimepicker")
     ],
     targets: [
@@ -65,7 +64,6 @@ let package = Package(
                 .product(name: "CapgoCapacitorLlm", package: "CapgoCapacitorLlm"),
                 .product(name: "CommunityCordovaPluginNfc", package: "CommunityCordovaPluginNfc"),
                 .product(name: "CordovaPluginBleCentral", package: "CordovaPluginBleCentral"),
-                .product(name: "CordovaPluginHealth", package: "CordovaPluginHealth"),
                 .product(name: "SkwasCordovaPluginDatetimepicker", package: "SkwasCordovaPluginDatetimepicker")
             ]
         )
