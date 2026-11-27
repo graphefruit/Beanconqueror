@@ -871,11 +871,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   private newRenderer(): UplotRenderer {
-    return new UplotRenderer([], {
-      minDrawIntervalMs: this.settings.graph_threshold_frequency_update
-        ? this.settings.graph_threshold_frequency_interval
-        : 0,
-    });
+    return new UplotRenderer();
   }
 
   /**

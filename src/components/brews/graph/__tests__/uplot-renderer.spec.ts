@@ -174,45 +174,6 @@ describe('UplotRenderer', () => {
     expect(frames.pending).toBe(1);
   });
 
-  it('draws new samples at most once per interval, a change at once', async () => {
-    let now = 0;
-    const due: FrameRequestCallback[] = [];
-    const tick = async (ms: number): Promise<void> => {
-      now += ms;
-      due.splice(0).forEach((cb) => cb(now));
-      await new Promise((resolve) => setTimeout(resolve));
-    };
-    probe = new Probe();
-    renderer = new UplotRenderer([probe], {
-      requestFrame: (cb) => due.push(cb),
-      cancelFrame: () => due.splice(0),
-      minDrawIntervalMs: 100,
-    });
-    await renderer.mount(host, {
-      width: 400,
-      height: 200,
-      dark: false,
-      mode: 'live',
-      axisSettings: new Settings(),
-      style: PREPARATION_STYLE_TYPE.ESPRESSO,
-    });
-    renderer.setSeries(defs('live', 'weight'));
-    renderer.attach(buffer);
-    await tick(16);
-    const afterBuild = probe.draws;
-
-    feed(buffer, 0, 1);
-    await tick(16);
-    await tick(16);
-    expect(probe.draws).toBe(afterBuild);
-    await tick(80);
-    expect(probe.draws).toBe(afterBuild + 1);
-
-    renderer.setVisible('weight', false);
-    await tick(16);
-    expect(probe.draws).toBe(afterBuild + 2);
-  });
-
   it('hides canvas and axes from screen readers and shows no legend', async () => {
     await mount();
     feed(buffer, 0, 2);

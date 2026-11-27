@@ -54,11 +54,6 @@ export interface UplotRendererOptions {
   /** Injected for tests; defaults to window.requestAnimationFrame. */
   requestFrame?: (callback: FrameRequestCallback) => number;
   cancelFrame?: (handle: number) => void;
-  /**
-   * Least time between two draws for new samples, for slow devices
-   * (Settings.graph_threshold_frequency_interval); 0 draws every frame.
-   */
-  minDrawIntervalMs?: number;
 }
 
 export const MAX_PIXEL_RATIO = 2;
@@ -213,8 +208,6 @@ interface Look {
 export class UplotRenderer implements BrewChartPort {
   private readonly requestFrame: (callback: FrameRequestCallback) => number;
   private readonly cancelFrame: (handle: number) => void;
-  private readonly minDrawIntervalMs: number;
-  private lastDrawAt = Number.NEGATIVE_INFINITY;
 
   private lib: UPlotCtor | null = null;
   private el: HTMLElement | null = null;
@@ -256,7 +249,6 @@ export class UplotRenderer implements BrewChartPort {
       options.requestFrame ?? ((cb) => window.requestAnimationFrame(cb));
     this.cancelFrame =
       options.cancelFrame ?? ((h) => window.cancelAnimationFrame(h));
-    this.minDrawIntervalMs = options.minDrawIntervalMs ?? 0;
   }
 
   public async mount(el: HTMLElement, opts: MountOptions): Promise<void> {
@@ -472,22 +464,16 @@ export class UplotRenderer implements BrewChartPort {
     if (this.destroyed || this.frameHandle !== null || !this.lib) {
       return;
     }
-    this.frameHandle = this.requestFrame((now) => {
+    this.frameHandle = this.requestFrame(() => {
       this.frameHandle = null;
-      if (this.tick(now)) {
-        this.scheduleFrame();
-      }
+      this.tick();
     });
   }
 
-  /**
-   * One frame: draws only when a buffer or the renderer's state changed. New
-   * samples alone wait for minDrawIntervalMs; they are drawn on a later frame.
-   * Returns true when samples wait for that later frame.
-   */
-  private tick(now: number): boolean {
+  /** One frame: draws only when a buffer or the renderer's state changed. */
+  private tick(): void {
     if (!this.lib || !this.el) {
-      return false;
+      return;
     }
     const liveVersion = this.live?.version ?? -1;
     const refVersion = this.ref?.version ?? -1;
@@ -497,12 +483,8 @@ export class UplotRenderer implements BrewChartPort {
     const stateChanged = this.stateDirty || this.structureDirty;
     const drawable = this.size.width > 0 && this.size.height > 0;
     if (!drawable || (!dataChanged && !stateChanged)) {
-      return false;
+      return;
     }
-    if (!stateChanged && now - this.lastDrawAt < this.minDrawIntervalMs) {
-      return true;
-    }
-    this.lastDrawAt = now;
     this.lastLiveVersion = liveVersion;
     this.lastRefVersion = refVersion;
     if (this.structureDirty || !this.u) {
@@ -510,7 +492,6 @@ export class UplotRenderer implements BrewChartPort {
     } else {
       this.render();
     }
-    return false;
   }
 
   private rebuild(): void {
