@@ -21,8 +21,9 @@ export default defineConfig<HarnessOptions>({
   testDir: './e2e',
   outputDir: './test-results',
   fullyParallel: true,
-  // Several worktrees run E2E at once on one Mac; the default (half the cores) per run starved it.
-  workers: isCI ? undefined : 3,
+  // Fixed instead of the default (half the cores): locally several worktrees share one Mac, and on
+  // the 4-vCPU CI runner half the cores (2) left the slowest shard at over 6 minutes.
+  workers: 3,
   forbidOnly: isCI,
   // Flaky tests must be fixed, not retried into green.
   retries: 0,
