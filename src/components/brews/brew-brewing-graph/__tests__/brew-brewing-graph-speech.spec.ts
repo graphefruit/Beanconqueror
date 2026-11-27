@@ -67,16 +67,38 @@ describe('BrewBrewingGraphComponent spoken scale values', () => {
 
   afterEach(() => component.deattachToTextToSpeedChange());
 
-  it('says the espresso weight in whole grams when chosen', fakeAsync(() => {
-    create(
-      { text_to_speech_whole_grams: true },
+  it('says the brew weight with tenths, for every preparation', fakeAsync(() => {
+    for (const styleType of [
+      PREPARATION_STYLE_TYPE.POUR_OVER,
       PREPARATION_STYLE_TYPE.ESPRESSO,
-    );
+    ]) {
+      create({}, styleType);
 
-    component.attachToTextToSpeechChange();
-    tick(500);
+      component.attachToTextToSpeechChange();
+      tick(1000);
 
-    expect(textToSpeech.speak.calls.allArgs()).toEqual([['18']]);
+      expect(textToSpeech.speak.calls.allArgs())
+        .withContext(styleType)
+        .toEqual([['18.5'], ['18.5']]);
+      component.deattachToTextToSpeedChange();
+    }
+  }));
+
+  it('says the brew weight in whole grams when chosen', fakeAsync(() => {
+    for (const styleType of [
+      PREPARATION_STYLE_TYPE.POUR_OVER,
+      PREPARATION_STYLE_TYPE.ESPRESSO,
+    ]) {
+      create({ text_to_speech_whole_grams: true }, styleType);
+
+      component.attachToTextToSpeechChange();
+      tick(500);
+
+      expect(textToSpeech.speak.calls.allArgs())
+        .withContext(styleType)
+        .toEqual([['18']]);
+      component.deattachToTextToSpeedChange();
+    }
   }));
 
   it('says the weight only, as the brew time is said from the timer', fakeAsync(() => {
@@ -85,7 +107,7 @@ describe('BrewBrewingGraphComponent spoken scale values', () => {
     component.attachToTextToSpeechChange();
     tick(1000);
 
-    expect(textToSpeech.speak.calls.allArgs()).toEqual([['18'], ['18']]);
+    expect(textToSpeech.speak.calls.count()).toBe(2);
     expect(textToSpeech.speakInFull.calls.count()).toBe(0);
   }));
 

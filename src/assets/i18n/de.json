@@ -1323,7 +1323,7 @@
         "BREW_TIME_EVERY": "Brühzeit alle",
         "BREW_START_END": "Brühbeginn und Brühende ansagen",
         "WHOLE_GRAMS": "Ganze Gramm ansagen",
-        "WHOLE_GRAMS_DESCRIPTION": "Auch Espresso-Gewichte werden ohne Nachkommastelle angesagt; so ist jede Ansage kürzer.",
+        "WHOLE_GRAMS_DESCRIPTION": "Gilt für alle Zubereitungsarten und jede Gewichtsansage: Das Gewicht wird ohne Nachkommastelle angesagt; so ist jede Ansage kürzer.",
         "ANDROID_RATE_HINT": "Unter Android dauert jede Ansage rund eine Sekunde länger. Kommen die Ansagen zu spät, hilft eine höhere Sprechgeschwindigkeit des Geräts, beim Gewicht auch „Ganze Gramm ansagen“."
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptisches Feedback",

@@ -1323,7 +1323,7 @@
         "BREW_TIME_EVERY": "Brew time every",
         "BREW_START_END": "Announce brew start and brew end",
         "WHOLE_GRAMS": "Speak whole grams",
-        "WHOLE_GRAMS_DESCRIPTION": "Also espresso weights are spoken without decimal places, which keeps each announcement shorter.",
+        "WHOLE_GRAMS_DESCRIPTION": "Applies to all preparation methods and every weight announcement: the weight is spoken without decimal places, which keeps each announcement shorter.",
         "ANDROID_RATE_HINT": "On Android, each announcement takes about one second longer. If announcements come too late, raise the speaking rate on your device. For weights, “Speak whole grams” also helps."
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptic feedback",

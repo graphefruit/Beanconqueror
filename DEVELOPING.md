@@ -185,10 +185,12 @@ end, each with its own switch;
 
 - The graph says the weight (needs a scale) and the brew start and end. `brew-brewing` says the
   time from the brew timer's own ticks (`brewTimeToSay`), also without a scale, so the time said is
-  the one shown and falls on the multiples of the interval. "Speak whole grams" drops the decimal of
-  espresso weights, which the Android voice service needs noticeably longer for (`spokenWeight` in
-  `speech-options.ts`). Settings of "Speak the brew time only" are moved to the switches by
-  `migrateSpeechSettings`.
+  the one shown and falls on the multiples of the interval. The graph says the weight with one decimal;
+  "Speak whole grams" drops it, as the Android voice service needs noticeably longer for a decimal
+  (`spokenWeightDecimals` in `speech-options.ts`). Before the timer has started, the graph says the
+  scale weight to weigh the beans; the brew start ends this and a reset starts it again.
+  `spokenWeight` writes the decimal separator of the app language (German "18,3"). Settings of
+  "Speak the brew time only" are moved to the switches by `migrateSpeechSettings`.
 - Values never pile up: a weight or time due while the last one is still said replaces the one
   waiting (`enqueueAnnouncement`), in the native queue and in the live region; other messages are
   all said, in order.

@@ -5,6 +5,7 @@ import {
   speechLanguageTag,
   spokenBrewValues,
   spokenWeight,
+  spokenWeightDecimals,
 } from '../speech-options';
 
 /** What WebKit asked AVSpeechUtterance for (default 0.5, fastest 1). */
@@ -125,16 +126,31 @@ describe('speech options', () => {
     });
   });
 
-  it('says one decimal for espresso unless whole grams are chosen', () => {
-    expect(spokenWeight(18.26, true, false)).toBe('18.3');
-    expect(spokenWeight(18.04, true, false)).toBe('18');
-    expect(spokenWeight(18.26, true, true)).toBe('18');
-    expect(spokenWeight(18.5, true, true)).toBe('19');
+  it('says tenths unless whole grams are chosen', () => {
+    expect(spokenWeightDecimals(false)).toBe(1);
+    expect(spokenWeightDecimals(true)).toBe(0);
   });
 
-  it('says whole grams for other brews', () => {
-    expect(spokenWeight(251.6, false, false)).toBe('252');
-    expect(spokenWeight(251.6, false, true)).toBe('252');
-    expect(spokenWeight(-0.3, false, false)).toBe('0');
+  it('says the weight rounded, with the decimal separator of the app language', () => {
+    const table: [number, number, string | undefined, string][] = [
+      [18.26, 1, 'en', '18.3'],
+      [18.26, 1, 'de', '18,3'],
+      [18.04, 1, 'de', '18'],
+      [18.26, 0, 'de', '18'],
+      [18.5, 0, 'en', '19'],
+      [251.6, 0, 'en', '252'],
+      [1250.4, 1, 'en', '1250.4'],
+      [-0.3, 0, 'en', '0'],
+      [-0.04, 1, 'de', '0'],
+      [-0.3, 1, 'de', '-0,3'],
+      [7.25, 1, 'fr', '7,3'],
+      [7.25, 1, 'zh_TW', '7.3'],
+      [7.25, 1, undefined, '7.3'],
+    ];
+    for (const [grams, decimals, language, said] of table) {
+      expect(spokenWeight(grams, decimals, language))
+        .withContext(`${grams} g, ${decimals} decimals, ${language}`)
+        .toBe(said);
+    }
   });
 });

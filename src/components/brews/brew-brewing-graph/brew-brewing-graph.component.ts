@@ -110,6 +110,7 @@ import { drawWhenPlotlyLoaded } from '../../../services/graphHelper/load-plotly'
 import {
   spokenBrewValues,
   spokenWeight,
+  spokenWeightDecimals,
 } from '../../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
@@ -1258,6 +1259,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
       // Always attach flow.
       this.attachToFlowChange();
+      this.attachToTextToSpeechBeforeStart();
 
       this.checkChanges();
     }
@@ -1711,6 +1713,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.deattachToTextToSpeedChange();
         // 551 - Always attach to flow change, even when reset is triggerd
         this.attachToFlowChange();
+        this.attachToTextToSpeechBeforeStart();
       }
 
       if (pressureDevice) {
@@ -1927,6 +1930,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       if (scale) {
         this.attachToScaleWeightChange();
         this.attachToFlowChange();
+        this.attachToTextToSpeechChange();
       }
       if (pressureDevice) {
         this.attachToPressureChange();
@@ -2928,9 +2932,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   public attachToTextToSpeechChange() {
     this.deattachToTextToSpeedChange();
     if (spokenBrewValues(this.settings).weight) {
-      const isEspressoBrew: boolean =
-        this.data.getPreparation().style_type ===
-        PREPARATION_STYLE_TYPE.ESPRESSO;
       this.ngZone.runOutsideAngular(() => {
         this.textToSpeechWeightInterval = setInterval(() => {
           if (this.flowProfileTempAll.length > 0) {
@@ -2940,8 +2941,10 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               this.textToSpeech.speak(
                 spokenWeight(
                   actualScaleWeight,
-                  isEspressoBrew,
-                  this.settings.text_to_speech_whole_grams,
+                  spokenWeightDecimals(
+                    this.settings.text_to_speech_whole_grams,
+                  ),
+                  this.settings.language,
                 ),
               );
             }
@@ -2949,6 +2952,32 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         }, this.settings.text_to_speech_interval_rate);
       });
     }
+  }
+
+  /**
+   * Before the brew the scale weight is said to weigh the beans; the brew start
+   * ends this and says the brew weight instead.
+   */
+  public attachToTextToSpeechBeforeStart() {
+    this.deattachToTextToSpeedChange();
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (!scale || !spokenBrewValues(this.settings).weight) {
+      return;
+    }
+    this.ngZone.runOutsideAngular(() => {
+      this.textToSpeechWeightInterval = setInterval(() => {
+        // A paused brew has started; its weight is not said again.
+        if (this.brewComponent.timer?.timer?.hasStarted !== true) {
+          this.textToSpeech.speak(
+            spokenWeight(
+              scale.getWeight(),
+              spokenWeightDecimals(this.settings.text_to_speech_whole_grams),
+              this.settings.language,
+            ),
+          );
+        }
+      }, this.settings.text_to_speech_interval_rate);
+    });
   }
 
   public attachToPressureChange() {

@@ -64,7 +64,10 @@ import {
 import { injectDiscardGuard } from '../../../services/discardGuard/discard-guard';
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
-import { speechLanguageTag } from '../../../services/textToSpeech/speech-options';
+import {
+  spokenWeight,
+  spokenWeightDecimals,
+} from '../../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -88,7 +91,6 @@ import {
 } from '../../../stores/brews/brew-form-rules';
 import {
   magicTapAction,
-  spokenGrams,
   spokenStopTime,
 } from '../../../stores/brews/magic-tap-rules';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
@@ -374,9 +376,10 @@ export class BrewAddComponent implements OnDestroy {
             'TEXT_TO_SPEECH.MAGIC_TAP_STOPPED_WITH_WEIGHT',
             {
               time,
-              weight: spokenGrams(
+              weight: spokenWeight(
                 grams,
-                speechLanguageTag(this.settings.language),
+                spokenWeightDecimals(this.settings.text_to_speech_whole_grams),
+                this.settings.language,
               ),
             },
           ),
