@@ -1,4 +1,5 @@
 import { BrewInstanceHelper } from '../../classes/brew/brew';
+import { Logger } from '../../classes/devices/common/logger';
 import { Settings } from '../../classes/settings/settings';
 import { DataUpdateSignal } from '../../services/dataUpdates/data-update-rules';
 import { AppComponent } from '../app.component';
@@ -39,6 +40,8 @@ describe('AppComponent data update tracking at the start', () => {
 
   afterEach(() => {
     jasmine.clock().uninstall();
+    // __initApp switches the global logger off with default settings.
+    Logger.enableLog();
   });
 
   it('sends the outcome of the data updates once', async () => {
