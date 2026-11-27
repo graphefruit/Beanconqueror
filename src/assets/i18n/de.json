@@ -217,6 +217,7 @@
     "TECHNICAL_DETAILS": "Technische Details:",
     "PHOTO_COULD_NOT_BE_ADDED": "Das Foto konnte nicht hinzugefügt werden.",
     "PHOTO_ACCESS_DENIED": "Beanconqueror darf die Kamera oder deine Fotos nicht verwenden. Du kannst den Zugriff in den Einstellungen deines Geräts erlauben.",
+    "CAMERA_COULD_NOT_BE_STARTED": "Die Kamera konnte nicht gestartet werden.",
     "ADD_BREW": "Bezug hinzufügen",
     "CHOOSE": "Auswählen",
     "CHOOSE_PHOTO_OR_LIBRARY": "Foto aufnehmen oder aus Bibliothek auswählen",

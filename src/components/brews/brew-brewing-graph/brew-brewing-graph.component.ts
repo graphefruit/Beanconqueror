@@ -13,6 +13,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  output,
   signal,
   ViewChild,
 } from '@angular/core';
@@ -233,6 +234,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
   @Input() public data: Brew;
   @Output() public dataChange = new EventEmitter<Brew>();
+  /** The barista page opened the graph, so it can be sized to the room left. */
+  public readonly baristaGraphShown = output<void>();
 
   @Input() public isEdit = false;
 
@@ -281,16 +284,16 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private readonly liveBuffer = new FlowSeriesBuffer();
   private readonly referenceBuffer = new FlowSeriesBuffer();
   private renderer: UplotRenderer | null = null;
+  /** The same graph again in the maximized view, drawn from the same buffers. */
+  private maximizedRenderer: UplotRenderer | null = null;
   private readonly seriesDefs = signal<readonly SeriesDef[]>([]);
   private readonly hiddenSeries = signal<ReadonlySet<SeriesId>>(new Set());
   /** Chip state of the live series; read this instead of the drawing internals. */
   public readonly seriesState = computed(() =>
     liveSeriesState(this.seriesDefs(), this.hiddenSeries(), this.theme.dark()),
   );
-  /** Height the graph is drawn at in its own container; a host may set another. */
+  /** Height the graph is drawn at in its own container; the barista page sets another. */
   private graphHeight = GRAPH_HEIGHT;
-  /** The host the graph was moved to, e.g. the maximized view. */
-  private graphHost: HTMLElement | null = null;
   /** From the start of the timer until its pause; the timer itself runs a moment later. */
   private recording = false;
   private graphSizes: ResizeObserver | null = null;
@@ -360,7 +363,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     effect(() => {
       // Lines, axes and grid are drawn in the colours of the theme.
       const dark = this.theme.dark();
-      this.renderer?.setDark(dark);
+      this.renderers().forEach((renderer) => renderer.setDark(dark));
     });
   }
 
@@ -384,10 +387,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
 
     this.graphSizes = new ResizeObserver(([entry]) => {
-      // In another host the graph takes that host's size.
-      if (!this.graphHost) {
-        this.renderer?.resize(entry.contentRect.width, this.graphHeight);
-      }
+      this.renderer?.resize(entry.contentRect.width, this.graphHeight);
     });
     this.graphSizes.observe(this.canvaContainer.nativeElement);
   }
@@ -755,6 +755,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   public toggleGraphOnBaristaMode() {
     this.showAdvancedBarista = !this.showAdvancedBarista;
     this.toggleGraphElementsOnBaristaMode();
+    if (this.showAdvancedBarista) {
+      this.baristaGraphShown.emit();
+    }
   }
 
   public toggleChartLines(_type: string) {
@@ -768,7 +771,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
     this.hiddenSeries.set(hidden);
     // Hides or shows the reference line of the series too.
-    this.renderer?.setVisible(id, visible);
+    this.renderers().forEach((renderer) => renderer.setVisible(id, visible));
     this.checkChanges();
   }
 
@@ -798,10 +801,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.setUpSeries();
     void this.mountGraph();
     this.updateChart();
-    if (this.brewComponent?.maximizeFlowGraphIsShown) {
-      // The maximized view sizes the graph on a resize.
-      window.dispatchEvent(new Event('resize'));
-    }
   }
 
   /** The series of the live graph, every fixed one and the recorded custom metrics. */
@@ -845,12 +844,12 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.showSeries();
   }
 
-  /** Hands the series, their buffers and their visibility to the renderer. */
+  /** Hands the series, their buffers and their visibility to the renderers. */
   private showSeries(): void {
-    const renderer = this.renderer;
-    if (!renderer) {
-      return;
-    }
+    this.renderers().forEach((renderer) => this.showSeriesIn(renderer));
+  }
+
+  private showSeriesIn(renderer: UplotRenderer): void {
     const defs = this.seriesDefs();
     const hidden = this.hiddenSeries();
     renderer.setSeries(defs);
@@ -865,47 +864,107 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** Loads the chart library once and draws into the graph container. */
-  private async mountGraph(): Promise<void> {
-    if (this.renderer) {
-      return;
-    }
-    const renderer = new UplotRenderer([], {
+  private renderers(): UplotRenderer[] {
+    return [this.renderer, this.maximizedRenderer].filter(
+      (renderer): renderer is UplotRenderer => renderer !== null,
+    );
+  }
+
+  private newRenderer(): UplotRenderer {
+    return new UplotRenderer([], {
       minDrawIntervalMs: this.settings.graph_threshold_frequency_update
         ? this.settings.graph_threshold_frequency_interval
         : 0,
     });
-    this.renderer = renderer;
-    const el: HTMLElement = this.profileDiv.nativeElement;
-    const host = this.graphHost ?? this.canvaContainer.nativeElement;
+  }
+
+  /**
+   * Loads the chart library and draws into the element; false when it cannot
+   * be loaded, so the form works on without a graph.
+   */
+  private async mountLive(
+    renderer: UplotRenderer,
+    el: HTMLElement,
+    width: number,
+    height: number,
+  ): Promise<boolean> {
     try {
       await renderer.mount(el, {
-        width: host.offsetWidth,
-        height: this.graphHost ? host.offsetHeight : this.graphHeight,
+        width,
+        height,
         dark: this.theme.dark(),
         mode: 'live',
         axisSettings: this.settings,
         style: this.getPreparation().style_type,
       });
+      return true;
     } catch (error) {
-      // Without the chart library the form works on without a graph.
       this.uiLog.error('Live graph could not be drawn', error);
-      if (this.renderer === renderer) {
-        this.renderer = null;
-      }
-      return;
-    }
-    if (this.renderer === renderer) {
-      this.showSeries();
-      this.updateChart();
+      return false;
     }
   }
 
-  /** Redraws the live graph at the given size, e.g. after the host changed. */
-  public resize(width: number, height: number): void {
-    if (!this.graphHost) {
-      this.graphHeight = height;
+  /** Loads the chart library once and draws into the graph container. */
+  private async mountGraph(): Promise<void> {
+    if (this.renderer) {
+      return;
     }
+    const renderer = this.newRenderer();
+    this.renderer = renderer;
+    const mounted = await this.mountLive(
+      renderer,
+      this.profileDiv.nativeElement,
+      this.canvaContainer.nativeElement.offsetWidth,
+      this.graphHeight,
+    );
+    if (this.renderer !== renderer) {
+      return;
+    }
+    if (!mounted) {
+      this.renderer = null;
+      return;
+    }
+    this.showSeries();
+    this.updateChart();
+  }
+
+  /**
+   * Draws the live graph a second time into the maximized view. Both graphs
+   * read the same buffers, so they show the same samples at the same time.
+   */
+  public async showMaximized(
+    host: HTMLElement,
+    width: number,
+    height: number,
+  ): Promise<void> {
+    this.closeMaximized();
+    const renderer = this.newRenderer();
+    this.maximizedRenderer = renderer;
+    const mounted = await this.mountLive(renderer, host, width, height);
+    if (this.maximizedRenderer !== renderer) {
+      return;
+    }
+    if (!mounted) {
+      this.maximizedRenderer = null;
+      return;
+    }
+    this.showSeriesIn(renderer);
+    this.updateChart();
+  }
+
+  public resizeMaximized(width: number, height: number): void {
+    this.maximizedRenderer?.resize(width, height);
+  }
+
+  /** Lets go of the graph of the maximized view. */
+  public closeMaximized(): void {
+    this.maximizedRenderer?.destroy();
+    this.maximizedRenderer = null;
+  }
+
+  /** Redraws the live graph at the given size, e.g. on the barista page. */
+  public resize(width: number, height: number): void {
+    this.graphHeight = height;
     this.renderer?.resize(width, height);
   }
 
@@ -913,18 +972,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   public graphBox(): { top: number; width: number } {
     const container: HTMLElement = this.canvaContainer.nativeElement;
     return { top: container.offsetTop, width: container.offsetWidth };
-  }
-
-  /** Shows the live graph in another host, e.g. the maximized view. */
-  public moveGraphTo(host: HTMLElement): void {
-    this.graphHost = host;
-    host.append(this.profileDiv.nativeElement);
-  }
-
-  /** Puts the live graph back into its own container. */
-  public restoreGraph(): void {
-    this.graphHost = null;
-    this.canvaContainer.nativeElement.append(this.profileDiv.nativeElement);
   }
 
   private async __connectPressureDevice(_firstStart: boolean) {
@@ -1242,17 +1289,18 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
    * renderer draws new samples on its own, at most once per frame.
    */
   public updateChart(): void {
-    this.renderer?.setViewport(
+    const viewport = (maximized: boolean) =>
       liveViewport({
         graphTime: this.settings.graph_time,
         style: this.getPreparation().style_type,
-        maximized: this.brewComponent?.maximizeFlowGraphIsShown === true,
+        maximized,
         timerRunning:
           this.recording ||
           this.brewComponent?.timer?.isTimerRunning() === true,
         hasSamples: this.liveBuffer.seriesIds().length > 0,
-      }),
-    );
+      });
+    this.renderer?.setViewport(viewport(false));
+    this.maximizedRenderer?.setViewport(viewport(true));
   }
 
   private canWePlot(): boolean {
@@ -3391,6 +3439,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.graphSizes?.disconnect();
     this.renderer?.destroy();
     this.renderer = null;
+    this.closeMaximized();
   }
 
   /**
@@ -4274,7 +4323,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   @HostListener('window:orientationchange')
   public onOrientationChange() {
-    if (this.baristamode === false && !this.graphHost) {
+    if (this.baristamode === false) {
       this.resize(this.canvaContainer.nativeElement.offsetWidth, GRAPH_HEIGHT);
     }
   }

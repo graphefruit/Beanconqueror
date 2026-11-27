@@ -110,7 +110,6 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
     destroy: jasmine.Spy;
   };
   let timerRunning: boolean;
-  let maximized: boolean;
   let readInternalJSONFile: jasmine.Spy;
   let showInfoToast: jasmine.Spy;
   let modalResult: unknown;
@@ -137,7 +136,6 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
     settings = new Settings();
     dark = signal(false);
     timerRunning = false;
-    maximized = false;
     readInternalJSONFile = jasmine.createSpy('readInternalJSONFile');
     showInfoToast = jasmine.createSpy('showInfoToast').and.resolveTo();
     modalResult = undefined;
@@ -233,9 +231,7 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
       profileDiv: { nativeElement: plot },
       data,
       brewComponent: {
-        get maximizeFlowGraphIsShown() {
-          return maximized;
-        },
+        maximizeFlowGraphIsShown: false,
         timer: { isTimerRunning: () => timerRunning },
         choosenPreparation: preparation,
       },
@@ -361,21 +357,6 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
         mode: 'stepped',
         windowSec: settings.graph_time.ESPRESSO.NORMAL_SCREEN,
         backSec: settings.graph_time.ESPRESSO.NORMAL_SCREEN - 10,
-      });
-    });
-
-    it('jumps by the maximized time while the timer runs maximized', async () => {
-      component.flow_profile_raw = flowWithMetric();
-      await draw();
-      timerRunning = true;
-      maximized = true;
-
-      component.updateChart();
-
-      expect(lastViewport()).toEqual({
-        mode: 'stepped',
-        windowSec: settings.graph_time.ESPRESSO.FULL_SCREEN,
-        backSec: settings.graph_time.ESPRESSO.FULL_SCREEN - 20,
       });
     });
 
@@ -526,17 +507,116 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
 
       expect(port.resize).not.toHaveBeenCalled();
     });
+  });
 
-    it('leaves the size to the host it was moved to', async () => {
+  describe('maximized view', () => {
+    let host: HTMLDivElement;
+
+    beforeEach(() => {
+      host = document.createElement('div');
+    });
+
+    /** The calls the renderer of the maximized view got. */
+    function maximizedCalls(spy: jasmine.Spy): unknown[][] {
+      const own = port.mount.calls
+        .all()
+        .find((call) => call.args[0] === host)?.object;
+      return spy.calls
+        .all()
+        .filter((call) => call.object === own)
+        .map((call) => call.args as unknown[]);
+    }
+
+    it('draws a second graph from the same buffer and keeps the graph of the form in place', async () => {
+      component.flow_profile_raw = flowWithMetric();
       await draw();
-      component.moveGraphTo(document.createElement('div'));
+      const formBuffer = attached();
+
+      await component.showMaximized(host, 800, 400);
+
+      expect(port.mount).toHaveBeenCalledWith(
+        host,
+        jasmine.objectContaining({ mode: 'live', width: 800, height: 400 }),
+      );
+      expect(maximizedCalls(port.attach)).toEqual([[formBuffer]]);
+      expect(plot.parentElement).toBe(container);
+    });
+
+    it('jumps by the maximized time there and by the time of the form in the form', async () => {
+      component.flow_profile_raw = flowWithMetric();
+      await draw();
+      await component.showMaximized(host, 800, 400);
+      timerRunning = true;
+      port.setViewport.calls.reset();
+
+      component.updateChart();
+
+      const windows = port.setViewport.calls
+        .all()
+        .map(
+          (call) =>
+            (call.args[0] as Viewport & { windowSec: number }).windowSec,
+        );
+      expect(windows).toEqual([
+        settings.graph_time.ESPRESSO.NORMAL_SCREEN,
+        settings.graph_time.ESPRESSO.FULL_SCREEN,
+      ]);
+    });
+
+    it('hides a line in both graphs', async () => {
+      await draw();
+      await component.showMaximized(host, 800, 400);
+
+      component.toggleChartLines('weight');
+
+      expect(maximizedCalls(port.setVisible)).toContain(['weight', false]);
+      expect(
+        port.setVisible.calls
+          .all()
+          .filter((call) => call.args[0] === 'weight' && !call.args[1]),
+      ).toHaveSize(2);
+    });
+
+    it('sizes only the maximized graph and lets go of it when closed', async () => {
+      await draw();
+      await component.showMaximized(host, 800, 400);
       port.resize.calls.reset();
 
-      component.onOrientationChange();
-      expect(port.resize).not.toHaveBeenCalled();
+      component.resizeMaximized(900, 500);
+      expect(port.resize).toHaveBeenCalledOnceWith(900, 500);
+      expect(maximizedCalls(port.resize)).toEqual([[900, 500]]);
 
-      component.resize(800, 400);
-      expect(port.resize).toHaveBeenCalledWith(800, 400);
+      component.closeMaximized();
+      expect(maximizedCalls(port.destroy)).toEqual([[]]);
+      component.resizeMaximized(1000, 600);
+      expect(port.resize).toHaveBeenCalledTimes(1);
+    });
+
+    it('lets go of a graph closed before its library loaded', async () => {
+      let loaded: () => void = () => undefined;
+      await draw();
+      port.mount.and.returnValue(
+        new Promise<void>((resolve) => (loaded = resolve)),
+      );
+      const shown = component.showMaximized(host, 800, 400);
+      component.closeMaximized();
+      loaded();
+      await shown;
+
+      port.setSeries.calls.reset();
+      component.redrawGraph();
+      expect(port.setSeries).toHaveBeenCalledTimes(1);
+    });
+
+    it('works on without the maximized graph when the library cannot load', async () => {
+      await draw();
+      port.mount.and.rejectWith(new Error('offline'));
+
+      await component.showMaximized(host, 800, 400);
+      port.resize.calls.reset();
+      component.resizeMaximized(900, 500);
+
+      expect(port.resize).not.toHaveBeenCalled();
     });
   });
 
@@ -547,14 +627,25 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
     expect(component.graphBox()).toEqual({ top: 42, width: 300 });
   });
 
-  it('moves the graph into another host and back', () => {
-    const host = document.createElement('div');
+  it('tells the barista page when its graph is opened', () => {
+    const tiles = document.createElement('div');
+    const graph = document.createElement('div');
+    Object.assign(internals(), {
+      baristamode: true,
+      tileContainerEl: { nativeElement: tiles },
+      graphContainerEl: { nativeElement: graph },
+    });
+    const shown = jasmine.createSpy('baristaGraphShown').and.callFake(() => {
+      // Sized only once the graph takes room on the page.
+      expect(graph.style.display).toBe('block');
+    });
+    component.baristaGraphShown.subscribe(shown);
 
-    component.moveGraphTo(host);
-    expect(plot.parentElement).toBe(host);
+    component.toggleGraphOnBaristaMode();
+    component.toggleGraphOnBaristaMode();
 
-    component.restoreGraph();
-    expect(plot.parentElement).toBe(container);
+    expect(shown).toHaveBeenCalledTimes(1);
+    expect(graph.style.display).toBe('none');
   });
 
   it('mounts the chart once and lets go of it when destroyed', async () => {

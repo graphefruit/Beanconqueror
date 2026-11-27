@@ -77,6 +77,6 @@
 
   <ion-card [hidden]="!isWebSocketConnected()" style="margin-top:0px;margin-bottom:0px;">
     <brew-brewing #brewBrewing [baristamode]="true" (lastShotInformation)="lastShotInformation($event)"
-                  [(data)]="data" />
+                  (baristaGraphShown)="resizeGraph()" [(data)]="data" />
   </ion-card>
 </ion-content>

@@ -4,20 +4,13 @@ import { expect, test } from './fixtures';
 import { seedDatabase } from './support/seed';
 import { generateDataSet, isOpenBrew } from './support/synthetic-data';
 
-const PLOTLY_SCRIPT = '/assets/js/plotly.min.js';
-
 /**
  * The large graph of a brew or of a stored graph is drawn by uPlot. The
  * browser build reads a bundled sample profile for every stored path, and a
  * bundled reference for a brew, so no flow file is needed.
  */
 
-async function start(page: Page, plotly: string[]): Promise<void> {
-  page.on('request', (request) => {
-    if (request.url().endsWith(PLOTLY_SCRIPT)) {
-      plotly.push(request.url());
-    }
-  });
+async function start(page: Page): Promise<void> {
   const data = generateDataSet({ brews: 3, beans: 2, archivedBeanShare: 0 });
   const withGraph = data.BREWS.find((brew) => isOpenBrew(data, brew));
   expect(withGraph).toBeDefined();
@@ -51,8 +44,7 @@ async function show(page: Page, route: string): Promise<void> {
 test('the graph of a brew: a chip hides a line, the slider moves by keyboard and says the values', async ({
   page,
 }) => {
-  const plotly: string[] = [];
-  await start(page, plotly);
+  await start(page);
   await show(page, '/home/brews');
 
   const card = page
@@ -86,12 +78,10 @@ test('the graph of a brew: a chip hides a line, the slider moves by keyboard and
 
   await detail.getByRole('button', { name: 'Close' }).click();
   await expect(detail).toHaveCount(0);
-  expect(plotly).toEqual([]);
 });
 
 test('the graph library opens a stored graph large', async ({ page }) => {
-  const plotly: string[] = [];
-  await start(page, plotly);
+  await start(page);
   await show(page, '/home/profile/graph');
 
   await page
@@ -111,5 +101,4 @@ test('the graph library opens a stored graph large', async ({ page }) => {
 
   await detail.getByRole('button', { name: 'Close' }).click();
   await expect(detail).toHaveCount(0);
-  expect(plotly).toEqual([]);
 });

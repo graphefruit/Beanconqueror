@@ -398,7 +398,7 @@
 }
 @if(choosenPreparation && baristamode === true) {
   <brew-brewing-preparation-device #brewBrewingPreparationDeviceEl [isEdit]='isEdit' [baristamode]="baristamode" [brewComponent]='this' [(data)]='data' />
-  <brew-brewing-graph [baristamode]="baristamode" #brewBrewingGraphEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data' />
+  <brew-brewing-graph [baristamode]="baristamode" #brewBrewingGraphEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data' (baristaGraphShown)="baristaGraphShown.emit()" />
 
   <ion-item style="display:none"  lines="inset">
     <brew-timer [baristamode]="baristamode" #timer (bloomTimer)="setCoffeeBloomingTime($event)" (dripTimer)="setCoffeeDripTime($event)" (listeningToScaleChange)='startListeningToScaleChange($event)'

@@ -9,7 +9,7 @@ import {
   type UplotOverlayState,
 } from './uplot-plugin';
 
-/** Spacing of the labels at the cursor, as the Plotly slider had it. */
+/** Spacing of the labels at the cursor. */
 export const LABEL_MIN_GAP = 28;
 export const LABEL_EDGE = 15;
 export const LABEL_OFFSET = 55;

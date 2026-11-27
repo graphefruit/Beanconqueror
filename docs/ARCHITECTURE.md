@@ -28,6 +28,7 @@ Contents:
 | Storage          | Ionic Storage (IndexedDB first)                                                               | `src/main.ts`, `src/services/uiStorage.ts`                                       |
 | i18n             | ngx-translate, JSON files per language                                                        | `src/main.ts`, `src/assets/i18n/`                                                |
 | Charts           | Chart.js                                                                                      | `src/app/app.component.ts` (`Chart.register`)                                    |
+| Brew graph       | uPlot, loaded lazily, behind a port (`BrewChartPort`) that draws from a buffer                | `src/components/brews/graph/`                                                    |
 | Change detection | zone.js (`provideZoneChangeDetection()`); existing components `ChangeDetectionStrategy.Eager` | `src/main.ts`, `src/polyfills.ts`                                                |
 | Tooling          | pnpm, ESLint (with a suppressions ratchet), Prettier, Karma, Playwright                       | `package.json`, `eslint.config.mjs`, `src/karma.conf.js`, `playwright.config.ts` |
 

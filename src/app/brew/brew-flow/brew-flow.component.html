@@ -52,7 +52,7 @@
 <ion-content #brewFlowContent [class.camera-visible]="cameraIsVisible" class="brew-flow-content">
 
   <div id="main-content">
-    <div id="informationContainer" [hidden]="settings.maximize_hide_value_cards_on_maximize_screen">
+    <div #informationContainer class="information-container" [hidden]="settings.maximize_hide_value_cards_on_maximize_screen">
       <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
         <ion-row style="padding-bottom:5px;">
           @if(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected || ( brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceConnected && brewComponent?.brewBrewingPreparationDeviceEl?.uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
@@ -139,7 +139,7 @@
     <ion-grid class="ion-no-padding ion-no-margin-important">
 
       <ion-row>
-        <ion-col [size]="cameraIsVisible?7:12"><div id="brewFlowContainer"></div></ion-col>
+        <ion-col [size]="cameraIsVisible?7:12"><div #brewFlowContainer></div></ion-col>
         @if(cameraIsVisible) {
           <ion-col size="5"> <div style="width:100%;height:100%" id="cameraPreview"></div></ion-col>
         }

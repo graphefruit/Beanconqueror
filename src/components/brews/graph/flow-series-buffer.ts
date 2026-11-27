@@ -316,8 +316,7 @@ export class FlowSeriesBuffer implements SeriesSource {
     }));
     const all = [...fixed, ...custom];
     const byId = new Map(all.map((s) => [s.id, s]));
-    // GraphHelperService takes the first weight, pressure, temperature or
-    // custom sample as zero; the other series only count when those are empty.
+    // The first weight, pressure, temperature or custom sample is zero; the other series only count when those are empty.
     const order = [
       byId.get('weight'),
       byId.get('pressure'),

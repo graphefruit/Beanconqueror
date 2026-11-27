@@ -250,6 +250,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   @Input('baristamode') public baristamode: boolean = false;
   @Output() public lastShotInformation = new EventEmitter();
+  public readonly baristaGraphShown = output<void>();
   /** The form has filled itself in (last brew, device, graph). */
   public readonly loaded = output<void>();
 
@@ -581,8 +582,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     await modal.present();
     await modal.onWillDismiss();
-    await sleep(50);
-    this.brewBrewingGraphEl.onOrientationChange();
   }
 
   public async chooseGraphToSetAsReference() {
@@ -615,10 +614,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.brewBrewingGraphEl.checkChanges();
     await modal.onWillDismiss();
     this.maximizeFlowGraphIsShown = false;
-    this.brewBrewingGraphEl.updateChart();
-
-    await sleep(50);
-    this.brewBrewingGraphEl.onOrientationChange();
   }
 
   public ngOnDestroy() {

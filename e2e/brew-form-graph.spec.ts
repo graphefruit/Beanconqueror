@@ -107,3 +107,37 @@ test('a chosen reference is drawn under the live graph', async ({ page }) => {
     .poll(() => pixelsIn(canvas, WEIGHT_REFERENCE), { timeout: 10_000 })
     .toBeGreaterThan(before + 30);
 });
+
+test('the maximized graph goes on with the running brew and gives the form its graph back', async ({
+  page,
+}) => {
+  await startWithBrewWithGraph(page);
+  await openAddBrew(page);
+  await expect(liveGraph(page)).toBeAttached({ timeout: 10_000 });
+
+  // The browser build feeds simulated scale weights while the timer runs.
+  await page.getByRole('button', { name: 'Start timer' }).click();
+  await expect(page.getByRole('button', { name: 'Pause timer' })).toBeVisible();
+  await page.getByRole('button', { name: 'Maximize flow graph' }).click();
+
+  const maximized = page.locator('brew-flow');
+  const large = maximized.locator('.uplot canvas').first();
+  await expect(large).toBeVisible({ timeout: 10_000 });
+  // Drawn as well, from the same samples, behind the maximized view.
+  await expect(liveGraph(page)).toBeAttached();
+  const drawn = await pixelsIn(large, WEIGHT);
+  await expect
+    .poll(() => pixelsIn(large, WEIGHT), { timeout: 10_000 })
+    .toBeGreaterThan(drawn + 30);
+
+  await maximized.getByRole('button', { name: 'Close flow graph' }).click();
+  await expect(maximized).toHaveCount(0);
+  const graph = page.locator('brew-brewing-graph .uplot').first();
+  await expect(graph).toBeVisible();
+  // The graph of the form keeps the width of its container.
+  const [own, container] = await graph.evaluate((element) => [
+    element.getBoundingClientRect().width,
+    element.parentElement?.parentElement?.getBoundingClientRect().width ?? 0,
+  ]);
+  expect(Math.abs(own - container)).toBeLessThanOrEqual(2);
+});

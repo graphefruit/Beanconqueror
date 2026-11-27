@@ -4,20 +4,13 @@ import { expect, test } from './fixtures';
 import { seedDatabase } from './support/seed';
 import { generateDataSet, isOpenBrew } from './support/synthetic-data';
 
-const PLOTLY_SCRIPT = '/assets/js/plotly.min.js';
-
 /**
  * The small graph of a stored brew or graph is drawn by uPlot, inside a
  * picture named for screen readers. The browser build reads a bundled sample
  * profile for every stored path, so no flow file is needed.
  */
 
-async function start(page: Page, plotly: string[]): Promise<void> {
-  page.on('request', (request) => {
-    if (request.url().endsWith(PLOTLY_SCRIPT)) {
-      plotly.push(request.url());
-    }
-  });
+async function start(page: Page): Promise<void> {
   const data = generateDataSet({ brews: 3, beans: 2, archivedBeanShare: 0 });
   // One brew under "Current" has a flow profile.
   const withGraph = data.BREWS.find((brew) => isOpenBrew(data, brew));
@@ -56,8 +49,7 @@ function picture(scope: Locator): Locator {
 test('a brew card draws its graph once its graph slide is shown', async ({
   page,
 }) => {
-  const plotly: string[] = [];
-  await start(page, plotly);
+  await start(page);
   await show(page, '/home/brews');
 
   const card = page
@@ -74,15 +66,12 @@ test('a brew card draws its graph once its graph slide is shown', async ({
 
   await expect(graph).toBeInViewport();
   await expect(graph.locator('.uplot canvas')).toBeVisible();
-  expect(plotly).toEqual([]);
 });
 
 test('the graph library draws a stored graph', async ({ page }) => {
-  const plotly: string[] = [];
-  await start(page, plotly);
+  await start(page);
   await show(page, '/home/profile/graph');
 
   const card = page.locator('graph-information-card').filter({ visible: true });
   await expect(picture(card).locator('.uplot canvas')).toBeVisible();
-  expect(plotly).toEqual([]);
 });
