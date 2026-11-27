@@ -6,7 +6,7 @@ describe('nextSanremoStopStep', () => {
     options: Partial<SanremoStopWatch> = {},
   ): SanremoStopWatch => ({
     groupStatus,
-    sawZero: false,
+    sawEnd: false,
     resent: false,
     ...options,
   });
@@ -19,16 +19,27 @@ describe('nextSanremoStopStep', () => {
   });
 
   it('keeps watching a 0 for a restart before confirming', () => {
-    expect(nextSanremoStopStep(watch(0, { sawZero: true }), 900)).toBe('wait');
-    expect(nextSanremoStopStep(watch(0, { sawZero: true }), 1999)).toBe('wait');
+    expect(nextSanremoStopStep(watch(0, { sawEnd: true }), 900)).toBe('wait');
+    expect(nextSanremoStopStep(watch(0, { sawEnd: true }), 1999)).toBe('wait');
   });
 
+  for (const ended of [5, 6]) {
+    it(`treats groupStatus ${ended} as an ended shot and never resends`, () => {
+      expect(nextSanremoStopStep(watch(ended, { sawEnd: true }), 1999)).toBe(
+        'wait',
+      );
+      expect(
+        nextSanremoStopStep(watch(ended, { statusAfterMs: 1500 }), 3000),
+      ).toBe('confirmed');
+    });
+  }
+
   it('confirms when the status is still 0 after 2 s', () => {
-    expect(nextSanremoStopStep(watch(0, { sawZero: true }), 2000)).toBe(
+    expect(nextSanremoStopStep(watch(0, { sawEnd: true }), 2000)).toBe(
       'confirmed',
     );
     expect(
-      nextSanremoStopStep(watch(0, { sawZero: true, resent: true }), 2000),
+      nextSanremoStopStep(watch(0, { sawEnd: true, resent: true }), 2000),
     ).toBe('confirmed');
   });
 
@@ -46,7 +57,7 @@ describe('nextSanremoStopStep', () => {
   });
 
   it('resends at once on a restart after a 0', () => {
-    expect(nextSanremoStopStep(watch(3, { sawZero: true }), 1000)).toBe(
+    expect(nextSanremoStopStep(watch(3, { sawEnd: true }), 1000)).toBe(
       'resend',
     );
   });
@@ -59,7 +70,7 @@ describe('nextSanremoStopStep', () => {
       ),
     ).toBe('failed');
     expect(
-      nextSanremoStopStep(watch(2, { sawZero: true, resent: true }), 100),
+      nextSanremoStopStep(watch(2, { sawEnd: true, resent: true }), 100),
     ).toBe('failed');
   });
 });

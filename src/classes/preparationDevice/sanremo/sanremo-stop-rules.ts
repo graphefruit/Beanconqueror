@@ -25,8 +25,8 @@ export type SanremoStopStep = 'wait' | 'confirmed' | 'resend' | 'failed';
 export interface SanremoStopWatch {
   /** The single allowed second stop has been sent. */
   resent: boolean;
-  /** A 0 was reported since the last stop. */
-  sawZero: boolean;
+  /** A status without a running shot was reported since the last stop. */
+  sawEnd: boolean;
   groupStatus: number;
   /** When the latest status arrived, in ms after the last stop; undefined before the first one. */
   statusAfterMs?: number;
@@ -37,11 +37,11 @@ export function nextSanremoStopStep(
   watch: SanremoStopWatch,
   elapsedMs: number,
 ): SanremoStopStep {
-  if (watch.groupStatus === 0) {
+  if (!isSanremoShotRunning(watch.groupStatus)) {
     return elapsedMs >= SANREMO_CONFIRM_AFTER_MS ? 'confirmed' : 'wait';
   }
-  // A 0 is always a fresh value, so running after it is a real restart.
-  if (!watch.sawZero) {
+  // An ended shot is always a fresh value, so running after it is a real restart.
+  if (!watch.sawEnd) {
     if (elapsedMs < SANREMO_STOP_DEADLINE_MS) {
       return 'wait';
     }
@@ -50,6 +50,14 @@ export function nextSanremoStopStep(
     }
   }
   return watch.resent ? 'failed' : 'resend';
+}
+
+/**
+ * 1–4 are the shot programs; 5 (rinse) and 6 (paddle) are no shot, and a stop
+ * with their id would cancel them.
+ */
+export function isSanremoShotRunning(groupStatus: number): boolean {
+  return groupStatus >= 1 && groupStatus <= 4;
 }
 
 export function isFreshSanremoStatus(watch: SanremoStopWatch): boolean {

@@ -19,10 +19,14 @@ describe('SanremoYOUDevice stop confirmation', () => {
   function report(groupStatus: number) {
     socket.onmessage({ data: JSON.stringify({ status: 1, groupStatus }) });
   }
-  function sentStops(): unknown[] {
+  function sentStops(): Array<{ key?: number; id?: number; value?: number }> {
     return socket.send.calls
       .allArgs()
-      .map(([data]) => JSON.parse(data) as unknown);
+      .map(
+        ([data]) =>
+          JSON.parse(data) as { key?: number; id?: number; value?: number },
+      )
+      .filter((data) => data.key === 220);
   }
   function ack() {
     socket.onmessage({ data: JSON.stringify({ key: 220, success: true }) });
@@ -294,6 +298,68 @@ describe('SanremoYOUDevice stop confirmation', () => {
 
     expect(result).toBe('aborted');
     expect(sentStops().length).toBe(1);
+  });
+
+  it('reports a lost connection during the watch and sends no further stop', async () => {
+    stop();
+    jasmine.clock().tick(300);
+    socket.onclose({});
+    await flush();
+    expect(result).toBe('connection_lost');
+
+    jasmine.clock().tick(500);
+    socket.onopen({});
+    report(2);
+    jasmine.clock().tick(5000);
+    report(2);
+    expect(sentStops().length).toBe(1);
+  });
+
+  it('reports a stop as unconfirmed when the machine stops sending data', async () => {
+    socket.onopen({});
+    stop();
+    jasmine.clock().tick(900);
+    report(2);
+    jasmine.clock().tick(2100);
+    expect(sentStops().length).toBe(2);
+    jasmine.clock().tick(1999);
+    await flush();
+    expect(result).toBeUndefined();
+
+    jasmine.clock().tick(1);
+    await flush();
+    expect(result).toBe('connection_lost');
+    expect(sentStops().length).toBe(2);
+  });
+
+  it('does not stop a rinse or paddle run', async () => {
+    report(6);
+    stop();
+    await flush();
+    expect(socket.send).not.toHaveBeenCalled();
+    expect(result).toBe('not_running');
+  });
+
+  it('does not resend when the machine moves on to a rinse after the stop', async () => {
+    stop();
+    jasmine.clock().tick(900);
+    report(5);
+    jasmine.clock().tick(2100);
+    report(5);
+    await flush();
+
+    expect(sentStops().length).toBe(1);
+    expect(result).toBe('confirmed');
+  });
+
+  it('logs that no status came while waiting for a reconnect', async () => {
+    socket.readyState = 0;
+    stop();
+    jasmine.clock().tick(5000);
+    await flush();
+    expect(JSON.stringify(log.error.calls.allArgs())).toContain(
+      'no status from the machine within 5000 ms',
+    );
   });
 
   it('keeps one watch when the stop is triggered twice', async () => {

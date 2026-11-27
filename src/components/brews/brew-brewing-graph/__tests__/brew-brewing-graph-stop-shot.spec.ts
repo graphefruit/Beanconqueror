@@ -52,6 +52,17 @@ describe('BrewBrewingGraphComponent stop shot', () => {
     ]);
   });
 
+  for (const result of ['not_connected', 'connection_lost'] as const) {
+    it(`asks to stop on the machine when the stop ends as ${result}`, async () => {
+      setup(result);
+      component.triggerStopShotOnSanremoYOU(36);
+      await flush();
+      expect(uiToast.showInfoToast).toHaveBeenCalledOnceWith(
+        'PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_NOT_CONFIRMED',
+      );
+    });
+  }
+
   for (const result of ['not_running', 'aborted'] as const) {
     it(`shows nothing when the stop ends as ${result}`, async () => {
       setup(result);
