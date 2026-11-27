@@ -197,7 +197,7 @@
     "FILE_DOWNLOADED_SUCCESSFULLY": "File '{{fileName}}' was successfully downloaded to your download folder!",
     "NO": "No",
     "YES": "Yes",
-    "SURE_QUESTION": "Are your sure?",
+    "SURE_QUESTION": "Are you sure?",
     "DELETE_BREW_QUESTION": "Delete brew?",
     "DELETE_BEAN_QUESTION_NONE": "Delete bean? No brews will be deleted.",
     "DELETE_BEAN_QUESTION_ONE": "Delete bean? {{count}} brew of this bean will be deleted as well!",

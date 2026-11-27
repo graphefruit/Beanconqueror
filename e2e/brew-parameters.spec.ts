@@ -180,8 +180,7 @@ test('managed parameters hide and show fields in the brew form', async ({
   // Hidden fields are hidden in the details too.
   await page.getByRole('button', { name: 'Cancel' }).click();
   await brewAction(page, 'Details');
-  // Unlike its neighbours, this label has no colon.
-  await expect(page.getByText('Coffee Type', { exact: true })).toBeVisible();
+  await expect(page.getByText('Coffee Type:', { exact: true })).toBeVisible();
   await expect(
     page.getByText('Total dissolved solids %:', { exact: true }),
   ).toBeVisible();

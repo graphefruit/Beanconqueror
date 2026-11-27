@@ -310,6 +310,16 @@ describe('BrewDetailComponent field order', () => {
     expect(graph().flow()).toBe(flow);
   });
 
+  it('ends the coffee type label with a colon like its neighbours', () => {
+    layOut({ after: ['coffee_type', 'coffee_concentration'] });
+
+    expect(labels('BREW_HEADER_AFTER_BREW')).toEqual([
+      'BREW_DATA_COFFEE_TYPE:',
+      'BREW_DATA_COFFEE_CONCENTRATION:',
+      'BREW_CREATION_DATE',
+    ]);
+  });
+
   it('keeps the graph when the settings change while the details are open', () => {
     const graphBefore = graph();
 

@@ -65,15 +65,6 @@ export class ManageCustomParameterComponent implements OnInit {
     return this.data instanceof Preparation;
   }
 
-  public firstDripDisabled(): boolean {
-    //#598
-    return false;
-    if (this.isPreparation()) {
-      const prep: Preparation = this.data as Preparation;
-      return prep.style_type !== PREPARATION_STYLE_TYPE.ESPRESSO;
-    }
-    return false;
-  }
   public brewQuantityDisabled(): boolean {
     if (this.isPreparation()) {
       const prep: Preparation = this.data as Preparation;
