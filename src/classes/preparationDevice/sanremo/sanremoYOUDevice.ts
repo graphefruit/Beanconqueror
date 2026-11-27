@@ -10,9 +10,11 @@ import { sleep } from '../../devices';
 import { Preparation } from '../../preparation/preparation';
 import { PreparationDevice } from '../preparationDevice';
 import {
+  hasSanremoVolumeRestarted,
   isFreshSanremoStatus,
   isSanremoShotRunning,
   nextSanremoStopStep,
+  noteSanremoStopStatus,
   SANREMO_FRESH_STATUS_MS,
   SANREMO_PENDING_STOP_MS,
   SanremoStopWatch,
@@ -519,7 +521,10 @@ export class SanremoYOUDevice extends PreparationDevice {
               this.lastRunnedProgramm = this.sanremoShotData.groupStatus;
             }
             this.statusSinceOpen = true;
-            this.watchStopStatus(this.sanremoShotData.groupStatus);
+            this.watchStopStatus(
+              this.sanremoShotData.groupStatus,
+              this.sanremoShotData.counterVol,
+            );
           } else if (responseJSON.key === 220) {
             this.noteStopAnswer(responseJSON.success === true);
           }
@@ -645,7 +650,7 @@ export class SanremoYOUDevice extends PreparationDevice {
     );
   }
 
-  private watchStopStatus(groupStatus: number) {
+  private watchStopStatus(groupStatus: number, counterVol: number) {
     const request = this.stopRequest;
     if (!request) {
       return;
@@ -664,7 +669,7 @@ export class SanremoYOUDevice extends PreparationDevice {
       return;
     }
     const watch = request.watch;
-    watch.groupStatus = groupStatus;
+    noteSanremoStopStatus(watch, groupStatus, counterVol);
     watch.statusAfterMs = Date.now() - watch.startedAt;
     if (!isSanremoShotRunning(groupStatus) && !watch.sawEnd) {
       watch.sawEnd = true;
@@ -697,9 +702,11 @@ export class SanremoYOUDevice extends PreparationDevice {
     }
     const reason = watch.sawEnd
       ? `shot restarted after it ended, ${elapsed} ms after the stop`
-      : isFreshSanremoStatus(watch)
-        ? `still running ${watch.statusAfterMs} ms after the stop`
-        : `no status from ${SANREMO_FRESH_STATUS_MS} ms after the stop, a second stop could start a new shot`;
+      : hasSanremoVolumeRestarted(watch)
+        ? `shot restarted at volume ${watch.counterVol} after ${watch.maxRunningVol}, ${elapsed} ms after the stop`
+        : isFreshSanremoStatus(watch)
+          ? `still running ${watch.statusAfterMs} ms after the stop`
+          : `no status from ${SANREMO_FRESH_STATUS_MS} ms after the stop, a second stop could start a new shot`;
     if (step === 'resend') {
       this.logInfo(
         `Stop not effective (${reason}, groupStatus ${watch.groupStatus}), resending`,
@@ -712,6 +719,7 @@ export class SanremoYOUDevice extends PreparationDevice {
         resent: true,
         sawEnd: false,
         statusAfterMs: undefined,
+        maxRunningVol: undefined,
         startedAt: Date.now(),
       });
       request.onResend?.();

@@ -16,8 +16,10 @@ describe('SanremoYOUDevice stop confirmation', () => {
   let onResend: jasmine.Spy;
   let result: SanremoStopResult | undefined;
 
-  function report(groupStatus: number) {
-    socket.onmessage({ data: JSON.stringify({ status: 1, groupStatus }) });
+  function report(groupStatus: number, counterVol?: number) {
+    socket.onmessage({
+      data: JSON.stringify({ status: 1, groupStatus, counterVol }),
+    });
   }
   function sentStops(): Array<{ key?: number; id?: number; value?: number }> {
     return socket.send.calls
@@ -153,6 +155,67 @@ describe('SanremoYOUDevice stop confirmation', () => {
     jasmine.clock().tick(2000);
     await flush();
     expect(result).toBe('confirmed');
+  });
+
+  it('resends at once when the volume restarts without a reported 0', async () => {
+    stop();
+    jasmine.clock().tick(100);
+    report(1, 352);
+    jasmine.clock().tick(300);
+    report(1, 362);
+    jasmine.clock().tick(300);
+    report(1, 5);
+
+    expect(sentStops()).toEqual([
+      { key: 220, id: 2, value: 0 },
+      { key: 220, id: 1, value: 0 },
+    ]);
+    expect(onResend).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(log.info.calls.allArgs())).toContain(
+      'shot restarted at volume 0.5 after 36.2',
+    );
+
+    jasmine.clock().tick(300);
+    report(1, 15);
+    jasmine.clock().tick(300);
+    report(0, 400);
+    jasmine.clock().tick(2000);
+    await flush();
+    expect(sentStops().length).toBe(2);
+    expect(result).toBe('confirmed');
+  });
+
+  it('resends only once when the volume restarts after a 0', async () => {
+    stop();
+    jasmine.clock().tick(100);
+    report(1, 352);
+    jasmine.clock().tick(300);
+    report(1, 362);
+    jasmine.clock().tick(300);
+    report(0, 400);
+    jasmine.clock().tick(300);
+    report(1, 5);
+    jasmine.clock().tick(300);
+    report(1, 15);
+
+    expect(sentStops().length).toBe(2);
+    expect(onResend).toHaveBeenCalledTimes(1);
+
+    report(0, 400);
+    jasmine.clock().tick(2000);
+    await flush();
+    expect(sentStops().length).toBe(2);
+    expect(result).toBe('confirmed');
+  });
+
+  it('does not resend early while the volume keeps rising', () => {
+    stop();
+    for (let vol = 300; vol <= 380; vol += 10) {
+      jasmine.clock().tick(300);
+      report(1, vol);
+    }
+    expect(sentStops().length).toBe(1);
+    expect(onResend).not.toHaveBeenCalled();
   });
 
   it('sends no third stop when the resend is ignored as well', async () => {

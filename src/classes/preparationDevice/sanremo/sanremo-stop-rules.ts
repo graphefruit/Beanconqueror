@@ -28,6 +28,10 @@ export interface SanremoStopWatch {
   /** A status without a running shot was reported since the last stop. */
   sawEnd: boolean;
   groupStatus: number;
+  /** Shot volume of the latest status. */
+  counterVol?: number;
+  /** Highest shot volume reported with a running shot since the last stop. */
+  maxRunningVol?: number;
   /** When the latest status arrived, in ms after the last stop; undefined before the first one. */
   statusAfterMs?: number;
 }
@@ -41,7 +45,7 @@ export function nextSanremoStopStep(
     return elapsedMs >= SANREMO_CONFIRM_AFTER_MS ? 'confirmed' : 'wait';
   }
   // An ended shot is always a fresh value, so running after it is a real restart.
-  if (!watch.sawEnd) {
+  if (!watch.sawEnd && !hasSanremoVolumeRestarted(watch)) {
     if (elapsedMs < SANREMO_STOP_DEADLINE_MS) {
       return 'wait';
     }
@@ -62,4 +66,31 @@ export function isSanremoShotRunning(groupStatus: number): boolean {
 
 export function isFreshSanremoStatus(watch: SanremoStopWatch): boolean {
   return (watch.statusAfterMs ?? -1) >= SANREMO_FRESH_STATUS_MS;
+}
+
+/**
+ * A new shot counts its volume from 0, so a running shot with less volume than
+ * before is a restart even when no status in between showed the end.
+ */
+export function hasSanremoVolumeRestarted(watch: SanremoStopWatch): boolean {
+  return (
+    isSanremoShotRunning(watch.groupStatus) &&
+    watch.counterVol < (watch.maxRunningVol ?? -1)
+  );
+}
+
+/** Takes a status into the watch; the volume of an ended shot does not count. */
+export function noteSanremoStopStatus(
+  watch: SanremoStopWatch,
+  groupStatus: number,
+  counterVol: number,
+): void {
+  watch.groupStatus = groupStatus;
+  watch.counterVol = counterVol;
+  if (isSanremoShotRunning(groupStatus) && Number.isFinite(counterVol)) {
+    watch.maxRunningVol = Math.max(
+      watch.maxRunningVol ?? counterVol,
+      counterVol,
+    );
+  }
 }

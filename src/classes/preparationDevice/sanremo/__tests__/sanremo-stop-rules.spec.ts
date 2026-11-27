@@ -1,4 +1,8 @@
-import { nextSanremoStopStep, SanremoStopWatch } from '../sanremo-stop-rules';
+import {
+  nextSanremoStopStep,
+  noteSanremoStopStatus,
+  SanremoStopWatch,
+} from '../sanremo-stop-rules';
 
 describe('nextSanremoStopStep', () => {
   const watch = (
@@ -72,5 +76,45 @@ describe('nextSanremoStopStep', () => {
     expect(
       nextSanremoStopStep(watch(2, { sawEnd: true, resent: true }), 100),
     ).toBe('failed');
+  });
+
+  it('resends at once when the running volume drops without a reported end', () => {
+    const w = watch(1);
+    noteSanremoStopStatus(w, 1, 35.2);
+    expect(nextSanremoStopStep(w, 300)).toBe('wait');
+    noteSanremoStopStatus(w, 1, 0.5);
+    expect(nextSanremoStopStep(w, 600)).toBe('resend');
+  });
+
+  it('does not resend on a rising volume', () => {
+    const w = watch(1);
+    for (const vol of [35.2, 36.2, 37]) {
+      noteSanremoStopStatus(w, 1, vol);
+      expect(nextSanremoStopStep(w, 600)).toBe('wait');
+    }
+  });
+
+  it('ignores the volume of an ended shot', () => {
+    const w = watch(1);
+    noteSanremoStopStatus(w, 1, 0.5);
+    noteSanremoStopStatus(w, 0, 40);
+    noteSanremoStopStatus(w, 1, 1);
+    expect(w.maxRunningVol).toBe(1);
+    expect(nextSanremoStopStep(w, 600)).toBe('wait');
+  });
+
+  it('ignores a status without a volume', () => {
+    const w = watch(1);
+    noteSanremoStopStatus(w, 1, 35.2);
+    noteSanremoStopStatus(w, 1, NaN);
+    expect(w.maxRunningVol).toBe(35.2);
+    expect(nextSanremoStopStep(w, 600)).toBe('wait');
+  });
+
+  it('gives up when the volume drops again after the resend', () => {
+    const w = watch(1, { resent: true });
+    noteSanremoStopStatus(w, 1, 20);
+    noteSanremoStopStatus(w, 1, 0.5);
+    expect(nextSanremoStopStep(w, 600)).toBe('failed');
   });
 });
