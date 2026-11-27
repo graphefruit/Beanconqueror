@@ -232,6 +232,25 @@ describe('BrewBrewingGraphComponent spoken scale weight', () => {
     expect(said()).toEqual(['31,5', '31,5']);
   }));
 
+  it('says the weight again when the scale button resumes a paused brew', fakeAsync(() => {
+    create();
+    void component.timerStarted(undefined);
+    timer.hasStarted = true;
+    timer.running = true;
+    scale.getWeight.and.returnValue(31.46);
+    tick(500);
+
+    timer.running = false;
+    void component.timerPaused(undefined);
+    tick(1000);
+    // The scale button only restarts the timer; timerResumed is not called.
+    timer.running = true;
+    scale.getWeight.and.returnValue(40.02);
+    tick(500);
+
+    expect(said()).toEqual(['31,5', '40']);
+  }));
+
   it('starts again after a reset', fakeAsync(() => {
     create();
     void component.timerStarted(undefined);

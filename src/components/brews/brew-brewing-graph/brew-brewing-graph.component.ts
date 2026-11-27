@@ -1396,7 +1396,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         scale.setTimer(SCALE_TIMER_COMMAND.STOP);
         this.deattachToWeightChange();
         this.deattachToFlowChange();
-        this.deattachToTextToSpeedChange();
+        // The spoken weight stays attached: it is silent while paused, and a resume
+        // from the scale button does not call timerResumed.
       }
       if (pressureDevice) {
         this.deattachToPressureChange();
