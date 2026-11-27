@@ -80,7 +80,8 @@ export class FlowProfileReader {
     }
   }
 
-  private referencePath(reference: IReferenceGraph): string | undefined {
+  /** The file of a reference graph; undefined when its brew or graph has been deleted. */
+  public referencePath(reference: IReferenceGraph): string | undefined {
     switch (reference.type) {
       case REFERENCE_GRAPH_TYPE.BREW:
         return this.uiBrewStorage

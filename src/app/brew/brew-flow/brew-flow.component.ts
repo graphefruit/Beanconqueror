@@ -143,6 +143,8 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   public smartScaleBrewRatio: ElementRef;
 
   private disableHardwareBack;
+  /** Only while the graph is shown here may this view size it. */
+  private graphShown = false;
   protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
 
   public graphIconColSize: number = 2.4;
@@ -232,6 +234,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         this.brewComponent.brewBrewingGraphEl.moveGraphTo(
           document.getElementById('brewFlowContainer'),
         );
+        this.graphShown = true;
         resolve(undefined);
       }, 50);
     });
@@ -320,6 +323,10 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   @HostListener('window:orientationchange')
   public onOrientationChange() {
     setTimeout(() => {
+      // A late timer after dismiss would size the form's own graph.
+      if (!this.graphShown) {
+        return;
+      }
       try {
         const flowHeight = this.brewFlowContent.nativeElement.offsetHeight;
         let informationContainerHeight = 0;
@@ -389,18 +396,6 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
 
   public async startTimer() {
     await this.brewComponent.timerStartPressed(undefined);
-
-    // Looks funny but we need. if we would not calculate and substract 25px, the actual time graph would not be displayed :<
-    setTimeout(() => {
-      try {
-        const newHeight =
-          document.getElementById('brewFlowContainer').offsetHeight;
-        document
-          .getElementById('brewFlowContainer')
-          .getElementsByTagName('canvas')[0].style.height =
-          newHeight - 1 + 'px';
-      } catch (ex) {}
-    }, 250);
   }
 
   public pauseTimer() {
@@ -599,6 +594,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public dismiss() {
+    this.graphShown = false;
     this.brewComponent.brewBrewingGraphEl.restoreGraph();
     try {
       this.disableHardwareBack.unsubscribe();

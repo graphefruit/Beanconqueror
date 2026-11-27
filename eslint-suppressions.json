@@ -515,7 +515,7 @@
       "count": 3
     },
     "no-empty": {
-      "count": 5
+      "count": 4
     },
     "prefer-const": {
       "count": 1
@@ -2400,14 +2400,11 @@
     "@typescript-eslint/no-misused-promises": {
       "count": 2
     },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 2
-    },
     "@typescript-eslint/no-unsafe-return": {
-      "count": 2
+      "count": 1
     },
     "eqeqeq": {
-      "count": 5
+      "count": 3
     },
     "no-async-promise-executor": {
       "count": 1
@@ -2416,13 +2413,13 @@
       "count": 3
     },
     "no-empty": {
-      "count": 23
+      "count": 18
     },
     "no-unsafe-optional-chaining": {
       "count": 1
     },
     "prefer-const": {
-      "count": 3
+      "count": 1
     }
   },
   "src/components/brews/brew-brewing-preparation-device/brew-brewing-preparation-device.component.ts": {

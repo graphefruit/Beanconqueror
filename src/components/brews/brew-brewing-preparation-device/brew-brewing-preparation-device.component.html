@@ -59,7 +59,6 @@
           lines="none">
           <ion-input [label]="'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_AT_WEIGHT' | translate" label-placement="stacked"
                      [(ngModel)]="data.preparationDeviceBrew.params.scriptAtWeightReachedNumber"
-                     (ionBlur)='drawTargetWeight(data.preparationDeviceBrew.params.scriptAtWeightReachedNumber)'
                      inputmode="decimal"
                      prevent-characters remove-empty-number type="text" />
         </ion-item>
@@ -167,7 +166,6 @@
             <ion-item [disabled]="!(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected)" lines="none">
               <ion-input [label]="'PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_AT_WEIGHT' | translate"
                          label-placement="stacked"
-                         (ionBlur)='drawTargetWeight(data.preparationDeviceBrew.params.stopAtWeight)'
                          [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeight" inputmode="decimal"
                          prevent-characters
                          remove-empty-number type="text" />
@@ -326,7 +324,6 @@
         <ion-item [disabled]="!(brewComponent?.brewBrewingGraphEl?.uiSmartScaleConnected)" lines="inset">
           <ion-input [label]="'PREPARATION_DEVICE.TYPE_MOVE2.STOP_AT_WEIGHT' | translate"
                      label-placement="stacked"
-                     (ionBlur)='drawTargetWeight(data.preparationDeviceBrew.params.stopAtWeight)'
                      [(ngModel)]="data.preparationDeviceBrew.params.stopAtWeight" inputmode="decimal"
                      prevent-characters
                      remove-empty-number type="text" />

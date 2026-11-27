@@ -79,6 +79,21 @@ function importedFlow(): BrewFlow {
 }
 
 describe('FlowSeriesBuffer', () => {
+  it('tells its listeners about every change until they stop listening', () => {
+    const buffer = new FlowSeriesBuffer();
+    const listener = jasmine.createSpy('listener');
+    const stop = buffer.onChange(listener);
+
+    buffer.append('weight', 0, 1);
+    buffer.replaceLast('weight', 2);
+    buffer.clear();
+    expect(listener).toHaveBeenCalledTimes(3);
+
+    stop();
+    buffer.append('weight', 0, 1);
+    expect(listener).toHaveBeenCalledTimes(3);
+  });
+
   it('loads recorded brews without losing a sample', () => {
     for (const recorded of [recordedThird, recordedFourth]) {
       const flow = recorded as unknown as BrewFlow;
@@ -284,6 +299,57 @@ describe('FlowSeriesBuffer', () => {
     expect(buffer.view('weight').y[39]).toBe(39);
     expect(buffer.version).toBe(before + 40);
     expect(buffer.endTime()).toBeCloseTo(3.9, 6);
+  });
+
+  it('times recorded samples from the first one, as a load of them does', () => {
+    const recorded = new BrewFlow();
+    recorded.weight = [
+      w('08:00:00.000', '0.0', 1),
+      w('08:00:01.500', '1.5', 3),
+      w('08:00:02.000', '2.0', 5),
+    ];
+    recorded.pressureFlow = [
+      {
+        timestamp: '08:00:00.250',
+        brew_time: '0.2',
+        actual_pressure: 9,
+        old_pressure: 0,
+      },
+    ];
+    const live = new FlowSeriesBuffer();
+    live.appendSample('weight', recorded.weight[0], 1);
+    live.appendSample('pressure', recorded.pressureFlow[0], 9);
+    live.appendSample('weight', recorded.weight[1], 3);
+    live.appendSample('weight', recorded.weight[2], 5);
+    const loaded = new FlowSeriesBuffer();
+    loaded.load(recorded);
+
+    for (const id of ['weight', 'pressure'] as SeriesId[]) {
+      expect(times(live, id)).toEqual(times(loaded, id));
+      expect(values(live, id)).toEqual(values(loaded, id));
+    }
+  });
+
+  it('goes on timing a loaded brew from its first sample', () => {
+    const buffer = new FlowSeriesBuffer();
+    const flow = new BrewFlow();
+    flow.weight = [w('08:00:00.000', '0.0', 1)];
+    buffer.load(flow);
+
+    buffer.appendSample('weight', w('08:00:03.000', '3.0', 2), 2);
+    expect(times(buffer, 'weight')).toEqual([0, 3]);
+
+    buffer.clear();
+    buffer.appendSample('weight', w('09:00:00.000', '0.0', 2), 2);
+    expect(times(buffer, 'weight')).toEqual([0]);
+  });
+
+  it('leaves out a recorded sample without a time or a value', () => {
+    const buffer = new FlowSeriesBuffer();
+    buffer.appendSample('weight', { timestamp: 'later' }, 1);
+    buffer.appendSample('weight', w('08:00:00.000', '0.0', 1), Number.NaN);
+
+    expect(buffer.length('weight')).toBe(0);
   });
 
   it('replaces the last value, as a machine correcting its flow does', () => {

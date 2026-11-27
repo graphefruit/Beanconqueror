@@ -2,8 +2,10 @@ import { config, Subject } from 'rxjs';
 
 import { Brew } from '../../../../classes/brew/brew';
 import { SCALE_TIMER_COMMAND } from '../../../../classes/devices';
+import { Preparation } from '../../../../classes/preparation/preparation';
 import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
 import { BrewBrewingComponent } from '../../brew-brewing/brew-brewing.component';
+import { FlowSeriesBuffer } from '../../graph/flow-series-buffer';
 import { BrewBrewingGraphComponent } from '../brew-brewing-graph.component';
 
 describe('BrewBrewingGraphComponent without the brew time parameter', () => {
@@ -62,22 +64,20 @@ describe('BrewBrewingGraphComponent without the brew time parameter', () => {
   });
 
   it('moves the maximized graph along without reading a timer', () => {
-    const plotly = jasmine.createSpyObj('Plotly', ['extendTraces', 'relayout']);
-    (window as unknown as { Plotly: unknown }).Plotly = plotly;
+    const renderer = jasmine.createSpyObj('BrewChartPort', ['setViewport']);
     Object.assign(component.brewComponent, {
       maximizeFlowGraphIsShown: true,
       choosenPreparation: { style_type: PREPARATION_STYLE_TYPE.ESPRESSO },
     });
+    spyOn(component.data, 'getPreparation').and.returnValue(
+      Object.assign(new Preparation(), {
+        style_type: PREPARATION_STYLE_TYPE.ESPRESSO,
+      }),
+    );
     Object.assign(component, {
-      graph_threshold_frequency_update_active: false,
-      ngZone: { runOutsideAngular: (fn: () => void) => fn() },
-      profileDiv: { nativeElement: {} },
-      traces: {
-        weightTrace: { y: [] },
-        realtimeFlowTrace: { y: [] },
-      },
-      lastChartLayout: { xaxis: {} },
-      lastChartRenderingInstance: -1,
+      renderer,
+      liveBuffer: new FlowSeriesBuffer(),
+      recording: false,
       settings: {
         graph_time: {
           ESPRESSO: { NORMAL_SCREEN: 60, FULL_SCREEN: 90 },
@@ -86,16 +86,11 @@ describe('BrewBrewingGraphComponent without the brew time parameter', () => {
       },
     });
 
-    jasmine.clock().install();
-    try {
-      component.updateChart();
-      // The chart layout is moved in a timeout.
-      expect(() => jasmine.clock().tick(25)).not.toThrow();
-    } finally {
-      jasmine.clock().uninstall();
-      delete (window as unknown as { Plotly?: unknown }).Plotly;
-    }
-
-    expect(component['lastChartLayout'].xaxis.range.length).toBe(2);
+    expect(() => component.updateChart()).not.toThrow();
+    expect(renderer.setViewport).toHaveBeenCalledOnceWith({
+      mode: 'stepped',
+      windowSec: 90,
+      backSec: 70,
+    });
   });
 });

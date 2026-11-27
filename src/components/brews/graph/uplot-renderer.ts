@@ -52,6 +52,11 @@ export interface UplotRendererOptions {
   /** Injected for tests; defaults to window.requestAnimationFrame. */
   requestFrame?: (callback: FrameRequestCallback) => number;
   cancelFrame?: (handle: number) => void;
+  /**
+   * Least time between two draws for new samples, for slow devices
+   * (Settings.graph_threshold_frequency_interval); 0 draws every frame.
+   */
+  minDrawIntervalMs?: number;
 }
 
 export const MAX_PIXEL_RATIO = 2;
@@ -142,7 +147,32 @@ export function viewportRange(viewport: Viewport, end: number): Range {
       const from = Math.max(0, end - viewport.windowSec * 0.9);
       return [from, from + viewport.windowSec];
     }
+    case 'stepped':
+      return steppedRange(end, viewport.windowSec, viewport.backSec);
   }
+}
+
+/** Seconds the stepped window reaches beyond its next jump. */
+export const STEPPED_LEAD_SEC = 10;
+
+/**
+ * The window of the live brew graph: it stays put for `windowSec` seconds and
+ * then jumps, keeping the last `backSec` seconds in view, so the line is
+ * drawn into a still picture instead of the picture scrolling under it.
+ */
+export function steppedRange(
+  end: number,
+  windowSec: number,
+  backSec: number,
+): Range {
+  if (!(windowSec > 0)) {
+    return [0, Math.max(end, 1)];
+  }
+  const jump = Math.floor(Math.max(0, end) / windowSec) * windowSec;
+  return [
+    Math.max(0, jump - Math.max(0, backSec)),
+    jump + windowSec + STEPPED_LEAD_SEC,
+  ];
 }
 
 /**
@@ -185,6 +215,8 @@ interface Look {
 export class UplotRenderer implements BrewChartPort {
   private readonly requestFrame: (callback: FrameRequestCallback) => number;
   private readonly cancelFrame: (handle: number) => void;
+  private readonly minDrawIntervalMs: number;
+  private lastDrawAt = Number.NEGATIVE_INFINITY;
 
   private lib: UPlotCtor | null = null;
   private el: HTMLElement | null = null;
@@ -198,6 +230,7 @@ export class UplotRenderer implements BrewChartPort {
   private signature = '';
   private live: FlowSeriesBuffer | null = null;
   private ref: FlowSeriesBuffer | null = null;
+  private stopWatching: Array<() => void> = [];
   private viewport: Viewport = { mode: 'fitAll' };
   private readonly hidden = new Set<SeriesId>();
   private cursor: number | null = null;
@@ -225,6 +258,7 @@ export class UplotRenderer implements BrewChartPort {
       options.requestFrame ?? ((cb) => window.requestAnimationFrame(cb));
     this.cancelFrame =
       options.cancelFrame ?? ((h) => window.cancelAnimationFrame(h));
+    this.minDrawIntervalMs = options.minDrawIntervalMs ?? 0;
   }
 
   public async mount(el: HTMLElement, opts: MountOptions): Promise<void> {
@@ -259,6 +293,7 @@ export class UplotRenderer implements BrewChartPort {
 
   public attach(buffer: FlowSeriesBuffer): void {
     this.live = buffer;
+    this.watchBuffers();
     this.resetData();
     this.markState();
   }
@@ -266,6 +301,7 @@ export class UplotRenderer implements BrewChartPort {
   public setReferences(buffer: FlowSeriesBuffer | null): void {
     if (buffer !== this.ref) {
       this.ref = buffer;
+      this.watchBuffers();
       this.resetData();
       this.markState();
     }
@@ -375,6 +411,7 @@ export class UplotRenderer implements BrewChartPort {
 
   public destroy(): void {
     this.destroyed = true;
+    this.unwatchBuffers();
     if (this.frameHandle !== null) {
       this.cancelFrame(this.frameHandle);
       this.frameHandle = null;
@@ -397,41 +434,64 @@ export class UplotRenderer implements BrewChartPort {
   }
 
   /**
-   * Requests a frame for the next change. In live mode the renderer keeps
-   * watching the buffers' version every frame; a saved brew does not grow,
-   * so the other modes only draw after a setter (attach again after
-   * reloading a buffer), and a list of cards keeps no frame loop running.
+   * In live mode a change of a buffer requests a frame, so an idle or hidden
+   * live graph does no work per frame. A saved brew does not grow, so the
+   * other modes only draw after a setter (attach again after reloading a
+   * buffer).
    */
+  private watchBuffers(): void {
+    this.unwatchBuffers();
+    const wake = (): void => {
+      if (this.opts?.mode === 'live') {
+        this.scheduleFrame();
+      }
+    };
+    this.stopWatching = [this.live, this.ref]
+      .filter((buffer): buffer is FlowSeriesBuffer => buffer !== null)
+      .map((buffer) => buffer.onChange(wake));
+  }
+
+  private unwatchBuffers(): void {
+    this.stopWatching.forEach((stop) => stop());
+    this.stopWatching = [];
+  }
+
+  /** Requests a frame for the next change; collects several into one. */
   private scheduleFrame(): void {
     if (this.destroyed || this.frameHandle !== null || !this.lib) {
       return;
     }
-    this.frameHandle = this.requestFrame(() => {
+    this.frameHandle = this.requestFrame((now) => {
       this.frameHandle = null;
-      this.tick();
-      if (this.opts?.mode === 'live' && this.live) {
+      if (this.tick(now)) {
         this.scheduleFrame();
       }
     });
   }
 
-  /** One frame: draws only when a buffer or the renderer's state changed. */
-  private tick(): void {
+  /**
+   * One frame: draws only when a buffer or the renderer's state changed. New
+   * samples alone wait for minDrawIntervalMs; they are drawn on a later frame.
+   * Returns true when samples wait for that later frame.
+   */
+  private tick(now: number): boolean {
     if (!this.lib || !this.el) {
-      return;
+      return false;
     }
     const liveVersion = this.live?.version ?? -1;
     const refVersion = this.ref?.version ?? -1;
     const dataChanged =
       liveVersion !== this.lastLiveVersion ||
       refVersion !== this.lastRefVersion;
+    const stateChanged = this.stateDirty || this.structureDirty;
     const drawable = this.size.width > 0 && this.size.height > 0;
-    if (
-      !drawable ||
-      (!dataChanged && !this.stateDirty && !this.structureDirty)
-    ) {
-      return;
+    if (!drawable || (!dataChanged && !stateChanged)) {
+      return false;
     }
+    if (!stateChanged && now - this.lastDrawAt < this.minDrawIntervalMs) {
+      return true;
+    }
+    this.lastDrawAt = now;
     this.lastLiveVersion = liveVersion;
     this.lastRefVersion = refVersion;
     if (this.structureDirty || !this.u) {
@@ -439,6 +499,7 @@ export class UplotRenderer implements BrewChartPort {
     } else {
       this.render();
     }
+    return false;
   }
 
   private rebuild(): void {
