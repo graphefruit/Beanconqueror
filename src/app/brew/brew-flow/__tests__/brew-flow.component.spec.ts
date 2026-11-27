@@ -21,11 +21,8 @@ describe('BrewFlowComponent', () => {
 
   describe('sizing the graph', () => {
     let container: HTMLDivElement;
-    let graph: jasmine.SpyObj<{
-      moveGraphTo(host: HTMLElement): void;
-      restoreGraph(): void;
-      resize(width: number, height: number): void;
-    }>;
+    let resize: jasmine.Spy;
+    let restoreGraph: jasmine.Spy;
     let component: BrewFlowComponent;
 
     beforeEach(() => {
@@ -33,13 +30,10 @@ describe('BrewFlowComponent', () => {
       container = document.createElement('div');
       container.id = 'brewFlowContainer';
       document.body.appendChild(container);
-      graph = jasmine.createSpyObj('graph', [
-        'moveGraphTo',
-        'restoreGraph',
-        'resize',
-      ]);
+      resize = jasmine.createSpy('resize');
+      restoreGraph = jasmine.createSpy('restoreGraph');
       component = Object.assign(Object.create(BrewFlowComponent.prototype), {
-        brewComponent: { brewBrewingGraphEl: graph },
+        brewComponent: { brewBrewingGraphEl: { resize, restoreGraph } },
         brewFlowContent: { nativeElement: { offsetHeight: 600 } },
         modalController: jasmine.createSpyObj('modal', ['dismiss']),
         disableHardwareBack: { unsubscribe: () => undefined },
@@ -56,7 +50,7 @@ describe('BrewFlowComponent', () => {
       (component as unknown as { graphShown: boolean }).graphShown = true;
       component.onOrientationChange();
       jasmine.clock().tick(50);
-      expect(graph.resize).toHaveBeenCalledTimes(1);
+      expect(resize).toHaveBeenCalledTimes(1);
     });
 
     it('leaves the graph alone once it went back into the brew form', () => {
@@ -65,8 +59,8 @@ describe('BrewFlowComponent', () => {
       component.dismiss();
       jasmine.clock().tick(50);
 
-      expect(graph.restoreGraph).toHaveBeenCalled();
-      expect(graph.resize).not.toHaveBeenCalled();
+      expect(restoreGraph).toHaveBeenCalled();
+      expect(resize).not.toHaveBeenCalled();
     });
   });
 });
