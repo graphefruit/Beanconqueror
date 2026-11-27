@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Beanconqueror</string>
-    <string name="title_activity_main">Beanconqueror</string>
-    <string name="package_name">com.beanconqueror.app</string>
-    <string name="custom_url_scheme">com.beanconqueror.app</string>
+    <string name="app_name" translatable="false">Beanconqueror</string>
+    <string name="title_activity_main" translatable="false">Beanconqueror</string>
+    <string name="package_name" translatable="false">com.beanconqueror.app</string>
+    <string name="custom_url_scheme" translatable="false">com.beanconqueror.app</string>
     <string name="shortcut_brew_short">Brew</string>
     <string name="shortcut_brew_long">New brew</string>
     <string name="shortcut_bean_short">Bean</string>

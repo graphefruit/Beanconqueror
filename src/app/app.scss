@@ -1317,9 +1317,11 @@ $bq-focus-double-ring:
   }
 
   // A screen title takes focus after navigation so screen readers read it;
-  // it cannot be operated and gets no ring.
+  // it cannot be operated and gets no ring. Nor do the texts of an alert
+  // (OverlayStackA11yService).
   [role='heading'][tabindex='-1']:focus,
-  h1[tabindex='-1']:focus {
+  h1[tabindex='-1']:focus,
+  ion-alert :is(.alert-title, .alert-sub-title, .alert-message):focus {
     outline: none;
   }
 

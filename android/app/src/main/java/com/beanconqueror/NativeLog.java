@@ -10,6 +10,7 @@ import android.os.Process;
 import android.os.SystemClock;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.content.pm.PackageInfoCompat;
 
 import java.io.BufferedReader;
@@ -89,6 +90,7 @@ public final class NativeLog {
     }
   }
 
+  @RequiresApi(30)
   private static void logExitReasons(Context app, SharedPreferences prefs) {
     ActivityManager am = (ActivityManager) app.getSystemService(Context.ACTIVITY_SERVICE);
     List<ApplicationExitInfo> exits = am.getHistoricalProcessExitReasons(app.getPackageName(), 0, 5);
