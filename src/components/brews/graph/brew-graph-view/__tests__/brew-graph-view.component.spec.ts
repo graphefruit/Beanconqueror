@@ -51,8 +51,17 @@ function flow(seconds = 20, withMetric = true): BrewFlow {
 }
 
 @Component({
-  template: `<div [style.width.px]="320" [style.height.px]="480">
-    <app-brew-graph-view [flow]="flow()" [reference]="reference()">
+  // The old graph ground of the dark theme, which the view must not paint.
+  template: `<div
+    style="--ion-color-graph-background: #222428"
+    [style.width.px]="320"
+    [style.height.px]="480"
+  >
+    <app-brew-graph-view
+      [flow]="flow()"
+      [reference]="reference()"
+      [timeSlider]="timeSlider()"
+    >
       <button type="button" class="projected">Close</button>
     </app-brew-graph-view>
   </div>`,
@@ -61,6 +70,7 @@ function flow(seconds = 20, withMetric = true): BrewFlow {
 class HostComponent {
   public readonly flow = signal<BrewFlow | null>(flow());
   public readonly reference = signal<BrewFlow | null>(null);
+  public readonly timeSlider = signal(true);
 }
 
 describe('BrewGraphViewComponent', () => {
@@ -382,6 +392,33 @@ describe('BrewGraphViewComponent', () => {
     expect(value).toBeGreaterThan(5);
     expect(value).toBeLessThan(8);
     expect(Math.round(value * 10)).toBe(value * 10);
+  });
+
+  it('leaves out the time slider and its cursor unless maximized', async () => {
+    create((h) => h.timeSlider.set(false));
+    await until(() => !!drawn());
+
+    expect(range()).toBeNull();
+    expect(element().querySelector('.slider')).toBeNull();
+    const over = chart().querySelector<HTMLElement>('.u-over');
+    const rect = over.getBoundingClientRect();
+    over.dispatchEvent(
+      new PointerEvent('pointerdown', {
+        pointerId: 1,
+        clientX: rect.left + rect.width / 2,
+        clientY: rect.top + 10,
+      }),
+    );
+    over.dispatchEvent(new PointerEvent('pointerup', { pointerId: 1 }));
+    await settle();
+    expect((view() as unknown as { cursor: () => number }).cursor()).toBe(0);
+  });
+
+  it('draws on the ground it sits on, like the live graph', async () => {
+    create();
+    await until(() => !!drawn());
+
+    expect(getComputedStyle(chart()).backgroundColor).toBe('rgba(0, 0, 0, 0)');
   });
 
   it('exports the shown graph as a sharp picture in the theme of the app', async () => {

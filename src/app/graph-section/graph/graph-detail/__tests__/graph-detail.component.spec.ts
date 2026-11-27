@@ -126,6 +126,7 @@ describe('GraphDetailComponent', () => {
     expect(trackEvent).toHaveBeenCalled();
     expect(graphView().flow()).toBe(files['graphs/g1.json']);
     expect(graphView().reference()).toBeNull();
+    expect(graphView().timeSlider()).toBeTrue();
     expect(element().querySelector('ion-spinner')).toBeNull();
   });
 
