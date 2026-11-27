@@ -286,6 +286,14 @@ describe('VisualizerService', () => {
       ]);
     });
 
+    it('sends a grind setting of 0', async () => {
+      const brew = await storedBrew({ grind_size: 0 as unknown as string });
+
+      await service.uploadToVisualizer(brew);
+
+      expect((await uploaded()).brew.grind_size).toBe(0);
+    });
+
     it('sends neither the place of the brew nor photos, references or codes', async () => {
       const brew = await storedBrew({
         coordinates: {

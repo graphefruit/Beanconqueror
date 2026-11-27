@@ -121,7 +121,7 @@
        <div class='ion-label'>{{"BREW_DATA_TIME" | translate}}</div>
     </ion-checkbox>
   </ion-item>
-  <ion-item [disabled]='firstDripDisabled()' tappable>
+  <ion-item tappable>
     <ion-checkbox label-placement='start' (ngModelChange)='save()'
                   [(ngModel)]='data.default_last_coffee_parameters.coffee_first_drip_time'>
        <div class='ion-label'>

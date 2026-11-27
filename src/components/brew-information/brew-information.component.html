@@ -301,7 +301,7 @@
               <ion-text>{{brew | brewFunctionPipe: BREW_FUNCTION_PIPE_ENUM.FORMATTED_TOTAL_COFFEE_BREW_TIME}}</ion-text>
             </ion-col>
           }
-          @if ((brew?.grind_size != '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.grind_size,
+          @if ((brew?.grind_size !== '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.grind_size,
             $safeNavigationMigration(preparation?.visible_list_view_parameters.grind_size),
             $safeNavigationMigration(preparation?.use_custom_parameters)])) ||  (brew?.mill_speed > 0 && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.mill_speed,
             $safeNavigationMigration(preparation?.visible_list_view_parameters.mill_speed),
@@ -309,7 +309,7 @@
             <ion-col size='6'>
               <ion-label class='card-headline'>{{ 'BREW_DATA_GRIND_SIZE' | translate }}</ion-label>
               <br />
-              <ion-text>@if (brew?.grind_size != '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.grind_size,
+              <ion-text>@if (brew?.grind_size !== '' && (settings | brewFieldVisiblePipe: [settings.visible_list_view_parameters.grind_size,
                 $safeNavigationMigration(preparation?.visible_list_view_parameters.grind_size),
                 $safeNavigationMigration(preparation?.use_custom_parameters)])) {
                 <span>{{ brew?.grind_size }}</span>

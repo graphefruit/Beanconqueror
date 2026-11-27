@@ -293,18 +293,6 @@ export class UIHelper {
     KeepAwake.allowSleep().catch(() => undefined);
   }
 
-  public convertToNumber(event: any): number {
-    let eventInput: any = event;
-    if (eventInput === '') {
-      return eventInput;
-    }
-    if (eventInput.indexOf(',')) {
-      eventInput = eventInput.replace(/,/g, '.');
-    }
-
-    return parseFloat(eventInput);
-  }
-
   public openExternalWebpage(_url: string) {
     let url: string = _url;
     if (url.indexOf('http') === -1) {
