@@ -6,7 +6,12 @@ import type { IBeanParameter } from '../../interfaces/parameter/iBeanParameter';
 import type { Translate } from '../brews/brew-share-card-rules';
 import { SHARE_CARD_MAX_STARS } from '../brews/brew-share-card-rules';
 import type { DeepReadonly } from '../core/read-only';
-import { beanAgeInDays, isFrozen, isSelfRoasted } from './bean-rules';
+import {
+  beanAgeInDays,
+  hasFrozenInformation,
+  isFrozen,
+  isSelfRoasted,
+} from './bean-rules';
 import type { BeanUsage } from './bean-usage.store';
 
 export interface BeanShareSource {
@@ -99,15 +104,17 @@ export function beanShareCard(source: BeanShareSource): BeanShareCard {
   };
   const date = (value: string) => (value ? source.formatDate(value) : '');
 
+  const frozenInformation = hasFrozenInformation(bean);
   add('BEAN_DATA_FROZEN_DATE', true, date(bean.frozenDate));
   add('BEAN_DATA_UNFROZEN_DATE', true, date(bean.unfrozenDate));
   add(
     'BEAN_DATA_FROZEN_STORAGE_TYPE',
-    !!bean.frozenStorageType &&
+    frozenInformation &&
+      !!bean.frozenStorageType &&
       bean.frozenStorageType !== BEAN_FREEZING_STORAGE_ENUM.UNKNOWN,
     t('BEAN_FREEZING_STORAGE_TYPE_' + bean.frozenStorageType),
   );
-  add('BEAN_DATA_FROZEN_NOTE', true, bean.frozenNote, {
+  add('BEAN_DATA_FROZEN_NOTE', frozenInformation, bean.frozenNote, {
     wide: true,
     note: true,
   });

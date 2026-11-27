@@ -163,44 +163,59 @@ describe('BeanShareComponent', () => {
     );
   });
 
-  it('keeps every text at 4.5:1 in each colour set and changes with the choice', async () => {
-    const host = await show(makeBean({ rating: 4 }));
-    const radios = host.querySelectorAll<HTMLInputElement>(
-      'fieldset input[type="radio"]',
-    );
-    expect(radios.length).toBe(4);
-    expect(radios[1].checked).toBeTrue();
+  it('keeps every text at 4.5:1 in each colour set, whatever mode the app shows, and changes with the choice', async () => {
+    settings.bean_visible_list_view_parameters.bean_roasting_type = true;
+    const bean = makeBean({
+      rating: 4,
+      frozenId: 'F-7',
+      frozenDate: '2027-01-10T10:00:00.000Z',
+      bean_roasting_type: 'FILTER' as never,
+    });
+    for (const appIsDark of [false, true]) {
+      theme.isDarkMode.and.returnValue(appIsDark);
+      const host = await show(bean);
+      const radios = host.querySelectorAll<HTMLInputElement>(
+        'fieldset input[type="radio"]',
+      );
+      expect(radios.length).toBe(4);
+      expect(radios[appIsDark ? 2 : 1].checked).toBeTrue();
 
-    for (const radio of Array.from(radios)) {
-      radio.click();
-      fixture.detectChanges();
-      const colour = (selector: string, property = 'color') =>
-        firstColour(
-          getComputedStyle(
-            picture(host).querySelector(selector) ?? picture(host),
-          ).getPropertyValue(property),
+      for (const radio of Array.from(radios)) {
+        radio.click();
+        fixture.detectChanges();
+        const colour = (selector: string, property = 'color') => {
+          const element = picture(host).querySelector(selector);
+          expect(element).withContext(selector).not.toBeNull();
+          return firstColour(
+            getComputedStyle(element).getPropertyValue(property),
+          );
+        };
+        const context = `${radio.value} in an app that is ${appIsDark ? 'dark' : 'light'}`;
+        const card = colour('.share-card', 'background-color');
+        for (const selector of [
+          '.share-value',
+          '.share-label',
+          '.share-roaster',
+          '.share-roasting-type',
+          '.share-bean',
+          '.share-frozen-id',
+          '.share-rating',
+        ]) {
+          expect(contrast(colour(selector), card))
+            .withContext(`${selector}, ${context}`)
+            .toBeGreaterThanOrEqual(4.5);
+        }
+        const frame = firstColour(
+          getComputedStyle(picture(host)).getPropertyValue('background-color'),
         );
-      const card = colour('.share-card', 'background-color');
-      for (const selector of [
-        '.share-value',
-        '.share-label',
-        '.share-roaster',
-        '.share-bean',
-        '.share-rating',
-      ]) {
-        expect(contrast(colour(selector), card))
-          .withContext(`${selector}, ${radio.value}`)
+        expect(contrast(colour('.share-stamp'), frame))
+          .withContext(`stamp, ${context}`)
           .toBeGreaterThanOrEqual(4.5);
       }
-      expect(
-        contrast(colour('.share-stamp'), colour(':scope', 'background-color')),
-      )
-        .withContext(`stamp, ${radio.value}`)
-        .toBeGreaterThanOrEqual(4.5);
+      expect(picture(host).style.getPropertyValue('--share-frame')).toBe(
+        '#2f5e4c',
+      );
     }
-    expect(picture(host).style.getPropertyValue('--share-frame')).toBe(
-      '#2f5e4c',
-    );
   });
 
   it('starts in the dark colours of the app when the app is dark', async () => {

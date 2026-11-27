@@ -2,7 +2,12 @@ import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { BEANS, ROASTER_NORTH } from './support/bean-data';
-import { beanAction, showBeanSegment, startWithBeans } from './support/beans';
+import {
+  beanAction,
+  beanCard,
+  showBeanSegment,
+  startWithBeans,
+} from './support/beans';
 
 /**
  * A bean is shared as a picture of its bean card, drawn from the preview
@@ -63,6 +68,12 @@ test('a bean is shared as a picture of its card, in a colour of choice', async (
 
   await page.getByRole('button', { name: 'Back' }).click();
   await expect(picture(page)).toHaveCount(0);
+  await expect(
+    beanCard(page, BEANS.alpha)
+      .first()
+      .getByRole('button', { name: /^Options for / })
+      .first(),
+  ).toBeFocused();
 });
 
 test('the card of frozen portions and the frozen notes go on the picture', async ({

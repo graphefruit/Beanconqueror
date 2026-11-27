@@ -233,6 +233,21 @@ describe('bean share card rules', () => {
     expect(card().hasNote).toBeFalse();
   });
 
+  it('leaves the frozen fields out, as the bean card does, while the bean was never frozen', () => {
+    bean.frozenStorageType = 'VACUUM_SEALED' as never;
+    bean.frozenNote = 'Bag 2';
+
+    const shown = card();
+
+    expect(shown.rows.map((row) => row.labelKey)).not.toContain(
+      'BEAN_DATA_FROZEN_STORAGE_TYPE',
+    );
+    expect(shown.rows.map((row) => row.labelKey)).not.toContain(
+      'BEAN_DATA_FROZEN_NOTE',
+    );
+    expect(shown.hasNote).toBeFalse();
+  });
+
   it('shows the marks, the frozen id, the roasting type and the stars of the bean card', () => {
     parameters.roast_range = true;
     bean.decaffeinated = true;
