@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="widget_description">Brühungen heute und diese Woche, offene Bohnen und deine letzte Brühung</string>
+  <string name="widget_today">Heute</string>
+  <string name="widget_week">Diese Woche</string>
+  <string name="widget_beans">Offene Bohnen</string>
+  <string name="widget_start_brew">Neue Brühung</string>
+  <string name="widget_last_brew">Letzte Brühung %1$s</string>
+  <string name="widget_no_brew">Noch keine Brühung</string>
+  <string name="widget_empty">Speichere eine Brühung in BeanConqueror, um das Widget zu füllen.</string>
+  <plurals name="widget_today_description">
+    <item quantity="one">%1$d Brühung heute</item>
+    <item quantity="other">%1$d Brühungen heute</item>
+  </plurals>
+  <plurals name="widget_week_description">
+    <item quantity="one">%1$d Brühung diese Woche</item>
+    <item quantity="other">%1$d Brühungen diese Woche</item>
+  </plurals>
+  <plurals name="widget_beans_description">
+    <item quantity="one">%1$d offene Bohne</item>
+    <item quantity="other">%1$d offene Bohnen</item>
+  </plurals>
+</resources>

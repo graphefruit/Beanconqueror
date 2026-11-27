@@ -62,6 +62,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
 
             <!-- ionic-plugin-deeplinks -->
             <intent-filter>
@@ -93,6 +94,15 @@
                 <data android:host="beanconqueror.com" android:pathPrefix="/app/nfc" android:scheme="https" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".BrewWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/bq_widget_info" />
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"

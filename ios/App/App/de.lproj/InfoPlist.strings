@@ -1,0 +1,5 @@
+/* Titles of the home screen quick actions; the keys are the titles in Info.plist. */
+"Brew" = "Neue Brühung";
+"Bean" = "Neue Bohne";
+"Preparation method" = "Neue Brühmethode";
+"Grinder" = "Neue Mühle";

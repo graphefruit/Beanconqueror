@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="shortcut_brew_short">Brühung</string>
+    <string name="shortcut_brew_long">Neue Brühung</string>
+    <string name="shortcut_bean_short">Bohne</string>
+    <string name="shortcut_bean_long">Neue Bohne</string>
+    <string name="shortcut_preparation_short">Methode</string>
+    <string name="shortcut_preparation_long">Neue Brühmethode</string>
+    <string name="shortcut_mill_short">Mühle</string>
+    <string name="shortcut_mill_long">Neue Mühle</string>
+</resources>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The same forms as the quick actions on iOS; each link reaches the intent handler of the web
+     app, cold and warm. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+  <shortcut
+    android:shortcutId="new_brew"
+    android:enabled="true"
+    android:icon="@drawable/bq_shortcut_add"
+    android:shortcutShortLabel="@string/shortcut_brew_short"
+    android:shortcutLongLabel="@string/shortcut_brew_long">
+    <intent
+      android:action="android.intent.action.VIEW"
+      android:data="beanconqueror://START_BREW"
+      android:targetClass="com.beanconqueror.MainActivity"
+      android:targetPackage="com.beanconqueror.app" />
+  </shortcut>
+  <shortcut
+    android:shortcutId="new_bean"
+    android:enabled="true"
+    android:icon="@drawable/bq_shortcut_add"
+    android:shortcutShortLabel="@string/shortcut_bean_short"
+    android:shortcutLongLabel="@string/shortcut_bean_long">
+    <intent
+      android:action="android.intent.action.VIEW"
+      android:data="beanconqueror://NEW_BEAN"
+      android:targetClass="com.beanconqueror.MainActivity"
+      android:targetPackage="com.beanconqueror.app" />
+  </shortcut>
+  <shortcut
+    android:shortcutId="new_preparation"
+    android:enabled="true"
+    android:icon="@drawable/bq_shortcut_add"
+    android:shortcutShortLabel="@string/shortcut_preparation_short"
+    android:shortcutLongLabel="@string/shortcut_preparation_long">
+    <intent
+      android:action="android.intent.action.VIEW"
+      android:data="beanconqueror://NEW_PREPARATION"
+      android:targetClass="com.beanconqueror.MainActivity"
+      android:targetPackage="com.beanconqueror.app" />
+  </shortcut>
+  <shortcut
+    android:shortcutId="new_mill"
+    android:enabled="true"
+    android:icon="@drawable/bq_shortcut_add"
+    android:shortcutShortLabel="@string/shortcut_mill_short"
+    android:shortcutLongLabel="@string/shortcut_mill_long">
+    <intent
+      android:action="android.intent.action.VIEW"
+      android:data="beanconqueror://NEW_MILL"
+      android:targetClass="com.beanconqueror.MainActivity"
+      android:targetPackage="com.beanconqueror.app" />
+  </shortcut>
+</shortcuts>

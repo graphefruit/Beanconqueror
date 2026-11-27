@@ -13,6 +13,7 @@ import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIStorage } from '../uiStorage';
+import { WidgetSnapshotService } from '../widgetSnapshot/widget-snapshot.service';
 import { AndroidPlatformService } from './android-platform.service';
 
 describe('AndroidPlatformService', () => {
@@ -24,6 +25,7 @@ describe('AndroidPlatformService', () => {
         new Promise<void>((_resolve) => (finishWriting = _resolve)),
       );
     const start = jasmine.createSpy('start');
+    const startWidgetSnapshot = jasmine.createSpy('startWidgetSnapshot');
     TestBed.configureTestingModule({
       providers: [
         AndroidPlatformService,
@@ -49,6 +51,10 @@ describe('AndroidPlatformService', () => {
         { provide: UISettingsStorage, useValue: {} },
         { provide: UIBrewStorage, useValue: {} },
         { provide: UIExportImportHelper, useValue: { saveAutomaticBackups } },
+        {
+          provide: WidgetSnapshotService,
+          useValue: { start: startWidgetSnapshot },
+        },
       ],
     });
     TestBed.inject(AndroidPlatformService);
@@ -57,6 +63,7 @@ describe('AndroidPlatformService', () => {
       'android-Platform',
       jasmine.any(Function),
     );
+    expect(startWidgetSnapshot).toHaveBeenCalledTimes(1);
     let done = false;
     void (start.calls.mostRecent().args[1]() as Promise<unknown>).then(
       () => (done = true),

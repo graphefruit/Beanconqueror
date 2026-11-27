@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/bq_widget_root"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@drawable/bq_widget_background"
+  android:orientation="vertical"
+  android:padding="12dp">
+
+  <LinearLayout
+    android:id="@+id/bq_widget_counts"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <LinearLayout
+      android:id="@+id/bq_widget_tile_today"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:focusable="true"
+      android:importantForAccessibility="yes"
+      android:orientation="vertical">
+      <TextView
+        android:id="@+id/bq_widget_value_today"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:textColor="@color/bq_widget_text"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="@string/widget_today"
+        android:textColor="@color/bq_widget_text_secondary"
+        android:textSize="13sp" />
+    </LinearLayout>
+    <LinearLayout
+      android:id="@+id/bq_widget_tile_week"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:focusable="true"
+      android:importantForAccessibility="yes"
+      android:orientation="vertical">
+      <TextView
+        android:id="@+id/bq_widget_value_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:textColor="@color/bq_widget_text"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="@string/widget_week"
+        android:textColor="@color/bq_widget_text_secondary"
+        android:textSize="13sp" />
+    </LinearLayout>
+    <LinearLayout
+      android:id="@+id/bq_widget_tile_beans"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:focusable="true"
+      android:importantForAccessibility="yes"
+      android:orientation="vertical">
+      <TextView
+        android:id="@+id/bq_widget_value_beans"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:textColor="@color/bq_widget_text"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="@string/widget_beans"
+        android:textColor="@color/bq_widget_text_secondary"
+        android:textSize="13sp" />
+    </LinearLayout>
+  </LinearLayout>
+
+  <TextView
+    android:id="@+id/bq_widget_last_brew"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:maxLines="2"
+    android:ellipsize="end"
+    android:textAlignment="viewStart"
+    android:textColor="@color/bq_widget_text_secondary"
+    android:textSize="13sp" />
+
+  <Button
+    android:id="@+id/bq_widget_start_brew"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:background="@drawable/bq_widget_action"
+    android:minHeight="48dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:text="@string/widget_start_brew"
+    android:textAllCaps="false"
+    android:textColor="@color/bq_widget_on_action"
+    android:textSize="14sp" />
+</LinearLayout>

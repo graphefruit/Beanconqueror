@@ -14,6 +14,7 @@ import {
   type IBrewImportResult,
 } from '../../brewImport/brew-import.service';
 import { CoffeeBluetoothDevicesService } from '../../coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { QuickActionService } from '../../quickAction/quick-action.service';
 import { ServerCommunicationService } from '../../serverCommunication/server-communication.service';
 import { UIAlert } from '../../uiAlert';
 import { UIAnalytics } from '../../uiAnalytics';
@@ -140,6 +141,7 @@ describe('IntentHandlerService', () => {
   let preparationStorage: jasmine.SpyObj<UIPreparationStorage>;
   let brewStorage: jasmine.SpyObj<UIBrewStorage>;
   let settingsStorage: jasmine.SpyObj<UISettingsStorage>;
+  let quickActions: jasmine.SpyObj<QuickActionService>;
   let envelope: IHandoffEnvelope;
   let url: string;
 
@@ -171,6 +173,10 @@ describe('IntentHandlerService', () => {
       'presentCustomPopover',
     ]);
     uiAnalytics = jasmine.createSpyObj('UIAnalytics', ['trackEvent']);
+    quickActions = jasmine.createSpyObj<QuickActionService>(
+      'QuickActionService',
+      ['open'],
+    );
     translate = jasmine.createSpyObj('TranslateService', ['instant']);
     visualizerService = jasmine.createSpyObj('VisualizerService', [
       'importShotWithSharedCode',
@@ -319,6 +325,7 @@ describe('IntentHandlerService', () => {
           provide: CoffeeBluetoothDevicesService,
           useValue: {},
         },
+        { provide: QuickActionService, useValue: quickActions },
         {
           provide: NgZone,
           useValue: jasmine.createSpyObj('NgZone', {
@@ -332,6 +339,42 @@ describe('IntentHandlerService', () => {
     service = TestBed.inject(IntentHandlerService);
     envelope = validEnvelope();
     url = handoffUrl(await gzipBase64Url(envelope));
+  });
+
+  describe('the links of the quick actions', () => {
+    let open: jasmine.Spy;
+
+    beforeEach(() => {
+      open = quickActions.open.and.resolveTo();
+    });
+
+    for (const [link, type] of [
+      ['beanconqueror://START_BREW', 'Brew'],
+      ['beanconqueror://NEW_BEAN', 'Bean'],
+      ['beanconqueror://NEW_PREPARATION', 'Preparation'],
+      ['beanconqueror://NEW_MILL', 'Mill'],
+      ['beanconqueror://OPEN_BREWS', 'Brews'],
+    ]) {
+      it(`${link} opens the ${type} quick action`, async () => {
+        await service.handleDeepLink(link);
+
+        expect(open).toHaveBeenCalledOnceWith(type);
+        expect(uiAlert.showMessage.calls.count()).toBe(0);
+      });
+    }
+
+    it('also takes small letters and a trailing slash', async () => {
+      await service.handleDeepLink('beanconqueror://new_mill/');
+
+      expect(open).toHaveBeenCalledOnceWith('Mill');
+    });
+
+    it('takes no link that only begins like one', async () => {
+      await service.handleDeepLink('beanconqueror://NEW_BEANS');
+
+      expect(open).not.toHaveBeenCalled();
+      expect(uiAlert.showMessage.calls.count()).toBe(1);
+    });
   });
 
   it('imports a brew handoff when the user has no mill', async () => {
