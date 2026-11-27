@@ -61,10 +61,10 @@ describe('PreventCharacterDirective', () => {
     expect(fixture.componentInstance.value).toBe('');
   });
 
-  it('drops a number that starts with a comma, but reads one after a 0', async () => {
-    // indexOf(',') is 0 here, so the comma is not replaced.
+  it('reads a number that starts with a comma', async () => {
     await typeAndLeave(',5');
-    expect(field.value).toBe('');
+    expect(field.value).toBe('0.5');
+    expect(fixture.componentInstance.value).toBe(0.5);
 
     await typeAndLeave('0,5');
     expect(field.value).toBe('0.5');

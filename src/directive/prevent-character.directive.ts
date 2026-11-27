@@ -14,9 +14,7 @@ export class PreventCharacterDirective {
     if (val === '') {
       val = '0';
     }
-    if (val.indexOf(',')) {
-      val = val.replace(/,/g, '.');
-    }
+    val = val.replace(/,/g, '.');
 
     // Emit worked aswell but I don't know what its doing in depth
     // this.ngModelChange.emit(parseFloat(val));
