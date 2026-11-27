@@ -27,6 +27,11 @@ test('the log page asks before it shares the log', async ({ page }) => {
   await page.goto('/');
   await completeFirstRun(page);
   await openLogs(page);
+  // The entries are a short list: thousands of them at once left VoiceOver
+  // nothing to read or tap on this page.
+  const entries = page.locator('log').getByRole('listitem');
+  await expect(entries.first()).toBeVisible();
+  expect(await entries.count()).toBeLessThanOrEqual(100);
   const send = page.getByRole('button', { name: 'Send logs' });
 
   await send.click();
