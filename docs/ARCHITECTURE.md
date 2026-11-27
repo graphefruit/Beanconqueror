@@ -38,11 +38,11 @@ The app runs in the system WebView, so Angular's browser support sets the minimu
 platform versions. Angular 22 supports the browsers that are "Baseline widely
 available" on 2026-05-07: Chrome, Edge and Firefox 119+, Safari and iOS 17+.
 
-| Platform | Minimum                                                             | Where                                                                            |
-| -------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Web      | Chrome, Edge, Firefox 119+, Safari 17+                              | `.browserslistrc`                                                                |
-| iOS      | iOS 17.0 (WKWebView is Safari of the same version)                  | `IPHONEOS_DEPLOYMENT_TARGET` in `ios/App/App.xcodeproj`, `ios/App/Podfile`       |
-| Android  | Android 8.0 (`minSdkVersion = 26`) with Android System WebView 119+ | `android/variables.gradle`, `android.minWebViewVersion` in `capacitor.config.ts` |
+| Platform | Minimum                                                             | Where                                                                                       |
+| -------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Web      | Chrome, Edge, Firefox 119+, Safari 17+                              | `.browserslistrc`                                                                           |
+| iOS      | iOS 17.0 (WKWebView is Safari of the same version)                  | `IPHONEOS_DEPLOYMENT_TARGET` in `ios/App/App.xcodeproj`, `ios/App/CapApp-SPM/Package.swift` |
+| Android  | Android 8.0 (`minSdkVersion = 26`) with Android System WebView 119+ | `android/variables.gradle`, `android.minWebViewVersion` in `capacitor.config.ts`            |
 
 On Android the WebView is updated through Google Play independently of the
 system: Android 8 and 9 get WebView versions up to 138, Android 10 and later the

@@ -212,7 +212,7 @@ end, each with its own switch;
   `speak` cut off by the next one (`QueueStrategy.Flush`) or by `stop()` stayed in the Capacitor
   bridge until the app restarted. `patches/@capacitor-community__text-to-speech@8.0.2.patch`
   resolves them, as iOS does (`didCancel`). After a plugin update, check whether the patch is still
-  needed; a changed patch changes the plugin path in `capacitor.settings.gradle` and the Podfile
+  needed; a changed patch changes the plugin path in `capacitor.settings.gradle` and `ios/App/CapApp-SPM/Package.swift`
   (`pnpm exec cap sync android` and `… ios`).
 - The plugin binds the system TTS service when Capacitor loads it at app start (`load()` creates
   `android.speech.tts.TextToSpeech`), for every Android user, also with text to speech off; the
@@ -544,6 +544,11 @@ pnpm run -- cap sync <platform> # where <platform> is either 'android' or 'ios'
 ```
 
 After that, you can use the respective mobile IDE (Android Studio or Xcode) to build and deploy the app.
+
+iOS uses the Swift Package Manager (no CocoaPods). `cap sync ios` writes `ios/App/CapApp-SPM/Package.swift`
+with the plugin paths in `node_modules/.pnpm`, which change with every plugin update or patch: sync before
+building and commit the changed file together with `pnpm-lock.yaml`. Open `ios/App/App.xcodeproj`; the
+resolved package versions are pinned in its `Package.resolved`.
 To run the respective IDE, use the following command:
 
 ```shell

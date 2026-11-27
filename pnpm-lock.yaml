@@ -11,6 +11,9 @@ patchedDependencies:
   '@capacitor-community/text-to-speech@8.0.2':
     hash: 646e7b336b9e0c59ee44f250128db04562cf08e173a9f5529ab3d6a3ca49bcf8
     path: patches/@capacitor-community__text-to-speech@8.0.2.patch
+  skwas-cordova-plugin-datetimepicker@3.0.2:
+    hash: 55f95e24a2b8fe4845095133603a0013540616f0c4b3a61393357867a63706a3
+    path: patches/skwas-cordova-plugin-datetimepicker@3.0.2.patch
 
 importers:
 
@@ -313,7 +316,7 @@ importers:
         version: 3.10.1
       skwas-cordova-plugin-datetimepicker:
         specifier: ^3.0.2
-        version: 3.0.2
+        version: 3.0.2(patch_hash=55f95e24a2b8fe4845095133603a0013540616f0c4b3a61393357867a63706a3)
       stylelint:
         specifier: 18.0.0
         version: 18.0.0
@@ -8917,7 +8920,7 @@ snapshots:
 
   sisteransi@1.0.5: {}
 
-  skwas-cordova-plugin-datetimepicker@3.0.2: {}
+  skwas-cordova-plugin-datetimepicker@3.0.2(patch_hash=55f95e24a2b8fe4845095133603a0013540616f0c4b3a61393357867a63706a3): {}
 
   slice-ansi@10.0.0:
     dependencies:
