@@ -1,0 +1,25 @@
+<div class="chips">
+  <div class="chip-list">
+    @for (chip of chips(); track chip.id) {
+      <ion-chip chipButton [chipPressed]="chip.visible" (click)="toggle(chip.id)" [outline]="!chip.visible"
+        class="trace-chip" [class.custom-trace-chip]="chip.custom" [class.trace-active]="chip.visible"
+        [style.--chip-color]="chip.colour">{{ chip.label }}</ion-chip>
+    }
+  </div>
+  <ng-content />
+</div>
+<div #chart class="chart" role="img" [hidden]="!live()" [attr.aria-label]="description()"></div>
+@if (live()) {
+  <div class="slider">
+    <ion-item lines="none">
+      <ion-label>{{ 'BREW_GRAPH_TIME_SLIDER' | translate }}&nbsp;<ion-badge>{{ cursor() | number: '1.1-1' }}s</ion-badge></ion-label>
+    </ion-item>
+    <ion-item lines="none">
+      <ion-range [rangeLabel]="'BREW_GRAPH_TIME_SLIDER' | translate" rangeUnit="s" [rangeValueFormat]="valueText()"
+        [min]="0" [max]="end()" [step]="0.1" [value]="cursor()"
+        (ionInput)="onSlide($event)" (keydown.pageup)="onPage($event, 1)" (keydown.pagedown)="onPage($event, -1)" />
+    </ion-item>
+  </div>
+} @else {
+  <p class="hint">{{ 'GRAPH_CANNOT_BE_SHOWN' | translate }}</p>
+}

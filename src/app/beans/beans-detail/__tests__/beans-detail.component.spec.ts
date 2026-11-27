@@ -6,6 +6,7 @@ import { defineCustomElement as defineSegmentButton } from '@ionic/core/componen
 import { defineCustomElement as defineSegment } from '@ionic/core/components/ion-segment.js';
 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NgxStarsComponent } from 'ngx-stars';
 
 import en from '../../../../assets/i18n/en.json';
 import { Bean } from '../../../../classes/bean/bean';
@@ -132,5 +133,163 @@ describe('BeansDetailComponent', () => {
     );
     // The id of the frozen bag, which the card shows, is missing here.
     expect(element.textContent).not.toContain('TA1');
+  });
+
+  /** Gamma Blend of the E2E data set: a blend of three varieties. */
+  function blend(): IBean {
+    const bean = new Bean();
+    Object.assign(bean, {
+      name: 'Gamma Blend',
+      roaster: 'Rösterei Süd',
+      beanMix: 'BLEND',
+      weight: 1000,
+      cost: 30,
+      rating: 5,
+      roast: 'CUSTOM_ROAST',
+      roast_custom: 'Hausröstung',
+      bean_roasting_type: 'FILTER',
+      bean_information: [
+        ['Ethiopia', 50],
+        ['Brazil', 30],
+        ['Colombia', 20],
+      ].map(([country, percentage]) => ({ country, percentage })),
+    });
+    bean.config.uuid = 'blend';
+    return JSON.parse(JSON.stringify(bean)) as IBean;
+  }
+
+  /** The tabs by their names, with the one selected. */
+  function tabs(element: HTMLElement): [string, boolean][] {
+    return [...element.querySelectorAll('ion-segment-button')].map((tab) => [
+      readable(tab),
+      tab.classList.contains('segment-button-checked'),
+    ]);
+  }
+
+  /** The buttons of the header and the footer by their names. */
+  function buttons(element: HTMLElement): string[] {
+    return [
+      ...element.querySelectorAll(
+        'ion-header ion-button, ion-footer ion-button',
+      ),
+    ].map(
+      (button) =>
+        button.shadowRoot
+          ?.querySelector('button')
+          ?.getAttribute('aria-label') ??
+        button.getAttribute('aria-label') ??
+        readable(button),
+    );
+  }
+
+  // Brews, usage, age and the favourite mark of the card are not shown here.
+  // "Roast type" is the kind of roast (filter, espresso), not the roast degree
+  // the card shows under the same label.
+  it('shows the general information of a bean to read only', async () => {
+    settings.bean_manage_parameters.bean_information = true;
+    const fixture = await open(blend(), 'general');
+    const element = fixture.nativeElement as HTMLElement;
+    const panel = element.querySelector<HTMLElement>('[appTabPanel]');
+    await until(() => tabs(element).some(([, selected]) => selected));
+
+    const title = element.querySelector('ion-header [role="heading"]');
+    expect([readable(title), title.getAttribute('aria-level')]).toEqual([
+      'Bean details',
+      '1',
+    ]);
+    expect(buttons(element)).toEqual(['Back', 'Edit bean', 'Cancel']);
+    expect(tabs(element)).toEqual([
+      ['General', true],
+      ['Frozen information', false],
+      ['Variety information', false],
+    ]);
+    expect(panel.innerText.replace(/\s+/g, ' ').trim()).toBe(
+      'Name: Gamma Blend Roaster: Rösterei Süd Roast date: Roast type: Filter Rating 5 Blend: Blend More information Weight: 1000 Cost: 30 Flavour profile: Decaffeinated: Website: Archive?: Notes:',
+    );
+    const heading = panel.querySelector('[role="heading"]');
+    expect([readable(heading), heading.getAttribute('aria-level')]).toEqual([
+      'More information',
+      '2',
+    ]);
+    const rating = panel.querySelector('ion-range');
+    expect(rating.getAttribute('disabled')).toBe('true');
+    expect(
+      rating.shadowRoot
+        ?.querySelector('[role="slider"]')
+        ?.getAttribute('aria-label'),
+    ).toBe('Rating');
+    // The stars are set a moment after the details are shown.
+    const stars = fixture.debugElement.query(
+      (node) => node.name === 'ngx-stars',
+    ).componentInstance as NgxStarsComponent;
+    await until(() => stars.rating === 5);
+    await fixture.whenStable();
+    expect(
+      panel.querySelector('ngx-stars [role="img"]').getAttribute('aria-label'),
+    ).toBe('Rating: 5 of 5 stars');
+    expect(
+      [...panel.querySelectorAll('ion-checkbox')].map((checkbox) => [
+        readable(checkbox),
+        checkbox.getAttribute('disabled'),
+      ]),
+    ).toEqual([
+      ['Decaffeinated:', 'true'],
+      ['Archive?:', 'true'],
+    ]);
+    expect(panel.querySelector('ion-item[button]').textContent).toContain(
+      'Website:',
+    );
+    // Nothing to type in; the checkboxes and the range carry hidden inputs.
+    expect(
+      element.querySelectorAll(
+        'input:not([type="hidden"], [type="checkbox"]), textarea, ion-input, ion-textarea',
+      ).length,
+    ).toBe(0);
+  });
+
+  it('has the frozen tab for a bean that was never frozen', async () => {
+    const fixture = await open(blend(), 'frozen');
+    const panel = (
+      fixture.nativeElement as HTMLElement
+    ).querySelector<HTMLElement>('[appTabPanel]');
+
+    expect(panel.innerText.replace(/\s+/g, ' ').trim()).toBe(
+      'Frozen date: Unfrozen date: Freezing storage type: Unknown Frozen notes:',
+    );
+  });
+
+  it('shows each variety of a blend as a section of its own', async () => {
+    settings.bean_manage_parameters.bean_information = true;
+    const fixture = await open(blend(), 'sortinformation');
+    const panel = (
+      fixture.nativeElement as HTMLElement
+    ).querySelector<HTMLElement>('[appTabPanel]');
+
+    expect(
+      [...panel.querySelectorAll('[role="heading"]')].map((heading) => [
+        readable(heading),
+        heading.getAttribute('aria-level'),
+      ]),
+    ).toEqual([
+      ['1. Bean Type', '2'],
+      ['2. Bean Type', '2'],
+      ['3. Bean Type', '2'],
+    ]);
+    expect(
+      [...panel.querySelectorAll('.field-label')]
+        .map(readable)
+        .filter((label) => ['Country:', 'Percentage:'].includes(label)),
+    ).toEqual([
+      'Country:',
+      'Percentage:',
+      'Country:',
+      'Percentage:',
+      'Country:',
+      'Percentage:',
+    ]);
+    const values = panel.innerText;
+    for (const shown of ['Ethiopia', '50', 'Brazil', '30', 'Colombia', '20']) {
+      expect(values).toContain(shown);
+    }
   });
 });

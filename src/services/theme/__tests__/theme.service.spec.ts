@@ -1,3 +1,4 @@
+import { effect, Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { SystemBarsStyle } from '@capacitor/core';
@@ -17,6 +18,7 @@ const DARK_BAR = '#221100';
 describe('ThemeService', () => {
   let platform: string;
   let systemDark: boolean;
+  let colorSchemeListeners: (() => void)[];
   let themeMode: THEME_MODE_ENUM;
   let statusBar: jasmine.SpyObj<ThemePlugins['statusBar']>;
   let systemBars: jasmine.SpyObj<ThemePlugins['systemBars']>;
@@ -39,6 +41,7 @@ describe('ThemeService', () => {
   beforeEach(() => {
     platform = 'android';
     systemDark = false;
+    colorSchemeListeners = [];
     themeMode = THEME_MODE_ENUM.LIGHT;
 
     tokens = document.createElement('style');
@@ -68,11 +71,14 @@ describe('ThemeService', () => {
     });
     const fakes: ThemePlugins = {
       getPlatform: () => platform,
-      darkMode: {
-        init: () => Promise.resolve(),
-        isDarkMode: () => Promise.resolve({ dark: systemDark }),
-        addAppearanceListener: () =>
-          Promise.resolve({ remove: () => Promise.resolve() }),
+      colorScheme: {
+        get matches() {
+          return systemDark;
+        },
+        addEventListener: ((type: string, listener: () => void) => {
+          expect(type).toBe('change');
+          colorSchemeListeners.push(listener);
+        }) as MediaQueryList['addEventListener'],
       },
       statusBar,
       systemBars,
@@ -161,6 +167,66 @@ describe('ThemeService', () => {
     expectBars(LIGHT_BAR, 'dark-icons');
     expect(statusBar.setBackgroundColor.calls.mostRecent().args[0]).toEqual({
       color: LIGHT_BAR,
+    });
+  });
+
+  it('restyles the bars when the device appearance changes at runtime', async () => {
+    platform = 'ios';
+    themeMode = THEME_MODE_ENUM.DEVICE;
+    await service.initialize();
+    expectBars(LIGHT_BAR, 'dark-icons');
+    expect(colorSchemeListeners.length).toBe(1);
+
+    statusBar.setBackgroundColor.calls.reset();
+    systemDark = true;
+    colorSchemeListeners[0]();
+    await new Promise((resolve) => setTimeout(resolve));
+
+    expectBars(DARK_BAR, 'light-icons');
+    expect(service.isDarkMode()).toBeTrue();
+    expect(
+      document.documentElement.classList.contains('ion-palette-dark'),
+    ).toBeTrue();
+  });
+
+  it('signals a change of the device appearance after the palette class is set', async () => {
+    platform = 'web';
+    themeMode = THEME_MODE_ENUM.DEVICE;
+    await service.initialize();
+    expect(service.dark()).toBeFalse();
+
+    const seen: boolean[] = [];
+    const watcher = effect(
+      () => {
+        seen.push(
+          service.dark() ===
+            document.documentElement.classList.contains('ion-palette-dark'),
+        );
+      },
+      { injector: TestBed.inject(Injector) },
+    );
+    TestBed.tick();
+    systemDark = true;
+    colorSchemeListeners[0]();
+    await new Promise((resolve) => setTimeout(resolve));
+    TestBed.tick();
+
+    expect(service.dark()).toBeTrue();
+    expect(seen).toEqual([true, true]);
+    watcher.destroy();
+  });
+
+  it('keeps the chosen mode when the device appearance changes', async () => {
+    themeMode = THEME_MODE_ENUM.LIGHT;
+    await service.initialize();
+
+    systemDark = true;
+    colorSchemeListeners[0]();
+    await new Promise((resolve) => setTimeout(resolve));
+
+    expect(service.isDarkMode()).toBeFalse();
+    expect(statusBar.setBackgroundColor).not.toHaveBeenCalledWith({
+      color: DARK_BAR,
     });
   });
 

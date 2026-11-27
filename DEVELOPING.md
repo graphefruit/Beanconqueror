@@ -472,6 +472,16 @@ How it works:
 - Every value is printed as a `DEVICE {…}` line with `build`, `brews` and `run`. No budget is
   checked: the budgets are set for the throttled browser.
 
+## Data updates change no files
+
+The data updates at a start (`UIUpdate.checkUpdate()`, `DATA_UPDATES` in
+`src/services/dataUpdates/data-update-rules.ts`) change stored entries only. They never delete,
+rename, move or copy a file, such as a photo, a flow profile or a backup. The backup written before
+them holds the entries alone, so a file an update changed could not be brought back with it.
+`src/services/__tests__/dataUpdateFiles.spec.ts` runs the updates of 9.0 on data of 8.8 and fails
+when a file is changed. A data update that has to change files needs its own backup of those files
+first and is planned as a change of its own.
+
 ## Building and Running Beanconqueror
 
 You can perform most development work in a browser instead of running on Android or iOS.
@@ -538,17 +548,29 @@ pnpm build && pnpm run -- cap run android
 
 #### Live Reload in Native Apps
 
-If you want to use live reload for your native app, it's actually a little easier to use the `ionic` CLI.
-However, you need to understand a small quirk about our Capacitor configuration: We currently need to supply the mobile platform using an environment variable.
-To do that, run the following command: (The example is for a typical `bash`-like shell)
+Start the development server in one terminal and the native app in a second one:
+
+```shell
+pnpm start
+pnpm run live:android   # Android emulator or a device connected via USB
+pnpm run live:ios       # iOS simulator
+```
+
+`live:android` forwards port 4200 to the device (`adb reverse`), so the app loads `http://localhost:4200` and the development server stays private to your machine.
+The app reloads whenever you save a file.
+Quit with Ctrl+C; Capacitor then removes the development server URL from the native configuration again.
+If it was not removed (for example after a crash), run `pnpm run cap sync <platform>`.
+The installed app keeps loading `http://localhost:4200` until you install a normal build again (`pnpm run cap run <platform>`).
+
+For a physical iOS device, the development server has to listen on your network interface:
 
 > [!WARNING]
 > This will open the development server on your external network interface.
 > Proceed with caution, especially if you are currently on an untrusted network!
 
 ```shell
-# <platform> is either 'android' or 'ios'.
-CAPACITOR_PLATFORM_OVERRIDE=<platform> pnpm run -- ionic capacitor run <platform> --livereload --external
+pnpm start --host 0.0.0.0
+pnpm exec cap run ios --live-reload --host <your-computer-ip> --port 4200
 ```
 
 ## Capacitor Configuration Hack
@@ -557,10 +579,10 @@ To support existing installations, we need to use very specific URL schemes and 
 To make matters worse, these differ between Android and iOS.
 In order to make this happen, we need to employ a terrible hack in our Capacitor configuration, at least until https://github.com/ionic-team/capacitor/issues/3976 is resolved.
 
-For you as a developer, this means that almost all commands involving the `capacitor` CLI (either directly or indirectly, for example through the `ionic` CLI) need to supply the current mobile platform as an environment variable.
+For you as a developer, this means that almost all commands involving the `capacitor` CLI need to supply the current mobile platform as an environment variable.
 That variable is called `CAPACITOR_PLATFORM_OVERRIDE` and valid values are `android` or `ios`.
 
-Keep this in mind if `capacitor` or `ionic` CLI commands fail in mysterious ways.
+Keep this in mind if `capacitor` CLI commands fail in mysterious ways.
 
 ## Create a Production build
 
@@ -644,3 +666,132 @@ Credentials are read from environment variables and must be stored outside the r
 | `SUPPLY_JSON_KEY`                                                         | Path to the Google Play service account JSON key  |
 
 Run the script's tests with `python3 -m unittest discover -s tools/tests`.
+
+## Release checklist
+
+Before every store release, hotfixes included, with the release build on an iPhone and an Android
+phone. Automatic points run in CI or with the named command; manual points are checked by a person
+on the device. Browser tests replace native plugins (see [Native plugins](#native-plugins)), so
+they cover only the app's side. A release with data updates also follows
+[Rolling out a major release](#rolling-out-a-major-release).
+
+| Point                                                                                                                                                                                                        | Device          | Check                                                                                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Keyboard: the view moves up, so the focused field stays visible above the keyboard (brew form, bean form, search).                                                                                           | iPhone, Android | Manual                                                                                                                                                                   |
+| Status bar and navigation bar take the page colour in light and dark mode, also when the app setting differs from the system.                                                                                | iPhone, Android | Automatic for the colour: `e2e/system-bars.spec.ts`. Manual for the native bars                                                                                          |
+| Safe area: nothing lies under the notch, the camera cutout or the home indicator; tab bar and bottom buttons stay clear of them, upright and turned.                                                         | iPhone, Android | Manual                                                                                                                                                                   |
+| Bluetooth: pair a scale, its weight arrives during a brew, it connects again after a restart of the app.                                                                                                     | iPhone, Android | Manual                                                                                                                                                                   |
+| NFC: write a bean to a tag and open the bean by reading the tag.                                                                                                                                             | iPhone, Android | Automatic for the link: `src/services/nfcService/*.spec.ts`. Manual for the tag                                                                                          |
+| Backup and import: export, import the file again, counts match; a backup file is written before the import.                                                                                                  | iPhone, Android | Automatic: `e2e/import-backup.spec.ts`, `pnpm e2e:device` (export and import on Android, see [Device tests](#device-tests)). Manual on the iPhone and with a real backup |
+| Update over the installed store version with real data, not a fresh install: all entries and photos are there, and the web view keeps its origin (`capacitor.config.ts`), else the stored data is not found. | iPhone, Android | Automatic for the data: `e2e/update-from-8-8.spec.ts`, `src/services/__tests__/dataUpdateFiles.spec.ts`. Manual for the update itself                                    |
+| Native functions: app shortcuts (quick actions) and NFC links open the app where they should. Add widgets and Live Activities here once the app has them.                                                    | iPhone, Android | Automatic for the app's reaction: `e2e/brew-quick-action.spec.ts`. Manual from the home screen                                                                           |
+| Device checks still open for finished changes are done.                                                                                                                                                      | As noted there  | Manual                                                                                                                                                                   |
+| After the release: the fixes made on `develop` for the store version are taken over into `feature/relaunch`.                                                                                                 | None            | Manual                                                                                                                                                                   |
+
+Before a release in December, also check the year in review:
+
+| Point                                                                                               | Device          | Check                                                                                          |
+| --------------------------------------------------------------------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------- |
+| It appears in December and in January, both times with the data of the year that ends.              | iPhone, Android | Automatic: `src/app/dashboard/__tests__/dashboard.page.spec.ts`. Manual on the device          |
+| "Most expensive bean" compares the price per kg and counts the frozen portions of one bag together. | iPhone, Android | Automatic: `src/services/unwrapped/__tests__/unwrapped.service.spec.ts`. Manual with real data |
+| The country average in the statistics uses the bean rating and leaves unrated beans out.            | iPhone, Android | Automatic: `src/app/statistic/__tests__/statistic.page.spec.ts`. Manual with real data         |
+
+## Rolling out a major release
+
+Checklist for a release with data updates (such as 9.0). Store consoles (Google Play Console, App
+Store Connect) are operated by the maintainer only: moving stages, pausing a rollout and requesting
+reviews. Developers prepare builds, watch the signals and write a daily summary.
+
+### Before the beta
+
+- [ ] CI is green on the release branch (unit tests, both E2E time zones).
+- [ ] Device test on a Pixel and an iPad: update from the store version 8.8.2 with 30,000 brews.
+      Counts of beans, brews and mills match before and after; note backup size and duration.
+- [ ] Way back: a 9.0 export imports into 8.8.2 with matching counts.
+- [ ] The fallback build (see below) is built once and installed over data migrated by 9.0 on a
+      Pixel and an iPad, both builds with the same signature: it starts, counts match, and entries
+      added and changed in it are still there after updating to the next 9.0 build.
+- [ ] English and German texts are complete; other languages fall back to English.
+
+### Beta
+
+- [ ] External TestFlight group and closed Play test track with the store signature, so the
+      real update path from the installed store version is tested.
+- [ ] At least 14 days and 2 builds; 20 to 50 testers, at least 3 with more than 9,000 brews,
+      several scales and machines, both platforms and one older Android phone.
+- [ ] Testers export their data in 8.8 and keep the file outside the app before updating.
+- [ ] Feedback goes through the existing Discord groups; testers share logs from the app.
+
+The beta ends when all of these hold; otherwise it is extended, never skipped:
+
+- [ ] No confirmed data loss.
+- [ ] At least 15 completed updates with more than 1,000 brews, 3 of them with more than 9,000.
+- [ ] No open crash or data bug.
+
+### Staged rollout
+
+- [ ] Start on a Tuesday or Wednesday, not between 20 December and 6 January, with the maintainer
+      reachable for the first 72 hours.
+- [ ] Android staged rollout 5 % → 20 % → 50 % → 100 %, each stage at least 72 hours (Android
+      vitals lag one to two days).
+- [ ] iOS: submit for review at least 3 days ahead with manual release. Release only after a
+      clean 20 % stage on Android, then use phased release over 7 days. Manual updates in the App
+      Store skip the phased release, so Android goes first.
+- [ ] Daily: summarise Android vitals, App Store crashes, store reviews and Discord.
+
+### Stop criteria
+
+Halt at once (Play Console: halt rollout; App Store Connect: pause phased release) on:
+
+- a confirmed data loss (counts differ and are not explained by removed exact duplicates);
+- Android user-perceived crash rate above 1.09 % or more than twice that of 8.8.2, ANR rate above
+  0.47 %; iOS crashes per session more than twice those of 8.8.2;
+- 3 or more independent reports of the same blocking bug (start, saving, scale) within 24 hours.
+
+Do not move to the next stage while:
+
+- a single crash or data bug is not yet reproduced;
+- many users report that the backup before the data update failed;
+- start time with more than 9,000 brews is more than twice that of 8.8.
+
+Analytics are opt-in and send nothing without consent, so they are not a stop signal. There is
+no crash reporting SDK.
+
+### Hotfix
+
+- [ ] Branch `hotfix/<version>` from the release tag; fix, test, tag.
+- [ ] Android: publish the new version on the current stage.
+- [ ] iOS: pause the phased release and request an expedited review in App Store Connect.
+- [ ] A broken data update is fixed with a new update step or by reopening the broken one, never
+      by changing an update step that has already run on user devices.
+- [ ] Merge the hotfix back into the development branch.
+
+### Fallback to 8.8
+
+Last resort when 9.0 is broken in the stores and no hotfix can ship in time: the 8.8 code is
+published with a version number above the broken 9.0, so users get it as a normal update. Only
+the maintainer decides to use it, and only if the fallback build passed its test before the start (see
+"Before the beta").
+
+- [ ] Halt the rollout first (Play Console: halt rollout; App Store Connect: pause phased release).
+- [ ] Branch `fallback/<version>` from the store tag `v8.8.2` plus the commits on `develop` after
+      it, with these patches, all about data safety:
+  - Before every import, write a backup file `pre-import/Beanconqueror_pre_import_<UTC>.zip`,
+    named like the 9.0 backups so that 9.0 lists and rotates it. 8.8 keeps the data before an
+    import only in memory, and the next change of the day overwrites the daily backup.
+  - List `pre-import/Beanconqueror_pre_import_*.zip` and `pre-import/Beanconqueror_pre_migration_*.zip`
+    with the automatic backups, so the backup from before the data update can be restored on
+    Android.
+  - Keep the credentials stored on the device when importing: files written by 9.0 hold them
+    empty, and 8.8 would overwrite the stored ones.
+  - Remove the `LAST_RESTORE` value on start. 8.8 does not stamp changed entries, so 9.0 could
+    take the data for an unchanged import and delete that backup first when rotating.
+- [ ] Version above the broken 9.0 in every number (`versionName`, `versionCode`,
+      `MARKETING_VERSION`, `CURRENT_PROJECT_VERSION`), for example 9.0.1. The fixed 9.0 gets the
+      next number again.
+- [ ] 8.8 keeps what it does not know: new fields, settings, storage keys, data update steps and
+      the backups in `pre-import/` stay. Unlike 9.0, 8.8 deletes daily backups older than eight
+      days. Entries added or changed in 8.8 have no or outdated change info.
+- [ ] The fixed 9.0 (for example 9.0.2) adds a new data update step that fills in the missing
+      change info, after the backup like every update step. UPDATE_16 to UPDATE_19 count as done
+      and do not run again.

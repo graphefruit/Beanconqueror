@@ -4,7 +4,11 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ModalController, Platform } from '@ionic/angular';
 
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import {
+  TranslateModule,
+  TranslatePipe,
+  TranslateService,
+} from '@ngx-translate/core';
 
 import { Bean } from '../../../classes/bean/bean';
 import { Brew, BrewInstanceHelper } from '../../../classes/brew/brew';
@@ -12,6 +16,7 @@ import { Mill } from '../../../classes/mill/mill';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
 import { StorageClass } from '../../../classes/storageClass';
+import { BREW_ACTION } from '../../../enums/brews/brewAction';
 import { BeanFunction } from '../../../pipes/bean/beanFunction';
 import { BrewFieldVisiblePipe } from '../../../pipes/brew/brewFieldVisible';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
@@ -19,7 +24,6 @@ import { FormatDatePipe } from '../../../pipes/formatDate';
 import { PreparationFunction } from '../../../pipes/preparation/preparationFunction';
 import { ToFixedPipe } from '../../../pipes/toFixed';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
-import { ShareService } from '../../../services/shareService/share-service.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
@@ -36,9 +40,11 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
+import { ActionsPopoverComponent } from '../../actions-popover/actions-popover.component';
+import { BrewShareComponent } from '../../brew-share/brew-share.component';
 import { BrewInformationComponent } from '../brew-information.component';
 
-describe('BrewInformationComponent imported provenance', () => {
+describe('BrewInformationComponent', () => {
   let fixture: ComponentFixture<BrewInformationComponent>;
   let uiHelper: jasmine.SpyObj<UIHelper>;
   let settingsStorage: jasmine.SpyObj<UISettingsStorage>;
@@ -127,10 +133,6 @@ describe('BrewInformationComponent imported provenance', () => {
           useValue: jasmine.createSpyObj('ModalController', ['create']),
         },
         { provide: UIHelper, useValue: uiHelper },
-        {
-          provide: ShareService,
-          useValue: jasmine.createSpyObj('ShareService', ['shareImage']),
-        },
         {
           provide: BrewTrackingService,
           useValue: jasmine.createSpyObj('BrewTrackingService', ['trackBrew']),
@@ -625,6 +627,117 @@ describe('BrewInformationComponent imported provenance', () => {
       );
       expect(tracking.trackBrew).not.toHaveBeenCalled();
       expect(toast.showInfoToast).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('share as image', () => {
+    it('offers the picture in the menu and opens it with the brew', async () => {
+      const brew = makeBrew();
+      render(brew);
+      (TestBed.inject(UIBrewHelper) as any).fieldVisible = () => true;
+      const pick = spyOn(ActionsPopoverComponent, 'pick').and.resolveTo(
+        BREW_ACTION.SHARE,
+      );
+      const open = spyOn(BrewShareComponent, 'open').and.resolveTo();
+
+      await fixture.componentInstance.showBrewActions(new MouseEvent('click'));
+
+      const share = pick.calls
+        .mostRecent()
+        .args[1].items.find(
+          (item) =>
+            item.itemType === 'action' &&
+            item.role === (BREW_ACTION.SHARE as string),
+        );
+      expect(share).toEqual(
+        jasmine.objectContaining({ translationKey: 'SHARE_CARD.MENU' }),
+      );
+      expect(open).toHaveBeenCalledOnceWith(jasmine.anything(), brew);
+    });
+  });
+
+  describe('options and roles', () => {
+    // 15 January 2027, 09:20 in the time zone the tests run in.
+    const time = new Date(2027, 0, 15, 9, 20).getTime() / 1000;
+
+    beforeEach(() => {
+      const translate = TestBed.inject(TranslateService);
+      translate.setTranslation('en', {
+        A11Y: {
+          ARCHIVED_BREW: 'Archived brew',
+          BREW_OPTIONS_FOR: 'Options for the brew of {{date}}',
+          BREW_OPTIONS_FOR_BEAN: 'Options for the brew of {{date}}, {{bean}}',
+        },
+      });
+      translate.use('en');
+      settings.date_format = 'DD.MM.YYYY';
+    });
+
+    function show(brew: Brew, layout: 'brew' | 'dashboard'): HTMLElement {
+      brew.config.unix_timestamp = time;
+      fixture.componentRef.setInput('layout', layout);
+      render(brew);
+      return fixture.nativeElement as HTMLElement;
+    }
+
+    /** Ionic moves the name of ion-button to the button in its shadow root. */
+    async function optionsName(card: HTMLElement): Promise<string> {
+      const button = card
+        .querySelector('ion-icon[name="beanconqueror-dots"]')
+        .closest('ion-button');
+      await new Promise((resolve) => setTimeout(resolve));
+      return (
+        button.shadowRoot
+          ?.querySelector('button')
+          ?.getAttribute('aria-label') ?? button.getAttribute('aria-label')
+      );
+    }
+
+    // Brews of the same minute are told apart by their bean.
+    for (const layout of ['brew', 'dashboard'] as const) {
+      it(`names the options after the date and the bean of the brew (${layout})`, async () => {
+        expect(await optionsName(show(makeBrew(), layout))).toBe(
+          'Options for the brew of 15.01.2027 09:20, Filter roast',
+        );
+      });
+
+      it(`names the options of a brew whose bean is gone by its date only (${layout})`, async () => {
+        const brew = makeBrew();
+        (UIBeanStorage as any).instance = { getByUUID: () => undefined };
+
+        expect(await optionsName(show(brew, layout))).toBe(
+          'Options for the brew of 15.01.2027 09:20',
+        );
+      });
+    }
+
+    it('is one entry on Home: a level-3 heading, no list, an archive mark but no button', () => {
+      const brew = makeBrew();
+      brew.getBean().finished = true;
+      const card = show(brew, 'dashboard');
+
+      const headings = card.querySelectorAll('[role="heading"]');
+      expect(headings.length).toBe(1);
+      expect(headings[0].getAttribute('aria-level')).toBe('3');
+      expect(headings[0].textContent).toContain('Filter roast');
+      expect(
+        card.querySelectorAll('ion-list, [role="list"], [role="listitem"]')
+          .length,
+      ).toBe(0);
+      // The mark sits where the options are; a tap on it reaches the card.
+      expect(
+        card.querySelector('ion-icon[name="beanconqueror-dots"]'),
+      ).toBeNull();
+      const mark = card
+        .querySelector('ion-icon[name="archive"]')
+        .closest('ion-button');
+      expect(mark.hasAttribute('inert')).toBeTrue();
+      expect(mark.hasAttribute('aria-label')).toBeFalse();
+      expect(
+        [...card.querySelectorAll('.visually-hidden')].map((hidden) =>
+          hidden.textContent.trim(),
+        ),
+      ).toEqual(['Archived brew']);
     });
   });
 });

@@ -1,4 +1,8 @@
 :host {
+  .chart {
+    overflow: hidden;
+    background: var(--ion-color-graph-background);
+  }
   ion-item {
     --border-width: 0px;
     margin-left: 16px;
@@ -13,5 +17,4 @@
     padding-left: 10px;
     padding-right: 10px;
   }
-
 }

@@ -1,5 +1,11 @@
 import { Service } from '@angular/core';
 
+import type {
+  Block,
+  BoundingBox,
+  TextDetectionResult,
+} from '@beanconqueror/text-recognition';
+
 import {
   OCR_LARGE_TEXT_AVG_MULTIPLIER,
   OCR_LARGE_TEXT_MAX_HEIGHT_RATIO,
@@ -8,38 +14,6 @@ import {
   OCR_SMALL_TEXT_AVG_MULTIPLIER,
 } from '../../data/ai-import/ai-import-constants';
 import { MultiPassOcrResult } from './camera-ocr.service';
-
-/**
- * Interfaces matching the ML Kit plugin's TypeScript definitions.
- * These are imported types from @pantrist/capacitor-plugin-ml-kit-text-recognition
- */
-export interface BoundingBox {
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-}
-
-export interface TextBase {
-  text: string;
-  boundingBox: BoundingBox;
-  recognizedLanguage: string;
-}
-
-export type Element = TextBase;
-
-export interface Line extends TextBase {
-  elements: Element[];
-}
-
-export interface Block extends TextBase {
-  lines: Line[];
-}
-
-export interface TextDetectionResult {
-  text: string;
-  blocks: Block[];
-}
 
 /**
  * Size classification for text blocks.

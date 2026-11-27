@@ -1,9 +1,13 @@
 import { ChangeDetectorRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 
 import { ModalController } from '@ionic/angular';
 
+import { TranslateModule } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+
+import { Settings } from '../../../classes/settings/settings';
 import { environment } from '../../../environments/environment';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -198,5 +202,72 @@ describe('DashboardPage - adding a brew', () => {
     await component.addBrew();
 
     expect(navigate).not.toHaveBeenCalled();
+  });
+});
+
+/** Headings a screen reader lists: role="none" takes the h4 out. */
+function headings(root: HTMLElement): HTMLElement[] {
+  return [
+    ...root.querySelectorAll<HTMLElement>(
+      '[role="heading"], h1, h2, h3, h4, h5, h6',
+    ),
+  ].filter((heading) => heading.getAttribute('role') !== 'none');
+}
+
+describe('DashboardPage - headings', () => {
+  it('has "Last brews" as a level-2 heading and no figure as a heading', () => {
+    const none = () => new Subject<unknown>();
+    TestBed.configureTestingModule({
+      imports: [DashboardPage, TranslateModule.forRoot()],
+      providers: [
+        provideRouter([]),
+        {
+          provide: UIStatistic,
+          useValue: {
+            getBeansCount: () => 4,
+            getBrewsDrunk: () => 12,
+            getTimePassedSinceLastBrew: () => '3',
+            getTimePassedSinceLastBrewMessage: () => 'DAYS',
+          },
+        },
+        {
+          provide: UIBrewStorage,
+          useValue: { getAllEntries: () => [], attachOnEvent: none },
+        },
+        {
+          provide: UIBeanStorage,
+          useValue: { getAllEntries: () => [], attachOnEvent: none },
+        },
+        { provide: UIPreparationStorage, useValue: { attachOnEvent: none } },
+        { provide: UIMillStorage, useValue: { attachOnEvent: none } },
+        {
+          provide: UISettingsStorage,
+          useValue: { getSettings: () => new Settings() },
+        },
+        {
+          provide: UnwrappedService,
+          useValue: { getUnwrappedData: () => null },
+        },
+        ...[UIBrewHelper, UIBeanHelper, ModalController].map((provide) => ({
+          provide,
+          useValue: {},
+        })),
+      ],
+    });
+    const fixture = TestBed.createComponent(DashboardPage);
+    fixture.detectChanges();
+    const content = (fixture.nativeElement as HTMLElement).querySelector(
+      'ion-content',
+    );
+
+    expect(
+      headings(content).map((heading) => [
+        heading.getAttribute('aria-level'),
+        heading.textContent.trim(),
+      ]),
+    ).toEqual([['2', 'PAGE_HOME_LAST_BREWS']]);
+    // The figures are shown, as text.
+    expect(content.textContent).toContain('PAGE_HOME_TOTAL_BREWS');
+    expect(content.textContent).toContain('PAGE_HOME_BEANS_EXPLORED');
   });
 });

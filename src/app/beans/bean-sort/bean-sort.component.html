@@ -75,19 +75,19 @@
         <ion-icon aria-hidden="true" name="beanconqueror-filter-aa" slot="start" />
         <ion-label>{{"BEAN_SORT_WEIGHT" | translate}}</ion-label>
       </ion-item>
-      @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.buyDate])) {
+      @if (sortableDates().buyDate) {
         <ion-item (click)="setSortAfter(beanSortAfterEnum.BUY_DATE)" [class.active]="isSortActive(beanSortAfterEnum.BUY_DATE)" class="ion-margin-top" lines="none" tappable>
           <ion-icon aria-hidden="true" name="beanconqueror-clock" slot="start" />
           <ion-label>{{"BEAN_DATA_BUY_DATE" | translate}}</ion-label>
         </ion-item>
       }
-      @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.openDate])) {
+      @if (sortableDates().openDate) {
         <ion-item (click)="setSortAfter(beanSortAfterEnum.OPEN_DATE)" [class.active]="isSortActive(beanSortAfterEnum.OPEN_DATE)" class="ion-margin-top" lines="none" tappable>
           <ion-icon aria-hidden="true" name="beanconqueror-clock" slot="start" />
           <ion-label>{{"BEAN_DATA_OPEN_DATE" | translate}}</ion-label>
         </ion-item>
       }
-      @if ((settings | beanFieldVisiblePipe: [settings.bean_manage_parameters.bestDate])) {
+      @if (sortableDates().bestDate) {
         <ion-item (click)="setSortAfter(beanSortAfterEnum.BEST_DATE)" [class.active]="isSortActive(beanSortAfterEnum.BEST_DATE)" class="ion-margin-top" lines="none" tappable>
           <ion-icon aria-hidden="true" name="beanconqueror-clock" slot="start" />
           <ion-label>{{"BEAN_DATA_BEST_DATE" | translate}}</ion-label>

@@ -112,6 +112,11 @@ import { ToFixedPipe } from '../../pipes/toFixed';
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import {
+  backupFormatProblem,
+  NotABackupError,
+  splitExportPartProblem,
+} from '../../services/backup-format-rules';
 import { BrewReferencesService } from '../../services/brewReferences/brew-references.service';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { CurrencyService } from '../../services/currencyService/currency.service';
@@ -148,6 +153,7 @@ import { UIUpdate } from '../../services/uiUpdate';
 import { UiVersionStorage } from '../../services/uiVersionStorage';
 import { UIWaterStorage } from '../../services/uiWaterStorage';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
+import { StoreHub } from '../../stores/core/store-hub';
 
 @Component({
   selector: 'settings',
@@ -223,6 +229,7 @@ export class SettingsPage {
   private readonly eventQueue = inject(EventQueueService);
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiExportImportHelper = inject(UIExportImportHelper);
+  private readonly storeHub = inject(StoreHub);
   private readonly visualizerService = inject(VisualizerService);
   private readonly textToSpeech = inject(TextToSpeechService);
   private readonly themeService = inject(ThemeService);
@@ -804,6 +811,10 @@ export class SettingsPage {
               );
             await this.__importJSON(parsedJSON, '', file.name);
           } catch (error) {
+            if (error instanceof NotABackupError) {
+              await this.__refuseImport('IMPORT_NOT_A_BACKUP', error.message);
+              return;
+            }
             this.uiLog.error('Error while importing ZIP on web:', error);
             await this.uiAlert.hideLoadingSpinner();
             await this.uiAlert.showMessageWithDetails(
@@ -878,10 +889,20 @@ export class SettingsPage {
           );
         await this.__importJSON(parsedJSON, directoryUri, fileName);
       } else {
-        // importMode === 'json'
-        await this.uiFileHelper.readJSONFile(mainFileUri);
+        // A Beanconqueror.json, as older versions exported it.
+        const parsedJSON = await this.uiFileHelper.readJSONFile(mainFileUri);
+        const partProblem = splitExportPartProblem(parsedJSON);
+        if (partProblem !== null) {
+          await this.__refuseImport('IMPORT_ONLY_PART_OF_BACKUP', partProblem);
+          return;
+        }
+        await this.__importJSON(parsedJSON, directoryUri, fileName);
       }
     } catch (error) {
+      if (error instanceof NotABackupError) {
+        await this.__refuseImport('IMPORT_NOT_A_BACKUP', error.message);
+        return;
+      }
       this.uiLog.error(
         'Error while importing file',
         mainFileUri,
@@ -1448,7 +1469,7 @@ export class SettingsPage {
     },
   ) {
     try {
-      const sourceFile = this.uiFileHelper.normalizeFileName(fileName);
+      const sourceFile = await this.uiFileHelper.resolvePhotoPath(fileName);
       const targetFile = `${exportPath.path}/${fileName}`;
 
       await this.uiFileHelper.makeParentDirs(targetFile, exportPath.directory);
@@ -1593,6 +1614,16 @@ export class SettingsPage {
     }
   }
 
+  /** Tells why the chosen file is not imported, before anything is asked. */
+  private async __refuseImport(
+    _messageKey: string,
+    _problem: string,
+  ): Promise<void> {
+    this.uiLog.error(`Import - refused: ${_problem}`);
+    await this.uiAlert.hideLoadingSpinner();
+    await this.uiAlert.showMessageWithDetails(_messageKey, _problem);
+  }
+
   /**
    * `_fileName` is the name of the backup file chosen, which the note about
    * the import keeps (UIExportImportHelper.importBackup).
@@ -1602,6 +1633,11 @@ export class SettingsPage {
     _importDirectory: string,
     _fileName: string,
   ) {
+    const formatProblem = backupFormatProblem(_parsedJSON);
+    if (formatProblem !== null) {
+      await this.__refuseImport('IMPORT_NOT_A_BACKUP', formatProblem);
+      return;
+    }
     try {
       const parsedContent = _parsedJSON;
       this.uiLog.log('Parsed import data successfully');
@@ -1669,16 +1705,21 @@ export class SettingsPage {
       await this.uiAlert.showLoadingSpinner();
       // A failure after the data was stored must not say that no data was
       // changed, or the file may be imported again.
-      let phase: 'storing' | 'reloading' | 'reported' = 'storing';
+      let phase = 'storing' as 'storing' | 'reloading' | 'reported';
       try {
-        const _data = await this.uiExportImportHelper.importBackup(
-          parsedContent,
-          'import',
-          _fileName,
-        );
+        const _data = await this.storeHub.reload(async () => {
+          const imported = await this.uiExportImportHelper.importBackup(
+            parsedContent,
+            'import',
+            _fileName,
+          );
+          if (imported.BACKUP === false) {
+            phase = 'reloading';
+            await this.__reinitializeStorages();
+          }
+          return imported;
+        });
         if (_data.BACKUP === false) {
-          phase = 'reloading';
-          await this.__reinitializeStorages();
           // Show loadingspinner again, because the reintializestorages hides it.
           await this.uiAlert.showLoadingSpinner();
           this.uiAnalytics.disableTracking();

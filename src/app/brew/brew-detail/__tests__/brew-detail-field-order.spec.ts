@@ -4,11 +4,9 @@ import {
   Component,
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
-  EventEmitter,
-  Input,
+  input,
   NO_ERRORS_SCHEMA,
   OnDestroy,
-  Output,
   Signal,
   signal,
   WritableSignal,
@@ -28,9 +26,11 @@ import {
 } from '../../../../brew-session/rules/brewFieldLayout';
 import { Bean } from '../../../../classes/bean/bean';
 import { Brew } from '../../../../classes/brew/brew';
+import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import { Mill } from '../../../../classes/mill/mill';
 import { Preparation } from '../../../../classes/preparation/preparation';
 import { Settings } from '../../../../classes/settings/settings';
+import { FlowProfileReader } from '../../../../components/brews/graph/flow-profile-reader.service';
 import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
 import { BrewFunction } from '../../../../pipes/brew/brewFunction';
 import { FormatDatePipe } from '../../../../pipes/formatDate';
@@ -55,32 +55,23 @@ import { BrewDetailComponent } from '../brew-detail.component';
 
 /** Stands in for the graph of the flow profile and counts its instances. */
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector -- the selector of the real graph
-  selector: 'brew-brewing-graph',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  selector: 'app-brew-graph-view',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: '',
 })
-class BrewBrewingGraphStubComponent implements OnDestroy {
+class BrewGraphViewStubComponent implements OnDestroy {
   public static created = 0;
   public static destroyed = 0;
 
-  @Input() public isDetail: boolean;
-  @Input() public brewComponent: BrewDetailComponent;
-  @Input() public data: Brew;
-  @Output() public dataChange = new EventEmitter<Brew>();
-
-  public flow_profile_raw = { waterFlow: [], realtimeFlow: [] };
+  public readonly flow = input<BrewFlow | null>(null);
+  public readonly reference = input<BrewFlow | null>(null);
 
   constructor() {
-    BrewBrewingGraphStubComponent.created++;
-  }
-
-  public async instance(): Promise<void> {
-    // Draws the graph in the real component.
+    BrewGraphViewStubComponent.created++;
   }
 
   public ngOnDestroy(): void {
-    BrewBrewingGraphStubComponent.destroyed++;
+    BrewGraphViewStubComponent.destroyed++;
   }
 }
 
@@ -99,16 +90,18 @@ describe('BrewDetailComponent field order', () => {
   let uiBrewHelper: jasmine.SpyObj<UIBrewHelper>;
   /** The layout a test sets in place of the one of the settings. */
   let layout: WritableSignal<BrewFieldLayout | undefined>;
+  let flow: BrewFlow;
 
   beforeEach(waitForAsync(() => {
+    flow = new BrewFlow();
     settings = new Settings();
     settings.manage_parameters.brew_temperature_time = true;
     Object.assign(settings.brew_order.before, { brew_temperature: 0 });
     Object.assign(settings.brew_order.while, { brew_temperature_time: 5 });
     preparation = new Preparation();
     preparation.style_type = PREPARATION_STYLE_TYPE.POUR_OVER;
-    BrewBrewingGraphStubComponent.created = 0;
-    BrewBrewingGraphStubComponent.destroyed = 0;
+    BrewGraphViewStubComponent.created = 0;
+    BrewGraphViewStubComponent.destroyed = 0;
 
     settingsEvents = new Subject();
     preparationEvents = new Subject();
@@ -138,7 +131,7 @@ describe('BrewDetailComponent field order', () => {
     TestBed.overrideComponent(BrewDetailComponent, {
       set: {
         imports: [
-          BrewBrewingGraphStubComponent,
+          BrewGraphViewStubComponent,
           DecimalPipe,
           KeyValuePipe,
           TranslatePipe,
@@ -202,6 +195,14 @@ describe('BrewDetailComponent field order', () => {
         {
           provide: ShareService,
           useValue: jasmine.createSpyObj('ShareService', ['shareFile']),
+        },
+        {
+          provide: FlowProfileReader,
+          useValue: {
+            read: () => Promise.resolve(flow),
+            readReference: () =>
+              Promise.resolve({ flow: null, missing: false }),
+          },
         },
         {
           provide: UIBrewStorage,
@@ -276,10 +277,9 @@ describe('BrewDetailComponent field order', () => {
     fixture.detectChanges();
   }
 
-  function graph(): BrewBrewingGraphStubComponent {
-    return fixture.debugElement.query(
-      By.directive(BrewBrewingGraphStubComponent),
-    ).componentInstance as BrewBrewingGraphStubComponent;
+  function graph(): BrewGraphViewStubComponent {
+    return fixture.debugElement.query(By.directive(BrewGraphViewStubComponent))
+      .componentInstance as BrewGraphViewStubComponent;
   }
 
   it('renders the fields in the configured order, the creation date last', () => {
@@ -295,7 +295,7 @@ describe('BrewDetailComponent field order', () => {
     // The flow profile summary and the graph take the place of the brew time.
     expect(labels('BREW_HEADER_WHILE_BREW')).toEqual([
       'ion-item',
-      'brew-brewing-graph',
+      'app-brew-graph-view',
       'BREW_DATA_TIME:',
       'BREW_DATA_COFFEE_BLOOMING_TIME:',
       'BREW_DATA_TEMPERATURE_TIME / BREW_DATA_SURF_TIME:',
@@ -307,7 +307,7 @@ describe('BrewDetailComponent field order', () => {
       'BREW_DATA_NOTES:',
       'BREW_CREATION_DATE',
     ]);
-    expect(component.brewBrewingGraphEl).toBe(graph() as any);
+    expect(graph().flow()).toBe(flow);
   });
 
   it('keeps the graph when the settings change while the details are open', () => {
@@ -321,12 +321,12 @@ describe('BrewDetailComponent field order', () => {
     expect(labels('BREW_HEADER_WHILE_BREW')).toEqual([
       'BREW_DATA_TEMPERATURE_TIME / BREW_DATA_SURF_TIME:',
       'ion-item',
-      'brew-brewing-graph',
+      'app-brew-graph-view',
       'BREW_DATA_TIME:',
     ]);
     expect(graph()).toBe(graphBefore);
-    expect(BrewBrewingGraphStubComponent.created).toBe(1);
-    expect(BrewBrewingGraphStubComponent.destroyed).toBe(0);
+    expect(BrewGraphViewStubComponent.created).toBe(1);
+    expect(BrewGraphViewStubComponent.destroyed).toBe(0);
   });
 
   it('lays out the fields again when the preparation is saved', () => {

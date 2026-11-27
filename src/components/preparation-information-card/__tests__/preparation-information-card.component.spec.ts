@@ -57,6 +57,10 @@ class BrewStorageFake {
     return Promise.resolve();
   }
 
+  public isRead(): boolean {
+    return true;
+  }
+
   public change(stored: object[]): void {
     this.stored = stored;
     this.instances = [];

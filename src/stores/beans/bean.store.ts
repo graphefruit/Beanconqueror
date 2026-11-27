@@ -6,6 +6,7 @@ import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UILog } from '../../services/uiLog';
 import { CollectionStore } from '../core/collection-store';
 import { DeepReadonly, toPlainData } from '../core/read-only';
+import { StoreHub } from '../core/store-hub';
 
 /**
  * The stored beans for new code, as read-only plain data. Created with its
@@ -25,7 +26,13 @@ export class BeanStore extends CollectionStore<IBean> {
   });
 
   public constructor() {
-    super(inject(UIBeanStorage), ingestBean, inject(UILog));
+    super(
+      inject(UIBeanStorage),
+      ingestBean,
+      inject(UILog),
+      toLegacyBean,
+      inject(StoreHub),
+    );
   }
 }
 
@@ -42,7 +49,7 @@ export function ingestBean(json: string): IBean {
 
 /**
  * A deep copy of a store entry as a `Bean`, for legacy code that changes and
- * saves it.
+ * saves it, and the form in which the store saves a bean.
  */
 export function toLegacyBean(entry: DeepReadonly<IBean>): Bean {
   const bean = new Bean();

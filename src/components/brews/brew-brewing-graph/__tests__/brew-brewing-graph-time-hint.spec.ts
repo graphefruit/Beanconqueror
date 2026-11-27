@@ -41,7 +41,6 @@ describe('BrewBrewingGraphComponent hint on the hidden brew time', () => {
       {
         data: new Brew(),
         isEdit: false,
-        isDetail: false,
         baristamode: false,
         settings,
         brewComponent: Object.assign(

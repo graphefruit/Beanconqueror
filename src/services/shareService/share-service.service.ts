@@ -1,9 +1,12 @@
 import { inject, Service } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
-
+import { App } from '@capacitor/app';
+import { Capacitor, registerPlugin } from '@capacitor/core';
+import { Device } from '@capacitor/device';
+import { Encoding, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { TranslateService } from '@ngx-translate/core';
+import { toPng } from 'html-to-image';
 import { stringify } from 'safe-stable-stringify';
 
 import { Bean } from '../../classes/bean/bean';
@@ -18,11 +21,29 @@ import {
   BeanRoastingType,
   Roast,
 } from '../../generated/src/classes/bean/bean';
+import {
+  SUPPORT_INFO_FILE,
+  supportInfo,
+} from '../../stores/settings/support-info-rules';
 import { UIAlert } from '../uiAlert';
 import { UIAnalytics } from '../uiAnalytics';
 import { UIFileHelper } from '../uiFileHelper';
 import { UIHelper } from '../uiHelper';
-import { UILog } from '../uiLog';
+import { LOG_DIRECTORY, LOG_FILE_NAME, LOG_FOLDER, UILog } from '../uiLog';
+import { UISettingsStorage } from '../uiSettingsStorage';
+
+const NATIVE_LOG_FILE_NAME = /^native_\d{8}_\d{9}\.log$/;
+
+/** iOS only: the native log fetches its entries in intervals. */
+const NativeLog = registerPlugin<{ flush(): Promise<void> }>('NativeLog');
+
+/** Whether `_error`, from Share.share(), tells that the user closed the dialog. */
+export function isShareCancelled(_error: unknown): boolean {
+  return (
+    (_error as { message?: unknown })?.message === 'Share canceled' ||
+    (_error as { name?: unknown })?.name === 'AbortError'
+  );
+}
 
 @Service()
 export class ShareService {
@@ -30,9 +51,10 @@ export class ShareService {
   private readonly uiHelper = inject(UIHelper);
   private readonly uiAnalytics = inject(UIAnalytics);
   private readonly uiFileHelper = inject(UIFileHelper);
-  private readonly platform = inject(Platform);
   private readonly uiLog = inject(UILog);
   private readonly uiAlert = inject(UIAlert);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly nativeLog = NativeLog;
 
   public async shareImage(_dataUrl: string) {
     try {
@@ -40,57 +62,93 @@ export class ShareService {
     } catch (ex) {}
   }
 
-  /** Resolves false when the file could not be written, so nothing was shared. */
+  /**
+   * Shares an element as a PNG `width` pixels wide, its height in proportion.
+   * Resolves false when it could not be drawn or written; the cause is logged.
+   */
+  public async shareElementAsImage(
+    _element: HTMLElement,
+    _width: number,
+  ): Promise<boolean> {
+    let dataUrl: string;
+    try {
+      const started = performance.now();
+      const options = { pixelRatio: _width / _element.offsetWidth };
+      if (Capacitor.getPlatform() === 'ios') {
+        // WebKit leaves out the images inside the element (the graph) the
+        // first time it draws it.
+        await toPng(_element, options);
+      }
+      dataUrl = await toPng(_element, options);
+      this.uiLog.info(
+        `Share - image drawn in ${Math.round(performance.now() - started)} ms, ` +
+          `${Math.round((dataUrl.length * 3) / 4 / 1024)} KB`,
+      );
+    } catch (ex) {
+      this.uiLog.error('Share - could not draw the image', ex);
+      return false;
+    }
+    return this.shareFile('', dataUrl);
+  }
+
+  /**
+   * Resolves false when the file could not be written, so nothing was shared.
+   * A share dialog the user cancels is no failure.
+   */
   public async shareFile(
     _filename: string,
     _dataUrl: string,
   ): Promise<boolean> {
-    let file: { path: string; fullpath: string } | undefined;
+    let extensionEnding = '.jpg';
+    if (_dataUrl.indexOf('image/png') > 0) {
+      extensionEnding = '.png';
+    }
+    if (_dataUrl.indexOf('application/json') > 0) {
+      extensionEnding = '.json';
+    }
+    let file: { path: string; fullpath: string };
     try {
-      let extensionEnding = '.jpg';
-      if (_dataUrl.indexOf('image/png') > 0) {
-        extensionEnding = '.png';
-      }
-      if (_dataUrl.indexOf('application/json') > 0) {
-        extensionEnding = '.json';
-      }
-
-      /** We need to save the file before we can share, because base64 share is not supported**/
-      if (this.platform.is('android')) {
-        /** We need to save the file before we can share, because base64 share is not supported**/
-        file = await this.uiFileHelper.writeExternalFileFromBase64ForSharing(
-          _dataUrl,
-          'sharefile' + extensionEnding,
-        );
-      } else {
-        file = await this.uiFileHelper.writeInternalFileFromBase64(
-          _dataUrl,
-          'sharefile' + extensionEnding,
-        );
-      }
-
+      await this.uiFileHelper.clearShareDirectory();
+      // A unique name, so an app still holding an earlier file never reads
+      // this one in its place. Base64 cannot be shared, only a file.
+      file = await this.uiFileHelper.writeFileForSharing(
+        _dataUrl,
+        (_filename || 'Beanconqueror') + '_' + Date.now() + extensionEnding,
+      );
+    } catch (ex) {
+      this.uiLog.error('Share - could not write the file', ex);
+      return false;
+    }
+    try {
       await Share.share({
         url: file.fullpath,
       });
     } catch (ex) {}
-    // Also when sharing failed or was cancelled: the file can hold the log.
-    if (file) {
-      try {
-        if (this.platform.is('android')) {
-          await this.uiFileHelper.deleteExternalSharedFile(file.path);
-        } else {
-          await this.uiFileHelper.deleteInternalFile(file.path);
-        }
-      } catch (ex) {
-        this.uiLog.error('Share - could not remove the shared file', ex);
-      }
-    }
-    return file !== undefined;
+    return true;
   }
 
   /**
-   * Shares the log as a file after the user agreed to what it can contain.
-   * When the log cannot be turned into a file or the file cannot be written,
+   * Opens the share dialog for the stored file at `_uri`, so it can be kept
+   * outside the app. Resolves false when it could not be shared; closing the
+   * dialog counts as shared.
+   */
+  public async shareStoredFile(_uri: string): Promise<boolean> {
+    try {
+      await Share.share({ url: _uri });
+      return true;
+    } catch (ex) {
+      if (isShareCancelled(ex)) {
+        return true;
+      }
+      this.uiLog.error('Share - the stored file could not be shared', ex);
+      return false;
+    }
+  }
+
+  /**
+   * Shares the log files and the support info after the user agreed to what
+   * they can contain. In the browser or without readable files, the log in
+   * memory is shared as one file instead; when that cannot be written either,
    * it is shown as text to copy.
    */
   public async shareLogs(): Promise<void> {
@@ -102,6 +160,9 @@ export class ShareService {
       true,
     );
     if (choice !== 'YES') {
+      return;
+    }
+    if (await this.shareLogFiles()) {
       return;
     }
     let dataUrl: string;
@@ -118,6 +179,67 @@ export class ShareService {
     }
     if (!(await this.shareFile('Beanconqueror_logs', dataUrl))) {
       await this.uiAlert.copyLogfiles();
+    }
+  }
+
+  /** Resolves false when there were no log files to share. */
+  private async shareLogFiles(): Promise<boolean> {
+    if (!Capacitor.isNativePlatform()) {
+      return false;
+    }
+    let files: string[];
+    try {
+      await this.uiLog.writeToFile();
+      if (Capacitor.getPlatform() === 'ios') {
+        // Without the latest native entries the files are still worth sharing.
+        await this.nativeLog.flush().catch(() => undefined);
+      }
+      const listed = await Filesystem.readdir({
+        path: LOG_FOLDER,
+        directory: LOG_DIRECTORY,
+      });
+      files = listed.files
+        .filter(
+          (_file) =>
+            LOG_FILE_NAME.test(_file.name) ||
+            NATIVE_LOG_FILE_NAME.test(_file.name),
+        )
+        .sort((_a, _b) => (_a.name < _b.name ? -1 : 1))
+        .map((_file) => _file.uri);
+    } catch {
+      return false;
+    }
+    if (files.length === 0) {
+      return false;
+    }
+    const info = await this.writeSupportInfo();
+    try {
+      await Share.share({ files: info ? [info, ...files] : files });
+    } catch {
+      // Cancelling the share dialog is no error.
+    }
+    return true;
+  }
+
+  /** Resolves the file's uri, or undefined when it could not be written. */
+  private async writeSupportInfo(): Promise<string | undefined> {
+    try {
+      const info = supportInfo(
+        this.uiSettingsStorage.getSettings(),
+        await Device.getInfo(),
+        (await App.getInfo()).version,
+      );
+      const { uri } = await Filesystem.writeFile({
+        path: `${LOG_FOLDER}/${SUPPORT_INFO_FILE}`,
+        directory: LOG_DIRECTORY,
+        data: JSON.stringify(info, null, 2),
+        encoding: Encoding.UTF8,
+      });
+      return uri;
+    } catch (ex) {
+      // The log files alone still help.
+      this.uiLog.error('Share - could not write the support info', ex);
+      return undefined;
     }
   }
 
