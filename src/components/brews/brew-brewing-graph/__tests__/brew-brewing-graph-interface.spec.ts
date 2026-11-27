@@ -42,7 +42,6 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
   beforeEach(() => {
     const stubs = [
       ChangeDetectorRef,
-      NgZone,
       ModalController,
       TranslateService,
       GraphHelperService,
@@ -62,6 +61,10 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
     TestBed.configureTestingModule({
       providers: [
         ...stubs,
+        {
+          provide: NgZone,
+          useValue: { runOutsideAngular: (fn: () => void) => fn() },
+        },
         { provide: Platform, useValue: { is: () => true } },
         {
           provide: CoffeeBluetoothDevicesService,
