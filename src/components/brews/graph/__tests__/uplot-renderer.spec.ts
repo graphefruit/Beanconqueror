@@ -486,20 +486,26 @@ describe('UplotRenderer', () => {
     expect(plot().axes[1].show).toBeFalse();
   });
 
-  it('writes the axis values without halo, readable on the ground they stand on', async () => {
+  it('writes the axis values readable on a halo of the ground they stand on', async () => {
     const texts: { text: string; style: string }[] = [];
+    const halos: string[] = [];
     spyOn(CanvasRenderingContext2D.prototype, 'fillText').and.callFake(
       function (this: CanvasRenderingContext2D, text: string) {
         texts.push({ text, style: this.fillStyle as string });
       },
     );
-    const strokes = spyOn(CanvasRenderingContext2D.prototype, 'strokeText');
+    spyOn(CanvasRenderingContext2D.prototype, 'strokeText').and.callFake(
+      function (this: CanvasRenderingContext2D) {
+        halos.push(this.strokeStyle as string);
+      },
+    );
     for (const [dark, ground] of [
       [false, '#ead9c4'],
       [true, '#211914'],
     ] as const) {
       host.style.backgroundColor = ground;
       texts.length = 0;
+      halos.length = 0;
       buffer = new FlowSeriesBuffer();
       await mount('live', dark);
       feed(buffer, 0, 2);
@@ -512,9 +518,37 @@ describe('UplotRenderer', () => {
           .withContext(`${text} in ${style} on ${ground}`)
           .toBeGreaterThanOrEqual(4.5);
       }
+      expect(halos.length).withContext(ground).toBe(values.length);
+      expect(halos.every((h) => h === ground))
+        .withContext(halos.join())
+        .toBeTrue();
       renderer.destroy();
     }
-    expect(strokes).not.toHaveBeenCalled();
+  });
+
+  it('draws the grid with the first axis shown', async () => {
+    await mount('detail');
+    feed(buffer, 0, 2);
+    renderer.setVisible('weight', false);
+    await frames.run();
+
+    expect(plot().axes[1].show).withContext('weight axis').toBeFalse();
+    expect(plot().axes[2].grid.show).withContext('pressure grid').toBeTrue();
+
+    renderer.setVisible('weight', true);
+    await frames.run();
+
+    expect(plot().axes[1].grid.show).withContext('weight grid').toBeTrue();
+    expect(plot().axes[2].grid.show).withContext('pressure grid').toBeFalse();
+  });
+
+  it('shows the grid of the live graph before the first sample with weight hidden', async () => {
+    await mount();
+    renderer.setVisible('weight', false);
+    await frames.run();
+
+    expect(plot().axes[2].show).withContext('pressure axis').toBeTrue();
+    expect(plot().axes[2].grid.show).withContext('pressure grid').toBeTrue();
   });
 
   it('exports a PNG data URL at its own size, scale and theme', async () => {

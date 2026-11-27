@@ -94,12 +94,15 @@ export interface InsetAxis {
   index: number;
   axisId: AxisId;
   colour: string;
-  /** The axis draws grid lines. */
-  grid: boolean;
 }
 
 export interface InsetAxesSpec {
   axes: readonly InsetAxis[];
+  /**
+   * Halo in the colour of the ground, so a line under a value does not strike
+   * it through; none on a clear picture.
+   */
+  halo: string | null;
   font: string;
   format: (value: number) => string;
   k: number;
@@ -126,6 +129,9 @@ export function insetAxesPlugin(spec: InsetAxesSpec): {
     const plot = { top, bottom: top + height };
     ctx.save();
     ctx.font = `${Math.round(FONT_PX * px)}px ${spec.font}`;
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 3 * px;
+    ctx.strokeStyle = spec.halo ?? 'transparent';
     for (const side of ['left', 'right'] as const) {
       const columns = spec.axes
         .filter(
@@ -136,6 +142,7 @@ export function insetAxesPlugin(spec: InsetAxesSpec): {
             splitsOf.has(a.index),
         )
         .sort((a, b) => insetRank(a.axisId) - insetRank(b.axisId))
+        .map((a) => ({ ...a, grid: u.axes[a.index].grid?.show === true }))
         .map((a) => ({
           colour: a.colour,
           baseline: a.grid ? ('bottom' as const) : ('middle' as const),
@@ -157,6 +164,9 @@ export function insetAxesPlugin(spec: InsetAxesSpec): {
         ctx.fillStyle = column.colour;
         ctx.textBaseline = column.baseline;
         for (const label of column.labels) {
+          if (spec.halo) {
+            ctx.strokeText(label.text, xs[i], label.y);
+          }
           ctx.fillText(label.text, xs[i], label.y);
         }
       });

@@ -704,9 +704,9 @@ export class UplotRenderer implements BrewChartPort {
             (look.ground
               ? readableLine(colour, look.ground, VALUE_CONTRAST)
               : colour),
-          grid: i === 0,
         };
       }),
+      halo: look.ground,
       font: FONT,
       format: (value) => lib.fmtNum(value),
       k,
@@ -768,21 +768,20 @@ export class UplotRenderer implements BrewChartPort {
 
   /**
    * An axis shows when a shown series on it has data. The live graph shows
-   * its grid axis before the first sample too, so grid and range stand from
-   * the start, as the brew form always showed them.
+   * its first axis with a shown series before the first sample too, so grid
+   * and range stand from the start, as the brew form always showed them.
    */
   private axisVisible(axisId: AxisId, bare: boolean): boolean {
+    const shownOn = (id: AxisId): SeriesDef[] =>
+      axisShown(id, bare)
+        ? this.layout.drawn.filter(
+            (d) => d.axisId === id && !this.hidden.has(d.id),
+          )
+        : [];
     const awaited =
-      this.opts?.mode === 'live' && this.layout.axes[0] === axisId;
-    return (
-      axisShown(axisId, bare) &&
-      this.layout.drawn.some(
-        (d) =>
-          d.axisId === axisId &&
-          !this.hidden.has(d.id) &&
-          (awaited || this.hasData(d)),
-      )
-    );
+      this.opts?.mode === 'live' &&
+      this.layout.axes.find((id) => shownOn(id).length > 0) === axisId;
+    return shownOn(axisId).some((d) => awaited || this.hasData(d));
   }
 
   /** Shows the series and axes that have something to show; true when an axis changed. */
@@ -791,11 +790,16 @@ export class UplotRenderer implements BrewChartPort {
     bare = this.opts?.mode === 'live',
   ): boolean {
     let axesChanged = false;
+    let gridDrawn = false;
     this.layout.axes.forEach((axisId, i) => {
       const axis = u.axes[i + 1];
       const show = this.axisVisible(axisId, bare);
-      if (axis.show !== show) {
+      // The first axis shown draws the grid, so hiding weight keeps it.
+      const grid = show && !gridDrawn;
+      gridDrawn ||= grid;
+      if (axis.show !== show || axis.grid?.show !== grid) {
         axis.show = show;
+        axis.grid = { ...axis.grid, show: grid };
         axesChanged = true;
       }
     });

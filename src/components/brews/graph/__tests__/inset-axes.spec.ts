@@ -19,7 +19,10 @@ interface Call {
 }
 
 /** A chart as the draw hook sees it: 200 × 100 CSS px at pixel ratio 2. */
-function fakeChart(shown: Record<number, boolean>): {
+function fakeChart(
+  shown: Record<number, boolean>,
+  gridAxis: number,
+): {
   u: uPlot;
   calls: Call[];
 } {
@@ -62,7 +65,10 @@ function fakeChart(shown: Record<number, boolean>): {
     ctx,
     width: 200,
     bbox: { left: 20, top: 10, width: 360, height: 160 },
-    axes: [0, 1, 2, 3].map((i) => ({ show: shown[i] ?? true })),
+    axes: [0, 1, 2, 3].map((i) => ({
+      show: shown[i] ?? true,
+      grid: { show: i === 0 || i === gridAxis },
+    })),
     scales: {
       weight: { min: 0, max: 100 },
       flow: { min: 0, max: 10 },
@@ -74,18 +80,23 @@ function fakeChart(shown: Record<number, boolean>): {
   return { u, calls };
 }
 
-function drawWith(shown: Record<number, boolean> = {}): Call[] {
+function drawWith(
+  shown: Record<number, boolean> = {},
+  halo: string | null = '#ffffff',
+  gridAxis = 1,
+): Call[] {
   const { plugin, values } = insetAxesPlugin({
     axes: [
-      { index: 1, axisId: 'weight', colour: '#aa0000', grid: true },
-      { index: 2, axisId: 'pressure', colour: '#00aa00', grid: false },
-      { index: 3, axisId: 'flow', colour: '#0000aa', grid: false },
+      { index: 1, axisId: 'weight', colour: '#aa0000' },
+      { index: 2, axisId: 'pressure', colour: '#00aa00' },
+      { index: 3, axisId: 'flow', colour: '#0000aa' },
     ],
+    halo,
     font: 'sans-serif',
     format: (v) => String(v),
     k: 1,
   });
-  const { u, calls } = fakeChart(shown);
+  const { u, calls } = fakeChart(shown, gridAxis);
   expect(values(u, [0, 50, 100], 1, 0, 0)).toEqual([null, null, null]);
   values(u, [0, 6, 12], 2, 0, 0);
   values(u, [0, 5], 3, 0, 0);
@@ -168,11 +179,14 @@ describe('inset axes', () => {
     }
   });
 
-  it('draws the values of the shown axes in their colour, without halo', () => {
+  it('draws the values of the shown axes in their colour on a halo of the ground', () => {
     const calls = drawWith();
 
     const fills = calls.filter((c) => c.op === 'fill');
-    expect(calls.some((c) => c.op === 'stroke')).toBeFalse();
+    // The halo keeps a line that runs under a value from striking it through.
+    const strokes = calls.filter((c) => c.op === 'stroke');
+    expect(strokes.length).toBe(fills.length);
+    expect(strokes.every((c) => c.style === '#ffffff')).toBeTrue();
     const column = (style: string): number[] => [
       ...new Set(fills.filter((c) => c.style === style).map((c) => c.x)),
     ];
@@ -192,6 +206,22 @@ describe('inset axes', () => {
     const weight = fills.find((c) => c.text === '50' && c.style === '#aa0000');
     expect(weight?.y).toBe(170 - 50 - 4);
     expect(weight?.baseline).toBe('bottom');
+  });
+
+  it('draws no halo on a clear picture', () => {
+    const calls = drawWith({}, null);
+
+    expect(calls.some((c) => c.op === 'stroke')).toBeFalse();
+    expect(calls.length).toBe(3 + 3 + 2);
+  });
+
+  it('sets the values above the lines of the axis that draws the grid', () => {
+    const fills = drawWith({ 1: false }, null, 2);
+
+    const six = fills.find((c) => c.text === '6');
+    expect(six?.baseline).toBe('bottom');
+    expect(six?.y).toBe(170 - 6 - 4);
+    expect(fills.find((c) => c.text === '5')?.baseline).toBe('middle');
   });
 
   it('leaves out a hidden axis and gives its column to the next', () => {
