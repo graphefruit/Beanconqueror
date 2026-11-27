@@ -7,6 +7,10 @@
 .chips {
   display: flex;
   align-items: flex-start;
+}
+
+// Maximized, the chips are the header strip; embedded they sit on the card.
+.chips.header {
   background-color: var(--ion-header-background-color);
 }
 

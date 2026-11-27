@@ -1,4 +1,4 @@
-<div class="chips">
+<div class="chips" [class.header]="timeSlider()">
   <div class="chip-list">
     @for (chip of chips(); track chip.id) {
       <ion-chip chipButton [chipPressed]="chip.visible" (click)="toggle(chip.id)" [outline]="!chip.visible"

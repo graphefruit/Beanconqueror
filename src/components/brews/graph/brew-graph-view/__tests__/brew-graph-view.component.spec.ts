@@ -53,7 +53,7 @@ function flow(seconds = 20, withMetric = true): BrewFlow {
 @Component({
   // The old graph ground of the dark theme, which the view must not paint.
   template: `<div
-    style="--ion-color-graph-background: #222428"
+    style="--ion-color-graph-background: #222428; --ion-header-background-color: #ead9c4"
     [style.width.px]="320"
     [style.height.px]="480"
   >
@@ -419,6 +419,20 @@ describe('BrewGraphViewComponent', () => {
     await until(() => !!drawn());
 
     expect(getComputedStyle(chart()).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+  });
+
+  it('lays the chips on the card when embedded, on the header strip when maximized', async () => {
+    const chips = (): string =>
+      getComputedStyle(
+        (fixture.nativeElement as HTMLElement).querySelector('.chips'),
+      ).backgroundColor;
+    create();
+    await until(() => !!drawn());
+    expect(chips()).toBe('rgb(234, 217, 196)');
+
+    host.timeSlider.set(false);
+    fixture.detectChanges();
+    expect(chips()).toBe('rgba(0, 0, 0, 0)');
   });
 
   it('exports the shown graph as a sharp picture in the theme of the app', async () => {

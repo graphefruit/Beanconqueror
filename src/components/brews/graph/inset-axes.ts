@@ -73,12 +73,15 @@ export function labelY(
 }
 
 /**
- * The colour of the first ground behind `el`, so the halo matches the card or
- * page the clear canvas sits on; null when nothing behind it has one.
+ * The colour of the first ground behind `el`, the card or page the clear
+ * canvas sits on; null when nothing behind it has one.
  */
 export function groundOf(el: Element | null): string | null {
   for (let node = el; node; node = node.parentElement) {
-    const colour = getComputedStyle(node).backgroundColor;
+    // ion-content paints its ground on an element inside its shadow root.
+    const painted =
+      node.shadowRoot?.getElementById('background-content') ?? node;
+    const colour = getComputedStyle(painted).backgroundColor;
     if (colour && colour !== 'transparent' && !/[,/]\s*0\)$/.test(colour)) {
       return colour;
     }
@@ -97,8 +100,6 @@ export interface InsetAxis {
 
 export interface InsetAxesSpec {
   axes: readonly InsetAxis[];
-  /** Halo behind the text in the colour of the ground; none on a clear ground. */
-  halo: string | null;
   font: string;
   format: (value: number) => string;
   k: number;
@@ -125,9 +126,6 @@ export function insetAxesPlugin(spec: InsetAxesSpec): {
     const plot = { top, bottom: top + height };
     ctx.save();
     ctx.font = `${Math.round(FONT_PX * px)}px ${spec.font}`;
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = 3 * px;
-    ctx.strokeStyle = spec.halo ?? 'transparent';
     for (const side of ['left', 'right'] as const) {
       const columns = spec.axes
         .filter(
@@ -159,9 +157,6 @@ export function insetAxesPlugin(spec: InsetAxesSpec): {
         ctx.fillStyle = column.colour;
         ctx.textBaseline = column.baseline;
         for (const label of column.labels) {
-          if (spec.halo) {
-            ctx.strokeText(label.text, xs[i], label.y);
-          }
           ctx.fillText(label.text, xs[i], label.y);
         }
       });

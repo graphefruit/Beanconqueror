@@ -15,6 +15,7 @@
  */
 import type uPlot from 'uplot';
 
+import { readableLine } from '../../../services/graphHelper/line-contrast';
 import {
   extentOf,
   fittedRange,
@@ -63,11 +64,14 @@ export interface UplotRendererOptions {
 export const MAX_PIXEL_RATIO = 2;
 const FONT = '-apple-system, Roboto, sans-serif';
 
-/** Axis text and grid of the two themes; the ground matches --ion-color-graph-background. */
+/** Axis text and grid of the two themes; the ground is the card colour of the app. */
 export const CHART_PALETTE = {
   light: { text: '#444444', grid: 'rgba(0,0,0,0.1)', background: '#ffffff' },
-  dark: { text: '#e0e0e0', grid: '#8e8e8e', background: '#222428' },
+  dark: { text: '#e0e0e0', grid: '#8e8e8e', background: '#2a211a' },
 } as const;
+
+/** WCAG contrast of the axis values on their ground. */
+const VALUE_CONTRAST = 4.5;
 
 /** Subset of uPlot.min.css the renderer needs (no legend, no title). */
 const UPLOT_CSS =
@@ -202,8 +206,8 @@ interface Look {
   ink?: string;
   /** Size factor for fonts and lines, for an export at another scale. */
   k: number;
-  /** Ground behind the axis values; null on a picture without ground. */
-  halo: string | null;
+  /** Ground the axis values stand on; null on a picture without ground. */
+  ground: string | null;
 }
 
 export class UplotRenderer implements BrewChartPort {
@@ -256,6 +260,12 @@ export class UplotRenderer implements BrewChartPort {
   }
 
   public async mount(el: HTMLElement, opts: MountOptions): Promise<void> {
+    // Taken before the library loads, so a resize() meanwhile wins: the
+    // container may only get its size while uPlot is still loading.
+    this.size = {
+      width: Math.floor(opts.width),
+      height: Math.floor(opts.height),
+    };
     const lib = await loadUplot();
     if (this.destroyed) {
       return;
@@ -265,7 +275,6 @@ export class UplotRenderer implements BrewChartPort {
     this.el = el;
     this.opts = opts;
     this.dark = opts.dark;
-    this.size = { width: opts.width, height: opts.height };
     this.structureDirty = true;
     this.scheduleFrame();
   }
@@ -371,7 +380,7 @@ export class UplotRenderer implements BrewChartPort {
             dark: options.theme === 'dark',
             ink: options.ink,
             k,
-            halo: options.transparent
+            ground: options.transparent
               ? null
               : CHART_PALETTE[options.theme].background,
           },
@@ -525,7 +534,7 @@ export class UplotRenderer implements BrewChartPort {
         {
           dark: this.dark,
           k: 1,
-          halo:
+          ground:
             groundOf(el) ??
             CHART_PALETTE[this.dark ? 'dark' : 'light'].background,
         },
@@ -690,11 +699,14 @@ export class UplotRenderer implements BrewChartPort {
         return {
           index: i + 1,
           axisId,
-          colour: look.ink ?? colour,
+          colour:
+            look.ink ??
+            (look.ground
+              ? readableLine(colour, look.ground, VALUE_CONTRAST)
+              : colour),
           grid: i === 0,
         };
       }),
-      halo: look.halo,
       font: FONT,
       format: (value) => lib.fmtNum(value),
       k,
@@ -754,11 +766,21 @@ export class UplotRenderer implements BrewChartPort {
     };
   }
 
+  /**
+   * An axis shows when a shown series on it has data. The live graph shows
+   * its grid axis before the first sample too, so grid and range stand from
+   * the start, as the brew form always showed them.
+   */
   private axisVisible(axisId: AxisId, bare: boolean): boolean {
+    const awaited =
+      this.opts?.mode === 'live' && this.layout.axes[0] === axisId;
     return (
       axisShown(axisId, bare) &&
       this.layout.drawn.some(
-        (d) => d.axisId === axisId && !this.hidden.has(d.id) && this.hasData(d),
+        (d) =>
+          d.axisId === axisId &&
+          !this.hidden.has(d.id) &&
+          (awaited || this.hasData(d)),
       )
     );
   }

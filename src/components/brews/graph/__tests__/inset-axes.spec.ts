@@ -74,17 +74,13 @@ function fakeChart(shown: Record<number, boolean>): {
   return { u, calls };
 }
 
-function drawWith(
-  shown: Record<number, boolean> = {},
-  halo: string | null = '#ffffff',
-): Call[] {
+function drawWith(shown: Record<number, boolean> = {}): Call[] {
   const { plugin, values } = insetAxesPlugin({
     axes: [
       { index: 1, axisId: 'weight', colour: '#aa0000', grid: true },
       { index: 2, axisId: 'pressure', colour: '#00aa00', grid: false },
       { index: 3, axisId: 'flow', colour: '#0000aa', grid: false },
     ],
-    halo,
     font: 'sans-serif',
     format: (v) => String(v),
     k: 1,
@@ -134,7 +130,7 @@ describe('inset axes', () => {
     expect(labelY(170, plot, 2, false)).toBe(159);
   });
 
-  it('takes the halo from the first ground behind the chart', () => {
+  it('finds the first ground behind the chart', () => {
     const card = document.createElement('div');
     card.style.backgroundColor = '#2a211a';
     const clear = document.createElement('div');
@@ -154,13 +150,29 @@ describe('inset axes', () => {
     }
   });
 
-  it('draws the values of the shown axes in their colour on a halo', () => {
+  it('finds the ground ion-content paints inside its shadow root', () => {
+    const content = document.createElement('div');
+    const painted = document.createElement('div');
+    painted.id = 'background-content';
+    painted.style.backgroundColor = '#ffffff';
+    content.attachShadow({ mode: 'open' }).appendChild(painted);
+    const host = content.appendChild(document.createElement('div'));
+    const page = document.createElement('div');
+    page.style.backgroundColor = '#ead9c4';
+    page.appendChild(content);
+    document.body.appendChild(page);
+    try {
+      expect(groundOf(host)).toBe('rgb(255, 255, 255)');
+    } finally {
+      page.remove();
+    }
+  });
+
+  it('draws the values of the shown axes in their colour, without halo', () => {
     const calls = drawWith();
 
     const fills = calls.filter((c) => c.op === 'fill');
-    const strokes = calls.filter((c) => c.op === 'stroke');
-    expect(strokes.length).toBe(fills.length);
-    expect(strokes.every((c) => c.style === '#ffffff')).toBeTrue();
+    expect(calls.some((c) => c.op === 'stroke')).toBeFalse();
     const column = (style: string): number[] => [
       ...new Set(fills.filter((c) => c.style === style).map((c) => c.x)),
     ];
@@ -180,13 +192,6 @@ describe('inset axes', () => {
     const weight = fills.find((c) => c.text === '50' && c.style === '#aa0000');
     expect(weight?.y).toBe(170 - 50 - 4);
     expect(weight?.baseline).toBe('bottom');
-  });
-
-  it('draws no halo on a clear picture', () => {
-    const calls = drawWith({}, null);
-
-    expect(calls.some((c) => c.op === 'stroke')).toBeFalse();
-    expect(calls.length).toBe(3 + 3 + 2);
   });
 
   it('leaves out a hidden axis and gives its column to the next', () => {

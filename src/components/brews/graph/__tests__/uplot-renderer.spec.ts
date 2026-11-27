@@ -3,6 +3,7 @@ import type uPlot from 'uplot';
 import { Settings } from '../../../../classes/settings/settings';
 import { DEFAULT_GRAPH_COLORS } from '../../../../data/defaultGraphColors';
 import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
+import { contrastRatio } from '../../../../services/graphHelper/line-contrast';
 import type { ChartMode } from '../brew-chart-port';
 import { FlowSeriesBuffer } from '../flow-series-buffer';
 import type {
@@ -441,6 +442,79 @@ describe('UplotRenderer', () => {
     expect(host.querySelector('.uplot')).not.toBeNull();
     // A saved brew does not keep a frame loop running.
     expect(frames.pending).toBe(0);
+  });
+
+  it('keeps a size its container reports while uPlot still loads', async () => {
+    renderer = new UplotRenderer([], {
+      requestFrame: frames.request,
+      cancelFrame: frames.cancel,
+    });
+    // Measured while the container was still hidden.
+    const mounting = renderer.mount(host, {
+      width: 0,
+      height: 150,
+      dark: false,
+      mode: 'live',
+      axisSettings: new Settings(),
+      style: PREPARATION_STYLE_TYPE.ESPRESSO,
+    });
+    // The container shows up before the library is there.
+    renderer.resize(360, 150);
+    await mounting;
+    renderer.setSeries(defs('live', 'weight'));
+    renderer.attach(buffer);
+    await frames.run();
+
+    expect(plot()?.width).toBe(360);
+  });
+
+  it('shows grid and weight axis of the live graph before the first sample', async () => {
+    await mount();
+    await frames.run();
+
+    expect(plot().axes[1].show).withContext('weight axis').toBeTrue();
+    expect(plot().axes[2].show).withContext('pressure axis').toBeFalse();
+    expect(plot().scales.weight.max).toBe(
+      new Settings().graph_weight.ESPRESSO.upper,
+    );
+  });
+
+  it('shows no axis of a saved brew without data', async () => {
+    await mount('detail');
+    await frames.run();
+
+    expect(plot().axes[1].show).toBeFalse();
+  });
+
+  it('writes the axis values without halo, readable on the ground they stand on', async () => {
+    const texts: { text: string; style: string }[] = [];
+    spyOn(CanvasRenderingContext2D.prototype, 'fillText').and.callFake(
+      function (this: CanvasRenderingContext2D, text: string) {
+        texts.push({ text, style: this.fillStyle as string });
+      },
+    );
+    const strokes = spyOn(CanvasRenderingContext2D.prototype, 'strokeText');
+    for (const [dark, ground] of [
+      [false, '#ead9c4'],
+      [true, '#211914'],
+    ] as const) {
+      host.style.backgroundColor = ground;
+      texts.length = 0;
+      buffer = new FlowSeriesBuffer();
+      await mount('live', dark);
+      feed(buffer, 0, 2);
+      await frames.run();
+
+      const values = texts.filter((t) => /^\d+$/.test(t.text));
+      expect(values.length).withContext(ground).toBeGreaterThan(4);
+      for (const { text, style } of values) {
+        expect(contrastRatio(style, ground))
+          .withContext(`${text} in ${style} on ${ground}`)
+          .toBeGreaterThanOrEqual(4.5);
+      }
+      renderer.destroy();
+    }
+    expect(strokes).not.toHaveBeenCalled();
   });
 
   it('exports a PNG data URL at its own size, scale and theme', async () => {
