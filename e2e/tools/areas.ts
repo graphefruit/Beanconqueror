@@ -60,6 +60,7 @@ export const SPEC_AREAS: Readonly<Record<string, readonly Area[]>> = {
   'e2e/deletion-journal.spec.ts': ['@brew', '@data'],
   'e2e/device-identity.spec.ts': ['@data'],
   'e2e/duplicate-entries.spec.ts': ['@brew', '@data'],
+  'e2e/extraction-chart.spec.ts': ['@brew'],
   'e2e/fonts.spec.ts': ['@layout'],
   'e2e/form-controls.spec.ts': ['@a11y', '@bean', '@settings'],
   'e2e/graph-card.spec.ts': ['@brew'],

@@ -574,20 +574,6 @@
       "count": 1
     }
   },
-  "src/app/brew/brew-popover-extraction/brew-popover-extraction.component.ts": {
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 1
-    },
-    "no-empty": {
-      "count": 3
-    },
-    "no-var": {
-      "count": 1
-    }
-  },
   "src/app/brew/brew-rating/brew-rating.component.ts": {
     "@angular-eslint/no-input-rename": {
       "count": 1
