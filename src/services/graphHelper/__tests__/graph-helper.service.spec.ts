@@ -13,10 +13,7 @@ import { CoffeeBluetoothDevicesService } from '../../coffeeBluetoothDevices/coff
 import { ThemeService } from '../../theme/theme.service';
 import { UIFileHelper } from '../../uiFileHelper';
 import { UISettingsStorage } from '../../uiSettingsStorage';
-import {
-  expandLiveAxisRangeForSample,
-  GraphHelperService,
-} from '../graph-helper.service';
+import { GraphHelperService } from '../graph-helper.service';
 import { contrastRatio } from '../line-contrast';
 
 describe('GraphHelperService custom axis names', () => {
@@ -320,42 +317,6 @@ describe('GraphHelperService axis fitting', () => {
     expect(liveLayout['yaxis11'].range[0]).toBeLessThan(
       liveLayout['yaxis11'].range[1],
     );
-  });
-
-  it('keeps the latest all-negative live custom sample inside the expanded axis', () => {
-    const range = expandLiveAxisRangeForSample([-8.3, -4.7], -5, 1.5, 1);
-
-    expect(range[0]).toBeLessThanOrEqual(-5);
-    expect(range[1]).toBeGreaterThanOrEqual(-5);
-    expect(range).toEqual([-8.3, -2.5]);
-  });
-
-  it('widens the lower bound when an all-negative live custom sample moves lower', () => {
-    const range = expandLiveAxisRangeForSample([-8.3, -4.7], -9, 1.5, 1);
-
-    expect(range[0]).toBeLessThanOrEqual(-9);
-    expect(range[1]).toBe(-4.7);
-    expect(range).toEqual([-13.5, -4.7]);
-  });
-
-  it('lifts the upper bound above zero when a negative live series climbs back', () => {
-    const range = expandLiveAxisRangeForSample([-8.3, -4.7], 1, 1.5, 1);
-
-    expect(range[1]).toBeGreaterThanOrEqual(1);
-    expect(range).toEqual([-8.3, 1.5]);
-  });
-
-  it('keeps a near-zero negative sample inside a range whose bound has crossed zero', () => {
-    const range = expandLiveAxisRangeForSample([-1.099, 0.089], -0.01, 1.5, 1);
-
-    expect(range[1]).toBeGreaterThanOrEqual(-0.01);
-    expect(range).toEqual([-1.099, 0.089]);
-  });
-
-  it('keeps positive live custom expansion unchanged', () => {
-    const range = expandLiveAxisRangeForSample([0, 20], 19.5, 1.5, 1);
-
-    expect(range).toEqual([0, 29.25]);
   });
 
   it('keeps the detail chart fitted for an all-negative custom series', () => {

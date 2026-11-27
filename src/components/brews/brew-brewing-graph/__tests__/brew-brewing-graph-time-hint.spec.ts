@@ -68,7 +68,7 @@ describe('BrewBrewingGraphComponent hint on the hidden brew time', () => {
       '__connectSmartScale',
       '__connectPressureDevice',
       '__connectTemperatureDevice',
-      'initializeFlowChart',
+      'redrawGraph',
       'checkChanges',
       'getGraphIonColSize',
       'setUIParams',

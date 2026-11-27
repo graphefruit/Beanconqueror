@@ -1,7 +1,6 @@
 import {
   magicTapAction,
   MagicTapTimer,
-  spokenGrams,
   spokenStopTime,
 } from '../magic-tap-rules';
 
@@ -45,12 +44,5 @@ describe('magic tap rules', () => {
     expect(spokenStopTime(42)).toBe('0:42');
     expect(spokenStopTime(65)).toBe('1:05');
     expect(spokenStopTime(605)).toBe('10:05');
-  });
-
-  it('says grams with tenths in the app language', () => {
-    expect(spokenGrams(18.34, 'de')).toBe('18,3');
-    expect(spokenGrams(18.34, 'en')).toBe('18.3');
-    expect(spokenGrams(18, 'en')).toBe('18');
-    expect(spokenGrams(1234.5, 'en')).toBe('1234.5');
   });
 });

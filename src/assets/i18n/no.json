@@ -1164,8 +1164,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Denne innstillingen brukes kun for brygg av typen 'espresso'. Bryggingen vil automatisk stoppe når det ikke registreres noe gjennomstrømming.",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "Bryggeforholdet vil bli utregnet med denne verdien for alle brygg, men ikke for typen \"espresso\"",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Bryggeforholdet vil kun utregnes med denne verdien for brygg av typen \"espresso\"",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Det ser ut til at Bluetooth-vekten ikke var riktig tilkoblet. Dette skjer vanligvis på iOS-enheter med Acaia-vekter. Koble til vekten igjen og sørg for at vekten er oppdatert.",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Ingen vektverdier?",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Gjennomstrømmingshastighet som bryggingen skal stoppes på. Brygget vil kun stoppes når det har gått minimum 5 sekunder, 5 gram er i koppen eller hvis du har angitt vekten av kvernet kaffe - minst et bryggeforhold på 1:1 oppnås (feks 18g inn, 18g ut). Etter at disse forholdene er møtt, vil den minste gjennomstrømmingshastigheten som er angitt her, bli sjekket",
     "ONLY_BEST_BREWS": "Bare beste brygg",
     "POPOVER_BEST_BREW": "Beste brygg",
@@ -1673,8 +1671,6 @@
     "CLOUD_AI_MODELS_LOADING": "Laster inn tilgjengelige modeller ...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "Kunne ikke laste inn modeller. Skriv inn modellnavnet manuelt.",
     "CLOUD_AI_MODELS_NONE": "Ingen modeller funnet.",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "Ingen vekt ennå",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "Denne vekten begynner først å sende data etter en vektendring. Plasser en kopp på vekten for å forsikre deg om at alt er klart før du begynner å brygge.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Etiopia, Colombia, Brasil, Kenya, Guatemala, Costa Rica, Honduras, Peru, Rwanda, Burundi, Tanzania, Uganda, Jemen, Indonesia, India, Panama, El Salvador, Nicaragua, Mexico, Bolivia, Ecuador, Papua Ny-Guinea, Hawaii, Jamaica",
         "PROCESSING_METHODS": "Vasket, Natural, Honey, Anaerob, Karbonisk Maserasjon, Wet-Hulled, Semi-Vasket, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

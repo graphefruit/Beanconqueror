@@ -1164,8 +1164,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Ce réglage n'est utilisé que pour les infusions de type \"espresso\". L'infusion s'arrête automatiquement lorsqu'aucun débit n'est détecté.",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "Le rapport d'infusion sera calculé avec cette valeur pour toutes les infusions, mais pas pour le type 'espresso'",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Le rapport d'infusion sera calculé avec cette valeur uniquement pour les infusions de type \"espresso\".",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Il semble que la balance Bluetooth n'a pas été correctement connectée. Cela arrive généralement sur les appareils iOS avec des balances Acaia, veuillez reconnecter la balance et t'assurer que la tuile de poids est mise à jour",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Pas de valeurs de poids?",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Le débit auquel l'infusion doit être arrêtée. L'infusion ne sera arrêtée que lorsqu'un minimum de 5 secondes s'est écoulé, 5 grammes sont dans la tasse ou si tu as entré le poids du café moulu - au moins un ratio d'infusion de 1:1 est atteint (par exemple : 18g in, 18g out). Après que ces conditions sont remplies, le débit minimum défini ici sera vérifié",
     "ONLY_BEST_BREWS": "Uniquement les meilleures infusions",
     "POPOVER_BEST_BREW": "Meilleure infusion",
@@ -1673,8 +1671,6 @@
     "CLOUD_AI_MODELS_LOADING": "Chargement des modèles disponibles...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "Impossible de charger les modèles. Saisissez le nom du modèle manuellement.",
     "CLOUD_AI_MODELS_NONE": "Aucun modèle trouvé.",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "Pas de poids pour l'instant",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "Cette balance ne commence à transmettre des données qu'une fois que le poids a changé. Posez une tasse sur la balance pour vous assurer que tout est prêt avant de commencer à préparer votre café.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Éthiopie, Colombie, Brésil, Kenya, Guatemala, Costa Rica, Honduras, Pérou, Rwanda, Burundi, Tanzanie, Ouganda, Yémen, Indonésie, Inde, Panama, El Salvador, Nicaragua, Mexique, Bolivie, Équateur, Papouasie-Nouvelle-Guinée, Hawaï, Jamaïque",
         "PROCESSING_METHODS": "Lavé, Naturel, Honey, Anaérobie, Macération Carbonique, Wet-Hulled, Semi-Lavé, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

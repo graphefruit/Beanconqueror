@@ -1140,8 +1140,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Diese Einstellung wird nur für Zubereitungsmethoden mit 'Espresso' verwendet. Die Brühung wird automatisch gestoppt, sobald keine Flussveränderung mehr erkannt wird.",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "Die Brührate wird für alle Zubereitungsmethoden außer 'Espresso' hiermit kalkuliert",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Die Brührate wird hiermit für alle Zubereitungsmethoden mit 'Espresso' kalkuliert",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Es scheint so, als ob die Waage nicht richtig mit Beanconqueror verbunden werden konnte, dies passiert in den meisten Fällen nur mit iOS-Geräten und Acaia Waagen, bitte verbinde die Waage erneut und achte darauf, dass das Gewicht in der Kachel aktualisiert wird.",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Keine Gewichtswerte?",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Ab welcher minimum Flussrate, soll die Brühung gestoppt werden? Die Brühung wird erst gestoppt wenn mindestens 5 Sekunden sowie 5 Gramm oder die eingegebene Bohnen-Mahlmenge erreicht wurde, sodass mindestens eine 1:1 Brührate erreicht wurde. Ab dann, wird die hinterlegte Flussrate überprüft sowie verwendet",
     "ONLY_BEST_BREWS": "Nur beste Brühungen",
     "POPOVER_BEST_BREW": "Beste Brühung",
@@ -1327,7 +1325,7 @@
         "BREW_TIME_EVERY": "Brühzeit alle",
         "BREW_START_END": "Brühbeginn und Brühende ansagen",
         "WHOLE_GRAMS": "Ganze Gramm ansagen",
-        "WHOLE_GRAMS_DESCRIPTION": "Auch Espresso-Gewichte werden ohne Nachkommastelle angesagt; so ist jede Ansage kürzer.",
+        "WHOLE_GRAMS_DESCRIPTION": "Gilt für alle Zubereitungsarten und jede Gewichtsansage: Das Gewicht wird ohne Nachkommastelle angesagt; so ist jede Ansage kürzer.",
         "ANDROID_RATE_HINT": "Unter Android dauert jede Ansage rund eine Sekunde länger. Kommen die Ansagen zu spät, hilft eine höhere Sprechgeschwindigkeit des Geräts, beim Gewicht auch „Ganze Gramm ansagen“."
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptisches Feedback",
@@ -1436,6 +1434,11 @@
     "BLUETOOTH_REQUEST_PERMISSION": {
         "LOCATION": "Um Bluetooth-Geräte zu finden, benötigt die App Zugriff auf den Standort.",
         "BLUETOOTH": "Um Bluetooth-Geräte zu finden, benötigt die App Zugriff auf Bluetooth."
+    },
+    "DEVICE_SILENCE_HINT": {
+        "SCALE": "Die Waage ist verbunden, sendet aber kein Gewicht. Schalte die Waage aus und wieder ein, BeanConqueror verbindet sich dann von selbst neu.",
+        "SCALE_ON_CHANGE": "Die Waage ist verbunden, sendet das Gewicht aber erst, wenn es sich ändert. Leg etwas auf die Waage.",
+        "PRESSURE": "Der Drucksensor ist verbunden, sendet aber keine Werte. Schalte den Sensor aus und wieder ein, BeanConqueror verbindet sich dann von selbst neu."
     },
     "BLUETOOTH_DEVICE_CHOOSER_HINT": {
         "PERMISSION_MISSING": "BeanConqueror darf Bluetooth oder den Standort nicht nutzen und findet deshalb keine Geräte. Erlaube beides für BeanConqueror in den Systemeinstellungen und suche dann erneut.",
@@ -1550,6 +1553,8 @@
     "STORAGE_NOT_READ_NOTHING_SAVED": "Deine Änderung wurde nicht gespeichert, weil deine Daten nicht geladen werden konnten. Bitte beende die App vollständig und starte sie neu.",
     "STORAGE_SAVE_FAILED": "Speichern fehlgeschlagen. Deine letzte Änderung wurde nicht gespeichert. Bitte beende die App vollständig, starte sie neu und prüfe den freien Speicher.",
     "USER_BEAN_SHARE_CODE_UNREADABLE": "Diese geteilte Bohne konnte nicht gelesen werden. Der Link ist vielleicht unvollständig oder beschädigt. Bitte lass dir die Bohne noch einmal teilen.",
+    "REFERENCE_GRAPH_NOT_READ": "Der Referenzgraph konnte nicht geladen werden. Vielleicht wurde er gelöscht.",
+    "BREW_GRAPH_NOT_READ": "Der Graph dieser Brühung konnte nicht geladen werden. Er bleibt so gespeichert, wie er war.",
     "FILES_NOT_COPIED": "Fotos oder Graph-Dateien, die nicht kopiert werden konnten: {{count}}. Alles andere wurde übertragen.",
     "CLIPBOARD": "Zwischenablage",
     "NO_IMAGE_IN_CLIPBOARD": "Kein Bild in der Zwischenablage",
@@ -1699,8 +1704,6 @@
     "CLOUD_AI_MODELS_LOADING": "Verfügbare Modelle werden geladen...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "Modelle konnten nicht geladen werden. Bitte Modellnamen manuell eingeben.",
     "CLOUD_AI_MODELS_NONE": "Keine Modelle gefunden.",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "Noch keine Gewichtswerte",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "Diese Waage beginnt erst dann mit der Datenübertragung, wenn sich das Gewicht ändert. Stelle eine Tasse auf die Waage, um sicherzustellen, dass alles bereit ist, bevor mit dem Aufbrühen begonnen wird.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Äthiopien, Kolumbien, Brasilien, Kenia, Guatemala, Costa Rica, Honduras, Peru, Ruanda, Burundi, Tansania, Uganda, Jemen, Indonesien, Indien, Panama, El Salvador, Nicaragua, Mexiko, Bolivien, Ecuador, Papua-Neuguinea, Hawaii, Jamaika",
         "PROCESSING_METHODS": "Gewaschen, Natural, Honey, Anaerob, Karbonische Mazeration, Wet-Hulled, Semi-Washed, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey, Nass aufbereitet, Trocken aufbereitet",

@@ -285,13 +285,8 @@ export class BrewBrewingPreparationDeviceComponent
       (
         this.data.preparationDeviceBrew?.params as SanremoYOUParams
       ).stopAtWeight = 0;
-      this.drawTargetWeight(0);
     }
     this.sanremoYOUModeSelected();
-  }
-
-  public drawTargetWeight(_weight: number) {
-    this.brewComponent.brewBrewingGraphEl?.drawTargetWeight(_weight);
   }
 
   public sanremoYOUModeSelected() {
@@ -634,11 +629,6 @@ export class BrewBrewingPreparationDeviceComponent
         () => {
           if (!ignoreAutoReconnect) {
             /**User dismissed, even so we may connected, ignore it because we throw away the screen **/
-            // Re-initialize the flow chart so the graph component picks up the MOVE2
-            // device and renders the pressure / temperature chips and axes.
-            // This is needed when the preparation is switched mid-brew (the graph's
-            // instance() already ran without MOVE2, so it missed the MOVE2 setup).
-            //this.brewComponent.brewBrewingGraphEl?.initializeFlowChart();
             this.uiToast.showInfoToast(
               'PREPARATION_DEVICE.TYPE_MOVE2.RECONNECTION_COULD_BE_ESTABLISHED',
             );
@@ -650,11 +640,6 @@ export class BrewBrewingPreparationDeviceComponent
         async () => {
           if (!hasAutoDisconnectBeenCalled) {
             hasAutoDisconnectBeenCalled = true;
-            // Re-initialize the flow chart so the graph component picks up the MOVE2
-            // device and renders the pressure / temperature chips and axes.
-            // This is needed when the preparation is switched mid-brew (the graph's
-            // instance() already ran without MOVE2, so it missed the MOVE2 setup).
-            //this.brewComponent.brewBrewingGraphEl?.initializeFlowChart();
 
             if (!this.brewComponent.timer?.isTimerRunning()) {
               // Only show the alert if the timer is not running, else we may have already started a brew and the user would get confused if we show an alert in the middle of the brew, even so the device got reconnected.
@@ -688,7 +673,7 @@ export class BrewBrewingPreparationDeviceComponent
       // device and renders the pressure / temperature chips and axes.
       // This is needed when the preparation is switched mid-brew (the graph's
       // instance() already ran without MOVE2, so it missed the MOVE2 setup).
-      this.brewComponent.brewBrewingGraphEl?.initializeFlowChart();
+      this.brewComponent.brewBrewingGraphEl?.redrawGraph();
     } else {
       this.uiAlert.showMessage(
         'PREPARATION_DEVICE.TYPE_MOVE2.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
@@ -1102,8 +1087,7 @@ export class BrewBrewingPreparationDeviceComponent
     this.brewComponent.timer?.setTime(seconds, milliseconds);
     this.brewComponent.timer?.changeEvent();
 
-    this.brewComponent.brewBrewingGraphEl.flow_profile_raw = newBrewFlow;
-    this.brewComponent.brewBrewingGraphEl.initializeFlowChart(true);
+    this.brewComponent.brewBrewingGraphEl.showShot(newBrewFlow);
 
     (
       this.data.preparationDeviceBrew.params as GaggiuinoParams
@@ -1179,8 +1163,7 @@ export class BrewBrewingPreparationDeviceComponent
     this.brewComponent.timer?.setTime(seconds, milliseconds);
     this.brewComponent.timer?.changeEvent();
 
-    this.brewComponent.brewBrewingGraphEl.flow_profile_raw = newBrewFlow;
-    this.brewComponent.brewBrewingGraphEl.initializeFlowChart(true);
+    this.brewComponent.brewBrewingGraphEl.showShot(newBrewFlow);
   }
 
   public async importShotFromGaggimate() {
@@ -1363,8 +1346,7 @@ export class BrewBrewingPreparationDeviceComponent
     this.brewComponent.timer?.setTime(shotData.duration / 1000, 0);
     this.brewComponent.timer?.changeEvent();
 
-    this.brewComponent.brewBrewingGraphEl.flow_profile_raw = newBrewFlow;
-    this.brewComponent.brewBrewingGraphEl.initializeFlowChart(true);
+    this.brewComponent.brewBrewingGraphEl.showShot(newBrewFlow);
 
     (
       this.data.preparationDeviceBrew.params as GaggimateParams

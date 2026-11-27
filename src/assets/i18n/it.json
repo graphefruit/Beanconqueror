@@ -1164,8 +1164,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "La preparazione si interromperà automaticamente quando il caffè smetterà di scendere (solo modalità espresso).",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "La ratio sarà calcolata con questo valore per tutte le preparazioni in modalità filtro.",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "La ratio sarà calcolata con questo valore per tutte le preparazioni in modalità espresso.",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Sembra che la bilancia Bluetooth non sia stata connessa correttamente. Questo di solito accade su dispositivi iOS con bilance Acaia, ricollega la bilancia e assicurati che il riquadro del peso sia aggiornato",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Nessun valore di peso?",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Il flusso minimo che indica quando fermare la preparazione. La preparazione verrà interrotta solo quando saranno trascorsi almeno 5 secondi, ci saranno 5 grammi in tazza o, in alternativa, lo stesso peso di macinato usato (es: 18g in, 18g out). Da questo punto in poi, scendere sotto il flusso impostato fermerà la preparazione.",
     "ONLY_BEST_BREWS": "Solo preparazioni preferite",
     "POPOVER_BEST_BREW": "Migliore",
@@ -1673,8 +1671,6 @@
     "CLOUD_AI_MODELS_LOADING": "Caricamento dei modelli disponibili...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "Impossibile caricare i modelli. Inserire manualmente il nome del modello.",
     "CLOUD_AI_MODELS_NONE": "Nessun modello trovato.",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "Peso non ancora disponibile",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "Questa bilancia inizia a inviare dati solo dopo che il peso è cambiato. Posiziona una tazza sulla bilancia per assicurarti che tutto sia pronto prima d'iniziare la preparazione.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Etiopia, Colombia, Brasile, Kenya, Guatemala, Costa Rica, Honduras, Perù, Ruanda, Burundi, Tanzania, Uganda, Yemen, Indonesia, India, Panama, El Salvador, Nicaragua, Messico, Bolivia, Ecuador, Papua Nuova Guinea, Hawaii, Giamaica",
         "PROCESSING_METHODS": "Lavato, Naturale, Honey, Anaerobico, Macerazione Carbonica, Wet-Hulled, Semi-Lavato, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

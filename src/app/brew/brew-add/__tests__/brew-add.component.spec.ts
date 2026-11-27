@@ -48,7 +48,7 @@ describe('BrewAddComponent VoiceOver Magic Tap', () => {
         instant: (key: string, params?: Record<string, string>) =>
           [key, ...Object.values(params ?? {})].join(' '),
       },
-      settings: { language: 'de' },
+      settings: { language: 'de', text_to_speech_whole_grams: false },
       bleManager: { getScale: () => scale },
     });
   });
@@ -114,6 +114,19 @@ describe('BrewAddComponent VoiceOver Magic Tap', () => {
 
     expect(textToSpeech.speakInFull).toHaveBeenCalledOnceWith(
       'TEXT_TO_SPEECH.MAGIC_TAP_STOPPED_WITH_WEIGHT 0:42 18,3',
+    );
+  });
+
+  it('says whole grams at the stop when they are chosen', async () => {
+    timer.isTimerRunning.and.returnValue(true);
+    timer.getSeconds.and.returnValue(42);
+    scale = { getWeight: jasmine.createSpy().and.returnValue(36.6) };
+    component.settings.text_to_speech_whole_grams = true;
+
+    await component.handleVoiceOverMagicTap();
+
+    expect(textToSpeech.speakInFull).toHaveBeenCalledOnceWith(
+      'TEXT_TO_SPEECH.MAGIC_TAP_STOPPED_WITH_WEIGHT 0:42 37',
     );
   });
 

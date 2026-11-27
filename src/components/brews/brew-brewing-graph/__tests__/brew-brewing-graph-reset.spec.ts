@@ -9,7 +9,7 @@ describe('BrewBrewingGraphComponent reset while editing', () => {
   let bleManager: jasmine.SpyObj<any>;
   let scale: jasmine.SpyObj<any>;
   let readReference: jasmine.Spy;
-  let initializeFlowChart: jasmine.Spy;
+  let redrawGraph: jasmine.Spy;
 
   function recordedFlow(): BrewFlow {
     const flow = new BrewFlow();
@@ -61,7 +61,7 @@ describe('BrewBrewingGraphComponent reset while editing', () => {
     ] as const) {
       spyOn(component, method).and.stub();
     }
-    initializeFlowChart = spyOn(component, 'initializeFlowChart').and.stub();
+    redrawGraph = spyOn(component, 'redrawGraph').and.stub();
     readReference = spyOn<any>(
       component,
       'readReferenceFlowProfile',
@@ -78,7 +78,7 @@ describe('BrewBrewingGraphComponent reset while editing', () => {
     // The form no longer refers to the graph, so saving removes it.
     expect(component.data.flow_profile).toBe('');
     expect(component.flow_profile_raw).toEqual(new BrewFlow());
-    expect(initializeFlowChart).toHaveBeenCalledOnceWith(false);
+    expect(redrawGraph).toHaveBeenCalledOnceWith();
   });
 
   it('keeps file and reference when nothing is connected', async () => {

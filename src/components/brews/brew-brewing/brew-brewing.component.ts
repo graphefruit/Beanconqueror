@@ -114,6 +114,8 @@ import { EventQueueService } from '../../../services/queueService/queue-service.
 import {
   brewTimeToSay,
   spokenBrewValues,
+  spokenWeight,
+  spokenWeightDecimals,
 } from '../../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
@@ -559,7 +561,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       if (this.timer?.isTimerRunning() === false) {
-        this.brewBrewingGraphEl.initializeFlowChart();
+        this.brewBrewingGraphEl.redrawGraph();
       }
     }, 150);
   }
@@ -609,16 +611,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       },
     });
 
-    // will force rerender :D
-    this.brewBrewingGraphEl.lastChartRenderingInstance = -1;
-
     await modal.present();
     this.brewBrewingGraphEl.checkChanges();
     await modal.onWillDismiss();
     this.maximizeFlowGraphIsShown = false;
-    // will force rerender :D
-    this.brewBrewingGraphEl.lastChartRenderingInstance = -1;
-    // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
     this.brewBrewingGraphEl.updateChart();
 
     await sleep(50);
@@ -697,11 +693,20 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.brewBrewingGraphEl.setFirstDripFromMachine();
   }
 
+  /**
+   * Said after the live weight still being said, not by stopping it: on
+   * Android a weight taken while the voice spoke was not heard.
+   */
   private speakCurrentScaleWeight(_value: number) {
     if (this.settings.text_to_speech_active) {
-      this.textToSpeech.speak(
-        this.translate.instant('BREW_FLOW_WEIGHT') + ' ' + _value.toString(),
-        true,
+      this.textToSpeech.speakInFull(
+        this.translate.instant('BREW_FLOW_WEIGHT') +
+          ' ' +
+          spokenWeight(
+            _value,
+            spokenWeightDecimals(this.settings.text_to_speech_whole_grams),
+            this.settings.language,
+          ),
       );
     }
   }

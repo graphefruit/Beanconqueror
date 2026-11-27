@@ -1164,8 +1164,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Esta configuração é usada apenas para extrações do tipo 'espresso'. A extração será automaticamente interrompida quando nenhum fluxo for detectado.",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "A proporção de extração será calculada com este valor para todas as extrações, exceto para 'espresso'",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "A proporção de extração será calculada com este valor apenas para extrações do tipo 'espresso'",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Parece que a balança bluetooth não foi conectada corretamente. Isso geralmente acontece em dispositivos iOS com balanças Acaia, reconecte a balança e certifique-se de que o bloco de peso esteja atualizado",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Nenhum valor de peso?",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "A taxa de fluxo na qual a infusão deve ser interrompida. A infusão só será interrompida quando um mínimo de 5 segundos tiver passado, 5 gramas estiverem na xícara ou se você tiver inserido o peso do café moído - pelo menos uma proporção de infusão de 1:1 for alcançada (por exemplo: 18g de entrada, 18g de saída). Depois que essas condições forem atendidas, a taxa de fluxo mínima definida aqui será verificada",
     "ONLY_BEST_BREWS": "So as melhores extrações",
     "POPOVER_BEST_BREW": "Melhor extração",
@@ -1673,8 +1671,6 @@
     "CLOUD_AI_MODELS_LOADING": "Carregando modelos disponíveis...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "Não foi possível carregar os modelos. Insira o nome do modelo manualmente.",
     "CLOUD_AI_MODELS_NONE": "Nenhum modelo encontrado.",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "Ainda não há peso definido.",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "Esta balança só começa a enviar dados depois que o peso muda. Coloque uma xícara na balança para garantir que tudo esteja pronto antes de começar a preparar o café.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Etiópia, Colômbia, Brasil, Quênia, Guatemala, Costa Rica, Honduras, Peru, Ruanda, Burundi, Tanzânia, Uganda, Iêmen, Indonésia, Índia, Panamá, El Salvador, Nicarágua, México, Bolívia, Equador, Papua Nova Guiné, Havaí, Jamaica",
         "PROCESSING_METHODS": "Lavado, Natural, Honey, Anaeróbico, Maceração Carbônica, Wet-Hulled, Semi-Lavado, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

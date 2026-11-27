@@ -69,12 +69,15 @@ import { DocumentLanguageService } from '../services/documentLanguage/document-l
 import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
 import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
 import { NfcService } from '../services/nfcService/nfc-service.service';
+import {
+  isQuickActionType,
+  QuickActionService,
+} from '../services/quickAction/quick-action.service';
 import { TabletLayoutService } from '../services/tabletLayout/tablet-layout.service';
 import { ThemeService } from '../services/theme/theme.service';
 import { UIAlert } from '../services/uiAlert';
 import { UIAnalytics } from '../services/uiAnalytics';
 import { UIBaristamodeBrewStorage } from '../services/uiBaristamodeBrewStorage';
-import { UIBeanHelper } from '../services/uiBeanHelper';
 import { UIBeanStorage } from '../services/uiBeanStorage';
 import { UIBrewHelper } from '../services/uiBrewHelper';
 import { UIBrewStorage } from '../services/uiBrewStorage';
@@ -84,9 +87,7 @@ import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIGreenBeanStorage } from '../services/uiGreenBeanStorage';
 import { UIHelper } from '../services/uiHelper';
 import { UILog } from '../services/uiLog';
-import { UIMillHelper } from '../services/uiMillHelper';
 import { UIMillStorage } from '../services/uiMillStorage';
-import { UIPreparationHelper } from '../services/uiPreparationHelper';
 import { UIPreparationStorage } from '../services/uiPreparationStorage';
 import { UIRoastingMachineStorage } from '../services/uiRoastingMachineStorage';
 import { UISettingsStorage } from '../services/uiSettingsStorage';
@@ -137,9 +138,7 @@ export class AppComponent implements AfterViewInit {
   private readonly uiRoastingMachineStorage = inject(UIRoastingMachineStorage);
   private readonly intentHandlerService = inject(IntentHandlerService);
   private readonly uiWaterStorage = inject(UIWaterStorage);
-  private readonly uiBeanHelper = inject(UIBeanHelper);
-  private readonly uiMillHelper = inject(UIMillHelper);
-  private readonly uiPreparationHelper = inject(UIPreparationHelper);
+  private readonly quickActions = inject(QuickActionService);
   private readonly bleManager = inject(CoffeeBluetoothDevicesService);
   private readonly uiExportImportHelper = inject(UIExportImportHelper);
   private readonly uiFileHelper = inject(UIFileHelper);
@@ -959,32 +958,9 @@ export class AppComponent implements AfterViewInit {
       );
       this.uiLog.log(`iOS Device - Home icon was pressed`);
     } catch {}
-    if (type === 'Brew') {
-      await this.__trackNewBrew();
-    } else if (!this.uiBrewHelper.canOpenBrewFormIfNotShowMessage()) {
-      // A new form and the change of tab would cover the open brew.
-    } else if (type === 'Bean') {
-      await this.__trackNewBean();
-    } else if (type === 'Preparation') {
-      await this.__trackNewPreparation();
-    } else if (type === 'Mill') {
-      await this.__trackNewMill();
+    if (isQuickActionType(type)) {
+      await this.quickActions.open(type);
     }
-  }
-
-  private async __trackNewBean() {
-    await this.uiBeanHelper.addBean();
-    this.router.navigate(['/'], { replaceUrl: true });
-  }
-
-  private async __trackNewPreparation() {
-    await this.uiPreparationHelper.addPreparation();
-    this.router.navigate(['/'], { replaceUrl: true });
-  }
-
-  private async __trackNewMill() {
-    await this.uiMillHelper.addMill();
-    this.router.navigate(['/'], { replaceUrl: true });
   }
 
   private __registerBack() {

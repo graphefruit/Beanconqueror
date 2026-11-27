@@ -1,13 +1,14 @@
-import { ChangeDetectorRef, NgZone } from '@angular/core';
+import { ChangeDetectorRef, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { ModalController, Platform } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 
+import { Announcer } from '../../../../services/a11y/announcer.service';
 import { CoffeeBluetoothDevicesService } from '../../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
 import { TextToSpeechService } from '../../../../services/textToSpeech/text-to-speech.service';
+import { ThemeService } from '../../../../services/theme/theme.service';
 import { UIAlert } from '../../../../services/uiAlert';
 import { UIBrewHelper } from '../../../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../../../services/uiBrewStorage';
@@ -37,11 +38,10 @@ describe('BrewBrewingGraphComponent devices on the first render', () => {
   beforeEach(() => {
     scale = undefined;
     const stubs = [
+      Announcer,
       ChangeDetectorRef,
-      NgZone,
       ModalController,
       TranslateService,
-      GraphHelperService,
       TextToSpeechService,
       UIAlert,
       UIBrewHelper,
@@ -59,6 +59,7 @@ describe('BrewBrewingGraphComponent devices on the first render', () => {
       providers: [
         ...stubs,
         { provide: Platform, useValue: { is: () => true } },
+        { provide: ThemeService, useValue: { dark: signal(false) } },
         {
           provide: CoffeeBluetoothDevicesService,
           useValue: {

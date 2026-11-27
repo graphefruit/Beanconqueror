@@ -6,21 +6,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject } from 'rxjs';
 
 import { IntentHandlerService } from '../intentHandler/intent-handler.service';
+import { NFC_PORT, NfcTag } from '../ports/nfc-port';
 import { UIAlert } from '../uiAlert';
 import { UIHelper } from '../uiHelper';
 import { UILog } from '../uiLog';
 import { UIToast } from '../uiToast';
-import { appLinkFromNdefMessage, INdefRecord } from './nfc-tag-link';
-
-/**https://github.com/EYALIN/community-cordova-plugin-nfc**/
-/** The plugin only clobbers NfcPlugin globally (not nfc/ndef). Use NfcPlugin.**/
-declare var NfcPlugin;
-
-/** An event of the NFC plugin; see www/phonegap-nfc.js. */
-interface INfcEvent {
-  tag?: { ndefMessage?: INdefRecord[] };
-  launch?: boolean;
-}
+import { appLinkFromNdefMessage } from './nfc-tag-link';
 
 @Service()
 export class NfcService {
@@ -30,18 +21,18 @@ export class NfcService {
   private readonly uiHelper = inject(UIHelper);
   private readonly uiToast = inject(UIToast);
   private readonly uiLog = inject(UILog);
-
-  private didAndroidAttachToListener: boolean = false;
+  private readonly nfc = inject(NFC_PORT);
 
   private nfcEnabled: boolean = false;
 
-  private androidMessageSubject = new Subject<any>();
+  /** Tags held to the reader while the app is open. */
+  private androidMessageSubject = new Subject<{ tag?: NfcTag }>();
 
   constructor() {
     if (this.platform.is('capacitor')) {
       this.uiHelper.isBeanconqurorAppReady().then(async () => {
         if (this.platform.is('android')) {
-          this.nfcEnabled = await this.getEnabledState();
+          this.nfcEnabled = await this.nfc.isEnabled();
           if (this.nfcEnabled) {
             this.listenToNFCAndroid();
           }
@@ -54,20 +45,6 @@ export class NfcService {
 
   public isNFCEnabled() {
     return this.nfcEnabled;
-  }
-
-  private async getEnabledState(): Promise<boolean> {
-    const enabled: boolean = await new Promise((resolve, _reject) => {
-      NfcPlugin.enabled(
-        () => {
-          resolve(true);
-        },
-        (_error) => {
-          resolve(false);
-        },
-      );
-    });
-    return enabled;
   }
 
   public async readNFCTag() {
@@ -84,13 +61,12 @@ export class NfcService {
         );
       } else {
         //IOS
-        // Async Await
-        try {
-          let tag = await NfcPlugin.scanTag();
-          this.__handleNFCData(tag);
-        } catch (ex) {
-          this.uiLog.error("We couldn't read NFC-Tag: " + ex.message);
-          //console.log(err);
+        const scan = await this.nfc.scanTag();
+        // Without strictNullChecks only a comparison narrows the result.
+        if (scan.ok === false) {
+          this.uiLog.error("We couldn't read NFC-Tag: " + scan.error);
+        } else {
+          this.__handleNFCData(scan.value);
         }
       }
     } else {
@@ -103,38 +79,20 @@ export class NfcService {
     }
   }
 
-  public attachOnNFCAndroid(): Observable<any> {
+  public attachOnNFCAndroid(): Observable<{ tag?: NfcTag }> {
     return this.androidMessageSubject.asObservable();
   }
 
   private listenToNFCAndroid() {
-    /**The issue with the plugin is that we can deattach but if we reattach the old handling instance is still given, therefore we make our own implemenntation logic, just attach once, and toggle.**/
-    if (this.didAndroidAttachToListener === false) {
-      NfcPlugin.addNdefListener(
-        (_data: INfcEvent) => {
-          // The plugin hands the tag that started the app to the first listener, marked as launch.
-          if (_data.launch) {
-            this.__handleNFCData(_data.tag);
-          } else {
-            this.androidMessageSubject.next({ tag: _data.tag });
-          }
-        },
-        () => {
-          this.didAndroidAttachToListener = true;
-        },
-        () => {
-          this.didAndroidAttachToListener = false;
-        },
-      );
-      // Tags of our NDEF_DISCOVERED filter (AndroidManifest) while the app is in the background.
-      document.addEventListener('ndef-mime', (_event: Event & INfcEvent) => {
-        if (!_event.launch) {
-          this.__handleNFCData(_event.tag);
-        }
-      });
-    }
+    this.nfc.listen((_event) => {
+      if (_event.opensApp) {
+        this.__handleNFCData(_event.tag);
+      } else {
+        this.androidMessageSubject.next({ tag: _event.tag });
+      }
+    });
   }
-  private __handleNFCData(_tag: INfcEvent['tag']) {
+  private __handleNFCData(_tag: NfcTag | undefined) {
     // The tag carries its serial number; its link is logged when it is opened.
     this.uiLog.log('We read NFC-Tag');
     const link = appLinkFromNdefMessage(_tag?.ndefMessage);
@@ -159,40 +117,28 @@ export class NfcService {
       );
       const nfcReadSubscription = this.attachOnNFCAndroid().subscribe(
         (_data) => {
-          this.__writeInternal(_link);
+          void this.__writeInternal(_link);
           nfcReadSubscription.unsubscribe();
         },
       );
     } else {
-      this.__writeInternal(_link);
+      void this.__writeInternal(_link);
     }
   }
-  private __writeInternal(_link: string) {
-    const record = [NfcPlugin.NdefPlugin.uriRecord(_link)];
-    NfcPlugin.write(
-      record,
-      (success) => {
-        this.uiLog.log('NFC tag written');
-        if (this.platform.is('android')) {
-          this.uiAlert.showMessage(
-            'NFC.WRITE_COMPLETED_DESCRIPTION',
-            'NFC.WRITE_COMPLETED_TITLE',
-            'OK',
-            true,
-          );
-        }
-      },
-      (error) => {
-        this.uiLog.log('NFC tag not written');
-        if (this.platform.is('android')) {
-          this.uiAlert.showMessage(
-            'NFC.WRITE_UNCOMPLETED_DESCRIPTION',
-            'NFC.WRITE_UNCOMPLETED_TITLE',
-            'OK',
-            true,
-          );
-        }
-      },
-    );
+  private async __writeInternal(_link: string) {
+    const written = await this.nfc.writeUri(_link);
+    this.uiLog.log(written.ok ? 'NFC tag written' : 'NFC tag not written');
+    if (this.platform.is('android')) {
+      void this.uiAlert.showMessage(
+        written.ok
+          ? 'NFC.WRITE_COMPLETED_DESCRIPTION'
+          : 'NFC.WRITE_UNCOMPLETED_DESCRIPTION',
+        written.ok
+          ? 'NFC.WRITE_COMPLETED_TITLE'
+          : 'NFC.WRITE_UNCOMPLETED_TITLE',
+        'OK',
+        true,
+      );
+    }
   }
 }

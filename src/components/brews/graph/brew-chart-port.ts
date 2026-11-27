@@ -20,13 +20,15 @@ export interface MountOptions {
   style?: PREPARATION_STYLE_TYPE;
 }
 
-/**
- * The visible time range. A stepped window that jumps per graph_time like
- * today's live graph comes with the live graph (U8), driven by the timer.
- */
+/** The visible time range. */
 export type Viewport =
   /** The last `windowSec` seconds; the newest sample stays at 90 %. */
   | { mode: 'follow'; windowSec: number }
+  /**
+   * The live brew form's window: it jumps once per `windowSec` and then shows
+   * the last `backSec` seconds before the jump and 10 s beyond the next one.
+   */
+  | { mode: 'stepped'; windowSec: number; backSec: number }
   /** The whole brew. */
   | { mode: 'fitAll' }
   | { mode: 'range'; from: number; to: number };

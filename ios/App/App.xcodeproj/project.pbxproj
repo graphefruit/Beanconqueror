@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1CA9B275A3686497E5F76E0B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = CA47AA3AC79C0B699A2F82AF /* PrivacyInfo.xcprivacy */; };
+		7A1C5E0B2EC5A00100B3D001 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7A1C5E0C2EC5A00100B3D001 /* InfoPlist.strings */; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
+		446EDD8A4FF939EBA0E3C1A8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2EA703FEFD9E151CF86D9716 /* Localizable.strings */; };
+		4632627A77B765ACFA129D97 /* BrewWidgetCounts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4A415EE95EDB8EF89CCBD8 /* BrewWidgetCounts.swift */; };
 		50379B232058CBB4000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
 		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
 		7A1C5E0A2EC5A00100B3D001 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1C5E092EC5A00100B3D001 /* SceneDelegate.swift */; };
@@ -16,10 +20,40 @@
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */; };
+		BCB797A0847BB9A7ACFD117D /* WidgetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34A65EC7533B24E473878B3 /* WidgetPlugin.swift */; };
+		C8C7ADAF0D5677B0A0D7C51C /* BrewWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 033E848F8B97F1831DAE6582 /* BrewWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F73902BF45D0BF6EEF6DC25A /* BrewWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83DFB600431494440FC2980 /* BrewWidget.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		87699BC9FDA6EA484C1AC27B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F51FDCC5420CF953EFD7C127;
+			remoteInfo = BrewWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5642477B65E9E1A235A83E40 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C8C7ADAF0D5677B0A0D7C51C /* BrewWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		033E848F8B97F1831DAE6582 /* BrewWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BrewWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
+		343431E65EB845329D8C4206 /* BrewWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = BrewWidget.entitlements; sourceTree = "<group>"; };
+		3D4A415EE95EDB8EF89CCBD8 /* BrewWidgetCounts.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BrewWidgetCounts.swift; sourceTree = "<group>"; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
 		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -29,10 +63,18 @@
 		504EC3111FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
+		A34A65EC7533B24E473878B3 /* WidgetPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetPlugin.swift; sourceTree = "<group>"; };
+		A83DFB600431494440FC2980 /* BrewWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BrewWidget.swift; sourceTree = "<group>"; };
 		AF277DCFFFF123FFC6DF26C7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
 		B57D0F662CB1168E001FE27F /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
+		B82C379C1B917244E29B656C /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BFA65F086144C34386C7E52C /* en */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		CA47AA3AC79C0B699A2F82AF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		CEF897CC4DDA4BABC56F8C02 /* de */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FC68EB0AF532CFC21C3344DD /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
+		7A1C5E0D2EC5A00100B3D001 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		7A1C5E0E2EC5A00100B3D001 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +83,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		62DC713D81209A7D1BC097BE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,6 +111,7 @@
 				504EC3051FED79650016851F /* Products */,
 				7F8756D8B27F46E3366F6CEA /* Pods */,
 				27E2DDA53C4D2A4D1A88CE4A /* Frameworks */,
+				D7F62B9073E8379DB49F6E2C /* BrewWidget */,
 			);
 			sourceTree = "<group>";
 		};
@@ -69,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				504EC3041FED79650016851F /* App.app */,
+				033E848F8B97F1831DAE6582 /* BrewWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -84,8 +135,10 @@
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
 				504EC3131FED79650016851F /* Info.plist */,
+				7A1C5E0C2EC5A00100B3D001 /* InfoPlist.strings */,
 				2FAD9762203C412B000D30F8 /* config.xml */,
 				50B271D01FEDC1A000F3C39B /* public */,
+				A34A65EC7533B24E473878B3 /* WidgetPlugin.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -97,6 +150,20 @@
 				AF51FD2D460BCFE21FA515B2 /* Pods-App.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		D7F62B9073E8379DB49F6E2C /* BrewWidget */ = {
+			isa = PBXGroup;
+			children = (
+				A83DFB600431494440FC2980 /* BrewWidget.swift */,
+				3D4A415EE95EDB8EF89CCBD8 /* BrewWidgetCounts.swift */,
+				B82C379C1B917244E29B656C /* Info.plist */,
+				343431E65EB845329D8C4206 /* BrewWidget.entitlements */,
+				CA47AA3AC79C0B699A2F82AF /* PrivacyInfo.xcprivacy */,
+				2EA703FEFD9E151CF86D9716 /* Localizable.strings */,
+			);
+			name = BrewWidget;
+			path = BrewWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,15 +179,34 @@
 				504EC3021FED79650016851F /* Resources */,
 				9592DBEFFC6D2A0C8D5DEB22 /* [CP] Embed Pods Frameworks */,
 				1AF0D671EF9D70109705F8E9 /* [CP] Copy Pods Resources */,
+				5642477B65E9E1A235A83E40 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				8E5333B55A8D52037F33099D /* PBXTargetDependency */,
 			);
 			name = App;
 			productName = App;
 			productReference = 504EC3041FED79650016851F /* App.app */;
 			productType = "com.apple.product-type.application";
+		};
+		F51FDCC5420CF953EFD7C127 /* BrewWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6B9662F86D0D96F1D892BC88 /* Build configuration list for PBXNativeTarget "BrewWidget" */;
+			buildPhases = (
+				698E3C474CEB58E320B82166 /* Sources */,
+				62DC713D81209A7D1BC097BE /* Frameworks */,
+				2603C6715C135EC708151AB7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BrewWidget;
+			productName = BrewWidget;
+			productReference = 033E848F8B97F1831DAE6582 /* BrewWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -145,6 +231,7 @@
 			knownRegions = (
 				en,
 				Base,
+				de,
 			);
 			mainGroup = 504EC2FB1FED79650016851F;
 			productRefGroup = 504EC3051FED79650016851F /* Products */;
@@ -152,11 +239,21 @@
 			projectRoot = "";
 			targets = (
 				504EC3031FED79650016851F /* App */,
+				F51FDCC5420CF953EFD7C127 /* BrewWidget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		2603C6715C135EC708151AB7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CA9B275A3686497E5F76E0B /* PrivacyInfo.xcprivacy in Resources */,
+				446EDD8A4FF939EBA0E3C1A8 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		504EC3021FED79650016851F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -167,6 +264,7 @@
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
 				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
+				7A1C5E0B2EC5A00100B3D001 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,12 +328,49 @@
 			files = (
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				7A1C5E0A2EC5A00100B3D001 /* SceneDelegate.swift in Sources */,
+				BCB797A0847BB9A7ACFD117D /* WidgetPlugin.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		698E3C474CEB58E320B82166 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F73902BF45D0BF6EEF6DC25A /* BrewWidget.swift in Sources */,
+				4632627A77B765ACFA129D97 /* BrewWidgetCounts.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		8E5333B55A8D52037F33099D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BrewWidget;
+			target = F51FDCC5420CF953EFD7C127 /* BrewWidget */;
+			targetProxy = 87699BC9FDA6EA484C1AC27B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
+		7A1C5E0C2EC5A00100B3D001 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7A1C5E0D2EC5A00100B3D001 /* en */,
+				7A1C5E0E2EC5A00100B3D001 /* de */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		2EA703FEFD9E151CF86D9716 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BFA65F086144C34386C7E52C /* en */,
+				CEF897CC4DDA4BABC56F8C02 /* de */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		504EC30B1FED79650016851F /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -415,6 +550,51 @@
 			};
 			name = Release;
 		};
+		D76CC0005AA8972CBC901039 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = BrewWidget/BrewWidget.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W8B7XY7WGY;
+				INFOPLIST_FILE = BrewWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 8.8.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beanconqueror.app.BrewWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E415EB4660EE93091A17F0ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = BrewWidget/BrewWidget.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = W8B7XY7WGY;
+				INFOPLIST_FILE = BrewWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 8.8.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beanconqueror.app.BrewWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -432,6 +612,15 @@
 			buildConfigurations = (
 				504EC3171FED79650016851F /* Debug */,
 				504EC3181FED79650016851F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6B9662F86D0D96F1D892BC88 /* Build configuration list for PBXNativeTarget "BrewWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D76CC0005AA8972CBC901039 /* Release */,
+				E415EB4660EE93091A17F0ED /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

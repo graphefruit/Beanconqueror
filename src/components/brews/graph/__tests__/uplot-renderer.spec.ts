@@ -22,6 +22,7 @@ import {
   formatSeconds,
   layoutSeries,
   loadUplot,
+  steppedRange,
   UplotRenderer,
   viewportRange,
 } from '../uplot-renderer';
@@ -128,20 +129,87 @@ describe('UplotRenderer', () => {
     host.remove();
   });
 
-  it('draws once per frame for many appends and skips idle frames', async () => {
+  it('draws once per frame for many appends and requests no idle frames', async () => {
     await mount();
     feed(buffer, 0, 1);
     await frames.run();
     const afterBuild = probe.draws;
+    expect(frames.pending).toBe(0);
 
     feed(buffer, 1, 30);
     expect(probe.draws).toBe(afterBuild);
-    await frames.run();
-    expect(probe.draws).toBe(afterBuild + 1);
-    await frames.run();
-    await frames.run();
-    expect(probe.draws).toBe(afterBuild + 1);
     expect(frames.pending).toBe(1);
+    await frames.run();
+    expect(probe.draws).toBe(afterBuild + 1);
+    expect(frames.pending).toBe(0);
+  });
+
+  it('requests no frames while the live graph is hidden and draws once it has a size', async () => {
+    await mount();
+    feed(buffer, 0, 1);
+    await frames.run();
+    renderer.resize(0, 200);
+    await frames.run();
+    const draws = probe.draws;
+
+    feed(buffer, 1, 2);
+    await frames.run();
+    expect(frames.pending).toBe(0);
+    expect(probe.draws).toBe(draws);
+
+    renderer.resize(400, 200);
+    await frames.run();
+    expect(probe.draws).toBe(draws + 1);
+    expect(plot().width).toBe(400);
+  });
+
+  it('wakes up for a change of the reference buffer', async () => {
+    await mount();
+    const reference = new FlowSeriesBuffer();
+    renderer.setReferences(reference);
+    await frames.run();
+
+    reference.append('weight', 0, 1);
+    expect(frames.pending).toBe(1);
+  });
+
+  it('draws new samples at most once per interval, a change at once', async () => {
+    let now = 0;
+    const due: FrameRequestCallback[] = [];
+    const tick = async (ms: number): Promise<void> => {
+      now += ms;
+      due.splice(0).forEach((cb) => cb(now));
+      await new Promise((resolve) => setTimeout(resolve));
+    };
+    probe = new Probe();
+    renderer = new UplotRenderer([probe], {
+      requestFrame: (cb) => due.push(cb),
+      cancelFrame: () => due.splice(0),
+      minDrawIntervalMs: 100,
+    });
+    await renderer.mount(host, {
+      width: 400,
+      height: 200,
+      dark: false,
+      mode: 'live',
+      axisSettings: new Settings(),
+      style: PREPARATION_STYLE_TYPE.ESPRESSO,
+    });
+    renderer.setSeries(defs('live', 'weight'));
+    renderer.attach(buffer);
+    await tick(16);
+    const afterBuild = probe.draws;
+
+    feed(buffer, 0, 1);
+    await tick(16);
+    await tick(16);
+    expect(probe.draws).toBe(afterBuild);
+    await tick(80);
+    expect(probe.draws).toBe(afterBuild + 1);
+
+    renderer.setVisible('weight', false);
+    await tick(16);
+    expect(probe.draws).toBe(afterBuild + 2);
   });
 
   it('hides canvas and axes from screen readers and shows no legend', async () => {
@@ -572,6 +640,18 @@ describe('UplotRenderer', () => {
     expect(frames.pending).toBe(0);
     expect(host.querySelector('.uplot')).toBeNull();
     renderer.setCursor(1);
+    feed(buffer, 2, 3);
+    expect(frames.pending).toBe(0);
+  });
+
+  it('does not wake up for a growing buffer outside live mode', async () => {
+    await mount('detail');
+    feed(buffer, 0, 1);
+    await frames.run();
+    await frames.run();
+    expect(frames.pending).toBe(0);
+
+    feed(buffer, 1, 2);
     expect(frames.pending).toBe(0);
   });
 
@@ -619,6 +699,25 @@ describe('UplotRenderer', () => {
       expect(viewportRange({ mode: 'follow', windowSec: 20 }, 30)).toEqual([
         12, 32,
       ]);
+    });
+
+    it('keeps the live window still and jumps it once per window, as today', () => {
+      // Brew form: a 60 s window keeps 50 s in view after a jump.
+      expect(steppedRange(0, 60, 50)).toEqual([0, 70]);
+      expect(steppedRange(59.9, 60, 50)).toEqual([0, 70]);
+      expect(steppedRange(60, 60, 50)).toEqual([10, 130]);
+      expect(steppedRange(150, 60, 50)).toEqual([70, 190]);
+      // Maximized: a 90 s window keeps 70 s in view.
+      expect(steppedRange(95, 90, 70)).toEqual([20, 190]);
+      expect(
+        viewportRange({ mode: 'stepped', windowSec: 60, backSec: 50 }, 61),
+      ).toEqual([10, 130]);
+    });
+
+    it('shows the whole brew for a window without length', () => {
+      expect(steppedRange(42, 0, 0)).toEqual([0, 42]);
+      expect(steppedRange(-3, 60, 50)).toEqual([0, 70]);
+      expect(steppedRange(5, 60, -10)).toEqual([0, 70]);
     });
 
     it('draws references first and orders the axes by the live series', () => {

@@ -236,7 +236,7 @@ describe('Adding an entry outside the forms', () => {
         },
         brewComponent: {
           data: brew,
-          brewBrewingGraphEl: { initializeFlowChart: () => undefined },
+          brewBrewingGraphEl: { showShot: () => undefined },
         },
         data: { preparationDeviceBrew: { params: {} } },
         settings: { bluetooth_scale_first_drip_threshold: 1000 },

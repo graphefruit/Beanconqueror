@@ -62,6 +62,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
 
             <!-- ionic-plugin-deeplinks -->
             <intent-filter>
@@ -78,8 +79,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:host="beanconqueror.com" android:pathPrefix="/app/roaster/bean" android:scheme="https" />
-                <data android:host="beanconqueror.com" android:pathPrefix="/app/nfc" android:scheme="https" />
+                <!-- Same paths as applinks in the iOS apple-app-site-association: every page below /app/
+                     hands its link to the app. The start page stays in the browser, otherwise every visit
+                     to the website would open the app; filters cannot match the query. -->
+                <data android:host="beanconqueror.com" android:pathPrefix="/app/" android:scheme="https" />
             </intent-filter>
             <!-- ionic-plugin-deeplinks end -->
             <!-- NFC tags written by the app. Android checks this filter before it opens the link in
@@ -93,6 +96,15 @@
                 <data android:host="beanconqueror.com" android:pathPrefix="/app/nfc" android:scheme="https" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".BrewWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/bq_widget_info" />
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"

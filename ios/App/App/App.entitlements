@@ -24,6 +24,10 @@
 	<array>
 		<string>TAG</string>
 	</array>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.beanconqueror.app</string>
+	</array>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>
 	<array>
 		<string>iCloud.com.beanconqueror.app</string>

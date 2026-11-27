@@ -32,6 +32,12 @@ interface SeriesStore {
 
 type Sample = Record<string, unknown>;
 
+/** What times a stored sample. */
+export interface TimedSample {
+  timestamp?: unknown;
+  brew_time?: unknown;
+}
+
 /** Where the value of each fixed series sits in BrewFlow. */
 const FIXED_SOURCES: readonly {
   id: FixedSeriesId;
@@ -98,7 +104,7 @@ function finite(value: unknown): number {
  * "second.tick" counter ("10.10" is tick 10 of second 10), so only a
  * fallback. NaN when neither can be read.
  */
-export function sampleTime(sample: Sample, start: number): number {
+export function sampleTime(sample: TimedSample, start: number): number {
   const clock = parseClockSeconds(sample.timestamp);
   if (Number.isFinite(clock) && Number.isFinite(start)) {
     const delta = clock - start;
@@ -156,8 +162,23 @@ export class FlowSeriesBuffer implements SeriesSource {
   private readonly axes = new Map<CustomSeriesId, IBrewCustomAxis>();
   private changes = 0;
   private clears = 0;
+  /** Clock seconds of the brew's first sample; times count from it. */
+  private start = Number.NaN;
+
+  private readonly listeners = new Set<() => void>();
 
   constructor(private readonly initialCapacity = 256) {}
+
+  /** Calls back on every change, until the returned function is called. */
+  public onChange(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  private changed(): void {
+    this.changes++;
+    this.listeners.forEach((listener) => listener());
+  }
 
   public get version(): number {
     return this.changes;
@@ -183,7 +204,7 @@ export class FlowSeriesBuffer implements SeriesSource {
 
   public setCustomAxis(axis: IBrewCustomAxis): void {
     this.axes.set(customSeriesId(axis.key), axis);
-    this.changes++;
+    this.changed();
   }
 
   /** Appends a sample; the series is created on its first sample. */
@@ -201,7 +222,22 @@ export class FlowSeriesBuffer implements SeriesSource {
     store.t[store.length] = t;
     store.y[store.length] = y;
     store.length++;
-    this.changes++;
+    this.changed();
+  }
+
+  /**
+   * Appends a sample as recorded in BrewFlow, timed like `load` times it: by
+   * its timestamp, from the first sample of the brew. A sample without a
+   * readable time or value is left out.
+   */
+  public appendSample(id: SeriesId, sample: TimedSample, value: number): void {
+    if (!Number.isFinite(this.start)) {
+      this.start = parseClockSeconds(sample.timestamp);
+    }
+    const t = sampleTime(sample, this.start);
+    if (Number.isFinite(t) && Number.isFinite(value)) {
+      this.append(id, t, value);
+    }
   }
 
   /**
@@ -214,7 +250,7 @@ export class FlowSeriesBuffer implements SeriesSource {
       return false;
     }
     store.y[store.length - 1] = y;
-    this.changes++;
+    this.changed();
     return true;
   }
 
@@ -249,8 +285,9 @@ export class FlowSeriesBuffer implements SeriesSource {
   public clear(): void {
     this.series.clear();
     this.axes.clear();
+    this.start = Number.NaN;
     this.clears++;
-    this.changes++;
+    this.changed();
   }
 
   /**
@@ -295,6 +332,7 @@ export class FlowSeriesBuffer implements SeriesSource {
           parseClockSeconds(isSample(first) ? first.timestamp : undefined),
         )
         .find((clock) => Number.isFinite(clock)) ?? Number.NaN;
+    this.start = start;
 
     const axes = Array.isArray(record.customAxes)
       ? (record.customAxes as unknown[])
@@ -324,7 +362,7 @@ export class FlowSeriesBuffer implements SeriesSource {
       }
       this.sortSeries(id);
     }
-    this.changes++;
+    this.changed();
     if (this.series.size > 0) {
       return { hasGraph: true, skipped };
     }
