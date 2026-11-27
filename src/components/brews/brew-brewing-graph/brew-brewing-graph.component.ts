@@ -137,6 +137,7 @@ import {
   type Translate,
 } from '../graph/series-def';
 import { UplotRenderer } from '../graph/uplot-renderer';
+import { pendingEspressoJump, type PendingJump } from './espresso-weight-jump';
 import {
   initiallyHidden,
   liveSeriesId,
@@ -271,6 +272,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private flowProfileArrCalculated = [];
   private flowProfileTempAll = [];
   private flowProfileSecondTempAll = [];
+  private espressoWeightJump: PendingJump | undefined;
 
   private flowTime: number = undefined;
   private flowSecondTick = 0;
@@ -1397,6 +1399,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
       this.flow_profile_raw = new BrewFlow();
       this.flowProfileTempAll = [];
+      this.espressoWeightJump = undefined;
       this.flowProfileSecondTempAll = [];
       this.flowNCalculation = 0;
 
@@ -1422,6 +1425,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       // The pressure or weight went down and we need to reset the graph now still
       this.flow_profile_raw = new BrewFlow();
       this.flowProfileTempAll = [];
+      this.espressoWeightJump = undefined;
       this.flowProfileSecondTempAll = [];
       this.flowNCalculation = 0;
       this.redrawGraph();
@@ -2817,7 +2821,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           const entryBefore =
             this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
           const entryBeforeVal = entryBefore.weight;
-          let risingFactorOK = true;
 
           /**
            * We try to match also turbo-shots which are like 7-8 grams.
@@ -2833,13 +2836,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
              */
             plausibleEspressoWeightIncreaseBound = 5;
           }
-          risingFactorOK =
-            entryBeforeVal + plausibleEspressoWeightIncreaseBound >= weight;
-
-          if (risingFactorOK) {
-            //All good factor is matched
-          } else {
-            //Nothing good, somehow we got spikes.
+          this.espressoWeightJump = pendingEspressoJump(
+            entryBeforeVal,
+            weight,
+            plausibleEspressoWeightIncreaseBound,
+            this.espressoWeightJump,
+          );
+          if (this.espressoWeightJump) {
             weight = entryBeforeVal;
             //Reset old weight.
             if (_scale) {
