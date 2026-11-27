@@ -1016,6 +1016,7 @@
         "URL": "Url",
         "CHOOSE_DEVICE": "Gerät auswählen",
         "SHOT_START_FAILED": "Der Bezug konnte nicht gestartet werden.",
+        "SHOT_STOP_FAILED": "Der Bezug konnte nicht gestoppt werden. Bitte an der Maschine beenden.",
         "CONNECTION": {
             "UNSUCCESFULLY": "Verbindung zur Maschine konnte nicht hergestellt werden",
             "SUCCESFULLY": "Verbindung zur Maschine konnte hergestellt werden"
@@ -1068,6 +1069,8 @@
             "MODE_LISTENING_AND_CONTROLLING": "Zuhören und Steuern",
             "SHOT_STARTED": "Bezug gestartet",
             "SHOT_ENDED": "Bezug beendet",
+            "STOP_IGNORED_RESENT": "Die Sanremo hat den Stopp ignoriert – Stopp erneut gesendet.",
+            "STOP_NOT_CONFIRMED": "Die Sanremo hat den Stopp nicht bestätigt. Bitte den Bezug an der Maschine beenden.",
             "CONNECTION_LOST_PLEASE_RECONNECT": "Leider ist die Verbindung zur Sanremo YOU verloren gegangen, bitte stelle die Verbindung mit dem Button wieder her.",
             "RECONNECT_NEEDED": "Erneute Verbindung erforderlich",
             "RECONNECT": "Erneut verbinden",

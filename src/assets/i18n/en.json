@@ -1016,6 +1016,7 @@
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
         "SHOT_START_FAILED": "The shot could not be started.",
+        "SHOT_STOP_FAILED": "The shot could not be stopped. Please stop it on the machine.",
         "CONNECTION": {
             "UNSUCCESFULLY": "Connection could not be established to machine",
             "SUCCESFULLY": "Connection to machine was successful"
@@ -1068,6 +1069,8 @@
             "MODE_LISTENING_AND_CONTROLLING": "Listening and Controlling",
             "SHOT_STARTED": "Shot started",
             "SHOT_ENDED": "Shot ended",
+            "STOP_IGNORED_RESENT": "The Sanremo ignored the stop – stop sent again.",
+            "STOP_NOT_CONFIRMED": "The Sanremo did not confirm the stop. Please stop the shot on the machine.",
             "CONNECTION_LOST_PLEASE_RECONNECT": "Sadly the connection to the Sanremo YOU has been lost, please reconnect with the button.",
             "RECONNECT_NEEDED": "Reconnect needed",
             "RECONNECT": "Reconnect",

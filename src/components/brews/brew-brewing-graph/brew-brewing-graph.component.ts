@@ -1451,7 +1451,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.uiLog.log(`Sanremo YOU - Pause button pressed, stop shot`);
       const prepDeviceCall: SanremoYOUDevice = this.brewComponent
         ?.brewBrewingPreparationDeviceEl?.preparationDevice as SanremoYOUDevice;
-      prepDeviceCall.stopActualShot();
+      this.stopShotOnSanremoYOU(prepDeviceCall, false);
       this.stopFetchingDataFromSanremoYOU();
     }
 
@@ -1489,7 +1489,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.uiLog.log(`MOVE2 - Pause button pressed, stop shot`);
         const prepDeviceCall: Move2Device = this.brewComponent
           ?.brewBrewingPreparationDeviceEl?.preparationDevice as Move2Device;
-        prepDeviceCall.stopShot();
+        prepDeviceCall.stopShot().catch(() => this.reportMove2StopFailed());
       }
       this.stopFetchingDataFromMove2();
     }
@@ -2978,10 +2978,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       .brewBrewingPreparationDeviceEl.preparationDevice as SanremoYOUDevice;
 
     this.uiLog.log(`Sanremo YOU Stop: ${_actualScaleWeight}`);
-    prepDeviceCall.stopActualShot();
-    this.uiToast.showInfoToast(
-      'PREPARATION_DEVICE.TYPE_SANREMO_YOU.SHOT_ENDED',
-    );
+    this.stopShotOnSanremoYOU(prepDeviceCall, true);
 
     // This will be just called once, we stopped the shot and now we check if we directly shall stop or not
     if (
@@ -2994,13 +2991,42 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
   }
 
+  private stopShotOnSanremoYOU(
+    prepDeviceCall: SanremoYOUDevice,
+    toastWhenConfirmed: boolean,
+  ) {
+    void prepDeviceCall
+      .stopActualShot(() => {
+        this.uiToast.showInfoToast(
+          'PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_IGNORED_RESENT',
+        );
+      })
+      .then((result) => {
+        this.uiLog.log(`Sanremo YOU stop result: ${result}`);
+        if (result === 'confirmed') {
+          if (toastWhenConfirmed) {
+            this.uiToast.showInfoToast(
+              'PREPARATION_DEVICE.TYPE_SANREMO_YOU.SHOT_ENDED',
+            );
+          }
+        } else if (result !== 'not_running' && result !== 'aborted') {
+          this.uiToast.showInfoToast(
+            'PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_NOT_CONFIRMED',
+          );
+        }
+      });
+  }
+
   private triggerStopShotOnMove2(_actualScaleWeight) {
     const prepDeviceCall: Move2Device = this.brewComponent
       .brewBrewingPreparationDeviceEl.preparationDevice as Move2Device;
 
     this.uiLog.log(`MOVE2 Stop: ${_actualScaleWeight}`);
-    prepDeviceCall.stopShot();
-    this.uiToast.showInfoToast('PREPARATION_DEVICE.TYPE_MOVE2.SHOT_ENDED');
+    prepDeviceCall.stopShot().then(
+      () =>
+        this.uiToast.showInfoToast('PREPARATION_DEVICE.TYPE_MOVE2.SHOT_ENDED'),
+      () => this.reportMove2StopFailed(),
+    );
 
     if (
       this.settings.bluetooth_scale_espresso_stop_on_no_weight_change === false
@@ -3010,6 +3036,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     } else {
       // We wait for the normal "hasEspressoShotEnded" to stop the graph and fetching
     }
+  }
+
+  private reportMove2StopFailed() {
+    this.uiLog.error('MOVE2 - stop command could not be written');
+    this.uiToast.showInfoToast('PREPARATION_DEVICE.SHOT_STOP_FAILED');
   }
 
   public attachToScaleWeightChange() {

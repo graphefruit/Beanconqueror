@@ -20,6 +20,7 @@ const NEW_CODE = [
   'src/brew-session/**',
   'src/classes/changeTracking/**',
   'src/classes/log/**',
+  'src/classes/preparationDevice/sanremo/sanremo-stop-rules.ts',
   'src/components/actions-popover/actions-popover.component.ts',
   'src/components/bean-information/bean-information.component.ts',
   'src/components/brew-share/**',
