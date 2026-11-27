@@ -9,7 +9,9 @@
   <ng-content />
 </div>
 <div #chart class="chart" role="img" [hidden]="!live()" [attr.aria-label]="description()"></div>
-@if (live()) {
+@if (!live()) {
+  <p class="hint">{{ 'GRAPH_CANNOT_BE_SHOWN' | translate }}</p>
+} @else if (!embedded()) {
   <div class="slider">
     <ion-item lines="none">
       <ion-label>{{ 'BREW_GRAPH_TIME_SLIDER' | translate }}&nbsp;<ion-badge>{{ cursor() | number: '1.1-1' }}s</ion-badge></ion-label>
@@ -20,6 +22,4 @@
         (ionInput)="onSlide($event)" (keydown.pageup)="onPage($event, 1)" (keydown.pagedown)="onPage($event, -1)" />
     </ion-item>
   </div>
-} @else {
-  <p class="hint">{{ 'GRAPH_CANNOT_BE_SHOWN' | translate }}</p>
 }

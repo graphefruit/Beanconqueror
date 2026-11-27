@@ -65,6 +65,7 @@ class BrewGraphViewStubComponent implements OnDestroy {
 
   public readonly flow = input<BrewFlow | null>(null);
   public readonly reference = input<BrewFlow | null>(null);
+  public readonly embedded = input(false);
 
   constructor() {
     BrewGraphViewStubComponent.created++;
