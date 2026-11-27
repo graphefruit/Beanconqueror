@@ -559,7 +559,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       if (this.timer?.isTimerRunning() === false) {
-        this.brewBrewingGraphEl.initializeFlowChart();
+        this.brewBrewingGraphEl.redrawGraph();
       }
     }, 150);
   }

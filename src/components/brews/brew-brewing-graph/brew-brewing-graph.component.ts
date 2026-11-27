@@ -69,7 +69,6 @@ import {
 } from '../../../classes/devices';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
 import { TemperatureDevice } from '../../../classes/devices/temperatureBluetoothDevice';
-import { Graph } from '../../../classes/graph/graph';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
@@ -86,7 +85,6 @@ import { Settings } from '../../../classes/settings/settings';
 import { storedOrReported } from '../../../classes/storedOrReported';
 import { ChipButtonDirective } from '../../../directive/chip-button.directive';
 import { BREW_FUNCTION_PIPE_ENUM } from '../../../enums/brews/brewFunctionPipe';
-import { BREW_GRAPH_TYPE } from '../../../enums/brews/brewGraphType';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
@@ -103,9 +101,6 @@ import { TextToSpeechService } from '../../../services/textToSpeech/text-to-spee
 import { ThemeService } from '../../../services/theme/theme.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UIFileHelper } from '../../../services/uiFileHelper';
-import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import { UIHelper } from '../../../services/uiHelper';
 import { UILog } from '../../../services/uiLog';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
@@ -121,6 +116,7 @@ import {
   shotEndMinimumWeight,
 } from '../../../stores/brews/shot-end-rules';
 import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
+import { FlowProfileReader } from '../graph/flow-profile-reader.service';
 import { FlowSeriesBuffer } from '../graph/flow-series-buffer';
 import {
   FIXED_SERIES_IDS,
@@ -175,18 +171,16 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private readonly uiAlert = inject(UIAlert);
   private readonly uiToast = inject(UIToast);
   private readonly uiHelper = inject(UIHelper);
-  private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
-  private readonly uiFileHelper = inject(UIFileHelper);
   private readonly ngZone = inject(NgZone);
   private readonly modalController = inject(ModalController);
   private readonly uiLog = inject(UILog);
   readonly uiBrewHelper = inject(UIBrewHelper);
-  private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly textToSpeech = inject(TextToSpeechService);
   private readonly theme = inject(ThemeService);
+  private readonly flowReader = inject(FlowProfileReader);
 
   @ViewChild('smartScaleWeight', { read: ElementRef })
   public smartScaleWeightEl: ElementRef;
@@ -387,7 +381,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           await this.readReferenceFlowProfile(this.data);
         }
 
-        this.initializeFlowChart();
+        this.redrawGraph();
       }
     }
 
@@ -420,7 +414,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       isSomethingConnected = true;
     }
     if (isSomethingConnected === true) {
-      this.initializeFlowChart();
+      this.redrawGraph();
       void this.hintTimeParameter();
     }
 
@@ -471,7 +465,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         if (connectTriggered) {
           //Always initialize new as long as the timer is not running
           if (this.brewComponent.timer?.isTimerRunning() !== true) {
-            this.initializeFlowChart();
+            this.redrawGraph();
           }
           void this.hintTimeParameter();
         }
@@ -559,55 +553,32 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.uiSmartScaleSupportsTaring = this.smartScaleSupportsTaring();
   }
 
-  private async readDummyFlowProfile(): Promise<any> {
-    return (
-      await import('../../../assets/BeanconquerorFlowTestDataFourth.json')
-    ).default;
-  }
-
-  private async readReferenceFlowProfile(_brew: Brew) {
-    if (!this.platform.is('capacitor')) {
-      this.reference_profile_raw = await this.readDummyFlowProfile();
+  /** Loads the reference the brew was made against; see loadReference. */
+  private async readReferenceFlowProfile(_brew: Brew): Promise<void> {
+    const reference = _brew.reference_flow_profile;
+    if (!reference || reference.type === REFERENCE_GRAPH_TYPE.NONE) {
       return;
     }
-
-    if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
-      let referencePath = '';
-      const uuid = _brew.reference_flow_profile.uuid;
-      let referenceObj: Brew | Graph = null;
-      if (
-        _brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW ||
-        _brew.reference_flow_profile.type ===
-          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-      ) {
-        referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
-
-        if (
-          _brew.reference_flow_profile.type ===
-          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-        ) {
-          referencePath = referenceObj.getGraphPath(
-            BREW_GRAPH_TYPE.IMPORTED_GRAPH,
-          );
-        } else {
-          referencePath = referenceObj.getGraphPath(BREW_GRAPH_TYPE.BREW);
-        }
-      } else {
-        referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
-        referencePath = referenceObj.getGraphPath();
-      }
-      if (referenceObj) {
-        await this.uiAlert.showLoadingSpinner();
-        try {
-          const jsonParsed =
-            await this.uiFileHelper.readInternalJSONFile(referencePath);
-          this.reference_profile_raw = jsonParsed;
-        } catch (ex) {
-          // Maybe the reference flow has been deleted.
-        }
-      }
+    await this.uiAlert.showLoadingSpinner();
+    try {
+      await this.loadReference(this.flowReader.referencePath(reference) ?? '');
+    } finally {
+      await this.uiAlert.hideLoadingSpinner();
     }
-    await this.uiAlert.hideLoadingSpinner();
+  }
+
+  /**
+   * Reads a reference graph. One that cannot be read, e.g. because its brew
+   * was deleted, is reported and leaves the current reference as it is.
+   */
+  private async loadReference(path: string): Promise<boolean> {
+    const flow = await this.flowReader.read(path);
+    if (!flow) {
+      void this.uiToast.showInfoToast('REFERENCE_GRAPH_NOT_READ');
+      return false;
+    }
+    this.reference_profile_raw = flow;
+    return true;
   }
 
   public checkChanges() {
@@ -787,11 +758,17 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       .map((id) => id.slice('custom:'.length));
   }
 
+  /** Shows a shot imported from a machine in place of what was recorded. */
+  public showShot(flow: BrewFlow): void {
+    this.flow_profile_raw = flow;
+    this.redrawGraph();
+  }
+
   /**
    * Draws flow_profile_raw and reference_profile_raw anew, e.g. after a brew
    * was loaded or imported, a reference chosen or a device connected.
    */
-  public initializeFlowChart(): void {
+  public redrawGraph(): void {
     this.graphIconColSize = this.getGraphIonColSize();
     void this.setUIParams();
     this.liveBuffer.load(this.flow_profile_raw);
@@ -1359,7 +1336,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           this.data.getPreparation().style_type ===
             PREPARATION_STYLE_TYPE.ESPRESSO)
       ) {
-        this.initializeFlowChart();
+        this.redrawGraph();
       }
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
       await sleep(200);
@@ -1375,7 +1352,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.flowProfileTempAll = [];
       this.flowProfileSecondTempAll = [];
       this.flowNCalculation = 0;
-      this.initializeFlowChart();
+      this.redrawGraph();
 
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
       await sleep(200);
@@ -3308,34 +3285,19 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.renderer = null;
   }
 
-  private async returnFlowProfile(_flowProfile: string): Promise<any> {
-    if (!this.platform.is('capacitor')) {
-      return this.readDummyFlowProfile();
+  /**
+   * Loads the stored graph of the brew being edited. A file that cannot be
+   * read is reported; it stays as it is, because an empty profile is not saved.
+   */
+  public async readFlowProfile(): Promise<void> {
+    const flow = await this.flowReader.read(
+      'brews/' + this.data.config.uuid + '_flow_profile.json',
+    );
+    if (flow) {
+      this.flow_profile_raw = flow;
+    } else {
+      void this.uiToast.showInfoToast('BREW_GRAPH_NOT_READ');
     }
-
-    if (_flowProfile === '') {
-      throw new Error('_flowProfile is empty');
-    }
-    try {
-      const jsonParsed =
-        await this.uiFileHelper.readInternalJSONFile(_flowProfile);
-      return jsonParsed;
-    } catch (ex) {
-      // ignore
-    }
-  }
-
-  public async readFlowProfile() {
-    if (!this.platform.is('capacitor')) {
-      this.flow_profile_raw = await this.readDummyFlowProfile();
-    }
-    const flowProfilePath =
-      'brews/' + this.data.config.uuid + '_flow_profile.json';
-    try {
-      const jsonParsed =
-        await this.uiFileHelper.readInternalJSONFile(flowProfilePath);
-      this.flow_profile_raw = jsonParsed;
-    } catch (ex) {}
   }
 
   private __setPressureFlow(_pressure: any) {
@@ -4290,16 +4252,16 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         refGraph.type = REFERENCE_GRAPH_TYPE.GRAPH;
         flowProfileRtr = rData?.data?.graph.flow_profile;
       }
+      if (!(await this.loadReference(flowProfileRtr))) {
+        return;
+      }
       this.data.reference_flow_profile = refGraph;
-
-      const presetGraphData: any = await this.returnFlowProfile(flowProfileRtr);
-      this.reference_profile_raw = presetGraphData;
-      this.initializeFlowChart();
+      this.redrawGraph();
     } else if (rData?.data?.reset) {
       // Reset the reference flow profile
       this.data.reference_flow_profile = new ReferenceGraph();
       this.reference_profile_raw = new BrewFlow();
-      this.initializeFlowChart();
+      this.redrawGraph();
     }
   }
 

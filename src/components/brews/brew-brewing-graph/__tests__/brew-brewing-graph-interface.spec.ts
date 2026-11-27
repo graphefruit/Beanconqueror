@@ -4,12 +4,14 @@ import { TestBed } from '@angular/core/testing';
 import { ModalController, Platform } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
+import { NEVER } from 'rxjs';
 
 import { Brew } from '../../../../classes/brew/brew';
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import { Preparation } from '../../../../classes/preparation/preparation';
 import { MeticulousDevice } from '../../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { Settings } from '../../../../classes/settings/settings';
+import { REFERENCE_GRAPH_TYPE } from '../../../../enums/brews/referenceGraphType';
 import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
 import { CoffeeBluetoothDevicesService } from '../../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { TextToSpeechService } from '../../../../services/textToSpeech/text-to-speech.service';
@@ -110,6 +112,9 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
   let timerRunning: boolean;
   let maximized: boolean;
   let readInternalJSONFile: jasmine.Spy;
+  let showInfoToast: jasmine.Spy;
+  let modalResult: unknown;
+  let storedBrews: Record<string, Brew>;
 
   function internals(): Record<string, unknown> {
     return component as unknown as Record<string, unknown>;
@@ -124,7 +129,7 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
 
   /** Lets the chart library load and the renderer take the series. */
   async function draw(): Promise<void> {
-    component.initializeFlowChart();
+    component.redrawGraph();
     await new Promise((resolve) => setTimeout(resolve));
   }
 
@@ -134,24 +139,45 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
     timerRunning = false;
     maximized = false;
     readInternalJSONFile = jasmine.createSpy('readInternalJSONFile');
+    showInfoToast = jasmine.createSpy('showInfoToast').and.resolveTo();
+    modalResult = undefined;
+    storedBrews = {};
     const preparation = new Preparation();
     preparation.style_type = PREPARATION_STYLE_TYPE.ESPRESSO;
 
     const stubs = [
       ChangeDetectorRef,
-      ModalController,
       TextToSpeechService,
-      UIAlert,
       UIBrewHelper,
-      UIBrewStorage,
       UIGraphStorage,
       UIPreparationHelper,
       UIPreparationStorage,
-      UIToast,
     ].map((provide) => ({ provide, useValue: {} }));
     TestBed.configureTestingModule({
       providers: [
         ...stubs,
+        { provide: UIToast, useValue: { showInfoToast } },
+        {
+          provide: UIAlert,
+          useValue: {
+            showLoadingSpinner: () => Promise.resolve(),
+            hideLoadingSpinner: () => Promise.resolve(),
+          },
+        },
+        {
+          provide: UIBrewStorage,
+          useValue: { getEntryByUUID: (uuid: string) => storedBrews[uuid] },
+        },
+        {
+          provide: ModalController,
+          useValue: {
+            create: () =>
+              Promise.resolve({
+                present: () => Promise.resolve(),
+                onWillDismiss: () => Promise.resolve({ data: modalResult }),
+              }),
+          },
+        },
         { provide: Platform, useValue: { is: () => true } },
         { provide: ThemeService, useValue: { dark } },
         {
@@ -174,6 +200,7 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
             getScale: () => undefined,
             getPressureDevice: () => undefined,
             getTemperatureDevice: () => undefined,
+            attachOnEvent: () => NEVER,
           },
         },
       ],
@@ -298,9 +325,10 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
     it('draws an imported shot in place of what was drawn', async () => {
       await draw();
 
-      component.flow_profile_raw = flowWithMetric();
-      component.initializeFlowChart();
+      const shot = flowWithMetric();
+      component.showShot(shot);
 
+      expect(component.flow_profile_raw).toBe(shot);
       expect(Array.from(attached().view('weight').y)).toEqual([0, 2.5]);
       expect(attached().has('custom:boiler')).toBeTrue();
       expect(lastDefs().map((d) => d.id)).toContain('custom:boiler');
@@ -395,6 +423,82 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
         expect(JSON.stringify(component.flow_profile_raw)).toBe(file);
       });
     }
+  });
+
+  it('reports a stored graph that cannot be read and keeps it out of the save', async () => {
+    readInternalJSONFile.and.rejectWith(new Error('not found'));
+    component.isEdit = true;
+
+    await component.readFlowProfile();
+
+    expect(showInfoToast).toHaveBeenCalledOnceWith('BREW_GRAPH_NOT_READ');
+    expect(component.flow_profile_raw).toEqual(new BrewFlow());
+  });
+
+  describe('reference', () => {
+    function referenceBrew(): Brew {
+      const brew = new Brew();
+      brew.config.uuid = 'ref-1';
+      brew.flow_profile = 'brews/ref-1_flow_profile.json';
+      return brew;
+    }
+
+    it('draws the chosen brew as reference', async () => {
+      const file = flowWithMetric();
+      readInternalJSONFile.and.resolveTo(file);
+      modalResult = { brew: referenceBrew() };
+      await draw();
+
+      await component.chooseGraphToSetAsReference();
+
+      expect(readInternalJSONFile).toHaveBeenCalledWith(
+        'brews/ref-1_flow_profile.json',
+      );
+      expect(component.reference_profile_raw).toBe(file);
+      expect(internals()['data']).toEqual(
+        jasmine.objectContaining({
+          reference_flow_profile: jasmine.objectContaining({
+            type: REFERENCE_GRAPH_TYPE.BREW,
+            uuid: 'ref-1',
+          }),
+        }),
+      );
+      expect(port.setReferences.calls.mostRecent().args[0]).not.toBeNull();
+    });
+
+    it('reports a chosen reference that cannot be read and keeps the current one', async () => {
+      const current = flowWithMetric();
+      component.reference_profile_raw = current;
+      readInternalJSONFile.and.rejectWith(new Error('not found'));
+      modalResult = { brew: referenceBrew() };
+
+      await component.chooseGraphToSetAsReference();
+
+      expect(showInfoToast).toHaveBeenCalledOnceWith(
+        'REFERENCE_GRAPH_NOT_READ',
+      );
+      expect(component.reference_profile_raw).toBe(current);
+      expect((internals()['data'] as Brew).reference_flow_profile.type).toBe(
+        REFERENCE_GRAPH_TYPE.NONE,
+      );
+    });
+
+    it('reports the reference of an edited brew when its brew was deleted', async () => {
+      const data = internals()['data'] as Brew;
+      data.flow_profile = 'brews/brew-1_flow_profile.json';
+      data.reference_flow_profile.type = REFERENCE_GRAPH_TYPE.BREW;
+      data.reference_flow_profile.uuid = 'deleted';
+      readInternalJSONFile.and.resolveTo(flowWithMetric());
+      component.isEdit = true;
+
+      await component.instance();
+
+      expect(showInfoToast).toHaveBeenCalledOnceWith(
+        'REFERENCE_GRAPH_NOT_READ',
+      );
+      expect(component.reference_profile_raw).toEqual(new BrewFlow());
+      expect(component.flow_profile_raw.weight.length).toBe(2);
+    });
   });
 
   describe('size', () => {

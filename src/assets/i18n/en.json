@@ -1548,6 +1548,8 @@
     "STORAGE_NOT_READ_NOTHING_SAVED": "Your change was not saved because your data could not be loaded. Please close the app completely and start it again.",
     "STORAGE_SAVE_FAILED": "Saving failed. Your last change was not saved. Please close the app completely, start it again and check the free storage.",
     "USER_BEAN_SHARE_CODE_UNREADABLE": "This shared bean could not be read. The link may be incomplete or damaged. Please ask for the bean to be shared again.",
+    "REFERENCE_GRAPH_NOT_READ": "The reference graph could not be loaded. It may have been deleted.",
+    "BREW_GRAPH_NOT_READ": "The graph of this brew could not be loaded. It stays saved as it was.",
     "FILES_NOT_COPIED": "Photos or graph files that could not be copied: {{count}}. Everything else was transferred.",
     "CLIPBOARD": "Clipboard",
     "NO_IMAGE_IN_CLIPBOARD": "No image in clipboard",

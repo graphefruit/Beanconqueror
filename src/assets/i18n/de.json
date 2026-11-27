@@ -1548,6 +1548,8 @@
     "STORAGE_NOT_READ_NOTHING_SAVED": "Deine Änderung wurde nicht gespeichert, weil deine Daten nicht geladen werden konnten. Bitte beende die App vollständig und starte sie neu.",
     "STORAGE_SAVE_FAILED": "Speichern fehlgeschlagen. Deine letzte Änderung wurde nicht gespeichert. Bitte beende die App vollständig, starte sie neu und prüfe den freien Speicher.",
     "USER_BEAN_SHARE_CODE_UNREADABLE": "Diese geteilte Bohne konnte nicht gelesen werden. Der Link ist vielleicht unvollständig oder beschädigt. Bitte lass dir die Bohne noch einmal teilen.",
+    "REFERENCE_GRAPH_NOT_READ": "Der Referenzgraph konnte nicht geladen werden. Vielleicht wurde er gelöscht.",
+    "BREW_GRAPH_NOT_READ": "Der Graph dieser Brühung konnte nicht geladen werden. Er bleibt so gespeichert, wie er war.",
     "FILES_NOT_COPIED": "Fotos oder Graph-Dateien, die nicht kopiert werden konnten: {{count}}. Alles andere wurde übertragen.",
     "CLIPBOARD": "Zwischenablage",
     "NO_IMAGE_IN_CLIPBOARD": "Kein Bild in der Zwischenablage",

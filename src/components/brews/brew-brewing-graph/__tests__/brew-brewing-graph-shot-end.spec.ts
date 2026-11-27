@@ -153,7 +153,7 @@ describe('BrewBrewingGraphComponent shot end', () => {
         platform: { is: () => isCapacitor },
         bleManager,
         uiHelper: Object.create(UIHelper.prototype),
-        uiFileHelper: { readInternalJSONFile },
+        flowReader: { read: readInternalJSONFile },
         uiAlert: jasmine.createSpyObj('UIAlert', {
           showLoadingSpinner: Promise.resolve(),
           hideLoadingSpinner: Promise.resolve(),
