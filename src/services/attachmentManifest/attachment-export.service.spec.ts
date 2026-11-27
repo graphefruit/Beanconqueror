@@ -261,8 +261,9 @@ describe('AttachmentExportService', () => {
       return done;
     });
     await service.writeExport(folder, zip(), controller.signal);
-    // A complete file of the staging folder is kept as it is.
-    await write(`${STAGING}/b.jpg`, 'copied before', Directory.External);
+    // A complete file of the staging folder is kept as it is (same size as
+    // its source, so only the content shows which one was exported).
+    await write(`${STAGING}/b.jpg`, 'copied before...', Directory.External);
     copy.calls.reset();
     copy.and.callFake(function (this: FilesystemWeb, _options) {
       return realCopy(this, _options);
@@ -273,7 +274,25 @@ describe('AttachmentExportService', () => {
     expect(result).toEqual({ missing: 0, aborted: false });
     expect(copiedFrom()).toEqual(FILES.slice(2));
     expect(await exported()).toEqual([...FILES, ZIP].sort());
-    expect(await read(`${DIR}/b.jpg`)).toBe('copied before');
+    expect(await read(`${DIR}/b.jpg`)).toBe('copied before...');
+  });
+
+  it('copies a file of the staging folder again when its source changed since', async () => {
+    await write(`${STAGING}/a.jpg`, 'content of a.jpg', Directory.External);
+    await write(`${STAGING}/b.jpg`, 'content of b.jpg', Directory.External);
+    // Rewritten under its name with another size, as a cut flow profile.
+    await write('a.jpg', 'cut', Directory.Data);
+    // Rewritten with the same size, after it was copied.
+    spyOn(Date, 'now').and.returnValue(new Date().getTime() + 60_000);
+    await write('b.jpg', 'CONTENT OF B.JPG', Directory.Data);
+    (Date.now as jasmine.Spy).and.callThrough();
+
+    const result = await service.writeExport(folder, zip());
+
+    expect(result).toEqual({ missing: 0, aborted: false });
+    expect(copiedFrom()).toEqual(FILES);
+    expect(await read(`${DIR}/a.jpg`)).toBe('cut');
+    expect(await read(`${DIR}/b.jpg`)).toBe('CONTENT OF B.JPG');
   });
 
   it('copies a file again that the app was ended in, and only that one', async () => {

@@ -28,7 +28,8 @@ export interface FullExportResult {
  * files without their zip are left behind. An export that was stopped, or
  * ended with the app, keeps its staging folder, and the next one goes on
  * from there: a file is copied as `<name>.part` and only gets its name when
- * complete, so a file with its name is never copied again.
+ * complete, so a file with its name is copied again only when its source
+ * changed since.
  */
 @Service()
 export class AttachmentExportService {
@@ -117,23 +118,24 @@ export class AttachmentExportService {
       const path = _paths[i];
       const target = `${_staging.path}/${path}`;
       const unfinished = target + '.part';
-      if (
-        _resuming &&
-        (await this.uiFileHelper.fileExists({
-          path: target,
-          directory: _staging.directory,
-        }))
-      ) {
-        copied.push(path);
-        continue;
-      }
       try {
+        const source = await this.uiFileHelper.resolvePhotoPath(path);
+        if (
+          _resuming &&
+          (await this.__isUpToDate(
+            { path: target, directory: _staging.directory },
+            { path: source, directory: dataDirectory },
+          ))
+        ) {
+          copied.push(path);
+          continue;
+        }
         await this.__makeParent(_staging, path, made);
         if (_resuming) {
           await this.__delete(unfinished, _staging.directory);
         }
         await Filesystem.copy({
-          from: await this.uiFileHelper.resolvePhotoPath(path),
+          from: source,
           directory: dataDirectory,
           to: unfinished,
           toDirectory: _staging.directory,
@@ -157,6 +159,26 @@ export class AttachmentExportService {
       }
     }
     return { copied, missing };
+  }
+
+  /**
+   * A file of the staging folder is kept only when its source was not
+   * changed after it was copied: a flow profile is rewritten under the same
+   * name, for example when it is cut.
+   */
+  private async __isUpToDate(
+    _staged: ExportFolder,
+    _source: ExportFolder,
+  ): Promise<boolean> {
+    try {
+      const [staged, source] = await Promise.all([
+        Filesystem.stat(_staged),
+        Filesystem.stat(_source),
+      ]);
+      return staged.size === source.size && staged.mtime >= source.mtime;
+    } catch {
+      return false;
+    }
   }
 
   private async __makeParent(
