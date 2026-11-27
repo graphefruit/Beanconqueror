@@ -482,6 +482,58 @@ describe('UplotRenderer', () => {
     expect(theme.dark).toBeFalse();
   });
 
+  it('leaves temperature and water axes out of a compact picture, so the lines reach further', async () => {
+    await mount('static');
+    renderer.setSeries(
+      // Only the weight line is red; the other axes draw their ticks in their own colour.
+      defs('live', 'weight', 'temperature', 'waterDispensed').map((def) => {
+        const colour = def.id === 'weight' ? '#ff0000' : '#00ff00';
+        return { ...def, colour: { light: colour, dark: colour } };
+      }),
+    );
+    for (let k = 0; k < 300; k++) {
+      buffer.append('weight', k / 10, 10);
+      buffer.append('temperature', k / 10, 93);
+      buffer.append('waterDispensed', k / 10, k);
+    }
+    renderer.attach(buffer);
+    await frames.run();
+    const rightmostLine = async (compact: boolean): Promise<number> => {
+      const image = await decode(
+        await renderer.exportImage({
+          width: 300,
+          height: 150,
+          theme: 'light',
+          ink: '#0000ff',
+          transparent: true,
+          compact,
+          scale: 1,
+        }),
+      );
+      let right = -1;
+      pixels(image, 0, 0, image.width, image.height).forEach(([r, g, b], i) => {
+        if (r > 200 && g < 60 && b < 60) {
+          right = Math.max(right, i % image.width);
+        }
+      });
+      return right;
+    };
+
+    const full = await rightmostLine(false);
+    const compact = await rightmostLine(true);
+
+    // The two axes of 36 px on the right give their room to the lines.
+    expect(full).toBeLessThanOrEqual(300 - 2 * 36);
+    expect(compact).toBeGreaterThan(300 - 36);
+    // The graph in the app keeps its axes.
+    expect(plot().axes.map((axis) => axis.show)).toEqual([
+      true,
+      true,
+      true,
+      true,
+    ]);
+  });
+
   it('refuses to export without series', async () => {
     renderer = new UplotRenderer([], {
       requestFrame: frames.request,
@@ -570,7 +622,7 @@ describe('UplotRenderer', () => {
       expect(layout.axes).toEqual(['pressure', 'weight', 'temperature']);
     });
 
-    it('keeps temperature and water axes bare only while live', () => {
+    it('keeps temperature and water axes bare only while live or compact', () => {
       expect(axisShown('temperature', true)).toBeFalse();
       expect(axisShown('water', true)).toBeFalse();
       expect(axisShown('weight', true)).toBeTrue();

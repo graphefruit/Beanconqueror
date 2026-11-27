@@ -145,9 +145,12 @@ export function viewportRange(viewport: Viewport, end: number): Range {
   }
 }
 
-/** Whether an axis shows its ticks: the live graph keeps temperature and water bare, as today. */
-export function axisShown(axisId: AxisId, live: boolean): boolean {
-  return !(live && (axisId === 'temperature' || axisId === 'water'));
+/**
+ * Whether an axis shows its ticks: the live graph and a compact picture keep
+ * temperature and water bare, so the lines get the width.
+ */
+export function axisShown(axisId: AxisId, bare: boolean): boolean {
+  return !(bare && (axisId === 'temperature' || axisId === 'water'));
 }
 
 interface Layout {
@@ -343,7 +346,7 @@ export class UplotRenderer implements BrewChartPort {
           { hooks: { draw: [() => resolve()] } },
         ];
         chart = new lib(opts, this.buildData(), host);
-        this.applyVisibility(chart);
+        this.applyVisibility(chart, options.compact === true);
       });
       await drawn;
       const source = chart.ctx.canvas;
@@ -664,9 +667,9 @@ export class UplotRenderer implements BrewChartPort {
     };
   }
 
-  private axisVisible(axisId: AxisId): boolean {
+  private axisVisible(axisId: AxisId, bare: boolean): boolean {
     return (
-      axisShown(axisId, this.opts?.mode === 'live') &&
+      axisShown(axisId, bare) &&
       this.layout.drawn.some(
         (d) => d.axisId === axisId && !this.hidden.has(d.id) && this.hasData(d),
       )
@@ -674,11 +677,14 @@ export class UplotRenderer implements BrewChartPort {
   }
 
   /** Shows the series and axes that have something to show; true when an axis changed. */
-  private applyVisibility(u: uPlot): boolean {
+  private applyVisibility(
+    u: uPlot,
+    bare = this.opts?.mode === 'live',
+  ): boolean {
     let axesChanged = false;
     this.layout.axes.forEach((axisId, i) => {
       const axis = u.axes[i + 1];
-      const show = this.axisVisible(axisId);
+      const show = this.axisVisible(axisId, bare);
       if (axis.show !== show) {
         axis.show = show;
         axesChanged = true;
