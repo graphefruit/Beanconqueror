@@ -64,6 +64,11 @@ export async function installApp(apk: string): Promise<void> {
   await adb('install', '-r', apk);
 }
 
+/** Removes the app with its data; no error if it is not installed. */
+export async function uninstallApp(): Promise<void> {
+  await adb('uninstall', APP_ID).catch(() => undefined);
+}
+
 /** Deletes the app's data, like a fresh installation. */
 export async function clearAppData(): Promise<void> {
   await shell(`pm clear ${APP_ID}`);
