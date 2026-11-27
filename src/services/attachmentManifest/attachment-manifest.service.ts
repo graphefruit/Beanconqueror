@@ -158,6 +158,16 @@ export class AttachmentManifestService {
     return this.building;
   }
 
+  /**
+   * The paths of all referenced files, each once, after the manifest was
+   * brought up to date. Empty where the platform stores no files.
+   */
+  public async currentPaths(): Promise<string[]> {
+    await this.start();
+    await this.reconcile();
+    return [...new Set([...this.entries.values()].map((_e) => _e.path))];
+  }
+
   /** For tests and diagnosis only. */
   public getManifest(): IAttachmentManifest {
     return {

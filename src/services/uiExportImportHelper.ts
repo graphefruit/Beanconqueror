@@ -1,4 +1,4 @@
-import { inject, Service } from '@angular/core';
+import { inject, Injector, Service } from '@angular/core';
 
 import { ModalController, Platform } from '@ionic/angular';
 
@@ -31,6 +31,11 @@ import {
 } from '../interfaces/changeTracking/iRestoreNote';
 import { DataCorruptionFoundComponent } from '../popover/data-corruption-found/data-corruption-found.component';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import {
+  AttachmentExportService,
+  ExportFolder,
+  FullExportResult,
+} from './attachmentManifest/attachment-export.service';
 import { EXPORT_CHUNKING_CONFIG, NotABackupError } from './backup-format-rules';
 import {
   canBeImportedAgain,
@@ -222,6 +227,9 @@ export class UIExportImportHelper {
   private readonly uiBrewStorage = inject(UIBrewStorage);
   private readonly modalController = inject(ModalController);
   private readonly preImportBackup = inject(PreImportBackupService);
+  // Resolved on use: it brings in every storage, which most users of this
+  // helper never need.
+  private readonly injector = inject(Injector);
 
   /**
    *
@@ -437,6 +445,18 @@ export class UIExportImportHelper {
       await this.__sayBackupNotRestored('MIGRATION_BACKUP_FAILED');
       return false;
     }
+  }
+
+  /**
+   * Writes the zip of the data together with every photo and flow profile
+   * file into `_folder`; see AttachmentExportService.
+   */
+  public async writeFullExport(
+    _folder: ExportFolder,
+  ): Promise<FullExportResult> {
+    return this.injector
+      .get(AttachmentExportService)
+      .writeExport(_folder, await this.buildExportZIP());
   }
 
   /**

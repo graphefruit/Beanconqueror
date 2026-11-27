@@ -670,6 +670,43 @@ describe('AttachmentManifestService', () => {
     flush();
   }));
 
+  it('names every referenced file once, after building the list, also before it was started', async () => {
+    const setup = createSetup();
+    setup.storages.BEANS.setEntries([
+      { config: { uuid: 'bean-0' }, attachments: ['shared.jpg', 'a.jpg'] },
+      // A copy of the bean with the same photo.
+      { config: { uuid: 'bean-1' }, attachments: ['shared.jpg'] },
+    ]);
+    setup.storages.BREWS.setEntries([
+      {
+        config: { uuid: 'brew-0' },
+        attachments: [],
+        flow_profile: 'brews/brew-0_flow_profile.json',
+      },
+    ]);
+    setup.files.set('DATA:shared.jpg', 1);
+    const { service, statFile } = createService(setup);
+
+    const paths = await service.currentPaths();
+
+    expect(paths).toEqual([
+      'shared.jpg',
+      'a.jpg',
+      'brews/brew-0_flow_profile.json',
+    ]);
+    expect(statFile).toHaveBeenCalled();
+    expect(storedManifest(setup).completed_at).toBeGreaterThan(0);
+    service.stop();
+  });
+
+  it('names no files in the browser', async () => {
+    const setup = createSetup(['desktop']);
+    fillSyntheticData(setup, 3, 3);
+    const { service } = createService(setup);
+
+    expect(await service.currentPaths()).toEqual([]);
+  });
+
   it('does nothing in the browser', async () => {
     const setup = createSetup(['desktop', 'mobileweb']);
     fillSyntheticData(setup, 10, 2);
