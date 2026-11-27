@@ -1,22 +1,21 @@
-import {
-  nextSanremoStopStep,
-  sanremoStopDeadlineMs,
-} from '../sanremo-stop-rules';
+import { nextSanremoStopStep, SanremoStopWatch } from '../sanremo-stop-rules';
 
 describe('nextSanremoStopStep', () => {
   const watch = (
     groupStatus: number,
-    { sawZero = false, resent = false, acked = false } = {},
-  ) => ({ groupStatus, sawZero, resent, acked });
-
-  it('waits while the old running status may still be reported', () => {
-    expect(nextSanremoStopStep(watch(2), 600)).toBe('wait');
-    expect(nextSanremoStopStep(watch(2), 1199)).toBe('wait');
+    options: Partial<SanremoStopWatch> = {},
+  ): SanremoStopWatch => ({
+    groupStatus,
+    sawZero: false,
+    resent: false,
+    ...options,
   });
 
-  it('does not resend an acknowledged stop before 3 s', () => {
-    expect(nextSanremoStopStep(watch(1, { acked: true }), 600)).toBe('wait');
-    expect(nextSanremoStopStep(watch(1, { acked: true }), 2999)).toBe('wait');
+  it('waits until 3 s even when a fresh status shows the shot running', () => {
+    expect(nextSanremoStopStep(watch(2), 600)).toBe('wait');
+    expect(nextSanremoStopStep(watch(2, { statusAfterMs: 1500 }), 2999)).toBe(
+      'wait',
+    );
   });
 
   it('keeps watching a 0 for a restart before confirming', () => {
@@ -33,9 +32,17 @@ describe('nextSanremoStopStep', () => {
     ).toBe('confirmed');
   });
 
-  it('resends once when still running at the deadline', () => {
-    expect(nextSanremoStopStep(watch(2), 1200)).toBe('resend');
-    expect(nextSanremoStopStep(watch(2, { acked: true }), 3000)).toBe('resend');
+  it('resends once when a status from 900 ms after the stop still runs at 3 s', () => {
+    expect(nextSanremoStopStep(watch(2, { statusAfterMs: 900 }), 3000)).toBe(
+      'resend',
+    );
+  });
+
+  it('never resends without a status from 900 ms after the stop', () => {
+    expect(nextSanremoStopStep(watch(2), 3000)).toBe('failed');
+    expect(nextSanremoStopStep(watch(2, { statusAfterMs: 899 }), 5000)).toBe(
+      'failed',
+    );
   });
 
   it('resends at once on a restart after a 0', () => {
@@ -45,16 +52,14 @@ describe('nextSanremoStopStep', () => {
   });
 
   it('gives up after the resend was ignored or the shot restarted again', () => {
-    expect(nextSanremoStopStep(watch(2, { resent: true }), 1200)).toBe(
-      'failed',
-    );
+    expect(
+      nextSanremoStopStep(
+        watch(2, { resent: true, statusAfterMs: 2000 }),
+        3000,
+      ),
+    ).toBe('failed');
     expect(
       nextSanremoStopStep(watch(2, { sawZero: true, resent: true }), 100),
     ).toBe('failed');
-  });
-
-  it('gives the machine longer once it acknowledged the stop', () => {
-    expect(sanremoStopDeadlineMs(false)).toBe(1200);
-    expect(sanremoStopDeadlineMs(true)).toBe(3000);
   });
 });

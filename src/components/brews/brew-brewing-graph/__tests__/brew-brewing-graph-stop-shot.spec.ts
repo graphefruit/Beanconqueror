@@ -52,12 +52,14 @@ describe('BrewBrewingGraphComponent stop shot', () => {
     ]);
   });
 
-  it('shows nothing when no shot was running', async () => {
-    setup('not_running');
-    component.triggerStopShotOnSanremoYOU(36);
-    await flush();
-    expect(uiToast.showInfoToast).not.toHaveBeenCalled();
-  });
+  for (const result of ['not_running', 'aborted'] as const) {
+    it(`shows nothing when the stop ends as ${result}`, async () => {
+      setup(result);
+      component.triggerStopShotOnSanremoYOU(36);
+      await flush();
+      expect(uiToast.showInfoToast).not.toHaveBeenCalled();
+    });
+  }
 
   it('confirms a pause stop without "shot ended"', async () => {
     setup('confirmed');

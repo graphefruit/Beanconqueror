@@ -9,6 +9,8 @@ describe('SanremoYOUDevice stop confirmation', () => {
     send: jasmine.Spy;
     close: jasmine.Spy;
     onmessage?: (event: { data: string }) => void;
+    onopen?: (event: object) => void;
+    onclose?: (event: object) => void;
   };
   let log: jasmine.SpyObj<UILog>;
   let onResend: jasmine.Spy;
@@ -97,11 +99,12 @@ describe('SanremoYOUDevice stop confirmation', () => {
     );
   });
 
-  it('resends once when the acknowledged stop still runs after 3 s', async () => {
+  it('resends once when a status from 900 ms after the stop still runs at 3 s', async () => {
     stop();
     ack();
+    jasmine.clock().tick(900);
     report(2);
-    jasmine.clock().tick(2999);
+    jasmine.clock().tick(2099);
     expect(sentStops().length).toBe(1);
 
     jasmine.clock().tick(1);
@@ -114,18 +117,19 @@ describe('SanremoYOUDevice stop confirmation', () => {
     expect(result).toBe('confirmed');
   });
 
-  it('resends once when an unacknowledged stop still runs after 1.2 s', async () => {
+  it('sends no second stop without a status from 900 ms after the stop', async () => {
     stop();
+    jasmine.clock().tick(600);
     report(2);
-    jasmine.clock().tick(1199);
-    expect(sentStops().length).toBe(1);
+    jasmine.clock().tick(2400);
+    await flush();
 
-    jasmine.clock().tick(1);
-    expect(sentStops()).toEqual([
-      { key: 220, id: 2, value: 0 },
-      { key: 220, id: 2, value: 0 },
-    ]);
-    expect(onResend).toHaveBeenCalledTimes(1);
+    expect(sentStops().length).toBe(1);
+    expect(onResend).not.toHaveBeenCalled();
+    expect(result).toBe('failed');
+    expect(JSON.stringify(log.error.calls.allArgs())).toContain(
+      'no status from 900 ms',
+    );
   });
 
   it('resends at once when the shot restarts after a 0', async () => {
@@ -151,7 +155,11 @@ describe('SanremoYOUDevice stop confirmation', () => {
     stop();
     jasmine.clock().tick(1200);
     report(2);
+    jasmine.clock().tick(1800);
+    expect(sentStops().length).toBe(2);
     jasmine.clock().tick(1200);
+    report(2);
+    jasmine.clock().tick(1800);
     await flush();
 
     expect(sentStops().length).toBe(2);
@@ -211,11 +219,41 @@ describe('SanremoYOUDevice stop confirmation', () => {
     expect(result).toBe('aborted');
   });
 
-  it('retries a connection that is not open after 3 s', () => {
+  it('waits for the first status after a reconnect instead of using the old one', () => {
+    socket.onclose({});
+    jasmine.clock().tick(500);
+    socket.onopen({});
+    stop();
+    expect(socket.send).not.toHaveBeenCalled();
+
+    report(3);
+    expect(sentStops()).toEqual([{ key: 220, id: 3, value: 0 }]);
+  });
+
+  it('keeps waiting for a first connection that opens late', async () => {
     device.disconnectSocket();
     socket.close.calls.reset();
     socket.readyState = 0;
-    void device.connectToSocket();
+    let connected: boolean | undefined;
+    void device
+      .connectToSocket()
+      .then((_connected) => (connected = _connected));
+    jasmine.clock().tick(5000);
+    await flush();
+    expect(connected).toBeUndefined();
+    expect(socket.close).not.toHaveBeenCalled();
+
+    socket.readyState = 1;
+    socket.onopen({});
+    await flush();
+    expect(connected).toBe(true);
+  });
+
+  it('retries a reconnect that is not open after 3 s', () => {
+    device.disconnectSocket();
+    socket.close.calls.reset();
+    socket.readyState = 0;
+    device.reconnectToSocket();
     jasmine.clock().tick(2999);
     expect(socket.close).not.toHaveBeenCalled();
 

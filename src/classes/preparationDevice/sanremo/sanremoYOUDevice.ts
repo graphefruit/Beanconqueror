@@ -10,9 +10,10 @@ import { sleep } from '../../devices';
 import { Preparation } from '../../preparation/preparation';
 import { PreparationDevice } from '../preparationDevice';
 import {
+  isFreshSanremoStatus,
   nextSanremoStopStep,
+  SANREMO_FRESH_STATUS_MS,
   SANREMO_PENDING_STOP_MS,
-  sanremoStopDeadlineMs,
   SanremoStopWatch,
 } from './sanremo-stop-rules';
 import { SanremoShotData } from './sanremoShotData';
@@ -41,6 +42,8 @@ export class SanremoYOUDevice extends PreparationDevice {
   public reconnectionCounter = 0;
 
   public lastRunnedProgramm: number = 0;
+  /** sanremoShotData still holds the status from before a reconnect until this is set. */
+  private statusSinceOpen = false;
   private stopRequest:
     | {
         requestedAt: number;
@@ -316,6 +319,7 @@ export class SanremoYOUDevice extends PreparationDevice {
     }
     this.receivingDataFromWebsocketTimestamp = 0;
     this._isConnected = false;
+    this.statusSinceOpen = false;
     this.clearKeepAliveInterval();
     if (this.stopRequest?.watch) {
       this.endStop('aborted');
@@ -363,9 +367,10 @@ export class SanremoYOUDevice extends PreparationDevice {
     this.logInfo('Reconnecting from socket');
     this.socket = undefined;
     this._isConnected = false;
-    this.connectToSocket();
+    this.connectToSocket(true);
   }
-  public connectToSocket(): Promise<boolean> {
+  /** retryWhenStuck: nobody awaits a reconnect, so it may give up a hanging socket. */
+  public connectToSocket(retryWhenStuck = false): Promise<boolean> {
     this.logInfo('Connect to socket');
     let hasPromiseBeenCalled: boolean = false;
     const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
@@ -399,7 +404,11 @@ export class SanremoYOUDevice extends PreparationDevice {
         const socket = new WebSocket(this.websocketURL);
         this.socket = socket;
         setTimeout(() => {
-          if (this.socket === socket && socket.readyState === 0) {
+          if (
+            retryWhenStuck &&
+            this.socket === socket &&
+            socket.readyState === 0
+          ) {
             this.logInfo(
               `Socket not open after ${SANREMO_CONNECT_TIMEOUT_MS} ms, retrying`,
             );
@@ -502,6 +511,7 @@ export class SanremoYOUDevice extends PreparationDevice {
             ) {
               this.lastRunnedProgramm = this.sanremoShotData.groupStatus;
             }
+            this.statusSinceOpen = true;
             this.watchStopStatus(this.sanremoShotData.groupStatus);
           } else if (responseJSON.key === 220) {
             this.noteStopAnswer(responseJSON.success === true);
@@ -556,8 +566,9 @@ export class SanremoYOUDevice extends PreparationDevice {
       this.logError('Stop not sent, socket is not open');
       return Promise.resolve('not_connected');
     }
+    const known = open && this.statusSinceOpen;
     //ID -> The actual running profile, groupStatus 0 would shut off the machine
-    if (open && this.sanremoShotData.groupStatus === 0) {
+    if (known && this.sanremoShotData.groupStatus === 0) {
       this.logInfo('Stop not sent, groupStatus is already 0');
       return Promise.resolve('not_running');
     }
@@ -572,11 +583,11 @@ export class SanremoYOUDevice extends PreparationDevice {
       resolve,
       result,
     };
-    if (open) {
+    if (known) {
       this.beginStopWatch(this.sanremoShotData.groupStatus);
     } else {
       this.logInfo(
-        `Stop requested while reconnecting, waiting up to ${SANREMO_PENDING_STOP_MS} ms for the machine`,
+        `Stop requested while reconnecting, waiting up to ${SANREMO_PENDING_STOP_MS} ms for the first status`,
       );
     }
     return result;
@@ -599,7 +610,6 @@ export class SanremoYOUDevice extends PreparationDevice {
     this.stopRequest.watch = {
       resent: false,
       sawZero: false,
-      acked: false,
       groupStatus,
       startedAt: Date.now(),
     };
@@ -621,12 +631,8 @@ export class SanremoYOUDevice extends PreparationDevice {
     if (!watch) {
       return;
     }
-    const elapsed = Date.now() - watch.startedAt;
-    watch.acked = success;
     this.logInfo(
-      success
-        ? `Stop acknowledged after ${elapsed} ms, resend only if still running without a 0 after ${sanremoStopDeadlineMs(true)} ms`
-        : `Stop rejected after ${elapsed} ms, resend if still running after ${sanremoStopDeadlineMs(false)} ms`,
+      `Stop ${success ? 'acknowledged' : 'rejected'} after ${Date.now() - watch.startedAt} ms`,
     );
   }
 
@@ -650,6 +656,7 @@ export class SanremoYOUDevice extends PreparationDevice {
     }
     const watch = request.watch;
     watch.groupStatus = groupStatus;
+    watch.statusAfterMs = Date.now() - watch.startedAt;
     if (groupStatus === 0 && !watch.sawZero) {
       watch.sawZero = true;
       this.logInfo(
@@ -681,7 +688,9 @@ export class SanremoYOUDevice extends PreparationDevice {
     }
     const reason = watch.sawZero
       ? `shot restarted after a 0, ${elapsed} ms after the stop`
-      : `still running ${elapsed} ms after the stop, ${watch.acked ? 'acknowledged' : 'not acknowledged'}`;
+      : isFreshSanremoStatus(watch)
+        ? `still running ${watch.statusAfterMs} ms after the stop`
+        : `no status from ${SANREMO_FRESH_STATUS_MS} ms after the stop, a second stop could start a new shot`;
     if (step === 'resend') {
       this.logInfo(
         `Stop not effective (${reason}, groupStatus ${watch.groupStatus}), resending`,
@@ -693,7 +702,7 @@ export class SanremoYOUDevice extends PreparationDevice {
       Object.assign(watch, {
         resent: true,
         sawZero: false,
-        acked: false,
+        statusAfterMs: undefined,
         startedAt: Date.now(),
       });
       request.onResend?.();
@@ -703,7 +712,7 @@ export class SanremoYOUDevice extends PreparationDevice {
       this.logInfo(`Stop confirmed after ${elapsed} ms, no restart`);
     } else {
       this.logError(
-        `Stop not effective again (${reason}, groupStatus ${watch.groupStatus}), no further stop sent`,
+        `Stop not confirmed (${reason}, groupStatus ${watch.groupStatus}), no further stop sent`,
       );
     }
     this.endStop(step);

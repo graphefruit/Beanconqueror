@@ -3345,7 +3345,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
               'PREPARATION_DEVICE.TYPE_SANREMO_YOU.SHOT_ENDED',
             );
           }
-        } else if (result !== 'not_running') {
+        } else if (result !== 'not_running' && result !== 'aborted') {
           this.uiToast.showInfoToast(
             'PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_NOT_CONFIRMED',
           );
