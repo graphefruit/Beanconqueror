@@ -11,6 +11,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  signal,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -124,6 +125,11 @@ import {
   shotEndMinimumWeight,
 } from '../../../stores/brews/shot-end-rules';
 import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
+import {
+  liveSeriesState,
+  LiveSeriesState,
+  liveSeriesTraceKey,
+} from './live-series-state';
 
 declare let Plotly;
 
@@ -255,8 +261,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private flowNCalculation = 0;
   private startingFlowTime: number = undefined;
 
-  public traces: any = {};
-  public traceReferences: any = {};
+  private traces: any = {};
+  private traceReferences: any = {};
+  private readonly seriesStateSource = signal<LiveSeriesState>(
+    liveSeriesState(undefined),
+  );
+  /** Chip state of the live series; read this instead of the drawing internals. */
+  public readonly seriesState = this.seriesStateSource.asReadonly();
 
   private graphTimerTest: any = undefined;
   private pressureThresholdWasHit = false;
@@ -266,7 +277,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private sanremoYOUFetchingInterval: any = undefined;
   private move2FetchingInterval: any = undefined;
 
-  public lastChartLayout: any = undefined;
+  private lastChartLayout: any = undefined;
   public lastChartRenderingInstance = 0;
   public graphSettings: IBrewGraphs = undefined;
 
@@ -285,9 +296,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private webhookTargetWeight = 0;
 
   @ViewChild('canvaContainer', { read: ElementRef, static: true })
-  public canvaContainer: ElementRef;
+  private canvaContainer: ElementRef;
   @ViewChild('profileDiv', { read: ElementRef, static: true })
-  public profileDiv: ElementRef;
+  private profileDiv: ElementRef;
 
   @ViewChild('graphContainer', { read: ElementRef, static: true })
   public graphContainerEl: ElementRef;
@@ -295,7 +306,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   @ViewChild('tileContainer', { read: ElementRef, static: false })
   public tileContainerEl: ElementRef;
 
-  public chartData = [];
+  private chartData = [];
 
   public textToSpeechWeightInterval: any = undefined;
 
@@ -731,66 +742,12 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   public toggleChartLines(_type: string) {
-    if (_type === 'weight') {
-      this.traces.weightTrace.visible = !this.traces.weightTrace.visible;
-      if (this.traceReferences.weightTrace) {
-        this.traceReferences.weightTrace.visible =
-          !this.traceReferences.weightTrace.visible;
-      }
-    } else if (_type === 'calc_flow') {
-      this.traces.flowPerSecondTrace.visible =
-        !this.traces.flowPerSecondTrace.visible;
-      if (this.traceReferences.flowPerSecondTrace) {
-        this.traceReferences.flowPerSecondTrace.visible =
-          !this.traceReferences.flowPerSecondTrace.visible;
-      }
-    } else if (_type === 'realtime_flow') {
-      this.traces.realtimeFlowTrace.visible =
-        !this.traces.realtimeFlowTrace.visible;
-      if (this.traceReferences.realtimeFlowTrace) {
-        this.traceReferences.realtimeFlowTrace.visible =
-          !this.traceReferences.realtimeFlowTrace.visible;
-      }
-    } else if (_type === 'pressure') {
-      this.traces.pressureTrace.visible = !this.traces.pressureTrace.visible;
-      if (this.traceReferences.pressureTrace) {
-        this.traceReferences.pressureTrace.visible =
-          !this.traceReferences.pressureTrace.visible;
-      }
-    } else if (_type === 'temperature') {
-      this.traces.temperatureTrace.visible =
-        !this.traces.temperatureTrace.visible;
-      if (this.traceReferences.temperatureTrace) {
-        this.traceReferences.temperatureTrace.visible =
-          !this.traceReferences.temperatureTrace.visible;
-      }
-    } else if (_type === 'weightSecond') {
-      this.traces.weightTraceSecond.visible =
-        !this.traces.weightTraceSecond.visible;
-      if (this.traceReferences.weightTraceSecond) {
-        this.traceReferences.weightTraceSecond.visible =
-          !this.traceReferences.weightTraceSecond.visible;
-      }
-    } else if (_type === 'realtimeFlowSecond') {
-      this.traces.realtimeFlowTraceSecond.visible =
-        !this.traces.realtimeFlowTraceSecond.visible;
-      if (this.traceReferences.realtimeFlowTraceSecond) {
-        this.traceReferences.realtimeFlowTraceSecond.visible =
-          !this.traceReferences.realtimeFlowTraceSecond.visible;
-      }
-    } else if (_type === 'waterDispensed') {
-      this.traces.waterDispensedTrace.visible =
-        !this.traces.waterDispensedTrace.visible;
-      if (this.traceReferences.waterDispensedTrace) {
-        this.traceReferences.waterDispensedTrace.visible =
-          !this.traceReferences.waterDispensedTrace.visible;
-      }
-    } else if (_type === 'waterDispensedFlowSecond') {
-      this.traces.waterDispensedFlowSecondTrace.visible =
-        !this.traces.waterDispensedFlowSecondTrace.visible;
-      if (this.traceReferences.waterDispensedFlowSecondTrace) {
-        this.traceReferences.waterDispensedFlowSecondTrace.visible =
-          !this.traceReferences.waterDispensedFlowSecondTrace.visible;
+    const traceKey = liveSeriesTraceKey(_type);
+    if (traceKey) {
+      this.traces[traceKey].visible = !this.traces[traceKey].visible;
+      if (this.traceReferences[traceKey]) {
+        this.traceReferences[traceKey].visible =
+          !this.traceReferences[traceKey].visible;
       }
     } else {
       if (this.traces.customTraces && this.traces.customTraces[_type]) {
@@ -805,6 +762,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         }
       }
     }
+    this.seriesStateSource.set(liveSeriesState(this.traces));
 
     if (
       this.brewComponent?.timer?.isTimerRunning() !== true ||
@@ -1001,6 +959,33 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType(),
     );
     this.uiCustomMetricsKeys = this.getCustomTraceKeys();
+    this.seriesStateSource.set(liveSeriesState(this.traces));
+  }
+
+  /** Redraws the live graph at the given size, e.g. after the host changed. */
+  public resize(width: number, height: number): void {
+    if (!this.lastChartLayout) {
+      return;
+    }
+    this.lastChartLayout.width = width;
+    this.lastChartLayout.height = height;
+    Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
+  }
+
+  /** Position and width of the graph inside its own container. */
+  public graphBox(): { top: number; width: number } {
+    const container: HTMLElement = this.canvaContainer.nativeElement;
+    return { top: container.offsetTop, width: container.offsetWidth };
+  }
+
+  /** Shows the live graph in another host, e.g. the maximized view. */
+  public moveGraphTo(host: HTMLElement): void {
+    host.append(this.profileDiv.nativeElement);
+  }
+
+  /** Puts the live graph back into its own container. */
+  public restoreGraph(): void {
+    this.canvaContainer.nativeElement.append(this.profileDiv.nativeElement);
   }
 
   private __setupReferenceGraphs() {
@@ -3708,6 +3693,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   public ngOnDestroy() {
     // We don't deattach the timer subscription in the deattach toscale events, else we couldn't start anymore.
     this.destroy();
+    try {
+      Plotly.purge(this.profileDiv.nativeElement);
+    } catch {
+      // Plotly never loaded, so there is nothing to free.
+    }
   }
 
   private async returnFlowProfile(_flowProfile: string): Promise<any> {
