@@ -7,8 +7,8 @@ import { seedDatabase } from './support/seed';
 import { generateDataSet, isOpenBrew } from './support/synthetic-data';
 
 /** Default line colours of the weight in the light theme. */
-const WEIGHT: Rgb = [0xcd, 0xc2, 0xac];
-const WEIGHT_REFERENCE: Rgb = [0xeb, 0xe6, 0xdd];
+const WEIGHT: Rgb = [0x85, 0x74, 0x50];
+const WEIGHT_REFERENCE: Rgb = [0xa0, 0x90, 0x7a];
 
 /**
  * The live graph of the brew form shows a stored shot when a brew is edited

@@ -141,7 +141,11 @@ describe('GraphHelperService graph picture', () => {
 
     it('draws dark when asked, in a light app, with every line readable on the ground', async () => {
       files.readInternalJSONFile.and.resolveTo(pictureFlow());
-      const colors = new Settings().graph_colors;
+      const colors =
+        TestBed.inject(UISettingsStorage).getSettings().graph_colors;
+      // Chosen by the user, too faint on the dark and on the light card.
+      colors.realtimeFlow.active.dark = '#09485D';
+      colors.weight.active.light = '#cdc2ac';
 
       await service.brewGraphImage({ flow_profile: 'b.json' }, 300, 150, DARK);
 

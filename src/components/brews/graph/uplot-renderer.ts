@@ -64,7 +64,10 @@ export interface UplotRendererOptions {
 export const MAX_PIXEL_RATIO = 2;
 const FONT = '-apple-system, Roboto, sans-serif';
 
-/** Axis text and grid of the two themes; the ground is the card colour of the app. */
+/**
+ * Axis text and grid of the two themes; the ground is the card colour of the
+ * app ($card in bq-tokens.scss), which the default line colours are tested on.
+ */
 export const CHART_PALETTE = {
   light: { text: '#444444', grid: 'rgba(0,0,0,0.1)', background: '#ffffff' },
   dark: { text: '#e0e0e0', grid: '#8e8e8e', background: '#2a211a' },
@@ -718,6 +721,7 @@ export class UplotRenderer implements BrewChartPort {
         label: def.label,
         stroke: seriesColour(def, look.dark),
         width: (def.kind === 'reference' ? 1.5 : 2) * k,
+        dash: def.kind === 'reference' ? [6 * k, 4 * k] : undefined,
         points: { show: false },
         paths: linear,
         facets: [
