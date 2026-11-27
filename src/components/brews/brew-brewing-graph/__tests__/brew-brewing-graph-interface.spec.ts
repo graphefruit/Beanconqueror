@@ -469,6 +469,10 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
     it('reports a chosen reference that cannot be read and keeps the current one', async () => {
       const current = flowWithMetric();
       component.reference_profile_raw = current;
+      const data = internals()['data'] as Brew;
+      data.reference_flow_profile.type = REFERENCE_GRAPH_TYPE.BREW;
+      data.reference_flow_profile.uuid = 'old';
+      const link = data.reference_flow_profile;
       readInternalJSONFile.and.rejectWith(new Error('not found'));
       modalResult = { brew: referenceBrew() };
 
@@ -478,8 +482,12 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
         'REFERENCE_GRAPH_NOT_READ',
       );
       expect(component.reference_profile_raw).toBe(current);
-      expect((internals()['data'] as Brew).reference_flow_profile.type).toBe(
-        REFERENCE_GRAPH_TYPE.NONE,
+      expect(data.reference_flow_profile).toBe(link);
+      expect(data.reference_flow_profile).toEqual(
+        jasmine.objectContaining({
+          type: REFERENCE_GRAPH_TYPE.BREW,
+          uuid: 'old',
+        }),
       );
     });
 
