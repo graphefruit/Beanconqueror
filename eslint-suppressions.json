@@ -791,11 +791,6 @@
       "count": 1
     }
   },
-  "src/app/info/log/log.component.ts": {
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    }
-  },
   "src/app/info/privacy/privacy.component.ts": {
     "@angular-eslint/no-empty-lifecycle-method": {
       "count": 1
