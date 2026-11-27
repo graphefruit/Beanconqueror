@@ -1364,7 +1364,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public async saveFlowProfile(_uuid: string): Promise<string> {
     try {
       const savingPath = 'brews/' + _uuid + '_flow_profile.json';
-      await this.uiFileHelper.writeInternalFileFromText(
+      await this.uiFileHelper.replaceInternalFileFromText(
         JSON.stringify(this.brewBrewingGraphEl.flow_profile_raw),
         savingPath,
       );
@@ -1381,7 +1381,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public async saveReferenceFlowProfile(_uuid: string): Promise<string> {
     try {
       const savingPath = 'importedGraph/' + _uuid + '_flow_profile.json';
-      await this.uiFileHelper.writeInternalFileFromText(
+      await this.uiFileHelper.replaceInternalFileFromText(
         JSON.stringify(this.brewBrewingGraphEl.reference_profile_raw),
         savingPath,
       );

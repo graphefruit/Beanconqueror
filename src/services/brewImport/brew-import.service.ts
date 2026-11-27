@@ -347,7 +347,7 @@ export class BrewImportService {
     if (this.hasFlowContent(result.brewFlow)) {
       addedBrew.flow_profile = addedBrew.getGraphPath();
       try {
-        await this.fileHelper.writeInternalFileFromText(
+        await this.fileHelper.replaceInternalFileFromText(
           JSON.stringify(result.brewFlow),
           addedBrew.flow_profile,
         );
