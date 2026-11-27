@@ -782,7 +782,7 @@ export class SanremoYOUDevice extends PreparationDevice {
   public sendJustAppConnectionToMachine() {
     try {
       /**Sending data to the WIFI module currently makes issues, so we disable it for now **/
-      return;
+      //return;
       if (this.isConnected()) {
         /**
          * We wait one second, because we want to give the machine some short delay, after initial connecting
@@ -805,7 +805,7 @@ export class SanremoYOUDevice extends PreparationDevice {
     _targetBrewByWeight: number,
   ) {
     /**Sending data to the WIFI module currently makes issues, so we disable it for now **/
-    return;
+    //return;
     if (Date.now() - this.sendingWeightAndFlowTimestamp < 200) {
       return;
     } else {
