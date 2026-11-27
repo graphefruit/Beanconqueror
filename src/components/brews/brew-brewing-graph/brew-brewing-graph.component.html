@@ -47,9 +47,9 @@
         <ion-chip chipButton [chipPressed]="!!series.realtimeFlowSecond?.visible" (click)="toggleChartLines('realtimeFlowSecond')" [outline]="!series.realtimeFlowSecond?.visible" class="trace-chip" [class.trace-active]="series.realtimeFlowSecond?.visible" [style.--chip-color]="series.realtimeFlowSecond?.color">{{'BREW_FLOW_WEIGHT_REALTIME_SECOND' | translate}}</ion-chip>
       }
       @for(key of uiCustomMetricsKeys; track key) {
-        @if(series[key]) {
-          <ion-chip chipButton [chipPressed]="!!series[key]?.visible" (click)="toggleChartLines(key)" [outline]="!series[key]?.visible" class="trace-chip custom-trace-chip" [class.trace-active]="series[key]?.visible" [style.--chip-color]="series[key]?.color">
-             {{ series[key]?.name }}
+        @if(series.custom[key]) {
+          <ion-chip chipButton [chipPressed]="!!series.custom[key]?.visible" (click)="toggleChartLines(key)" [outline]="!series.custom[key]?.visible" class="trace-chip custom-trace-chip" [class.trace-active]="series.custom[key]?.visible" [style.--chip-color]="series.custom[key]?.color">
+             {{ series.custom[key]?.name }}
           </ion-chip>
         }
       }

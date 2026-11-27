@@ -122,7 +122,7 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
     });
 
     it('is empty until the graph is set up', () => {
-      expect(component.seriesState()).toEqual({});
+      expect(component.seriesState()).toEqual({ custom: {} });
     });
 
     it('shows the colour, name and visibility of each series once set up', () => {
@@ -131,7 +131,7 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
       expect(component.seriesState()).toEqual({
         weight: { visible: true, color: '#aa0000', name: undefined },
         pressure: { visible: false, color: '#00aa00', name: undefined },
-        boiler: { visible: true, color: '#0a0', name: 'Boiler' },
+        custom: { boiler: { visible: true, color: '#0a0', name: 'Boiler' } },
       });
     });
 
@@ -142,9 +142,9 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
       component.toggleChartLines('pressure');
       component.toggleChartLines('boiler');
 
-      expect(component.seriesState()['weight'].visible).toBeFalse();
-      expect(component.seriesState()['pressure'].visible).toBeTrue();
-      expect(component.seriesState()['boiler'].visible).toBeFalse();
+      expect(component.seriesState().weight.visible).toBeFalse();
+      expect(component.seriesState().pressure.visible).toBeTrue();
+      expect(component.seriesState().custom['boiler'].visible).toBeFalse();
       expect(
         (
           internals()['traceReferences'] as {

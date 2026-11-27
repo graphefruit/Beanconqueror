@@ -16,6 +16,7 @@ describe('liveSeriesState', () => {
         color: undefined,
         name: undefined,
       },
+      custom: {},
     });
   });
 
@@ -28,13 +29,33 @@ describe('liveSeriesState', () => {
     });
 
     expect(state).toEqual({
-      boiler: { visible: true, color: '#333', name: 'Boiler' },
+      custom: { boiler: { visible: true, color: '#333', name: 'Boiler' } },
+    });
+  });
+
+  it('keeps a fixed series apart from a custom metric with the same key', () => {
+    const state = liveSeriesState({
+      waterDispensedTrace: { visible: true, line: { color: '#111' } },
+      customTraces: {
+        waterDispensed: { visible: false, line: { color: '#999' } },
+      },
+    });
+
+    expect(state.waterDispensed).toEqual({
+      visible: true,
+      color: '#111',
+      name: undefined,
+    });
+    expect(state.custom['waterDispensed']).toEqual({
+      visible: false,
+      color: '#999',
+      name: undefined,
     });
   });
 
   it('is empty before the graph has traces', () => {
-    expect(liveSeriesState(undefined)).toEqual({});
-    expect(liveSeriesState({})).toEqual({});
+    expect(liveSeriesState(undefined)).toEqual({ custom: {} });
+    expect(liveSeriesState({})).toEqual({ custom: {} });
   });
 });
 

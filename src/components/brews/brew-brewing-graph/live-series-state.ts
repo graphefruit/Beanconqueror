@@ -5,8 +5,13 @@ export interface LiveSeriesChip {
   readonly name: string | undefined;
 }
 
-/** Chip state per series, keyed like `toggleChartLines` (custom metrics by their key). */
-export type LiveSeriesState = Readonly<Record<string, LiveSeriesChip>>;
+/**
+ * Chip state per fixed series, keyed like `toggleChartLines`. Custom metrics
+ * sit apart, because an imported metric may share a fixed series' key.
+ */
+export type LiveSeriesState = Readonly<
+  Partial<Record<keyof typeof LIVE_SERIES_TRACES, LiveSeriesChip>>
+> & { readonly custom: Readonly<Record<string, LiveSeriesChip>> };
 
 export interface LiveTrace {
   visible?: unknown;
@@ -53,19 +58,17 @@ export function liveSeriesState(
   traces: LiveTraces | undefined,
 ): LiveSeriesState {
   const state: Record<string, LiveSeriesChip> = {};
-  if (!traces) {
-    return state;
-  }
+  const custom: Record<string, LiveSeriesChip> = {};
   for (const [key, traceKey] of Object.entries(LIVE_SERIES_TRACES)) {
-    const trace = traces[traceKey];
+    const trace = traces?.[traceKey];
     if (trace) {
       state[key] = chip(trace);
     }
   }
-  for (const [key, trace] of Object.entries(traces.customTraces ?? {})) {
+  for (const [key, trace] of Object.entries(traces?.customTraces ?? {})) {
     if (trace) {
-      state[key] = chip(trace);
+      custom[key] = chip(trace);
     }
   }
-  return state;
+  return { ...state, custom };
 }

@@ -263,7 +263,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
   private traces: any = {};
   private traceReferences: any = {};
-  private readonly seriesStateSource = signal<LiveSeriesState>({});
+  private readonly seriesStateSource = signal<LiveSeriesState>(
+    liveSeriesState(undefined),
+  );
   /** Chip state of the live series; read this instead of the drawing internals. */
   public readonly seriesState = this.seriesStateSource.asReadonly();
 
