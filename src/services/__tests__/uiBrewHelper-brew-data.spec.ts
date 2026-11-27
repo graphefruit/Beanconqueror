@@ -1267,6 +1267,29 @@ describe('UIBrewHelper brew data', () => {
       expect(trackedEvents()).toEqual([customParameters(false)]);
     });
 
+    // The only place where a whole brew reaches Matomo.
+    it('sends no location of the brew, even with every parameter shown', () => {
+      settings.manage_parameters = allParameters(true);
+      settings.track_brew_coordinates = true;
+      const brew = recordedBrew();
+      brew.coordinates = {
+        accuracy: 5,
+        altitude: 34.5,
+        altitudeAccuracy: 3,
+        heading: null,
+        latitude: 52.520008,
+        longitude: 13.404954,
+        speed: null,
+      };
+
+      helper.logUsedBrewParameters(link(brew));
+
+      const sent = JSON.stringify(trackedEvents());
+      for (const value of ['52.52', '13.40', '34.5']) {
+        expect(sent).not.toContain(value);
+      }
+    });
+
     it('leaves out devices that are not connected', () => {
       preparation.style_type = PREPARATION_STYLE_TYPE.ESPRESSO;
       settings.manage_parameters.note = true;

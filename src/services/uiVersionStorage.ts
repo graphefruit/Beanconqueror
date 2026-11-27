@@ -93,7 +93,8 @@ export class UiVersionStorage extends StorageClass {
     return this.version;
   }
 
-  public async saveVersion(version: IVersion) {
-    await super.storeOnlyEntry(version);
+  /** Resolves whether the version was stored. */
+  public saveVersion(version: IVersion): Promise<boolean> {
+    return super.storeOnlyEntry(version);
   }
 }

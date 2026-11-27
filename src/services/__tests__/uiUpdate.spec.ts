@@ -1014,7 +1014,7 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
   beforeEach(() => {
     version = new Version();
     dataState = 'data';
-    saveVersion = jasmine.createSpy('saveVersion').and.resolveTo();
+    saveVersion = jasmine.createSpy('saveVersion').and.resolveTo(true);
     calls = [];
     backedUp = true;
     backup = step('backup', () => backedUp);
@@ -1192,6 +1192,32 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
   it('reports the first update still open', async () => {
     markDone(15);
     update16Done = false;
+
+    expect(await uiUpdate.checkUpdate()).toBe('open:UPDATE_16');
+  });
+
+  it('reports an update as open while its version is not stored', async () => {
+    markDone(15);
+    saveVersion.and.resolveTo(false);
+
+    expect(await uiUpdate.checkUpdate()).toBe('open:UPDATE_16');
+  });
+
+  it('reports done once a later save stored every update', async () => {
+    markDone(15);
+    saveVersion.and.returnValues(
+      Promise.resolve(false),
+      Promise.resolve(true),
+      Promise.resolve(true),
+      Promise.resolve(true),
+    );
+
+    expect(await uiUpdate.checkUpdate()).toBe('done');
+  });
+
+  it('reports an update as open when storing its version throws', async () => {
+    markDone(15);
+    saveVersion.and.rejectWith(new Error('not stored'));
 
     expect(await uiUpdate.checkUpdate()).toBe('open:UPDATE_16');
   });

@@ -774,6 +774,12 @@ Do not move to the next stage while:
 Analytics are opt-in and send nothing without consent, so they are not a stop signal. There is
 no crash reporting SDK.
 
+With consent, a start at which a data update was open sends the Matomo event `STARTUP` /
+`DATA_UPDATE` with `done`, `backup_failed` or `open:UPDATE_n` (the first update not stored as
+done). An update that keeps failing sends its value again at every start, `done` comes once, so
+count unique visitors per value, not events. A start whose data cannot be read, or whose check
+fails before it ends, sends nothing.
+
 ### Hotfix
 
 - [ ] Branch `hotfix/<version>` from the release tag; fix, test, tag.

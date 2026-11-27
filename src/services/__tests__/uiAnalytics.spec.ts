@@ -81,9 +81,6 @@ describe('UIAnalytics bulk tracking', () => {
 const TRACKER_URL = 'https://analytics.example/matomo.php';
 const ANALYTICS_ID = 'analytics-id-0815';
 const DEVICE_ID = 'sync-device-id-4711';
-const LATITUDE = 52.520008;
-const LONGITUDE = 13.404954;
-const ALTITUDE = 34.5;
 
 /** The Matomo tracker of the app, configured as in index.html. */
 function loadMatomo(): Promise<void> {
@@ -104,7 +101,7 @@ function loadMatomo(): Promise<void> {
   });
 }
 
-describe('UIAnalytics keeps the sync device id and the brew location out of what it sends', () => {
+describe('UIAnalytics keeps the sync device id out of what it sends', () => {
   let analytics: UIAnalytics;
   let settings: Settings;
   let brew: Brew;
@@ -155,15 +152,6 @@ describe('UIAnalytics keeps the sync device id and the brew location out of what
     settings.matomo_analytics_id = ANALYTICS_ID;
     brew = new Brew();
     brew.grind_size = '12';
-    brew.coordinates = {
-      accuracy: 5,
-      altitude: ALTITUDE,
-      altitudeAccuracy: 3,
-      heading: null,
-      latitude: LATITUDE,
-      longitude: LONGITUDE,
-      speed: null,
-    };
 
     TestBed.configureTestingModule({
       providers: [
@@ -220,9 +208,6 @@ describe('UIAnalytics keeps the sync device id and the brew location out of what
     expect(_requests.length).toBeGreaterThan(0);
     for (const request of _requests) {
       expect(request).not.toContain(DEVICE_ID);
-      for (const value of [LATITUDE, LONGITUDE, ALTITUDE]) {
-        expect(request).not.toContain(String(value));
-      }
       expect(request).toContain(`uid=${ANALYTICS_ID}`);
     }
   }

@@ -69,6 +69,11 @@ export class UIUpdate {
   private readonly brewReferences = inject(BrewReferencesService);
   private readonly uiExportImportHelper = inject(UIExportImportHelper);
   private readonly shareService = inject(ShareService);
+  /**
+   * The first update of this check that is done in memory but not stored as
+   * done yet; it runs again at the next start.
+   */
+  private unsavedUpdate: string | undefined;
 
   /**
    * `_afterImport`: the stored data was just replaced by a backup chosen
@@ -103,6 +108,7 @@ export class UIUpdate {
       !this.uiVersionStorage.getVersion().checkIfDataVersionWasUpdated(_update);
     const openAtStart = hasData && DATA_UPDATES.some(isOpen);
     let backedUp = true;
+    this.unsavedUpdate = undefined;
 
     try {
       let backupPending =
@@ -171,7 +177,11 @@ export class UIUpdate {
     if (this.uiAlert.isLoadingSpinnerShown()) {
       await this.uiAlert.hideLoadingSpinner();
     }
-    return dataUpdateSignal(openAtStart, backedUp, DATA_UPDATES.find(isOpen));
+    return dataUpdateSignal(
+      openAtStart,
+      backedUp,
+      this.unsavedUpdate ?? DATA_UPDATES.find(isOpen),
+    );
   }
 
   private async __updateDataVersion(_version): Promise<boolean> {
@@ -886,7 +896,11 @@ export class UIUpdate {
     }
 
     if (somethingUpdated) {
-      await this.uiVersionStorage.saveVersion(version);
+      // Each save stores every update done so far.
+      this.unsavedUpdate ??= _dataVersion;
+      if (await this.uiVersionStorage.saveVersion(version)) {
+        this.unsavedUpdate = undefined;
+      }
     }
     return somethingUpdated;
   }
