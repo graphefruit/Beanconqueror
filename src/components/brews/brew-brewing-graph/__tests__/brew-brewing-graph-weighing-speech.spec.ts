@@ -78,7 +78,7 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
       'deattachToWeightChange',
       'deattachToFlowChange',
       'deattachToPressureChange',
-      'initializeFlowChart',
+      'redrawGraph',
       'updateChart',
     ] as const) {
       spyOn(component, method).and.stub();
