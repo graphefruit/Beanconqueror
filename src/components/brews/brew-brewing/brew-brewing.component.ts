@@ -609,16 +609,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       },
     });
 
-    // will force rerender :D
-    this.brewBrewingGraphEl.lastChartRenderingInstance = -1;
-
     await modal.present();
     this.brewBrewingGraphEl.checkChanges();
     await modal.onWillDismiss();
     this.maximizeFlowGraphIsShown = false;
-    // will force rerender :D
-    this.brewBrewingGraphEl.lastChartRenderingInstance = -1;
-    // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
     this.brewBrewingGraphEl.updateChart();
 
     await sleep(50);

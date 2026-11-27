@@ -78,7 +78,7 @@ describe('BrewBrewingGraphComponent reset while editing', () => {
     // The form no longer refers to the graph, so saving removes it.
     expect(component.data.flow_profile).toBe('');
     expect(component.flow_profile_raw).toEqual(new BrewFlow());
-    expect(initializeFlowChart).toHaveBeenCalledOnceWith(false);
+    expect(initializeFlowChart).toHaveBeenCalledOnceWith();
   });
 
   it('keeps file and reference when nothing is connected', async () => {

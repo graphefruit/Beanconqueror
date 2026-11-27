@@ -10,8 +10,8 @@ import { SanremoShotData } from '../../../../classes/preparationDevice/sanremo/s
 import { Settings } from '../../../../classes/settings/settings';
 import { SanremoYOUMode } from '../../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
-import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
 import { UIHelper } from '../../../../services/uiHelper';
+import { FlowSeriesBuffer } from '../../graph/flow-series-buffer';
 import { BrewBrewingGraphComponent } from '../brew-brewing-graph.component';
 
 interface ScaleSample {
@@ -25,7 +25,7 @@ interface ScaleSample {
 /**
  * Characterises when a running espresso shot is stopped. All readings enter
  * the way devices deliver them (scale, pressure sensor, machine polling), so
- * the graph traces and the stored flow profile hold the same values.
+ * the drawn graph and the stored flow profile hold the same values.
  */
 describe('BrewBrewingGraphComponent shot end', () => {
   const SAMPLE_MS = 100;
@@ -73,7 +73,7 @@ describe('BrewBrewingGraphComponent shot end', () => {
 
   const internals = () =>
     component as unknown as {
-      traces: Record<string, { x: unknown[]; y: number[] }>;
+      liveBuffer: FlowSeriesBuffer;
       flow_profile_raw: BrewFlow;
     };
 
@@ -127,19 +127,6 @@ describe('BrewBrewingGraphComponent shot end', () => {
         .and.returnValue(pressureDevice),
     };
 
-    const traces: Record<string, { x: unknown[]; y: number[] }> = {};
-    for (const key of [
-      'weightTrace',
-      'flowPerSecondTrace',
-      'realtimeFlowTrace',
-      'pressureTrace',
-      'temperatureTrace',
-      'waterDispensedTrace',
-      'waterDispensedFlowSecondTrace',
-    ]) {
-      traces[key] = { x: [], y: [] };
-    }
-
     component = Object.assign(
       Object.create(BrewBrewingGraphComponent.prototype),
       {
@@ -154,7 +141,7 @@ describe('BrewBrewingGraphComponent shot end', () => {
         webhookFired: false,
         webhookTargetWeight: 0,
         flow_profile_raw: new BrewFlow(),
-        traces,
+        liveBuffer: new FlowSeriesBuffer(),
         flowProfileArr: [],
         flowProfileArrObjs: [],
         flowProfileArrCalculated: [],
@@ -166,7 +153,6 @@ describe('BrewBrewingGraphComponent shot end', () => {
         platform: { is: () => isCapacitor },
         bleManager,
         uiHelper: Object.create(UIHelper.prototype),
-        graphHelper: Object.create(GraphHelperService.prototype),
         uiFileHelper: { readInternalJSONFile },
         uiAlert: jasmine.createSpyObj('UIAlert', {
           showLoadingSpinner: Promise.resolve(),
@@ -573,12 +559,7 @@ describe('BrewBrewingGraphComponent shot end', () => {
       jasmine.clock().tick(20_000);
 
       await component.readFlowProfile();
-      (
-        component as unknown as { graphHelper: GraphHelperService }
-      ).graphHelper.fillDataIntoTraces(
-        internals().flow_profile_raw,
-        internals().traces,
-      );
+      internals().liveBuffer.load(internals().flow_profile_raw);
       press(1);
 
       expect(readInternalJSONFile).toHaveBeenCalledWith(
@@ -634,7 +615,7 @@ describe('BrewBrewingGraphComponent shot end', () => {
       return realtimeFlow[realtimeFlow.length - 1].flow_value;
     };
     const lastFlowTrace = () => {
-      const { y } = internals().traces.realtimeFlowTrace;
+      const { y } = internals().liveBuffer.view('realtimeFlow');
       return y[y.length - 1];
     };
 

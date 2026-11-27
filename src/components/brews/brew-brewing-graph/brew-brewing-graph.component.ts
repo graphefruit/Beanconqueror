@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
+  effect,
   ElementRef,
   EventEmitter,
   HostListener,
@@ -52,7 +54,6 @@ import { Brew } from '../../../classes/brew/brew';
 import {
   BrewFlow,
   IBrewByWeight,
-  IBrewCustomMetric,
   IBrewPressureFlow,
   IBrewRealtimeWaterFlow,
   IBrewTemperatureFlow,
@@ -89,22 +90,17 @@ import { BREW_GRAPH_TYPE } from '../../../enums/brews/brewGraphType';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
-import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
 import { BrewFunction } from '../../../pipes/brew/brewFunction';
 import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import {
-  expandLiveAxisRangeForSample,
-  GraphHelperService,
-} from '../../../services/graphHelper/graph-helper.service';
-import { drawWhenPlotlyLoaded } from '../../../services/graphHelper/load-plotly';
-import {
   spokenBrewValues,
   spokenWeight,
 } from '../../../services/textToSpeech/speech-options';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
+import { ThemeService } from '../../../services/theme/theme.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
@@ -125,13 +121,28 @@ import {
   shotEndMinimumWeight,
 } from '../../../stores/brews/shot-end-rules';
 import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
+import { FlowSeriesBuffer } from '../graph/flow-series-buffer';
 import {
+  FIXED_SERIES_IDS,
+  fixedSeriesDef,
+  graphSettingsFor,
+  isCustomId,
+  seriesDefsFor,
+  type SeriesDef,
+  type SeriesId,
+  type Translate,
+} from '../graph/series-def';
+import { UplotRenderer } from '../graph/uplot-renderer';
+import {
+  initiallyHidden,
+  liveSeriesId,
   liveSeriesState,
-  LiveSeriesState,
-  liveSeriesTraceKey,
+  liveViewport,
+  shownReferenceDefs,
 } from './live-series-state';
 
-declare let Plotly;
+/** Height of the graph in the brew form. */
+const GRAPH_HEIGHT = 150;
 
 @Component({
   selector: 'brew-brewing-graph',
@@ -175,7 +186,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   readonly uiBrewHelper = inject(UIBrewHelper);
   private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly textToSpeech = inject(TextToSpeechService);
-  private readonly graphHelper = inject(GraphHelperService);
+  private readonly theme = inject(ThemeService);
 
   @ViewChild('smartScaleWeight', { read: ElementRef })
   public smartScaleWeightEl: ElementRef;
@@ -261,13 +272,26 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private flowNCalculation = 0;
   private startingFlowTime: number = undefined;
 
-  private traces: any = {};
-  private traceReferences: any = {};
-  private readonly seriesStateSource = signal<LiveSeriesState>(
-    liveSeriesState(undefined),
-  );
+  /**
+   * What the graph draws, from the start, so a reading before the graph is
+   * shown is kept. flow_profile_raw stays what is saved; this only mirrors it.
+   */
+  private readonly liveBuffer = new FlowSeriesBuffer();
+  private readonly referenceBuffer = new FlowSeriesBuffer();
+  private renderer: UplotRenderer | null = null;
+  private readonly seriesDefs = signal<readonly SeriesDef[]>([]);
+  private readonly hiddenSeries = signal<ReadonlySet<SeriesId>>(new Set());
   /** Chip state of the live series; read this instead of the drawing internals. */
-  public readonly seriesState = this.seriesStateSource.asReadonly();
+  public readonly seriesState = computed(() =>
+    liveSeriesState(this.seriesDefs(), this.hiddenSeries(), this.theme.dark()),
+  );
+  /** Height the graph is drawn at in its own container; a host may set another. */
+  private graphHeight = GRAPH_HEIGHT;
+  /** The host the graph was moved to, e.g. the maximized view. */
+  private graphHost: HTMLElement | null = null;
+  /** From the start of the timer until its pause; the timer itself runs a moment later. */
+  private recording = false;
+  private graphSizes: ResizeObserver | null = null;
 
   private graphTimerTest: any = undefined;
   private pressureThresholdWasHit = false;
@@ -276,10 +300,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private meticulousInterval: any = undefined;
   private sanremoYOUFetchingInterval: any = undefined;
   private move2FetchingInterval: any = undefined;
-
-  private lastChartLayout: any = undefined;
-  public lastChartRenderingInstance = 0;
-  public graphSettings: IBrewGraphs = undefined;
 
   public ignoreScaleWeight = false;
 
@@ -306,16 +326,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   @ViewChild('tileContainer', { read: ElementRef, static: false })
   public tileContainerEl: ElementRef;
 
-  private chartData = [];
-
   public textToSpeechWeightInterval: any = undefined;
 
   public graphIconColSize = 2;
 
   public espressoJustOneCup = false;
-  public graphUpdateChartTimestamp = 0;
-  public graph_threshold_frequency_update_active = false;
-  public graph_frequency_update_interval = 150;
 
   constructor() {
     addIcons({
@@ -325,6 +340,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       thermometerOutline,
       timerOutline,
       waterOutline,
+    });
+    effect(() => {
+      // Lines, axes and grid are drawn in the colours of the theme.
+      const dark = this.theme.dark();
+      this.renderer?.setDark(dark);
     });
   }
 
@@ -347,10 +367,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.data.brew_beverage_quantity = cfg.defaultTargetWeight;
     }
 
-    this.graph_threshold_frequency_update_active =
-      this.settings.graph_threshold_frequency_update;
-    this.graph_frequency_update_interval =
-      this.settings.graph_threshold_frequency_interval;
+    this.graphSizes = new ResizeObserver(([entry]) => {
+      // In another host the graph takes that host's size.
+      if (!this.graphHost) {
+        this.renderer?.resize(entry.contentRect.width, this.graphHeight);
+      }
+    });
+    this.graphSizes.observe(this.canvaContainer.nativeElement);
   }
 
   public async instance() {
@@ -742,234 +765,149 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   public toggleChartLines(_type: string) {
-    const traceKey = liveSeriesTraceKey(_type);
-    if (traceKey) {
-      this.traces[traceKey].visible = !this.traces[traceKey].visible;
-      if (this.traceReferences[traceKey]) {
-        this.traceReferences[traceKey].visible =
-          !this.traceReferences[traceKey].visible;
-      }
+    const id = liveSeriesId(_type);
+    const hidden = new Set(this.hiddenSeries());
+    const visible = hidden.has(id);
+    if (visible) {
+      hidden.delete(id);
     } else {
-      if (this.traces.customTraces && this.traces.customTraces[_type]) {
-        this.traces.customTraces[_type].visible =
-          !this.traces.customTraces[_type].visible;
-        if (
-          this.traceReferences.customTraces &&
-          this.traceReferences.customTraces[_type]
-        ) {
-          this.traceReferences.customTraces[_type].visible =
-            !this.traceReferences.customTraces[_type].visible;
-        }
-      }
+      hidden.add(id);
     }
-    this.seriesStateSource.set(liveSeriesState(this.traces));
-
-    if (
-      this.brewComponent?.timer?.isTimerRunning() !== true ||
-      this.data.brew_time === 0
-    ) {
-      if (this.canWePlot()) {
-        // Re render, else the lines would not be hidden/shown when having references graphs
-        Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
-      }
-    }
+    this.hiddenSeries.set(hidden);
+    // Hides or shows the reference line of the series too.
+    this.renderer?.setVisible(id, visible);
     this.checkChanges();
   }
 
+  /** Keys of the custom metrics of the recorded brew. */
   public getCustomTraceKeys(): string[] {
-    if (this.traces && this.traces.customTraces) {
-      return Object.keys(this.traces.customTraces);
-    }
-    return [];
+    return this.liveBuffer
+      .seriesIds()
+      .filter(isCustomId)
+      .map((id) => id.slice('custom:'.length));
   }
 
-  public initializeFlowChart(_wait = true): void {
-    let timeout = 1;
-    if (_wait === true) {
-      timeout = 1000;
+  /**
+   * Draws flow_profile_raw and reference_profile_raw anew, e.g. after a brew
+   * was loaded or imported, a reference chosen or a device connected.
+   */
+  public initializeFlowChart(): void {
+    this.graphIconColSize = this.getGraphIonColSize();
+    void this.setUIParams();
+    this.liveBuffer.load(this.flow_profile_raw);
+    this.referenceBuffer.load(this.reference_profile_raw);
+    this.setUpSeries();
+    void this.mountGraph();
+    this.updateChart();
+    if (this.brewComponent?.maximizeFlowGraphIsShown) {
+      // The maximized view sizes the graph on a resize.
+      window.dispatchEvent(new Event('resize'));
     }
-    setTimeout(() => {
-      this.graphIconColSize = this.getGraphIonColSize();
-      this.setUIParams();
-      try {
-        if (this.canWePlot()) {
-          Plotly.purge(this.profileDiv.nativeElement);
-        }
-      } catch (ex) {}
-      this.graphSettings = this.uiHelper.cloneData(this.settings.graph.FILTER);
-      if (
-        this.data.getPreparation().style_type ===
-        PREPARATION_STYLE_TYPE.ESPRESSO
-      ) {
-        this.graphSettings = this.uiHelper.cloneData(
-          this.settings.graph.ESPRESSO,
-        );
-      }
-      // Put the reference charts first, because they can then get overlayed from the other graphs
-      this.chartData = [];
-
-      this.__setupReferenceGraphs();
-      this.__setupGraphs();
-
-      this.graphHelper.fillDataIntoTraces(
-        this.reference_profile_raw,
-        this.traceReferences,
-      );
-      this.graphHelper.fillDataIntoTraces(this.flow_profile_raw, this.traces);
-
-      if (
-        this.traceReferences.weightTrace &&
-        this.traceReferences.weightTrace.x?.length > 0
-      ) {
-        this.chartData.push(this.traceReferences.weightTrace);
-        this.chartData.push(this.traceReferences.flowPerSecondTrace);
-        this.chartData.push(this.traceReferences.realtimeFlowTrace);
-      }
-
-      const pressureDevice = this.bleManager.getPressureDevice();
-      if (
-        ((pressureDevice != null &&
-          this.getPreparation().style_type ===
-            PREPARATION_STYLE_TYPE.ESPRESSO) ||
-          this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() ||
-          !this.platform.is('capacitor')) &&
-        this.traceReferences.pressureTrace &&
-        this.traceReferences.pressureTrace.x?.length > 0
-      ) {
-        this.chartData.push(this.traceReferences.pressureTrace);
-      }
-      const temperatureDevice = this.bleManager.getTemperatureDevice();
-      if (
-        (temperatureDevice != null ||
-          this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() ||
-          !this.platform.is('capacitor')) &&
-        this.traceReferences.temperatureTrace &&
-        this.traceReferences.temperatureTrace.x?.length > 0
-      ) {
-        this.chartData.push(this.traceReferences.temperatureTrace);
-      }
-      if (
-        this.traceReferences.waterDispensedTrace &&
-        this.traceReferences.waterDispensedTrace.x?.length > 0
-      ) {
-        this.chartData.push(this.traceReferences.waterDispensedTrace);
-        this.chartData.push(this.traceReferences.waterDispensedFlowSecondTrace);
-      }
-
-      this.chartData.push(this.traces.weightTrace);
-      this.chartData.push(this.traces.flowPerSecondTrace);
-      this.chartData.push(this.traces.realtimeFlowTrace);
-
-      this.lastChartLayout = this.getChartLayout();
-
-      if (this.lastChartLayout.yaxisWeightSecond) {
-        this.chartData.push(this.traces.weightTraceSecond);
-        this.chartData.push(this.traces.realtimeFlowTraceSecond);
-      }
-      if (this.lastChartLayout.yaxis4) {
-        this.chartData.push(this.traces.pressureTrace);
-      }
-
-      if (this.lastChartLayout.yaxis5) {
-        this.chartData.push(this.traces.temperatureTrace);
-      }
-
-      if (this.lastChartLayout.yaxis6) {
-        this.chartData.push(this.traces.waterDispensedTrace);
-        this.chartData.push(this.traces.waterDispensedFlowSecondTrace);
-      }
-
-      if (this.traces.customTraces) {
-        for (const [key, trace] of Object.entries(this.traces.customTraces) as [
-          string,
-          any,
-        ][]) {
-          if (
-            this.traceReferences.customTraces &&
-            this.traceReferences.customTraces[key]
-          ) {
-            if (this.traceReferences.customTraces[key].x?.length > 0) {
-              this.chartData.push(this.traceReferences.customTraces[key]);
-            }
-          }
-          if (trace) {
-            this.chartData.push(trace);
-          }
-        }
-      }
-
-      // The traces are set up already, readings arriving meanwhile go there.
-      drawWhenPlotlyLoaded(() => {
-        try {
-          if (this.canWePlot()) {
-            Plotly.newPlot(
-              this.profileDiv.nativeElement,
-              this.chartData,
-              this.lastChartLayout,
-              this.getChartConfig(),
-            );
-          }
-
-          setTimeout(() => {
-            /** On big tablets, the chart is not resized, so trigger the resize event**/
-            window.dispatchEvent(new Event('resize'));
-            //Do this after the plot.
-            if (
-              this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()
-            ) {
-              if (
-                this.brewComponent?.brewBrewingPreparationDeviceEl?.hasTargetWeightActive()
-              ) {
-                this.drawTargetWeight(
-                  this.brewComponent?.brewBrewingPreparationDeviceEl?.getTargetWeight(),
-                );
-              }
-            }
-          }, 50);
-
-          this.lastChartRenderingInstance = -1;
-          if (this.brewComponent.maximizeFlowGraphIsShown) {
-            //After we don't know how long all scale events take, dispatch the resize event, after the flow component will then grab on and stretch the canva.
-            window.dispatchEvent(new Event('resize'));
-          }
-          setTimeout(() => {
-            if (
-              this.flow_profile_raw.weight.length > 0 ||
-              this.flow_profile_raw.pressureFlow.length > 0 ||
-              this.flow_profile_raw.temperatureFlow.length > 0
-            ) {
-              this.updateChart(true);
-            }
-          }, 250);
-        } catch (ex) {
-          //
-        }
-      });
-    }, timeout);
   }
 
-  private __setupGraphs() {
-    this.traces = this.graphHelper.initializeTraces();
-    this.traces = this.graphHelper.fillTraces(
-      this.traces,
-      this.graphSettings,
-      false,
-      false,
-      this.flow_profile_raw,
-      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType(),
+  /** The series of the live graph, every fixed one and the recorded custom metrics. */
+  private setUpSeries(): void {
+    const colors = this.settings.graph_colors;
+    const translate: Translate = (key) => String(this.translate.instant(key));
+    const live: SeriesDef[] = [
+      ...FIXED_SERIES_IDS.map((id) =>
+        fixedSeriesDef(id, 'live', colors, translate),
+      ),
+      ...seriesDefsFor(this.liveBuffer, 'live', colors, translate).filter(
+        (def) => isCustomId(def.id),
+      ),
+    ];
+    const machine =
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() ===
+      true;
+    const browser = !this.platform.is('capacitor');
+    const references = shownReferenceDefs(
+      seriesDefsFor(this.referenceBuffer, 'reference', colors, translate),
+      live,
+      {
+        pressure:
+          (!!this.bleManager.getPressureDevice() &&
+            this.getPreparation().style_type ===
+              PREPARATION_STYLE_TYPE.ESPRESSO) ||
+          machine ||
+          browser,
+        temperature:
+          !!this.bleManager.getTemperatureDevice() || machine || browser,
+      },
     );
+    const defs = [...live, ...references];
+    const hidden = initiallyHidden(
+      live,
+      graphSettingsFor(this.settings.graph, this.getPreparation().style_type),
+    );
+    this.seriesDefs.set(defs);
+    this.hiddenSeries.set(hidden);
     this.uiCustomMetricsKeys = this.getCustomTraceKeys();
-    this.seriesStateSource.set(liveSeriesState(this.traces));
+    this.showSeries();
+  }
+
+  /** Hands the series, their buffers and their visibility to the renderer. */
+  private showSeries(): void {
+    const renderer = this.renderer;
+    if (!renderer) {
+      return;
+    }
+    const defs = this.seriesDefs();
+    const hidden = this.hiddenSeries();
+    renderer.setSeries(defs);
+    renderer.attach(this.liveBuffer);
+    renderer.setReferences(
+      defs.some((def) => def.kind === 'reference')
+        ? this.referenceBuffer
+        : null,
+    );
+    for (const def of defs) {
+      renderer.setVisible(def.id, !hidden.has(def.id));
+    }
+  }
+
+  /** Loads the chart library once and draws into the graph container. */
+  private async mountGraph(): Promise<void> {
+    if (this.renderer) {
+      return;
+    }
+    const renderer = new UplotRenderer([], {
+      minDrawIntervalMs: this.settings.graph_threshold_frequency_update
+        ? this.settings.graph_threshold_frequency_interval
+        : 0,
+    });
+    this.renderer = renderer;
+    const el: HTMLElement = this.profileDiv.nativeElement;
+    const host = this.graphHost ?? this.canvaContainer.nativeElement;
+    try {
+      await renderer.mount(el, {
+        width: host.offsetWidth,
+        height: this.graphHost ? host.offsetHeight : this.graphHeight,
+        dark: this.theme.dark(),
+        mode: 'live',
+        axisSettings: this.settings,
+        style: this.getPreparation().style_type,
+      });
+    } catch (error) {
+      // Without the chart library the form works on without a graph.
+      this.uiLog.error('Live graph could not be drawn', error);
+      if (this.renderer === renderer) {
+        this.renderer = null;
+      }
+      return;
+    }
+    if (this.renderer === renderer) {
+      this.showSeries();
+      this.updateChart();
+    }
   }
 
   /** Redraws the live graph at the given size, e.g. after the host changed. */
   public resize(width: number, height: number): void {
-    if (!this.lastChartLayout) {
-      return;
+    if (!this.graphHost) {
+      this.graphHeight = height;
     }
-    this.lastChartLayout.width = width;
-    this.lastChartLayout.height = height;
-    Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
+    this.renderer?.resize(width, height);
   }
 
   /** Position and width of the graph inside its own container. */
@@ -980,104 +918,14 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
   /** Shows the live graph in another host, e.g. the maximized view. */
   public moveGraphTo(host: HTMLElement): void {
+    this.graphHost = host;
     host.append(this.profileDiv.nativeElement);
   }
 
   /** Puts the live graph back into its own container. */
   public restoreGraph(): void {
+    this.graphHost = null;
     this.canvaContainer.nativeElement.append(this.profileDiv.nativeElement);
-  }
-
-  private __setupReferenceGraphs() {
-    this.traceReferences = this.graphHelper.initializeTraces();
-
-    this.traceReferences = this.graphHelper.fillTraces(
-      this.traceReferences,
-      this.graphSettings,
-      false,
-      true,
-      this.reference_profile_raw,
-      undefined,
-    );
-  }
-
-  private getChartLayout() {
-    let chartWidth = 300;
-    try {
-      chartWidth = this.canvaContainer.nativeElement.offsetWidth;
-    } catch (ex) {}
-    const chartHeight = 150;
-
-    const layout = this.graphHelper.getChartLayout(
-      this.traces,
-      this.getPreparation().style_type,
-      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected(),
-      this.brewComponent.maximizeFlowGraphIsShown,
-      false,
-      chartWidth,
-      chartHeight,
-      false,
-      this.traceReferences,
-    );
-
-    return layout;
-  }
-
-  public drawTargetWeight(_targetWeight: number) {
-    /**We disabled this function right now, sadly it does performance-harm, you can't toggle buttons anymore in a performant way**/
-    return;
-    if (
-      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
-        PreparationDeviceType.SANREMO_YOU ||
-      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
-        PreparationDeviceType.XENIA
-    ) {
-      if (!('shapes' in this.lastChartLayout)) {
-        this.lastChartLayout.shapes = [];
-      }
-      let didWeAlreadyHaveAshape = false;
-      for (const [index, shape] of this.lastChartLayout.shapes.entries()) {
-        if (shape.customId === 'targetWeightLine') {
-          if (_targetWeight > 0) {
-            //We have already one shape.
-            shape.y0 = _targetWeight;
-            shape.y1 = _targetWeight;
-          } else {
-            this.lastChartLayout.shapes.splice(index, 1);
-          }
-          didWeAlreadyHaveAshape = true;
-
-          break;
-        }
-      }
-      if (didWeAlreadyHaveAshape === false && _targetWeight > 0) {
-        this.lastChartLayout.shapes.push({
-          type: 'line',
-          x0: 0, // Anfang der x-Achse (in Bezug auf die Daten)
-          x1: 1, // Ende der x-Achse (1 = 100% der Breite)
-          y0: _targetWeight, // Y-Position der Linie (auf der Datenachse)
-          y1: _targetWeight, // gleiche Y-Position, um eine horizontale Linie zu erzeugen
-          xref: 'paper', // Verweise auf das gesamte Diagramm (nicht nur den Datenbereich)
-          yref: 'y', // Y-Achse bezieht sich auf den Datenwert
-          line: {
-            color: 'rgb(193, 160, 80)',
-            width: 2,
-            dash: 'dot', // Stil der Linie (optional)
-          },
-          customId: 'targetWeightLine',
-        });
-      }
-
-      Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
-    }
-  }
-
-  private getChartConfig() {
-    return {
-      responsive: false,
-      scrollZoom: false,
-      displayModeBar: false, // this is the line that hides the bar.
-    };
   }
 
   private async __connectPressureDevice(_firstStart: boolean) {
@@ -1389,249 +1237,22 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     });
   }
 
-  public updateChart(_force = false) {
-    /**
-     * This solution is specially for very poor performing devices.
-     */
-    if (this.graph_threshold_frequency_update_active === true) {
-      if (_force === true) {
-        //ignore this call, and just update the chart timestamp
-      } else {
-        if (
-          Date.now() - this.graphUpdateChartTimestamp <
-          this.graph_frequency_update_interval
-        ) {
-          return;
-        }
-      }
-
-      this.graphUpdateChartTimestamp = Date.now();
-    }
-    this.ngZone.runOutsideAngular(() => {
-      try {
-        const xData = [[]];
-        const yData = [[]];
-        const tracesData = [0];
-
-        Plotly.extendTraces(
-          this.profileDiv.nativeElement,
-          {
-            x: xData,
-            y: yData,
-          },
-          tracesData,
-        );
-
-        if (
-          this.brewComponent?.timer?.isTimerRunning() === true ||
-          this.data.brew_time === 0
-        ) {
-          setTimeout(() => {
-            const prepStyle = this.brewComponent.choosenPreparation.style_type;
-            let newLayoutIsNeeded = false;
-            /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
-            let newRenderingInstance = 0;
-
-            let normalScreenTime: number;
-            let fullScreenTime: number;
-            if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
-              normalScreenTime =
-                this.settings.graph_time.ESPRESSO.NORMAL_SCREEN;
-              fullScreenTime = this.settings.graph_time.ESPRESSO.FULL_SCREEN;
-            } else {
-              normalScreenTime = this.settings.graph_time.FILTER.NORMAL_SCREEN;
-              fullScreenTime = this.settings.graph_time.FILTER.FULL_SCREEN;
-            }
-
-            if (this.brewComponent.maximizeFlowGraphIsShown === true) {
-              newRenderingInstance = Math.floor(
-                this.brewComponent.getTime() / fullScreenTime,
-              );
-            } else {
-              newRenderingInstance = Math.floor(
-                this.brewComponent.getTime() / normalScreenTime,
-              );
-            }
-
-            if (
-              newRenderingInstance > this.lastChartRenderingInstance ||
-              this.lastChartRenderingInstance === -1
-            ) {
-              let subtractTime: number = this.brewComponent
-                .maximizeFlowGraphIsShown
-                ? fullScreenTime - 20
-                : normalScreenTime - 10;
-              const addTime: number = this.brewComponent
-                .maximizeFlowGraphIsShown
-                ? fullScreenTime + 10
-                : normalScreenTime + 10;
-              if (this.data.brew_time <= 10) {
-                subtractTime = 0;
-              }
-
-              const delay = moment(new Date())
-                .startOf('day')
-                .add('seconds', this.brewComponent.getTime() - subtractTime)
-                .toDate()
-                .getTime();
-              const delayedTime: number = moment(new Date())
-                .startOf('day')
-                .add('seconds', this.brewComponent.getTime() + addTime)
-                .toDate()
-                .getTime();
-              this.lastChartLayout.xaxis.range = [delay, delayedTime];
-              newLayoutIsNeeded = true;
-              this.lastChartRenderingInstance = newRenderingInstance;
-            }
-
-            if (this.traces.weightTrace.y.length > 0) {
-              const lastWeightData: number =
-                this.traces.weightTrace.y[this.traces.weightTrace.y.length - 1];
-              // add some tolerance
-              let toleranceMinus = 10;
-              if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
-                toleranceMinus = 1;
-              }
-              if (
-                lastWeightData >=
-                this.lastChartLayout.yaxis.range[1] - toleranceMinus
-              ) {
-                // Scale a bit up
-                if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
-                  this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.25;
-                } else {
-                  this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.5;
-                }
-
-                newLayoutIsNeeded = true;
-              }
-            }
-            if (this.traces.realtimeFlowTrace.y.length > 0) {
-              const lastRealtimeFlowVal: number =
-                this.traces.realtimeFlowTrace.y[
-                  this.traces.realtimeFlowTrace.y.length - 1
-                ];
-              // add some tolerance
-              let toleranceMinus = 3;
-              if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
-                toleranceMinus = 0.5;
-              }
-
-              if (
-                lastRealtimeFlowVal >=
-                this.lastChartLayout.yaxis2.range[1] - toleranceMinus
-              ) {
-                // Scale a bit up
-                if (prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO) {
-                  this.lastChartLayout.yaxis2.range[1] =
-                    lastRealtimeFlowVal * 1.25;
-                } else {
-                  this.lastChartLayout.yaxis2.range[1] =
-                    lastRealtimeFlowVal * 1.5;
-                }
-                newLayoutIsNeeded = true;
-              }
-            }
-            if (this.traces.pressureTrace?.y?.length > 0) {
-              // #783
-              const lastPressureData: number =
-                this.traces.pressureTrace.y[
-                  this.traces.pressureTrace.y.length - 1
-                ];
-              if (lastPressureData > this.lastChartLayout.yaxis4.range[1]) {
-                this.lastChartLayout.yaxis4.range[1] = Math.ceil(
-                  lastPressureData + 1,
-                );
-                newLayoutIsNeeded = true;
-              }
-            }
-
-            if (this.traces.waterDispensedTrace?.y?.length > 0) {
-              const lastData: number =
-                this.traces.waterDispensedTrace.y[
-                  this.traces.waterDispensedTrace.y.length - 1
-                ];
-              if (lastData >= this.lastChartLayout.yaxis6.range[1] - 1) {
-                this.lastChartLayout.yaxis6.range[1] = lastData * 1.25;
-                if (!this.lastChartLayout.yaxis6.visible) {
-                  this.lastChartLayout.yaxis6.visible = true;
-                }
-                newLayoutIsNeeded = true;
-              }
-            }
-
-            if (this.traces.waterDispensedFlowSecondTrace?.y?.length > 0) {
-              const lastData: number =
-                this.traces.waterDispensedFlowSecondTrace.y[
-                  this.traces.waterDispensedFlowSecondTrace.y.length - 1
-                ];
-              if (lastData >= this.lastChartLayout.yaxis2.range[1] - 0.5) {
-                this.lastChartLayout.yaxis2.range[1] = lastData * 1.25;
-                if (!this.lastChartLayout.yaxis2.visible) {
-                  this.lastChartLayout.yaxis2.visible = true;
-                }
-                newLayoutIsNeeded = true;
-              }
-            }
-
-            if (this.traces.customTraces) {
-              for (const [key, trace] of Object.entries(
-                this.traces.customTraces,
-              ) as [string, any][]) {
-                if (trace && trace.y && trace.y.length > 0) {
-                  let yAxisKey = trace.yaxis.replace('y', 'yaxis');
-                  if (this.lastChartLayout[yAxisKey]) {
-                    if (
-                      this.lastChartLayout[yAxisKey].visible === false &&
-                      trace.visible
-                    ) {
-                      this.lastChartLayout[yAxisKey].visible = true;
-                      newLayoutIsNeeded = true;
-                    }
-
-                    const lastData = trace.y[trace.y.length - 1];
-                    let toleranceMinus = 1;
-
-                    if (!this.lastChartLayout[yAxisKey].range) {
-                      this.lastChartLayout[yAxisKey].range = [0, 20];
-                      newLayoutIsNeeded = true;
-                    }
-
-                    const multiplier =
-                      prepStyle === PREPARATION_STYLE_TYPE.ESPRESSO
-                        ? 1.25
-                        : 1.5;
-                    const expandedRange = expandLiveAxisRangeForSample(
-                      this.lastChartLayout[yAxisKey].range,
-                      lastData,
-                      multiplier,
-                      toleranceMinus,
-                    );
-                    if (
-                      expandedRange !== this.lastChartLayout[yAxisKey].range
-                    ) {
-                      this.lastChartLayout[yAxisKey].range = expandedRange;
-                      newLayoutIsNeeded = true;
-                    }
-                  }
-                }
-              }
-            }
-
-            if (newLayoutIsNeeded) {
-              if (this.canWePlot()) {
-                Plotly.relayout(
-                  this.profileDiv.nativeElement,
-                  this.lastChartLayout,
-                );
-              }
-            }
-          }, 25);
-        } else {
-          // Not needed anymore
-        }
-      } catch (ex) {}
-    });
+  /**
+   * Sets the visible time range for the timer and the maximized view; the
+   * renderer draws new samples on its own, at most once per frame.
+   */
+  public updateChart(): void {
+    this.renderer?.setViewport(
+      liveViewport({
+        graphTime: this.settings.graph_time,
+        style: this.getPreparation().style_type,
+        maximized: this.brewComponent?.maximizeFlowGraphIsShown === true,
+        timerRunning:
+          this.recording ||
+          this.brewComponent?.timer?.isTimerRunning() === true,
+        hasSamples: this.liveBuffer.seriesIds().length > 0,
+      }),
+    );
   }
 
   private canWePlot(): boolean {
@@ -1643,6 +1264,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
   public async timerReset(_event) {
     this.machineStopScriptWasTriggered = false;
+    this.recording = false;
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
@@ -1737,7 +1359,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           this.data.getPreparation().style_type ===
             PREPARATION_STYLE_TYPE.ESPRESSO)
       ) {
-        this.initializeFlowChart(false);
+        this.initializeFlowChart();
       }
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
       await sleep(200);
@@ -1753,7 +1375,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.flowProfileTempAll = [];
       this.flowProfileSecondTempAll = [];
       this.flowNCalculation = 0;
-      this.initializeFlowChart(false);
+      this.initializeFlowChart();
 
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
       await sleep(200);
@@ -1762,6 +1384,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   public async timerPaused(_event) {
+    this.recording = false;
     this.speakBrewEnd();
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
@@ -1780,7 +1403,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       if (temperatureDevice) {
         this.deattachToTemperatureChange();
       }
-      this.updateChart(true);
+      this.updateChart();
     }
 
     // If machineStopScriptWasTriggered would be true, we would already hit the weight mark, and therefore the stop was fired, and we don't fire it twice.
@@ -1876,6 +1499,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
   public async timerResumed(_event) {
     this.machineStopScriptWasTriggered = false;
+    this.recording = true;
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
@@ -1889,18 +1513,15 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
       this.startingFlowTime = Date.now();
 
-      const startingDay = moment(new Date()).startOf('day');
       // IF brewtime has some seconds, we add this to the delay directly.
       if (this.data.brew_time > 0) {
-        startingDay.add('seconds', this.data.brew_time);
-
         this.startingFlowTime = moment()
           .subtract('seconds', this.data.brew_time)
           .toDate()
           .getTime();
       }
 
-      this.updateChart(true);
+      this.updateChart();
 
       if (scale) {
         this.attachToScaleWeightChange();
@@ -2002,7 +1623,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
               this.brewComponent.timer?.startTimer(false, false);
 
-              this.lastChartRenderingInstance = -1;
               this.updateChart();
               this.changeDetectorRef.detectChanges();
             } else if (shotData.statusPhase == 0 && hasShotStarted === true) {
@@ -2130,7 +1750,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
               this.brewComponent.timer?.initTimer(false);
               this.brewComponent.timer?.startTimer(false, false);
-              this.lastChartRenderingInstance = -1;
               this.updateChart();
             } else if (
               shotData.extracting === false &&
@@ -2173,11 +1792,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
                   ];
                 if (lastRealtimeFlow) {
                   lastRealtimeFlow.flow_value = flow;
-                }
-                // The drawn graph mirrors the measured series.
-                const drawnFlow = this.traces?.realtimeFlowTrace?.y;
-                if (drawnFlow?.length > 0) {
-                  drawnFlow[drawnFlow.length - 1] = flow;
+                  this.liveBuffer.replaceLast('realtimeFlow', flow);
                 }
               }
 
@@ -2363,6 +1978,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       return;
     }
     this.machineStopScriptWasTriggered = false;
+    this.recording = true;
 
     // Reset webhook flag here (not in attachToScaleWeightChange) so a
     // scale reconnect mid-shot cannot re-arm the webhook.
@@ -2395,11 +2011,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       let pressure = 0;
       let temperature = 0;
       this.startingFlowTime = Date.now();
-      const startingDay = moment(new Date()).startOf('day');
-      //IF brewtime has some seconds, we add this to the delay directly.
-      if (this.data.brew_time > 0) {
-        startingDay.add('seconds', this.data.brew_time);
-      }
 
       weight = 0;
       const genRand = (min, max, decimalPlaces) => {
@@ -2447,7 +2058,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
 
     if (scale || pressureDevice || temperatureDevice || prepDeviceConnected) {
-      this.lastChartRenderingInstance = -1;
       if (
         this.settings.bluetooth_scale_maximize_on_start_timer === true &&
         this.brewComponent.maximizeFlowGraphIsShown === false
@@ -3693,11 +3303,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   public ngOnDestroy() {
     // We don't deattach the timer subscription in the deattach toscale events, else we couldn't start anymore.
     this.destroy();
-    try {
-      Plotly.purge(this.profileDiv.nativeElement);
-    } catch {
-      // Plotly never loaded, so there is nothing to free.
-    }
+    this.graphSizes?.disconnect();
+    this.renderer?.destroy();
+    this.renderer = null;
   }
 
   private async returnFlowProfile(_flowProfile: string): Promise<any> {
@@ -3745,14 +3353,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.flowSecondTick = 0;
     }
 
-    const actualUnixTime: number = moment(new Date())
-      .startOf('day')
-      .add('milliseconds', Date.now() - this.startingFlowTime)
-      .toDate()
-      .getTime();
-
     const pressureObj = {
-      unixTime: actualUnixTime,
       actual: actual,
       old: old,
       flowTime: this.flowTime,
@@ -3766,9 +3367,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.traces.pressureTrace.x.push(new Date(pressureObj.unixTime));
-    this.traces.pressureTrace.y.push(pressureObj.actual);
-
     this.pushPressureProfile(
       pressureObj.flowTimeSecond,
       pressureObj.actual,
@@ -3776,8 +3374,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     );
 
     if (!isSmartScaleConnected) {
-      //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
-      this.updateChart();
       this.flowSecondTick++;
 
       /** We just support the end by pressure if no smart scale is connected, because the smart scale will be the master **/
@@ -3798,23 +3394,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       2,
     );
 
-    const isSmartScaleConnected = this.smartScaleConnected();
     const flowTimeSecond = (this.data.brew_time_milliseconds / 1000).toFixed(1);
 
-    const actualUnixTime: number = moment(new Date())
-      .startOf('day')
-      .add('milliseconds', Date.now() - this.startingFlowTime)
-      .toDate()
-      .getTime();
-
-    this.traces.waterDispensedTrace.x.push(new Date(actualUnixTime));
-    this.traces.waterDispensedTrace.y.push(actual);
-
     this.pushWaterDispensedProfile(flowTimeSecond, actual, _waterDispensed.old);
-
-    if (!isSmartScaleConnected) {
-      this.updateChart();
-    }
   }
 
   private __setWaterDispensedFlowSecond(_waterDispensedRealtime: any) {
@@ -3823,86 +3405,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       2,
     );
 
-    const isSmartScaleConnected = this.smartScaleConnected();
     const flowTimeSecond = (this.data.brew_time_milliseconds / 1000).toFixed(1);
-
-    const actualUnixTime: number = moment(new Date())
-      .startOf('day')
-      .add('milliseconds', Date.now() - this.startingFlowTime)
-      .toDate()
-      .getTime();
-
-    this.traces.waterDispensedFlowSecondTrace.x.push(new Date(actualUnixTime));
-    this.traces.waterDispensedFlowSecondTrace.y.push(actual);
 
     this.pushWaterDispensedFlowSecondProfile(
       flowTimeSecond,
       actual,
       _waterDispensedRealtime.old,
     );
-
-    if (!isSmartScaleConnected) {
-      this.updateChart();
-    }
-  }
-
-  private __setCustomMetric(_key: string, _value: number) {
-    const actual: number = this.uiHelper.toFixedIfNecessary(_value, 2);
-
-    const isSmartScaleConnected = this.smartScaleConnected();
-    if (this.flowTime === undefined) {
-      this.flowTime = this.brewComponent.getTime();
-      this.flowSecondTick = 0;
-    }
-    /**if (
-      this.flowTime > 0 &&
-      this.brewComponent.timer.timer.runTimer &&
-      Date.now() - this.flowTime >= this.graph_frequency_update_interval
-    ) {
-      const tileElement = document.getElementById('customMetricTile_' + _key);
-      const flowTileElement = document.getElementById('customMetricTile_Flow_' + _key);
-      let unit = this.traces.customTraces[_key]?.unit || '';
-      const text = actual + (unit ? ' ' + unit : '');
-
-      if (tileElement) {
-        tileElement.innerText = text;
-      }
-      if (flowTileElement) {
-        flowTileElement.innerText = text;
-      }
-    }**/
-
-    const actualUnixTime: number = moment(new Date())
-      .startOf('day')
-      .add('milliseconds', Date.now() - this.startingFlowTime)
-      .toDate()
-      .getTime();
-
-    if (!isSmartScaleConnected) {
-      if (this.flowTime !== this.brewComponent.getTime()) {
-        this.flowTime = this.brewComponent.getTime();
-        this.flowSecondTick = 0;
-      }
-    }
-
-    const flowTimeSecond = this.flowTime + '.' + this.flowSecondTick;
-
-    if (!this.traces.customTraces) {
-      this.traces.customTraces = {};
-    }
-    if (!this.traces.customTraces[_key]) {
-      // It should have been initialized in getChartLayout / fillTraces, but fallback:
-      this.traces.customTraces[_key] = { x: [], y: [] };
-    }
-
-    this.traces.customTraces[_key].x.push(new Date(actualUnixTime));
-    this.traces.customTraces[_key].y.push(actual);
-
-    this.pushCustomProfile(_key, flowTimeSecond, actual);
-
-    if (!isSmartScaleConnected) {
-      this.updateChart();
-    }
   }
 
   private __setTemperatureFlow(_temperature: any) {
@@ -3920,14 +3429,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.flowSecondTick = 0;
     }
 
-    const actualUnixTime: number = moment(new Date())
-      .startOf('day')
-      .add('milliseconds', Date.now() - this.startingFlowTime)
-      .toDate()
-      .getTime();
-
     const temperatureObj = {
-      unixTime: actualUnixTime,
       actual: actual,
       old: old,
       flowTime: this.flowTime,
@@ -3941,9 +3443,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.traces.temperatureTrace.x.push(new Date(temperatureObj.unixTime));
-    this.traces.temperatureTrace.y.push(temperatureObj.actual);
-
     this.pushTemperatureProfile(
       temperatureObj.flowTimeSecond,
       temperatureObj.actual,
@@ -3951,8 +3450,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     );
 
     if (!isSmartScaleConnected) {
-      //Just update the chart if a smart scale is not connected - else it has huge performance issues on android
-      this.updateChart();
       this.flowSecondTick++;
     }
 
@@ -4000,10 +3497,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       flowTime: this.flowTime,
       flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
       flowTimestamp: this.uiHelper.getActualTimeWithMilliseconds(),
-      dateUnixTime: undefined,
       notMutatedWeight: notMutatedWeight,
     };
-    flowObj.dateUnixTime = new Date(flowObj.unixTime);
 
     this.flowProfileTempAll.push(flowObj);
 
@@ -4161,9 +3656,12 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         waterFlow.brew_time = this.flowTime.toString();
         waterFlow.timestamp = flowObj.flowTimestamp;
         waterFlow.value = actualFlowValue;
-        this.traces.flowPerSecondTrace.x.push(item.dateUnixTime);
-        this.traces.flowPerSecondTrace.y.push(actualFlowValue);
         this.flow_profile_raw.waterFlow.push(waterFlow);
+        this.liveBuffer.appendSample(
+          'flowPerSecond',
+          waterFlow,
+          actualFlowValue,
+        );
       }
 
       this.__setScaleWeight(weight, wrongFlow, weightDidntChange);
@@ -4177,9 +3675,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.flowProfileArr = [];
       this.flowProfileArrObjs = [];
       this.flowProfileArrCalculated = [];
-
-      /**We exclude the chart update because its update below aswell, after we've removed the ignore anomaly function**/
-      //this.updateChart();
     }
 
     this.flowProfileArr.push(weight);
@@ -4230,10 +3725,12 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
     realtimeWaterFlow.flow_value = calcFlowValue;
 
-    this.traces.realtimeFlowTrace.x.push(flowObj.dateUnixTime);
-    this.traces.realtimeFlowTrace.y.push(realtimeWaterFlow.flow_value);
-
     this.flow_profile_raw.realtimeFlow.push(realtimeWaterFlow);
+    this.liveBuffer.appendSample(
+      'realtimeFlow',
+      realtimeWaterFlow,
+      realtimeWaterFlow.flow_value,
+    );
     /* Realtime flow End **/
 
     if (
@@ -4262,9 +3759,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.traces.weightTrace.x.push(flowObj.dateUnixTime);
-    this.traces.weightTrace.y.push(flowObj.weight);
-
     this.pushFlowProfile(
       flowObj.flowTimestamp,
       flowObj.flowTimeSecond,
@@ -4274,8 +3768,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       flowObj.oldSmoothedWeight,
       flowObj.notMutatedWeight,
     );
-
-    this.updateChart();
 
     if (this.hasEspressoShotEnded()) {
       if (
@@ -4359,10 +3851,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       flowTime: this.flowTime,
       flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
       flowTimestamp: this.uiHelper.getActualTimeWithMilliseconds(),
-      dateUnixTime: undefined,
       notMutatedWeight: notMutatedWeight,
     };
-    flowObj.dateUnixTime = new Date(flowObj.unixTime);
 
     this.flowProfileSecondTempAll.push(flowObj);
 
@@ -4413,14 +3903,13 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
     realtimeWaterFlow.flow_value = calcFlowValue;
 
-    this.traces.realtimeFlowTraceSecond.x.push(flowObj.dateUnixTime);
-    this.traces.realtimeFlowTraceSecond.y.push(realtimeWaterFlow.flow_value);
-
     this.flow_profile_raw.realtimeFlowSecond.push(realtimeWaterFlow);
+    this.liveBuffer.appendSample(
+      'realtimeFlowSecond',
+      realtimeWaterFlow,
+      realtimeWaterFlow.flow_value,
+    );
     /* Realtime flow End **/
-
-    this.traces.weightTraceSecond.x.push(flowObj.dateUnixTime);
-    this.traces.weightTraceSecond.y.push(flowObj.weight);
 
     this.pushFlowProfileSecond(
       flowObj.flowTimestamp,
@@ -4432,7 +3921,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       flowObj.notMutatedWeight,
     );
     this.__setScaleSecondWeight(weight);
-    this.updateChart();
   }
 
   private __setScaleWeight(
@@ -4580,6 +4068,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     brewFlow.old_smoothed_weight = _oldSmoothedWeight;
     brewFlow.not_mutated_weight = _notMutatedWeight;
     this.flow_profile_raw.weight.push(brewFlow);
+    this.liveBuffer.appendSample('weight', brewFlow, _actualWeight);
   }
 
   private pushFlowProfileSecond(
@@ -4600,6 +4089,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     brewFlow.old_smoothed_weight = _oldSmoothedWeight;
     brewFlow.not_mutated_weight = _notMutatedWeight;
     this.flow_profile_raw.weightSecond.push(brewFlow);
+    this.liveBuffer.appendSample('weightSecond', brewFlow, _actualWeight);
   }
 
   private pushWaterDispensedProfile(
@@ -4618,6 +4108,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     waterDispensedFlow.old = _old;
 
     this.flow_profile_raw.waterDispensed.push(waterDispensedFlow);
+    this.liveBuffer.appendSample('waterDispensed', waterDispensedFlow, _actual);
   }
 
   private pushWaterDispensedFlowSecondProfile(
@@ -4638,6 +4129,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.flow_profile_raw.waterDispensedFlowSecond.push(
       waterDispensedFlowSecond,
     );
+    this.liveBuffer.appendSample(
+      'waterDispensedFlowSecond',
+      waterDispensedFlowSecond,
+      _actual,
+    );
   }
 
   private pushPressureProfile(
@@ -4652,18 +4148,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     pressureFlow.old_pressure = _oldPressure;
 
     this.flow_profile_raw.pressureFlow.push(pressureFlow);
-  }
-
-  private pushCustomProfile(_key: string, _brewTime: string, _value: number) {
-    if (!this.flow_profile_raw.customMetrics[_key]) {
-      this.flow_profile_raw.customMetrics[_key] = [];
-    }
-    const customMetric: IBrewCustomMetric = {} as IBrewCustomMetric;
-    customMetric.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
-    customMetric.brew_time = _brewTime;
-    customMetric.value = _value;
-
-    this.flow_profile_raw.customMetrics[_key].push(customMetric);
+    this.liveBuffer.appendSample('pressure', pressureFlow, _actualPressure);
   }
 
   private pushBrewByWeight(
@@ -4708,30 +4193,19 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     temperatureFlow.old_temperature = _oldTemperature;
 
     this.flow_profile_raw.temperatureFlow.push(temperatureFlow);
+    this.liveBuffer.appendSample(
+      'temperature',
+      temperatureFlow,
+      _actualTemperature,
+    );
   }
 
+  /** Back in its own container the graph has the form's width and height. */
   @HostListener('window:resize')
   @HostListener('window:orientationchange')
   public onOrientationChange() {
-    if (
-      (this.smartScaleConnected() ||
-        this.pressureDeviceConnected() ||
-        this.temperatureDeviceConnected()) &&
-      this.baristamode === false
-    ) {
-      setTimeout(() => {
-        try {
-          this.lastChartLayout.height = 150;
-          this.lastChartLayout.width =
-            this.canvaContainer.nativeElement.offsetWidth;
-          if (this.canWePlot()) {
-            Plotly.relayout(
-              this.profileDiv.nativeElement,
-              this.lastChartLayout,
-            );
-          }
-        } catch (ex) {}
-      }, 50);
+    if (this.baristamode === false && !this.graphHost) {
+      this.resize(this.canvaContainer.nativeElement.offsetWidth, GRAPH_HEIGHT);
     }
   }
 
@@ -4800,8 +4274,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       },
     });
 
-    // will force rerender :D
-    this.lastChartRenderingInstance = -1;
     await modal.present();
     const rData = await modal.onWillDismiss();
     if (rData?.data?.brew || rData?.data?.graph) {
@@ -4822,12 +4294,12 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
       const presetGraphData: any = await this.returnFlowProfile(flowProfileRtr);
       this.reference_profile_raw = presetGraphData;
-      this.initializeFlowChart(true);
+      this.initializeFlowChart();
     } else if (rData?.data?.reset) {
       // Reset the reference flow profile
       this.data.reference_flow_profile = new ReferenceGraph();
       this.reference_profile_raw = new BrewFlow();
-      this.initializeFlowChart(true);
+      this.initializeFlowChart();
     }
   }
 

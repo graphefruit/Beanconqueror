@@ -11,11 +11,12 @@ import { Settings } from '../../../../classes/settings/settings';
 import { SanremoYOUMode } from '../../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
 import { UIHelper } from '../../../../services/uiHelper';
+import { FlowSeriesBuffer } from '../../graph/flow-series-buffer';
 import { BrewBrewingGraphComponent } from '../brew-brewing-graph.component';
 
 /**
  * The shot end rules read the measured series only: every case runs
- * without the drawn graph (traces undefined).
+ * without a drawn graph.
  */
 describe('BrewBrewingGraphComponent shot end without the drawn graph', () => {
   let component: BrewBrewingGraphComponent;
@@ -100,7 +101,7 @@ describe('BrewBrewingGraphComponent shot end without the drawn graph', () => {
         ignoreScaleWeight: true,
         espressoJustOneCup: false,
         flow_profile_raw: raw,
-        traces: undefined,
+        liveBuffer: new FlowSeriesBuffer(),
         flowProfileTempAll: [],
         uiHelper: Object.create(UIHelper.prototype),
         uiLog: jasmine.createSpyObj('UILog', ['log', 'error']),

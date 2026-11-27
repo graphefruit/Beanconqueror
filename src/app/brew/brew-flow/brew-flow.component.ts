@@ -389,18 +389,6 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
 
   public async startTimer() {
     await this.brewComponent.timerStartPressed(undefined);
-
-    // Looks funny but we need. if we would not calculate and substract 25px, the actual time graph would not be displayed :<
-    setTimeout(() => {
-      try {
-        const newHeight =
-          document.getElementById('brewFlowContainer').offsetHeight;
-        document
-          .getElementById('brewFlowContainer')
-          .getElementsByTagName('canvas')[0].style.height =
-          newHeight - 1 + 'px';
-      } catch (ex) {}
-    }, 250);
   }
 
   public pauseTimer() {

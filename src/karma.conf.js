@@ -23,6 +23,7 @@ const NEW_CODE = [
   'src/components/actions-popover/actions-popover.component.ts',
   'src/components/bean-information/bean-information.component.ts',
   'src/components/brew-share/**',
+  'src/components/brews/brew-brewing-graph/live-series-state.ts',
   'src/components/brews/graph/**',
   'src/components/graph-display-card/**',
   'src/components/segment-label/**',

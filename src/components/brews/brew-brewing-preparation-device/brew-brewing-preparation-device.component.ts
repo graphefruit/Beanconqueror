@@ -285,13 +285,8 @@ export class BrewBrewingPreparationDeviceComponent
       (
         this.data.preparationDeviceBrew?.params as SanremoYOUParams
       ).stopAtWeight = 0;
-      this.drawTargetWeight(0);
     }
     this.sanremoYOUModeSelected();
-  }
-
-  public drawTargetWeight(_weight: number) {
-    this.brewComponent.brewBrewingGraphEl?.drawTargetWeight(_weight);
   }
 
   public sanremoYOUModeSelected() {
@@ -1103,7 +1098,7 @@ export class BrewBrewingPreparationDeviceComponent
     this.brewComponent.timer?.changeEvent();
 
     this.brewComponent.brewBrewingGraphEl.flow_profile_raw = newBrewFlow;
-    this.brewComponent.brewBrewingGraphEl.initializeFlowChart(true);
+    this.brewComponent.brewBrewingGraphEl.initializeFlowChart();
 
     (
       this.data.preparationDeviceBrew.params as GaggiuinoParams
@@ -1180,7 +1175,7 @@ export class BrewBrewingPreparationDeviceComponent
     this.brewComponent.timer?.changeEvent();
 
     this.brewComponent.brewBrewingGraphEl.flow_profile_raw = newBrewFlow;
-    this.brewComponent.brewBrewingGraphEl.initializeFlowChart(true);
+    this.brewComponent.brewBrewingGraphEl.initializeFlowChart();
   }
 
   public async importShotFromGaggimate() {
@@ -1364,7 +1359,7 @@ export class BrewBrewingPreparationDeviceComponent
     this.brewComponent.timer?.changeEvent();
 
     this.brewComponent.brewBrewingGraphEl.flow_profile_raw = newBrewFlow;
-    this.brewComponent.brewBrewingGraphEl.initializeFlowChart(true);
+    this.brewComponent.brewBrewingGraphEl.initializeFlowChart();
 
     (
       this.data.preparationDeviceBrew.params as GaggimateParams
