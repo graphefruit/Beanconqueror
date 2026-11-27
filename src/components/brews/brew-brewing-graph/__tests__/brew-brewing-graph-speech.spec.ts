@@ -8,7 +8,7 @@ import { BrewBrewingGraphComponent } from '../brew-brewing-graph.component';
 describe('BrewBrewingGraphComponent spoken scale values', () => {
   let component: BrewBrewingGraphComponent;
   let textToSpeech: jasmine.SpyObj<TextToSpeechService>;
-  let scale: jasmine.SpyObj<{ setTimer: () => void }>;
+  let scale: jasmine.SpyObj<{ getWeight: () => number; setTimer: () => void }>;
 
   function create(
     settings: object,
@@ -18,7 +18,8 @@ describe('BrewBrewingGraphComponent spoken scale values', () => {
       'TextToSpeechService',
       ['speak', 'speakInFull', 'end'],
     );
-    scale = jasmine.createSpyObj('BluetoothScale', ['setTimer']);
+    scale = jasmine.createSpyObj('BluetoothScale', ['getWeight', 'setTimer']);
+    scale.getWeight.and.returnValue(18.46);
     const bleManager = jasmine.createSpyObj('CoffeeBluetoothDevicesService', {
       getScale: scale,
       getPressureDevice: null,
@@ -37,7 +38,7 @@ describe('BrewBrewingGraphComponent spoken scale values', () => {
           brew_time: 12,
           getPreparation: () => ({ style_type: styleType }),
         },
-        flowProfileTempAll: [{ weight: 18.46 }],
+        flowProfileTempAll: [],
         settings: {
           text_to_speech_active: true,
           text_to_speech_weight: true,

@@ -1122,15 +1122,15 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           await sleep(this.settings.bluetooth_command_delay);
         }
       }
-      if (
+      const brewRunning =
         this.brewComponent.timer?.isTimerRunning() === true &&
-        _firstStart === false
-      ) {
+        _firstStart === false;
+      if (brewRunning) {
         this.attachToScaleWeightChange();
       }
       // Always attach flow.
       this.attachToFlowChange();
-      this.attachToTextToSpeechBeforeStart();
+      this.attachToTextToSpeechChange();
 
       this.checkChanges();
     }
@@ -1359,7 +1359,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.deattachToTextToSpeedChange();
         // 551 - Always attach to flow change, even when reset is triggerd
         this.attachToFlowChange();
-        this.attachToTextToSpeechBeforeStart();
+        this.attachToTextToSpeechChange();
       }
 
       if (pressureDevice) {
@@ -1444,7 +1444,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         scale.setTimer(SCALE_TIMER_COMMAND.STOP);
         this.deattachToWeightChange();
         this.deattachToFlowChange();
-        this.deattachToTextToSpeedChange();
+        // The spoken weight stays attached: it is silent while paused, and a resume
+        // from the scale button does not call timerResumed.
       }
       if (pressureDevice) {
         this.deattachToPressureChange();
@@ -2563,53 +2564,36 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Says the weight the scale shows, before and during the brew. The graph value
+   * is filtered and can freeze, and a start from the scale button skips timerStarted.
+   */
   public attachToTextToSpeechChange() {
     this.deattachToTextToSpeedChange();
-    if (spokenBrewValues(this.settings).weight) {
-      this.ngZone.runOutsideAngular(() => {
-        this.textToSpeechWeightInterval = setInterval(() => {
-          if (this.flowProfileTempAll.length > 0) {
-            const actualScaleWeight =
-              this.flowProfileTempAll.slice(-1)[0].weight;
-            if (actualScaleWeight !== null && actualScaleWeight !== undefined) {
-              this.textToSpeech.speak(
-                spokenWeight(
-                  actualScaleWeight,
-                  spokenWeightDecimals(
-                    this.settings.text_to_speech_whole_grams,
-                  ),
-                  this.settings.language,
-                ),
-              );
-            }
-          }
-        }, this.settings.text_to_speech_interval_rate);
-      });
-    }
-  }
-
-  /**
-   * Before the brew the scale weight is said to weigh the beans; the brew start
-   * ends this and says the brew weight instead.
-   */
-  public attachToTextToSpeechBeforeStart() {
-    this.deattachToTextToSpeedChange();
-    const scale: BluetoothScale = this.bleManager.getScale();
-    if (!scale || !spokenBrewValues(this.settings).weight) {
+    if (
+      !this.bleManager.getScale() ||
+      !spokenBrewValues(this.settings).weight
+    ) {
       return;
     }
     this.ngZone.runOutsideAngular(() => {
       this.textToSpeechWeightInterval = setInterval(() => {
-        // A paused brew has started; its weight is not said again.
-        if (this.brewComponent.timer?.timer?.hasStarted !== true) {
-          this.textToSpeech.speak(
-            spokenWeight(
-              scale.getWeight(),
-              spokenWeightDecimals(this.settings.text_to_speech_whole_grams),
-              this.settings.language,
-            ),
-          );
+        const timer = this.brewComponent.timer;
+        const scale: BluetoothScale = this.bleManager.getScale();
+        // A paused brew is silent.
+        if (
+          !scale ||
+          (timer?.timer?.hasStarted === true && timer.isTimerRunning() !== true)
+        ) {
+          return;
         }
+        this.textToSpeech.speak(
+          spokenWeight(
+            scale.getWeight(),
+            spokenWeightDecimals(this.settings.text_to_speech_whole_grams),
+            this.settings.language,
+          ),
+        );
       }, this.settings.text_to_speech_interval_rate);
     });
   }

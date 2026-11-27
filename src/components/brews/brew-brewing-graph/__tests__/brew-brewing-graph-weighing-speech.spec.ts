@@ -7,7 +7,7 @@ import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparati
 import { TextToSpeechService } from '../../../../services/textToSpeech/text-to-speech.service';
 import { BrewBrewingGraphComponent } from '../brew-brewing-graph.component';
 
-describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
+describe('BrewBrewingGraphComponent spoken scale weight', () => {
   let component: BrewBrewingGraphComponent;
   let textToSpeech: jasmine.SpyObj<TextToSpeechService>;
   let scale: jasmine.SpyObj<{
@@ -92,7 +92,7 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
   it('says the scale weight with tenths in the app language', fakeAsync(() => {
     create();
 
-    component.attachToTextToSpeechBeforeStart();
+    component.attachToTextToSpeechChange();
     tick(500);
     scale.getWeight.and.returnValue(18.04);
     tick(500);
@@ -115,10 +115,59 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
     expect(said()).toEqual(['18,3']);
   }));
 
+  it('says the brew weight again when the scale reconnects during the brew', fakeAsync(() => {
+    create();
+    Object.assign(scale, {
+      timerEvent: new Subject(),
+      tareEvent: new Subject(),
+    });
+    spyOn(component, 'deattachToScaleEvents').and.stub();
+    spyOn(component, 'checkChanges').and.stub();
+    scale.getWeight.and.returnValue(31.46);
+    void component.timerStarted(undefined);
+    timer.hasStarted = true;
+    timer.running = true;
+
+    component.deattachToTextToSpeedChange();
+    void component['__connectSmartScale'](false);
+    tick(500);
+
+    expect(said()).toEqual(['31,5']);
+  }));
+
+  it('says the shown weight while the brew runs, also when the graph froze it', fakeAsync(() => {
+    create();
+    Object.assign(component, { flowProfileTempAll: [{ weight: 0 }] });
+    scale.getWeight.and.returnValue(60.24);
+    void component.timerStarted(undefined);
+    timer.hasStarted = true;
+    timer.running = true;
+    tick(500);
+
+    expect(said()).toEqual(['60,2']);
+  }));
+
+  it('says the weight when the scale started the timer', fakeAsync(() => {
+    create();
+    Object.assign(scale, {
+      timerEvent: new Subject(),
+      tareEvent: new Subject(),
+    });
+    spyOn(component, 'deattachToScaleEvents').and.stub();
+    spyOn(component, 'checkChanges').and.stub();
+    void component['__connectSmartScale'](false);
+    timer.hasStarted = true;
+    timer.running = true;
+    scale.getWeight.and.returnValue(42.04);
+    tick(500);
+
+    expect(said()).toEqual(['42']);
+  }));
+
   it('says whole grams when chosen', fakeAsync(() => {
     create({ language: 'en', text_to_speech_whole_grams: true });
 
-    component.attachToTextToSpeechBeforeStart();
+    component.attachToTextToSpeechChange();
     tick(500);
 
     expect(said()).toEqual(['18']);
@@ -132,7 +181,7 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
     ] as const) {
       create(settings, withScale);
 
-      component.attachToTextToSpeechBeforeStart();
+      component.attachToTextToSpeechChange();
       tick(5000);
 
       expect(textToSpeech.speak.calls.count())
@@ -145,20 +194,21 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
     create();
     timer.hasStarted = true;
 
-    component.attachToTextToSpeechBeforeStart();
+    component.attachToTextToSpeechChange();
     tick(5000);
 
     expect(textToSpeech.speak.calls.count()).toBe(0);
   }));
 
-  it('ends at the brew start, which says the brew weight with tenths too', fakeAsync(() => {
+  it('goes on through the brew start, saying the brew weight with tenths too', fakeAsync(() => {
     create();
-    component.attachToTextToSpeechBeforeStart();
+    component.attachToTextToSpeechChange();
     tick(500);
 
     void component.timerStarted(undefined);
     timer.hasStarted = true;
-    Object.assign(component, { flowProfileTempAll: [{ weight: 31.46 }] });
+    timer.running = true;
+    scale.getWeight.and.returnValue(31.46);
     tick(1000);
 
     expect(said()).toEqual(['18,3', '31,5', '31,5']);
@@ -166,17 +216,39 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
 
   it('is silent while paused and says the brew weight again on resume', fakeAsync(() => {
     create();
-    Object.assign(component, { flowProfileTempAll: [{ weight: 31.46 }] });
+    scale.getWeight.and.returnValue(31.46);
     void component.timerStarted(undefined);
     timer.hasStarted = true;
+    timer.running = true;
     tick(500);
 
+    timer.running = false;
     void component.timerPaused(undefined);
     tick(1000);
+    timer.running = true;
     void component.timerResumed(undefined);
     tick(500);
 
     expect(said()).toEqual(['31,5', '31,5']);
+  }));
+
+  it('says the weight again when the scale button resumes a paused brew', fakeAsync(() => {
+    create();
+    void component.timerStarted(undefined);
+    timer.hasStarted = true;
+    timer.running = true;
+    scale.getWeight.and.returnValue(31.46);
+    tick(500);
+
+    timer.running = false;
+    void component.timerPaused(undefined);
+    tick(1000);
+    // The scale button only restarts the timer; timerResumed is not called.
+    timer.running = true;
+    scale.getWeight.and.returnValue(40.02);
+    tick(500);
+
+    expect(said()).toEqual(['31,5', '40']);
   }));
 
   it('starts again after a reset', fakeAsync(() => {
@@ -197,7 +269,7 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
 
   it('ends with the component', fakeAsync(() => {
     create();
-    component.attachToTextToSpeechBeforeStart();
+    component.attachToTextToSpeechChange();
 
     component.ngOnDestroy();
     tick(5000);
