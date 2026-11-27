@@ -29,8 +29,16 @@ const SHARED_FILE = {
 describe('ShareService', () => {
   let service: ShareService;
   let uiAlert: jasmine.SpyObj<
-    Pick<UIAlert, 'showConfirmWithYesNoTranslation' | 'copyLogfiles'>
+    Pick<
+      UIAlert,
+      | 'showConfirmWithYesNoTranslation'
+      | 'copyLogfiles'
+      | 'withLoadingSpinner'
+      | 'isLoadingSpinnerShown'
+    >
   >;
+  /** Whether the loading spinner is shown, as the work in it sees it. */
+  let spinnerShown: boolean;
   let fileHelper: jasmine.SpyObj<
     Pick<UIFileHelper, 'clearShareDirectory' | 'writeFileForSharing'>
   >;
@@ -48,9 +56,24 @@ describe('ShareService', () => {
     uiAlert = jasmine.createSpyObj('UIAlert', [
       'showConfirmWithYesNoTranslation',
       'copyLogfiles',
+      'withLoadingSpinner',
+      'isLoadingSpinnerShown',
     ]);
     uiAlert.showConfirmWithYesNoTranslation.and.resolveTo(answer);
-    uiAlert.copyLogfiles.and.resolveTo();
+    uiAlert.isLoadingSpinnerShown.and.returnValue(false);
+    spinnerShown = false;
+    uiAlert.copyLogfiles.and.callFake(() => {
+      expect(spinnerShown).withContext('spinner over the log text').toBe(false);
+      return Promise.resolve();
+    });
+    uiAlert.withLoadingSpinner.and.callFake(async (_action) => {
+      spinnerShown = true;
+      try {
+        return await _action();
+      } finally {
+        spinnerShown = false;
+      }
+    });
     fileHelper = jasmine.createSpyObj('UIFileHelper', [
       'clearShareDirectory',
       'writeFileForSharing',
@@ -165,6 +188,40 @@ describe('ShareService', () => {
       expect(uiAlert.copyLogfiles).not.toHaveBeenCalled();
     });
 
+    it('shows and announces a loading message from the answer until the share dialog closes', async () => {
+      setup('YES');
+      uiLog.writeToFile.and.callFake(() => {
+        expect(spinnerShown).toBe(true);
+        return Promise.resolve();
+      });
+      share.and.callFake(() => {
+        expect(spinnerShown).toBe(true);
+        return Promise.resolve({});
+      });
+
+      await service.shareLogs();
+
+      expect(uiAlert.withLoadingSpinner).toHaveBeenCalledOnceWith(
+        jasmine.any(Function),
+        'SHARE_LOGS_PREPARING',
+      );
+      expect(uiAlert.showConfirmWithYesNoTranslation).toHaveBeenCalledBefore(
+        uiAlert.withLoadingSpinner,
+      );
+      expect(share).toHaveBeenCalledTimes(1);
+      expect(spinnerShown).toBe(false);
+    });
+
+    it('keeps a loading dialog that offers to share the logs while its step hangs', async () => {
+      setup('YES');
+      uiAlert.isLoadingSpinnerShown.and.returnValue(true);
+
+      await service.shareLogs();
+
+      expect(uiAlert.withLoadingSpinner).not.toHaveBeenCalled();
+      expect(share).toHaveBeenCalledTimes(1);
+    });
+
     it('fetches the native log on iOS before reading the files', async () => {
       setup('YES');
       getPlatform.and.returnValue('ios');
@@ -277,6 +334,7 @@ describe('ShareService', () => {
       );
       expect(fileHelper.writeFileForSharing).not.toHaveBeenCalled();
       expect(share).not.toHaveBeenCalled();
+      expect(uiAlert.withLoadingSpinner).not.toHaveBeenCalled();
     });
 
     it('shares the log as a JSON file after the user agreed and keeps the file for the receiving app', async () => {

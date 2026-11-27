@@ -6,15 +6,13 @@
 </ion-header>
 <ion-content>
   <ion-card class="ion-padding">
-    @for (log of logs; track log) {
-      <ion-row class="ion-padding-bottom">
-        <ion-col size="12">
-              <ion-text [color]="levelToColor(log.level)">
-                {{formatLogEntry(log)}}
-            </ion-text>
-        </ion-col>
-      </ion-row>
+    <ol>
+      @for (line of lines(); track $index) {
+        <li [style.color]="line.color">{{ line.text }}</li>
+      }
+    </ol>
+    @if (hasEarlier()) {
+      <ion-button expand="block" fill="outline" (click)="showEarlier()">{{ 'LOG_SHOW_EARLIER' | translate }}</ion-button>
     }
-
   </ion-card>
 </ion-content>
