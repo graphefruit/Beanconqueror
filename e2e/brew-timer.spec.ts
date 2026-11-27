@@ -12,10 +12,13 @@ import {
   openBrewParameterPage,
   saveBrew,
   setParameter,
+  showBrewsTab,
   timeParameterHint,
   topDialog,
 } from './support/brew-form';
 import { completeFirstRunWithBrew } from './support/first-brew';
+import { openFromProfile } from './support/profile';
+import { readStoredValue } from './support/stored-values';
 
 /**
  * Characterization of the brew timer without a real Bluetooth device: start,
@@ -45,14 +48,27 @@ async function tick(page: Page, seconds: number): Promise<void> {
   await page.clock.fastForward(seconds * 1000);
 }
 
-/** Expects mm:ss of at least `seconds` and at most two seconds of drift more. */
-async function expectAbout(field: Locator, seconds: number): Promise<string> {
+/** mm:ss of at least `seconds` and at most two seconds of drift more. */
+function about(seconds: number): RegExp {
   const allowed = [seconds, seconds + 1, seconds + 2].map(
     (s) =>
       `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`,
   );
-  await expect(field).toHaveValue(new RegExp(`^(${allowed.join('|')})$`));
+  return new RegExp(`^(${allowed.join('|')})$`);
+}
+
+async function expectAbout(field: Locator, seconds: number): Promise<string> {
+  await expect(field).toHaveValue(about(seconds));
   return field.inputValue();
+}
+
+/** The same for the maximized graph's tiles, which show the time as text. */
+async function expectAboutText(
+  tile: Locator,
+  seconds: number,
+): Promise<string> {
+  await expect(tile).toHaveText(about(seconds));
+  return (await tile.textContent()) ?? '';
 }
 
 function seconds(mmss: string): number {
@@ -61,6 +77,33 @@ function seconds(mmss: string): number {
 }
 
 const timeField = (page: Page) => brewField(page, 'Time');
+
+interface StoredBrew {
+  brew_time: number;
+  brew_time_milliseconds: number;
+  flow_profile: string;
+}
+
+/** The brews in the database, newest last. */
+async function storedBrews(page: Page): Promise<StoredBrew[]> {
+  return (await readStoredValue<StoredBrew[]>(page, 'BREWS')) ?? [];
+}
+
+/** The maximized flow graph and the value tiles above it. */
+function maximizedGraph(page: Page) {
+  const view = page.locator('brew-flow');
+  // Each tile names its value with a visually hidden label.
+  const tile = (label: string) =>
+    view
+      .locator('ion-card-header')
+      .filter({ has: page.getByText(label, { exact: true }) });
+  return {
+    view,
+    time: tile('Time').locator('.information-tile-no-overflow'),
+    weight: tile('Weight').locator('div').first(),
+    temperature: tile('Temperature').locator('div').first(),
+  };
+}
 
 /** Starts the timer and waits until it runs before time is moved. */
 async function startTimer(page: Page): Promise<void> {
@@ -152,6 +195,124 @@ test('an espresso method marks the first drip and shows the brew time after it',
   );
 });
 
+test('editing a brew keeps its time and asks for a reset before the timer starts again', async ({
+  page,
+}) => {
+  await openAddBrew(page);
+  await startTimer(page);
+  await tick(page, 25);
+  await page.getByRole('button', { name: 'Pause timer' }).click();
+  const saved = await expectAbout(timeField(page), 25);
+  await saveBrew(page);
+  await expect
+    .poll(async () => (await storedBrews(page)).map((brew) => brew.brew_time))
+    .toContain(seconds(saved));
+
+  await brewAction(page, 'Edit');
+  await expect(timeField(page)).toHaveValue(saved);
+  // With a device connected (the browser build pretends one is), a stored
+  // time is not continued: the timer has to start from zero.
+  await page.getByRole('button', { name: 'Start timer' }).click();
+  const question = page.getByRole('alertdialog', { name: 'Reset timer!' });
+  await expect(question).toBeVisible();
+  await question.getByRole('button', { name: 'Ok' }).click();
+  await expect(question).toHaveCount(0);
+  await expect(timeField(page)).toHaveValue(saved);
+
+  await page.getByRole('button', { name: 'Reset timer' }).click();
+  await expect(timeField(page)).toHaveValue('00:00');
+  await startTimer(page);
+  await tick(page, 5);
+  await page.getByRole('button', { name: 'Pause timer' }).click();
+  await expect(
+    page.getByRole('button', { name: 'Resume timer' }),
+  ).toBeVisible();
+  const total = await expectAbout(timeField(page), 5);
+  await saveBrew(page);
+
+  await expect
+    .poll(async () => (await storedBrews(page)).map((brew) => brew.brew_time))
+    .toContain(seconds(total));
+  expect((await storedBrews(page)).map((brew) => brew.brew_time)).not.toContain(
+    seconds(saved),
+  );
+});
+
+test('in millisecond mode the timer shows, saves and edits milliseconds', async ({
+  page,
+}) => {
+  await openFromProfile(page, 'Settings');
+  const milliseconds = page.getByRole('checkbox', { name: /^Milliseconds\?/ });
+  await milliseconds.click();
+  await expect(milliseconds).toBeChecked();
+  await showBrewsTab(page);
+
+  await openAddBrew(page);
+  await startTimer(page);
+  await tick(page, 5);
+  // Three decimal places unless the settings ask for fewer.
+  await expect(timeField(page)).toHaveValue(/^00:0[5-7]\.\d{3}$/);
+  await page.getByRole('button', { name: 'Pause timer' }).click();
+  await expect(
+    page.getByRole('button', { name: 'Resume timer' }),
+  ).toBeVisible();
+  const shown = await timeField(page).inputValue();
+  await tick(page, 2);
+  await expect(timeField(page)).toHaveValue(shown);
+  await saveBrew(page);
+
+  const [, secondsShown, millisShown] = /^00:(\d\d)\.(\d{3})$/.exec(shown)!;
+  await expect
+    .poll(async () =>
+      (await storedBrews(page)).map((brew) => [
+        brew.brew_time,
+        brew.brew_time_milliseconds,
+      ]),
+    )
+    .toContainEqual([Number(secondsShown), Number(millisShown)]);
+
+  await brewAction(page, 'Edit');
+  await expect(timeField(page)).toHaveValue(shown);
+});
+
+test('the maximized graph starts and pauses the brew while its values run', async ({
+  page,
+}) => {
+  await openAddBrew(page);
+  await page.getByRole('button', { name: 'Maximize flow graph' }).click();
+  const graph = maximizedGraph(page);
+  await expect(
+    page.getByRole('button', { name: 'Close flow graph' }),
+  ).toBeVisible();
+  await expect(graph.weight).toHaveText('? g');
+
+  // The page behind the maximized graph is hidden, so these are its buttons.
+  await startTimer(page);
+  await tick(page, 5);
+  await expectAboutText(graph.time, 5);
+  // The browser build has no scale weight, but its simulated sensors send a
+  // new temperature every 100 ms while the brew runs.
+  await expect(graph.weight).toHaveText('0');
+  await expect(graph.temperature).toHaveText(/^\d+$/);
+  const running = await graph.temperature.textContent();
+  await expect(graph.temperature).not.toHaveText(running!);
+
+  await page.getByRole('button', { name: 'Pause timer' }).click();
+  await expect(
+    page.getByRole('button', { name: 'Resume timer' }),
+  ).toBeVisible();
+  const pausedTime = await expectAboutText(graph.time, 5);
+  const pausedTemperature = await graph.temperature.textContent();
+  await tick(page, 5);
+  await expect(graph.time).toHaveText(pausedTime);
+  await expect(graph.temperature).toHaveText(pausedTemperature!);
+
+  await page.getByRole('button', { name: 'Close flow graph' }).click();
+  await expect(graph.view).toHaveCount(0);
+  // The form shows the time the maximized graph paused at.
+  await expect(timeField(page)).toHaveValue(pausedTime);
+});
+
 test.describe('without the brew time parameter', () => {
   test.beforeEach(async ({ page }) => {
     await openBrewParameterPage(page, 'Manage parameters');
@@ -180,6 +341,34 @@ test.describe('without the brew time parameter', () => {
     await expect(maximize).toBeVisible();
     // Asked once per brew.
     await expect(timeParameterHint(page)).toHaveCount(0);
+  });
+
+  // Whether a brew without the timer records against time 0 or throws was an
+  // open question: nothing starts the recording without the timer.
+  test('nothing is recorded and the brew is saved without time and flow', async ({
+    page,
+  }) => {
+    await openAddBrewWithoutTime(page, 'Not now');
+    await page.getByRole('button', { name: 'Maximize flow graph' }).click();
+    const graph = maximizedGraph(page);
+    await expect(graph.weight).toHaveText('? g');
+    await expect(graph.temperature).toHaveText('? °C');
+    await expect(
+      page.getByRole('button', { name: 'Start listening to scale' }),
+    ).toHaveCount(0);
+    await tick(page, 10);
+    await expect(graph.weight).toHaveText('? g');
+    await expect(graph.temperature).toHaveText('? °C');
+    await page.getByRole('button', { name: 'Close flow graph' }).click();
+    await expect(graph.view).toHaveCount(0);
+    await expect(
+      page.getByRole('button', { name: 'Download flow profile' }),
+    ).toHaveCount(0);
+
+    await saveBrew(page);
+    await expect.poll(async () => (await storedBrews(page)).length).toBe(2);
+    const [, saved] = await storedBrews(page);
+    expect(saved).toMatchObject({ brew_time: 0, flow_profile: '' });
   });
 
   test('a connected scale offers to show the brew time', async ({ page }) => {
