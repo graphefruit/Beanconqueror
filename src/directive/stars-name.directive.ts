@@ -33,9 +33,14 @@ export class StarsNameDirective {
           max: stars.maxStars,
         }),
       );
-    // The stars of a card are not checked again on their own when only the
-    // language changed.
+    // The stars are not checked again on their own when only the language
+    // or, set from code, the rating changed.
     const changes = inject(ChangeDetectorRef);
+    const setRating = stars.setRating.bind(stars);
+    stars.setRating = (rating: number) => {
+      setRating(rating);
+      changes.markForCheck();
+    };
     translate.onLangChange
       .pipe(takeUntilDestroyed())
       .subscribe(() => changes.markForCheck());

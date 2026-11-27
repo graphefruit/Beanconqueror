@@ -2,8 +2,8 @@
 include ':capacitor-android'
 project(':capacitor-android').projectDir = new File('../node_modules/.pnpm/@capacitor+android@8.6.2_@capacitor+core@8.6.2/node_modules/@capacitor/android/capacitor')
 
-include ':aparajita-capacitor-dark-mode'
-project(':aparajita-capacitor-dark-mode').projectDir = new File('../node_modules/.pnpm/@aparajita+capacitor-dark-mode@6.0.0/node_modules/@aparajita/capacitor-dark-mode/android')
+include ':beanconqueror-text-recognition'
+project(':beanconqueror-text-recognition').projectDir = new File('../capacitor-plugins/text-recognition/android')
 
 include ':capacitor-community-keep-awake'
 project(':capacitor-community-keep-awake').projectDir = new File('../node_modules/.pnpm/@capacitor-community+keep-awake@8.0.1_@capacitor+core@8.6.2/node_modules/@capacitor-community/keep-awake/android')
@@ -64,6 +64,3 @@ project(':capgo-camera-preview').projectDir = new File('../node_modules/.pnpm/@c
 
 include ':capgo-capacitor-llm'
 project(':capgo-capacitor-llm').projectDir = new File('../node_modules/.pnpm/@capgo+capacitor-llm@8.0.19_@capacitor+core@8.6.2_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm/android')
-
-include ':pantrist-capacitor-plugin-ml-kit-text-recognition'
-project(':pantrist-capacitor-plugin-ml-kit-text-recognition').projectDir = new File('../node_modules/.pnpm/@pantrist+capacitor-plugin-ml-kit-text-recognition@8.1.1_@capacitor+core@8.6.2/node_modules/@pantrist/capacitor-plugin-ml-kit-text-recognition/android')

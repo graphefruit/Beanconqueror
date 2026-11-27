@@ -41,7 +41,6 @@ import {
 } from 'ionicons/icons';
 
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import * as htmlToImage from 'html-to-image';
 import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 
 import { Bean } from '../../classes/bean/bean';
@@ -73,7 +72,6 @@ import {
   buildBrewImportProvenanceChip,
 } from '../../services/brewImport/brew-import-provenance';
 import { BrewTrackingService } from '../../services/brewTracking/brew-tracking.service';
-import { ShareService } from '../../services/shareService/share-service.service';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
@@ -93,6 +91,7 @@ import {
   PopoverAction,
 } from '../actions-popover/actions-popover.component';
 import { AsyncImageComponent } from '../async-image/async-image.component';
+import { BrewShareComponent } from '../brew-share/brew-share.component';
 import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
 
 declare let window;
@@ -147,7 +146,6 @@ export class BrewInformationComponent implements OnInit, OnChanges {
   private readonly uiImage = inject(UIImage);
   private readonly modalCtrl = inject(ModalController);
   readonly uiHelper = inject(UIHelper);
-  private readonly shareService = inject(ShareService);
   private readonly translate = inject(TranslateService);
   private readonly brewTracking = inject(BrewTrackingService);
   private readonly uiHealthKit = inject(UIHealthKit);
@@ -170,9 +168,6 @@ export class BrewInformationComponent implements OnInit, OnChanges {
   @Input() public brew: Brew;
   public _collapsed: boolean = undefined;
   @Input() public layout = 'brew';
-  @ViewChild('card', { read: ElementRef })
-  public cardEl: ElementRef;
-
   public slideOpts = {
     allowTouchMove: false,
     speed: 400,
@@ -390,13 +385,11 @@ export class BrewInformationComponent implements OnInit, OnChanges {
         translationKey: 'POPOVER_BREWS_OPTION_CUPPING',
         icon: 'beanconqueror-cupping',
       }),
-      /* Disabled because it's not easy to render shadow DOM components to an image
       popoverAction({
         role: BREW_ACTION.SHARE,
-        translationKey: 'SHARE',
+        translationKey: 'SHARE_CARD.MENU',
         icon: 'share-social-outline',
       }),
-      */
       popoverAction({
         role: BREW_ACTION.SHOW_MAP_COORDINATES,
         translationKey: 'POPOVER_BREWS_OPTION_MAP_COORDINATES',
@@ -716,51 +709,7 @@ export class BrewInformationComponent implements OnInit, OnChanges {
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.SHARE,
     );
-    await this.uiAlert.showLoadingSpinner();
-    if (this.platform.is('ios')) {
-      htmlToImage
-        .toPng(this.cardEl.nativeElement)
-        .then((_dataURL) => {
-          // On iOS we need to do this a second time, because the rendering doesn't render everything (strange thing)
-          setTimeout(() => {
-            htmlToImage
-              .toPng(this.cardEl.nativeElement)
-              .then(async (_dataURLSecond) => {
-                await this.uiAlert.hideLoadingSpinner();
-                setTimeout(() => {
-                  if (
-                    _dataURLSecond.length > 20 &&
-                    _dataURLSecond.length > _dataURL.length
-                  ) {
-                    this.shareService.shareImage(_dataURLSecond);
-                  } else {
-                    this.shareService.shareImage(_dataURL);
-                  }
-                }, 50);
-              })
-              .catch(async (error) => {
-                await this.uiAlert.hideLoadingSpinner();
-              });
-          }, 500);
-        })
-        .catch(async (error) => {
-          await this.uiAlert.hideLoadingSpinner();
-        });
-    } else {
-      htmlToImage
-        .toPng(this.cardEl.nativeElement)
-        .then(async (_dataURL) => {
-          await this.uiAlert.hideLoadingSpinner();
-          setTimeout(() => {
-            this.shareService.shareImage(_dataURL);
-          }, 50);
-        })
-        .catch(async (error) => {
-          await this.uiAlert.hideLoadingSpinner();
-        });
-    }
-
-    //await this.shareService.shareBrew(this.brew);
+    await BrewShareComponent.open(this.modalCtrl, this.brew);
   }
 
   public getCuppedBrewFlavors(): string[] {

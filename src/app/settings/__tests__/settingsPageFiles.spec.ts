@@ -8,13 +8,16 @@ import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
 import { FilesystemWeb } from '@capacitor/filesystem/dist/esm/web';
 import { ShareWeb } from '@capacitor/share/dist/esm/web';
 import { FilePickerWeb } from '@capawesome/capacitor-file-picker/dist/esm/web';
+import { TextReader, Uint8ArrayWriter, ZipWriter } from '@zip.js/zip.js';
 
 import { Settings } from '../../../classes/settings/settings';
 import { StorageClass } from '../../../classes/storageClass';
+import { NotABackupError } from '../../../services/backup-format-rules';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewStorage';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIExportImportHelper } from '../../../services/uiExportImportHelper';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import { UIGreenBeanStorage } from '../../../services/uiGreenBeanStorage';
@@ -567,6 +570,21 @@ describe('SettingsPage files of an export and an import', () => {
       ).toBe('299');
       expect(log.error).not.toHaveBeenCalled();
     });
+
+    it('takes a photo stored under Cloud/ from the path without Cloud/, and keeps the stored path in the export', async () => {
+      database.values.set('BEANS', [
+        entry('bean-cloud', { attachments: ['Cloud/x.jpg'] }),
+      ]);
+      await storages.beans.reinitializeStorage();
+      await write('x.jpg', 'the photo', Directory.Data);
+
+      await page.export();
+
+      expect(await read(`${EXPORT_DIR}/Cloud/x.jpg`, Directory.External)).toBe(
+        'the photo',
+      );
+      expect(log.error).not.toHaveBeenCalled();
+    });
   });
 
   describe('exporting on iOS', () => {
@@ -1027,8 +1045,39 @@ describe('SettingsPage files of an export and an import', () => {
       expect(settings.bean_rating_steps).toBe(0.1);
     });
 
+    for (const [name, content, problem] of [
+      ['an empty file', {}, 'The file holds no list SETTINGS, BEANS, BREWS'],
+      [
+        'the file of another app',
+        { recipes: [{ name: 'V60' }], version: 3 },
+        'The file holds no list SETTINGS, BEANS, BREWS',
+      ],
+      ['a list', [{ SETTINGS: [{}] }], 'The file holds no JSON object'],
+    ] as [string, unknown, string][]) {
+      it(`refuses ${name} as no backup before anything is asked or imported`, async () => {
+        await open(['capacitor', 'android']);
+        const { uiAlert } = page as unknown as {
+          uiAlert: { showConfirm: () => Promise<string> };
+        };
+        const confirm = spyOn(uiAlert, 'showConfirm').and.resolveTo('YES');
+
+        await page.__importJSON(content, IMPORT_DIR, 'Beanconqueror.zip');
+
+        expect(confirm).not.toHaveBeenCalled();
+        expect(importBackup).not.toHaveBeenCalled();
+        expect(showMessage).not.toHaveBeenCalled();
+        expect(hideLoadingSpinner).toHaveBeenCalled();
+        expect(showMessageWithDetails).toHaveBeenCalledOnceWith(
+          'IMPORT_NOT_A_BACKUP',
+          problem,
+        );
+        expect(await filesIn('', Directory.Data)).toEqual([]);
+        expect(database.set).not.toHaveBeenCalled();
+      });
+    }
+
+    // Taken for a backup, but without the settings it cannot be imported.
     for (const [name, content] of [
-      ['an empty file', {}],
       ['a file without settings', { BREWS: [{}], BEANS: [{}] }],
       ['a file with an empty list of settings', { SETTINGS: [] }],
     ] as [string, object][]) {
@@ -1067,7 +1116,7 @@ describe('SettingsPage files of an export and an import', () => {
       );
     });
 
-    it('known gap: reads a JSON file and then imports nothing, without a word', async () => {
+    it('imports a JSON file of an older export as a backup', async () => {
       await android();
       await write('picked/Beanconqueror.json', '{"BREWS":[]}', Directory.Cache);
       const importJSON = spyOn(page, '__importJSON').and.resolveTo();
@@ -1079,9 +1128,202 @@ describe('SettingsPage files of an export and an import', () => {
         'Beanconqueror.json',
       );
 
-      expect(importJSON).not.toHaveBeenCalled();
+      expect(importJSON.calls.allArgs()).toEqual([
+        [{ BREWS: [] }, '/CACHE/picked', 'Beanconqueror.json'],
+      ]);
+    });
+
+    it('refuses a JSON file of another app with the reason, without writing', async () => {
+      await android();
+      await write(
+        'picked/brews.json',
+        '{"shots":[{"dose":18}]}',
+        Directory.Cache,
+      );
+
+      await page.doImport(
+        'json',
+        '/CACHE/picked/brews.json',
+        '/CACHE/picked',
+        'brews.json',
+      );
+
       expect(showMessage).not.toHaveBeenCalled();
+      expect(showMessageWithDetails).toHaveBeenCalledOnceWith(
+        'IMPORT_NOT_A_BACKUP',
+        'The file holds no list SETTINGS, BEANS, BREWS',
+      );
+      expect(log.error).toHaveBeenCalledOnceWith(
+        'Import - refused: The file holds no list SETTINGS, BEANS, BREWS',
+      );
       expect(database.set).not.toHaveBeenCalled();
+    });
+
+    it('refuses a zip without settings, beans and brews with the reason, without writing', async () => {
+      await android();
+      await write('picked/other.zip', 'zip of another app', Directory.Cache);
+      Object.assign(page, {
+        uiExportImportHelper: {
+          getJSONFromZIPArrayBufferContent: () =>
+            Promise.resolve({ PHOTOS: [] }),
+        },
+      });
+
+      await page.doImport(
+        'zip',
+        '/CACHE/picked/other.zip',
+        '/CACHE/picked',
+        'other.zip',
+      );
+
+      expect(showMessage).not.toHaveBeenCalled();
+      expect(showMessageWithDetails).toHaveBeenCalledOnceWith(
+        'IMPORT_NOT_A_BACKUP',
+        'The file holds no list SETTINGS, BEANS, BREWS',
+      );
+      expect(database.set).not.toHaveBeenCalled();
+    });
+
+    /** Writes a real zip with these files to the picked folder. */
+    async function writeZip(
+      _name: string,
+      _files: Record<string, string>,
+    ): Promise<void> {
+      const writer = new ZipWriter(new Uint8ArrayWriter());
+      for (const [name, text] of Object.entries(_files)) {
+        await writer.add(name, new TextReader(text));
+      }
+      const bytes = await writer.close();
+      await Filesystem.writeFile({
+        path: `picked/${_name}`,
+        directory: Directory.Cache,
+        data: btoa(String.fromCharCode(...bytes)),
+        recursive: true,
+      });
+    }
+
+    /** The page reads zips with the helper of the app, not a stand-in. */
+    function readZipsForReal(): void {
+      Object.assign(page, {
+        uiExportImportHelper: Object.assign(
+          Object.create(UIExportImportHelper.prototype) as object,
+          { uiLog: log },
+        ),
+      });
+    }
+
+    for (const [name, files, problem] of [
+      [
+        'a zip of another app',
+        { 'recipes.json': '{"recipes":[]}' },
+        'The zip file holds no Beanconqueror.json',
+      ],
+      ['an empty zip', {}, 'The zip file is empty'],
+    ] as [string, Record<string, string>, string][]) {
+      it(`refuses ${name} as no backup, without writing`, async () => {
+        await android();
+        readZipsForReal();
+        await writeZip('other.zip', files);
+
+        await page.doImport(
+          'zip',
+          '/CACHE/picked/other.zip',
+          '/CACHE/picked',
+          'other.zip',
+        );
+
+        expect(showMessage).not.toHaveBeenCalled();
+        expect(showMessageWithDetails).toHaveBeenCalledOnceWith(
+          'IMPORT_NOT_A_BACKUP',
+          problem,
+        );
+        expect(log.error).toHaveBeenCalledOnceWith(
+          `Import - refused: ${problem}`,
+        );
+        expect(hideLoadingSpinner).toHaveBeenCalled();
+        expect(database.set).not.toHaveBeenCalled();
+      });
+    }
+
+    it('still imports a zip of an export after reading it for real', async () => {
+      await android();
+      readZipsForReal();
+      await writeZip('Beanconqueror.zip', {
+        'Beanconqueror.json': '{"BREWS":[{"a":1}]}',
+        'Beanconqueror_Brews_1.json': '[{"a":2}]',
+      });
+      const importJSON = spyOn(page, '__importJSON').and.resolveTo();
+
+      await page.doImport(
+        'zip',
+        '/CACHE/picked/Beanconqueror.zip',
+        '/CACHE/picked',
+        'Beanconqueror.zip',
+      );
+
+      expect(importJSON.calls.allArgs()).toEqual([
+        [{ BREWS: [{ a: 1 }, { a: 2 }] }, '/CACHE/picked', 'Beanconqueror.zip'],
+      ]);
+    });
+
+    for (const [list, size] of [
+      ['BREWS', 500],
+      ['BEANS', 500],
+      ['BARISTAMODE_BREWS', 250],
+    ] as [string, number][]) {
+      it(`refuses a JSON file with ${size} ${list}, the first part of a split export`, async () => {
+        await android();
+        const content = {
+          SETTINGS: [{}],
+          [list]: Array.from({ length: size }, (_, i) => ({ i })),
+        };
+        await write(
+          'picked/Beanconqueror.json',
+          JSON.stringify(content),
+          Directory.Cache,
+        );
+        const importJSON = spyOn(page, '__importJSON').and.resolveTo();
+
+        await page.doImport(
+          'json',
+          '/CACHE/picked/Beanconqueror.json',
+          '/CACHE/picked',
+          'Beanconqueror.json',
+        );
+
+        expect(importJSON).not.toHaveBeenCalled();
+        expect(showMessageWithDetails).toHaveBeenCalledOnceWith(
+          'IMPORT_ONLY_PART_OF_BACKUP',
+          `The list ${list} holds ${size} entries, the size of the first part of an export split into several files`,
+        );
+        expect(hideLoadingSpinner).toHaveBeenCalled();
+        expect(database.set).not.toHaveBeenCalled();
+      });
+    }
+
+    it('imports a JSON file with more brews than one part of a split export', async () => {
+      await android();
+      const content = { BREWS: Array.from({ length: 501 }, (_, i) => ({ i })) };
+      await write(
+        'picked/Beanconqueror.json',
+        JSON.stringify(content),
+        Directory.Cache,
+      );
+      const importJSON = spyOn(page, '__importJSON').and.resolveTo();
+
+      await page.doImport(
+        'json',
+        '/CACHE/picked/Beanconqueror.json',
+        '/CACHE/picked',
+        'Beanconqueror.json',
+      );
+
+      expect(importJSON).toHaveBeenCalledOnceWith(
+        content,
+        '/CACHE/picked',
+        'Beanconqueror.json',
+      );
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
     });
 
     it('reports a JSON file that is damaged', async () => {
@@ -1285,6 +1527,20 @@ describe('SettingsPage files of an export and an import', () => {
       expect(showMessage).not.toHaveBeenCalled();
       expect(showMessageWithDetails.calls.allArgs()).toEqual([
         ['ERROR_ON_FILE_READING', new Error('not a zip')],
+      ]);
+      expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);
+      expect(importJSON).not.toHaveBeenCalled();
+    });
+
+    it('refuses a zip that is no backup, with the reason, and hides the spinner', async () => {
+      await choose(new File(['zip'], 'Other.zip'));
+      parse.and.rejectWith(
+        new NotABackupError('The zip file holds no Beanconqueror.json'),
+      );
+      await done;
+
+      expect(showMessageWithDetails.calls.allArgs()).toEqual([
+        ['IMPORT_NOT_A_BACKUP', 'The zip file holds no Beanconqueror.json'],
       ]);
       expect(hideLoadingSpinner).toHaveBeenCalledTimes(1);
       expect(importJSON).not.toHaveBeenCalled();

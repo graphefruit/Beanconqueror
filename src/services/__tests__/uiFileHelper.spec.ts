@@ -134,11 +134,9 @@ describe('UIFileHelper', () => {
           'a.bin.part',
           Directory.Data,
         ),
-      writeExternalFileFromBase64ForSharing: () =>
-        fileHelper.writeExternalFileFromBase64ForSharing(BYTES_BASE64, 'a.bin'),
+      writeFileForSharing: () =>
+        fileHelper.writeFileForSharing(BYTES_BASE64, 'a.bin'),
       deleteFile: () => fileHelper.deleteFile('a.txt', Directory.Data),
-      deleteExternalSharedFile: () =>
-        fileHelper.deleteExternalSharedFile('a.txt'),
       listAutomaticBackupFiles: () => fileHelper.listAutomaticBackupFiles(),
       deleteOldAutomaticBackups: () => fileHelper.deleteOldAutomaticBackups(),
       duplicateInternalFile: () => fileHelper.duplicateInternalFile('a.txt'),
@@ -330,22 +328,6 @@ describe('UIFileHelper', () => {
       ]);
     });
 
-    it('writes the file for sharing into the external directory', async () => {
-      const result = await fileHelper.writeExternalFileFromBase64ForSharing(
-        BYTES_BASE64,
-        'share.png',
-      );
-
-      expect(result).toEqual({
-        path: 'share.png',
-        fullpath: '/EXTERNAL/share.png',
-      });
-      expect(
-        await fileHelper.readFileAsBase64('share.png', Directory.External),
-      ).toBe(BYTES_BASE64);
-      expect(await namesIn('', Directory.Data)).toEqual([]);
-    });
-
     it('gives the bytes of a file', async () => {
       await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'photo.png');
 
@@ -372,6 +354,26 @@ describe('UIFileHelper', () => {
       ]);
       expect(stat.calls.allArgs().map(([options]) => options.path)).toEqual([
         'photo.png',
+      ]);
+    });
+
+    it('reads a photo stored with "Cloud/" in front of the name', async () => {
+      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'photo.png');
+
+      expect(await fileHelper.readInternalFileAsBase64('Cloud/photo.png')).toBe(
+        BYTES_BASE64,
+      );
+    });
+
+    it('asks for a "Cloud/" photo found nowhere as before', async () => {
+      const read = spyOn(FilesystemWeb.prototype, 'readFile').and.callThrough();
+
+      await expectAsync(
+        fileHelper.readInternalFileAsBase64('/Cloud/missing.png'),
+      ).toBeRejected();
+
+      expect(read.calls.allArgs().map(([options]) => options.path)).toEqual([
+        'Cloud/missing.png',
       ]);
     });
 
@@ -573,19 +575,6 @@ describe('UIFileHelper', () => {
       expect(await namesIn('', Directory.Data)).toEqual(['b.txt']);
     });
 
-    it('deletes a shared file from the external directory only', async () => {
-      await fileHelper.writeExternalFileFromBase64ForSharing(
-        BYTES_BASE64,
-        'share.png',
-      );
-      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'share.png');
-
-      await fileHelper.deleteExternalSharedFile('share.png');
-
-      expect(await namesIn('', Directory.External)).toEqual([]);
-      expect(await namesIn('', Directory.Data)).toEqual(['share.png']);
-    });
-
     it('rejects deleting a file that does not exist', async () => {
       await expectAsync(
         fileHelper.deleteFile('missing.txt', Directory.Data),
@@ -678,6 +667,17 @@ describe('UIFileHelper', () => {
 
       expect(copy).toMatch(new RegExp(`^duplicate_${UUID}s$`));
       expect(await fileHelper.readInternalFileAsText(copy)).toBe('text');
+    });
+
+    it('copies a photo stored with "Cloud/" in front of the name', async () => {
+      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'photo.png');
+
+      const copy = await fileHelper.duplicateInternalFile('/Cloud/photo.png');
+
+      expect(copy).toMatch(new RegExp(`^duplicate_${UUID}\\.png$`));
+      expect(await fileHelper.readInternalFileAsBase64(copy)).toBe(
+        BYTES_BASE64,
+      );
     });
 
     it('rejects and copies nothing when the file does not exist', async () => {
@@ -1525,20 +1525,33 @@ describe('UIFileHelper', () => {
       );
     });
 
-    it('keeps the "Cloud/" folder on Android', async () => {
+    it('finds a photo with the "Cloud/" in front of the name on Android, preferring the file as stored', async () => {
       setupAndroid();
       await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'photo.png');
+      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'other.png');
       await fileHelper.writeInternalFileFromBase64(
         BYTES_BASE64,
         'Cloud/other.png',
       );
 
       expect(
+        urlOf(await fileHelper.getInternalFileSrc('/Cloud/photo.png')),
+      ).toBe('/DATA/photo.png');
+      expect(
         urlOf(await fileHelper.getInternalFileSrc('Cloud/other.png')),
       ).toBe('/DATA/Cloud/other.png');
-      await expectAsync(
-        fileHelper.getInternalFileSrc('Cloud/photo.png'),
-      ).toBeRejected();
+    });
+
+    it('finds a photo kept in a "Cloud/" folder on iOS when there is none without it', async () => {
+      setupIos();
+      await fileHelper.writeInternalFileFromBase64(
+        BYTES_BASE64,
+        'Cloud/photo.png',
+      );
+
+      expect(
+        urlOf(await fileHelper.getInternalFileSrc('Cloud/photo.png')),
+      ).toBe('/DOCUMENTS/Cloud/photo.png');
     });
 
     it('logs and rejects when the file does not exist', async () => {
@@ -1548,6 +1561,68 @@ describe('UIFileHelper', () => {
         fileHelper.getInternalFileSrc('missing.png'),
       ).toBeRejectedWithError('Entry does not exist.');
       expect(uiLog.error).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('files to share', () => {
+    for (const [platform, setupPlatform] of [
+      ['Android', setupAndroid],
+      ['iOS', setupIos],
+    ] as const) {
+      it(`writes them into the share folder of the cache on ${platform}`, async () => {
+        setupPlatform();
+
+        const result = await fileHelper.writeFileForSharing(
+          BYTES_BASE64,
+          'Beanconqueror_1.png',
+        );
+
+        expect(result).toEqual({
+          path: 'share/Beanconqueror_1.png',
+          fullpath: '/CACHE/share/Beanconqueror_1.png',
+        });
+        expect(
+          await fileHelper.readFileAsBase64(result.path, Directory.Cache),
+        ).toBe(BYTES_BASE64);
+        expect(await namesIn('', Directory.Data)).toEqual([]);
+      });
+    }
+
+    it('keeps each file until the share folder is cleared', async () => {
+      setupAndroid();
+      await fileHelper.writeFileForSharing(BYTES_BASE64, 'a.png');
+      await fileHelper.writeFileForSharing(BYTES_BASE64, 'b.json');
+
+      expect(await namesIn('share', Directory.Cache)).toEqual([
+        'a.png',
+        'b.json',
+      ]);
+    });
+
+    it('clears only the share folder and leaves the rest of the cache', async () => {
+      setupAndroid();
+      const other = await fileHelper.createTempCacheDirectory('import');
+      await Filesystem.writeFile({
+        path: other.path + '/Beanconqueror.json',
+        data: '{}',
+        directory: Directory.Cache,
+        encoding: Encoding.UTF8,
+      });
+      await fileHelper.writeFileForSharing(BYTES_BASE64, 'a.png');
+
+      await fileHelper.clearShareDirectory();
+
+      expect(await namesIn('', Directory.Cache)).toEqual([other.path]);
+      expect(await namesIn(other.path, Directory.Cache)).toEqual([
+        'Beanconqueror.json',
+      ]);
+    });
+
+    it('does not fail when there is nothing to clear', async () => {
+      setupAndroid();
+
+      await expectAsync(fileHelper.clearShareDirectory()).toBeResolved();
+      expect(uiLog.info).toHaveBeenCalled();
     });
   });
 

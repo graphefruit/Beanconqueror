@@ -5,6 +5,7 @@ import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 
+import { Brew } from '../../classes/brew/brew';
 import { BrewFlow, IBrewCustomAxis } from '../../classes/brew/brewFlow';
 import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { Settings } from '../../classes/settings/settings';
@@ -12,7 +13,14 @@ import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyl
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
 import { CoffeeBluetoothDevicesService } from '../coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { ThemeService } from '../theme/theme.service';
+import { UIFileHelper } from '../uiFileHelper';
 import { UISettingsStorage } from '../uiSettingsStorage';
+import { readableLine } from './line-contrast';
+import { loadPlotly } from './load-plotly';
+
+declare const Plotly: {
+  toImage(figure: object, options: object): Promise<string>;
+};
 
 export function expandLiveAxisRangeForSample(
   range: [number, number],
@@ -64,6 +72,120 @@ export class GraphHelperService {
   private readonly bleManager = inject(CoffeeBluetoothDevicesService);
   private readonly platform = inject(Platform);
   private readonly themeService = inject(ThemeService);
+  private readonly uiFileHelper = inject(UIFileHelper);
+
+  /**
+   * The graph of a brew as a PNG data URL, drawn off screen at a fixed size;
+   * undefined when the brew has none. Callers only get the picture, so the
+   * renderer behind it can change without them. It is drawn light or dark as
+   * asked, not as the app is, with the axes in `ink` and a clear ground, so
+   * it takes the colour of whatever it is laid on. Lines too faint on
+   * `ground` are darkened (or lightened) to 3:1; the app's own graph keeps
+   * the colours as they were chosen.
+   */
+  public async brewGraphImage(
+    brew: Pick<Brew, 'flow_profile'>,
+    width: number,
+    height: number,
+    look: {
+      readonly dark: boolean;
+      readonly ink: string;
+      readonly ground: string;
+    },
+  ): Promise<string | undefined> {
+    if (!brew.flow_profile) {
+      return undefined;
+    }
+    const flow = await this.readFlowProfile(brew.flow_profile);
+    await loadPlotly();
+    const { data, layout } = this.staticFlowFigure(
+      flow,
+      width,
+      height,
+      look.dark,
+    );
+    layout.paper_bgcolor = layout.plot_bgcolor = 'rgba(0,0,0,0)';
+    for (const trace of data as { line?: { color?: string } }[]) {
+      if (trace.line?.color) {
+        trace.line = {
+          ...trace.line,
+          color: readableLine(trace.line.color, look.ground),
+        };
+      }
+    }
+    // The axes otherwise take the colours of their lines, which are too pale
+    // to read on a light ground.
+    layout.font = { color: look.ink };
+    for (const axis of Object.keys(layout).filter((key) =>
+      /^[xy]axis/.test(key),
+    )) {
+      layout[axis].tickfont = { color: look.ink };
+    }
+    return Plotly.toImage(
+      { data, layout },
+      { format: 'png', width, height, scale: 3 },
+    );
+  }
+
+  /**
+   * The graph file of a brew. The browser has no files, so a sample stands in
+   * there, as on the brew card.
+   */
+  public async readFlowProfile(path: string): Promise<BrewFlow> {
+    if (!this.platform.is('capacitor')) {
+      return (await import('../../assets/BeanconquerorFlowTestDataFourth.json'))
+        .default as unknown as BrewFlow;
+    }
+    return (await this.uiFileHelper.readInternalJSONFile(path)) as BrewFlow;
+  }
+
+  /** The graph of a brew card: every line, nothing to touch. */
+  public staticFlowFigure(
+    flow: BrewFlow,
+    width: number,
+    height: number,
+    dark = this.themeService.isDarkMode(),
+  ): {
+    traces: ReturnType<GraphHelperService['initializeTraces']>;
+    data: unknown[];
+    layout: ReturnType<GraphHelperService['getChartLayout']>;
+  } {
+    const traces = this.fillTraces(
+      this.initializeTraces(),
+      null,
+      true,
+      false,
+      undefined,
+      undefined,
+      dark,
+    );
+    this.fillDataIntoTraces(flow, traces, dark);
+    const data = [
+      traces.weightTrace,
+      traces.flowPerSecondTrace,
+      traces.realtimeFlowTrace,
+      traces.pressureTrace,
+      traces.temperatureTrace,
+      traces.waterDispensedTrace,
+      traces.waterDispensedFlowSecondTrace,
+      traces.weightTraceSecond,
+      traces.realtimeFlowTraceSecond,
+      ...Object.values(traces.customTraces ?? {}).filter(Boolean),
+    ];
+    const layout = this.getChartLayout(
+      traces,
+      PREPARATION_STYLE_TYPE.FULL_IMMERSION,
+      false,
+      false,
+      true,
+      width,
+      height,
+      true,
+      undefined,
+      dark,
+    );
+    return { traces, data, layout };
+  }
 
   public initializeTraces() {
     const trace: any = {};
@@ -87,11 +209,11 @@ export class GraphHelperService {
     _isReference: boolean = false,
     _rawData?: BrewFlow,
     _preparationDeviceType?: PreparationDeviceType,
+    isDarkMode = this.themeService.isDarkMode(),
   ) {
     const traces = _traces;
 
     const settings: Settings = this.uiSettingsStorage.getSettings();
-    const isDarkMode = this.themeService.isDarkMode();
     const colors = settings.graph_colors;
 
     const getColor = (key: keyof typeof colors, isRef: boolean) => {
@@ -301,7 +423,11 @@ export class GraphHelperService {
     return traces;
   }
 
-  public fillDataIntoTraces(_rawData: BrewFlow, _traces: any) {
+  public fillDataIntoTraces(
+    _rawData: BrewFlow,
+    _traces: any,
+    isDarkMode = this.themeService.isDarkMode(),
+  ) {
     const firstTimestamp = this.firstTraceTimestamp(_rawData);
     if (!firstTimestamp) {
       return;
@@ -455,9 +581,7 @@ export class GraphHelperService {
             mode: 'lines',
             line: {
               shape: 'linear',
-              color: this.themeService.isDarkMode()
-                ? customAxis.colorDark
-                : customAxis.colorLight,
+              color: isDarkMode ? customAxis.colorDark : customAxis.colorLight,
               width: 2,
             },
             visible: true,
@@ -602,9 +726,9 @@ export class GraphHelperService {
     _chartHeight: number = undefined,
     _disableClick: boolean = false,
     _traceReferences: any = undefined,
+    isDarkMode = this.themeService.isDarkMode(),
   ) {
     const settings: Settings = this.uiSettingsStorage.getSettings();
-    const isDarkMode = this.themeService.isDarkMode();
     const colors = settings.graph_colors;
 
     const getAxisColor = (key: keyof typeof colors) => {
@@ -1027,7 +1151,7 @@ export class GraphHelperService {
       }
     }
 
-    if (this.themeService.isDarkMode() === true) {
+    if (isDarkMode) {
       layout.xaxis.gridcolor = '#8e8e8e';
       layout.yaxis.gridcolor = '#8e8e8e';
     }

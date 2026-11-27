@@ -1,5 +1,6 @@
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import { ATTACHMENT_KIND } from '../../interfaces/changeTracking/iAttachmentManifest';
+import { photoPathCandidates } from '../../services/photoPath/photo-path';
 
 /** A file an entry refers to. */
 export interface AttachmentRef {
@@ -9,7 +10,8 @@ export interface AttachmentRef {
 
 /** Where to look for a referenced file. */
 export interface AttachmentStatTarget {
-  path: string;
+  /** The places to try, in order; the first one found counts. */
+  paths: string[];
   /**
    * True for absolute file URIs, which are checked as they are; otherwise
    * the path is relative to the data directory of the app.
@@ -95,22 +97,15 @@ export function mimeFromPath(_path: string): string {
 
 /**
  * Where a referenced file is looked up, following the rules used to show
- * photos: a leading '/' is left out (UIFileHelper.normalizeFileName), and on
- * iOS a leading 'Cloud/' as well (UIFileHelper.getInternalFileSrc).
- * Absolute 'file://' URIs, as stored by early iOS versions, are checked as
- * they are. Only for looking up; the stored path is never changed.
+ * photos (photoPathCandidates). Only for looking up; the stored path is never
+ * changed.
  */
 export function resolveForStat(
   _path: string,
   _isIos: boolean,
 ): AttachmentStatTarget {
-  if (_path.startsWith('file://')) {
-    return { path: _path, absolute: true };
-  }
-  let path = _path.startsWith('/') ? _path.slice(1) : _path;
-  const cloud = 'Cloud/';
-  if (_isIos && path.startsWith(cloud)) {
-    path = path.substring(cloud.length);
-  }
-  return { path, absolute: false };
+  return {
+    paths: photoPathCandidates(_path, _isIos),
+    absolute: _path.startsWith('file://'),
+  };
 }

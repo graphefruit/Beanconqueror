@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ModalController, Platform } from '@ionic/angular';
 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { register } from 'swiper/element/bundle';
 
 import de from '../../../assets/i18n/de.json';
 import en from '../../../assets/i18n/en.json';
@@ -27,6 +28,39 @@ function readable(element: Element | null): string {
 
 const TRANSLATIONS = { en, de } as const;
 
+const PROVIDERS = [
+  { provide: ModalController, useValue: { dismiss: () => undefined } },
+  {
+    provide: Platform,
+    useValue: {
+      backButton: {
+        subscribeWithPriority: () => ({ unsubscribe: () => undefined }),
+      },
+    },
+  },
+  {
+    provide: UISettingsStorage,
+    useValue: {
+      getSettings: () => new Settings(),
+      saveSettings: () => Promise.resolve(),
+    },
+  },
+  {
+    provide: UIAnalytics,
+    useValue: {
+      disableTracking: () => undefined,
+      enableTracking: () => undefined,
+    },
+  },
+  {
+    provide: ThemeService,
+    useValue: { setLightMode: () => undefined },
+  },
+  { provide: UIBeanHelper, useValue: {} },
+  { provide: UIMillHelper, useValue: {} },
+  { provide: UIPreparationHelper, useValue: {} },
+];
+
 for (const language of ['en', 'de'] as const) {
   describe(`WelcomePopoverComponent (${language})`, () => {
     let fixture: ComponentFixture<WelcomePopoverComponent>;
@@ -35,38 +69,7 @@ for (const language of ['en', 'de'] as const) {
     beforeEach(async () => {
       TestBed.configureTestingModule({
         imports: [WelcomePopoverComponent, TranslateModule.forRoot()],
-        providers: [
-          { provide: ModalController, useValue: { dismiss: () => undefined } },
-          {
-            provide: Platform,
-            useValue: {
-              backButton: {
-                subscribeWithPriority: () => ({ unsubscribe: () => undefined }),
-              },
-            },
-          },
-          {
-            provide: UISettingsStorage,
-            useValue: {
-              getSettings: () => new Settings(),
-              saveSettings: () => Promise.resolve(),
-            },
-          },
-          {
-            provide: UIAnalytics,
-            useValue: {
-              disableTracking: () => undefined,
-              enableTracking: () => undefined,
-            },
-          },
-          {
-            provide: ThemeService,
-            useValue: { setLightMode: () => undefined },
-          },
-          { provide: UIBeanHelper, useValue: {} },
-          { provide: UIMillHelper, useValue: {} },
-          { provide: UIPreparationHelper, useValue: {} },
-        ],
+        providers: PROVIDERS,
       });
       const translate = TestBed.inject(TranslateService);
       translate.setTranslation(language, TRANSLATIONS[language]);
@@ -162,3 +165,57 @@ for (const language of ['en', 'de'] as const) {
     });
   });
 }
+
+describe('WelcomePopoverComponent with Swiper', () => {
+  it('takes a tap on the next step while the slide is still moving in', async () => {
+    register();
+    TestBed.configureTestingModule({
+      imports: [WelcomePopoverComponent, TranslateModule.forRoot()],
+      providers: PROVIDERS,
+    });
+    const fixture = TestBed.createComponent(WelcomePopoverComponent);
+    const host = fixture.nativeElement as HTMLElement;
+    Object.assign(host.style, { display: 'block', width: '360px' });
+    document.body.appendChild(host);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const slider = host.querySelector('swiper-container') as HTMLElement & {
+      swiper: {
+        animating: boolean;
+      };
+    };
+    const skip = (step: number) =>
+      host
+        .querySelectorAll<HTMLElement>('swiper-slide')
+        [step - 1].querySelector<HTMLElement>('ion-row:last-child ion-button');
+    skip(1).click();
+    await fixture.whenStable();
+    while (slider.swiper.animating) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    skip(2).click();
+    expect(slider.swiper.animating).toBeTrue();
+
+    // A tap whose finger moves a little, or WebKit's own pointer move when the content
+    // under a resting pointer moves, between down and up.
+    const button = skip(3);
+    const pointer = {
+      bubbles: true,
+      composed: true,
+      pointerId: 1,
+      isPrimary: true,
+    };
+    button.dispatchEvent(new PointerEvent('pointerdown', pointer));
+    button.dispatchEvent(
+      new PointerEvent('pointermove', { ...pointer, clientX: 1 }),
+    );
+    button.dispatchEvent(new PointerEvent('pointerup', pointer));
+    button.click();
+    await fixture.whenStable();
+
+    expect(fixture.componentInstance.slide).toBe(4);
+    fixture.destroy();
+    host.remove();
+  });
+});
