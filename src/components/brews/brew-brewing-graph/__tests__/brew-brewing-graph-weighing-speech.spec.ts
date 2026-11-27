@@ -115,6 +115,26 @@ describe('BrewBrewingGraphComponent spoken weight before the brew', () => {
     expect(said()).toEqual(['18,3']);
   }));
 
+  it('says the brew weight again when the scale reconnects during the brew', fakeAsync(() => {
+    create();
+    Object.assign(scale, {
+      timerEvent: new Subject(),
+      tareEvent: new Subject(),
+    });
+    spyOn(component, 'deattachToScaleEvents').and.stub();
+    spyOn(component, 'checkChanges').and.stub();
+    Object.assign(component, { flowProfileTempAll: [{ weight: 31.46 }] });
+    void component.timerStarted(undefined);
+    timer.hasStarted = true;
+    timer.running = true;
+
+    component.deattachToTextToSpeedChange();
+    void component['__connectSmartScale'](false);
+    tick(500);
+
+    expect(said()).toEqual(['31,5']);
+  }));
+
   it('says whole grams when chosen', fakeAsync(() => {
     create({ language: 'en', text_to_speech_whole_grams: true });
 

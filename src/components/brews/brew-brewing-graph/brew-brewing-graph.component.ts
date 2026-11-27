@@ -1075,15 +1075,19 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           await sleep(this.settings.bluetooth_command_delay);
         }
       }
-      if (
+      const brewRunning =
         this.brewComponent.timer?.isTimerRunning() === true &&
-        _firstStart === false
-      ) {
+        _firstStart === false;
+      if (brewRunning) {
         this.attachToScaleWeightChange();
       }
       // Always attach flow.
       this.attachToFlowChange();
-      this.attachToTextToSpeechBeforeStart();
+      if (brewRunning) {
+        this.attachToTextToSpeechChange();
+      } else {
+        this.attachToTextToSpeechBeforeStart();
+      }
 
       this.checkChanges();
     }
