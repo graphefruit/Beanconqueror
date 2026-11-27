@@ -18,4 +18,55 @@ describe('BrewFlowComponent', () => {
 
     expect(tareScale).toHaveBeenCalledOnceWith(undefined);
   });
+
+  describe('sizing the graph', () => {
+    let container: HTMLDivElement;
+    let graph: jasmine.SpyObj<{
+      moveGraphTo(host: HTMLElement): void;
+      restoreGraph(): void;
+      resize(width: number, height: number): void;
+    }>;
+    let component: BrewFlowComponent;
+
+    beforeEach(() => {
+      jasmine.clock().install();
+      container = document.createElement('div');
+      container.id = 'brewFlowContainer';
+      document.body.appendChild(container);
+      graph = jasmine.createSpyObj('graph', [
+        'moveGraphTo',
+        'restoreGraph',
+        'resize',
+      ]);
+      component = Object.assign(Object.create(BrewFlowComponent.prototype), {
+        brewComponent: { brewBrewingGraphEl: graph },
+        brewFlowContent: { nativeElement: { offsetHeight: 600 } },
+        modalController: jasmine.createSpyObj('modal', ['dismiss']),
+        disableHardwareBack: { unsubscribe: () => undefined },
+        cameraIsVisible: false,
+      });
+    });
+
+    afterEach(() => {
+      jasmine.clock().uninstall();
+      container.remove();
+    });
+
+    it('sizes the graph while it is shown here', () => {
+      (component as unknown as { graphShown: boolean }).graphShown = true;
+      component.onOrientationChange();
+      jasmine.clock().tick(50);
+      expect(graph.resize).toHaveBeenCalledTimes(1);
+    });
+
+    it('leaves the graph alone once it went back into the brew form', () => {
+      (component as unknown as { graphShown: boolean }).graphShown = true;
+      component.onOrientationChange();
+      component.dismiss();
+      jasmine.clock().tick(50);
+
+      expect(graph.restoreGraph).toHaveBeenCalled();
+      expect(graph.resize).not.toHaveBeenCalled();
+    });
+  });
 });

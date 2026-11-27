@@ -143,6 +143,8 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   public smartScaleBrewRatio: ElementRef;
 
   private disableHardwareBack;
+  /** Only while the graph is shown here may this view size it. */
+  private graphShown = false;
   protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
 
   public graphIconColSize: number = 2.4;
@@ -232,6 +234,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         this.brewComponent.brewBrewingGraphEl.moveGraphTo(
           document.getElementById('brewFlowContainer'),
         );
+        this.graphShown = true;
         resolve(undefined);
       }, 50);
     });
@@ -320,6 +323,10 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   @HostListener('window:orientationchange')
   public onOrientationChange() {
     setTimeout(() => {
+      // A late timer after dismiss would size the form's own graph.
+      if (!this.graphShown) {
+        return;
+      }
       try {
         const flowHeight = this.brewFlowContent.nativeElement.offsetHeight;
         let informationContainerHeight = 0;
@@ -587,6 +594,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public dismiss() {
+    this.graphShown = false;
     this.brewComponent.brewBrewingGraphEl.restoreGraph();
     try {
       this.disableHardwareBack.unsubscribe();
