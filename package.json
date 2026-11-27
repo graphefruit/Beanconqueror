@@ -35,8 +35,6 @@
     "@angular/forms": "^22.3.0",
     "@angular/platform-browser": "^22.3.0",
     "@angular/router": "^22.3.0",
-    "@awesome-cordova-plugins/android-permissions": "^9.7.0",
-    "@awesome-cordova-plugins/core": "^9.7.0",
     "@beanconqueror/text-recognition": "link:capacitor-plugins/text-recognition",
     "@bufbuild/protobuf": "^2.17.0",
     "@capacitor-community/keep-awake": "^8.0.1",

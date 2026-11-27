@@ -37,12 +37,6 @@ importers:
       '@angular/router':
         specifier: ^22.3.0
         version: 22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3)))(rxjs@7.8.2)
-      '@awesome-cordova-plugins/android-permissions':
-        specifier: ^9.7.0
-        version: 9.7.0(@awesome-cordova-plugins/core@9.7.0(rxjs@7.8.2))(rxjs@7.8.2)
-      '@awesome-cordova-plugins/core':
-        specifier: ^9.7.0
-        version: 9.7.0(rxjs@7.8.2)
       '@beanconqueror/text-recognition':
         specifier: link:capacitor-plugins/text-recognition
         version: link:capacitor-plugins/text-recognition
@@ -516,17 +510,6 @@ packages:
       '@angular/core': 22.3.0
       '@angular/platform-browser': 22.3.0
       rxjs: ^6.5.3 || ^7.4.0
-
-  '@awesome-cordova-plugins/android-permissions@9.7.0':
-    resolution: {integrity: sha512-/F1dP1sL0eAi9HRX+sjnFKowlMYYuZFhxZ6vNgGZIlcjRHkW0HXWBDCVpK6DEk1mBgaKuI6GO99ziG0jPC9tEQ==}
-    peerDependencies:
-      '@awesome-cordova-plugins/core': ^9.7.0
-      rxjs: ^5.5.0 || ^6.5.0 || ^7.3.0
-
-  '@awesome-cordova-plugins/core@9.7.0':
-    resolution: {integrity: sha512-ap9Aat0NwcLhwwItP0ff7YqxJkhsGZZFRLGYo2mI1d3qN+eXE2iSQFUvnY+NHFvYttKtIrg0NI0oCtKTs7BRTg==}
-    peerDependencies:
-      rxjs: ^5.5.0 || ^6.5.0 || ^7.3.0
 
   '@axe-core/playwright@4.14.0':
     resolution: {integrity: sha512-SGUhG5PIHd2eMdpgBF2PyQLOhX+qyDR2PT4cmoS4Qk2ak+jX/rrSvst9l0PGv5WTHolKpUMvVmoHpr4cZgf1RQ==}
@@ -2359,9 +2342,6 @@ packages:
 
   '@tybys/wasm-util@0.10.4':
     resolution: {integrity: sha512-W3c4gRigFS0T/Ma4qIYF3GDAc5AQdHb1yL5znJT1Zv1YaD9Kitx656wBjvr19qbiosmZT8lWDM5BEMynUqX65A==}
-
-  '@types/cordova@11.0.3':
-    resolution: {integrity: sha512-kyuRQ40/NWQVhqGIHq78Ehu2Bf9Mlg0LhmSmis6ZFJK7z933FRfYi8tHe/k/0fB+PGfCf95rJC6TO7dopaFvAg==}
 
   '@types/cors@2.8.19':
     resolution: {integrity: sha512-mFNylyeyqN93lfe/9CSxOGREz8cpzAhH+E93xJ4xWQf62V8sQ/24reV2nyzUWM6H6Xji+GGHpkbLe7pVoUEskg==}
@@ -5187,16 +5167,6 @@ snapshots:
       rxjs: 7.8.2
       tslib: 2.9.1
 
-  '@awesome-cordova-plugins/android-permissions@9.7.0(@awesome-cordova-plugins/core@9.7.0(rxjs@7.8.2))(rxjs@7.8.2)':
-    dependencies:
-      '@awesome-cordova-plugins/core': 9.7.0(rxjs@7.8.2)
-      rxjs: 7.8.2
-
-  '@awesome-cordova-plugins/core@9.7.0(rxjs@7.8.2)':
-    dependencies:
-      '@types/cordova': 11.0.3
-      rxjs: 7.8.2
-
   '@axe-core/playwright@4.14.0(playwright-core@1.65.1)':
     dependencies:
       axe-core: 4.14.0
@@ -6714,8 +6684,6 @@ snapshots:
     dependencies:
       tslib: 2.9.1
     optional: true
-
-  '@types/cordova@11.0.3': {}
 
   '@types/cors@2.8.19':
     dependencies:

@@ -2,8 +2,6 @@ import { TestBed } from '@angular/core/testing';
 
 import { Platform } from '@ionic/angular';
 
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-
 import { AutomaticBackupService } from '../automaticBackup/automatic-backup.service';
 import { UIAlert } from '../uiAlert';
 import { UIBrewStorage } from '../uiBrewStorage';
@@ -46,7 +44,6 @@ describe('AndroidPlatformService', () => {
           provide: UIHelper,
           useValue: { isBeanconqurorAppReady: () => Promise.resolve() },
         },
-        { provide: AndroidPermissions, useValue: {} },
         { provide: UIAlert, useValue: {} },
         { provide: UISettingsStorage, useValue: {} },
         { provide: UIBrewStorage, useValue: {} },
