@@ -27,7 +27,10 @@ import { UIMillStorage } from '../../uiMillStorage';
 import { UIPreparationStorage } from '../../uiPreparationStorage';
 import { UISettingsStorage } from '../../uiSettingsStorage';
 import { VisualizerService } from '../../visualizerService/visualizer-service.service';
-import { IntentHandlerService } from '../intent-handler.service';
+import {
+  IntentHandlerService,
+  isWebsitePageWithoutData,
+} from '../intent-handler.service';
 
 async function gzipBase64Url(value: unknown): Promise<string> {
   const bytes = new TextEncoder().encode(JSON.stringify(value));
@@ -123,6 +126,34 @@ function importResult(beanUuid: string): IBrewImportResult {
     brewFlow: {} as IBrewImportResult['brewFlow'],
   };
 }
+
+describe('isWebsitePageWithoutData', () => {
+  for (const link of [
+    'https://beanconqueror.com/app/',
+    'https://beanconqueror.com/app/userbean/',
+    'https://beanconqueror.com/app/userbean',
+    'https://www.beanconqueror.com/app/nfc/',
+  ]) {
+    it(`only opens the app for the website page ${link}`, () => {
+      expect(isWebsitePageWithoutData(link)).toBeTrue();
+    });
+  }
+
+  for (const link of [
+    'https://beanconqueror.com/app/userbean/?shareUserBean0=AAA',
+    'https://beanconqueror.com/app/userbean?shareUserBean0=AAA',
+    'https://beanconqueror.com/app/roaster/bean.html?id=ROASTER1',
+    'https://beanconqueror.com/app/nfc/#3E95E1/DETAIL',
+    'https://beanconqueror.com/?qr=ROASTER1',
+    'https://beanconqueror.com/',
+    'beanconqueror://ADD_BEAN_ONLINE?id=ROASTER1',
+    'beanconqueror://int/bean/3E95E1/DETAIL',
+  ]) {
+    it(`hands ${link} to the import`, () => {
+      expect(isWebsitePageWithoutData(link)).toBeFalse();
+    });
+  }
+});
 
 describe('IntentHandlerService', () => {
   let service: IntentHandlerService;
@@ -452,6 +483,7 @@ describe('IntentHandlerService', () => {
 
   for (const prefix of [
     'https://beanconqueror.com/app/userbean/?',
+    'https://beanconqueror.com/app/userbean?',
     'https://beanconqueror.com/?',
     'beanconqueror://ADD_USER_BEAN?',
   ]) {
@@ -471,6 +503,18 @@ describe('IntentHandlerService', () => {
       ]);
     });
   }
+
+  it('restores the + of a shared bean that Android hands over as a space', async () => {
+    uiBeanHelper.addUserSharedBean.and.resolveTo();
+
+    await service.handleDeepLink(
+      'https://beanconqueror.com/app/userbean/?shareUserBean0=ab cd/=',
+    );
+
+    expect(uiBeanHelper.addUserSharedBean.calls.allArgs()).toEqual([
+      ['ab+cd/='],
+    ]);
+  });
 
   describe('links from the website and from roaster codes', () => {
     for (const link of [
