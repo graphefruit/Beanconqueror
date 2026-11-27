@@ -88,9 +88,8 @@ describe('BrewBrewingGraphComponent without the brew time parameter', () => {
 
     expect(() => component.updateChart()).not.toThrow();
     expect(renderer.setViewport).toHaveBeenCalledOnceWith({
-      mode: 'stepped',
-      windowSec: 90,
-      backSec: 70,
+      mode: 'grow',
+      startSec: 90,
     });
   });
 });

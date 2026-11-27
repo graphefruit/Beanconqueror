@@ -354,17 +354,16 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
   });
 
   describe('time range', () => {
-    it('jumps by the time of the brew form until something was recorded', async () => {
+    it('starts with the time of the brew form until something was recorded', async () => {
       await draw();
 
       expect(lastViewport()).toEqual({
-        mode: 'stepped',
-        windowSec: settings.graph_time.ESPRESSO.NORMAL_SCREEN,
-        backSec: settings.graph_time.ESPRESSO.NORMAL_SCREEN - 10,
+        mode: 'grow',
+        startSec: settings.graph_time.ESPRESSO.NORMAL_SCREEN,
       });
     });
 
-    it('jumps by the maximized time while the timer runs maximized', async () => {
+    it('starts with the maximized time while the timer runs maximized', async () => {
       component.flow_profile_raw = flowWithMetric();
       await draw();
       timerRunning = true;
@@ -373,9 +372,8 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
       component.updateChart();
 
       expect(lastViewport()).toEqual({
-        mode: 'stepped',
-        windowSec: settings.graph_time.ESPRESSO.FULL_SCREEN,
-        backSec: settings.graph_time.ESPRESSO.FULL_SCREEN - 20,
+        mode: 'grow',
+        startSec: settings.graph_time.ESPRESSO.FULL_SCREEN,
       });
     });
 
@@ -383,7 +381,7 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
       component.flow_profile_raw = flowWithMetric();
       await draw();
       await component.timerResumed(undefined);
-      expect(lastViewport().mode).toBe('stepped');
+      expect(lastViewport().mode).toBe('grow');
 
       await component.timerPaused(undefined);
 

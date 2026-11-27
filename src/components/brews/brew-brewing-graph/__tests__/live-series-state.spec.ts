@@ -174,26 +174,21 @@ describe('liveViewport', () => {
     hasSamples: true,
   };
 
-  it('jumps by graph_time of the style while the timer runs', () => {
-    expect(liveViewport(base)).toEqual({
-      mode: 'stepped',
-      windowSec: 20,
-      backSec: 10,
-    });
+  it('starts with graph_time of the style and grows while the timer runs', () => {
+    expect(liveViewport(base)).toEqual({ mode: 'grow', startSec: 20 });
     expect(liveViewport({ ...base, maximized: true })).toEqual({
-      mode: 'stepped',
-      windowSec: 60,
-      backSec: 40,
+      mode: 'grow',
+      startSec: 60,
     });
     expect(
       liveViewport({ ...base, style: PREPARATION_STYLE_TYPE.POUR_OVER }),
-    ).toEqual({ mode: 'stepped', windowSec: 120, backSec: 110 });
+    ).toEqual({ mode: 'grow', startSec: 120 });
   });
 
   it('starts in the first window before anything is recorded', () => {
     expect(
       liveViewport({ ...base, timerRunning: false, hasSamples: false }),
-    ).toEqual({ mode: 'stepped', windowSec: 20, backSec: 10 });
+    ).toEqual({ mode: 'grow', startSec: 20 });
   });
 
   it('shows a stopped brew whole, e.g. while editing it', () => {

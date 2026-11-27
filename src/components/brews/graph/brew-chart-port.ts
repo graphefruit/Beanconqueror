@@ -22,13 +22,11 @@ export interface MountOptions {
 
 /** The visible time range. */
 export type Viewport =
-  /** The last `windowSec` seconds; the newest sample stays at 90 %. */
-  | { mode: 'follow'; windowSec: number }
   /**
-   * The live brew form's window: it jumps once per `windowSec` and then shows
-   * the last `backSec` seconds before the jump and 10 s beyond the next one.
+   * The live brew form's window: `startSec` long at first, then it grows
+   * with the brew from 0, so the line stays at 80 % and the rest compresses.
    */
-  | { mode: 'stepped'; windowSec: number; backSec: number }
+  | { mode: 'grow'; startSec: number }
   /** The whole brew. */
   | { mode: 'fitAll' }
   | { mode: 'range'; from: number; to: number };

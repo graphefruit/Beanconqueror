@@ -144,37 +144,28 @@ export function viewportRange(viewport: Viewport, end: number): Range {
       return [viewport.from, Math.max(viewport.to, viewport.from + 0.001)];
     case 'fitAll':
       return [0, Math.max(end, 1)];
-    case 'follow': {
-      const from = Math.max(0, end - viewport.windowSec * 0.9);
-      return [from, from + viewport.windowSec];
-    }
-    case 'stepped':
-      return steppedRange(end, viewport.windowSec, viewport.backSec);
+    case 'grow':
+      return liveTimeRange(end, viewport.startSec);
   }
 }
 
-/** Seconds the stepped window reaches beyond its next jump. */
-export const STEPPED_LEAD_SEC = 10;
+/** The live line stops at 1 / LIVE_HEADROOM of the width; beyond, the time axis compresses. */
+const LIVE_HEADROOM = 1.25;
 
 /**
- * The window of the live brew graph: it stays put for `windowSec` seconds and
- * then jumps, keeping the last `backSec` seconds in view, so the line is
- * drawn into a still picture instead of the picture scrolling under it.
+ * The window of the live brew graph: it starts with `startSec` and, once the
+ * brew comes near the right edge, grows with it from 0, so the start never
+ * scrolls away and the newest sample stays at 80 % of the width.
  */
-export function steppedRange(
-  end: number,
-  windowSec: number,
-  backSec: number,
-): Range {
-  if (!(windowSec > 0)) {
-    return [0, Math.max(end, 1)];
-  }
-  const jump = Math.floor(Math.max(0, end) / windowSec) * windowSec;
-  return [
-    Math.max(0, jump - Math.max(0, backSec)),
-    jump + windowSec + STEPPED_LEAD_SEC,
-  ];
+export function liveTimeRange(end: number, startSec: number): Range {
+  const start = startSec > 0 ? startSec : 20;
+  return [0, Math.max(start, end > 0 ? end * LIVE_HEADROOM : 0)];
 }
+
+/** Steps of the time axis, so it counts in whole m:ss steps (no 0:25 or 0:50). */
+const TIME_INCRS = [
+  1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200, 21600,
+];
 
 /**
  * Whether an axis shows its values: the live graph keeps temperature and
@@ -637,7 +628,7 @@ export class UplotRenderer implements BrewChartPort {
   }
 
   private buildData(): uPlot.AlignedData {
-    const windowed = this.viewport.mode !== 'fitAll';
+    const windowed = this.viewport.mode === 'range';
     const [from, to] = this.xRange;
     const facets: Facet[] = this.layout.drawn.map((def) => {
       const { t, y } = this.bufferOf(def.kind)?.view(def.id) ?? {
@@ -713,6 +704,7 @@ export class UplotRenderer implements BrewChartPort {
         font,
         size: 28 * k,
         space: 40 * k,
+        incrs: TIME_INCRS,
         grid: { stroke: palette.grid, width: k },
         ticks: { stroke: palette.grid, width: k, size: 5 * k },
         values: (_u, splits) => splits.map(formatSeconds),

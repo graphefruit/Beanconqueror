@@ -136,10 +136,9 @@ export interface LiveViewportInput {
 }
 
 /**
- * While the timer runs, or before anything was recorded, the window jumps by
- * graph_time (normal or maximized) and keeps 10 s (maximized 20 s) less than
- * that in view after a jump. A stopped brew with samples, e.g. one being
- * edited or imported, is shown whole.
+ * While the timer runs, or before anything was recorded, the window starts
+ * with graph_time (normal or maximized) and grows with the brew. A stopped
+ * brew with samples, e.g. one being edited or imported, is shown whole.
  */
 export function liveViewport(input: LiveViewportInput): Viewport {
   if (!input.timerRunning && input.hasSamples) {
@@ -149,10 +148,8 @@ export function liveViewport(input: LiveViewportInput): Viewport {
     input.style === PREPARATION_STYLE_TYPE.ESPRESSO
       ? input.graphTime.ESPRESSO
       : input.graphTime.FILTER;
-  const windowSec = input.maximized ? times.FULL_SCREEN : times.NORMAL_SCREEN;
   return {
-    mode: 'stepped',
-    windowSec,
-    backSec: windowSec - (input.maximized ? 20 : 10),
+    mode: 'grow',
+    startSec: input.maximized ? times.FULL_SCREEN : times.NORMAL_SCREEN,
   };
 }

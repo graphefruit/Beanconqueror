@@ -21,8 +21,8 @@ import {
   CHART_PALETTE,
   formatSeconds,
   layoutSeries,
+  liveTimeRange,
   loadUplot,
-  steppedRange,
   UplotRenderer,
   viewportRange,
 } from '../uplot-renderer';
@@ -223,20 +223,36 @@ describe('UplotRenderer', () => {
     expect(host.querySelectorAll('canvas').length).toBe(1);
   });
 
-  it('gives every series its own x (mode 2) and follows the newest sample', async () => {
+  it('gives every series its own x (mode 2) and hands uPlot only the visible range', async () => {
     await mount();
-    renderer.setViewport({ mode: 'follow', windowSec: 20 });
+    renderer.setViewport({ mode: 'range', from: 10, to: 20 });
     feed(buffer, 0, 30);
     await frames.run();
 
     const u = plot();
-    const end = buffer.endTime();
     expect(u.data[0]).toBeNull();
-    expect(u.scales.x.min).toBeCloseTo(end - 18, 6);
-    expect(u.scales.x.max).toBeCloseTo(end + 2, 6);
-    // Only the visible window is handed to uPlot.
+    expect(u.scales.x.min).toBe(10);
+    expect(u.scales.x.max).toBe(20);
     const weight = u.data[1] as unknown as [Float64Array, Float64Array];
     expect(weight[0].length).toBeLessThan(buffer.length('weight'));
+  });
+
+  it('grows the live window from 0 with the brew and counts in m:ss steps', async () => {
+    await mount();
+    renderer.setViewport({ mode: 'grow', startSec: 20 });
+    feed(buffer, 0, 120);
+    await frames.run();
+
+    const u = plot();
+    const end = buffer.endTime();
+    expect(u.scales.x.min).toBe(0);
+    expect(u.scales.x.max).toBeCloseTo(end * 1.25, 6);
+    // The whole brew stays in the picture.
+    const weight = u.data[1] as unknown as [Float64Array, Float64Array];
+    expect(weight[0].length).toBe(buffer.length('weight'));
+    const splits = (u.axes[0] as unknown as { _splits: number[] })._splits;
+    // uPlot's own steps would label 0:20, 0:40 … here.
+    expect(splits.every((t) => t % 15 === 0)).toBeTrue();
   });
 
   it('grows the live axes with live samples only, starting from the settings', async () => {
@@ -705,31 +721,22 @@ describe('UplotRenderer', () => {
       expect(viewportRange({ mode: 'range', from: 2, to: 2 }, 30)).toEqual([
         2, 2.001,
       ]);
-      expect(viewportRange({ mode: 'follow', windowSec: 20 }, 5)).toEqual([
-        0, 20,
-      ]);
-      expect(viewportRange({ mode: 'follow', windowSec: 20 }, 30)).toEqual([
-        12, 32,
+      expect(viewportRange({ mode: 'grow', startSec: 20 }, 30)).toEqual([
+        0, 37.5,
       ]);
     });
 
-    it('keeps the live window still and jumps it once per window, as today', () => {
-      // Brew form: a 60 s window keeps 50 s in view after a jump.
-      expect(steppedRange(0, 60, 50)).toEqual([0, 70]);
-      expect(steppedRange(59.9, 60, 50)).toEqual([0, 70]);
-      expect(steppedRange(60, 60, 50)).toEqual([10, 130]);
-      expect(steppedRange(150, 60, 50)).toEqual([70, 190]);
-      // Maximized: a 90 s window keeps 70 s in view.
-      expect(steppedRange(95, 90, 70)).toEqual([20, 190]);
-      expect(
-        viewportRange({ mode: 'stepped', windowSec: 60, backSec: 50 }, 61),
-      ).toEqual([10, 130]);
-    });
-
-    it('shows the whole brew for a window without length', () => {
-      expect(steppedRange(42, 0, 0)).toEqual([0, 42]);
-      expect(steppedRange(-3, 60, 50)).toEqual([0, 70]);
-      expect(steppedRange(5, 60, -10)).toEqual([0, 70]);
+    it('starts the live window with its length and then grows it with the brew', () => {
+      expect(liveTimeRange(0, 20)).toEqual([0, 20]);
+      expect(liveTimeRange(16, 20)).toEqual([0, 20]);
+      expect(liveTimeRange(30, 20)).toEqual([0, 37.5]);
+      expect(liveTimeRange(360, 20)).toEqual([0, 450]);
+      // A long start window keeps still until the brew comes near its end.
+      expect(liveTimeRange(200, 300)).toEqual([0, 300]);
+      expect(liveTimeRange(-3, 20)).toEqual([0, 20]);
+      expect(liveTimeRange(Number.NaN, 20)).toEqual([0, 20]);
+      expect(liveTimeRange(5, 0)).toEqual([0, 20]);
+      expect(liveTimeRange(5, Number.NaN)).toEqual([0, 20]);
     });
 
     it('draws references first and orders the axes by the live series', () => {
