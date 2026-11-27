@@ -2036,6 +2036,7 @@
         "STARS": "{{name}}: {{rating}} von {{max}} Sternen",
         "RANGE_FROM_VALUE": "von {{value}}",
         "RANGE_TO_VALUE": "bis {{value}}",
+        "CUT_RESULT": "neue Dauer {{duration}}, neues Gewicht {{weight}}",
         "RANGE_VALUE_OF_MAX": "{{value}} von {{max}}",
         "START_TIMER_AT_WEIGHT": "Timer bei diesem Gewicht starten",
         "STOP_AT_MIN_FLOW": "Brühung unter diesem Durchfluss stoppen",

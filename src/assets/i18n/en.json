@@ -2036,6 +2036,7 @@
         "STARS": "{{name}}: {{rating}} of {{max}} stars",
         "RANGE_FROM_VALUE": "from {{value}}",
         "RANGE_TO_VALUE": "to {{value}}",
+        "CUT_RESULT": "new duration {{duration}}, new weight {{weight}}",
         "RANGE_VALUE_OF_MAX": "{{value}} of {{max}}",
         "START_TIMER_AT_WEIGHT": "Start the timer at this weight",
         "STOP_AT_MIN_FLOW": "Stop the brew below this flow",

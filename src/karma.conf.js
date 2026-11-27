@@ -15,6 +15,7 @@ const path = require('node:path');
  */
 const NEW_CODE = [
   'src/app/graph-section/graph/graph-detail/**',
+  'src/app/brew/brew-popover-cut/brew-popover-cut.component.ts',
   'src/app/profile/**',
   'src/brew-session/**',
   'src/classes/changeTracking/**',
