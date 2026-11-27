@@ -209,9 +209,6 @@ importers:
         specifier: ^0.16.3
         version: 0.16.3
     devDependencies:
-      '@angular-devkit/schematics':
-        specifier: ^22.3.0
-        version: 22.3.0(chokidar@6.0.0)
       '@angular/build':
         specifier: ^22.3.0
         version: 22.3.0(patch_hash=f560f53bc1ad83f8bb4c85958b0cfabc1f01a7303249061a26b3c5dc2c7e952d)(@angular/compiler-cli@22.3.0(@angular/compiler@22.3.0)(typescript@6.0.3))(@angular/compiler@22.3.0)(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3)))(@types/node@25.9.9)(istanbul-lib-instrument@6.0.3)(karma@6.4.4)(postcss@8.5.32)(rollup@4.68.0)(tslib@2.9.1)(typescript@6.0.3)(yaml@2.9.1)
@@ -242,9 +239,6 @@ importers:
       '@ianvs/prettier-plugin-sort-imports':
         specifier: ^4.7.1
         version: 4.7.1(prettier@3.10.1)
-      '@ionic/angular-toolkit':
-        specifier: ^13.0.0
-        version: 13.0.0(@angular-devkit/core@22.3.0(chokidar@6.0.0))(@angular-devkit/schematics@22.3.0(chokidar@6.0.0))(@schematics/angular@22.3.0(chokidar@6.0.0))(typescript@6.0.3)
       '@playwright/test':
         specifier: ^1.65.1
         version: 1.65.1
@@ -1390,14 +1384,6 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
-
-  '@ionic/angular-toolkit@13.0.0':
-    resolution: {integrity: sha512-tdI5NPy10EXIRWKztbNm5df2GvGOaculamxLoylM8RxorSw+Xm84+34L4SIbxFXM+b+5r98r3lIFTSo9tKhpOw==}
-    peerDependencies:
-      '@angular-devkit/core': '>=21.0.0 <23.0.0'
-      '@angular-devkit/schematics': '>=21.0.0 <23.0.0'
-      '@schematics/angular': '>=21.0.0 <23.0.0'
-      typescript: '>=5.9.0 <6.1.0'
 
   '@ionic/angular@9.0.11':
     resolution: {integrity: sha512-icfrZkFIByewTG+FH84acKP2YqbkH9PxKy1VP1Y0v2GiTqo5ZroxmrqB5DcXCmn5M1XIEWMtm0qh/SjParz4Jw==}
@@ -5979,13 +5965,6 @@ snapshots:
   '@inquirer/type@4.3.0(@types/node@25.9.9)':
     optionalDependencies:
       '@types/node': 25.9.9
-
-  '@ionic/angular-toolkit@13.0.0(@angular-devkit/core@22.3.0(chokidar@6.0.0))(@angular-devkit/schematics@22.3.0(chokidar@6.0.0))(@schematics/angular@22.3.0(chokidar@6.0.0))(typescript@6.0.3)':
-    dependencies:
-      '@angular-devkit/core': 22.3.0(chokidar@6.0.0)
-      '@angular-devkit/schematics': 22.3.0(chokidar@6.0.0)
-      '@schematics/angular': 22.3.0(chokidar@6.0.0)
-      typescript: 6.0.3
 
   '@ionic/angular@9.0.11(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/forms@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3)))(rxjs@7.8.2))(@angular/router@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@22.3.0(@angular/common@22.3.0(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@22.3.0(@angular/compiler@22.3.0)(rxjs@7.8.2)(zone.js@0.16.3)))(rxjs@7.8.2))(rxjs@7.8.2)(zone.js@0.16.3)':
     dependencies:
