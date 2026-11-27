@@ -23,3 +23,5 @@ patchedDependencies:
   '@angular/build@22.3.0': patches/@angular__build@22.3.0.patch
   # Settles the speech calls cut off by stop() on Android, as iOS does.
   '@capacitor-community/text-to-speech@8.0.2': patches/@capacitor-community__text-to-speech@8.0.2.patch
+  # Imports UIKit in a header that compiled only through the CocoaPods prefix header.
+  'skwas-cordova-plugin-datetimepicker@3.0.2': patches/skwas-cordova-plugin-datetimepicker@3.0.2.patch
