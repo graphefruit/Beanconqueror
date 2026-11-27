@@ -47,7 +47,6 @@ import {
 } from '../actions-popover/actions-popover.component';
 import { GraphDisplayCardComponent } from '../graph-display-card/graph-display-card.component';
 
-declare var Plotly;
 @Component({
   selector: 'graph-information-card',
   templateUrl: './graph-information-card.component.html',

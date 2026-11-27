@@ -1,11 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   inject,
   Input,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -92,9 +90,6 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
   public loadingTotal = 0;
   public loadingImportedShot = false;
   private loadingCancelled = false;
-
-  @ViewChild('ionItemEl', { read: ElementRef, static: false })
-  public ionItemEl: ElementRef;
 
   public ngOnInit() {
     this.readHistory();
@@ -265,13 +260,6 @@ export class BrewModalImportShotGaggimateComponent implements OnInit {
     if (importedShot) {
       shotsToFetch.unshift(importedShot);
     }
-  }
-
-  public getElementOffsetWidth() {
-    if (this.ionItemEl?.nativeElement?.offsetWidth) {
-      return this.ionItemEl?.nativeElement?.offsetWidth - 50;
-    }
-    return 0;
   }
 
   public dismiss(): void {

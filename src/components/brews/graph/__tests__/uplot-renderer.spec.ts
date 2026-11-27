@@ -77,6 +77,18 @@ class Probe implements UplotOverlayPlugin {
   }
 }
 
+/** Records the theme the overlays had at each draw. */
+class ThemeProbe implements UplotOverlayPlugin {
+  public dark = false;
+  public readonly drawnDark: boolean[] = [];
+  public hooks(): uPlot.Plugin {
+    return { hooks: { draw: [() => this.drawnDark.push(this.dark)] } };
+  }
+  public apply(state: UplotOverlayState): void {
+    this.dark = state.dark;
+  }
+}
+
 describe('UplotRenderer', () => {
   let host: HTMLDivElement;
   let frames: FakeFrames;
@@ -380,6 +392,161 @@ describe('UplotRenderer', () => {
     expect(document.querySelectorAll('.uplot').length).toBe(1);
   });
 
+  it('draws ground, axes and their text in the ink given into the picture', async () => {
+    await mount('static');
+    feed(buffer, 0, 30);
+    renderer.attach(buffer);
+    await frames.run();
+
+    const image = await decode(
+      await renderer.exportImage({
+        width: 300,
+        height: 150,
+        theme: 'light',
+        ink: '#ff00ff',
+        transparent: false,
+        scale: 3,
+      }),
+    );
+
+    expect(image.width).toBe(900);
+    expect(image.height).toBe(450);
+    expect(pixel(image, 1, 1)).toEqual(rgb(CHART_PALETTE.light.background));
+    // uPlot draws its axes on the canvas, so the time labels at the bottom are in the picture.
+    const strip = pixels(image, 0, image.height - 28 * 3, image.width, 28 * 3);
+    expect(strip.filter(([r, g, b]) => r > 180 && g < 90 && b > 180).length)
+      .withContext('ink pixels of the time axis')
+      .toBeGreaterThan(50);
+  });
+
+  it('draws the lines of a picture in its theme, not in the app theme', async () => {
+    await mount('static', false);
+    renderer.setSeries(
+      defs('live', 'weight').map((def) => ({
+        ...def,
+        colour: { light: '#ff0000', dark: '#00ff00' },
+      })),
+    );
+    feed(buffer, 0, 30);
+    renderer.attach(buffer);
+    await frames.run();
+
+    const image = await decode(
+      await renderer.exportImage({
+        width: 300,
+        height: 150,
+        theme: 'dark',
+        transparent: true,
+        scale: 1,
+      }),
+    );
+
+    const all = pixels(image, 0, 0, image.width, image.height);
+    const green = all.filter(([r, g, b]) => g > 200 && r < 60 && b < 60);
+    const red = all.filter(([r, g, b]) => r > 200 && g < 60 && b < 60);
+    expect(green.length).withContext('dark line pixels').toBeGreaterThan(50);
+    expect(red.length).withContext('light line pixels').toBe(0);
+  });
+
+  it('draws the overlays of a picture in its theme, the graph keeps the app theme', async () => {
+    const theme = new ThemeProbe();
+    renderer = new UplotRenderer([theme], {
+      requestFrame: frames.request,
+      cancelFrame: frames.cancel,
+    });
+    await renderer.mount(host, {
+      width: 300,
+      height: 150,
+      dark: false,
+      mode: 'static',
+      axisSettings: new Settings(),
+    });
+    renderer.setSeries(defs('live', 'weight'));
+    feed(buffer, 0, 2);
+    renderer.attach(buffer);
+    await frames.run();
+    expect(theme.drawnDark).not.toContain(true);
+    const before = theme.drawnDark.length;
+
+    await renderer.exportImage({
+      width: 150,
+      height: 75,
+      theme: 'dark',
+      transparent: true,
+      scale: 1,
+    });
+
+    const picture = theme.drawnDark.slice(before);
+    expect(picture.length).toBeGreaterThan(0);
+    expect(picture.every(Boolean)).toBeTrue();
+    expect(theme.dark).toBeFalse();
+  });
+
+  /** Mounts three lines with their own axes; the reach is the rightmost x of the red weight line. */
+  async function mountThreeAxes(
+    mode: ChartMode,
+  ): Promise<(compact?: boolean) => Promise<number>> {
+    await mount(mode);
+    renderer.setSeries(
+      // Only the weight line is red; the other axes draw their ticks in their own colour.
+      defs('live', 'weight', 'temperature', 'waterDispensed').map((def) => {
+        const colour = def.id === 'weight' ? '#ff0000' : '#00ff00';
+        return { ...def, colour: { light: colour, dark: colour } };
+      }),
+    );
+    for (let k = 0; k < 300; k++) {
+      buffer.append('weight', k / 10, 10);
+      buffer.append('temperature', k / 10, 93);
+      buffer.append('waterDispensed', k / 10, k);
+    }
+    renderer.attach(buffer);
+    await frames.run();
+    return async (compact?: boolean): Promise<number> => {
+      const image = await decode(
+        await renderer.exportImage({
+          width: 300,
+          height: 150,
+          theme: 'light',
+          ink: '#0000ff',
+          transparent: true,
+          compact,
+          scale: 1,
+        }),
+      );
+      let right = -1;
+      pixels(image, 0, 0, image.width, image.height).forEach(([r, g, b], i) => {
+        if (r > 200 && g < 60 && b < 60) {
+          right = Math.max(right, i % image.width);
+        }
+      });
+      return right;
+    };
+  }
+
+  it('leaves temperature and water axes out of a compact picture, so the lines reach further', async () => {
+    const rightmostLine = await mountThreeAxes('static');
+
+    const full = await rightmostLine(false);
+    const compact = await rightmostLine(true);
+
+    // The two axes of 36 px on the right give their room to the lines.
+    expect(full).toBeLessThanOrEqual(300 - 2 * 36);
+    expect(compact).toBeGreaterThan(300 - 36);
+    // The graph in the app keeps its axes.
+    expect(plot().axes.map((axis) => axis.show)).toEqual([
+      true,
+      true,
+      true,
+      true,
+    ]);
+  });
+
+  it('exports a live graph without temperature and water axes, as it shows them', async () => {
+    const rightmostLine = await mountThreeAxes('live');
+
+    expect(await rightmostLine()).toBeGreaterThan(300 - 36);
+  });
+
   it('refuses to export without series', async () => {
     renderer = new UplotRenderer([], {
       requestFrame: frames.request,
@@ -468,7 +635,7 @@ describe('UplotRenderer', () => {
       expect(layout.axes).toEqual(['pressure', 'weight', 'temperature']);
     });
 
-    it('keeps temperature and water axes bare only while live', () => {
+    it('keeps temperature and water axes bare only while live or compact', () => {
       expect(axisShown('temperature', true)).toBeFalse();
       expect(axisShown('water', true)).toBeFalse();
       expect(axisShown('weight', true)).toBeTrue();
@@ -498,6 +665,26 @@ function pixel(image: HTMLImageElement, x: number, y: number): number[] {
   const ctx = canvas.getContext('2d');
   ctx.drawImage(image, 0, 0);
   return Array.from(ctx.getImageData(x, y, 1, 1).data);
+}
+
+function pixels(
+  image: HTMLImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+): number[][] {
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(image, 0, 0);
+  const data = ctx.getImageData(x, y, width, height).data;
+  const result: number[][] = [];
+  for (let i = 0; i < data.length; i += 4) {
+    result.push([data[i], data[i + 1], data[i + 2], data[i + 3]]);
+  }
+  return result;
 }
 
 function rgb(hex: string): number[] {

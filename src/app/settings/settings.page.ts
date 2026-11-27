@@ -1469,7 +1469,7 @@ export class SettingsPage {
     },
   ) {
     try {
-      const sourceFile = this.uiFileHelper.normalizeFileName(fileName);
+      const sourceFile = await this.uiFileHelper.resolvePhotoPath(fileName);
       const targetFile = `${exportPath.path}/${fileName}`;
 
       await this.uiFileHelper.makeParentDirs(targetFile, exportPath.directory);

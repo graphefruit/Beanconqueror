@@ -63,10 +63,10 @@ describe('series definitions', () => {
 
     expect(defs.map((d) => [d.id, d.label, d.unit, d.axisId])).toEqual([
       ['weight', 'Weight', 'g', 'weight'],
-      ['weightSecond', 'Weight', 'g', 'weight'],
+      ['weightSecond', 'BREW_FLOW_WEIGHT_SECOND', 'g', 'weight'],
       ['flowPerSecond', 'BREW_FLOW_WEIGHT_PER_SECOND', 'g/s', 'flow'],
       ['realtimeFlow', 'Flow (Realtime)', 'g/s', 'flow'],
-      ['realtimeFlowSecond', 'Flow (Realtime)', 'g/s', 'flow'],
+      ['realtimeFlowSecond', 'BREW_FLOW_WEIGHT_REALTIME_SECOND', 'g/s', 'flow'],
       ['pressure', 'BREW_PRESSURE_FLOW', 'bar', 'pressure'],
       ['temperature', 'BREW_TEMPERATURE_REALTIME', '°C', 'temperature'],
       ['waterDispensed', 'Water dispensed', 'ml', 'water'],

@@ -93,8 +93,6 @@ import {
 } from '../../../stores/brews/magic-tap-rules';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 
-declare var Plotly;
-
 // Define this interface if not already globally available or imported
 interface IEventPayload {
   category: string;
@@ -460,13 +458,6 @@ export class BrewAddComponent implements OnDestroy {
 
   public async dismiss() {
     this.stopScaleTimer();
-    try {
-      if (this.brewBrewing.brewBrewingGraphEl) {
-        Plotly.purge(
-          this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement,
-        );
-      }
-    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,

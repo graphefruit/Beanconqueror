@@ -14,6 +14,8 @@ const path = require('node:path');
  * can be listed: the test build instruments nothing else.
  */
 const NEW_CODE = [
+  'src/app/graph-section/graph/graph-detail/**',
+  'src/app/brew/brew-popover-cut/brew-popover-cut.component.ts',
   'src/app/profile/**',
   'src/brew-session/**',
   'src/classes/changeTracking/**',
@@ -22,6 +24,7 @@ const NEW_CODE = [
   'src/components/bean-information/bean-information.component.ts',
   'src/components/brew-share/**',
   'src/components/brews/graph/**',
+  'src/components/graph-display-card/**',
   'src/components/segment-label/**',
   'src/components/reorder-buttons/**',
   'src/components/virtual-list/**',

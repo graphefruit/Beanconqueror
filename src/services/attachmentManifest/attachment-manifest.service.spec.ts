@@ -320,6 +320,22 @@ describe('AttachmentManifestService', () => {
     service.stop();
   });
 
+  it('finds photos from iOS with the Cloud folder on Android too', async () => {
+    const setup = createSetup();
+    setup.storages.BEANS.setEntries([
+      { config: { uuid: 'bean-0' }, attachments: ['Cloud/photo.png'] },
+    ]);
+    setup.files.set('DATA:photo.png', 7);
+    const { service } = createService(setup);
+
+    await startAndBuild(service);
+
+    expect(storedManifest(setup).entries).toEqual([
+      jasmine.objectContaining({ path: 'Cloud/photo.png', size: 7 }),
+    ]);
+    service.stop();
+  });
+
   it('continues a stopped build on the next start without listing a file twice', async () => {
     const setup = createSetup();
     fillSyntheticData(setup, 1200, 40);

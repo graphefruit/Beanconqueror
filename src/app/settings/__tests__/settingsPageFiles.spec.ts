@@ -570,6 +570,21 @@ describe('SettingsPage files of an export and an import', () => {
       ).toBe('299');
       expect(log.error).not.toHaveBeenCalled();
     });
+
+    it('takes a photo stored under Cloud/ from the path without Cloud/, and keeps the stored path in the export', async () => {
+      database.values.set('BEANS', [
+        entry('bean-cloud', { attachments: ['Cloud/x.jpg'] }),
+      ]);
+      await storages.beans.reinitializeStorage();
+      await write('x.jpg', 'the photo', Directory.Data);
+
+      await page.export();
+
+      expect(await read(`${EXPORT_DIR}/Cloud/x.jpg`, Directory.External)).toBe(
+        'the photo',
+      );
+      expect(log.error).not.toHaveBeenCalled();
+    });
   });
 
   describe('exporting on iOS', () => {

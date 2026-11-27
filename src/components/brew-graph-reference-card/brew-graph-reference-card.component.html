@@ -189,10 +189,10 @@
         </ion-grid>
       }
       @if (isGraph && graph?.flow_profile) {
-        <graph-display-card [staticChart]="true" [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='graph.flow_profile' />
+        <graph-display-card [flowProfilePath]='graph.flow_profile' />
       }
       @if (!isGraph && brew?.flow_profile) {
-        <graph-display-card [staticChart]="true" [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='brew.flow_profile' />
+        <graph-display-card [flowProfilePath]='brew.flow_profile' />
       }
     </div>
     <div style="height:10px;"></div>

@@ -152,35 +152,23 @@ describe('attachmentRefs', () => {
   });
 
   describe('resolveForStat', () => {
-    it('leaves out a leading slash', () => {
+    it('looks up the photo path candidates relative to the data directory', () => {
       expect(resolveForStat('/photo.jpg', false)).toEqual({
-        path: 'photo.jpg',
-        absolute: false,
-      });
-      expect(resolveForStat('photo.jpg', true)).toEqual({
-        path: 'photo.jpg',
-        absolute: false,
-      });
-    });
-
-    it('leaves out the Cloud folder only on iOS', () => {
-      expect(resolveForStat('Cloud/photo.jpg', true)).toEqual({
-        path: 'photo.jpg',
-        absolute: false,
-      });
-      expect(resolveForStat('/Cloud/photo.jpg', true)).toEqual({
-        path: 'photo.jpg',
+        paths: ['photo.jpg'],
         absolute: false,
       });
       expect(resolveForStat('Cloud/photo.jpg', false)).toEqual({
-        path: 'Cloud/photo.jpg',
+        paths: ['Cloud/photo.jpg', 'photo.jpg'],
         absolute: false,
       });
     });
 
     it('checks absolute file URIs as they are', () => {
       const uri = 'file:///var/mobile/Containers/Data/photo.jpg';
-      expect(resolveForStat(uri, true)).toEqual({ path: uri, absolute: true });
+      expect(resolveForStat(uri, true)).toEqual({
+        paths: [uri],
+        absolute: true,
+      });
     });
   });
 });

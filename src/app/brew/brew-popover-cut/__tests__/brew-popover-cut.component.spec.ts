@@ -1,236 +1,313 @@
-import { ChangeDetectorRef, NgZone } from '@angular/core';
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ModalController } from '@ionic/angular';
 
-import { TranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 
 import { Brew } from 'src/classes/brew/brew';
-import { BrewFlow } from 'src/classes/brew/brewFlow';
+import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import { MeticulousDevice } from '../../../../classes/preparationDevice/meticulous/meticulousDevice';
-import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
+import { Settings } from '../../../../classes/settings/settings';
+import { CutMarkersPlugin } from '../../../../components/brews/graph/overlays/cut-markers';
+import type { SeriesDef } from '../../../../components/brews/graph/series-def';
+import { UplotRenderer } from '../../../../components/brews/graph/uplot-renderer';
+import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
+import { ThemeService } from '../../../../services/theme/theme.service';
+import { UILog } from '../../../../services/uiLog';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 import { BrewPopoverCutComponent } from '../brew-popover-cut.component';
 
-describe('BrewPopoverCutComponent performCut', () => {
+/** A Meticulous shot of 30 s whose times have to be recovered for the cut. */
+function legacyShot(): BrewFlow {
+  const flow = MeticulousDevice.returnBrewFlowForShotData(
+    [100, 1350, 30125].map((time, index) => ({
+      time,
+      shot: { weight: index * 12, pressure: 9, gravimetric_flow: 2 },
+    })),
+  );
+  for (const samples of [flow.weight, flow.pressureFlow, flow.realtimeFlow]) {
+    samples.forEach((sample) => {
+      sample.brew_time = '';
+    });
+  }
+  return flow;
+}
+
+/** A shot with an imported metric next to the weight. */
+function shotWithMetric(): BrewFlow {
+  const flow = legacyShot();
+  flow.customMetrics.counter = flow.weight.map((sample, i) => ({
+    value: i * 5,
+    timestamp: sample.timestamp,
+    brew_time: sample.brew_time,
+  }));
+  flow.customAxes = [
+    {
+      key: 'counter',
+      name: 'Counter',
+      unit: 'ml',
+      colorLight: '#123456',
+      colorDark: '#abcdef',
+    },
+  ];
+  return flow;
+}
+
+function brew(): Brew {
+  return {
+    getPreparation: () => ({ style_type: PREPARATION_STYLE_TYPE.ESPRESSO }),
+  } as unknown as Brew;
+}
+
+function rangeInput(lower: number, upper: number): Event {
+  return { detail: { value: { lower, upper } } } as unknown as Event;
+}
+
+describe('BrewPopoverCutComponent', () => {
+  let fixture: ComponentFixture<BrewPopoverCutComponent>;
   let component: BrewPopoverCutComponent;
+  let dark: ReturnType<typeof signal<boolean>>;
+  let dismiss: jasmine.Spy;
+  let logError: jasmine.Spy;
+
+  function element(): HTMLElement {
+    return fixture.nativeElement as HTMLElement;
+  }
+
+  function chart(): HTMLElement {
+    return element().querySelector('.chart');
+  }
+
+  function drawn(): HTMLElement | null {
+    return chart().querySelector('.uplot');
+  }
+
+  async function frame(): Promise<void> {
+    fixture.detectChanges();
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await new Promise((resolve) => setTimeout(resolve));
+    fixture.detectChanges();
+  }
+
+  /** Settles until `done` holds; the first load of uPlot may take a moment. */
+  async function until(done: () => boolean): Promise<void> {
+    for (let i = 0; i < 40 && !done(); i++) {
+      await frame();
+    }
+  }
+
+  function create(flow: BrewFlow): void {
+    fixture = TestBed.createComponent(BrewPopoverCutComponent);
+    component = fixture.componentInstance;
+    fixture.componentRef.setInput('brew', brew());
+    fixture.componentRef.setInput('flowProfile', flow);
+    element().style.display = 'block';
+    element().style.width = '320px';
+    document.body.appendChild(element());
+    fixture.detectChanges();
+  }
 
   beforeEach(() => {
-    const modalCtrlSpy = jasmine.createSpyObj('ModalController', ['dismiss']);
-    const translateSpy = jasmine.createSpyObj('TranslateService', ['instant']);
-    const graphHelperSpy = jasmine.createSpyObj('GraphHelperService', [
-      'initializeTraces',
-      'fillTraces',
-      'fillDataIntoTraces',
-      'getChartLayout',
-    ]);
-    const settingsStorageSpy = jasmine.createSpyObj('UISettingsStorage', [
-      'getSettings',
-    ]);
-    const cdrSpy = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
-    const ngZoneMock = {
-      runOutsideAngular: (fn: () => void) => fn(),
-    };
-
+    dark = signal(false);
+    dismiss = jasmine.createSpy('dismiss').and.resolveTo(true);
+    logError = jasmine.createSpy('error');
     TestBed.configureTestingModule({
+      imports: [BrewPopoverCutComponent],
       providers: [
-        BrewPopoverCutComponent,
-        { provide: ModalController, useValue: modalCtrlSpy },
-        { provide: TranslateService, useValue: translateSpy },
-        { provide: GraphHelperService, useValue: graphHelperSpy },
-        { provide: UISettingsStorage, useValue: settingsStorageSpy },
-        { provide: ChangeDetectorRef, useValue: cdrSpy },
-        { provide: NgZone, useValue: ngZoneMock },
+        provideTranslateService(),
+        { provide: ModalController, useValue: { dismiss } },
+        { provide: ThemeService, useValue: { dark } },
+        { provide: UILog, useValue: { error: logError } },
+        {
+          provide: UISettingsStorage,
+          useValue: { getSettings: () => new Settings() },
+        },
       ],
     });
-
-    component = TestBed.inject(BrewPopoverCutComponent);
   });
 
-  it('recovers legacy Meticulous times and cuts all imported traces', fakeAsync(() => {
-    const flow = MeticulousDevice.returnBrewFlowForShotData(
-      [100, 1350, 30125].map((time, index) => ({
-        time,
-        shot: { weight: index * 12, pressure: 9, gravimetric_flow: 2 },
-      })),
+  afterEach(() => {
+    element().remove();
+    fixture.destroy();
+  });
+
+  it('offers the whole profile, previews the weight and saves the cut', () => {
+    create(legacyShot());
+
+    expect(component.maxTime()).toBe(30.025);
+    expect(component.cutRange()).toEqual({ lower: 0, upper: 30.025 });
+    expect(component.newFinalWeight()).toBe(24);
+    expect(component.saveDisabled()).toBeTrue();
+    component.onRangeInput(rangeInput(1.25, 2));
+    expect(component.newFinalWeight()).toBe(12);
+    expect(component.duration()).toBe(0.75);
+    expect(component.rightCut()).toBeCloseTo(28.025, 6);
+    expect(component.saveDisabled()).toBeFalse();
+
+    component.save();
+
+    const [cut, role, id] = dismiss.calls.mostRecent().args;
+    expect(role).toBe('save');
+    expect(id).toBe(BrewPopoverCutComponent.COMPONENT_ID);
+    const saved = cut as { flowProfile: BrewFlow } & Record<string, unknown>;
+    expect(saved.flowProfile.weight.length).toBe(1);
+    expect(saved.finalWeight).toBe(12);
+    expect(saved.brew_time).toBe(1);
+    expect(saved.brew_time_milliseconds).toBe(750);
+  });
+
+  it('shows the new weight and duration as text', async () => {
+    create(legacyShot());
+    component.onRangeInput(rangeInput(1.25, 2));
+    await until(() => component.loaded());
+    await frame();
+
+    const text = element().textContent;
+    expect(text).toContain('12.0 g');
+    expect(text).toContain('0.75s');
+    expect(text).toContain('1.250s');
+    expect(text).toContain('28.025s');
+  });
+
+  it('closes without a cut', () => {
+    create(legacyShot());
+
+    component.dismiss();
+
+    expect(dismiss).toHaveBeenCalledOnceWith(
+      undefined,
+      'cancel',
+      BrewPopoverCutComponent.COMPONENT_ID,
     );
-    for (const samples of [flow.weight, flow.pressureFlow, flow.realtimeFlow]) {
-      samples.forEach((sample) => {
-        sample.brew_time = '';
-      });
-    }
-    component.flowProfile = flow;
-    component.brew = new Brew();
-    component.ngOnInit();
-    tick(50);
-
-    expect(component.maxTime).toBe(30.025);
-    expect(component.cutRange).toEqual({ lower: 0, upper: 30.025 });
-    expect(component.newFinalWeight).toBe(24);
-    component.onRangeInput({ detail: { value: { lower: 1.25, upper: 2 } } });
-    expect(component.newFinalWeight).toBe(12);
-    expect(component.isSaveDisabled()).toBeFalse();
-
-    const result = component['performCut'](flow, 1.25, 2, component.brew);
-    for (const samples of [
-      result.flowProfile.weight,
-      result.flowProfile.pressureFlow,
-      result.flowProfile.realtimeFlow,
-    ]) {
-      expect(samples.length).toBe(1);
-      expect(samples[0].brew_time).toBe('0.0');
-      expect(samples[0].timestamp).toBe('00:00:00.100');
-    }
-    expect(result.finalWeight).toBe(12);
-  }));
-
-  it('preserves elapsed times already stored by the importer', fakeAsync(() => {
-    component.flowProfile = MeticulousDevice.returnBrewFlowForShotData([
-      { time: 100, shot: { weight: 0, pressure: 0, gravimetric_flow: 0 } },
-      { time: 30125, shot: { weight: 24, pressure: 9, gravimetric_flow: 2 } },
-    ]);
-    component.ngOnInit();
-    tick(50);
-
-    expect(component.maxTime).toBe(30.125);
-    expect(component.flowProfile.weight[0].brew_time).toBe('0.100');
-    expect(component.flowProfile.weight[1].brew_time).toBe('30.125');
-  }));
-
-  it('should correctly filter and shift weights and timestamps', () => {
-    // Arrange
-    const rawFlow = new BrewFlow();
-    rawFlow.weight = [
-      {
-        timestamp: '12:00:00.000',
-        brew_time: '0.0',
-        actual_weight: 0,
-        old_weight: 0,
-        actual_smoothed_weight: 0,
-        old_smoothed_weight: 0,
-        calculated_real_flow: 0,
-        not_mutated_weight: 0,
-      },
-      {
-        timestamp: '12:00:02.000',
-        brew_time: '2.0',
-        actual_weight: 5.0,
-        old_weight: 0,
-        actual_smoothed_weight: 5.0,
-        old_smoothed_weight: 0,
-        calculated_real_flow: 2.5,
-        not_mutated_weight: 5.0,
-      },
-      {
-        timestamp: '12:00:05.000',
-        brew_time: '5.0',
-        actual_weight: 15.0,
-        old_weight: 5.0,
-        actual_smoothed_weight: 15.0,
-        old_smoothed_weight: 5.0,
-        calculated_real_flow: 3.3,
-        not_mutated_weight: 15.0,
-      },
-      {
-        timestamp: '12:00:10.000',
-        brew_time: '10.0',
-        actual_weight: 35.0,
-        old_weight: 15.0,
-        actual_smoothed_weight: 35.0,
-        old_smoothed_weight: 15.0,
-        calculated_real_flow: 4.0,
-        not_mutated_weight: 35.0,
-      },
-    ];
-
-    // Act
-    // Cut from 2.0 to 5.0 seconds
-    const result = (component as any).performCut(rawFlow, 2.0, 5.0);
-
-    // Assert
-    expect(result.flowProfile.weight.length).toBe(2);
-
-    // First remaining point (was at 2.0s) should be shifted to 0.0s
-    expect(result.flowProfile.weight[0].brew_time).toBe('0.0');
-    // Timestamp should be shifted by 2 seconds (2000 ms) back from 12:00:02.000 to 12:00:00.000
-    expect(result.flowProfile.weight[0].timestamp).toBe('12:00:00.000');
-    // Weight should remain the same absolute value (5.0g) - not tared
-    expect(result.flowProfile.weight[0].actual_weight).toBe(5.0);
-
-    // Second remaining point (was at 5.0s) should be shifted to 3.0s (5.0 - 2.0)
-    expect(result.flowProfile.weight[1].brew_time).toBe('3.0');
-    // Timestamp should be shifted by 2 seconds back from 12:00:05.000 to 12:00:03.000
-    expect(result.flowProfile.weight[1].timestamp).toBe('12:00:03.000');
-    // Weight should remain the same absolute value (15.0g) - not tared
-    expect(result.flowProfile.weight[1].actual_weight).toBe(15.0);
-
-    // Final weight should be 15.0g (the weight at the end of the range)
-    expect(result.finalWeight).toBe(15.0);
   });
 
-  it('should shift first drip time and blooming time when cutting from the left', () => {
-    const rawFlow = new BrewFlow();
-    rawFlow.weight = [
-      {
-        timestamp: '12:00:02.000',
-        brew_time: '2.0',
-        actual_weight: 5.0,
-        old_weight: 0,
-        actual_smoothed_weight: 5.0,
-        old_smoothed_weight: 0,
-        calculated_real_flow: 2.5,
-        not_mutated_weight: 5.0,
-      },
-    ];
+  it('draws the graph with its imported metrics as a named picture', async () => {
+    const setSeries = spyOn(
+      UplotRenderer.prototype,
+      'setSeries',
+    ).and.callThrough();
+    create(shotWithMetric());
+    await until(() => !!drawn()?.querySelector('canvas'));
 
-    const mockBrew = new Brew();
-    mockBrew.coffee_first_drip_time = 5;
-    mockBrew.coffee_first_drip_time_milliseconds = 500;
-    mockBrew.coffee_blooming_time = 10;
-    mockBrew.coffee_blooming_time_milliseconds = 200;
-
-    // Cut starting at 2.0 seconds -> shift is 2.0s (2000 ms)
-    const result = (component as any).performCut(rawFlow, 2.0, 10.0, mockBrew);
-
-    // First drip time: 5500 ms - 2000 ms = 3500 ms -> 3s 500ms
-    expect(result.coffee_first_drip_time).toBe(3);
-    expect(result.coffee_first_drip_time_milliseconds).toBe(500);
-
-    // Blooming time: 10200 ms - 2000 ms = 8200 ms -> 8s 200ms
-    expect(result.coffee_blooming_time).toBe(8);
-    expect(result.coffee_blooming_time_milliseconds).toBe(200);
+    expect(drawn()).not.toBeNull();
+    expect(chart().getAttribute('aria-label')).toBe(
+      'A11Y.GRAPH_VALUES_AS_TEXT',
+    );
+    expect(element().querySelector('#cutChart')).toBeNull();
+    const defs = setSeries.calls.mostRecent().args[0] as SeriesDef[];
+    const metric = defs.find((def) => def.id === 'custom:counter');
+    expect(metric?.colour).toEqual({ light: '#123456', dark: '#abcdef' });
   });
 
-  it('should set first drip time and blooming time to zero if they fall below or equal to 0:00', () => {
-    const rawFlow = new BrewFlow();
-    rawFlow.weight = [
-      {
-        timestamp: '12:00:05.000',
-        brew_time: '5.0',
-        actual_weight: 5.0,
-        old_weight: 0,
-        actual_smoothed_weight: 5.0,
-        old_smoothed_weight: 0,
-        calculated_real_flow: 2.5,
-        not_mutated_weight: 5.0,
-      },
-    ];
+  it('puts the cut markers where the knobs are, without drawing the graph again', async () => {
+    const mount = spyOn(UplotRenderer.prototype, 'mount').and.callThrough();
+    const setViewport = spyOn(
+      UplotRenderer.prototype,
+      'setViewport',
+    ).and.callThrough();
+    const setSeries = spyOn(
+      UplotRenderer.prototype,
+      'setSeries',
+    ).and.callThrough();
+    const apply = spyOn(CutMarkersPlugin.prototype, 'apply').and.callThrough();
+    const cuts = () => apply.calls.all().map((call) => call.args[0].cut);
+    create(legacyShot());
+    await until(() => cuts().length > 0);
+    expect(cuts().at(-1)).toEqual([0, 30.025]);
+    expect(setViewport).toHaveBeenCalledOnceWith({
+      mode: 'range',
+      from: 0,
+      to: 30.025,
+    });
+    const root = drawn();
+    const canvas = root.querySelector('canvas');
 
-    const mockBrew = new Brew();
-    mockBrew.coffee_first_drip_time = 4;
-    mockBrew.coffee_first_drip_time_milliseconds = 0;
-    mockBrew.coffee_blooming_time = 5;
-    mockBrew.coffee_blooming_time_milliseconds = 0;
+    component.onRangeInput(rangeInput(1.25, 2));
+    await frame();
+    component.onRangeInput(rangeInput(2.5, 20));
+    await frame();
 
-    // Cut starting at 5.0 seconds -> shift is 5.0s (5000 ms)
-    const result = (component as any).performCut(rawFlow, 5.0, 10.0, mockBrew);
+    expect(cuts().at(-1)).toEqual([2.5, 20]);
+    expect(drawn()).toBe(root);
+    expect(drawn().querySelector('canvas')).toBe(canvas);
+    expect(mount).toHaveBeenCalledTimes(1);
+    expect(setSeries).toHaveBeenCalledTimes(1);
+  });
 
-    // First drip time: 4000 ms - 5000 ms = -1000 ms <= 0 -> 0s 0ms
-    expect(result.coffee_first_drip_time).toBe(0);
-    expect(result.coffee_first_drip_time_milliseconds).toBe(0);
+  it('draws at the width the dialog has once uPlot is loaded', async () => {
+    let release: () => void = () => undefined;
+    const loading = new Promise<void>((resolve) => (release = resolve));
+    const started = spyOn(UplotRenderer.prototype, 'mount');
+    started.and.callFake(async function (
+      this: UplotRenderer,
+      ...args: Parameters<UplotRenderer['mount']>
+    ): Promise<void> {
+      await loading;
+      started.and.callThrough();
+      await this.mount(...args);
+    });
+    create(legacyShot());
+    await until(() => started.calls.count() > 0);
 
-    // Blooming time: 5000 ms - 5000 ms = 0 ms <= 0 -> 0s 0ms
-    expect(result.coffee_blooming_time).toBe(0);
-    expect(result.coffee_blooming_time_milliseconds).toBe(0);
+    element().style.width = '400px';
+    await frame();
+    await frame();
+    release();
+    await until(() => !!drawn()?.querySelector('canvas'));
+    await frame();
+
+    // Ionic's padding and card margins settle late; compare with the box itself.
+    const wrap = drawn().querySelector<HTMLElement>('.u-wrap');
+    const width = Math.floor(chart().getBoundingClientRect().width);
+    expect(wrap.style.width).toBe(`${width}px`);
+  });
+
+  it('ignores a range event without two knobs', () => {
+    create(legacyShot());
+
+    component.onRangeInput({ detail: { value: 3 } } as unknown as Event);
+
+    expect(component.cutRange()).toEqual({ lower: 0, upper: 30.025 });
+  });
+
+  it('follows the theme', async () => {
+    const setDark = spyOn(UplotRenderer.prototype, 'setDark').and.callThrough();
+    create(legacyShot());
+    await until(() => !!drawn()?.querySelector('canvas'));
+
+    dark.set(true);
+    await frame();
+
+    expect(setDark).toHaveBeenCalledWith(true);
+  });
+
+  it('still cuts when the graph cannot be drawn', async () => {
+    spyOn(UplotRenderer.prototype, 'mount').and.rejectWith(
+      new Error('chunk failed'),
+    );
+    create(legacyShot());
+    await until(() => logError.calls.count() > 0);
+
+    expect(logError).toHaveBeenCalledWith(
+      'Cut graph could not be drawn',
+      jasmine.any(Error),
+    );
+    component.onRangeInput(rangeInput(1.25, 2));
+    component.save();
+    expect(dismiss).toHaveBeenCalled();
+  });
+
+  it('says the new duration and weight after a knob value', () => {
+    create(legacyShot());
+    const translate = TestBed.inject(TranslateService);
+    translate.setTranslation('de', {
+      A11Y: { CUT_RESULT: 'neue Dauer {{duration}}, neues Gewicht {{weight}}' },
+    });
+    translate.use('de');
+
+    expect(component.cutSummary({ lower: 1.25, upper: 2 })).toBe(
+      'neue Dauer 0,75 s, neues Gewicht 12 g',
+    );
   });
 });

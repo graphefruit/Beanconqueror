@@ -297,6 +297,104 @@ describe('UIFileHelper', () => {
     });
   });
 
+  describe('replacing a file and keeping a copy', () => {
+    const PATH = 'brews/a_flow_profile.json';
+    const COPY = 'brews/a_flow_profile.before-cut.json';
+
+    beforeEach(async () => {
+      setupAndroid();
+      await fileHelper.writeInternalFileFromText('original', PATH);
+    });
+
+    it('writes the new text and keeps the file from before', async () => {
+      await fileHelper.replaceInternalFileKeepingCopy('cut', PATH, COPY);
+
+      expect(await fileHelper.readInternalFileAsText(PATH)).toBe('cut');
+      expect(await fileHelper.readInternalFileAsText(COPY)).toBe('original');
+      expect(await namesIn('brews', Directory.Data)).toEqual([
+        'a_flow_profile.before-cut.json',
+        'a_flow_profile.json',
+      ]);
+    });
+
+    it('keeps only the copy from before the last replacing', async () => {
+      await fileHelper.replaceInternalFileKeepingCopy('first cut', PATH, COPY);
+      await fileHelper.replaceInternalFileKeepingCopy('second cut', PATH, COPY);
+
+      expect(await fileHelper.readInternalFileAsText(PATH)).toBe('second cut');
+      expect(await fileHelper.readInternalFileAsText(COPY)).toBe('first cut');
+      expect((await namesIn('brews', Directory.Data)).length).toBe(2);
+    });
+
+    it('replaces an older copy where copying refuses an existing file', async () => {
+      await fileHelper.replaceInternalFileKeepingCopy('first cut', PATH, COPY);
+      // As on iOS: copying onto a file that exists fails.
+      spyOn(FilesystemWeb.prototype, 'copy').and.callFake(async (options) => {
+        const name = options.to.split('/').pop();
+        if ((await namesIn('brews', Directory.Data)).includes(name)) {
+          throw new Error('file exists');
+        }
+        const { data } = await Filesystem.readFile({
+          path: options.from,
+          directory: options.directory,
+          encoding: Encoding.UTF8,
+        });
+        await Filesystem.writeFile({
+          path: options.to,
+          directory: options.toDirectory,
+          data,
+          encoding: Encoding.UTF8,
+        });
+        return { uri: options.to };
+      });
+
+      await fileHelper.replaceInternalFileKeepingCopy('second cut', PATH, COPY);
+
+      expect(await fileHelper.readInternalFileAsText(PATH)).toBe('second cut');
+      expect(await fileHelper.readInternalFileAsText(COPY)).toBe('first cut');
+    });
+
+    it('leaves the file as it was when the copy cannot be made', async () => {
+      spyOn(FilesystemWeb.prototype, 'copy').and.rejectWith(
+        new Error('disk full'),
+      );
+
+      await expectAsync(
+        fileHelper.replaceInternalFileKeepingCopy('cut', PATH, COPY),
+      ).toBeRejectedWithError('disk full');
+      expect(await fileHelper.readInternalFileAsText(PATH)).toBe('original');
+    });
+
+    it('leaves the file as it was when writing fails', async () => {
+      spyOn(fileHelper, 'writeFileFromText').and.rejectWith(
+        new Error('disk full'),
+      );
+
+      await expectAsync(
+        fileHelper.replaceInternalFileKeepingCopy('cut', PATH, COPY),
+      ).toBeRejectedWithError('disk full');
+      expect(await fileHelper.readInternalFileAsText(PATH)).toBe('original');
+    });
+
+    it('puts the copy back when renaming fails after the file was removed', async () => {
+      const rename = spyOn(FilesystemWeb.prototype, 'rename');
+      rename.and.callFake(async () => {
+        rename.and.callThrough();
+        // As on Android and iOS: the old file is gone before the move.
+        await Filesystem.deleteFile({ path: PATH, directory: Directory.Data });
+        throw new Error('rename failed');
+      });
+
+      await expectAsync(
+        fileHelper.replaceInternalFileKeepingCopy('cut', PATH, COPY),
+      ).toBeRejectedWithError('rename failed');
+      expect(await fileHelper.readInternalFileAsText(PATH)).toBe('original');
+      expect(await namesIn('brews', Directory.Data)).toEqual([
+        'a_flow_profile.json',
+      ]);
+    });
+  });
+
   describe('binary files', () => {
     beforeEach(setupAndroid);
 
@@ -354,6 +452,26 @@ describe('UIFileHelper', () => {
       ]);
       expect(stat.calls.allArgs().map(([options]) => options.path)).toEqual([
         'photo.png',
+      ]);
+    });
+
+    it('reads a photo stored with "Cloud/" in front of the name', async () => {
+      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'photo.png');
+
+      expect(await fileHelper.readInternalFileAsBase64('Cloud/photo.png')).toBe(
+        BYTES_BASE64,
+      );
+    });
+
+    it('asks for a "Cloud/" photo found nowhere as before', async () => {
+      const read = spyOn(FilesystemWeb.prototype, 'readFile').and.callThrough();
+
+      await expectAsync(
+        fileHelper.readInternalFileAsBase64('/Cloud/missing.png'),
+      ).toBeRejected();
+
+      expect(read.calls.allArgs().map(([options]) => options.path)).toEqual([
+        'Cloud/missing.png',
       ]);
     });
 
@@ -647,6 +765,17 @@ describe('UIFileHelper', () => {
 
       expect(copy).toMatch(new RegExp(`^duplicate_${UUID}s$`));
       expect(await fileHelper.readInternalFileAsText(copy)).toBe('text');
+    });
+
+    it('copies a photo stored with "Cloud/" in front of the name', async () => {
+      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'photo.png');
+
+      const copy = await fileHelper.duplicateInternalFile('/Cloud/photo.png');
+
+      expect(copy).toMatch(new RegExp(`^duplicate_${UUID}\\.png$`));
+      expect(await fileHelper.readInternalFileAsBase64(copy)).toBe(
+        BYTES_BASE64,
+      );
     });
 
     it('rejects and copies nothing when the file does not exist', async () => {
@@ -1494,20 +1623,33 @@ describe('UIFileHelper', () => {
       );
     });
 
-    it('keeps the "Cloud/" folder on Android', async () => {
+    it('finds a photo with the "Cloud/" in front of the name on Android, preferring the file as stored', async () => {
       setupAndroid();
       await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'photo.png');
+      await fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'other.png');
       await fileHelper.writeInternalFileFromBase64(
         BYTES_BASE64,
         'Cloud/other.png',
       );
 
       expect(
+        urlOf(await fileHelper.getInternalFileSrc('/Cloud/photo.png')),
+      ).toBe('/DATA/photo.png');
+      expect(
         urlOf(await fileHelper.getInternalFileSrc('Cloud/other.png')),
       ).toBe('/DATA/Cloud/other.png');
-      await expectAsync(
-        fileHelper.getInternalFileSrc('Cloud/photo.png'),
-      ).toBeRejected();
+    });
+
+    it('finds a photo kept in a "Cloud/" folder on iOS when there is none without it', async () => {
+      setupIos();
+      await fileHelper.writeInternalFileFromBase64(
+        BYTES_BASE64,
+        'Cloud/photo.png',
+      );
+
+      expect(
+        urlOf(await fileHelper.getInternalFileSrc('Cloud/photo.png')),
+      ).toBe('/DOCUMENTS/Cloud/photo.png');
     });
 
     it('logs and rejects when the file does not exist', async () => {

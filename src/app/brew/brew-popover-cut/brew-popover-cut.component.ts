@@ -1,17 +1,19 @@
 import { DecimalPipe } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  computed,
+  DestroyRef,
+  effect,
   ElementRef,
-  HostListener,
   inject,
-  Input,
-  NgZone,
-  OnInit,
-  ViewChild,
+  input,
+  linkedSignal,
+  signal,
+  untracked,
+  viewChild,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 
 import {
   IonBadge,
@@ -27,29 +29,47 @@ import {
   IonRow,
   ModalController,
 } from '@ionic/angular';
+import type { RangeCustomEvent } from '@ionic/angular';
 
-import { TranslatePipe } from '@ngx-translate/core';
-import moment from 'moment';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { Brew } from 'src/classes/brew/brew';
-import { BrewFlow, IBrewWeightFlow } from 'src/classes/brew/brewFlow';
-import { PREPARATION_STYLE_TYPE } from 'src/enums/preparations/preparationStyleTypes';
+import { BrewFlow } from 'src/classes/brew/brewFlow';
+import { FlowSeriesBuffer } from '../../../components/brews/graph/flow-series-buffer';
+import { CutMarkersPlugin } from '../../../components/brews/graph/overlays/cut-markers';
+import { seriesDefsFor } from '../../../components/brews/graph/series-def';
+import { UplotRenderer } from '../../../components/brews/graph/uplot-renderer';
 import { HeaderDismissButtonComponent } from '../../../components/header/header-dismiss-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
-import { RangeNameDirective } from '../../../directive/range-name.directive';
-import { GraphHelperService } from '../../../services/graphHelper/graph-helper.service';
-import { loadPlotly } from '../../../services/graphHelper/load-plotly';
+import {
+  RangeNameDirective,
+  rangeValueText,
+} from '../../../directive/range-name.directive';
+import { ThemeService } from '../../../services/theme/theme.service';
+import { UILog } from '../../../services/uiLog';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import {
+  calculateCutBounds,
+  cutPreviewWeight,
+  FlowCutSave,
+  performFlowCut,
+} from '../../../stores/brews/flow-cut-rules';
 
-declare var Plotly: any;
+const CHART_HEIGHT = 200;
+/** An arrow key moves a knob by 0.1 s, PageUp/PageDown by 1 s; a finger keeps ms. */
+export const CUT_KEY_STEP = 0.1;
+
+interface CutRange {
+  lower: number;
+  upper: number;
+}
 
 @Component({
   selector: 'app-brew-popover-cut',
   templateUrl: './brew-popover-cut.component.html',
   styleUrls: ['./brew-popover-cut.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
     DecimalPipe,
     TranslatePipe,
     IonHeader,
@@ -68,617 +88,173 @@ declare var Plotly: any;
     IonBadge,
   ],
 })
-export class BrewPopoverCutComponent implements OnInit {
+export class BrewPopoverCutComponent {
   private readonly modalController = inject(ModalController);
-  private readonly graphHelper = inject(GraphHelperService);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
-  private readonly ngZone = inject(NgZone);
-  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly theme = inject(ThemeService);
+  private readonly translate = inject(TranslateService);
+  private readonly uiLog = inject(UILog);
 
   public static COMPONENT_ID = 'brew-cut';
+  protected readonly keyStep = CUT_KEY_STEP;
+  protected readonly chartHeight = CHART_HEIGHT;
 
-  @Input() public brew: Brew;
-  @Input() public flowProfile: BrewFlow;
+  public readonly brew = input.required<Brew>();
+  public readonly flowProfile = input.required<BrewFlow>();
 
-  @ViewChild('cutChartContent', { read: ElementRef })
-  public cutChartContent: ElementRef;
+  private readonly chart = viewChild.required<ElementRef<HTMLElement>>('chart');
 
-  public maxTime: number = 0;
-  public cutRange: { lower: number; upper: number } = { lower: 0, upper: 0 };
-  public newFinalWeight: number = 0;
-  public loaded: boolean = false;
+  public readonly maxTime = computed(() =>
+    calculateCutBounds(this.flowProfile()),
+  );
+  public readonly cutRange = linkedSignal<CutRange>(() => ({
+    lower: 0,
+    upper: this.maxTime(),
+  }));
+  public readonly newFinalWeight = computed(() =>
+    cutPreviewWeight(this.flowProfile(), this.cutRange().upper),
+  );
+  public readonly duration = computed(
+    () => this.cutRange().upper - this.cutRange().lower,
+  );
+  public readonly rightCut = computed(
+    () => this.maxTime() - this.cutRange().upper,
+  );
+  public readonly saveDisabled = computed(
+    () =>
+      this.cutRange().lower === 0 && this.cutRange().upper === this.maxTime(),
+  );
+  /** Ionic draws two knobs wrong while the modal still moves in. */
+  public readonly loaded = signal(false);
 
-  public ngOnInit() {
-    this.calculateBounds();
-    this.calculateNewFinalWeight();
-    setTimeout(() => {
-      this.loaded = true;
-      this.cdr.detectChanges();
-    }, 50);
-  }
-
-  public ionViewDidEnter() {
-    setTimeout(() => {
-      void this.initializeChart();
-    }, 100);
-  }
-
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    setTimeout(() => {
-      void this.initializeChart();
-    }, 100);
-  }
-
-  private calculateBounds() {
-    let max = 0;
-    if (this.flowProfile) {
-      const arraysToCheck = [
-        this.flowProfile.weight,
-        this.flowProfile.pressureFlow,
-        this.flowProfile.temperatureFlow,
-        this.flowProfile.weightSecond,
-        this.flowProfile.waterFlow,
-        this.flowProfile.realtimeFlow,
-        this.flowProfile.realtimeFlowSecond,
-        this.flowProfile.waterDispensed,
-        this.flowProfile.waterDispensedFlowSecond,
-        this.flowProfile.brewbyweight,
-        ...Object.values(this.flowProfile.customMetrics ?? {}),
-      ];
-
-      // Older imports stored timestamps but left brew_time empty.
-      const firstSample = arraysToCheck.find((arr) => arr?.length > 0)?.[0];
-      if (firstSample) {
-        const start = moment(firstSample.timestamp, 'HH:mm:ss.SSS', true);
-        const startTime = Number.parseFloat(firstSample.brew_time);
-        for (const arr of arraysToCheck) {
-          for (const sample of arr ?? []) {
-            if (!sample.brew_time?.trim()) {
-              const timestamp = moment(sample.timestamp, 'HH:mm:ss.SSS', true);
-              if (!start.isValid() || !timestamp.isValid()) {
-                throw new Error(
-                  'Cannot recover brew time from invalid timestamp',
-                );
-              }
-              sample.brew_time = (
-                timestamp.diff(start, 'seconds', true) +
-                (Number.isFinite(startTime) ? startTime : 0)
-              ).toFixed(3);
-            }
-          }
-        }
-      }
-
-      for (const arr of arraysToCheck) {
-        if (arr && arr.length > 0) {
-          const lastItem = arr[arr.length - 1];
-          const t = parseFloat(lastItem.brew_time);
-          if (!isNaN(t) && t > max) {
-            max = t;
-          }
-        }
-      }
-    }
-    this.maxTime = Number(max.toFixed(3));
-    this.cutRange = { lower: 0, upper: this.maxTime };
-  }
-
-  public onRangeInput(event: any) {
-    const val = event.detail.value;
-    if (val) {
-      this.cutRange = val;
-      this.calculateNewFinalWeight();
-
-      // Update vertical lines outside Angular zone for 60fps performance
-      this.ngZone.runOutsideAngular(() => {
-        this.updateChartLines();
-      });
-
-      this.cdr.detectChanges();
-    }
-  }
-
-  public onRangeChange(event: any) {
-    const val = event.detail.value;
-    if (val) {
-      this.cutRange = val;
-      this.calculateNewFinalWeight();
-
-      this.ngZone.runOutsideAngular(() => {
-        this.updateChartLines();
-      });
-
-      this.cdr.detectChanges();
-    }
-  }
-
-  public isSaveDisabled(): boolean {
-    return this.cutRange.lower === 0 && this.cutRange.upper === this.maxTime;
-  }
-
-  public calculateNewFinalWeight() {
-    let endWeight = 0;
-
-    const upperVal = this.cutRange.upper;
-
-    const getEndWeight = (arr: IBrewWeightFlow[]) => {
-      if (!arr || arr.length === 0) return null;
-      const endItem = [...arr]
-        .reverse()
-        .find((w) => parseFloat(w.brew_time) <= upperVal);
-      return endItem ? endItem.actual_weight : 0;
-    };
-
-    let weight = getEndWeight(this.flowProfile?.weight);
-    if (weight === null) {
-      weight = getEndWeight(this.flowProfile?.weightSecond);
-    }
-
-    if (weight !== null) {
-      endWeight = weight;
-    }
-
-    this.newFinalWeight = Math.max(0, Number(endWeight.toFixed(2)));
-  }
-
-  public async initializeChart() {
-    try {
-      const el = this.cutChartContent.nativeElement;
-      const chartWidth = el.offsetWidth || 300;
-      const chartHeight = 200;
-
-      const traces = this.graphHelper.initializeTraces();
-      const style = this.brew.getPreparation().style_type;
-      const settings = this.uiSettingsStorage.getSettings();
-      const graphSettings =
-        style === PREPARATION_STYLE_TYPE.ESPRESSO
-          ? settings.graph.ESPRESSO
-          : settings.graph.FILTER;
-
-      this.graphHelper.fillTraces(
-        traces,
-        graphSettings,
-        true,
-        false,
-        this.flowProfile,
-      );
-      this.graphHelper.fillDataIntoTraces(this.flowProfile, traces);
-
-      const chartData = [];
-      if (traces.weightTrace?.x?.length > 0) chartData.push(traces.weightTrace);
-      if (traces.flowPerSecondTrace?.x?.length > 0)
-        chartData.push(traces.flowPerSecondTrace);
-      if (traces.realtimeFlowTrace?.x?.length > 0)
-        chartData.push(traces.realtimeFlowTrace);
-      if (traces.pressureTrace?.x?.length > 0)
-        chartData.push(traces.pressureTrace);
-      if (traces.temperatureTrace?.x?.length > 0)
-        chartData.push(traces.temperatureTrace);
-      if (traces.weightTraceSecond?.x?.length > 0)
-        chartData.push(traces.weightTraceSecond);
-      if (traces.realtimeFlowTraceSecond?.x?.length > 0)
-        chartData.push(traces.realtimeFlowTraceSecond);
-      if (traces.waterDispensedTrace?.x?.length > 0)
-        chartData.push(traces.waterDispensedTrace);
-      if (traces.waterDispensedFlowSecondTrace?.x?.length > 0)
-        chartData.push(traces.waterDispensedFlowSecondTrace);
-
-      const layout = this.graphHelper.getChartLayout(
-        traces,
-        style,
-        false,
-        false,
-        true,
-        chartWidth,
-        chartHeight,
-        true,
-      );
-
-      const config = {
-        responsive: true,
-        scrollZoom: false,
-        displayModeBar: false,
-      };
-
-      await loadPlotly();
-      Plotly.newPlot('cutChart', chartData, layout, config);
-      this.updateChartLines();
-    } catch (ex) {
-      console.error('Failed to initialize Plotly chart in PopoverCut', ex);
-    }
-  }
-
-  public updateChartLines() {
-    try {
-      const startingDay = moment(new Date()).startOf('day');
-      const lowerVal = this.cutRange.lower;
-      const upperVal = this.cutRange.upper;
-
-      const xStart = new Date(startingDay.toDate().getTime() + lowerVal * 1000);
-      const xEnd = new Date(startingDay.toDate().getTime() + upperVal * 1000);
-
-      const shapes = [
-        {
-          type: 'line',
-          xref: 'x',
-          yref: 'paper',
-          x0: xStart,
-          y0: 0,
-          x1: xStart,
-          y1: 1,
-          line: {
-            color: '#e74c3c',
-            width: 2,
-            dash: 'dash',
-          },
-        },
-        {
-          type: 'line',
-          xref: 'x',
-          yref: 'paper',
-          x0: xEnd,
-          y0: 0,
-          x1: xEnd,
-          y1: 1,
-          line: {
-            color: '#e74c3c',
-            width: 2,
-            dash: 'dash',
-          },
-        },
-      ];
-
-      Plotly.relayout('cutChart', { shapes: shapes });
-    } catch (ex) {
-      // ignore if plotly is not ready yet
-    }
-  }
-
-  public save() {
-    try {
-      Plotly.purge('cutChart');
-    } catch (ex) {}
-
-    const cutResult = this.performCut(
-      this.flowProfile,
-      this.cutRange.lower,
-      this.cutRange.upper,
-      this.brew,
+  /** What the knobs say after their value: the result of the cut. */
+  public readonly cutSummary = (range: CutRange): string => {
+    const language = this.translate.getCurrentLang() ?? 'en';
+    return String(
+      this.translate.instant('A11Y.CUT_RESULT', {
+        duration: rangeValueText(
+          range.upper - range.lower,
+          0.01,
+          's',
+          language,
+        ),
+        weight: rangeValueText(
+          cutPreviewWeight(this.flowProfile(), range.upper),
+          0.01,
+          'g',
+          language,
+        ),
+      }),
     );
-    const duration = this.cutRange.upper - this.cutRange.lower;
+  };
 
-    this.modalController.dismiss(
-      {
-        flowProfile: cutResult.flowProfile,
-        brew_time: Math.round(duration),
-        brew_time_milliseconds: Math.round(duration * 1000),
-        finalWeight: cutResult.finalWeight,
-        coffee_first_drip_time: cutResult.coffee_first_drip_time,
-        coffee_first_drip_time_milliseconds:
-          cutResult.coffee_first_drip_time_milliseconds,
-        coffee_blooming_time: cutResult.coffee_blooming_time,
-        coffee_blooming_time_milliseconds:
-          cutResult.coffee_blooming_time_milliseconds,
-      },
+  private readonly width = signal(0);
+  private renderer: UplotRenderer | null = null;
+
+  constructor() {
+    const destroyRef = inject(DestroyRef);
+    const loading = setTimeout(() => this.loaded.set(true), 50);
+    afterNextRender(() => {
+      const sizes = new ResizeObserver(([entry]) =>
+        this.width.set(Math.floor(entry.contentRect.width)),
+      );
+      sizes.observe(this.chart().nativeElement);
+      destroyRef.onDestroy(() => sizes.disconnect());
+    });
+    destroyRef.onDestroy(() => {
+      clearTimeout(loading);
+      this.renderer?.destroy();
+      this.renderer = null;
+    });
+
+    effect(() => {
+      const width = this.width();
+      if (width <= 0) {
+        return;
+      }
+      if (this.renderer) {
+        this.renderer.resize(width, CHART_HEIGHT);
+      } else {
+        untracked(() => void this.draw(width));
+      }
+    });
+    effect(() => {
+      const dark = this.theme.dark();
+      this.renderer?.setDark(dark);
+    });
+  }
+
+  /** Draws the graph once; moving a knob only moves the cut markers. */
+  private async draw(width: number): Promise<void> {
+    const renderer = new UplotRenderer([new CutMarkersPlugin()]);
+    this.renderer = renderer;
+    const settings = this.uiSettingsStorage.getSettings();
+    const buffer = new FlowSeriesBuffer();
+    buffer.load(this.flowProfile());
+    try {
+      await renderer.mount(this.chart().nativeElement, {
+        width,
+        height: CHART_HEIGHT,
+        dark: this.theme.dark(),
+        mode: 'detail',
+        axisSettings: settings,
+        style: this.brew().getPreparation()?.style_type,
+      });
+    } catch (error) {
+      // Without the chart library the knobs still cut; the brew is intact.
+      this.uiLog.error('Cut graph could not be drawn', error);
+      return;
+    }
+    // A resize while uPlot loaded went to the renderer before its mount.
+    renderer.resize(this.width(), CHART_HEIGHT);
+    renderer.setSeries(
+      seriesDefsFor(buffer, 'live', settings.graph_colors, (key): string =>
+        String(this.translate.instant(key)),
+      ),
+    );
+    renderer.attach(buffer);
+    // The knobs end at the last brew time, which may lie past the last timestamp.
+    renderer.setViewport({
+      mode: 'range',
+      from: 0,
+      to: Math.max(this.maxTime(), buffer.endTime()),
+    });
+    this.showCut();
+  }
+
+  private showCut(): void {
+    const { lower, upper } = this.cutRange();
+    this.renderer?.setCutMarkers([lower, upper]);
+  }
+
+  public onRangeInput(event: Event): void {
+    const value = (event as RangeCustomEvent).detail.value;
+    if (typeof value === 'object') {
+      this.cutRange.set({ lower: value.lower, upper: value.upper });
+      this.showCut();
+    }
+  }
+
+  public save(): void {
+    const { lower, upper } = this.cutRange();
+    const duration = upper - lower;
+    const cut: FlowCutSave = {
+      ...performFlowCut(this.flowProfile(), lower, upper, this.brew()),
+      brew_time: Math.round(duration),
+      brew_time_milliseconds: Math.round(duration * 1000),
+    };
+    void this.modalController.dismiss(
+      cut,
       'save',
       BrewPopoverCutComponent.COMPONENT_ID,
     );
   }
 
-  public dismiss() {
-    try {
-      Plotly.purge('cutChart');
-    } catch (ex) {}
-
-    this.modalController.dismiss(
+  public dismiss(): void {
+    void this.modalController.dismiss(
       undefined,
       'cancel',
       BrewPopoverCutComponent.COMPONENT_ID,
     );
-  }
-
-  private performCut(
-    flowProfile: BrewFlow,
-    lower: number,
-    upper: number,
-    brew: Brew = this.brew,
-  ): {
-    flowProfile: BrewFlow;
-    finalWeight?: number;
-    coffee_first_drip_time?: number;
-    coffee_first_drip_time_milliseconds?: number;
-    coffee_blooming_time?: number;
-    coffee_blooming_time_milliseconds?: number;
-  } {
-    let globalMinTime = lower;
-    let found = false;
-    let minTime = Infinity;
-
-    const arraysToCheck = [
-      flowProfile.weight,
-      flowProfile.weightSecond,
-      flowProfile.waterFlow,
-      flowProfile.realtimeFlow,
-      flowProfile.realtimeFlowSecond,
-      flowProfile.pressureFlow,
-      flowProfile.temperatureFlow,
-      flowProfile.waterDispensed,
-      flowProfile.waterDispensedFlowSecond,
-      flowProfile.brewbyweight,
-    ];
-
-    for (const arr of arraysToCheck) {
-      if (arr && arr.length > 0) {
-        const firstItem = arr.find(
-          (item) => parseFloat(item.brew_time) >= lower,
-        );
-        if (firstItem) {
-          const t = parseFloat(firstItem.brew_time);
-          if (t < minTime) {
-            minTime = t;
-            found = true;
-          }
-        }
-      }
-    }
-
-    if (flowProfile.customMetrics) {
-      for (const val of Object.values(flowProfile.customMetrics)) {
-        if (val && val.length > 0) {
-          const firstItem = val.find(
-            (item) => parseFloat(item.brew_time) >= lower,
-          );
-          if (firstItem) {
-            const t = parseFloat(firstItem.brew_time);
-            if (t < minTime) {
-              minTime = t;
-              found = true;
-            }
-          }
-        }
-      }
-    }
-
-    if (found) {
-      globalMinTime = minTime;
-    }
-
-    const shiftSeconds = globalMinTime;
-    const shiftMs = Math.round(shiftSeconds * 1000);
-
-    const processArray = <T extends { brew_time: string; timestamp: string }>(
-      arr: T[],
-    ): T[] => {
-      if (!arr) return [];
-      return arr
-        .filter((item) => {
-          const t = parseFloat(item.brew_time);
-          return t >= lower && t <= upper;
-        })
-        .map((item) => {
-          const t = parseFloat(item.brew_time);
-          const newTime = (t - shiftSeconds).toFixed(1);
-
-          let newTimestamp = item.timestamp;
-          try {
-            newTimestamp = moment(item.timestamp, 'HH:mm:ss.SSS')
-              .subtract(shiftMs, 'milliseconds')
-              .format('HH:mm:ss.SSS');
-          } catch (ex) {}
-
-          return {
-            ...item,
-            brew_time: newTime,
-            timestamp: newTimestamp,
-          };
-        });
-    };
-
-    const processWeightArray = (arr: IBrewWeightFlow[]): IBrewWeightFlow[] => {
-      if (!arr) return [];
-      return arr
-        .filter((item) => {
-          const t = parseFloat(item.brew_time);
-          return t >= lower && t <= upper;
-        })
-        .map((item) => {
-          const t = parseFloat(item.brew_time);
-          const newTime = (t - shiftSeconds).toFixed(1);
-
-          let newTimestamp = item.timestamp;
-          try {
-            newTimestamp = moment(item.timestamp, 'HH:mm:ss.SSS')
-              .subtract(shiftMs, 'milliseconds')
-              .format('HH:mm:ss.SSS');
-          } catch (ex) {}
-
-          return {
-            ...item,
-            brew_time: newTime,
-            timestamp: newTimestamp,
-            actual_weight: item.actual_weight,
-            old_weight: item.old_weight,
-            actual_smoothed_weight: item.actual_smoothed_weight,
-            old_smoothed_weight: item.old_smoothed_weight,
-            not_mutated_weight: item.not_mutated_weight,
-          };
-        });
-    };
-
-    const newProfile = new BrewFlow();
-
-    newProfile.weight = processWeightArray(flowProfile.weight);
-    newProfile.weightSecond = processWeightArray(flowProfile.weightSecond);
-
-    newProfile.waterFlow = processArray(flowProfile.waterFlow);
-
-    if (flowProfile.realtimeFlow) {
-      newProfile.realtimeFlow = flowProfile.realtimeFlow
-        .filter((item) => {
-          const t = parseFloat(item.brew_time);
-          return t >= lower && t <= upper;
-        })
-        .map((item) => {
-          const t = parseFloat(item.brew_time);
-          const newTime = (t - shiftSeconds).toFixed(1);
-
-          let newTimestamp = item.timestamp;
-          try {
-            newTimestamp = moment(item.timestamp, 'HH:mm:ss.SSS')
-              .subtract(shiftMs, 'milliseconds')
-              .format('HH:mm:ss.SSS');
-          } catch (ex) {}
-
-          return {
-            ...item,
-            brew_time: newTime,
-            timestamp: newTimestamp,
-            smoothed_weight: item.smoothed_weight,
-          };
-        });
-    }
-
-    if (flowProfile.realtimeFlowSecond) {
-      newProfile.realtimeFlowSecond = flowProfile.realtimeFlowSecond
-        .filter((item) => {
-          const t = parseFloat(item.brew_time);
-          return t >= lower && t <= upper;
-        })
-        .map((item) => {
-          const t = parseFloat(item.brew_time);
-          const newTime = (t - shiftSeconds).toFixed(1);
-
-          let newTimestamp = item.timestamp;
-          try {
-            newTimestamp = moment(item.timestamp, 'HH:mm:ss.SSS')
-              .subtract(shiftMs, 'milliseconds')
-              .format('HH:mm:ss.SSS');
-          } catch (ex) {}
-
-          return {
-            ...item,
-            brew_time: newTime,
-            timestamp: newTimestamp,
-            smoothed_weight: item.smoothed_weight,
-          };
-        });
-    }
-
-    newProfile.pressureFlow = processArray(flowProfile.pressureFlow);
-    newProfile.temperatureFlow = processArray(flowProfile.temperatureFlow);
-
-    if (flowProfile.waterDispensed) {
-      newProfile.waterDispensed = flowProfile.waterDispensed
-        .filter((item) => {
-          const t = parseFloat(item.brew_time);
-          return t >= lower && t <= upper;
-        })
-        .map((item) => {
-          const t = parseFloat(item.brew_time);
-          const newTime = (t - shiftSeconds).toFixed(1);
-          let newTimestamp = item.timestamp;
-          try {
-            newTimestamp = moment(item.timestamp, 'HH:mm:ss.SSS')
-              .subtract(shiftMs, 'milliseconds')
-              .format('HH:mm:ss.SSS');
-          } catch (ex) {}
-          return {
-            ...item,
-            brew_time: newTime,
-            timestamp: newTimestamp,
-            actual: item.actual,
-            old: item.old,
-          };
-        });
-    }
-
-    if (flowProfile.waterDispensedFlowSecond) {
-      newProfile.waterDispensedFlowSecond = flowProfile.waterDispensedFlowSecond
-        .filter((item) => {
-          const t = parseFloat(item.brew_time);
-          return t >= lower && t <= upper;
-        })
-        .map((item) => {
-          const t = parseFloat(item.brew_time);
-          const newTime = (t - shiftSeconds).toFixed(1);
-          let newTimestamp = item.timestamp;
-          try {
-            newTimestamp = moment(item.timestamp, 'HH:mm:ss.SSS')
-              .subtract(shiftMs, 'milliseconds')
-              .format('HH:mm:ss.SSS');
-          } catch (ex) {}
-          return {
-            ...item,
-            brew_time: newTime,
-            timestamp: newTimestamp,
-            actual: item.actual,
-            old: item.old,
-          };
-        });
-    }
-
-    newProfile.brewbyweight = processArray(flowProfile.brewbyweight);
-
-    if (flowProfile.customMetrics) {
-      for (const [key, val] of Object.entries(flowProfile.customMetrics)) {
-        newProfile.customMetrics[key] = processArray(val);
-      }
-    }
-
-    newProfile.customAxes = flowProfile.customAxes || [];
-
-    let finalWeight = 0;
-    if (newProfile.weight && newProfile.weight.length > 0) {
-      finalWeight =
-        newProfile.weight[newProfile.weight.length - 1].actual_weight;
-    } else if (newProfile.weightSecond && newProfile.weightSecond.length > 0) {
-      finalWeight =
-        newProfile.weightSecond[newProfile.weightSecond.length - 1]
-          .actual_weight;
-    }
-
-    let coffee_first_drip_time = brew?.coffee_first_drip_time ?? 0;
-    let coffee_first_drip_time_milliseconds =
-      brew?.coffee_first_drip_time_milliseconds ?? 0;
-    let coffee_blooming_time = brew?.coffee_blooming_time ?? 0;
-    let coffee_blooming_time_milliseconds =
-      brew?.coffee_blooming_time_milliseconds ?? 0;
-
-    if (coffee_first_drip_time > 0 || coffee_first_drip_time_milliseconds > 0) {
-      const currentFirstDripMs =
-        coffee_first_drip_time * 1000 + coffee_first_drip_time_milliseconds;
-      const newFirstDripMs = currentFirstDripMs - shiftMs;
-      if (newFirstDripMs <= 0) {
-        coffee_first_drip_time = 0;
-        coffee_first_drip_time_milliseconds = 0;
-      } else {
-        coffee_first_drip_time = Math.floor(newFirstDripMs / 1000);
-        coffee_first_drip_time_milliseconds = Math.round(newFirstDripMs % 1000);
-      }
-    }
-
-    if (coffee_blooming_time > 0 || coffee_blooming_time_milliseconds > 0) {
-      const currentBloomingMs =
-        coffee_blooming_time * 1000 + coffee_blooming_time_milliseconds;
-      const newBloomingMs = currentBloomingMs - shiftMs;
-      if (newBloomingMs <= 0) {
-        coffee_blooming_time = 0;
-        coffee_blooming_time_milliseconds = 0;
-      } else {
-        coffee_blooming_time = Math.floor(newBloomingMs / 1000);
-        coffee_blooming_time_milliseconds = Math.round(newBloomingMs % 1000);
-      }
-    }
-
-    return {
-      flowProfile: newProfile,
-      finalWeight: finalWeight,
-      coffee_first_drip_time,
-      coffee_first_drip_time_milliseconds,
-      coffee_blooming_time,
-      coffee_blooming_time_milliseconds,
-    };
   }
 }
