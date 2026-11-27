@@ -451,6 +451,7 @@ describe('IntentHandlerService', () => {
   });
 
   for (const prefix of [
+    'https://beanconqueror.com/app/userbean/?',
     'https://beanconqueror.com/?',
     'beanconqueror://ADD_USER_BEAN?',
   ]) {
@@ -470,6 +471,42 @@ describe('IntentHandlerService', () => {
       ]);
     });
   }
+
+  describe('links from the website and from roaster codes', () => {
+    for (const link of [
+      'https://beanconqueror.com/?qr=ROASTER1',
+      'https://beanconqueror.com?qr=ROASTER1',
+      'https://beanconqueror.com/app/bean/?qr=ROASTER1',
+      'https://beanconqueror.com/app/roaster/bean.html?id=ROASTER1',
+      'beanconqueror://ADD_BEAN_ONLINE?id=ROASTER1',
+    ]) {
+      it(`loads the roaster bean (${link})`, async () => {
+        const addBeanFromServer = spyOn(
+          service,
+          'addBeanFromServer',
+        ).and.resolveTo();
+
+        await service.handleDeepLink(link);
+
+        expect(addBeanFromServer.calls.allArgs()).toEqual([['ROASTER1']]);
+      });
+    }
+
+    for (const link of [
+      'https://beanconqueror.com/?visualizerShare=JRKJ',
+      'https://beanconqueror.com/app/importvisualizer/?visualizerShare=JRKJ',
+      'https://beanconqueror.com/app/visualizer/importVisualizer.html?visualizerShare=JRKJ',
+      'beanconqueror://VISUALIZER_SHARE?code=JRKJ',
+    ]) {
+      it(`imports the visualizer shot (${link})`, async () => {
+        await service.handleDeepLink(link);
+
+        expect(
+          visualizerService.importShotWithSharedCode.calls.allArgs(),
+        ).toEqual([['JRKJ']]);
+      });
+    }
+  });
 
   it('imports a brew handoff with a trailing slash before the query', async () => {
     await service.handleDeepLink(withTrailingSlash(url));

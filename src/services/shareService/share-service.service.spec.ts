@@ -10,6 +10,7 @@ import { FilesystemWeb } from '@capacitor/filesystem/dist/esm/web';
 import { ShareWeb } from '@capacitor/share/dist/esm/web';
 import { TranslateService } from '@ngx-translate/core';
 
+import { Bean } from '../../classes/bean/bean';
 import { Settings } from '../../classes/settings/settings';
 import { UIAlert } from '../uiAlert';
 import { UIAnalytics } from '../uiAnalytics';
@@ -39,6 +40,7 @@ describe('ShareService', () => {
     error: jasmine.Spy;
     writeToFile: jasmine.Spy;
     info: jasmine.Spy;
+    debug: jasmine.Spy;
   };
   let flush: jasmine.Spy;
 
@@ -61,6 +63,7 @@ describe('ShareService', () => {
       error: jasmine.createSpy('error'),
       writeToFile: jasmine.createSpy('writeToFile').and.resolveTo(),
       info: jasmine.createSpy('info'),
+      debug: jasmine.createSpy('debug'),
     };
 
     TestBed.configureTestingModule({
@@ -406,6 +409,33 @@ describe('ShareService', () => {
       expect(await service.shareStoredFile(URI)).toBeFalse();
 
       expect(uiLog.error).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('sharing a bean', () => {
+    const ENCODED = 'A'.repeat(400) + 'B'.repeat(400) + 'C+/=';
+
+    beforeEach(() => {
+      setup('YES');
+      Object.assign(TestBed.inject(UIHelper), { encode: () => ENCODED });
+      Object.assign(TestBed.inject(UIAnalytics), {
+        trackEvent: jasmine.createSpy('trackEvent'),
+      });
+    });
+
+    it('links to the bean import page, which the app opens on Android and iOS', async () => {
+      await service.shareBean(new Bean());
+
+      const [{ text }] = share.calls.mostRecent().args;
+      expect(text).toBe(
+        'https://beanconqueror.com/app/userbean/' +
+          `?shareUserBean0=${'A'.repeat(400)}` +
+          `&shareUserBean1=${'B'.repeat(400)}` +
+          '&shareUserBean2=C+/=',
+      );
+      expect(uiLog.debug).toHaveBeenCalledOnceWith(
+        `Share bean link (${text.length} chars)`,
+      );
     });
   });
 
