@@ -26,49 +26,6 @@ import { readableLine } from './line-contrast';
 /** Bitmap pixels per CSS pixel of a picture of the graph, sharp on any screen. */
 const IMAGE_SCALE = 3;
 
-export function expandLiveAxisRangeForSample(
-  range: [number, number],
-  sample: number,
-  multiplier: number,
-  tolerance: number,
-): [number, number] {
-  if (!Number.isFinite(sample)) {
-    return range;
-  }
-
-  const [lowerBound, upperBound] = range;
-  const headroom = Math.abs(sample) * (multiplier - 1);
-
-  if (upperBound < 0) {
-    let nextLowerBound = lowerBound;
-    let nextUpperBound = upperBound;
-
-    if (sample <= lowerBound + tolerance) {
-      nextLowerBound = sample - headroom;
-    }
-    if (sample >= upperBound - tolerance) {
-      // A negative range grows towards zero, but a sample that has climbed
-      // back above zero needs a bound above it or the trace is clipped again.
-      nextUpperBound =
-        sample >= 0 ? sample + headroom : Math.min(0, sample + headroom);
-    }
-
-    if (nextLowerBound === lowerBound && nextUpperBound === upperBound) {
-      return range;
-    }
-
-    return [nextLowerBound, nextUpperBound];
-  }
-
-  if (sample >= upperBound - tolerance) {
-    // The bound has to end up above the sample it is following, which a bare
-    // multiplication does not guarantee for a sample near zero.
-    return [lowerBound, Math.max(upperBound, sample + headroom)];
-  }
-
-  return range;
-}
-
 @Service()
 export class GraphHelperService {
   private readonly translate = inject(TranslateService);
