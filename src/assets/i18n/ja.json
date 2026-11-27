@@ -1164,8 +1164,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "この設定はエスプレッソ専用です。フローが検出されなくなると抽出が自動停止されます。",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "この値で抽出比率を計算します（種類「エスプレッソ」を除く）",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "「エスプレッソ」の抽出比率はこの値で計算します",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Bluetooth スケールが正しく接続されていない可能性があります。iOS デバイスと Acaia スケールでよく発生します。スケールを再接続し、重量タイルが更新されることを確認してください。",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "重量値がありません？",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "抽出を停止するフロー速度を設定します。最低 5 秒経過し、かつカップに 5g 入っているか、豆の重量を入力した場合は少なくとも 1:1 の比率が達成されてから、この最小流量設定が確認されます。",
     "ONLY_BEST_BREWS": "ベストブリューのみ",
     "POPOVER_BEST_BREW": "ベストブリュー",
@@ -1673,8 +1671,6 @@
     "CLOUD_AI_MODELS_LOADING": "利用可能なモデルを読み込み中...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "モデルを読み込めませんでした。モデル名を手動で入力してください。",
     "CLOUD_AI_MODELS_NONE": "モデルが見つかりません。",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "まだ重量がありません",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "このスケールは重量が変化した後にデータ送信を開始します。抽出を始める前にカップを置いて準備ができているか確認してください。",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "エチオピア、コロンビア、ブラジル、ケニア、グアテマラ、コスタリカ、ホンジュラス、ペルー、ルワンダ、ブルンジ、タンザニア、ウガンダ、イエメン、インドネシア、インド、パナマ、エルサルバドル、ニカラグア、メキシコ、ボリビア、エクアドル、パプアニューギニア、ハワイ、ジャマイカ",
         "PROCESSING_METHODS": "ウォッシュド、ナチュラル、ハニー、アナエロビック、カーボニックマセレーション、ウェットハル、セミウォッシュド、パルプドナチュラル、ブラックハニー、レッドハニー、イエローハニー、ホワイトハニー",

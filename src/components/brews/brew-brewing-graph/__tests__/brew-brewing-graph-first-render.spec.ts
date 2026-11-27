@@ -5,6 +5,7 @@ import { ModalController, Platform } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 
+import { Announcer } from '../../../../services/a11y/announcer.service';
 import { CoffeeBluetoothDevicesService } from '../../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { GraphHelperService } from '../../../../services/graphHelper/graph-helper.service';
 import { TextToSpeechService } from '../../../../services/textToSpeech/text-to-speech.service';
@@ -37,6 +38,7 @@ describe('BrewBrewingGraphComponent devices on the first render', () => {
   beforeEach(() => {
     scale = undefined;
     const stubs = [
+      Announcer,
       ChangeDetectorRef,
       NgZone,
       ModalController,

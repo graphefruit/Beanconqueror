@@ -1140,8 +1140,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "This setting is just used for brews of type 'espresso'. The brew will be automatically stopped when no flow is detected.",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "The brew ratio will be calculated with this value for all brews, but not for type 'espresso'",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "The brew ratio will be calculated with this value only for brews of type 'espresso'",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "It looks like the bluetooth scale was not connected correctly. This usually happens on iOS-Devices with Acaia scales, please reconnect the scale and make sure the weight tile is updated",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "No weight values?",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "The flow rate at which the brew should be stopped. The brew will only be stopped when a minimum of 5 seconds has passed, 5 grams is in the cup or if you entered ground coffee weight - at least a 1:1 brew ratio is achieved (e.g: 18g in, 18g out). After those conditions are me, the minimum flow rate set here will be checked",
     "ONLY_BEST_BREWS": "Only best brews",
     "POPOVER_BEST_BREW": "Best brew",
@@ -1435,6 +1433,11 @@
         "LOCATION": "To find bluetooth devices, the app needs access to the location.",
         "BLUETOOTH": "To find bluetooth devices, the app needs access to bluetooth"
     },
+    "DEVICE_SILENCE_HINT": {
+        "SCALE": "The scale is connected but sends no weight. Turn the scale off and on again, BeanConqueror then reconnects by itself.",
+        "SCALE_ON_CHANGE": "The scale is connected but sends the weight only once it changes. Put something on the scale.",
+        "PRESSURE": "The pressure sensor is connected but sends no values. Turn the sensor off and on again, BeanConqueror then reconnects by itself."
+    },
     "BLUETOOTH_DEVICE_CHOOSER_HINT": {
         "PERMISSION_MISSING": "BeanConqueror may not use Bluetooth or the location, so it cannot find devices. Allow both for BeanConqueror in the system settings, then search again.",
         "BLUETOOTH_OFF": "Bluetooth is turned off or BeanConqueror may not use it. Turn Bluetooth on and allow it for BeanConqueror in the system settings, then search again."
@@ -1697,8 +1700,6 @@
     "CLOUD_AI_MODELS_LOADING": "Loading available models...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "Could not load models. Enter the model name manually.",
     "CLOUD_AI_MODELS_NONE": "No models found.",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "No weight yet",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "This scale starts sending data only after the weight changes. Place a cup on the scale to make sure everything is ready before you start brewing.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Ethiopia, Colombia, Brazil, Kenya, Guatemala, Costa Rica, Honduras, Peru, Rwanda, Burundi, Tanzania, Uganda, Yemen, Indonesia, India, Panama, El Salvador, Nicaragua, Mexico, Bolivia, Ecuador, Papua New Guinea, Hawaii, Jamaica",
         "PROCESSING_METHODS": "Washed, Natural, Honey, Anaerobic, Carbonic Maceration, Wet-Hulled, Semi-Washed, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",

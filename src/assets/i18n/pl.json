@@ -1164,8 +1164,6 @@
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "To ustawienie jest używane tylko w przypadku parzenia typu \"espresso\". Zaparzanie zostanie automatycznie zatrzymane, gdy nie zostanie wykryty żaden przepływ.",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "Proporcje parzenia zostaną obliczone na podstawie tej wartości dla wszystkich naparów, ale nie dla typu \"espresso\"",
     "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Proporcja parzenia zostanie obliczona na podstawie tej wartości tylko dla naparów typu \"espresso\"",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Wygląda na to, że waga Bluetooth nie została prawidłowo podłączona. Zwykle dzieje się tak na urządzeniach z systemem iOS z wagami Acaia. Podłącz ponownie wagę i upewnij się, że kafelek wagi jest zaktualizowany.",
-    "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Brak wartości wagi?",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Natężenie przepływu, przy którym napar powinien zostać zatrzymany. Napar zostanie zatrzymany, dopiero gdy upłynie minimum 5 sekund, w filiżance znajdzie się 5 gramów lub jeśli wprowadzisz wagę mielonej kawy – uzyskany zostanie co najmniej stosunek parzenia 1:1 (np.: 18g na wejściu, 18g na wyjściu). Po spełnieniu tych warunków zostanie sprawdzone minimalne natężenie przepływu ustawione tutaj",
     "ONLY_BEST_BREWS": "Tylko najlepsze napary",
     "POPOVER_BEST_BREW": "Najlepszy napar",
@@ -1673,8 +1671,6 @@
     "CLOUD_AI_MODELS_LOADING": "Ładowanie dostępnych modeli...",
     "CLOUD_AI_MODELS_LOAD_FAILED": "Nie udało się załadować modeli. Wprowadź nazwę modelu ręcznie.",
     "CLOUD_AI_MODELS_NONE": "Nie znaleziono żadnych modeli.",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_TITLE": "Jeszcze nie ma wagi",
-    "SMART_SCALE_FUTULA_NO_WEIGHT_DESCRIPTION": "Ta waga rozpoczyna przesyłanie danych dopiero po zmianie masy. Postaw kubek na wadze, aby upewnić się, że wszystko jest gotowe, zanim zaczniesz parzyć.",
     "AI_IMPORT_PROMPT_EXAMPLES": {
         "ORIGINS": "Etiopia, Kolumbia, Brazylia, Kenia, Gwatemala, Kostaryka, Honduras, Peru, Rwanda, Burundi, Tanzania, Uganda, Jemen, Indonezja, Indie, Panama, Salwador, Nikaragua, Meksyk, Boliwia, Ekwador, Papua-Nowa Gwinea, Hawaje, Jamajka",
         "PROCESSING_METHODS": "Myty, Natural, Honey, Anaerobowy, Maceracja Węglowa, Wet-Hulled, Półmyty, Pulped Natural, Black Honey, Red Honey, Yellow Honey, White Honey",
