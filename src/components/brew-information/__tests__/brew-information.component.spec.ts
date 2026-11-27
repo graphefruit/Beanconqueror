@@ -656,6 +656,30 @@ describe('BrewInformationComponent', () => {
     });
   });
 
+  describe('grind setting', () => {
+    function grindColumn(grindSize: unknown): HTMLElement | undefined {
+      const brew = makeBrew();
+      brew.grind_size = grindSize as string;
+      render(brew);
+      return Array.from(
+        (fixture.nativeElement as HTMLElement).querySelectorAll('ion-col'),
+      ).find((col) => col.textContent.includes('BREW_DATA_GRIND_SIZE'));
+    }
+
+    it('shows a grind setting of 0, stored as number or text', () => {
+      expect(grindColumn(0)?.querySelector('ion-text').textContent.trim()).toBe(
+        '0',
+      );
+      expect(
+        grindColumn('0')?.querySelector('ion-text').textContent.trim(),
+      ).toBe('0');
+    });
+
+    it('hides an empty grind setting', () => {
+      expect(grindColumn('')).toBeUndefined();
+    });
+  });
+
   describe('options and roles', () => {
     // 15 January 2027, 09:20 in the time zone the tests run in.
     const time = new Date(2027, 0, 15, 9, 20).getTime() / 1000;

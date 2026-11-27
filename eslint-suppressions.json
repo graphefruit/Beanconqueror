@@ -2340,7 +2340,7 @@
   },
   "src/components/brew-information/brew-information.component.html": {
     "@angular-eslint/template/eqeqeq": {
-      "count": 3
+      "count": 1
     }
   },
   "src/components/brew-information/brew-information.component.ts": {
