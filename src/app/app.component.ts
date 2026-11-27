@@ -63,6 +63,7 @@ import { AndroidPlatformService } from '../services/androidPlatform/android-plat
 import { AttachmentManifestService } from '../services/attachmentManifest/attachment-manifest.service';
 import { BrewReferencesService } from '../services/brewReferences/brew-references.service';
 import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { DataUpdateSignal } from '../services/dataUpdates/data-update-rules';
 import { DeletionJournalService } from '../services/deletionJournal/deletion-journal.service';
 import { DeviceIdentityService } from '../services/deviceIdentity/device-identity.service';
 import { DocumentLanguageService } from '../services/documentLanguage/document-language.service';
@@ -368,11 +369,11 @@ export class AppComponent implements AfterViewInit {
             // The data updates can show a message, which is then in the
             // language of the app.
             await this.__setDeviceLanguage();
-            await this.__checkUpdate();
+            const dataUpdate = await this.__checkUpdate();
             this.brewReferences.logMissingReferences();
             // After the data updates, which can still change uuids.
             await this.deleteCommands.finishInterrupted();
-            await this.__initApp();
+            await this.__initApp(dataUpdate);
             this.uiHelper.setAppReady(1);
             try {
               // Not awaited: builds in the background after the app is ready.
@@ -422,10 +423,12 @@ export class AppComponent implements AfterViewInit {
       .join(' - ');
   }
 
-  private async __checkUpdate() {
+  private async __checkUpdate(): Promise<DataUpdateSignal | undefined> {
     try {
-      await this.uiUpdate.checkUpdate();
-    } catch (ex) {}
+      return await this.uiUpdate.checkUpdate();
+    } catch {
+      return undefined;
+    }
   }
 
   public showRoastingSection() {
@@ -579,7 +582,7 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  private async __initApp() {
+  private async __initApp(_dataUpdate: DataUpdateSignal | undefined) {
     this.__registerBack();
 
     await this.uiAnalytics.initializeTracking();
@@ -623,6 +626,13 @@ export class AppComponent implements AfterViewInit {
       SettingsTracking.ACTIONS.USED_LANGUAGE,
       settings.language,
     );
+    if (_dataUpdate !== undefined) {
+      this.uiAnalytics.trackEvent(
+        STARTUP_TRACKING.TITLE,
+        STARTUP_TRACKING.ACTIONS.DATA_UPDATE.CATEGORY,
+        _dataUpdate,
+      );
+    }
     if (
       settings.scale_log === true ||
       settings.pressure_log === true ||

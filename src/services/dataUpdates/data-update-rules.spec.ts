@@ -1,5 +1,6 @@
 import {
   DATA_UPDATES,
+  dataUpdateSignal,
   isBackedUpBefore,
   nextFailedDataUpdate,
   showsFailedDataUpdateHint,
@@ -60,5 +61,16 @@ describe('Data update rules', () => {
         .withContext(JSON.stringify(stored))
         .toEqual({ update: 'UPDATE_16', starts: 1 });
     }
+  });
+
+  it('reports the outcome of a start with an update open on existing data', () => {
+    expect(dataUpdateSignal(true, true, undefined)).toBe('done');
+    expect(dataUpdateSignal(true, true, 'UPDATE_17')).toBe('open:UPDATE_17');
+    expect(dataUpdateSignal(true, false, 'UPDATE_16')).toBe('backup_failed');
+  });
+
+  it('reports nothing for a start without an open update', () => {
+    expect(dataUpdateSignal(false, true, undefined)).toBeUndefined();
+    expect(dataUpdateSignal(false, true, 'UPDATE_18')).toBeUndefined();
   });
 });

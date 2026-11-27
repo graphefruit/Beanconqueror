@@ -24,6 +24,8 @@ import { ChangeTrackingMigrationService } from './changeTracking/change-tracking
 import { DuplicateEntriesMigrationService } from './changeTracking/duplicate-entries-migration.service';
 import {
   DATA_UPDATES,
+  DataUpdateSignal,
+  dataUpdateSignal,
   isBackedUpBefore,
   nextFailedDataUpdate,
   showsFailedDataUpdateHint,
@@ -67,6 +69,11 @@ export class UIUpdate {
   private readonly brewReferences = inject(BrewReferencesService);
   private readonly uiExportImportHelper = inject(UIExportImportHelper);
   private readonly shareService = inject(ShareService);
+  /**
+   * The first update of this check that is done in memory but not stored as
+   * done yet; it runs again at the next start.
+   */
+  private unsavedUpdate: string | undefined;
 
   /**
    * `_afterImport`: the stored data was just replaced by a backup chosen
@@ -82,17 +89,26 @@ export class UIUpdate {
    *
    * When the stored data cannot be read, neither the backup nor an update
    * runs; the next start tries again.
+   *
+   * Returns the outcome for Matomo, see dataUpdateSignal().
    */
-  public async checkUpdate(_afterImport: boolean = false) {
+  public async checkUpdate(
+    _afterImport: boolean = false,
+  ): Promise<DataUpdateSignal | undefined> {
     this.uiLog.info('Check updates');
     const dataState = await this.uiStorage.getDataState();
     if (dataState === 'unknown') {
       this.uiLog.error(
         'Check updates - the data could not be read, nothing is backed up or updated',
       );
-      return;
+      return undefined;
     }
     const hasData = dataState === 'data';
+    const isOpen = (_update: string) =>
+      !this.uiVersionStorage.getVersion().checkIfDataVersionWasUpdated(_update);
+    const openAtStart = hasData && DATA_UPDATES.some(isOpen);
+    let backedUp = true;
+    this.unsavedUpdate = undefined;
 
     try {
       let backupPending =
@@ -119,7 +135,6 @@ export class UIUpdate {
         }
       }
 
-      let backedUp = true;
       let failedUpdate: string | undefined;
       for (const updateVersion of DATA_UPDATES) {
         if (
@@ -162,6 +177,11 @@ export class UIUpdate {
     if (this.uiAlert.isLoadingSpinnerShown()) {
       await this.uiAlert.hideLoadingSpinner();
     }
+    return dataUpdateSignal(
+      openAtStart,
+      backedUp,
+      this.unsavedUpdate ?? DATA_UPDATES.find(isOpen),
+    );
   }
 
   private async __updateDataVersion(_version): Promise<boolean> {
@@ -876,7 +896,11 @@ export class UIUpdate {
     }
 
     if (somethingUpdated) {
-      await this.uiVersionStorage.saveVersion(version);
+      // Each save stores every update done so far.
+      this.unsavedUpdate ??= _dataVersion;
+      if (await this.uiVersionStorage.saveVersion(version)) {
+        this.unsavedUpdate = undefined;
+      }
     }
     return somethingUpdated;
   }

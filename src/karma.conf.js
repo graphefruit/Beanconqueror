@@ -63,6 +63,7 @@ const NEW_CODE = [
   'src/services/textToSpeech/**',
   'src/services/theme/theme-plugins.ts',
   'src/services/translate/**',
+  'src/services/uiAnalytics.ts',
   'src/services/widgetSnapshot/**',
   'src/stores/**',
 ];
