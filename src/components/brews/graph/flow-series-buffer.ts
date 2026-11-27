@@ -32,6 +32,12 @@ interface SeriesStore {
 
 type Sample = Record<string, unknown>;
 
+/** What times a stored sample. */
+export interface TimedSample {
+  timestamp?: unknown;
+  brew_time?: unknown;
+}
+
 /** Where the value of each fixed series sits in BrewFlow. */
 const FIXED_SOURCES: readonly {
   id: FixedSeriesId;
@@ -98,7 +104,7 @@ function finite(value: unknown): number {
  * "second.tick" counter ("10.10" is tick 10 of second 10), so only a
  * fallback. NaN when neither can be read.
  */
-export function sampleTime(sample: Sample, start: number): number {
+export function sampleTime(sample: TimedSample, start: number): number {
   const clock = parseClockSeconds(sample.timestamp);
   if (Number.isFinite(clock) && Number.isFinite(start)) {
     const delta = clock - start;
@@ -156,6 +162,8 @@ export class FlowSeriesBuffer implements SeriesSource {
   private readonly axes = new Map<CustomSeriesId, IBrewCustomAxis>();
   private changes = 0;
   private clears = 0;
+  /** Clock seconds of the brew's first sample; times count from it. */
+  private start = Number.NaN;
 
   constructor(private readonly initialCapacity = 256) {}
 
@@ -205,6 +213,21 @@ export class FlowSeriesBuffer implements SeriesSource {
   }
 
   /**
+   * Appends a sample as recorded in BrewFlow, timed like `load` times it: by
+   * its timestamp, from the first sample of the brew. A sample without a
+   * readable time or value is left out.
+   */
+  public appendSample(id: SeriesId, sample: TimedSample, value: number): void {
+    if (!Number.isFinite(this.start)) {
+      this.start = parseClockSeconds(sample.timestamp);
+    }
+    const t = sampleTime(sample, this.start);
+    if (Number.isFinite(t) && Number.isFinite(value)) {
+      this.append(id, t, value);
+    }
+  }
+
+  /**
    * Replaces the value of the last sample of a series, as a machine does that
    * corrects its last flow value. Returns false when the series is empty.
    */
@@ -249,6 +272,7 @@ export class FlowSeriesBuffer implements SeriesSource {
   public clear(): void {
     this.series.clear();
     this.axes.clear();
+    this.start = Number.NaN;
     this.clears++;
     this.changes++;
   }
@@ -295,6 +319,7 @@ export class FlowSeriesBuffer implements SeriesSource {
           parseClockSeconds(isSample(first) ? first.timestamp : undefined),
         )
         .find((clock) => Number.isFinite(clock)) ?? Number.NaN;
+    this.start = start;
 
     const axes = Array.isArray(record.customAxes)
       ? (record.customAxes as unknown[])
