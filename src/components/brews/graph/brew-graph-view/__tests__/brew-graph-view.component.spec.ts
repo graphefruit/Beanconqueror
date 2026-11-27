@@ -403,6 +403,7 @@ describe('BrewGraphViewComponent', () => {
       theme: 'dark',
       transparent: false,
       scale: 3,
+      compact: true,
     });
   });
 
