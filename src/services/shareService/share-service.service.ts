@@ -303,7 +303,9 @@ export class ShareService {
       }
     }
 
-    const beanMessage: string = 'https://beanconqueror.com?' + jsonParams;
+    // Android and iOS open links below /app/ in the app; the page shows the import button otherwise.
+    const beanMessage: string =
+      'https://beanconqueror.com/app/userbean/?' + jsonParams;
     this.uiLog.debug(`Share bean link (${beanMessage.length} chars)`);
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,

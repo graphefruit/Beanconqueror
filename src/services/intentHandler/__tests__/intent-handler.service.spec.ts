@@ -3,6 +3,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { ModalController } from '@ionic/angular';
 
+import { App, type URLOpenListenerEvent } from '@capacitor/app';
+import { AppWeb } from '@capacitor/app/dist/esm/web';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Settings } from '../../../classes/settings/settings';
@@ -28,7 +30,10 @@ import { UIMillStorage } from '../../uiMillStorage';
 import { UIPreparationStorage } from '../../uiPreparationStorage';
 import { UISettingsStorage } from '../../uiSettingsStorage';
 import { VisualizerService } from '../../visualizerService/visualizer-service.service';
-import { IntentHandlerService } from '../intent-handler.service';
+import {
+  IntentHandlerService,
+  isWebsitePageWithoutData,
+} from '../intent-handler.service';
 
 async function gzipBase64Url(value: unknown): Promise<string> {
   const bytes = new TextEncoder().encode(JSON.stringify(value));
@@ -124,6 +129,34 @@ function importResult(beanUuid: string): IBrewImportResult {
     brewFlow: {} as IBrewImportResult['brewFlow'],
   };
 }
+
+describe('isWebsitePageWithoutData', () => {
+  for (const link of [
+    'https://beanconqueror.com/app/',
+    'https://beanconqueror.com/app/userbean/',
+    'https://beanconqueror.com/app/userbean',
+    'https://www.beanconqueror.com/app/nfc/',
+  ]) {
+    it(`only opens the app for the website page ${link}`, () => {
+      expect(isWebsitePageWithoutData(link)).toBeTrue();
+    });
+  }
+
+  for (const link of [
+    'https://beanconqueror.com/app/userbean/?shareUserBean0=AAA',
+    'https://beanconqueror.com/app/userbean?shareUserBean0=AAA',
+    'https://beanconqueror.com/app/roaster/bean.html?id=ROASTER1',
+    'https://beanconqueror.com/app/nfc/#3E95E1/DETAIL',
+    'https://beanconqueror.com/?qr=ROASTER1',
+    'https://beanconqueror.com/',
+    'beanconqueror://ADD_BEAN_ONLINE?id=ROASTER1',
+    'beanconqueror://int/bean/3E95E1/DETAIL',
+  ]) {
+    it(`hands ${link} to the import`, () => {
+      expect(isWebsitePageWithoutData(link)).toBeFalse();
+    });
+  }
+});
 
 describe('IntentHandlerService', () => {
   let service: IntentHandlerService;
@@ -494,6 +527,8 @@ describe('IntentHandlerService', () => {
   });
 
   for (const prefix of [
+    'https://beanconqueror.com/app/userbean/?',
+    'https://beanconqueror.com/app/userbean?',
     'https://beanconqueror.com/?',
     'beanconqueror://ADD_USER_BEAN?',
   ]) {
@@ -513,6 +548,94 @@ describe('IntentHandlerService', () => {
       ]);
     });
   }
+
+  it('restores the + of a shared bean that Android hands over as a space', async () => {
+    uiBeanHelper.addUserSharedBean.and.resolveTo();
+
+    await service.handleDeepLink(
+      'https://beanconqueror.com/app/userbean/?shareUserBean0=ab cd/=',
+    );
+
+    expect(uiBeanHelper.addUserSharedBean.calls.allArgs()).toEqual([
+      ['ab+cd/='],
+    ]);
+  });
+
+  describe('links the operating system opens in the app', () => {
+    let openUrl: ((event: URLOpenListenerEvent) => void) | undefined;
+    let handleDeepLink: jasmine.Spy;
+
+    beforeEach(async () => {
+      // Loads the web implementation, so the listener below is registered within one task.
+      await App.removeAllListeners();
+      openUrl = undefined;
+      spyOn(AppWeb.prototype, 'addListener').and.callFake(
+        (
+          _eventName: string,
+          listener: (event: URLOpenListenerEvent) => void,
+        ) => {
+          openUrl = listener;
+          return Promise.resolve({ remove: () => Promise.resolve() });
+        },
+      );
+      (TestBed.inject(NgZone).run as jasmine.Spy).and.callFake(
+        (fn: () => unknown) => fn(),
+      );
+      handleDeepLink = spyOn(service, 'handleDeepLink').and.resolveTo();
+      service.attachOnHandleOpenUrl();
+      await new Promise((resolve) => setTimeout(resolve));
+    });
+
+    it('only opens the app for a website page without data', () => {
+      openUrl({ url: 'https://beanconqueror.com/app/userbean/' });
+
+      expect(handleDeepLink).not.toHaveBeenCalled();
+    });
+
+    it('hands a link with data to the import', () => {
+      const link = 'https://beanconqueror.com/app/userbean/?shareUserBean0=AAA';
+
+      openUrl({ url: link });
+
+      expect(handleDeepLink).toHaveBeenCalledOnceWith(link);
+    });
+  });
+
+  describe('links from the website and from roaster codes', () => {
+    for (const link of [
+      'https://beanconqueror.com/?qr=ROASTER1',
+      'https://beanconqueror.com?qr=ROASTER1',
+      'https://beanconqueror.com/app/bean/?qr=ROASTER1',
+      'https://beanconqueror.com/app/roaster/bean.html?id=ROASTER1',
+      'beanconqueror://ADD_BEAN_ONLINE?id=ROASTER1',
+    ]) {
+      it(`loads the roaster bean (${link})`, async () => {
+        const addBeanFromServer = spyOn(
+          service,
+          'addBeanFromServer',
+        ).and.resolveTo();
+
+        await service.handleDeepLink(link);
+
+        expect(addBeanFromServer.calls.allArgs()).toEqual([['ROASTER1']]);
+      });
+    }
+
+    for (const link of [
+      'https://beanconqueror.com/?visualizerShare=JRKJ',
+      'https://beanconqueror.com/app/importvisualizer/?visualizerShare=JRKJ',
+      'https://beanconqueror.com/app/visualizer/importVisualizer.html?visualizerShare=JRKJ',
+      'beanconqueror://VISUALIZER_SHARE?code=JRKJ',
+    ]) {
+      it(`imports the visualizer shot (${link})`, async () => {
+        await service.handleDeepLink(link);
+
+        expect(
+          visualizerService.importShotWithSharedCode.calls.allArgs(),
+        ).toEqual([['JRKJ']]);
+      });
+    }
+  });
 
   it('imports a brew handoff with a trailing slash before the query', async () => {
     await service.handleDeepLink(withTrailingSlash(url));

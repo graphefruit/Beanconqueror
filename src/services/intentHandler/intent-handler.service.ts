@@ -46,6 +46,15 @@ const QUICK_ACTION_LINKS: readonly (readonly [string, QuickActionType])[] = [
   ['OPEN_BREWS', 'Brews'],
 ];
 
+// The OS hands every link below /app/ to the app, also the website pages
+// themselves; without query or fragment there is nothing to import.
+const WEBSITE_PAGE_WITHOUT_DATA =
+  /^https:\/\/(?:www\.)?beanconqueror\.com\/app\/[^?#]*$/i;
+
+export function isWebsitePageWithoutData(url: string): boolean {
+  return WEBSITE_PAGE_WITHOUT_DATA.test(url);
+}
+
 interface ICreatedHandoffBean {
   uuid: string;
   beanName: string;
@@ -108,6 +117,9 @@ export class IntentHandlerService {
           });
         } else {
           this.uiLog.log('Deeplink matched', event);
+        }
+        if (isWebsitePageWithoutData(event.url)) {
+          return;
         }
         this.handleDeepLink(event.url);
       });
