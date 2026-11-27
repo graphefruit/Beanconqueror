@@ -5,23 +5,13 @@ import { brewField, fillBrewField } from './support/brew-form';
 import { seedDatabase } from './support/seed';
 import { generateDataSet, isOpenBrew } from './support/synthetic-data';
 
-const PLOTLY_SCRIPT = '/assets/js/plotly.min.js';
-
 /**
  * The graph in the brew details is drawn by uPlot, and maximizing it opens
  * the large graph of the brew. The browser build reads a bundled sample
  * profile for every stored path, so no flow file is needed.
  */
 
-async function openDetailsOfBrewWithGraph(
-  page: Page,
-  plotly: string[],
-): Promise<void> {
-  page.on('request', (request) => {
-    if (request.url().endsWith(PLOTLY_SCRIPT)) {
-      plotly.push(request.url());
-    }
-  });
+async function openDetailsOfBrewWithGraph(page: Page): Promise<void> {
   const data = generateDataSet({ brews: 3, beans: 2, archivedBeanShare: 0 });
   const withGraph = data.BREWS.find((brew) => isOpenBrew(data, brew));
   expect(withGraph).toBeDefined();
@@ -55,8 +45,7 @@ function graphOf(page: Page) {
 test('the brew details draw the graph, hide a line by its chip and maximize it', async ({
   page,
 }) => {
-  const plotly: string[] = [];
-  await openDetailsOfBrewWithGraph(page, plotly);
+  await openDetailsOfBrewWithGraph(page);
 
   const details = page.locator('brew-detail');
   const graph = graphOf(page);
@@ -92,13 +81,12 @@ test('the brew details draw the graph, hide a line by its chip and maximize it',
   // Keyboard and screen reader users go on where they left the details.
   await expect(maximize).toBeFocused();
   await expect(graph.locator('.uplot canvas')).toBeVisible();
-  expect(plotly).toEqual([]);
 });
 
 test('the brew details still draw the graph after the brew is edited', async ({
   page,
 }) => {
-  await openDetailsOfBrewWithGraph(page, []);
+  await openDetailsOfBrewWithGraph(page);
   const details = page.locator('brew-detail');
   await expect(graphOf(page).locator('.uplot canvas')).toBeAttached();
 

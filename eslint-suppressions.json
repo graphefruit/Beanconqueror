@@ -509,16 +509,13 @@
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 5
-    },
-    "@typescript-eslint/no-misused-promises": {
-      "count": 3
-    },
-    "no-empty": {
       "count": 4
     },
-    "prefer-const": {
+    "@typescript-eslint/no-misused-promises": {
       "count": 1
+    },
+    "no-empty": {
+      "count": 3
     }
   },
   "src/app/brew/brew-maximize-controls/brew-maximize-controls.component.ts": {
@@ -538,7 +535,7 @@
       "count": 2
     },
     "no-empty": {
-      "count": 3
+      "count": 2
     }
   },
   "src/app/brew/brew-modal-import-shot-gaggimate/brew-modal-import-shot-gaggimate.component.ts": {
@@ -3179,28 +3176,6 @@
   },
   "src/services/currencyService/currency.service.ts": {
     "@typescript-eslint/no-unsafe-return": {
-      "count": 2
-    }
-  },
-  "src/services/graphHelper/__tests__/graph-helper.service.spec.ts": {
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 2
-    }
-  },
-  "src/services/graphHelper/graph-helper.service.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 6
-    },
-    "eqeqeq": {
-      "count": 2
-    },
-    "no-empty": {
-      "count": 3
-    },
-    "prefer-const": {
       "count": 2
     }
   },

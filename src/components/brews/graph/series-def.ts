@@ -59,7 +59,7 @@ interface FixedSeriesSpec {
 }
 
 /**
- * Names, units and axes as GraphHelperService.fillTraces gives them; the
+ * Names, units and axes of the fixed series; the
  * second scale's series take the names of their chips, so they can be told
  * apart from the first scale's.
  */

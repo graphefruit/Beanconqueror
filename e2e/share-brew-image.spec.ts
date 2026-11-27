@@ -105,7 +105,7 @@ test('the graph of a brew goes below its card on the picture', async ({
   );
   const graph = picture(page).locator('img.share-graph');
   await expect(graph).toHaveAttribute('src', /^data:image\/png;base64,/);
-  // Drawn three times as sharp as it is shown, without the Plotly library.
+  // Drawn three times as sharp as it is shown.
   await expect
     .poll(() =>
       graph.evaluate((img: HTMLImageElement) => [
@@ -114,7 +114,6 @@ test('the graph of a brew goes below its card on the picture', async ({
       ]),
     )
     .toEqual([900, 450]);
-  expect(await page.evaluate(() => 'Plotly' in window)).toBe(false);
   expect(await aspect(picture(page))).toBeGreaterThanOrEqual(1.249);
 
   // A dark colour set draws the graph again, in its dark lines.
