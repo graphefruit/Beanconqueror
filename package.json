@@ -34,7 +34,6 @@
     "@angular/core": "^22.3.0",
     "@angular/forms": "^22.3.0",
     "@angular/platform-browser": "^22.3.0",
-    "@angular/platform-browser-dynamic": "^22.3.0",
     "@angular/router": "^22.3.0",
     "@awesome-cordova-plugins/android-permissions": "^9.7.0",
     "@awesome-cordova-plugins/core": "^9.7.0",
