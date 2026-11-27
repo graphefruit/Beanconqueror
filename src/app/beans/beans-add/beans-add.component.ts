@@ -52,6 +52,11 @@ import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIToast } from '../../../services/uiToast';
+import {
+  hasBeanName,
+  hasSortInformation,
+  needsFrozenId,
+} from '../../../stores/beans/bean-form-rules';
 
 @Component({
   selector: 'beans-add',
@@ -123,46 +128,10 @@ export class BeansAddComponent implements OnInit {
     try {
       const params = this.settings.bean_manage_parameters;
       if (this.data.bean_information.length > 0) {
-        const info: IBeanInformation = this.data.bean_information[0];
-        let hasDataSet: boolean = false;
-        if (info.country && info.country !== '') {
-          hasDataSet = true;
-        }
-        if (info.region && info.region !== '') {
-          hasDataSet = true;
-        }
-        if (info.farm && info.farm !== '') {
-          hasDataSet = true;
-        }
-        if (info.farmer && info.farmer !== '') {
-          hasDataSet = true;
-        }
-        if (info.elevation && info.elevation !== '') {
-          hasDataSet = true;
-        }
-        if (info.harvest_time && info.harvest_time !== '') {
-          hasDataSet = true;
-        }
-        if (info.variety && info.variety !== '') {
-          hasDataSet = true;
-        }
-        if (info.processing && info.processing !== '') {
-          hasDataSet = true;
-        }
-        if (info.certification && info.certification !== '') {
-          hasDataSet = true;
-        }
-        if (info.percentage && info.percentage > 0) {
-          hasDataSet = true;
-        }
-        if (info.purchasing_price && info.purchasing_price > 0) {
-          hasDataSet = true;
-        }
-        if (info.fob_price && info.fob_price > 0) {
-          hasDataSet = true;
-        }
-
-        if (params.bean_information === false && hasDataSet === true) {
+        if (
+          params.bean_information === false &&
+          hasSortInformation(this.data.bean_information[0])
+        ) {
           //Woopsi doopsi, user hasn't enabled the bean_information, lets display him a popover
           //#623
           const choice = await this.uiAlert.showConfirm(
@@ -215,7 +184,7 @@ export class BeansAddComponent implements OnInit {
   }
 
   public async addBean() {
-    if (this.__formValid()) {
+    if (hasBeanName(this.data)) {
       await this.__addBean();
     } else {
       await this.requiredFields.report(
@@ -228,7 +197,10 @@ export class BeansAddComponent implements OnInit {
   private loadGreenBeanInformation() {
     if (this.greenBean) {
       this.data.bean_roast_information.bean_uuid = this.greenBean.config.uuid;
-      this.data.bean_information = this.greenBean.bean_information;
+      // The form edits the sorts in place; the green bean keeps its own.
+      this.data.bean_information = this.uiHelper.cloneData(
+        this.greenBean.bean_information,
+      );
 
       this.data.name = this.greenBean.name;
       this.data.cupping_points = this.greenBean.cupping_points;
@@ -247,7 +219,7 @@ export class BeansAddComponent implements OnInit {
   }
 
   public async __addBean() {
-    if (this.data.frozenDate && this.data.frozenId === '') {
+    if (needsFrozenId(this.data)) {
       this.data.frozenId = this.uiBeanHelper.generateFrozenId();
     }
     if (
@@ -373,15 +345,5 @@ export class BeansAddComponent implements OnInit {
     }
 
     this.data.qr_code = _bean.qr_code;
-  }
-
-  private __formValid(): boolean {
-    let valid: boolean = true;
-    const name: string = this.data.name;
-    if (name === undefined || name.trim() === '') {
-      valid = false;
-    }
-
-    return valid;
   }
 }

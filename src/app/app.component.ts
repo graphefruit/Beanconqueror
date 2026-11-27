@@ -50,6 +50,7 @@ import TrackContentImpression from '../data/tracking/trackContentImpression/trac
 import { STARTUP_VIEW_ENUM } from '../enums/settings/startupView';
 import { environment } from '../environments/environment';
 import { beanconquerorIcons } from '../generated/icon-registry';
+import { QuickAction } from '../native/quick-action-plugin';
 import { AnalyticsPopoverComponent } from '../popover/analytics-popover/analytics-popover.component';
 import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
 import { PleaseActivateAnalyticsPopoverComponent } from '../popover/please-activate-analytics-popover/please-activate-analytics-popover.component';
@@ -67,6 +68,7 @@ import { DeviceIdentityService } from '../services/deviceIdentity/device-identit
 import { DocumentLanguageService } from '../services/documentLanguage/document-language.service';
 import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
 import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
+import { NfcService } from '../services/nfcService/nfc-service.service';
 import { TabletLayoutService } from '../services/tabletLayout/tablet-layout.service';
 import { ThemeService } from '../services/theme/theme.service';
 import { UIAlert } from '../services/uiAlert';
@@ -77,6 +79,7 @@ import { UIBeanStorage } from '../services/uiBeanStorage';
 import { UIBrewHelper } from '../services/uiBrewHelper';
 import { UIBrewStorage } from '../services/uiBrewStorage';
 import { UIExportImportHelper } from '../services/uiExportImportHelper';
+import { UIFileHelper } from '../services/uiFileHelper';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIGreenBeanStorage } from '../services/uiGreenBeanStorage';
 import { UIHelper } from '../services/uiHelper';
@@ -139,6 +142,7 @@ export class AppComponent implements AfterViewInit {
   private readonly uiPreparationHelper = inject(UIPreparationHelper);
   private readonly bleManager = inject(CoffeeBluetoothDevicesService);
   private readonly uiExportImportHelper = inject(UIExportImportHelper);
+  private readonly uiFileHelper = inject(UIFileHelper);
   private readonly uiGraphStorage = inject(UIGraphStorage);
   private readonly uiStorage = inject(UIStorage);
   private readonly deviceIdentity = inject(DeviceIdentityService);
@@ -148,6 +152,8 @@ export class AppComponent implements AfterViewInit {
   private readonly iosPlatformService = inject(IosPlatformService);
   private readonly themeService = inject(ThemeService);
   private readonly deleteCommands = inject(DeleteCommands);
+  // Created at start so a tag that opens the app is handled before the beans tab is visited.
+  private readonly nfcService = inject(NfcService);
 
   @ViewChild(IonRouterOutlet, { static: false })
   public routerOutlet: IonRouterOutlet;
@@ -192,6 +198,8 @@ export class AppComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     this.uiLog.log('Platform ready, init app');
+    // Not awaited: the start does not wait for the earlier log to be read.
+    void this.uiLog.startFileLog();
 
     Chart.register(...registerables);
     this.__appReady();
@@ -292,35 +300,16 @@ export class AppComponent implements AfterViewInit {
       Logger.disableLog();
 
       if (this.platform.is('ios')) {
-        this.uiLog.log(`iOS Device - attach to home icon pressed`);
-        // Thanks to the solution here: https://forum.ionicframework.com/t/how-to-implement-quick-actions-home-screen-for-ionic-capacitor-app/235690/2
-        window.handleQuickAction = (type: any) => {
-          this.uiHelper.isBeanconqurorAppReady().then(async () => {
-            const payloadType = type;
-            try {
-              this.uiAnalytics.trackEvent(
-                STARTUP_TRACKING.TITLE,
-                STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.CATEGORY,
-                payloadType.toUpperCase(),
-              );
-              this.uiLog.log(`iOS Device - Home icon was pressed`);
-            } catch (ex) {}
-            if (payloadType === 'Brew') {
-              await this.__trackNewBrew();
-            } else if (!this.uiBrewHelper.canOpenBrewFormIfNotShowMessage()) {
-              // A new form and the change of tab would cover the open brew.
-            } else if (payloadType === 'Bean') {
-              await this.__trackNewBean();
-            } else if (payloadType === 'Preparation') {
-              await this.__trackNewPreparation();
-            } else if (payloadType === 'Mill') {
-              await this.__trackNewMill();
-            }
-          });
-        };
+        // A quick action that started the app is kept natively until this listener exists.
+        void QuickAction.addListener('quickAction', ({ type }) => {
+          void this.handleQuickAction(type);
+        });
       }
 
       if (this.platform.is('capacitor')) {
+        // Not awaited, it never rejects. Only the own folder: the cache also
+        // holds the folders of imports and exports.
+        void this.uiFileHelper.clearShareDirectory();
         try {
           await this.uiExportImportHelper.checkBackup();
         } catch (ex) {}
@@ -377,6 +366,9 @@ export class AppComponent implements AfterViewInit {
           async () => {
             this.uiLog.log('App finished loading');
             this.uiExportImportHelper.allCollectionsRead();
+            // The data updates can show a message, which is then in the
+            // language of the app.
+            await this.__setDeviceLanguage();
             await this.__checkUpdate();
             this.brewReferences.logMissingReferences();
             // After the data updates, which can still change uuids.
@@ -590,8 +582,6 @@ export class AppComponent implements AfterViewInit {
 
   private async __initApp() {
     this.__registerBack();
-
-    await this.__setDeviceLanguage();
 
     await this.uiAnalytics.initializeTracking();
     await this.themeService.initialize();
@@ -956,6 +946,29 @@ export class AppComponent implements AfterViewInit {
       });
       await modal.present();
       await modal.onWillDismiss();
+    }
+  }
+
+  private async handleQuickAction(type: string) {
+    await this.uiHelper.isBeanconqurorAppReady();
+    try {
+      this.uiAnalytics.trackEvent(
+        STARTUP_TRACKING.TITLE,
+        STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.CATEGORY,
+        type.toUpperCase(),
+      );
+      this.uiLog.log(`iOS Device - Home icon was pressed`);
+    } catch {}
+    if (type === 'Brew') {
+      await this.__trackNewBrew();
+    } else if (!this.uiBrewHelper.canOpenBrewFormIfNotShowMessage()) {
+      // A new form and the change of tab would cover the open brew.
+    } else if (type === 'Bean') {
+      await this.__trackNewBean();
+    } else if (type === 'Preparation') {
+      await this.__trackNewPreparation();
+    } else if (type === 'Mill') {
+      await this.__trackNewMill();
     }
   }
 

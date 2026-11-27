@@ -1,3 +1,4 @@
+import { effect, Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { SystemBarsStyle } from '@capacitor/core';
@@ -17,10 +18,12 @@ const DARK_BAR = '#221100';
 describe('ThemeService', () => {
   let platform: string;
   let systemDark: boolean;
+  let colorSchemeListeners: (() => void)[];
   let themeMode: THEME_MODE_ENUM;
   let statusBar: jasmine.SpyObj<ThemePlugins['statusBar']>;
   let systemBars: jasmine.SpyObj<ThemePlugins['systemBars']>;
   let edgeToEdge: jasmine.SpyObj<ThemePlugins['edgeToEdge']>;
+  let androidNativeCalls: jasmine.SpyObj<ThemePlugins['androidNativeCalls']>;
   let keyboard: jasmine.SpyObj<ThemePlugins['keyboard']>;
   let tokens: HTMLStyleElement;
   let metas: HTMLMetaElement[];
@@ -38,6 +41,7 @@ describe('ThemeService', () => {
   beforeEach(() => {
     platform = 'android';
     systemDark = false;
+    colorSchemeListeners = [];
     themeMode = THEME_MODE_ENUM.LIGHT;
 
     tokens = document.createElement('style');
@@ -59,20 +63,27 @@ describe('ThemeService', () => {
       setStatusBarColor: Promise.resolve(),
       setNavigationBarColor: Promise.resolve(),
     });
+    androidNativeCalls = jasmine.createSpyObj('BCAndroidNativeCalls', {
+      setBackgroundColor: Promise.resolve(),
+    });
     keyboard = jasmine.createSpyObj('Keyboard', {
       setStyle: Promise.resolve(),
     });
     const fakes: ThemePlugins = {
       getPlatform: () => platform,
-      darkMode: {
-        init: () => Promise.resolve(),
-        isDarkMode: () => Promise.resolve({ dark: systemDark }),
-        addAppearanceListener: () =>
-          Promise.resolve({ remove: () => Promise.resolve() }),
+      colorScheme: {
+        get matches() {
+          return systemDark;
+        },
+        addEventListener: ((type: string, listener: () => void) => {
+          expect(type).toBe('change');
+          colorSchemeListeners.push(listener);
+        }) as MediaQueryList['addEventListener'],
       },
       statusBar,
       systemBars,
       edgeToEdge,
+      androidNativeCalls,
       keyboard,
     };
 
@@ -114,6 +125,10 @@ describe('ThemeService', () => {
     expect(edgeToEdge.setNavigationBarColor).toHaveBeenCalledWith({
       color: LIGHT_BAR,
     });
+    // The strip beside a display cutout shows what lies behind the web view.
+    expect(androidNativeCalls.setBackgroundColor).toHaveBeenCalledWith({
+      color: LIGHT_BAR,
+    });
     expect(keyboard.setStyle).not.toHaveBeenCalled();
     expect(service.isDarkMode()).toBeFalse();
     expect(
@@ -130,6 +145,9 @@ describe('ThemeService', () => {
       color: DARK_BAR,
     });
     expect(edgeToEdge.setNavigationBarColor).toHaveBeenCalledWith({
+      color: DARK_BAR,
+    });
+    expect(androidNativeCalls.setBackgroundColor).toHaveBeenCalledWith({
       color: DARK_BAR,
     });
     expect(service.isDarkMode()).toBeTrue();
@@ -152,6 +170,66 @@ describe('ThemeService', () => {
     });
   });
 
+  it('restyles the bars when the device appearance changes at runtime', async () => {
+    platform = 'ios';
+    themeMode = THEME_MODE_ENUM.DEVICE;
+    await service.initialize();
+    expectBars(LIGHT_BAR, 'dark-icons');
+    expect(colorSchemeListeners.length).toBe(1);
+
+    statusBar.setBackgroundColor.calls.reset();
+    systemDark = true;
+    colorSchemeListeners[0]();
+    await new Promise((resolve) => setTimeout(resolve));
+
+    expectBars(DARK_BAR, 'light-icons');
+    expect(service.isDarkMode()).toBeTrue();
+    expect(
+      document.documentElement.classList.contains('ion-palette-dark'),
+    ).toBeTrue();
+  });
+
+  it('signals a change of the device appearance after the palette class is set', async () => {
+    platform = 'web';
+    themeMode = THEME_MODE_ENUM.DEVICE;
+    await service.initialize();
+    expect(service.dark()).toBeFalse();
+
+    const seen: boolean[] = [];
+    const watcher = effect(
+      () => {
+        seen.push(
+          service.dark() ===
+            document.documentElement.classList.contains('ion-palette-dark'),
+        );
+      },
+      { injector: TestBed.inject(Injector) },
+    );
+    TestBed.tick();
+    systemDark = true;
+    colorSchemeListeners[0]();
+    await new Promise((resolve) => setTimeout(resolve));
+    TestBed.tick();
+
+    expect(service.dark()).toBeTrue();
+    expect(seen).toEqual([true, true]);
+    watcher.destroy();
+  });
+
+  it('keeps the chosen mode when the device appearance changes', async () => {
+    themeMode = THEME_MODE_ENUM.LIGHT;
+    await service.initialize();
+
+    systemDark = true;
+    colorSchemeListeners[0]();
+    await new Promise((resolve) => setTimeout(resolve));
+
+    expect(service.isDarkMode()).toBeFalse();
+    expect(statusBar.setBackgroundColor).not.toHaveBeenCalledWith({
+      color: DARK_BAR,
+    });
+  });
+
   it('styles status bar and keyboard on iOS without the Android plugin', async () => {
     platform = 'ios';
     themeMode = THEME_MODE_ENUM.DARK;
@@ -163,6 +241,7 @@ describe('ThemeService', () => {
     });
     expect(edgeToEdge.setStatusBarColor).not.toHaveBeenCalled();
     expect(edgeToEdge.setNavigationBarColor).not.toHaveBeenCalled();
+    expect(androidNativeCalls.setBackgroundColor).not.toHaveBeenCalled();
   });
 
   it('applies the system appearance before the settings are loaded', async () => {
@@ -204,6 +283,7 @@ describe('ThemeService', () => {
     expect(statusBar.setBackgroundColor).not.toHaveBeenCalled();
     expect(edgeToEdge.setStatusBarColor).not.toHaveBeenCalled();
     expect(edgeToEdge.setNavigationBarColor).not.toHaveBeenCalled();
+    expect(androidNativeCalls.setBackgroundColor).not.toHaveBeenCalled();
     expect(metas.map((meta) => meta.content)).toEqual(['initial', 'initial']);
   });
 });

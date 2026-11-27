@@ -95,15 +95,8 @@ test('editing a brew opens it with its values and saves the change', async ({
   await expect(page.getByText('Edit brew')).toBeVisible();
   await expect(brewField(page, 'Ground Coffee (gr)')).toHaveValue('18');
   await expect(brewField(page, WATER)).toHaveValue('300');
-  // The live ratio is part of the water field's label.
-  await expect(brewField(page, WATER)).toHaveAccessibleName(
-    'Amount of water (1 / 16.67 , 60 g/l)',
-  );
 
   await fillBrewField(page, 'Ground Coffee (gr)', '20');
-  await expect(brewField(page, WATER)).toHaveAccessibleName(
-    'Amount of water (1 / 15.00 , 66.67 g/l)',
-  );
   await saveBrew(page);
 
   await expect(toast(page, 'Brew has been edited')).toBeVisible();

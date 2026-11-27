@@ -26,7 +26,7 @@ import { bluetoothOutline } from 'ionicons/icons';
 
 import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
 
@@ -64,6 +64,8 @@ import {
 import { injectDiscardGuard } from '../../../services/discardGuard/discard-guard';
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
+import { speechLanguageTag } from '../../../services/textToSpeech/speech-options';
+import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -82,10 +84,14 @@ import {
   brewFormChanged,
   BrewFormState,
   brewFormState,
+  flowPoints,
 } from '../../../stores/brews/brew-form-rules';
+import {
+  magicTapAction,
+  spokenGrams,
+  spokenStopTime,
+} from '../../../stores/brews/magic-tap-rules';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
-
-declare var Plotly;
 
 // Define this interface if not already globally available or imported
 interface IEventPayload {
@@ -139,6 +145,8 @@ export class BrewAddComponent implements OnDestroy {
   private readonly uiHelper = inject(UIHelper);
   private readonly eventQueue = inject(EventQueueService);
   private readonly elementRef = inject(ElementRef);
+  private readonly textToSpeech = inject(TextToSpeechService);
+  private readonly translate = inject(TranslateService);
   private magicTapActive = false;
   private magicTapBusy = false;
 
@@ -310,23 +318,69 @@ export class BrewAddComponent implements OnDestroy {
       if (
         !this.magicTapActive ||
         topModal?.querySelector('brew-add') !== this.elementRef.nativeElement ||
-        blockingOverlay ||
-        this.brewBrewing.timer.isTimerRunning()
+        blockingOverlay
       ) {
         return;
       }
 
       const timer = this.brewBrewing.timer;
-      if (timer.getSeconds() > 0 || timer.getMilliseconds() > 0) {
+      const action = magicTapAction({
+        running: timer.isTimerRunning(),
+        seconds: timer.getSeconds(),
+        milliseconds: timer.getMilliseconds(),
+        flowPoints: flowPoints(
+          this.brewBrewing.brewBrewingGraphEl?.flow_profile_raw,
+        ),
+      });
+      if (action === 'stop') {
+        // Pausing says the brew end first, so this follows it.
+        timer.pauseTimer('click');
+        this.speakMagicTapStop(timer.getSeconds());
+        return;
+      }
+      if (action === 'resetAndStart') {
         timer.resetWithoutEmit();
         await this.brewBrewing.timerReset(undefined);
       }
       if (this.magicTapActive && !timer.isTimerRunning()) {
         await this.brewBrewing.timerStartPressed(undefined);
+        if (timer.isTimerRunning()) {
+          this.textToSpeech.speakInFull(
+            this.translate.instant(
+              action === 'start'
+                ? 'TEXT_TO_SPEECH.MAGIC_TAP_STARTED'
+                : 'TEXT_TO_SPEECH.MAGIC_TAP_RESET_AND_STARTED',
+            ),
+          );
+        }
       }
     } finally {
       this.magicTapBusy = false;
     }
+  }
+
+  private speakMagicTapStop(seconds: number): void {
+    const time = spokenStopTime(seconds);
+    let grams: number | undefined;
+    try {
+      grams = this.bleManager.getScale()?.getWeight();
+    } catch {
+      // The scale went away: the time alone is said.
+    }
+    this.textToSpeech.speakInFull(
+      grams === undefined
+        ? this.translate.instant('TEXT_TO_SPEECH.MAGIC_TAP_STOPPED', { time })
+        : this.translate.instant(
+            'TEXT_TO_SPEECH.MAGIC_TAP_STOPPED_WITH_WEIGHT',
+            {
+              time,
+              weight: spokenGrams(
+                grams,
+                speechLanguageTag(this.settings.language),
+              ),
+            },
+          ),
+    );
   }
 
   public smartScaleConnected() {
@@ -404,13 +458,6 @@ export class BrewAddComponent implements OnDestroy {
 
   public async dismiss() {
     this.stopScaleTimer();
-    try {
-      if (this.brewBrewing.brewBrewingGraphEl) {
-        Plotly.purge(
-          this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement,
-        );
-      }
-    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,

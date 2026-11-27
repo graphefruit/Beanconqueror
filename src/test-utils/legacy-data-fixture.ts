@@ -46,12 +46,14 @@ export interface LegacyDataOptions {
   brews?: number;
   /** Number of beans. Default 40. */
   beans?: number;
+  /** The data updates done, UPDATE_1 up to this one. Default 15. */
+  dataUpdatesDone?: number;
 }
 
 /**
  * Synthetic data as an app version without change tracking stores it: no
  * change info in any config, settings without a user profile and all data
- * updates up to UPDATE_15 done.
+ * updates up to UPDATE_15 done (see `dataUpdatesDone`).
  *
  * Contains every collection, attachments with and without a leading slash,
  * flow profiles, a preparation with tools, a pair of identical brews that
@@ -116,7 +118,7 @@ export function createLegacyData(
   baristamodeBrews[0].flow_profile = 'baristamode/barista-0_flow_profile.json';
 
   const updatedDataVersions = Array.from(
-    { length: 15 },
+    { length: _options.dataUpdatesDone ?? 15 },
     (_, i) => `UPDATE_${i + 1}`,
   );
 

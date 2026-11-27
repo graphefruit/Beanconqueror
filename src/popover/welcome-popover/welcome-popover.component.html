@@ -53,8 +53,9 @@
   <!-- Only the step being shown is there for screen readers and the keyboard;
        the steps are named here instead of by Swiper, which names them in English.
        The position is part of the heading, which takes the focus on each step:
-       screen readers on phones do not say the name of a group entered that way. -->
-  <swiper-container  class='swiper' #slider allow-touch-move='false' a11y='false' [pagination]="{ draggable: false, clickable: false }"  pager="true">
+       screen readers on phones do not say the name of a group entered that way.
+       Swiping is off, so Swiper must not drop taps on a button while a slide moves in. -->
+  <swiper-container  class='swiper' #slider allow-touch-move='false' prevent-clicks='false' prevent-clicks-propagation='false' a11y='false' [pagination]="{ draggable: false, clickable: false }"  pager="true">
     <swiper-slide role="group" aria-labelledby="welcome-step-1" [inert]="slide !== 1" [attr.aria-hidden]="slide !== 1 ? 'true' : null">
       <!--Hide the long text, because else the slide would have a scrollable context -->
       <div [hidden]="slide!=1"  class="ion-padding-top ion-margin-horizontal">

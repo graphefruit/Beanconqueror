@@ -33,9 +33,11 @@ const ENTRY_COLLECTIONS = ['BEANS', 'PREPARATION', 'MILL', 'BREWS'];
  * A backup of the data the first run stored, with the bean renamed, and the
  * number of entries in it. The settings hold no analytics choice, so the app
  * asks for it after the import, as for a backup of an older version.
+ * `_change` changes the data further.
  */
 async function backupOfStoredData(
   page: Page,
+  _change: (data: Record<string, unknown[]>) => void = () => undefined,
 ): Promise<{ zip: Buffer; entryCount: number }> {
   const data: Record<string, unknown[]> = {};
   for (const key of ['SETTINGS', 'VERSION', ...ENTRY_COLLECTIONS]) {
@@ -49,6 +51,7 @@ async function backupOfStoredData(
     (_count, _key) => _count + data[_key].length,
     0,
   );
+  _change(data);
   return { zip: createBackupZip(data), entryCount };
 }
 
@@ -77,6 +80,18 @@ function importQuestion(page: Page) {
   return page.getByRole('alertdialog', {
     name: 'Replace all data with the import?',
   });
+}
+
+/** Confirms the import and closes the messages that follow it. */
+async function confirmImport(page: Page): Promise<void> {
+  await importQuestion(page).getByRole('button', { name: 'Yes' }).click();
+  await page
+    .getByRole('alertdialog')
+    .filter({ hasText: 'Import successful' })
+    .getByRole('button', { name: 'Ok' })
+    .click();
+  await page.getByRole('button', { name: "Don't activate" }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
 }
 
 test.beforeEach(async ({ page }) => {
@@ -115,15 +130,7 @@ test('in the browser the import runs without a backup file', async ({
 
   await chooseFileToImport(page, zip);
   const started = Date.now();
-  await importQuestion(page).getByRole('button', { name: 'Yes' }).click();
-
-  await page
-    .getByRole('alertdialog')
-    .filter({ hasText: 'Import successful' })
-    .getByRole('button', { name: 'Ok' })
-    .click();
-  await page.getByRole('button', { name: "Don't activate" }).click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await confirmImport(page);
 
   const [bean] = (await readStoredValue<StoredEntry[]>(page, 'BEANS')) ?? [];
   expect(bean.name).toBe(IMPORTED_BEAN_NAME);
@@ -142,6 +149,42 @@ test('in the browser the import runs without a backup file', async ({
     (_call) => _call.plugin === 'Filesystem',
   );
   expect(fileCalls).toEqual([]);
+});
+
+interface StoredSettings {
+  bluetooth_ignore_anomaly_values: boolean;
+  bluetooth_ignore_negative_values: boolean;
+}
+
+test('an import runs the data updates that a backup of an older version has not done', async ({
+  page,
+}) => {
+  const updates = (_count: number) =>
+    Array.from({ length: _count }, (_, i) => `UPDATE_${i + 1}`);
+  // Before UPDATE_12, which turns these filters of the scale off.
+  const { zip } = await backupOfStoredData(page, (_data) => {
+    const [settings] = _data.SETTINGS as StoredSettings[];
+    settings.bluetooth_ignore_anomaly_values = true;
+    settings.bluetooth_ignore_negative_values = true;
+    const [version] = _data.VERSION as { updatedDataVersions: string[] }[];
+    version.updatedDataVersions = updates(11);
+  });
+
+  await chooseFileToImport(page, zip);
+  await confirmImport(page);
+
+  const [settings] =
+    (await readStoredValue<StoredSettings[]>(page, 'SETTINGS')) ?? [];
+  expect(settings.bluetooth_ignore_anomaly_values).toBe(false);
+  expect(settings.bluetooth_ignore_negative_values).toBe(false);
+  const [version] =
+    (await readStoredValue<{ updatedDataVersions: string[] }[]>(
+      page,
+      'VERSION',
+    )) ?? [];
+  expect(version.updatedDataVersions).toEqual(
+    expect.arrayContaining(updates(19)),
+  );
 });
 
 test.describe('a file that cannot be read', () => {
@@ -172,5 +215,34 @@ test.describe('a file that cannot be read', () => {
     await alert.getByRole('button', { name: 'Ok' }).click();
     await expect(alert).toBeHidden();
     expect(await readStoredValue(page, 'BEANS')).toEqual(beansBefore);
+  });
+});
+
+test.describe('a file that is no backup', () => {
+  test.use({ allowedConsoleErrors: [/^Import - refused:/] });
+
+  test('is refused before the question, with the reason set apart below', async ({
+    page,
+  }) => {
+    const beansBefore = await readStoredValue<StoredEntry[]>(page, 'BEANS');
+
+    await chooseFileToImport(
+      page,
+      createBackupZip({ recipes: [{ name: 'V60' }], version: 3 }),
+    );
+
+    const alert = page
+      .getByRole('alertdialog')
+      .filter({ hasText: 'This file is not a BeanConqueror backup.' });
+    await expect(alert).toBeVisible();
+    await expect(alert).toHaveAccessibleDescription(
+      /^This file is not a BeanConqueror backup\. Nothing was imported, your data is unchanged\..*Technical details:\s*The file holds no list SETTINGS, BEANS, BREWS$/,
+    );
+    await expect(importQuestion(page)).toHaveCount(0);
+
+    await alert.getByRole('button', { name: 'Ok' }).click();
+    await expect(alert).toBeHidden();
+    expect(await readStoredValue(page, 'BEANS')).toEqual(beansBefore);
+    expect(await readStoredValue(page, 'LAST_RESTORE')).toBeNull();
   });
 });

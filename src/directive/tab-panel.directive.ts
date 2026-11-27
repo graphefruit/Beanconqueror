@@ -11,15 +11,31 @@ import {
 let nextId = 0;
 
 /**
- * The nearest ion-segment before `panel` among its siblings, else the nearest
- * one inside them: a virtual list keeps its segment in the head that stays on
- * top. A segment inside a sibling, such as a range below the tabs, does not
- * count while a sibling is one.
+ * The nearest ion-segment before `panel`: among its siblings, else inside
+ * them, else the same for its ancestors up to the ion-content, whose
+ * ion-header holds the segment of a list. A segment inside a sibling, such as
+ * a range below the tabs, does not count while a sibling is one.
  */
 function segmentBefore(panel: Element): HTMLIonSegmentElement | null {
+  for (
+    let element: Element | null = panel;
+    element;
+    element = element.parentElement
+  ) {
+    const segment = segmentAmongSiblingsBefore(element);
+    if (segment || element.localName === 'ion-content') {
+      return segment;
+    }
+  }
+  return null;
+}
+
+function segmentAmongSiblingsBefore(
+  element: Element,
+): HTMLIonSegmentElement | null {
   const siblings: Element[] = [];
   for (
-    let sibling = panel.previousElementSibling;
+    let sibling = element.previousElementSibling;
     sibling;
     sibling = sibling.previousElementSibling
   ) {

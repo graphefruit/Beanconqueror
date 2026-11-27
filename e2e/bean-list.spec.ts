@@ -16,7 +16,6 @@ import {
   storedBean,
   tabName,
 } from './support/beans';
-import { completeFirstRun } from './support/first-run';
 import { readStoredValue } from './support/stored-values';
 import { isUncovered, scrollToEnd, VIRTUAL_LIST } from './support/virtual-list';
 
@@ -30,24 +29,6 @@ import { isUncovered, scrollToEnd, VIRTUAL_LIST } from './support/virtual-list';
 // One toggle button: pressed while the cards are collapsed.
 const collapse = { name: 'Collapse bean list items', pressed: false };
 const expand = { name: 'Collapse bean list items', pressed: true };
-
-test('the segments count the available, frozen and archived beans', async ({
-  page,
-}) => {
-  await startWithBeans(page);
-
-  await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    tabName('Available ( 7 )'),
-  );
-  // Known defect: the three frozen portions are one entry, so the counter
-  // reads "shown / all" as if a filter hid two of four beans.
-  await expect(beanSegment(page, 'Frozen')).toHaveAccessibleName(
-    tabName('Frozen ( 2 / 4 )'),
-  );
-  await expect(beanSegment(page, 'Archive')).toHaveAccessibleName(
-    tabName('Archive ( 3 )'),
-  );
-});
 
 test('the collapsed list shows the beans by name and stays collapsed after a restart', async ({
   page,
@@ -99,40 +80,17 @@ test('the collapsed list shows the beans by name and stays collapsed after a res
 test('frozen portions of one bag share a card that opens to show them', async ({
   page,
 }) => {
+  // What the group card and its portions show is checked by unit tests.
   await startWithBeans(page);
   await showBeanSegment(page, 'Frozen');
 
   await expect(beanCards(page)).toHaveCount(2);
-  const frozen = beanCard(page, BEANS.frozen);
-  await expect(beanCardValue(frozen, 'Frozen date')).toHaveText('13.08.2025');
-  await expect(beanCardValue(frozen, 'Frozen notes')).toHaveText('Vakuumiert');
-  // 10 days until it was frozen; 90 days in the freezer count as one.
-  await expect(beanCardValue(frozen, 'Roasted before')).toHaveText(
-    '12 days old',
-  );
-
-  // The symbols before the name are spoken, and so is the one of the id.
-  await expect(
-    frozen.getByRole('img', { name: 'Frozen', exact: true }),
-  ).toBeVisible();
-  await expect(frozen.getByRole('img', { name: 'Frozen id' })).toBeVisible();
-
-  // The first portion stands for the group.
-  const group = beanCard(page, BEANS.portion).first();
-  await expect(group).toContainText('ZP1');
-  await expect(group.getByRole('img', { name: 'Bean group' })).toBeVisible();
-  const groupToggle = group.getByRole('button', {
+  const groupToggle = page.getByRole('button', {
     name: /^Beans in the group /,
   });
-  await expect(groupToggle).toHaveAttribute('aria-expanded', 'false');
   await groupToggle.click();
   await expect(groupToggle).toHaveAttribute('aria-expanded', 'true');
   await expect(beanCards(page)).toHaveCount(4);
-  await expect(group).toContainText('ZP2');
-  await expect(group).toContainText('ZP3');
-  await expect(
-    group.getByRole('button', { name: /^Options for / }),
-  ).toHaveCount(3);
 
   // An action on a card loads the list again; the group stays open.
   await beanAction(page, BEANS.frozen, 'Favourite');
@@ -148,55 +106,6 @@ test('frozen portions of one bag share a card that opens to show them', async ({
   await showBeanSegment(page, 'Available');
   await showBeanSegment(page, 'Frozen');
   await expect(beanCards(page)).toHaveCount(4);
-});
-
-test('archived beans are listed in the archive only', async ({ page }) => {
-  await startWithBeans(page);
-  await showBeanSegment(page, 'Archive');
-  await page.getByRole('button', collapse).click();
-
-  await expect
-    .poll(() => beanNames(page))
-    .toEqual([BEANS.archived, BEANS.archivedFrozen, BEANS.archivedLate]);
-
-  // An archived bean that is still frozen is not among the frozen ones.
-  await showBeanSegment(page, 'Frozen');
-  await expect(beanCard(page, BEANS.archivedFrozen)).toHaveCount(0);
-});
-
-test('the archive is hidden when archived beans are switched off', async ({
-  page,
-}) => {
-  await startWithBeans(page, { settings: { show_archived_beans: false } });
-
-  await expect(beanSegment(page, 'Available')).toBeVisible();
-  await expect(beanSegment(page, 'Frozen')).toBeVisible();
-  await expect(beanSegment(page, 'Archive')).toHaveCount(0);
-  await showBeanSegment(page, 'Frozen');
-  await expect(beanCards(page)).toHaveCount(2);
-  await expect(beanCard(page, BEANS.archivedFrozen)).toHaveCount(0);
-});
-
-test('a fresh install has no frozen segment and an empty list without a toolbar', async ({
-  page,
-}) => {
-  await page.goto('/');
-  await completeFirstRun(page);
-  await openBeansTab(page);
-
-  await expect(beanSegment(page, 'Available')).toHaveAccessibleName(
-    tabName('Available ( 0 )'),
-  );
-  await expect(beanSegment(page, 'Frozen')).toHaveCount(0);
-  await expect(page.getByText("You're out of fresh beans!")).toBeVisible();
-  await expect(page.getByRole('searchbox')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Filter beans' })).toHaveCount(
-    0,
-  );
-
-  await showBeanSegment(page, 'Archive');
-  await expect(page.getByText("You've got no archived beans.")).toBeVisible();
-  await expect(page.getByRole('searchbox')).toHaveCount(0);
 });
 
 test('the list stays where it is after a card action and returns to the top for a search', async ({

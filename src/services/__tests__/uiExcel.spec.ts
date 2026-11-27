@@ -23,6 +23,7 @@ import {
   createMockTranslateService,
   createMockUILog,
 } from '../../test-utils/mock-services';
+import { ExcelImportIssue } from '../excel-import-rules';
 import { UIAlert } from '../uiAlert';
 import { UIBeanHelper } from '../uiBeanHelper';
 import { UIBeanStorage } from '../uiBeanStorage';
@@ -128,6 +129,7 @@ describe('UIExcel', () => {
   let preparationStorage: FakeStorage<Preparation>;
   let saveSettings: jasmine.Spy;
   let showMessage: jasmine.Spy;
+  let showMessageWithList: jasmine.Spy;
   let showLoadingSpinner: jasmine.Spy;
   let hideLoadingSpinner: jasmine.Spy;
   let showBeans: jasmine.Spy;
@@ -135,6 +137,8 @@ describe('UIExcel', () => {
   let exportFileToDefaultDirectory: jasmine.Spy;
   let uiLog: ReturnType<typeof createMockUILog>;
   let translateInstant: jasmine.Spy;
+  /** The cells the last import did not read. */
+  let issues: ExcelImportIssue[];
 
   function setup(translations: Record<string, string> = {}): void {
     settings = new Settings();
@@ -145,6 +149,9 @@ describe('UIExcel', () => {
     preparationStorage = new FakeStorage<Preparation>();
     saveSettings = jasmine.createSpy('saveSettings').and.resolveTo(undefined);
     showMessage = jasmine.createSpy('showMessage').and.resolveTo(undefined);
+    showMessageWithList = jasmine
+      .createSpy('showMessageWithList')
+      .and.resolveTo(undefined);
     showLoadingSpinner = jasmine
       .createSpy('showLoadingSpinner')
       .and.resolveTo(undefined);
@@ -159,6 +166,7 @@ describe('UIExcel', () => {
       .createSpy('exportFileToDefaultDirectory')
       .and.resolveTo(undefined);
     uiLog = createMockUILog();
+    uiLog.warn = jasmine.createSpy('warn');
     const translate = createMockTranslateService(translations);
     translateInstant = translate.instant;
 
@@ -175,8 +183,9 @@ describe('UIExcel', () => {
             // UTC keeps the exported texts the same in every time zone.
             formateDate: (unix: number, format: string) =>
               moment.unix(unix).utc().format(format),
+            // Local, as in the app: a roast date is a local day.
             formateDatestr: (date: string, format: string) =>
-              moment.utc(date).format(format),
+              moment(date).format(format),
           },
         },
         { provide: UIBrewStorage, useValue: brewStorage },
@@ -187,7 +196,12 @@ describe('UIExcel', () => {
         { provide: TranslateService, useValue: translate },
         {
           provide: UIAlert,
-          useValue: { showMessage, showLoadingSpinner, hideLoadingSpinner },
+          useValue: {
+            showMessage,
+            showMessageWithList,
+            showLoadingSpinner,
+            hideLoadingSpinner,
+          },
         },
         { provide: UIFileHelper, useValue: { exportFileToDefaultDirectory } },
         {
@@ -204,12 +218,14 @@ describe('UIExcel', () => {
 
   /** Imports the rows as the sheet "Beans" and returns the stored beans. */
   async function importBeans(rows: Row[]): Promise<Bean[]> {
-    await excel.importBeansByExcel(xlsxFile({ Beans: rows }));
+    issues = await excel.importBeansByExcel(xlsxFile({ Beans: rows }));
     return beanStorage.stored;
   }
 
   async function importGreenBeans(rows: Row[]): Promise<GreenBean[]> {
-    await excel.importGreenBeansByExcel(xlsxFile({ 'Green Beans': rows }));
+    issues = await excel.importGreenBeansByExcel(
+      xlsxFile({ 'Green Beans': rows }),
+    );
     return greenBeanStorage.stored;
   }
 
@@ -308,6 +324,7 @@ describe('UIExcel', () => {
 
       expect(beans.map((bean) => bean.name)).toEqual(['First', 'Third']);
       expect(beans.map((bean) => bean.roaster)).toEqual(['A', 'C']);
+      expect(issues).toEqual([{ row: 3, field: 'Name' }]);
     });
 
     it('turns numbers in text columns into text', async () => {
@@ -346,14 +363,135 @@ describe('UIExcel', () => {
       expect(beans[2].roastingDate.substring(0, 10)).toBe('2022-02-02');
     });
 
-    it('leaves the roast date empty for zero, text and a missing cell', async () => {
+    it('reads the roast date also from an ISO text and from DD.MM.YYYY', async () => {
+      const beans = await importBeans([
+        { Name: 'ISO', 'Roast date': '2022-02-02' },
+        { Name: 'German', 'Roast date': '02.02.2022' },
+      ]);
+
+      // A day typed as text is local midnight, as the app stores a roast date.
+      expect(
+        beans.map((bean) =>
+          moment(bean.roastingDate).format('YYYY-MM-DD HH:mm'),
+        ),
+      ).toEqual(['2022-02-02 00:00', '2022-02-02 00:00']);
+      expect(issues).toEqual([]);
+    });
+
+    it('leaves the roast date empty for zero and a missing cell', async () => {
       const beans = await importBeans([
         { Name: 'Zero', 'Roast date': 0 },
-        { Name: 'Text', 'Roast date': '02.02.2022' },
         { Name: 'Missing' },
       ]);
 
-      expect(beans.map((bean) => bean.roastingDate)).toEqual(['', '', '']);
+      expect(beans.map((bean) => bean.roastingDate)).toEqual(['', '']);
+      expect(issues).toEqual([]);
+      expect(uiLog.warn).not.toHaveBeenCalled();
+    });
+
+    it('leaves a date that is none empty and notes and logs its row and field', async () => {
+      const beans = await importBeans([
+        { Name: 'Fine', 'Roast date': 44594 },
+        {
+          Name: 'Typo',
+          'Roast date': '31.02.2022',
+          'Frozen Date': 'last week',
+          'Unfrozen Date': -1,
+        },
+      ]);
+
+      expect(beans[1].roastingDate).toBe('');
+      expect(beans[1].frozenDate).toBe('');
+      expect(beans[1].frozenId).toBe('');
+      expect(beans[1].unfrozenDate).toBe('');
+      // The second bean is in row 3, below the header and the first bean.
+      expect(issues).toEqual([
+        { row: 3, field: 'Roast date' },
+        { row: 3, field: 'Frozen Date' },
+        { row: 3, field: 'Unfrozen Date' },
+      ]);
+      expect(uiLog.warn.calls.allArgs()).toEqual([
+        ['Excel import - row 3, Roast date: not read'],
+        ['Excel import - row 3, Frozen Date: not read'],
+        ['Excel import - row 3, Unfrozen Date: not read'],
+      ]);
+      // The bean is imported all the same.
+      expect(showMessageWithList.calls.mostRecent().args[0]).toBe(
+        'BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
+      );
+    });
+
+    it('names every row and field not taken over in the message, as a list', async () => {
+      translateInstant.and.callFake(
+        (key: string, params?: { row: number; field: string }) =>
+          params ? `${key}: ${params.row}, ${params.field}` : key,
+      );
+
+      const beans = await importBeans([
+        { Name: 'Fine' },
+        { Roaster: 'Nameless' },
+        { Name: '   ', Roaster: 'Blank' },
+        { Name: 'Typo', 'Roast date': 'soon', Blend: 'Mixed' },
+      ]);
+
+      // No bean without a name.
+      expect(beans.map((bean) => bean.name)).toEqual(['Fine', 'Typo']);
+      expect(showMessage).not.toHaveBeenCalled();
+      expect(showMessageWithList.calls.allArgs()).toEqual([
+        [
+          'BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
+          'IMPORT_SUCCESSFULLY',
+          'EXCEL_IMPORT_NOT_TAKEN_OVER',
+          [
+            'EXCEL_IMPORT_ROW_WITHOUT_NAME: 3, Name',
+            'EXCEL_IMPORT_ROW_WITHOUT_NAME: 4, Name',
+            'EXCEL_IMPORT_FIELD_NOT_READ: 5, Roast date',
+            'EXCEL_IMPORT_FIELD_NOT_READ: 5, Blend',
+          ],
+        ],
+      ]);
+    });
+
+    it('names the rows when the beans could not be saved', async () => {
+      beanStorage.failure = 'rejects';
+
+      await importBeans([{ Name: 'Lost' }, { Roaster: 'Nameless' }]);
+
+      expect(showMessageWithList.calls.allArgs()).toEqual([
+        [
+          'BEANS_IMPORTED_UNSUCCESSFULLY_NOT_SAVED',
+          'IMPORT_UNSUCCESSFULLY',
+          'EXCEL_IMPORT_NOT_TAKEN_OVER',
+          ['EXCEL_IMPORT_ROW_WITHOUT_NAME'],
+        ],
+      ]);
+    });
+
+    it('stores the key of the blend for its key and its English and German text', async () => {
+      const beans = await importBeans([
+        { Name: 'Key', Blend: 'BLEND' },
+        { Name: 'English', Blend: 'Single Origin' },
+        { Name: 'German', Blend: 'Unbekannt' },
+        { Name: 'Empty' },
+      ]);
+
+      expect(beans.map((bean) => bean.beanMix as string)).toEqual([
+        'BLEND',
+        'SINGLE_ORIGIN',
+        'UNKNOWN',
+        'SINGLE_ORIGIN',
+      ]);
+      expect(issues).toEqual([]);
+    });
+
+    it('keeps the default for an unknown blend and notes and logs its row and field', async () => {
+      const [bean] = await importBeans([{ Name: 'Mixed', Blend: 'Mixed' }]);
+
+      expect(bean.beanMix as string).toBe('SINGLE_ORIGIN');
+      expect(issues).toEqual([{ row: 2, field: 'Blend' }]);
+      expect(uiLog.warn).toHaveBeenCalledOnceWith(
+        'Excel import - row 2, Blend: not read',
+      );
     });
 
     it('takes the custom degree of roast only for a custom roast', async () => {
@@ -386,7 +524,6 @@ describe('UIExcel', () => {
           Name: 'Unchecked',
           'Roast type': 'Light filter',
           'Degree of Roast': 3,
-          Blend: 'Mixed',
           Cost: 'twelve',
           Decaffeinated: 'no',
           Archived: 'false',
@@ -395,7 +532,6 @@ describe('UIExcel', () => {
 
       expect(bean.bean_roasting_type as string).toBe('Light filter');
       expect(bean.roast as unknown).toBe(3);
-      expect(bean.beanMix as string).toBe('Mixed');
       // NaN, which the database stores as null.
       expect(bean.cost).toBeNull();
       // Text in the yes/no fields counts as yes: the bean lands in the archive.
@@ -717,11 +853,19 @@ describe('UIExcel', () => {
         expect(showBeans).not.toHaveBeenCalled();
       });
 
-      it('reports a wrong file when no row has a name', async () => {
+      it('reports a wrong file when no row has a name, with the rows', async () => {
         const beans = await importBeans([{ Roaster: 'A' }, { Weight: 250 }]);
 
         expect(beans).toEqual([]);
-        expect(showMessage.calls.allArgs()).toEqual([importFailedMessage]);
+        expect(showMessage).not.toHaveBeenCalled();
+        expect(showMessageWithList.calls.allArgs()).toEqual([
+          [
+            'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
+            'IMPORT_UNSUCCESSFULLY',
+            'EXCEL_IMPORT_NOT_TAKEN_OVER',
+            ['EXCEL_IMPORT_ROW_WITHOUT_NAME', 'EXCEL_IMPORT_ROW_WITHOUT_NAME'],
+          ],
+        ]);
       });
 
       it('reports a failure instead of crashing when the sheet "Beans" is missing', async () => {
@@ -875,6 +1019,27 @@ describe('UIExcel', () => {
       expect(saveSettings).not.toHaveBeenCalled();
     });
 
+    it('reads the buy date from a day number, an ISO text and DD.MM.YYYY', async () => {
+      const beans = await importGreenBeans([
+        { Name: 'Number', 'Buy Date': 44594 },
+        { Name: 'ISO', 'Buy Date': '2022-02-02' },
+        { Name: 'German', 'Buy Date': '02.02.2022' },
+        { Name: 'Not a date', 'Buy Date': 'soon' },
+      ]);
+
+      expect(beans[0].date).toBe('2022-02-02T00:00:00.000Z');
+      expect(
+        beans
+          .slice(1, 3)
+          .map((bean) => moment(bean.date).format('YYYY-MM-DD HH:mm')),
+      ).toEqual(['2022-02-02 00:00', '2022-02-02 00:00']);
+      expect(beans[3].date).toBe('');
+      expect(issues).toEqual([{ row: 5, field: 'Buy Date' }]);
+      expect(uiLog.warn).toHaveBeenCalledOnceWith(
+        'Excel import - row 5, Buy Date: not read',
+      );
+    });
+
     it('does not import the rating column', async () => {
       const [bean] = await importGreenBeans([{ Name: 'Rated', Rating: 4 }]);
 
@@ -886,9 +1051,14 @@ describe('UIExcel', () => {
         { Name: 'First' },
         { Weight: 500 },
         { Name: 'Third' },
+        { Name: ' ', Weight: 250 },
       ]);
 
       expect(beans.map((bean) => bean.name)).toEqual(['First', 'Third']);
+      expect(issues).toEqual([
+        { row: 3, field: 'Name' },
+        { row: 5, field: 'Name' },
+      ]);
     });
 
     it('counts a variety that has only a percentage or only a purchasing price', async () => {
@@ -987,7 +1157,10 @@ describe('UIExcel', () => {
     it('reports a wrong file for a sheet without a named green bean', async () => {
       await importGreenBeans([{ Weight: 250 }]);
 
-      expect(showMessage.calls.allArgs()).toEqual([importFailedMessage]);
+      expect(issues).toEqual([{ row: 2, field: 'Name' }]);
+      expect(showMessageWithList.calls.mostRecent().args[0]).toBe(
+        importFailedMessage[0],
+      );
     });
 
     it('reports a failure instead of crashing when the sheet "Green Beans" is missing', async () => {
@@ -1038,7 +1211,8 @@ describe('UIExcel', () => {
       const entry = createBean({
         name: 'Gesha Village',
         roaster: 'Roastery',
-        roastingDate: '2022-02-02T00:00:00.000Z',
+        // Local midnight, as the app stores a roast date.
+        roastingDate: moment('2022-02-02').format(),
         bean_roasting_type: 'FILTER' as BEAN_ROASTING_TYPE_ENUM,
         roast: 'CUSTOM_ROAST' as ROASTS_ENUM,
         roast_range: 2,
@@ -1579,7 +1753,9 @@ describe('UIExcel', () => {
         const beans = await exportAndImport();
 
         expect(beans).toEqual([]);
-        expect(showMessage.calls.allArgs()).toEqual([importFailedMessage]);
+        expect(showMessageWithList.calls.mostRecent().args[0]).toBe(
+          importFailedMessage[0],
+        );
       });
 
       it('known gap: an English export comes back with changed and lost values', async () => {
@@ -1600,11 +1776,13 @@ describe('UIExcel', () => {
         expect(imported.note).toBe('Very sweet');
         expect(imported.rating).toBe(4);
         expect(imported.finished).toBeTrue();
-        // The date is exported as text, which the import does not read.
-        expect(imported.roastingDate).toBe('');
+        // The date is exported as text in the date format of the settings
+        // and comes back as the same local day.
+        expect(moment(imported.roastingDate).format('YYYY-MM-DD')).toBe(
+          '2022-02-02',
+        );
         // The export writes display texts, the import expects the enum keys.
         expect(imported.bean_roasting_type as string).toBe('Filter');
-        expect(imported.beanMix as string).toBe('Blend');
         // "Degree of Roast" holds the roast range, so the degree is lost.
         expect(imported.roast as unknown).toBe(2);
         expect(imported.roast_custom).toBe('');
@@ -1616,6 +1794,41 @@ describe('UIExcel', () => {
         ]);
         expect(imported.config.uuid).not.toBe('bean-1');
       });
+
+      it('keeps a bean without a roast date without noting it', async () => {
+        setup(ENGLISH);
+        const exported = bean();
+        exported.roastingDate = '';
+        beanStorage.entries = [exported];
+        await excel.export();
+        const { buffer } = await exportedFile();
+
+        issues = await excel.importBeansByExcel(buffer);
+
+        expect(beanStorage.stored.map((entry) => entry.roastingDate)).toEqual([
+          '',
+        ]);
+        expect(issues).toEqual([]);
+        expect(uiLog.warn).not.toHaveBeenCalled();
+      });
+
+      for (const beanMix of ['SINGLE_ORIGIN', 'BLEND', 'UNKNOWN']) {
+        it(`keeps the blend ${beanMix}`, async () => {
+          setup(ENGLISH);
+          const exported = bean();
+          exported.beanMix = beanMix as BEAN_MIX_ENUM;
+          beanStorage.entries = [exported];
+          await excel.export();
+          const { buffer } = await exportedFile();
+
+          issues = await excel.importBeansByExcel(buffer);
+
+          expect(beanStorage.stored.map((entry) => entry.beanMix)).toEqual([
+            beanMix as BEAN_MIX_ENUM,
+          ]);
+          expect(issues).toEqual([]);
+        });
+      }
     });
   });
 

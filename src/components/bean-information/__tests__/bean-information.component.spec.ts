@@ -116,6 +116,7 @@ function spies(names: string[]): Record<string, jasmine.Spy> {
 
 describe('BeanInformationComponent', () => {
   let beans: FakeBeanStorage;
+  let beanWrites: jasmine.Spy;
   let brews: FakeBrewStorage;
   let commands: Record<string, jasmine.Spy>;
   let analytics: Record<string, jasmine.Spy>;
@@ -153,6 +154,7 @@ describe('BeanInformationComponent', () => {
     spyOn(Date, 'now').and.returnValue(NOW);
 
     beans = new FakeBeanStorage();
+    beanWrites = spyOn(beans, 'applyChanges').and.callThrough();
     brews = new FakeBrewStorage();
     settings = new Settings();
     for (const key of Object.keys(settings.bean_visible_list_view_parameters)) {
@@ -483,6 +485,120 @@ describe('BeanInformationComponent', () => {
     }
   });
 
+  it('names the only variety of a single origin bean without a number', async () => {
+    inEnglish();
+    const single = storedBean('single', {
+      name: 'Gamma Blend',
+      beanMix: 'SINGLE_ORIGIN' as never,
+      bean_information: [{ country: 'Ethiopia', percentage: 50 }] as never,
+    });
+    beans.change([single]);
+
+    const fixture = await render(single);
+
+    expect(value(fixture, 'Country')).toBe('Ethiopia');
+    expect(value(fixture, '1. Country')).toBe('');
+    expect(value(fixture, '2. Country')).toBe('');
+  });
+
+  /** The names of the symbols a screen reader speaks, in their order. */
+  function symbols(
+    fixture: ComponentFixture<BeanInformationComponent>,
+  ): string[] {
+    return [
+      ...(fixture.nativeElement as HTMLElement).querySelectorAll(
+        'ion-icon[aria-label]',
+      ),
+    ].map((icon) => icon.getAttribute('aria-label'));
+  }
+
+  /** The frozen ids on the cards, from top to bottom. */
+  function frozenIds(
+    fixture: ComponentFixture<BeanInformationComponent>,
+  ): string[] {
+    return [
+      ...(fixture.nativeElement as HTMLElement).querySelectorAll(
+        '.frozen-id-label',
+      ),
+    ].map((label) => label.textContent.trim());
+  }
+
+  /**
+   * An attribute of ion-button, which Ionic moves to its inner button once it
+   * has rendered again.
+   */
+  async function buttonAttribute(
+    button: Element,
+    name: string,
+  ): Promise<string | null> {
+    for (let frame = 0; frame < 3; frame++) {
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    }
+    return (
+      button.shadowRoot?.querySelector('button')?.getAttribute(name) ??
+      button.getAttribute(name)
+    );
+  }
+
+  it('shows when a bean was frozen, its note and its id with spoken symbols', async () => {
+    inEnglish();
+    // 10 days until it was frozen; 90 days in the freezer count as one.
+    const frozen = storedBean('frozen', {
+      name: 'Eta Frost',
+      roastingDate: new Date(NOW - 210 * DAY).toISOString(),
+      frozenDate: new Date(NOW - 200 * DAY).toISOString(),
+      frozenId: 'EF1',
+      frozenNote: 'Vakuumiert',
+    });
+    beans.change([frozen]);
+
+    const fixture = await render(frozen);
+
+    expect(value(fixture, 'Frozen date')).toBe('13.08.2025');
+    expect(value(fixture, 'Roasted before')).toBe('12 days old');
+    expect(value(fixture, 'Frozen notes')).toBe('Vakuumiert');
+    expect(frozenIds(fixture)).toEqual(['EF1']);
+    expect(symbols(fixture)).toEqual(['Frozen', 'Frozen id']);
+  });
+
+  it('marks a group card, names its toggle and shows each portion with its options', async () => {
+    inEnglish();
+    const portions = ['ZP1', 'ZP2', 'ZP3'].map((frozenId) =>
+      storedBean(frozenId, {
+        name: 'Zeta Portion',
+        frozenDate: new Date(NOW - 30 * DAY).toISOString(),
+        frozenId,
+        frozenGroupId: 'zeta',
+      }),
+    );
+    beans.change(portions);
+    const group: BeanGroup = {
+      frozenGroupId: 'zeta',
+      beans: portions.map(legacyBean),
+    };
+    const fixture = await render(group.beans[0], { beanGroup: group });
+    const element = fixture.nativeElement as HTMLElement;
+    const toggle = element.querySelector('.ion-text-center ion-button');
+    const options = () =>
+      element.querySelectorAll('ion-icon[name="beanconqueror-dots"]').length;
+
+    // The first portion stands for the group.
+    expect(symbols(fixture)).toEqual(['Bean group', 'Frozen', 'Frozen id']);
+    expect(frozenIds(fixture)).toEqual(['ZP1']);
+    expect(await buttonAttribute(toggle, 'aria-label')).toBe(
+      'Beans in the group Zeta Portion',
+    );
+    expect(await buttonAttribute(toggle, 'aria-expanded')).toBe('false');
+    expect(options()).toBe(1);
+
+    fixture.componentRef.setInput('groupExpanded', true);
+    await fixture.whenStable();
+
+    expect(await buttonAttribute(toggle, 'aria-expanded')).toBe('true');
+    expect(frozenIds(fixture)).toEqual(['ZP1', 'ZP2', 'ZP3']);
+    expect(options()).toBe(3);
+  });
+
   it('ends the age of an archived bean with its last brew, also when it was frozen later', async () => {
     const archived = storedBean('archived', {
       finished: true,
@@ -652,6 +768,7 @@ describe('BeanInformationComponent', () => {
         alert.showConfirm,
         uiHelper.copyToClipboard,
         beans.update,
+        beanWrites,
         commands.deleteBean,
       ]) {
         expect(spy).not.toHaveBeenCalled();
@@ -850,31 +967,51 @@ describe('BeanInformationComponent', () => {
       );
     });
 
-    it('toggle the favourite and save the copy', async () => {
+    it('toggle the favourite with the same toasts and tracking', async () => {
+      const stored = () => beans.entries[0] as IBean;
+      const tracked = (): unknown[] =>
+        analytics.trackEvent.calls.mostRecent().args;
       choose(BEAN_ACTION.TOGGLE_FAVOURITE);
       await card.showBeanActions(event());
 
-      expect(handed(beans.update).favourite).toBeTrue();
-      expect(toast.showInfoToast).toHaveBeenCalledWith(
-        'TOAST_BEAN_FAVOURITE_ADDED',
-      );
+      expect(stored().favourite).toBeTrue();
+      expect(stored().name).toBe('Alpha');
+      expect(beanWrites).toHaveBeenCalledTimes(1);
+      expect(toast.showInfoToast.calls.allArgs()).toEqual([
+        ['TOAST_BEAN_FAVOURITE_ADDED'],
+      ]);
+      expect(tracked()).toEqual([
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.ADD_FAVOURITE,
+      ]);
 
       await card.showBeanActions(event());
 
-      expect(handed(beans.update).favourite).toBeFalse();
-      expect(toast.showInfoToast).toHaveBeenCalledWith(
+      expect(stored().favourite).toBeFalse();
+      expect(toast.showInfoToast.calls.mostRecent().args).toEqual([
         'TOAST_BEAN_FAVOURITE_REMOVED',
-      );
+      ]);
+      expect(tracked()).toEqual([
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.REMOVE_FAVOURITE,
+      ]);
     });
 
-    it('take an archived bean back', async () => {
+    it('take an archived bean back with the same toast and tracking', async () => {
       beans.change([storedBean('alpha', { ...alpha, finished: true })]);
       choose(BEAN_ACTION.UNARCHIVE);
       await card.showBeanActions(event());
 
-      expect(handed(beans.update).finished).toBeFalse();
       expect((beans.entries[0] as IBean).finished).toBeFalse();
-      expect(settings.bean_filter).toBeDefined();
+      expect(beanWrites).toHaveBeenCalledTimes(1);
+      expect(toast.showInfoToast.calls.allArgs()).toEqual([
+        ['TOAST_BEAN_UNARCHIVED_SUCCESSFULLY'],
+      ]);
+      expect(analytics.trackEvent).toHaveBeenCalledWith(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.UNARCHIVE,
+      );
+      expect(settingsStorage.saveSettings.calls.count()).toBe(1);
     });
 
     it('thaw a bean without weight at once', async () => {

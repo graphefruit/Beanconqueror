@@ -9,13 +9,13 @@
     <ion-card>
         <app-virtual-list [items]="history" [itemKey]="entryKey" [estimateSize]="300" [clearOfAddButton]="false">
           <ng-template [appVirtualRow]="history" let-entry>
-            <ion-item #ionItemEl tappable lines='full'>
+            <ion-item tappable lines='full'>
               <ion-radio justify="start" label-placement="end" [value]='entry.id'>
                 <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
                 <h2>{{entry.profileName}}&nbsp;({{entry.id}})</h2>
                 <div class='font-size-16'>{{this.uiHelper.formateDate(entry.timestamp)}}</div>
                 </ion-grid>
-                <graph-display-card [chartWidth]='getElementOffsetWidth()' [gaggiuinoHistoryData]='entry.brewFlow' />
+                <graph-display-card [gaggiuinoHistoryData]='entry.brewFlow' />
               </ion-radio>
             </ion-item>
           </ng-template>

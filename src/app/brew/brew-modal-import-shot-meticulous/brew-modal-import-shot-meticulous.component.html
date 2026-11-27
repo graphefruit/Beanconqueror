@@ -8,13 +8,13 @@
     <ion-card>
       <app-virtual-list [items]="history" [itemKey]="entryKey" [estimateSize]="240" [clearOfAddButton]="false" (endReached)="loadMoreHistory()">
         <ng-template [appVirtualRow]="history" let-entry>
-          <ion-item #ionItemEl tappable lines='full'>
+          <ion-item tappable lines='full'>
             <ion-radio justify="start" label-placement="end" value='{{entry.id}}'>
               <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
               <h2>{{entry.profile.name}}</h2>
               <div class='font-size-16'>{{this.uiHelper.formatTimeNumber(entry.time * 1000)}}</div>
               </ion-grid>
-              <graph-display-card [chartWidth]='chartWidth()' [meticulousHistoryData]='entry' [meticulousDevice]='meticulousDevice' />
+              <graph-display-card [meticulousHistoryData]='entry' [meticulousDevice]='meticulousDevice' />
             </ion-radio>
           </ion-item>
         </ng-template>

@@ -43,9 +43,24 @@ class HostComponent {
       </div>
       <div id="inside" appTabPanel>Rows</div>
     </div>
-    <div class="list">
-      <div class="head"></div>
-      <div id="alone" appTabPanel>Rows</div>
+    <div class="page">
+      <ion-header>
+        <ion-segment value="brews">
+          <ion-segment-button value="brews">Brews</ion-segment-button>
+        </ion-segment>
+      </ion-header>
+      <ion-content>
+        <div class="list">
+          <p>Nothing found</p>
+          <div id="below-header" appTabPanel>Rows</div>
+        </div>
+      </ion-content>
+    </div>
+    <div class="page">
+      <ion-header><div>Search</div></ion-header>
+      <ion-content>
+        <div class="list"><div id="alone" appTabPanel>Rows</div></div>
+      </ion-content>
     </div>
   `,
 })
@@ -136,7 +151,8 @@ describe('TabPanelDirective with the segment not beside it', () => {
     await until(
       () =>
         panel('beside').hasAttribute('aria-labelledby') &&
-        panel('inside').hasAttribute('aria-labelledby'),
+        panel('inside').hasAttribute('aria-labelledby') &&
+        panel('below-header').hasAttribute('aria-labelledby'),
     );
   });
 
@@ -158,7 +174,14 @@ describe('TabPanelDirective with the segment not beside it', () => {
     );
   });
 
-  it('is no tab panel without a segment', () => {
+  it('takes the segment in the header of its page, as above a list', () => {
+    expect(panel('below-header').getAttribute('role')).toBe('tabpanel');
+    expect(panel('below-header').getAttribute('aria-labelledby')).toBe(
+      button('brews').id,
+    );
+  });
+
+  it('is no tab panel without a segment in its page', () => {
     expect(panel('alone').hasAttribute('role')).toBeFalse();
     expect(panel('alone').hasAttribute('aria-labelledby')).toBeFalse();
   });

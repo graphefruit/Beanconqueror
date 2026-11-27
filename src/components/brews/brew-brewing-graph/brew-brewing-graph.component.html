@@ -1,6 +1,7 @@
+@let series = seriesState();
 @let shallProfileHidden = shallFlowProfileBeHidden();
 
-@if(isDetail === false && settings.bluetooth_scale_espresso_just_one_cup === true && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO)
+@if(settings.bluetooth_scale_espresso_just_one_cup === true && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO)
   {
   <ion-grid class="ion-padding-horizontal ion-margin-bottom ion-no-padding brew-information-panel">
     <ion-row>
@@ -18,37 +19,37 @@
 @if(!baristamode) {
 <ion-item [hidden]="shallProfileHidden" class="ion-padding-bottom-half" lines="none">
     <div class="ion-text-center" style="width:100%">
-      @if( uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS) || (isDetail === true && this.traces.weightTrace?.x?.length >0)) {
-        <ion-chip chipButton [chipPressed]="!!this.traces.weightTrace?.visible" (click)="toggleChartLines('weight')" [outline]="!this.traces.weightTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.weightTrace?.visible" [style.--chip-color]="this.traces.weightTrace?.line?.color">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
-        <ion-chip chipButton [chipPressed]="!!this.traces.flowPerSecondTrace?.visible" (click)="toggleChartLines('calc_flow')" [outline]="!this.traces.flowPerSecondTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.flowPerSecondTrace?.visible" [style.--chip-color]="this.traces.flowPerSecondTrace?.line?.color">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
-        <ion-chip chipButton [chipPressed]="!!this.traces.realtimeFlowTrace?.visible" (click)="toggleChartLines('realtime_flow')" [outline]="!this.traces.realtimeFlowTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.realtimeFlowTrace?.visible" [style.--chip-color]="this.traces.realtimeFlowTrace?.line?.color">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
+      @if( uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
+        <ion-chip chipButton [chipPressed]="!!series.weight?.visible" (click)="toggleChartLines('weight')" [outline]="!series.weight?.visible" class="trace-chip" [class.trace-active]="series.weight?.visible" [style.--chip-color]="series.weight?.color">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
+        <ion-chip chipButton [chipPressed]="!!series.calc_flow?.visible" (click)="toggleChartLines('calc_flow')" [outline]="!series.calc_flow?.visible" class="trace-chip" [class.trace-active]="series.calc_flow?.visible" [style.--chip-color]="series.calc_flow?.color">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
+        <ion-chip chipButton [chipPressed]="!!series.realtime_flow?.visible" (click)="toggleChartLines('realtime_flow')" [outline]="!series.realtime_flow?.visible" class="trace-chip" [class.trace-active]="series.realtime_flow?.visible" [style.--chip-color]="series.realtime_flow?.color">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
       }
       @if ((uiPressureConnected && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) ||
-        ( uiPreparationDeviceConnected) || (isDetail === true && this.traces.pressureTrace?.x?.length >0)) {
-        <ion-chip chipButton [chipPressed]="!!this.traces.pressureTrace?.visible" (click)="toggleChartLines('pressure')"
-        [outline]="!this.traces.pressureTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.pressureTrace?.visible" [style.--chip-color]="this.traces.pressureTrace?.line?.color">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
+        ( uiPreparationDeviceConnected)) {
+        <ion-chip chipButton [chipPressed]="!!series.pressure?.visible" (click)="toggleChartLines('pressure')"
+        [outline]="!series.pressure?.visible" class="trace-chip" [class.trace-active]="series.pressure?.visible" [style.--chip-color]="series.pressure?.color">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
       }
-      @if(uiTemperatureConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS) || (isDetail === true && this.traces.temperatureTrace?.x?.length >0)) {
-        <ion-chip chipButton [chipPressed]="!!this.traces.temperatureTrace?.visible" (click)="toggleChartLines('temperature')"
-          [outline]="!this.traces.temperatureTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.temperatureTrace?.visible" [style.--chip-color]="this.traces.temperatureTrace?.line?.color">{{'BREW_TEMPERATURE_REALTIME' |
+      @if(uiTemperatureConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
+        <ion-chip chipButton [chipPressed]="!!series.temperature?.visible" (click)="toggleChartLines('temperature')"
+          [outline]="!series.temperature?.visible" class="trace-chip" [class.trace-active]="series.temperature?.visible" [style.--chip-color]="series.temperature?.color">{{'BREW_TEMPERATURE_REALTIME' |
         translate}}</ion-chip>
       }
-      @if ((uiPreparationDeviceConnected && [PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU, PREPARATION_DEVICE_TYPE_ENUM.GAGGIMATE].includes(uiPreparationDeviceType)) || (isDetail === true && this.traces.waterDispensedTrace?.x?.length > 0)) {
-        <ion-chip chipButton [chipPressed]="!!this.traces.waterDispensedTrace?.visible" (click)="toggleChartLines('waterDispensed')"
-          [outline]="!this.traces.waterDispensedTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.waterDispensedTrace?.visible" [style.--chip-color]="this.traces.waterDispensedTrace?.line?.color">{{'BREW_FLOW_WATER_DISPENSED_VOLUME' | translate}}</ion-chip>
+      @if ((uiPreparationDeviceConnected && [PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU, PREPARATION_DEVICE_TYPE_ENUM.GAGGIMATE].includes(uiPreparationDeviceType))) {
+        <ion-chip chipButton [chipPressed]="!!series.waterDispensed?.visible" (click)="toggleChartLines('waterDispensed')"
+          [outline]="!series.waterDispensed?.visible" class="trace-chip" [class.trace-active]="series.waterDispensed?.visible" [style.--chip-color]="series.waterDispensed?.color">{{'BREW_FLOW_WATER_DISPENSED_VOLUME' | translate}}</ion-chip>
       }
-      @if ((uiPreparationDeviceConnected && uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU) || (isDetail === true && this.traces.waterDispensedFlowSecondTrace?.x?.length > 0)) {
-        <ion-chip chipButton [chipPressed]="!!this.traces.waterDispensedFlowSecondTrace?.visible" (click)="toggleChartLines('waterDispensedFlowSecond')"
-          [outline]="!this.traces.waterDispensedFlowSecondTrace?.visible" class="trace-chip" [class.trace-active]="this.traces.waterDispensedFlowSecondTrace?.visible" [style.--chip-color]="this.traces.waterDispensedFlowSecondTrace?.line?.color">{{'BREW_FLOW_WATER_DISPENSED_REALTIME' | translate}}</ion-chip>
+      @if ((uiPreparationDeviceConnected && uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU)) {
+        <ion-chip chipButton [chipPressed]="!!series.waterDispensedFlowSecond?.visible" (click)="toggleChartLines('waterDispensedFlowSecond')"
+          [outline]="!series.waterDispensedFlowSecond?.visible" class="trace-chip" [class.trace-active]="series.waterDispensedFlowSecond?.visible" [style.--chip-color]="series.waterDispensedFlowSecond?.color">{{'BREW_FLOW_WATER_DISPENSED_REALTIME' | translate}}</ion-chip>
       }
-      @if( uiSmartScaleConnectedSupportsTwoWeights || (isDetail === true && this.traces.weightTraceSecond?.x?.length >0)) {
-        <ion-chip chipButton [chipPressed]="!!this.traces.weightTraceSecond?.visible" (click)="toggleChartLines('weightSecond')" [outline]="!this.traces.weightTraceSecond?.visible" class="trace-chip" [class.trace-active]="this.traces.weightTraceSecond?.visible" [style.--chip-color]="this.traces.weightTraceSecond?.line?.color">{{'BREW_FLOW_WEIGHT_SECOND' | translate}}</ion-chip>
-        <ion-chip chipButton [chipPressed]="!!this.traces.realtimeFlowTraceSecond?.visible" (click)="toggleChartLines('realtimeFlowSecond')" [outline]="!this.traces.realtimeFlowTraceSecond?.visible" class="trace-chip" [class.trace-active]="this.traces.realtimeFlowTraceSecond?.visible" [style.--chip-color]="this.traces.realtimeFlowTraceSecond?.line?.color">{{'BREW_FLOW_WEIGHT_REALTIME_SECOND' | translate}}</ion-chip>
+      @if( uiSmartScaleConnectedSupportsTwoWeights) {
+        <ion-chip chipButton [chipPressed]="!!series.weightSecond?.visible" (click)="toggleChartLines('weightSecond')" [outline]="!series.weightSecond?.visible" class="trace-chip" [class.trace-active]="series.weightSecond?.visible" [style.--chip-color]="series.weightSecond?.color">{{'BREW_FLOW_WEIGHT_SECOND' | translate}}</ion-chip>
+        <ion-chip chipButton [chipPressed]="!!series.realtimeFlowSecond?.visible" (click)="toggleChartLines('realtimeFlowSecond')" [outline]="!series.realtimeFlowSecond?.visible" class="trace-chip" [class.trace-active]="series.realtimeFlowSecond?.visible" [style.--chip-color]="series.realtimeFlowSecond?.color">{{'BREW_FLOW_WEIGHT_REALTIME_SECOND' | translate}}</ion-chip>
       }
       @for(key of uiCustomMetricsKeys; track key) {
-        @if(this.traces.customTraces[key]) {
-          <ion-chip chipButton [chipPressed]="!!this.traces.customTraces[key]?.visible" (click)="toggleChartLines(key)" [outline]="!this.traces.customTraces[key]?.visible" class="trace-chip custom-trace-chip" [class.trace-active]="this.traces.customTraces[key]?.visible" [style.--chip-color]="this.traces.customTraces[key]?.line?.color">
-             {{ this.traces.customTraces[key]?.name }}
+        @if(series.custom[key]) {
+          <ion-chip chipButton [chipPressed]="!!series.custom[key]?.visible" (click)="toggleChartLines(key)" [outline]="!series.custom[key]?.visible" class="trace-chip custom-trace-chip" [class.trace-active]="series.custom[key]?.visible" [style.--chip-color]="series.custom[key]?.color">
+             {{ series.custom[key]?.name }}
           </ion-chip>
         }
       }
@@ -74,7 +75,7 @@
       </ion-row>
       <ion-row>
         <ion-col size="6" size-md="3">
-          <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.weightTrace?.line?.color || 'var(--ion-color-accent)'">
+          <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="series.weight?.color || 'var(--ion-color-accent)'">
             <ion-card-header>
               <span class="visually-hidden">{{ 'BREW_FLOW_WEIGHT' | translate }}</span>
               <div><ion-icon aria-hidden="true" name="beanconqueror-scale-outline" /><span #smartScaleWeightPerSecondBarista>? g</span></div>
@@ -82,7 +83,7 @@
           </ion-card>
         </ion-col>
         <ion-col size="6" size-md="3" >
-          <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.realtimeFlowTrace?.line?.color || '#09485d'">
+          <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="series.realtime_flow?.color || '#09485d'">
             <ion-card-header>
               <span class="visually-hidden">{{ 'A11Y.FLOW' | translate }}</span>
               <div><ion-icon aria-hidden="true" name="water-outline" /><span #smartScaleAvgFlowPerSecondBarista>? g/s</span></div>
@@ -109,89 +110,87 @@
     </ion-grid>
   </ion-item>
 }
-@if (isDetail ===false) {
-  <ion-item #tileContainer [hidden]="shallProfileHidden" lines="none">
-    <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
-      @if (settings.bluetooth_scale_espresso_just_one_cup === true && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
-        <ion-row>
-          <ion-col size="12" />
-        </ion-row>
-      }
-      <ion-row style="padding-bottom:5px;">
-        @if ((uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS))) {
-          <ion-col size="{{graphIconColSize}}"
-            style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.weightTrace?.line?.color || 'var(--ion-color-accent)'">
-              <ion-card-header>
-                <span class="visually-hidden">{{ 'BREW_FLOW_WEIGHT' | translate }}</span>
-                <div #smartScaleWeight>? g</div>
-                @if (uiSmartScaleConnectedSupportsTwoWeights) {
-                  <div #smartScaleSecondWeight>?g</div>
-                }
-                <!-- We do this, because when the timer is not running and you change the grind-weight aswell as the quantity, we would need to somehow make a change call
-                and thats why we just check if the timer is running and if its running we update just the text by normal.-->
-                @if(brewComponent.timer?.timer?.runTimer) {
-                  <div #smartScaleBrewRatio class='information-tile-no-overflow'></div>
-                } @else {
-                  <div class='information-tile-no-overflow'>({{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,data.brew_beverage_quantity,data.brew_quantity]}})</div>
-                }
-              </ion-card-header>
-              <ion-card-content>
-                <ion-icon aria-hidden="true" name="beanconqueror-scale-outline" />
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        }
-        @if ((uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS))) {
-          <ion-col size="{{graphIconColSize}}"
-            style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.realtimeFlowTrace?.line?.color || '#09485d'">
-              <ion-card-header>
-                <span class="visually-hidden">{{ 'A11Y.FLOW' | translate }}</span>
-                <div class='information-tile-no-overflow' #smartScaleWeightPerSecond>? g/s</div>
-                <div class='information-tile-no-overflow' #smartScaleAvgFlowPerSecond>? g/s</div>
-                @if (uiSmartScaleConnectedSupportsTwoWeights) {
-                  <div class='information-tile-no-overflow' #smartScaleWeightSecondPerSecond>? g/s</div>
-                }
-              </ion-card-header>
-              <ion-card-content>
-                <ion-icon aria-hidden="true" name="water-outline" />
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        }
-        @if ((uiPressureConnected ||  uiPreparationDeviceConnected) && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
-          <ion-col (click)="resetPressure()" style="padding-right:5px;"
-            size="{{graphIconColSize}}">
-            <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.pressureTrace?.line?.color || '#05c793'">
-              <ion-card-header>
-                <span class="visually-hidden">{{ 'BREW_PRESSURE_FLOW' | translate }}</span>
-                <div #pressure>? bar</div>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-icon aria-hidden="true" name="beanconqueror-pressure" />
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        }
-        @if (uiTemperatureConnected ||  (uiPreparationDeviceConnected &&  uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
-          <ion-col
-            size="{{graphIconColSize}}">
-            <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="this.traces.temperatureTrace?.line?.color || '#cc3311'">
-              <ion-card-header>
-                <span class="visually-hidden">{{ 'BREW_TEMPERATURE_REALTIME' | translate }}</span>
-                <div #temperature>? °C</div>
-              </ion-card-header>
-              <ion-card-content>
-                <ion-icon aria-hidden="true" name="thermometer-outline" />
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        }
+<ion-item #tileContainer [hidden]="shallProfileHidden" lines="none">
+  <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
+    @if (settings.bluetooth_scale_espresso_just_one_cup === true && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
+      <ion-row>
+        <ion-col size="12" />
       </ion-row>
-    </ion-grid>
-  </ion-item>
-}
+    }
+    <ion-row style="padding-bottom:5px;">
+      @if ((uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS))) {
+        <ion-col size="{{graphIconColSize}}"
+          style="padding-right:5px;">
+          <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="series.weight?.color || 'var(--ion-color-accent)'">
+            <ion-card-header>
+              <span class="visually-hidden">{{ 'BREW_FLOW_WEIGHT' | translate }}</span>
+              <div #smartScaleWeight>? g</div>
+              @if (uiSmartScaleConnectedSupportsTwoWeights) {
+                <div #smartScaleSecondWeight>?g</div>
+              }
+              <!-- We do this, because when the timer is not running and you change the grind-weight aswell as the quantity, we would need to somehow make a change call
+              and thats why we just check if the timer is running and if its running we update just the text by normal.-->
+              @if(brewComponent.timer?.timer?.runTimer) {
+                <div #smartScaleBrewRatio class='information-tile-no-overflow'></div>
+              } @else {
+                <div class='information-tile-no-overflow'>({{data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.GET_BREW_RATIO,data.brew_beverage_quantity,data.brew_quantity]}})</div>
+              }
+            </ion-card-header>
+            <ion-card-content>
+              <ion-icon aria-hidden="true" name="beanconqueror-scale-outline" />
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      }
+      @if ((uiSmartScaleConnected || ( uiPreparationDeviceConnected &&  uiPreparationDeviceType === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS))) {
+        <ion-col size="{{graphIconColSize}}"
+          style="padding-right:5px;">
+          <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="series.realtime_flow?.color || '#09485d'">
+            <ion-card-header>
+              <span class="visually-hidden">{{ 'A11Y.FLOW' | translate }}</span>
+              <div class='information-tile-no-overflow' #smartScaleWeightPerSecond>? g/s</div>
+              <div class='information-tile-no-overflow' #smartScaleAvgFlowPerSecond>? g/s</div>
+              @if (uiSmartScaleConnectedSupportsTwoWeights) {
+                <div class='information-tile-no-overflow' #smartScaleWeightSecondPerSecond>? g/s</div>
+              }
+            </ion-card-header>
+            <ion-card-content>
+              <ion-icon aria-hidden="true" name="water-outline" />
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      }
+      @if ((uiPressureConnected ||  uiPreparationDeviceConnected) && brewComponent.choosenPreparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
+        <ion-col (click)="resetPressure()" style="padding-right:5px;"
+          size="{{graphIconColSize}}">
+          <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="series.pressure?.color || '#05c793'">
+            <ion-card-header>
+              <span class="visually-hidden">{{ 'BREW_PRESSURE_FLOW' | translate }}</span>
+              <div #pressure>? bar</div>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-icon aria-hidden="true" name="beanconqueror-pressure" />
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      }
+      @if (uiTemperatureConnected ||  (uiPreparationDeviceConnected &&  uiPreparationDeviceType !== PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)) {
+        <ion-col
+          size="{{graphIconColSize}}">
+          <ion-card class="flow-profile ion-text-center trace-card" style="height: 100%;" [style.--card-color]="series.temperature?.color || '#cc3311'">
+            <ion-card-header>
+              <span class="visually-hidden">{{ 'BREW_TEMPERATURE_REALTIME' | translate }}</span>
+              <div #temperature>? °C</div>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-icon aria-hidden="true" name="thermometer-outline" />
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      }
+    </ion-row>
+  </ion-grid>
+</ion-item>
 <div class="ion-margin-top ion-margin-horizontal" #graphContainer [hidden]="shallProfileHidden">
   <div style="width:100%;height:100%;" #canvaContainer>
     <div #profileDiv role="img" [attr.aria-label]="'A11Y.GRAPH_VALUES_AS_TEXT' | translate: { graph: ('A11Y.FLOW_PROFILE_GRAPH' | translate) }"></div>

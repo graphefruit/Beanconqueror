@@ -96,6 +96,25 @@ describe('BeanStore', () => {
     expect(logError).toHaveBeenCalledTimes(1);
   });
 
+  it('lists a bean stored with fields set to undefined with the defaults for them', async () => {
+    const store = TestBed.inject(BeanStore);
+    const ghost = {
+      ...storedBean({ name: 'Ghost' }),
+      roast: undefined,
+      roast_range: undefined,
+      decaffeinated: undefined,
+    };
+    await source.load([ghost]);
+
+    const [bean] = store.entries();
+    expect(bean.name).toBe('Ghost');
+    expect(bean.roast as string).toBe('UNKNOWN');
+    expect(bean.roast_range).toBe(0);
+    expect(bean.decaffeinated).toBeFalse();
+    // Only read so: the stored entry stays as it is.
+    expect(source.entries).toEqual([ghost]);
+  });
+
   it('finds the entries by uuid, of several with one uuid the first', async () => {
     const store = TestBed.inject(BeanStore);
     const one = storedBean({ name: 'One', config: { uuid: 'a' } as never });

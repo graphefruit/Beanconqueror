@@ -1,22 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DarkMode } from '@aparajita/capacitor-dark-mode';
 import { Capacitor, SystemBars } from '@capacitor/core';
 import { Keyboard } from '@capacitor/keyboard';
 import { StatusBar } from '@capacitor/status-bar';
 import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
 
+import { AndroidNativeCalls } from '../../../native/android-native-calls-plugin';
 import { THEME_PLUGINS, ThemePlugins } from '../theme-plugins';
 
 // The ThemeService tests replace the token; these check what the app gets.
 describe('THEME_PLUGINS', () => {
   it('hands each Capacitor plugin to its own slot', () => {
     const plugins = TestBed.inject(THEME_PLUGINS);
-    const expected: Omit<ThemePlugins, 'getPlatform'> = {
-      darkMode: DarkMode,
+    const expected: Omit<ThemePlugins, 'getPlatform' | 'colorScheme'> = {
       statusBar: StatusBar,
       systemBars: SystemBars,
       edgeToEdge: EdgeToEdge,
+      androidNativeCalls: AndroidNativeCalls,
       keyboard: Keyboard,
     };
 
@@ -27,6 +27,17 @@ describe('THEME_PLUGINS', () => {
         .withContext(slot)
         .toBeTrue();
     }
+  });
+
+  it('watches the system appearance through the dark colour-scheme query', () => {
+    const plugins = TestBed.inject(THEME_PLUGINS);
+
+    expect((plugins.colorScheme as MediaQueryList).media).toBe(
+      '(prefers-color-scheme: dark)',
+    );
+    expect(plugins.colorScheme.matches).toBe(
+      window.matchMedia('(prefers-color-scheme: dark)').matches,
+    );
   });
 
   it('reads the platform from Capacitor', () => {

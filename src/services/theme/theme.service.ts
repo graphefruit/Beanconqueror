@@ -1,4 +1,4 @@
-import { inject, Service } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
 
 import { SystemBarsStyle } from '@capacitor/core';
 import { KeyboardStyle } from '@capacitor/keyboard';
@@ -42,19 +42,14 @@ export class ThemeService {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly plugins = inject(THEME_PLUGINS);
 
-  private prefersDark: MediaQueryList;
-
-  private _darkMode = false;
+  private readonly darkMode = signal(false);
+  /** Whether the dark theme is applied; follows a change of the system scheme at runtime. */
+  public readonly dark = this.darkMode.asReadonly();
   public isDarkMode() {
-    return this._darkMode;
+    return this.darkMode();
   }
   public async initialize() {
-    this.prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-    this.prefersDark.addEventListener('change', () => {
-      void this.adjustTheme();
-    });
-
-    await this.plugins.darkMode.addAppearanceListener(() => {
+    this.plugins.colorScheme.addEventListener('change', () => {
       void this.adjustTheme();
     });
 
@@ -62,9 +57,9 @@ export class ThemeService {
   }
 
   public async initializeBeforeAppReady() {
-    await this.plugins.darkMode.init();
-    const { dark } = await this.plugins.darkMode.isDarkMode();
-    await this.applyTheme(dark ? DarkTheme : LightTheme);
+    await this.applyTheme(
+      this.plugins.colorScheme.matches ? DarkTheme : LightTheme,
+    );
   }
 
   public async adjustTheme() {
@@ -79,11 +74,7 @@ export class ThemeService {
         isDark = true;
         break;
       case THEME_MODE_ENUM.DEVICE:
-        if (this.plugins.getPlatform() === 'web') {
-          isDark = this.prefersDark.matches;
-        } else {
-          isDark = (await this.plugins.darkMode.isDarkMode()).dark;
-        }
+        isDark = this.plugins.colorScheme.matches;
         break;
     }
 
@@ -122,8 +113,9 @@ export class ThemeService {
   private async applyTheme(theme: Theme) {
     const promises = [];
 
-    this._darkMode = theme.isDark;
     document.documentElement.classList.toggle('ion-palette-dark', theme.isDark);
+    // After the class, so a canvas redrawn on the signal reads the new tokens.
+    this.darkMode.set(theme.isDark);
 
     const barColor = this.getSystemBarColor(theme);
     if (barColor) {
@@ -155,6 +147,13 @@ export class ThemeService {
         );
         promises.push(
           this.plugins.edgeToEdge.setStatusBarColor({ color: barColor }),
+        );
+        // The edge-to-edge plugin leaves the strip beside a display cutout
+        // uncoloured; it shows what lies behind the web view.
+        promises.push(
+          this.plugins.androidNativeCalls.setBackgroundColor({
+            color: barColor,
+          }),
         );
       }
 

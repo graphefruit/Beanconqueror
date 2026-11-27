@@ -37,20 +37,23 @@ async function showBrews(page: Page): Promise<void> {
 interface TopEntry {
   /** The place of the entry in the whole list. */
   position: string | null;
-  /** How far the top of the entry lies below the head (above: negative). */
+  /** How far the top of the entry lies below the top of the list (above: negative). */
   offset: number;
 }
 
-/** The entry at the top of the screen, the first one reaching below the head. */
+/** The entry at the top of the list, the first one reaching into its scroller. */
 function topEntry(page: Page): Promise<TopEntry> {
   return list(page).evaluate((element) => {
-    const head = element.querySelector('.head')!.getBoundingClientRect().bottom;
+    const top = element
+      .closest('ion-content')!
+      .shadowRoot!.querySelector('.inner-scroll')!
+      .getBoundingClientRect().top;
     const row = [...element.querySelectorAll('[role="listitem"]')].find(
-      (candidate) => candidate.getBoundingClientRect().bottom > head + 1,
+      (candidate) => candidate.getBoundingClientRect().bottom > top + 1,
     )!;
     return {
       position: row.getAttribute('aria-posinset'),
-      offset: Math.round(row.getBoundingClientRect().top - head),
+      offset: Math.round(row.getBoundingClientRect().top - top),
     };
   });
 }
@@ -160,7 +163,7 @@ test('the cards keep their place while the list is scrolled up over cards not me
   await page.setViewportSize(PORTRAIT);
   await expectStill(page);
 
-  // 50px a step. A card below the head is followed through the frames after
+  // 50px a step. A card at the top of the list is followed through the frames after
   // each step: every frame must show it 50px lower, never moved by a card
   // measured above it.
   const moves = await list(page).evaluate(async (element) => {
@@ -169,10 +172,9 @@ test('the cards keep their place while the list is scrolled up over cards not me
       .shadowRoot!.querySelector<HTMLElement>('.inner-scroll')!;
     const frame = () =>
       new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-    const head = element.querySelector('.head')!;
     const found: number[] = [];
     for (let step = 0; step < 40; step++) {
-      const below = head.getBoundingClientRect().bottom;
+      const below = scroller.getBoundingClientRect().top;
       const card = [...element.querySelectorAll('brew-information')].find(
         (candidate) => candidate.getBoundingClientRect().top >= below,
       )!;
@@ -191,31 +193,27 @@ test('the cards keep their place while the list is scrolled up over cards not me
   expect(moves).toEqual(moves.map(() => 50));
 });
 
-/** The first card, how far below the head it starts and whether the head lies over the cards. */
+/** The first card and how far below the top of the list it starts. */
 function start(page: Page) {
   return list(page).evaluate((element) => {
-    const head = element.querySelector('.head')!;
-    const box = head.getBoundingClientRect();
+    const top = element
+      .closest('ion-content')!
+      .shadowRoot!.querySelector('.inner-scroll')!
+      .getBoundingClientRect().top;
     const first = element.querySelector('[role="listitem"]')!;
-    const atHead = document.elementFromPoint(
-      box.left + box.width / 2,
-      box.top + box.height / 2,
-    );
     return {
       position: first.getAttribute('aria-posinset'),
-      gap: Math.round(first.getBoundingClientRect().top - box.bottom),
-      headOnTop: head.contains(atHead),
+      gap: Math.round(first.getBoundingClientRect().top - top),
     };
   });
 }
 
-test('after a fast scroll to the top the first brew starts below the head', async ({
+test('after a fast scroll to the top the first brew starts at the top of the list', async ({
   page,
 }) => {
   await page.setViewportSize(PORTRAIT);
   await showBrews(page);
   const atStart = await start(page);
-  expect(atStart.headOnTop).toBe(true);
   await page.setViewportSize(LANDSCAPE);
   await jumpToMiddle(page);
   await page.setViewportSize(PORTRAIT);
@@ -235,7 +233,7 @@ test('after a fast scroll to the top the first brew starts below the head', asyn
   await expect.poll(() => start(page)).toEqual(atStart);
 });
 
-test('after a brew is deleted sideways the first brew starts below the head at the top', async ({
+test('after a brew is deleted sideways the first brew starts at the top of the list', async ({
   page,
 }) => {
   // As an iPad reports itself: the list then holds its corrections while a
@@ -248,15 +246,13 @@ test('after a brew is deleted sideways the first brew starts below the head at t
   const atStart = await start(page);
   await jumpToMiddle(page);
 
-  // The next brew is brought right below the head, its options button on
+  // The next brew is brought to the top of the list, its options button on
   // the screen.
   const id = await list(page).evaluate((element) => {
     const scroller = element
       .closest('ion-content')!
       .shadowRoot!.querySelector<HTMLElement>('.inner-scroll')!;
-    const below = element
-      .querySelector('.head')!
-      .getBoundingClientRect().bottom;
+    const below = scroller.getBoundingClientRect().top;
     const card = [...element.querySelectorAll('brew-information')].find(
       (candidate) => candidate.getBoundingClientRect().top > below,
     )!;

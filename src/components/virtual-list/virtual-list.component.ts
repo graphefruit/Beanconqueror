@@ -88,11 +88,12 @@ export class VirtualRowDirective<T> {
  * floating add button the list ends with room for it, so the last row can be
  * read and tapped.
  *
- * Content marked `virtualListHead` (segments, search) stays at the top while
- * the rows scroll under it; other content is shown between it and the rows.
- * With a segment in the head, that content and the rows are the panel of the
- * selected tab. With the class `card`, that panel is drawn as a card below
- * the head.
+ * Content inside the list is shown above the rows. The segments and the
+ * search of a page belong in its `ion-header`, outside the content that
+ * scrolls: a screen reader brings the element it moves to into the scrolling
+ * part, and the head would cover it there. With a segment in the header, the
+ * content and the rows are the panel of the selected tab. With the class
+ * `card`, that panel is drawn as a card.
  */
 @Component({
   selector: 'app-virtual-list',
@@ -114,14 +115,6 @@ export class VirtualRowDirective<T> {
       /* 56px is the size of Ionic's floating button. */
       padding-bottom: calc(56px + 2 * var(--bq-space-4));
     }
-    .head {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      background: var(--ion-background-color);
-    }
-    /* An ion-card around the list would hold the head as well: Ionic clips the
-       card, and the head would no longer stay on top. */
     :host(.card) .panel {
       /* Ionic's card margin. */
       margin: 10px;
@@ -135,7 +128,8 @@ export class VirtualRowDirective<T> {
       position: relative;
       /* On iOS a correction waits while a finger or momentum moves the list,
          and the rows are drawn shifted by it meanwhile: at the top, the
-         first rows lie above the list and would show over the head. */
+         first rows lie above the list and would show over the content
+         there. */
       overflow-y: clip;
     }
     .rows {
@@ -155,7 +149,6 @@ export class VirtualRowDirective<T> {
     }
   `,
   template: `
-    <div #head class="head"><ng-content select="[virtualListHead]" /></div>
     <div appTabPanel class="panel">
       <ng-content />
       <div #sizer class="sizer" [style.height.px]="totalSize()">
@@ -165,7 +158,7 @@ export class VirtualRowDirective<T> {
           class="rows"
           role="list"
           [style.transform]="rowsOffset()"
-          (focusin)="revealFocus($event); keepFocusedRow($event)"
+          (focusin)="keepFocusedRow($event)"
           (focusout)="focusedRow.set(null)"
         >
           @for (row of rows(); track row.key) {
@@ -214,14 +207,11 @@ export class VirtualListComponent<T> {
   protected readonly rowTemplate =
     contentChild.required<VirtualRowDirective<T>>(VirtualRowDirective);
   private readonly rowElements = viewChildren<ElementRef<HTMLElement>>('row');
-  private readonly head = viewChild.required<ElementRef<HTMLElement>>('head');
   private readonly sizer = viewChild.required<ElementRef<HTMLElement>>('sizer');
 
   private readonly scroller = signal<HTMLElement | undefined>(undefined);
   /** Where the rows start in the scroller, below the content above them. */
   private readonly scrollMargin = signal(0);
-  /** The height of the head, which covers the top of the scroller. */
-  private readonly headHeight = signal(0);
   /** The row `scrollToKey` brings on the screen once the list is shown. */
   private keyToReveal: RowKey | null = null;
   /** The width of the scroller the rows were measured at; 0 before. */
@@ -347,7 +337,6 @@ export class VirtualListComponent<T> {
             instance,
           ),
         scrollMargin: this.scrollMargin(),
-        scrollPaddingStart: this.headHeight(),
         // The measuring, the correction of the scroll position it causes
         // and the rendering of the rows all happen before the browser
         // paints; a frame between them shows the rows jump. Angular renders
@@ -482,15 +471,8 @@ export class VirtualListComponent<T> {
     destroyRef.onDestroy(() =>
       document.removeEventListener(FOCUS_LOST_EVENT, onFocusLost),
     );
-    afterNextRender(() => {
-      const observer = new ResizeObserver(() => this.measureHead());
-      observer.observe(this.head().nativeElement);
-      destroyRef.onDestroy(() => observer.disconnect());
-    });
-
     afterRenderEffect(() => {
       this.items();
-      this.headHeight();
       this.virtualizer.scrollRect();
       this.measureScrollMargin();
     });
@@ -499,7 +481,7 @@ export class VirtualListComponent<T> {
   /**
    * Called as the list comes to rest at `offset`: ends a touch whose end
    * cannot reach the list any more, and at the top any touch, so that the
-   * first row lies below the head. A finger still resting on the list takes
+   * first row lies at the top. A finger still resting on the list takes
    * the correction. Dragging on, it moves no row above the screen at the
    * top; elsewhere, its corrections would no longer wait for it.
    */
@@ -507,14 +489,6 @@ export class VirtualListComponent<T> {
     const start = this.touchStart;
     if (start instanceof Node && (!start.isConnected || offset <= 0)) {
       this.scroller()?.dispatchEvent(new Event('touchcancel'));
-    }
-  }
-
-  private measureHead(): void {
-    const height = this.head().nativeElement.offsetHeight;
-    // A hidden page has no layout to measure.
-    if (height > 0) {
-      this.headHeight.set(height);
     }
   }
 
@@ -529,20 +503,6 @@ export class VirtualListComponent<T> {
         top - scroller.getBoundingClientRect().top + scroller.scrollTop,
       ),
     );
-  }
-
-  /** Moves a focused element that the head covers below it. */
-  protected revealFocus(event: FocusEvent): void {
-    const scroller = this.scroller();
-    if (!scroller || !(event.target instanceof Element)) {
-      return;
-    }
-    const covered =
-      this.head().nativeElement.getBoundingClientRect().bottom -
-      event.target.getBoundingClientRect().top;
-    if (covered > 0) {
-      scroller.scrollTop -= covered;
-    }
   }
 
   protected keepFocusedRow(event: FocusEvent): void {
@@ -613,10 +573,7 @@ export class VirtualListComponent<T> {
     if (!scroller) {
       return null;
     }
-    return anchorAt(
-      this.virtualizer.getVirtualItems(),
-      scroller.scrollTop + this.headHeight(),
-    );
+    return anchorAt(this.virtualizer.getVirtualItems(), scroller.scrollTop);
   }
 
   /** Goes back to `anchor` once the list shows its current items. */
@@ -649,7 +606,7 @@ export class VirtualListComponent<T> {
 
   /**
    * Brings the row with `key` on the screen once the list shows its current
-   * items, clear of the head and the add button; a row that is already there
+   * items, clear of the add button; a row that is already there
    * stays where it is (see `reveal`). A hidden list (another tab) does so
    * when it is shown again.
    */
@@ -693,8 +650,7 @@ export class VirtualListComponent<T> {
    */
   private measureAtNewWidth(): void {
     const anchor = this.anchor();
-    // The head and the content above the rows can wrap anew.
-    this.measureHead();
+    // The content above the rows can wrap anew.
     this.measureScrollMargin();
     this.measureShown();
     const scroller = this.scroller();
@@ -707,7 +663,7 @@ export class VirtualListComponent<T> {
     }
   }
 
-  /** The scroll position that brings `anchor` back below the head. */
+  /** The scroll position that brings `anchor` back. */
   private offsetOf(anchor: ListAnchor | null): number | null {
     const scroller = this.scroller();
     if (!scroller) {
@@ -720,13 +676,10 @@ export class VirtualListComponent<T> {
       index < 0
         ? undefined
         : this.virtualizer().measurementsCache[index]?.start;
-    const head = this.headHeight();
-    return (
-      anchorOffset(
-        anchor,
-        start,
-        scroller.scrollHeight - scroller.clientHeight + head,
-      ) - head
+    return anchorOffset(
+      anchor,
+      start,
+      scroller.scrollHeight - scroller.clientHeight,
     );
   }
 
@@ -746,7 +699,7 @@ export class VirtualListComponent<T> {
       getComputedStyle(this.host.nativeElement).paddingBottom,
     );
     const move = reveal(row, {
-      start: top + this.headHeight(),
+      start: top,
       end: top + scroller.clientHeight - addButtonRoom,
     });
     if (move === 'start') {

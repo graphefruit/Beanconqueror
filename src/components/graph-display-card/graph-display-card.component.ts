@@ -1,259 +1,250 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
+  computed,
+  DestroyRef,
+  effect,
   ElementRef,
-  HostListener,
   inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  SimpleChanges,
-  ViewChild,
+  input,
+  signal,
+  untracked,
+  viewChild,
 } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
-
-import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
-import { TranslatePipe } from '@ngx-translate/core';
+import {
+  HistoryDataPoint,
+  HistoryListingEntry,
+} from '@meticulous-home/espresso-api/dist/types';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { MeticulousDevice } from '../../classes/preparationDevice/meticulous/meticulousDevice';
-import { Settings } from '../../classes/settings/settings';
-import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { GraphHelperService } from '../../services/graphHelper/graph-helper.service';
-import { drawWhenPlotlyLoaded } from '../../services/graphHelper/load-plotly';
-import { UIFileHelper } from '../../services/uiFileHelper';
-import { UIHelper } from '../../services/uiHelper';
+import { ThemeService } from '../../services/theme/theme.service';
+import { UILog } from '../../services/uiLog';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { FlowSeriesBuffer } from '../brews/graph/flow-series-buffer';
+import { seriesDefsFor } from '../brews/graph/series-def';
+import { UplotRenderer } from '../brews/graph/uplot-renderer';
 
-declare var Plotly;
+const DEFAULT_HEIGHT = 150;
+
+/** A listing entry, whose shot data the card fetches when it is drawn. */
+export type MeticulousEntry = Omit<HistoryListingEntry, 'data'> & {
+  data: HistoryDataPoint[] | null;
+};
+
+interface FlowSource {
+  path: string | undefined;
+  data: BrewFlow | undefined;
+  meticulous: MeticulousEntry | undefined;
+  meticulousDevice: MeticulousDevice | undefined;
+  machine: BrewFlow | undefined;
+}
+
+/**
+ * The small, static graph of a brew in lists and previews. It reads its
+ * flow profile and draws only once it is on screen with a width, so a list
+ * of thousands of brews (graph on the second swiper slide) costs nothing
+ * until a graph is looked at.
+ */
 @Component({
   selector: 'graph-display-card',
   templateUrl: './graph-display-card.component.html',
   styleUrls: ['./graph-display-card.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslatePipe],
 })
-export class GraphDisplayCardComponent implements OnInit, OnChanges, OnDestroy {
-  private readonly uiHelper = inject(UIHelper);
-  private readonly uiFileHelper = inject(UIFileHelper);
-  private readonly platform = inject(Platform);
+export class GraphDisplayCardComponent {
   private readonly graphHelper = inject(GraphHelperService);
+  private readonly uiLog = inject(UILog);
+  private readonly uiSettingsStorage = inject(UISettingsStorage);
+  private readonly theme = inject(ThemeService);
+  private readonly translate = inject(TranslateService);
 
-  @Input() public flowProfileData: any;
-  @Input() public flowProfilePath: any;
+  public readonly flowProfileData = input<BrewFlow>();
+  public readonly flowProfilePath = input<string>();
+  public readonly meticulousHistoryData = input<MeticulousEntry>();
+  public readonly meticulousDevice = input<MeticulousDevice>();
+  public readonly gaggiuinoHistoryData = input<BrewFlow>();
+  public readonly gaggimateHistoryData = input<BrewFlow>();
+  public readonly chartHeight = input<number>();
 
-  @Input() public meticulousHistoryData: HistoryListingEntry;
-  @Input() public meticulousDevice: MeticulousDevice;
-  @Input() public gaggiuinoHistoryData: BrewFlow;
-  @Input() public gaggimateHistoryData: BrewFlow;
+  public readonly height = computed(() => {
+    const height = this.chartHeight();
+    return height > 0 ? height : DEFAULT_HEIGHT;
+  });
 
-  @Input() public chartWidth: number;
-  @Input() public chartHeight: number;
+  private readonly chart = viewChild.required<ElementRef<HTMLElement>>('chart');
 
-  @Input() public staticChart: boolean = false;
+  private readonly onScreen = signal(false);
+  private readonly width = signal(0);
+  private readonly drawable = computed(
+    () => this.onScreen() && this.width() > 0,
+  );
+  private readonly source = computed<FlowSource>(() => ({
+    path: this.flowProfilePath(),
+    data: this.flowProfileData(),
+    meticulous: this.meticulousHistoryData(),
+    meticulousDevice: this.meticulousDevice(),
+    machine: this.gaggiuinoHistoryData() ?? this.gaggimateHistoryData(),
+  }));
 
-  public flow_profile_raw: BrewFlow = new BrewFlow();
+  private renderer: UplotRenderer | null = null;
+  private mounted: Promise<void> | null = null;
+  /** Number of the latest draw; an older one that finishes later is dropped. */
+  private draws = 0;
 
-  public settings: Settings;
-
-  public traces: any = {};
-
-  @ViewChild('canvaContainer', { read: ElementRef, static: true })
-  public canvaContainer: ElementRef;
-  @ViewChild('profileDiv', { read: ElementRef, static: true })
-  public profileDiv: ElementRef;
-
-  public async ngOnInit() {
-    if (this.flowProfilePath) {
-      await this.readFlowProfile();
-    } else if (this.flowProfileData) {
-      this.flow_profile_raw = this.uiHelper.cloneData(this.flowProfileData);
-    } else if (this.meticulousHistoryData) {
-      await this.ensureMeticulousShotData();
-      this.flow_profile_raw = MeticulousDevice.returnBrewFlowForShotData(
-        this.meticulousHistoryData.data,
+  constructor() {
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      const el = this.chart().nativeElement;
+      const sizes = new ResizeObserver(([entry]) =>
+        this.width.set(Math.floor(entry.contentRect.width)),
       );
-    } else if (this.gaggiuinoHistoryData) {
-      //ebugger;
-      this.flow_profile_raw = this
-        .gaggiuinoHistoryData as BrewFlow; /**GaggiuinoDevice.returnBrewFlowForShotData(
-        this.gaggiuinoHistoryData.data,
-      );**/
-    } else if (this.gaggimateHistoryData) {
-      this.flow_profile_raw = this
-        .gaggimateHistoryData as BrewFlow; /**GaggimateDevice.returnBrewFlowForShotData(
-       this.gaggimateHistoryData.data,
-       );**/
-    }
-    setTimeout(() => {
-      this.initializeFlowChart();
-    }, 50);
+      sizes.observe(el);
+      const sight = new IntersectionObserver((entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          this.onScreen.set(true);
+          sight.disconnect();
+        }
+      });
+      sight.observe(el);
+      destroyRef.onDestroy(() => {
+        sizes.disconnect();
+        sight.disconnect();
+      });
+    });
+    destroyRef.onDestroy(() => {
+      this.draws++;
+      this.renderer?.destroy();
+      this.renderer = null;
+    });
+
+    effect(() => {
+      const source = this.source();
+      if (this.drawable()) {
+        untracked(() => void this.draw(source));
+      }
+    });
+    effect(() => {
+      const width = this.width();
+      const height = this.height();
+      if (width > 0) {
+        this.renderer?.resize(width, height);
+      }
+    });
+    effect(() => {
+      const dark = this.theme.dark();
+      this.renderer?.setDark(dark);
+    });
   }
 
-  public ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes &&
-      changes['meticulousHistoryData'] &&
-      !changes['meticulousHistoryData'].firstChange
-    ) {
-      if (this.meticulousHistoryData) {
-        this.flow_profile_raw = MeticulousDevice.returnBrewFlowForShotData(
-          this.meticulousHistoryData.data,
-        );
-        this.initializeFlowChart();
+  private async draw(source: FlowSource): Promise<void> {
+    const draw = ++this.draws;
+    const flow = await this.readFlow(source);
+    if (draw !== this.draws) {
+      return;
+    }
+    const buffer = new FlowSeriesBuffer();
+    const hasGraph = buffer.load(flow).hasGraph;
+    if (!hasGraph && !this.renderer) {
+      return;
+    }
+    try {
+      const renderer = await this.mount();
+      if (draw !== this.draws) {
+        return;
       }
+      renderer.setSeries(
+        hasGraph
+          ? seriesDefsFor(
+              buffer,
+              'live',
+              this.uiSettingsStorage.getSettings().graph_colors,
+              (key): string => String(this.translate.instant(key)),
+            )
+          : [],
+      );
+      renderer.attach(buffer);
+    } catch (error) {
+      // Without the chart library the card stays empty; the brew is intact.
+      this.uiLog.error('Graph card could not be drawn', error);
+    }
+  }
+
+  private async mount(): Promise<UplotRenderer> {
+    if (!this.renderer) {
+      const renderer = new UplotRenderer();
+      this.renderer = renderer;
+      this.mounted = renderer
+        .mount(this.chart().nativeElement, {
+          width: this.width(),
+          height: this.height(),
+          dark: this.theme.dark(),
+          mode: 'static',
+          axisSettings: this.uiSettingsStorage.getSettings(),
+        })
+        .catch((error: unknown) => {
+          // The next draw loads the library again.
+          if (this.renderer === renderer) {
+            this.renderer = null;
+          }
+          throw error;
+        });
+    }
+    const renderer = this.renderer;
+    await this.mounted;
+    return renderer;
+  }
+
+  private async readFlow(source: FlowSource): Promise<BrewFlow | null> {
+    try {
+      if (source.path) {
+        return await this.graphHelper.readFlowProfile(source.path);
+      }
+      if (source.data) {
+        return source.data;
+      }
+      if (source.meticulous) {
+        await this.ensureMeticulousShotData(
+          source.meticulous,
+          source.meticulousDevice,
+        );
+        return source.meticulous.data
+          ? MeticulousDevice.returnBrewFlowForShotData(source.meticulous.data)
+          : null;
+      }
+      return source.machine ?? null;
+    } catch (error) {
+      this.uiLog.error('Graph card could not read the flow profile', error);
+      return null;
     }
   }
 
   /**
    * History listing entries are loaded without their shot data for
-   * performance. When a card is actually rendered we lazily fetch the detail
+   * performance. When a card is actually drawn we lazily fetch the detail
    * for its own entry and cache it back onto the entry (mutating in place, so
    * the owning list keeps a stable object reference and the virtual scroll is
    * not reset).
    */
-  private async ensureMeticulousShotData() {
-    if (
-      !this.meticulousHistoryData ||
-      this.meticulousHistoryData.data ||
-      !this.meticulousDevice
-    ) {
+  private async ensureMeticulousShotData(
+    entry: MeticulousEntry,
+    device: MeticulousDevice | undefined,
+  ): Promise<void> {
+    if (entry.data || !device) {
       return;
     }
     try {
-      const details = await this.meticulousDevice.getHistoryEntryDetails(
-        this.meticulousHistoryData.id,
-      );
+      const details = await device.getHistoryEntryDetails(entry.id);
       if (details?.data) {
-        (this.meticulousHistoryData as any).data = details.data;
+        entry.data = details.data;
       }
     } catch {
-      // ignore - an empty graph will be rendered
+      // ignore - no graph is drawn
     }
-  }
-
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    setTimeout(() => {
-      this.initializeFlowChart();
-    }, 250);
-  }
-
-  private getChartConfig() {
-    const config: any = {
-      responsive: false,
-      scrollZoom: false,
-      displayModeBar: false, // this is the line that hides the bar.
-    };
-    if (this.staticChart) {
-      config.staticPlot = true;
-    }
-    return config;
-  }
-  private getChartLayout() {
-    /* Important - we use scatter instead of scattergl, because we can't have many openGL contexts
-     * - https://github.com/plotly/plotly.js/issues/2333 -
-     * */
-
-    let chartWidth: number = this.canvaContainer.nativeElement.offsetWidth - 10;
-    if (this.chartWidth && this.chartWidth > 0) {
-      chartWidth = this.chartWidth;
-    }
-    let chartHeight: number = 150;
-    if (this.chartHeight) {
-      chartHeight = this.chartHeight;
-    }
-
-    const layout = this.graphHelper.getChartLayout(
-      this.traces,
-      PREPARATION_STYLE_TYPE.FULL_IMMERSION,
-      false,
-      false,
-      true,
-      chartWidth,
-      chartHeight,
-      true,
-    );
-
-    return layout;
-  }
-  public initializeFlowChart(): void {
-    setTimeout(() => {
-      try {
-        Plotly.purge(this.profileDiv.nativeElement);
-      } catch (ex) {}
-
-      this.traces = this.graphHelper.initializeTraces();
-      this.traces = this.graphHelper.fillTraces(this.traces, null, true);
-
-      this.graphHelper.fillDataIntoTraces(this.flow_profile_raw, this.traces);
-
-      const chartData = [
-        this.traces.weightTrace,
-        this.traces.flowPerSecondTrace,
-        this.traces.realtimeFlowTrace,
-      ];
-
-      const layout = this.getChartLayout();
-
-      chartData.push(this.traces.pressureTrace);
-      chartData.push(this.traces.temperatureTrace);
-      chartData.push(this.traces.waterDispensedTrace);
-      chartData.push(this.traces.waterDispensedFlowSecondTrace);
-      chartData.push(this.traces.weightTraceSecond);
-      chartData.push(this.traces.realtimeFlowTraceSecond);
-
-      if (this.traces.customTraces) {
-        for (const [key, trace] of Object.entries(this.traces.customTraces) as [
-          string,
-          any,
-        ][]) {
-          if (trace) {
-            chartData.push(trace);
-          }
-        }
-      }
-
-      drawWhenPlotlyLoaded(() => {
-        Plotly.newPlot(
-          this.profileDiv.nativeElement,
-          chartData,
-          layout,
-          this.getChartConfig(),
-        );
-        this.profileDiv.nativeElement.removeAllListeners();
-        this.profileDiv.nativeElement.removeAllListeners('plotly_click');
-      });
-    }, 100);
-  }
-
-  private async readFlowProfile() {
-    if (!this.platform.is('capacitor')) {
-      const dummyData = (
-        await import('../../assets/BeanconquerorFlowTestDataFourth.json')
-      ).default;
-      this.flow_profile_raw = dummyData as any;
-      return;
-    }
-
-    if (this.flowProfilePath === '') {
-      return;
-    }
-
-    try {
-      const jsonParsed = await this.uiFileHelper.readInternalJSONFile(
-        this.flowProfilePath,
-      );
-      this.flow_profile_raw = jsonParsed;
-    } catch (ex) {
-      // ignore
-    }
-  }
-  public ngOnDestroy() {
-    try {
-      Plotly.purge(this.profileDiv.nativeElement);
-    } catch (ex) {}
   }
 }

@@ -175,7 +175,15 @@ export class Bean implements IBean {
   }
 
   public initializeByObject(beanObj: IBean): void {
-    Object.assign(this, beanObj);
+    // Shared beans imported before that import was fixed are stored with
+    // fields set to undefined. They keep the defaults instead, else every
+    // list filter hides them. Only read so, nothing is written.
+    Object.assign(
+      this,
+      Object.fromEntries(
+        Object.entries(beanObj).filter(([, value]) => value !== undefined),
+      ),
+    );
 
     // Newer version, this information may not exist
     if (beanObj.bean_roast_information) {

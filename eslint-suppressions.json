@@ -7,7 +7,7 @@
       "count": 10
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 25
+      "count": 24
     },
     "@typescript-eslint/no-misused-promises": {
       "count": 4
@@ -37,9 +37,6 @@
     },
     "no-empty": {
       "count": 2
-    },
-    "no-var": {
-      "count": 1
     },
     "prefer-const": {
       "count": 2
@@ -393,10 +390,7 @@
       "count": 1
     },
     "no-empty": {
-      "count": 3
-    },
-    "no-var": {
-      "count": 1
+      "count": 2
     }
   },
   "src/app/brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component.ts": {
@@ -454,11 +448,6 @@
       "count": 1
     }
   },
-  "src/app/brew/brew-detail/__tests__/brew-detail-field-order.spec.ts": {
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    }
-  },
   "src/app/brew/brew-detail/brew-detail.component.ts": {
     "@angular-eslint/no-input-rename": {
       "count": 1
@@ -467,16 +456,13 @@
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 8
+      "count": 2
     },
     "@typescript-eslint/no-unnecessary-type-assertion": {
       "count": 1
     },
     "no-empty": {
-      "count": 7
-    },
-    "no-var": {
-      "count": 1
+      "count": 2
     }
   },
   "src/app/brew/brew-edit/brew-edit.component.ts": {
@@ -489,11 +475,8 @@
     "@typescript-eslint/no-floating-promises": {
       "count": 6
     },
-    "no-empty": {
-      "count": 1
-    },
     "no-var": {
-      "count": 2
+      "count": 1
     }
   },
   "src/app/brew/brew-filter/brew-filter.component.ts": {
@@ -532,10 +515,7 @@
       "count": 3
     },
     "no-empty": {
-      "count": 6
-    },
-    "no-var": {
-      "count": 1
+      "count": 5
     },
     "prefer-const": {
       "count": 1
@@ -579,34 +559,6 @@
   },
   "src/app/brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    }
-  },
-  "src/app/brew/brew-popover-cut/brew-popover-cut.component.ts": {
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 2
-    },
-    "no-empty": {
-      "count": 8
-    },
-    "no-var": {
-      "count": 1
-    }
-  },
-  "src/app/brew/brew-popover-extraction/brew-popover-extraction.component.ts": {
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 1
-    },
-    "no-empty": {
-      "count": 3
-    },
-    "no-var": {
       "count": 1
     }
   },
@@ -685,32 +637,6 @@
     },
     "no-empty": {
       "count": 2
-    }
-  },
-  "src/app/graph-section/graph/graph-detail/graph-detail.component.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
-      "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 1
-    },
-    "no-empty": {
-      "count": 3
-    },
-    "no-var": {
-      "count": 1
     }
   },
   "src/app/graph-section/graph/graph-edit/graph-edit.component.ts": {
@@ -2427,7 +2353,7 @@
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 7
+      "count": 4
     },
     "no-empty": {
       "count": 1
@@ -2481,7 +2407,7 @@
       "count": 2
     },
     "eqeqeq": {
-      "count": 7
+      "count": 5
     },
     "no-async-promise-executor": {
       "count": 1
@@ -2490,7 +2416,7 @@
       "count": 3
     },
     "no-empty": {
-      "count": 24
+      "count": 23
     },
     "no-unsafe-optional-chaining": {
       "count": 1
@@ -2589,26 +2515,6 @@
       "count": 1
     }
   },
-  "src/components/graph-display-card/graph-display-card.component.ts": {
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-misused-promises": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 3
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 2
-    },
-    "no-empty": {
-      "count": 2
-    },
-    "no-var": {
-      "count": 1
-    }
-  },
   "src/components/graph-information-card/graph-information-card.component.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
       "count": 1
@@ -2624,9 +2530,6 @@
     },
     "no-empty": {
       "count": 3
-    },
-    "no-var": {
-      "count": 1
     }
   },
   "src/components/green-bean-information/green-bean-information.component.ts": {
@@ -3181,11 +3084,6 @@
       "count": 3
     }
   },
-  "src/services/aiBeanImport/__tests__/image-rotation.spec.ts": {
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    }
-  },
   "src/services/aiBeanImport/__tests__/text-normalization.service.spec.ts": {
     "@typescript-eslint/no-unnecessary-type-assertion": {
       "count": 2
@@ -3230,17 +3128,6 @@
   "src/services/androidPlatform/android-platform.service.ts": {
     "@typescript-eslint/no-empty-function": {
       "count": 3
-    }
-  },
-  "src/services/annotationGraphHelper/annotation-graph-helper.service.ts": {
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 2
-    },
-    "@typescript-eslint/prefer-regexp-exec": {
-      "count": 1
-    },
-    "no-var": {
-      "count": 1
     }
   },
   "src/services/beanSortFilterHelper/bean-sort-filter-helper.service.ts": {
@@ -3355,9 +3242,6 @@
     "@typescript-eslint/no-floating-promises": {
       "count": 12
     },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    },
     "@typescript-eslint/prefer-string-starts-ends-with": {
       "count": 9
     },
@@ -3381,7 +3265,7 @@
       "count": 1
     },
     "prefer-const": {
-      "count": 3
+      "count": 1
     }
   },
   "src/services/serverCommunication/server-communication.service.ts": {

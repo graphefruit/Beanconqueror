@@ -5,6 +5,8 @@ describe('BrewAddComponent VoiceOver Magic Tap', () => {
   let timer: jasmine.SpyObj<any>;
   let brewing: jasmine.SpyObj<any>;
   let modal: HTMLElement;
+  let textToSpeech: jasmine.SpyObj<any>;
+  let scale: { getWeight: jasmine.Spy } | null;
 
   beforeEach(() => {
     const element = document.createElement('brew-add');
@@ -15,6 +17,7 @@ describe('BrewAddComponent VoiceOver Magic Tap', () => {
       'getSeconds',
       'getMilliseconds',
       'resetWithoutEmit',
+      'pauseTimer',
     ]);
     timer.isTimerRunning.and.returnValue(false);
     timer.getSeconds.and.returnValue(0);
@@ -24,14 +27,29 @@ describe('BrewAddComponent VoiceOver Magic Tap', () => {
       'timerStartPressed',
     ]);
     brewing.timer = timer;
+    brewing.brewBrewingGraphEl = {
+      flow_profile_raw: { weight: [], pressureFlow: [], temperatureFlow: [] },
+    };
     brewing.timerReset.and.resolveTo();
-    brewing.timerStartPressed.and.resolveTo();
+    brewing.timerStartPressed.and.callFake(() => {
+      timer.isTimerRunning.and.returnValue(true);
+      return Promise.resolve();
+    });
+    textToSpeech = jasmine.createSpyObj('textToSpeech', ['speakInFull']);
+    scale = null;
     component = Object.assign(Object.create(BrewAddComponent.prototype), {
       magicTapActive: true,
       magicTapBusy: false,
       elementRef: { nativeElement: element },
       modalController: { getTop: () => Promise.resolve(modal) },
       brewBrewing: brewing,
+      textToSpeech,
+      translate: {
+        instant: (key: string, params?: Record<string, string>) =>
+          [key, ...Object.values(params ?? {})].join(' '),
+      },
+      settings: { language: 'de' },
+      bleManager: { getScale: () => scale },
     });
   });
 
@@ -73,13 +91,70 @@ describe('BrewAddComponent VoiceOver Magic Tap', () => {
     expect(brewing.timerStartPressed).toHaveBeenCalledOnceWith(undefined);
   });
 
-  it('does not restart a running timer', async () => {
+  it('stops a running timer and says when', async () => {
     timer.isTimerRunning.and.returnValue(true);
+    timer.getSeconds.and.returnValue(42);
 
     await component.handleVoiceOverMagicTap();
 
+    expect(timer.pauseTimer).toHaveBeenCalledOnceWith('click');
     expect(timer.resetWithoutEmit).not.toHaveBeenCalled();
     expect(brewing.timerStartPressed).not.toHaveBeenCalled();
+    expect(textToSpeech.speakInFull).toHaveBeenCalledOnceWith(
+      'TEXT_TO_SPEECH.MAGIC_TAP_STOPPED 0:42',
+    );
+  });
+
+  it('says the weight with tenths when a scale is connected', async () => {
+    timer.isTimerRunning.and.returnValue(true);
+    timer.getSeconds.and.returnValue(42);
+    scale = { getWeight: jasmine.createSpy().and.returnValue(18.34) };
+
+    await component.handleVoiceOverMagicTap();
+
+    expect(textToSpeech.speakInFull).toHaveBeenCalledOnceWith(
+      'TEXT_TO_SPEECH.MAGIC_TAP_STOPPED_WITH_WEIGHT 0:42 18,3',
+    );
+  });
+
+  it('leaves out a weight the scale cannot give', async () => {
+    timer.isTimerRunning.and.returnValue(true);
+    scale = { getWeight: jasmine.createSpy().and.throwError('gone') };
+
+    await component.handleVoiceOverMagicTap();
+
+    expect(timer.pauseTimer).toHaveBeenCalledTimes(1);
+    expect(textToSpeech.speakInFull).toHaveBeenCalledOnceWith(
+      'TEXT_TO_SPEECH.MAGIC_TAP_STOPPED 0:00',
+    );
+  });
+
+  it('says that the brew started', async () => {
+    await component.handleVoiceOverMagicTap();
+
+    expect(textToSpeech.speakInFull).toHaveBeenCalledOnceWith(
+      'TEXT_TO_SPEECH.MAGIC_TAP_STARTED',
+    );
+  });
+
+  it('resets a graph with values and says so', async () => {
+    brewing.brewBrewingGraphEl.flow_profile_raw.weight = [{}, {}];
+
+    await component.handleVoiceOverMagicTap();
+
+    expect(timer.resetWithoutEmit).toHaveBeenCalledOnceWith();
+    expect(brewing.timerReset).toHaveBeenCalledOnceWith(undefined);
+    expect(textToSpeech.speakInFull).toHaveBeenCalledOnceWith(
+      'TEXT_TO_SPEECH.MAGIC_TAP_RESET_AND_STARTED',
+    );
+  });
+
+  it('says nothing when the timer did not start', async () => {
+    brewing.timerStartPressed.and.resolveTo();
+
+    await component.handleVoiceOverMagicTap();
+
+    expect(textToSpeech.speakInFull).not.toHaveBeenCalled();
   });
 
   it('ignores repeated gestures while a start is pending', async () => {

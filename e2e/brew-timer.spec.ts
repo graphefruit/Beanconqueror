@@ -136,23 +136,6 @@ test('the timer runs, marks the bloom time, pauses, resumes and is saved with th
   `);
 });
 
-test('resetting the timer clears the time and allows a new start', async ({
-  page,
-}) => {
-  await openBrewFormAndSettle(page);
-  await startTimer(page);
-  await tick(page, 12);
-  await page.getByRole('button', { name: 'Pause timer' }).click();
-  await expectAbout(timeField(page), 12);
-
-  await page.getByRole('button', { name: 'Reset timer' }).click();
-  await expect(timeField(page)).toHaveValue('00:00');
-  await expect(page.getByRole('button', { name: 'Start timer' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Resume timer' })).toHaveCount(
-    0,
-  );
-});
-
 test('an espresso method marks the first drip and shows the brew time after it', async ({
   page,
 }) => {

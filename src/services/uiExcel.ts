@@ -17,6 +17,11 @@ import { StorageClass } from '../classes/storageClass';
 import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../enums/beans/mix';
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
+import {
+  ExcelImportIssue,
+  readBeanMix,
+  readExcelDate,
+} from './excel-import-rules';
 import { UIAlert } from './uiAlert';
 import { UIBeanHelper } from './uiBeanHelper';
 import { UIBeanStorage } from './uiBeanStorage';
@@ -486,10 +491,12 @@ export class UIExcel {
       const entry: Array<any> = [
         bean.name,
         bean.roaster,
-        this.uiHelper.formateDatestr(
-          bean.roastingDate,
-          this.settings.date_format,
-        ),
+        bean.roastingDate
+          ? this.uiHelper.formateDatestr(
+              bean.roastingDate,
+              this.settings.date_format,
+            )
+          : '',
         BEAN_ROASTING_TYPE_ENUM[bean.bean_roasting_type],
         bean.roast_range,
         bean.getRoastName(),
@@ -920,39 +927,38 @@ export class UIExcel {
   }
 
   /**
-   * Tells the user whether the beans read from the file were stored. After
-   * `_storageReported` the storage has told that they were not, and no
-   * second message is put on top.
+   * Tells the user whether the beans read from the file were stored, with
+   * the rows and cells that were not taken over. After `_storageReported`
+   * the storage has told that they were not, and no second message is put
+   * on top.
    */
   private async reportImport(
     _read: number,
     _stored: number,
     _successMessage: string,
     _storageReported: boolean,
+    _issues: ExcelImportIssue[],
   ): Promise<void> {
     try {
       if (_read === 0) {
-        await this.uiAlert.showMessage(
+        await this.showImportMessage(
           'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
           'IMPORT_UNSUCCESSFULLY',
-          undefined,
-          true,
+          _issues,
         );
       } else if (_stored === 0) {
         if (!_storageReported) {
-          await this.uiAlert.showMessage(
+          await this.showImportMessage(
             'BEANS_IMPORTED_UNSUCCESSFULLY_NOT_SAVED',
             'IMPORT_UNSUCCESSFULLY',
-            undefined,
-            true,
+            _issues,
           );
         }
       } else {
-        await this.uiAlert.showMessage(
+        await this.showImportMessage(
           _successMessage,
           'IMPORT_SUCCESSFULLY',
-          undefined,
-          true,
+          _issues,
         );
       }
     } catch (ex) {
@@ -960,7 +966,66 @@ export class UIExcel {
     }
   }
 
-  public async importGreenBeansByExcel(_arrayBuffer) {
+  /** Shows the message, with a list of the issues when there are any. */
+  private async showImportMessage(
+    _message: string,
+    _title: string,
+    _issues: ExcelImportIssue[],
+  ): Promise<void> {
+    if (_issues.length === 0) {
+      await this.uiAlert.showMessage(_message, _title, undefined, true);
+      return;
+    }
+    await this.uiAlert.showMessageWithList(
+      _message,
+      _title,
+      'EXCEL_IMPORT_NOT_TAKEN_OVER',
+      _issues.map(
+        (issue): string =>
+          this.translate.instant(
+            issue.field === 'Name'
+              ? 'EXCEL_IMPORT_ROW_WITHOUT_NAME'
+              : 'EXCEL_IMPORT_FIELD_NOT_READ',
+            issue,
+          ) as string,
+      ),
+    );
+  }
+
+  /**
+   * The value of a cell as a date, '' when it is empty. A value that is no
+   * date leaves the field empty and is noted in `_issues` and logged.
+   */
+  private readDate(
+    _entry: unknown,
+    _field: string,
+    _issues: ExcelImportIssue[],
+  ): string {
+    const date = readExcelDate((_entry as Record<string, unknown>)[_field]);
+    if (date === null) {
+      this.noteIssue(_entry, _field, _issues);
+      return '';
+    }
+    return date;
+  }
+
+  /** Notes a cell that was not read, without its value: it can be anything. */
+  private noteIssue(
+    _entry: unknown,
+    _field: string,
+    _issues: ExcelImportIssue[],
+  ): void {
+    // SheetJS gives each row its index in the sheet, counted from 0.
+    const row = (_entry as { __rowNum__?: number }).__rowNum__ + 1;
+    _issues.push({ row, field: _field });
+    this.uiLog.warn(`Excel import - row ${row}, ${_field}: not read`);
+  }
+
+  /** Resolves the cells that were not read. */
+  public async importGreenBeansByExcel(
+    _arrayBuffer,
+  ): Promise<ExcelImportIssue[]> {
+    const issues: ExcelImportIssue[] = [];
     try {
       /* data is an ArrayBuffer */
       const wb = XLSX.read(_arrayBuffer);
@@ -997,10 +1062,12 @@ export class UIExcel {
 
         const bean: GreenBean = new GreenBean();
 
-        const nameEntry = entry['Name'];
-        if (nameEntry) {
-          bean.name = nameEntry.toString();
+        // A name of blanks would be an entry the lists show without a name.
+        const name = String(entry['Name'] ?? '').trim();
+        if (name) {
+          bean.name = name;
         } else {
+          this.noteIssue(entry, 'Name', issues);
           continue;
         }
 
@@ -1009,10 +1076,7 @@ export class UIExcel {
           bean.weight = Number(weightEntry);
         }
 
-        const buyDateEntry = entry['Buy Date'];
-        if (buyDateEntry && Number(buyDateEntry) > 0) {
-          bean.date = this.getJsDateFromExcel(Number(buyDateEntry));
-        }
+        bean.date = this.readDate(entry, 'Buy Date', issues);
 
         const websiteEntry = entry['Website'];
         if (websiteEntry) {
@@ -1168,6 +1232,7 @@ export class UIExcel {
         addedBeans.length,
         'GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
         storageReported,
+        issues,
       );
     } catch (ex) {
       this.uiLog.error(`Excel import - Failed: ${ex?.message}`);
@@ -1178,9 +1243,12 @@ export class UIExcel {
         true,
       );
     }
+    return issues;
   }
 
-  public async importBeansByExcel(_arrayBuffer) {
+  /** Resolves the cells that were not read. */
+  public async importBeansByExcel(_arrayBuffer): Promise<ExcelImportIssue[]> {
+    const issues: ExcelImportIssue[] = [];
     try {
       /* data is an ArrayBuffer */
       const wb = XLSX.read(_arrayBuffer);
@@ -1225,10 +1293,12 @@ export class UIExcel {
 
         const bean: Bean = new Bean();
 
-        const nameEntry = entry['Name'];
-        if (nameEntry) {
-          bean.name = nameEntry.toString();
+        // A name of blanks would be an entry the lists show without a name.
+        const name = String(entry['Name'] ?? '').trim();
+        if (name) {
+          bean.name = name;
         } else {
+          this.noteIssue(entry, 'Name', issues);
           continue;
         }
 
@@ -1237,10 +1307,7 @@ export class UIExcel {
           bean.weight = Number(weightEntry);
         }
 
-        const roastDateEntry = entry['Roast date'];
-        if (roastDateEntry && Number(roastDateEntry) > 0) {
-          bean.roastingDate = this.getJsDateFromExcel(Number(roastDateEntry));
-        }
+        bean.roastingDate = this.readDate(entry, 'Roast date', issues);
 
         const websiteEntry = entry['Website'];
         if (websiteEntry) {
@@ -1303,9 +1370,11 @@ export class UIExcel {
           bean.cost = Number(costEntry);
         }
 
-        const blendEntry = entry['Blend'];
-        if (blendEntry) {
-          bean.beanMix = blendEntry;
+        const beanMix = readBeanMix(entry['Blend']);
+        if (beanMix === null) {
+          this.noteIssue(entry, 'Blend', issues);
+        } else if (beanMix) {
+          bean.beanMix = beanMix;
         }
 
         const archivedEntry = entry['Archived'];
@@ -1422,18 +1491,11 @@ export class UIExcel {
           bean.frozenNote = frozenNoteEntry;
         }
 
-        const frozenDateEntry = entry['Frozen Date'];
-        if (frozenDateEntry && Number(frozenDateEntry) > 0) {
-          bean.frozenDate = this.getJsDateFromExcel(Number(frozenDateEntry));
+        bean.frozenDate = this.readDate(entry, 'Frozen Date', issues);
+        if (bean.frozenDate) {
           bean.frozenId = this.uiBeanHelper.generateFrozenId();
         }
-
-        const unfrozenDateEntry = entry['Unfrozen Date'];
-        if (unfrozenDateEntry && Number(unfrozenDateEntry) > 0) {
-          bean.unfrozenDate = this.getJsDateFromExcel(
-            Number(unfrozenDateEntry),
-          );
-        }
+        bean.unfrozenDate = this.readDate(entry, 'Unfrozen Date', issues);
         toAddBeans.push(bean);
       }
 
@@ -1449,6 +1511,7 @@ export class UIExcel {
         addedBeans.length,
         'BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
         storageReported,
+        issues,
       );
       if (addedBeans.length > 0) {
         this.uiBeanHelper.showBeans(addedBeans);
@@ -1462,11 +1525,9 @@ export class UIExcel {
         true,
       );
     }
+    return issues;
   }
 
-  private getJsDateFromExcel(_dateNumber) {
-    return new Date((_dateNumber - (25567 + 2)) * 86400 * 1000).toISOString();
-  }
   /* Export button */
   public async export() {
     const dateTimeStr: string = this.uiHelper.formateDate(

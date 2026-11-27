@@ -94,6 +94,11 @@
     }
   }
 
+  app-brew-graph-view {
+    height: auto;
+    margin: 16px 16px 0;
+  }
+
   .brew-information-panel {
     ion-icon {
       /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- Icon size, not text. */

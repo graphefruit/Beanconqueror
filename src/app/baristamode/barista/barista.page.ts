@@ -83,7 +83,6 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 
-declare var Plotly;
 @Component({
   selector: 'app-barista',
   templateUrl: './barista.page.html',
@@ -322,24 +321,13 @@ export class BaristaPage implements OnInit, OnDestroy {
   public resizeGraph() {
     try {
       const totalHeight = this.ionContent.nativeElement.offsetHeight;
-      const offsetTopOfGraph =
-        this.brewBrewing.brewBrewingGraphEl.canvaContainer.nativeElement
-          .offsetTop;
-
-      const chartWidth =
-        this.brewBrewing.brewBrewingGraphEl.canvaContainer.nativeElement
-          .offsetWidth;
-      let chartHeight = totalHeight - (offsetTopOfGraph + 85);
+      const graph = this.brewBrewing.brewBrewingGraphEl;
+      const box = graph.graphBox();
+      let chartHeight = totalHeight - (box.top + 85);
       if (chartHeight <= 100) {
         chartHeight = 100;
       }
-      this.brewBrewing.brewBrewingGraphEl.lastChartLayout.height = chartHeight;
-
-      this.brewBrewing.brewBrewingGraphEl.lastChartLayout.width = chartWidth;
-      Plotly.relayout(
-        this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement,
-        this.brewBrewing.brewBrewingGraphEl.lastChartLayout,
-      );
+      graph.resize(box.width, chartHeight);
       // Re render, else the lines would not be hidden/shown when having references graphs
     } catch (ex) {}
   }

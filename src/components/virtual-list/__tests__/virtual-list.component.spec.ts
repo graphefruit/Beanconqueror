@@ -27,7 +27,8 @@ interface Item {
   ratio?: number;
 }
 
-const HEAD = 50;
+/** The content above the rows, where a page shows it. */
+const ABOVE = 50;
 const SCREEN = 400;
 const WIDTH = 400;
 
@@ -53,7 +54,9 @@ function items(count: number, height = 100): Item[] {
         [clearOfAddButton]="clearOfAddButton()"
         (endReached)="ends = ends + 1"
       >
-        <div virtualListHead style="height: ${HEAD}px">Head</div>
+        @if (contentAbove()) {
+          <p class="above" style="height: ${ABOVE}px; margin: 0">Above</p>
+        }
         <ng-template [appVirtualRow]="items()" let-item>
           <button
             class="item"
@@ -82,6 +85,7 @@ class HostComponent {
   public readonly items = signal(items(100));
   public readonly estimate = signal(100);
   public readonly clearOfAddButton = signal(true);
+  public readonly contentAbove = signal(false);
   public ends = 0;
   public keysRead = 0;
   public readonly key = (item: Item) => {
@@ -97,15 +101,15 @@ class HostComponent {
   changeDetection: ChangeDetectionStrategy.OnPush,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
+    <ion-segment value="open">
+      <ion-segment-button value="open">Open</ion-segment-button>
+      <ion-segment-button value="archive">Archive</ion-segment-button>
+    </ion-segment>
     <div
       id="scroller"
       style="height: ${SCREEN}px; width: ${WIDTH}px; overflow: auto"
     >
       <app-virtual-list [items]="items" [itemKey]="key" [estimateSize]="100">
-        <ion-segment virtualListHead value="open">
-          <ion-segment-button value="open">Open</ion-segment-button>
-          <ion-segment-button value="archive">Archive</ion-segment-button>
-        </ion-segment>
         <p>Nothing found</p>
         <ng-template [appVirtualRow]="items" let-item>
           <div class="item" style="height: 100px">{{ item.id }}</div>
@@ -189,13 +193,13 @@ describe('VirtualListComponent', () => {
 
   afterEach(() => fixture.destroy());
 
-  it('renders only the rows near the screen, below the head', async () => {
+  it('renders only the rows near the screen', async () => {
     expect(shown().length).toBeGreaterThan(0);
     expect(shown().length).toBeLessThan(10);
     expect(shown()[0]).toBe('item-0');
-    expect(top('item-0')).toBe(HEAD);
+    expect(top('item-0')).toBe(0);
     // The list ends with room for the add button.
-    expect(scroller().scrollHeight).toBe(HEAD + 100 * 100 + 56 + 2 * 16);
+    expect(scroller().scrollHeight).toBe(100 * 100 + 56 + 2 * 16);
   });
 
   it('tells when the last row is rendered, to load more', async () => {
@@ -222,7 +226,7 @@ describe('VirtualListComponent', () => {
     host.clearOfAddButton.set(false);
     await settle();
 
-    expect(scroller().scrollHeight).toBe(HEAD + 100 * 100);
+    expect(scroller().scrollHeight).toBe(100 * 100);
   });
 
   it('tells screen readers the size of the whole list', async () => {
@@ -240,7 +244,7 @@ describe('VirtualListComponent', () => {
     );
   });
 
-  it('is no tab panel without a segment in its head', () => {
+  it('is no tab panel without a segment before it', () => {
     expect(fixture.nativeElement.querySelector('[role="tabpanel"]')).toBeNull();
   });
 
@@ -248,7 +252,7 @@ describe('VirtualListComponent', () => {
     host.items.set([{ id: 'item-0', height: 250 }, ...items(100).slice(1)]);
     await settle();
 
-    expect(top('item-1')).toBe(HEAD + 250);
+    expect(top('item-1')).toBe(250);
   });
 
   it('lays out the rows after the screen once when it jumps to rows not measured yet', async () => {
@@ -257,7 +261,8 @@ describe('VirtualListComponent', () => {
     await settle();
     host.keysRead = 0;
 
-    await scrollTo(100_000);
+    // Into the middle of a row, not at its edge.
+    await scrollTo(100_050);
 
     const after = count - Number(shown()[0].slice(5));
     // Rows above the screen are among them, which move the content.
@@ -273,7 +278,7 @@ describe('VirtualListComponent', () => {
     await settle();
 
     expect(scroller().scrollHeight).toBe(before);
-    expect(top('item-0')).toBe(HEAD);
+    expect(top('item-0')).toBe(0);
   });
 
   it('brings a row on the screen by its key and leaves a shown one', async () => {
@@ -282,7 +287,7 @@ describe('VirtualListComponent', () => {
 
     expect(shown()).toContain('item-50');
     const offset = scroller().scrollTop;
-    expect(top('item-50')).toBeGreaterThanOrEqual(HEAD);
+    expect(top('item-50')).toBeGreaterThanOrEqual(0);
     expect(top('item-50')).toBeLessThan(SCREEN);
 
     host.list().scrollToKey('item-51');
@@ -301,21 +306,21 @@ describe('VirtualListComponent', () => {
     await settle();
 
     expect(shown()).toContain('item-50');
-    expect(top('item-50')).toBeGreaterThanOrEqual(HEAD);
+    expect(top('item-50')).toBeGreaterThanOrEqual(0);
     expect(top('item-50')).toBeLessThan(SCREEN);
   });
 
   it('brings a row cut off by the add button above it', async () => {
     // The add button and its margins cover the bottom of the screen.
     const clear = SCREEN - (56 + 2 * 16);
-    host.list().scrollToKey('item-2');
-    await settle();
-    expect(top('item-2') + 100).toBe(clear);
-
-    // Wholly under the button: shown from its start.
     host.list().scrollToKey('item-3');
     await settle();
-    expect(top('item-3')).toBe(HEAD);
+    expect(top('item-3') + 100).toBe(clear);
+
+    // Wholly under the button: shown from its start.
+    host.list().scrollToKey('item-4');
+    await settle();
+    expect(top('item-4')).toBe(0);
   });
 
   it('leaves a row higher than the screen that is shown', async () => {
@@ -357,7 +362,7 @@ describe('VirtualListComponent', () => {
     host.list().restore(anchor);
     await settle();
 
-    expect(top('item-30')).toBe(-20 + HEAD);
+    expect(top('item-30')).toBe(-20);
   });
 
   it('measures the rows again when asked to', async () => {
@@ -366,8 +371,8 @@ describe('VirtualListComponent', () => {
     host.list().measure();
     await settle();
 
-    expect(top('item-1')).toBe(HEAD + 40);
-    expect(scroller().scrollHeight).toBeLessThan(HEAD + 100 * 100);
+    expect(top('item-1')).toBe(40);
+    expect(scroller().scrollHeight).toBeLessThan(100 * 100);
   });
 
   it('keeps the heights of other items when the estimate changes', async () => {
@@ -388,17 +393,6 @@ describe('VirtualListComponent', () => {
     await settle();
 
     expect(top(String(anchor?.key))).toBe(before);
-  });
-
-  it('moves a focused row from under the head', async () => {
-    await scrollTo(1000);
-    const covered = shown().find((id) => top(id) < HEAD && top(id) > -100);
-    expect(covered).toBeDefined();
-
-    document.getElementById(covered).focus();
-    await settle();
-
-    expect(top(covered)).toBe(HEAD);
   });
 
   describe('when the row with the focus is deleted', () => {
@@ -470,18 +464,18 @@ describe('VirtualListComponent', () => {
 
     await scrollTo(5000);
     expect(shown()).toEqual(jasmine.arrayContaining(['item-0', 'item-3']));
-    expect(top('item-1')).toBe(HEAD + 100 - 5000);
-    expect(top('item-50')).toBe(HEAD);
+    expect(top('item-1')).toBe(100 - 5000);
+    expect(top('item-50')).toBe(0);
 
     await scrollTo(0);
-    expect(top('item-1')).toBe(HEAD + 100);
-    expect(top('item-2')).toBe(HEAD + 200);
+    expect(top('item-1')).toBe(100);
+    expect(top('item-2')).toBe(200);
 
     await scrollAgainTo(5000);
     await scrollAgainTo(7000);
     expect(shown()).not.toContain('item-1');
     expect(shown()).toEqual(jasmine.arrayContaining(['item-50', 'item-70']));
-    expect(top('item-50')).toBe(HEAD + 5000 - 7000);
+    expect(top('item-50')).toBe(5000 - 7000);
   });
 
   it('keeps no rows that were never on the screen when it comes back to an anchor', async () => {
@@ -499,7 +493,7 @@ describe('VirtualListComponent', () => {
     host.list().restore(anchor);
     await settle();
 
-    expect(top('item-50')).toBe(HEAD);
+    expect(top('item-50')).toBe(0);
     expect(shown()).not.toContain('item-0');
   });
 
@@ -519,7 +513,7 @@ describe('VirtualListComponent', () => {
     await settle();
 
     expect(shown()).toContain('item-1');
-    expect(top('item-1')).toBe(HEAD + 200 - scroller().scrollTop);
+    expect(top('item-1')).toBe(200 - scroller().scrollTop);
   });
 
   it('keeps the row with the focus in its place while the list scrolls away', async () => {
@@ -529,13 +523,13 @@ describe('VirtualListComponent', () => {
     await scrollTo(5000);
     await scrollAgainTo(7000);
     expect(document.activeElement?.id).toBe('item-1');
-    expect(top('item-1')).toBe(HEAD + 100 - 7000);
-    expect(top('item-70')).toBe(HEAD);
+    expect(top('item-1')).toBe(100 - 7000);
+    expect(top('item-70')).toBe(0);
     expect(shown()).not.toContain('item-2');
 
     await scrollAgainTo(0);
-    expect(top('item-1')).toBe(HEAD + 100);
-    expect(top('item-2')).toBe(HEAD + 200);
+    expect(top('item-1')).toBe(100);
+    expect(top('item-2')).toBe(200);
   });
 
   it('lets the row go once the focus has moved on', async () => {
@@ -566,12 +560,12 @@ describe('VirtualListComponent', () => {
 
   it('keeps the rows on the screen in place in the frame a row above grows', async () => {
     await scrollTo(3000);
-    expect(top('item-30')).toBe(HEAD);
+    expect(top('item-30')).toBe(0);
 
     await frame();
-    document.getElementById('item-28').style.height = '200px';
+    document.getElementById('item-29').style.height = '200px';
 
-    expect(await paintedTops('item-30', 3)).toEqual([HEAD, HEAD, HEAD]);
+    expect(await paintedTops('item-30', 3)).toEqual([0, 0, 0]);
     expect(scroller().scrollTop).toBe(3100);
   });
 
@@ -580,7 +574,7 @@ describe('VirtualListComponent', () => {
 
     // Written before the browser reports it: the correction adds to it.
     await frame();
-    document.getElementById('item-28').style.height = '200px';
+    document.getElementById('item-29').style.height = '200px';
     scroller().scrollTop = 3500;
     await settle();
 
@@ -607,7 +601,7 @@ describe('VirtualListComponent', () => {
      */
     function expectOnlyNewHeights(): void {
       const measured =
-        (scroller().scrollHeight - HEAD - roomForAddButton - 100 * estimate) /
+        (scroller().scrollHeight - roomForAddButton - 100 * estimate) /
         (200 - estimate);
       expect(Number.isInteger(measured)).toBe(true);
       expect(measured).toBeGreaterThanOrEqual(shown().length);
@@ -651,7 +645,7 @@ describe('VirtualListComponent', () => {
       expect(top(String(anchor?.key))).toBe(before);
       // Each row counts with the estimate, or 100 when measured.
       const measured =
-        (scroller().scrollHeight - HEAD - roomForAddButton - 100 * estimate) /
+        (scroller().scrollHeight - roomForAddButton - 100 * estimate) /
         (100 - estimate);
       expect(measured).toBeGreaterThanOrEqual(shown().length);
     });
@@ -696,14 +690,14 @@ describe('VirtualListComponent', () => {
       await scrollTo(3000);
       touch('touchstart');
       await frame();
-      document.getElementById('item-28').style.height = '200px';
+      document.getElementById('item-29').style.height = '200px';
       const held = await paintedTops('item-30', 3);
       touch('touchend');
       // The correction is written once the touch has ended (150ms).
       const released = await paintedTops('item-30', 30);
 
-      expect(held).toEqual([HEAD, HEAD, HEAD]);
-      expect(released).toEqual(released.map(() => HEAD));
+      expect(held).toEqual([0, 0, 0]);
+      expect(released).toEqual(released.map(() => 0));
       expect(scroller().scrollTop).toBe(3100);
     });
 
@@ -711,10 +705,10 @@ describe('VirtualListComponent', () => {
       await scrollTo(2900);
       touch('touchstart');
       await scrollAgainTo(3000);
-      document.getElementById('item-28').style.height = '200px';
+      document.getElementById('item-29').style.height = '200px';
       const held = await paintedTops('item-30', 30);
 
-      expect(held).toEqual(held.map(() => HEAD));
+      expect(held).toEqual(held.map(() => 0));
       expect(scroller().scrollTop).toBe(3000);
     });
 
@@ -727,17 +721,19 @@ describe('VirtualListComponent', () => {
       for (let offset = 2700; offset >= 0; offset -= 300) {
         await scrollTo(offset);
       }
-      const held = top('item-0') - HEAD;
+      const held = top('item-0');
       await paintedTops('item-1', 30);
 
       expect(held).not.toBe(0);
       expect(scroller().scrollTop).toBe(0);
-      expect(top('item-0')).toBe(HEAD);
-      expect(top('item-1')).toBe(HEAD + 150);
+      expect(top('item-0')).toBe(0);
+      expect(top('item-1')).toBe(150);
     });
 
     it('draws no row above the list while a correction waits at the top', async () => {
-      await scrollTo(150);
+      host.contentAbove.set(true);
+      await settle();
+      await scrollTo(ABOVE + 150);
       touch('touchstart');
       await frame();
       // The first row, above the screen, turns out higher than measured;
@@ -746,25 +742,25 @@ describe('VirtualListComponent', () => {
       await settle();
       await scrollTo(0);
 
-      // Nothing but the head lies at the top of the list.
-      const head = fixture.nativeElement.querySelector('.head');
-      head.style.visibility = 'hidden';
+      // Nothing but the content above lies at the top of the list.
+      const above = fixture.nativeElement.querySelector('.above');
+      above.style.visibility = 'hidden';
       const { left, right } = scroller().getBoundingClientRect();
       const hit = document.elementFromPoint(
         (left + right) / 2,
-        scroller().getBoundingClientRect().top + HEAD / 2,
+        scroller().getBoundingClientRect().top + ABOVE / 2,
       );
-      head.style.visibility = '';
+      above.style.visibility = '';
       expect(hit?.closest('.item')).toBeNull();
 
       touch('touchend');
       await paintedTops('item-1', 30);
       await scrollTo(0);
-      expect(top('item-0')).toBe(HEAD);
-      expect(top('item-1')).toBe(HEAD + 300);
+      expect(top('item-0')).toBe(ABOVE);
+      expect(top('item-1')).toBe(ABOVE + 300);
     });
 
-    it('lets go of a touch on a row taken off once the list rests, and goes back to the top below the head', async () => {
+    it('lets go of a touch on a row taken off once the list rests, and goes back to the top', async () => {
       // Turned sideways: the cards are lower than estimated, and those above
       // the screen make the list shorter as they are measured.
       scroller().style.width = `${2 * WIDTH}px`;
@@ -776,7 +772,7 @@ describe('VirtualListComponent', () => {
 
       // The finger is on a row that is taken off (deleted); the end of its
       // touch goes to the row, off the list.
-      const touched = shown().find((id) => top(id) >= HEAD);
+      const touched = shown().find((id) => top(id) >= 0);
       const row = document.getElementById(touched);
       row.dispatchEvent(new Event('touchstart', { bubbles: true }));
       host.items.set(host.items().filter((item) => item.id !== touched));
@@ -791,8 +787,8 @@ describe('VirtualListComponent', () => {
       await paintedTops('item-1', 30);
 
       expect(scroller().scrollTop).toBe(0);
-      expect(top('item-0')).toBe(HEAD);
-      expect(top('item-1')).toBe(HEAD + 150);
+      expect(top('item-0')).toBe(0);
+      expect(top('item-1')).toBe(150);
     });
 
     it('writes the corrections of a fling into the bounce at the top once it rests, after the device was turned', async () => {
@@ -820,30 +816,42 @@ describe('VirtualListComponent', () => {
         },
       });
 
-      touch('touchstart');
-      for (let offset = 4700; offset >= 3500; offset -= 300) {
-        await scrollTo(offset);
+      // The fling ends 150ms after its last scroll event. A slow runner
+      // can take that long between two of them, so the time stands still
+      // until the list rests. The end of the scroll before is waited for
+      // first: the held clock cannot cancel a timer started before it.
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      jasmine.clock().install();
+      let held: number;
+      try {
+        touch('touchstart');
+        for (let offset = 4700; offset >= 3500; offset -= 300) {
+          await scrollTo(offset);
+        }
+        touch('touchend');
+        for (let offset = 3200; offset >= 0; offset -= 400) {
+          await scrollTo(offset);
+        }
+        await scrollTo(0);
+        for (const offset of [-40, -15]) {
+          bounce = offset;
+          scroller().dispatchEvent(new Event('scroll'));
+          await frame();
+        }
+        // Held while it bounces: the rows measured lower above the screen.
+        held = top('item-0');
+        // Back at 0 with no further scroll event.
+        bounce = null;
+        jasmine.clock().tick(300);
+      } finally {
+        jasmine.clock().uninstall();
       }
-      touch('touchend');
-      for (let offset = 3200; offset >= 0; offset -= 400) {
-        await scrollTo(offset);
-      }
-      await scrollTo(0);
-      for (const offset of [-40, -15]) {
-        bounce = offset;
-        scroller().dispatchEvent(new Event('scroll'));
-        await frame();
-      }
-      // Held while it bounces: the rows measured lower above the screen.
-      const held = top('item-0') - HEAD;
-      // Back at 0 with no further scroll event.
-      bounce = null;
       await paintedTops('item-1', 30);
 
       expect(held).toBeGreaterThan(1000);
       expect(scroller().scrollTop).toBe(0);
-      expect(top('item-0')).toBe(HEAD);
-      expect(top('item-1')).toBe(HEAD + 150);
+      expect(top('item-0')).toBe(0);
+      expect(top('item-1')).toBe(150);
     });
   });
 });

@@ -28,7 +28,9 @@
 
       @if (flowData !== undefined) {
         <div style='padding-left:10px;padding-right:10px;'>
-          <graph-display-card (click)='showGraph()' [flowProfileData]='flowData' />
+          <button type="button" class="graph-preview-button" [attr.aria-label]="'SHOW_GRAPH' | translate" (click)='showGraph()'>
+            <graph-display-card [flowProfileData]='flowData' />
+          </button>
         </div>
         <ion-item tappable [button]="true" (click)='deleteGraph()'>
           <ion-label>{{"GRAPH.DELETE" | translate}}</ion-label>

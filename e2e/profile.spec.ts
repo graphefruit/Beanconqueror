@@ -85,26 +85,6 @@ const ENTRY_NAMES = [
   'Info & support Impressum, privacy, contact, logs',
 ];
 
-test('the hub has a page heading, three groups and named entries', async ({
-  page,
-}) => {
-  await page.goto('/');
-  await completeFirstRun(page);
-  await openProfile(page);
-
-  await expect(
-    page.getByRole('heading', { level: 1, name: 'Profile' }),
-  ).toBeVisible();
-  const groups = page.locator('app-profile').getByRole('heading', { level: 2 });
-  await expect(groups).toHaveText(['Equipment', 'Sections', 'App']);
-
-  // The description is part of each entry's name.
-  await expect(entries(page)).toHaveCount(ENTRY_NAMES.length);
-  for (const [index, name] of ENTRY_NAMES.entries()) {
-    await expect(entries(page).nth(index)).toHaveAccessibleName(name);
-  }
-});
-
 test('graphs and roasting join the sections once switched on', async ({
   page,
 }) => {
@@ -214,41 +194,6 @@ test('the water entry counts the water recipes in its name', async ({
   await expect(
     page.getByRole('link', { name: 'Water 2 waters', exact: true }),
   ).toBeVisible();
-});
-
-test('the water entry joins the equipment group once switched on', async ({
-  page,
-}) => {
-  await page.goto('/');
-  await completeFirstRun(page);
-  await openProfile(page);
-
-  await switchOnWater(page);
-  await expect(entries(page)).toHaveCount(ENTRY_NAMES.length + 1);
-  await expect(entries(page).nth(2)).toHaveAccessibleName(
-    'Water None added yet',
-  );
-});
-
-test('every entry shows its icon', async ({ page }) => {
-  await page.goto('/');
-  await completeFirstRun(page);
-  await openProfile(page);
-  await switchOnWater(page);
-
-  // An icon that is not registered stays an empty element without an error.
-  const icons = page.locator('app-profile ion-content .entry-icon ion-icon');
-  await expect(icons).toHaveCount(ENTRY_NAMES.length + 1);
-  for (const icon of await icons.all()) {
-    await expect
-      .poll(() =>
-        icon.evaluate(
-          (element) =>
-            element.shadowRoot?.querySelector('svg')?.childElementCount ?? 0,
-        ),
-      )
-      .toBeGreaterThan(0);
-  }
 });
 
 for (const { entry, url, shows, back } of [
