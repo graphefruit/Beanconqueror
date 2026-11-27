@@ -15,6 +15,7 @@
  */
 import type uPlot from 'uplot';
 
+import { readableLine } from '../../../services/graphHelper/line-contrast';
 import {
   extentOf,
   fittedRange,
@@ -33,6 +34,7 @@ import type {
   Viewport,
 } from './brew-chart-port';
 import { lowerBound, type FlowSeriesBuffer } from './flow-series-buffer';
+import { groundOf, insetAxesPlugin, insetSide } from './inset-axes';
 import type {
   UplotOverlayPlugin,
   UplotOverlayState,
@@ -62,11 +64,14 @@ export interface UplotRendererOptions {
 export const MAX_PIXEL_RATIO = 2;
 const FONT = '-apple-system, Roboto, sans-serif';
 
-/** Axis text and grid of the two themes; the ground matches --ion-color-graph-background. */
+/** Axis text and grid of the two themes; the ground is the card colour of the app. */
 export const CHART_PALETTE = {
   light: { text: '#444444', grid: 'rgba(0,0,0,0.1)', background: '#ffffff' },
-  dark: { text: '#e0e0e0', grid: '#8e8e8e', background: '#222428' },
+  dark: { text: '#e0e0e0', grid: '#8e8e8e', background: '#2a211a' },
 } as const;
+
+/** WCAG contrast of the axis values on their ground. */
+const VALUE_CONTRAST = 4.5;
 
 /** Subset of uPlot.min.css the renderer needs (no legend, no title). */
 const UPLOT_CSS =
@@ -143,41 +148,32 @@ export function viewportRange(viewport: Viewport, end: number): Range {
       return [viewport.from, Math.max(viewport.to, viewport.from + 0.001)];
     case 'fitAll':
       return [0, Math.max(end, 1)];
-    case 'follow': {
-      const from = Math.max(0, end - viewport.windowSec * 0.9);
-      return [from, from + viewport.windowSec];
-    }
-    case 'stepped':
-      return steppedRange(end, viewport.windowSec, viewport.backSec);
+    case 'grow':
+      return liveTimeRange(end, viewport.startSec);
   }
 }
 
-/** Seconds the stepped window reaches beyond its next jump. */
-export const STEPPED_LEAD_SEC = 10;
+/** The live line stops at 1 / LIVE_HEADROOM of the width; beyond, the time axis compresses. */
+const LIVE_HEADROOM = 1.25;
 
 /**
- * The window of the live brew graph: it stays put for `windowSec` seconds and
- * then jumps, keeping the last `backSec` seconds in view, so the line is
- * drawn into a still picture instead of the picture scrolling under it.
+ * The window of the live brew graph: it starts with `startSec` and, once the
+ * brew comes near the right edge, grows with it from 0, so the start never
+ * scrolls away and the newest sample stays at 80 % of the width.
  */
-export function steppedRange(
-  end: number,
-  windowSec: number,
-  backSec: number,
-): Range {
-  if (!(windowSec > 0)) {
-    return [0, Math.max(end, 1)];
-  }
-  const jump = Math.floor(Math.max(0, end) / windowSec) * windowSec;
-  return [
-    Math.max(0, jump - Math.max(0, backSec)),
-    jump + windowSec + STEPPED_LEAD_SEC,
-  ];
+export function liveTimeRange(end: number, startSec: number): Range {
+  const start = startSec > 0 ? startSec : 20;
+  return [0, Math.max(start, end > 0 ? end * LIVE_HEADROOM : 0)];
 }
 
+/** Steps of the time axis, so it counts in whole m:ss steps (no 0:25 or 0:50). */
+const TIME_INCRS = [
+  1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200, 21600,
+];
+
 /**
- * Whether an axis shows its ticks: the live graph and a compact picture keep
- * temperature and water bare, so the lines get the width.
+ * Whether an axis shows its values: the live graph keeps temperature and
+ * water bare, so few columns stand in its small plot.
  */
 export function axisShown(axisId: AxisId, bare: boolean): boolean {
   return !(bare && (axisId === 'temperature' || axisId === 'water'));
@@ -210,6 +206,8 @@ interface Look {
   ink?: string;
   /** Size factor for fonts and lines, for an export at another scale. */
   k: number;
+  /** Ground the axis values stand on; null on a picture without ground. */
+  ground: string | null;
 }
 
 export class UplotRenderer implements BrewChartPort {
@@ -262,6 +260,12 @@ export class UplotRenderer implements BrewChartPort {
   }
 
   public async mount(el: HTMLElement, opts: MountOptions): Promise<void> {
+    // Taken before the library loads, so a resize() meanwhile wins: the
+    // container may only get its size while uPlot is still loading.
+    this.size = {
+      width: Math.floor(opts.width),
+      height: Math.floor(opts.height),
+    };
     const lib = await loadUplot();
     if (this.destroyed) {
       return;
@@ -271,7 +275,6 @@ export class UplotRenderer implements BrewChartPort {
     this.el = el;
     this.opts = opts;
     this.dark = opts.dark;
-    this.size = { width: opts.width, height: opts.height };
     this.structureDirty = true;
     this.scheduleFrame();
   }
@@ -373,7 +376,14 @@ export class UplotRenderer implements BrewChartPort {
       const drawn = new Promise<void>((resolve) => {
         const opts = this.buildOptions(
           lib,
-          { dark: options.theme === 'dark', ink: options.ink, k },
+          {
+            dark: options.theme === 'dark',
+            ink: options.ink,
+            k,
+            ground: options.transparent
+              ? null
+              : CHART_PALETTE[options.theme].background,
+          },
           Math.round(options.width * k),
           Math.round(options.height * k),
         );
@@ -382,9 +392,10 @@ export class UplotRenderer implements BrewChartPort {
           { hooks: { draw: [() => resolve()] } },
         ];
         chart = new lib(opts, this.buildData(), host);
+        // Values in one ink colour cannot be told apart: keep the columns few.
         this.applyVisibility(
           chart,
-          options.compact === true || this.opts?.mode === 'live',
+          this.opts?.mode === 'live' || options.ink !== undefined,
         );
       });
       await drawn;
@@ -520,7 +531,13 @@ export class UplotRenderer implements BrewChartPort {
     this.u = new lib(
       this.buildOptions(
         lib,
-        { dark: this.dark, k: 1 },
+        {
+          dark: this.dark,
+          k: 1,
+          ground:
+            groundOf(el) ??
+            CHART_PALETTE[this.dark ? 'dark' : 'light'].background,
+        },
         this.size.width,
         this.size.height,
       ),
@@ -632,7 +649,7 @@ export class UplotRenderer implements BrewChartPort {
   }
 
   private buildData(): uPlot.AlignedData {
-    const windowed = this.viewport.mode !== 'fitAll';
+    const windowed = this.viewport.mode === 'range';
     const [from, to] = this.xRange;
     const facets: Facet[] = this.layout.drawn.map((def) => {
       const { t, y } = this.bufferOf(def.kind)?.view(def.id) ?? {
@@ -672,6 +689,28 @@ export class UplotRenderer implements BrewChartPort {
     for (const axisId of this.layout.axes) {
       scales[axisId] = { auto: false, range: identity };
     }
+    const inset = insetAxesPlugin({
+      axes: this.layout.axes.map((axisId, i) => {
+        const owner =
+          this.layout.drawn.find(
+            (d) => d.axisId === axisId && d.kind === 'live',
+          ) ?? this.layout.drawn.find((d) => d.axisId === axisId);
+        const colour = owner ? seriesColour(owner, look.dark) : palette.text;
+        return {
+          index: i + 1,
+          axisId,
+          colour:
+            look.ink ??
+            (look.ground
+              ? readableLine(colour, look.ground, VALUE_CONTRAST)
+              : colour),
+        };
+      }),
+      halo: look.ground,
+      font: FONT,
+      format: (value) => lib.fmtNum(value),
+      k,
+    });
     const linear = lib.paths.linear?.();
     const series: uPlot.Series[] = [
       {},
@@ -694,50 +733,55 @@ export class UplotRenderer implements BrewChartPort {
         font,
         size: 28 * k,
         space: 40 * k,
+        incrs: TIME_INCRS,
         grid: { stroke: palette.grid, width: k },
         ticks: { stroke: palette.grid, width: k, size: 5 * k },
         values: (_u, splits) => splits.map(formatSeconds),
       },
-      ...this.layout.axes.map((axisId, i): uPlot.Axis => {
-        const owner =
-          this.layout.drawn.find(
-            (d) => d.axisId === axisId && d.kind === 'live',
-          ) ?? this.layout.drawn.find((d) => d.axisId === axisId);
-        const colour = owner ? seriesColour(owner, look.dark) : palette.text;
-        return {
-          scale: axisId,
-          side: axisId === 'weight' ? 3 : 1,
-          stroke: look.ink ?? colour,
-          font,
-          size: 36 * k,
-          space: 24 * k,
-          grid: { show: i === 0, stroke: palette.grid, width: k },
-          ticks: { stroke: colour, width: k, size: 5 * k },
-          // uPlot only initialises axes created visible; render() hides them.
-          show: true,
-        };
-      }),
+      ...this.layout.axes.map((axisId, i): uPlot.Axis => ({
+        scale: axisId,
+        side: insetSide(axisId) === 'left' ? 3 : 1,
+        size: 0,
+        space: 24 * k,
+        grid: { show: i === 0, stroke: palette.grid, width: k },
+        ticks: { show: false },
+        values: inset.values,
+        // uPlot only initialises axes created visible; render() hides them.
+        show: true,
+      })),
     ];
     return {
       mode: 2,
       width,
       height,
+      // Room for the half time label at either end and the top value.
+      padding: [8 * k, 14 * k, 0, 14 * k],
       legend: { show: false },
       cursor: { show: false, drag: { x: false, y: false, setScale: false } },
       scales,
       series,
       axes,
-      plugins: this.plugins.map((p) => p.hooks()),
+      // Overlays draw last, so the cursor labels lie above the axis values.
+      plugins: [inset.plugin, ...this.plugins.map((p) => p.hooks())],
     };
   }
 
+  /**
+   * An axis shows when a shown series on it has data. The live graph shows
+   * its first axis with a shown series before the first sample too, so grid
+   * and range stand from the start, as the brew form always showed them.
+   */
   private axisVisible(axisId: AxisId, bare: boolean): boolean {
-    return (
-      axisShown(axisId, bare) &&
-      this.layout.drawn.some(
-        (d) => d.axisId === axisId && !this.hidden.has(d.id) && this.hasData(d),
-      )
-    );
+    const shownOn = (id: AxisId): SeriesDef[] =>
+      axisShown(id, bare)
+        ? this.layout.drawn.filter(
+            (d) => d.axisId === id && !this.hidden.has(d.id),
+          )
+        : [];
+    const awaited =
+      this.opts?.mode === 'live' &&
+      this.layout.axes.find((id) => shownOn(id).length > 0) === axisId;
+    return shownOn(axisId).some((d) => awaited || this.hasData(d));
   }
 
   /** Shows the series and axes that have something to show; true when an axis changed. */
@@ -746,11 +790,16 @@ export class UplotRenderer implements BrewChartPort {
     bare = this.opts?.mode === 'live',
   ): boolean {
     let axesChanged = false;
+    let gridDrawn = false;
     this.layout.axes.forEach((axisId, i) => {
       const axis = u.axes[i + 1];
       const show = this.axisVisible(axisId, bare);
-      if (axis.show !== show) {
+      // The first axis shown draws the grid, so hiding weight keeps it.
+      const grid = show && !gridDrawn;
+      gridDrawn ||= grid;
+      if (axis.show !== show || axis.grid?.show !== grid) {
         axis.show = show;
+        axis.grid = { ...axis.grid, show: grid };
         axesChanged = true;
       }
     });

@@ -5,6 +5,10 @@ describe('line contrast', () => {
     expect(contrastRatio('#000', '#ffffff')).toBeCloseTo(21, 5);
     expect(contrastRatio('#777777', '#777777')).toBe(1);
     expect(contrastRatio('red', '#ffffff')).toBeNaN();
+    // A computed ground, alpha left out.
+    expect(
+      contrastRatio('rgb(0, 0, 0)', 'rgba(255, 255, 255, 0.5)'),
+    ).toBeCloseTo(21, 5);
   });
 
   it('leaves a line that already reads as it is', () => {

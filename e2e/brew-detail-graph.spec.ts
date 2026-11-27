@@ -60,6 +60,10 @@ test('the brew details draw the graph, hide a line by its chip and maximize it',
   await weight.click();
   await expect(weight).toHaveAttribute('aria-pressed', 'false');
   await expect(graph).not.toHaveAccessibleName(/Weight \(g\)/);
+  // The time slider belongs to the maximized graph only.
+  await expect(
+    details.locator('app-brew-graph-view').getByRole('slider'),
+  ).toHaveCount(0);
 
   const maximize = details.getByRole('button', { name: 'Maximize flow graph' });
   await maximize.click();

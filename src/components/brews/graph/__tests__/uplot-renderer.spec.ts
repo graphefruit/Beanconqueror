@@ -3,6 +3,7 @@ import type uPlot from 'uplot';
 import { Settings } from '../../../../classes/settings/settings';
 import { DEFAULT_GRAPH_COLORS } from '../../../../data/defaultGraphColors';
 import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
+import { contrastRatio } from '../../../../services/graphHelper/line-contrast';
 import type { ChartMode } from '../brew-chart-port';
 import { FlowSeriesBuffer } from '../flow-series-buffer';
 import type {
@@ -21,8 +22,8 @@ import {
   CHART_PALETTE,
   formatSeconds,
   layoutSeries,
+  liveTimeRange,
   loadUplot,
-  steppedRange,
   UplotRenderer,
   viewportRange,
 } from '../uplot-renderer';
@@ -223,20 +224,36 @@ describe('UplotRenderer', () => {
     expect(host.querySelectorAll('canvas').length).toBe(1);
   });
 
-  it('gives every series its own x (mode 2) and follows the newest sample', async () => {
+  it('gives every series its own x (mode 2) and hands uPlot only the visible range', async () => {
     await mount();
-    renderer.setViewport({ mode: 'follow', windowSec: 20 });
+    renderer.setViewport({ mode: 'range', from: 10, to: 20 });
     feed(buffer, 0, 30);
     await frames.run();
 
     const u = plot();
-    const end = buffer.endTime();
     expect(u.data[0]).toBeNull();
-    expect(u.scales.x.min).toBeCloseTo(end - 18, 6);
-    expect(u.scales.x.max).toBeCloseTo(end + 2, 6);
-    // Only the visible window is handed to uPlot.
+    expect(u.scales.x.min).toBe(10);
+    expect(u.scales.x.max).toBe(20);
     const weight = u.data[1] as unknown as [Float64Array, Float64Array];
     expect(weight[0].length).toBeLessThan(buffer.length('weight'));
+  });
+
+  it('grows the live window from 0 with the brew and counts in m:ss steps', async () => {
+    await mount();
+    renderer.setViewport({ mode: 'grow', startSec: 20 });
+    feed(buffer, 0, 120);
+    await frames.run();
+
+    const u = plot();
+    const end = buffer.endTime();
+    expect(u.scales.x.min).toBe(0);
+    expect(u.scales.x.max).toBeCloseTo(end * 1.25, 6);
+    // The whole brew stays in the picture.
+    const weight = u.data[1] as unknown as [Float64Array, Float64Array];
+    expect(weight[0].length).toBe(buffer.length('weight'));
+    const splits = (u.axes[0] as unknown as { _splits: number[] })._splits;
+    // uPlot's own steps would label 0:20, 0:40 … here.
+    expect(splits.every((t) => t % 15 === 0)).toBeTrue();
   });
 
   it('grows the live axes with live samples only, starting from the settings', async () => {
@@ -427,6 +444,113 @@ describe('UplotRenderer', () => {
     expect(frames.pending).toBe(0);
   });
 
+  it('keeps a size its container reports while uPlot still loads', async () => {
+    renderer = new UplotRenderer([], {
+      requestFrame: frames.request,
+      cancelFrame: frames.cancel,
+    });
+    // Measured while the container was still hidden.
+    const mounting = renderer.mount(host, {
+      width: 0,
+      height: 150,
+      dark: false,
+      mode: 'live',
+      axisSettings: new Settings(),
+      style: PREPARATION_STYLE_TYPE.ESPRESSO,
+    });
+    // The container shows up before the library is there.
+    renderer.resize(360, 150);
+    await mounting;
+    renderer.setSeries(defs('live', 'weight'));
+    renderer.attach(buffer);
+    await frames.run();
+
+    expect(plot()?.width).toBe(360);
+  });
+
+  it('shows grid and weight axis of the live graph before the first sample', async () => {
+    await mount();
+    await frames.run();
+
+    expect(plot().axes[1].show).withContext('weight axis').toBeTrue();
+    expect(plot().axes[2].show).withContext('pressure axis').toBeFalse();
+    expect(plot().scales.weight.max).toBe(
+      new Settings().graph_weight.ESPRESSO.upper,
+    );
+  });
+
+  it('shows no axis of a saved brew without data', async () => {
+    await mount('detail');
+    await frames.run();
+
+    expect(plot().axes[1].show).toBeFalse();
+  });
+
+  it('writes the axis values readable on a halo of the ground they stand on', async () => {
+    const texts: { text: string; style: string }[] = [];
+    const halos: string[] = [];
+    spyOn(CanvasRenderingContext2D.prototype, 'fillText').and.callFake(
+      function (this: CanvasRenderingContext2D, text: string) {
+        texts.push({ text, style: this.fillStyle as string });
+      },
+    );
+    spyOn(CanvasRenderingContext2D.prototype, 'strokeText').and.callFake(
+      function (this: CanvasRenderingContext2D) {
+        halos.push(this.strokeStyle as string);
+      },
+    );
+    for (const [dark, ground] of [
+      [false, '#ead9c4'],
+      [true, '#211914'],
+    ] as const) {
+      host.style.backgroundColor = ground;
+      texts.length = 0;
+      halos.length = 0;
+      buffer = new FlowSeriesBuffer();
+      await mount('live', dark);
+      feed(buffer, 0, 2);
+      await frames.run();
+
+      const values = texts.filter((t) => /^\d+$/.test(t.text));
+      expect(values.length).withContext(ground).toBeGreaterThan(4);
+      for (const { text, style } of values) {
+        expect(contrastRatio(style, ground))
+          .withContext(`${text} in ${style} on ${ground}`)
+          .toBeGreaterThanOrEqual(4.5);
+      }
+      expect(halos.length).withContext(ground).toBe(values.length);
+      expect(halos.every((h) => h === ground))
+        .withContext(halos.join())
+        .toBeTrue();
+      renderer.destroy();
+    }
+  });
+
+  it('draws the grid with the first axis shown', async () => {
+    await mount('detail');
+    feed(buffer, 0, 2);
+    renderer.setVisible('weight', false);
+    await frames.run();
+
+    expect(plot().axes[1].show).withContext('weight axis').toBeFalse();
+    expect(plot().axes[2].grid.show).withContext('pressure grid').toBeTrue();
+
+    renderer.setVisible('weight', true);
+    await frames.run();
+
+    expect(plot().axes[1].grid.show).withContext('weight grid').toBeTrue();
+    expect(plot().axes[2].grid.show).withContext('pressure grid').toBeFalse();
+  });
+
+  it('shows the grid of the live graph before the first sample with weight hidden', async () => {
+    await mount();
+    renderer.setVisible('weight', false);
+    await frames.run();
+
+    expect(plot().axes[2].show).withContext('pressure axis').toBeTrue();
+    expect(plot().axes[2].grid.show).withContext('pressure grid').toBeTrue();
+  });
+
   it('exports a PNG data URL at its own size, scale and theme', async () => {
     await mount('static');
     feed(buffer, 0, 2);
@@ -553,7 +677,7 @@ describe('UplotRenderer', () => {
   /** Mounts three lines with their own axes; the reach is the rightmost x of the red weight line. */
   async function mountThreeAxes(
     mode: ChartMode,
-  ): Promise<(compact?: boolean) => Promise<number>> {
+  ): Promise<() => Promise<number>> {
     await mount(mode);
     renderer.setSeries(
       // Only the weight line is red; the other axes draw their ticks in their own colour.
@@ -569,7 +693,7 @@ describe('UplotRenderer', () => {
     }
     renderer.attach(buffer);
     await frames.run();
-    return async (compact?: boolean): Promise<number> => {
+    return async (): Promise<number> => {
       const image = await decode(
         await renderer.exportImage({
           width: 300,
@@ -577,7 +701,6 @@ describe('UplotRenderer', () => {
           theme: 'light',
           ink: '#0000ff',
           transparent: true,
-          compact,
           scale: 1,
         }),
       );
@@ -591,16 +714,11 @@ describe('UplotRenderer', () => {
     };
   }
 
-  it('leaves temperature and water axes out of a compact picture, so the lines reach further', async () => {
+  it('draws the value axes inside the plot, so the lines get the whole width', async () => {
     const rightmostLine = await mountThreeAxes('static');
 
-    const full = await rightmostLine(false);
-    const compact = await rightmostLine(true);
-
-    // The two axes of 36 px on the right give their room to the lines.
-    expect(full).toBeLessThanOrEqual(300 - 2 * 36);
-    expect(compact).toBeGreaterThan(300 - 36);
-    // The graph in the app keeps its axes.
+    // Two axes of 36 px beside the plot used to stop the lines at 300 - 72.
+    expect(await rightmostLine()).toBeGreaterThan(300 - 36);
     expect(plot().axes.map((axis) => axis.show)).toEqual([
       true,
       true,
@@ -609,10 +727,50 @@ describe('UplotRenderer', () => {
     ]);
   });
 
+  it('keeps the plot in place when an axis shows up after the first frame', async () => {
+    await mount();
+    renderer.setSeries(defs('live', 'weight', 'flowPerSecond', 'pressure'));
+    await frames.run();
+    const empty = { ...plot().bbox };
+
+    buffer.append('weight', 0, 1);
+    buffer.append('flowPerSecond', 0, 1);
+    await frames.run();
+
+    // A right axis that came in later used to stand where the hidden ones had kept room.
+    expect(plot().axes[2].show).toBeTrue();
+    expect(plot().bbox).toEqual(empty);
+    const ratio = plot().ctx.canvas.width / 400;
+    expect(plot().bbox.left).toBe(Math.round(14 * ratio));
+    expect(plot().bbox.left + plot().bbox.width).toBe(Math.round(386 * ratio));
+  });
+
   it('exports a live graph without temperature and water axes, as it shows them', async () => {
     const rightmostLine = await mountThreeAxes('live');
 
     expect(await rightmostLine()).toBeGreaterThan(300 - 36);
+  });
+
+  it('keeps temperature and water bare in a picture with one ink colour', async () => {
+    await mountThreeAxes('static');
+
+    const image = await decode(
+      await renderer.exportImage({
+        width: 300,
+        height: 150,
+        theme: 'light',
+        ink: '#0000ff',
+        transparent: true,
+        scale: 1,
+      }),
+    );
+
+    // Above the time axis only right value columns could be blue; four
+    // columns in one ink could not be told apart.
+    const ink = pixels(image, 150, 0, 150, 150 - 28).filter(
+      ([r, g, b, a]) => a > 0 && b > 180 && r < 90 && g < 90,
+    );
+    expect(ink.length).toBe(0);
   });
 
   it('refuses to export without series', async () => {
@@ -693,31 +851,22 @@ describe('UplotRenderer', () => {
       expect(viewportRange({ mode: 'range', from: 2, to: 2 }, 30)).toEqual([
         2, 2.001,
       ]);
-      expect(viewportRange({ mode: 'follow', windowSec: 20 }, 5)).toEqual([
-        0, 20,
-      ]);
-      expect(viewportRange({ mode: 'follow', windowSec: 20 }, 30)).toEqual([
-        12, 32,
+      expect(viewportRange({ mode: 'grow', startSec: 20 }, 30)).toEqual([
+        0, 37.5,
       ]);
     });
 
-    it('keeps the live window still and jumps it once per window, as today', () => {
-      // Brew form: a 60 s window keeps 50 s in view after a jump.
-      expect(steppedRange(0, 60, 50)).toEqual([0, 70]);
-      expect(steppedRange(59.9, 60, 50)).toEqual([0, 70]);
-      expect(steppedRange(60, 60, 50)).toEqual([10, 130]);
-      expect(steppedRange(150, 60, 50)).toEqual([70, 190]);
-      // Maximized: a 90 s window keeps 70 s in view.
-      expect(steppedRange(95, 90, 70)).toEqual([20, 190]);
-      expect(
-        viewportRange({ mode: 'stepped', windowSec: 60, backSec: 50 }, 61),
-      ).toEqual([10, 130]);
-    });
-
-    it('shows the whole brew for a window without length', () => {
-      expect(steppedRange(42, 0, 0)).toEqual([0, 42]);
-      expect(steppedRange(-3, 60, 50)).toEqual([0, 70]);
-      expect(steppedRange(5, 60, -10)).toEqual([0, 70]);
+    it('starts the live window with its length and then grows it with the brew', () => {
+      expect(liveTimeRange(0, 20)).toEqual([0, 20]);
+      expect(liveTimeRange(16, 20)).toEqual([0, 20]);
+      expect(liveTimeRange(30, 20)).toEqual([0, 37.5]);
+      expect(liveTimeRange(360, 20)).toEqual([0, 450]);
+      // A long start window keeps still until the brew comes near its end.
+      expect(liveTimeRange(200, 300)).toEqual([0, 300]);
+      expect(liveTimeRange(-3, 20)).toEqual([0, 20]);
+      expect(liveTimeRange(Number.NaN, 20)).toEqual([0, 20]);
+      expect(liveTimeRange(5, 0)).toEqual([0, 20]);
+      expect(liveTimeRange(5, Number.NaN)).toEqual([0, 20]);
     });
 
     it('draws references first and orders the axes by the live series', () => {
@@ -734,7 +883,7 @@ describe('UplotRenderer', () => {
       expect(layout.axes).toEqual(['pressure', 'weight', 'temperature']);
     });
 
-    it('keeps temperature and water axes bare only while live or compact', () => {
+    it('keeps temperature and water axes bare only while live', () => {
       expect(axisShown('temperature', true)).toBeFalse();
       expect(axisShown('water', true)).toBeFalse();
       expect(axisShown('weight', true)).toBeTrue();

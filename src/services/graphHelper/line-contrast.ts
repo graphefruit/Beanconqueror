@@ -1,6 +1,11 @@
 type Rgb = [number, number, number];
 
 function parse(colour: string): Rgb | undefined {
+  // A computed ground comes as rgb() or rgba(); its alpha is left out.
+  const rgb = /^rgba?\((\d+),\s*(\d+),\s*(\d+)/i.exec(colour.trim());
+  if (rgb) {
+    return [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])];
+  }
   const match = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(colour.trim());
   if (!match) {
     return undefined;
@@ -23,7 +28,7 @@ function ratio(a: Rgb, b: Rgb): number {
   return (light + 0.05) / (dark + 0.05);
 }
 
-/** WCAG contrast of two `#rgb`/`#rrggbb` colours; NaN for any other. */
+/** WCAG contrast of two `#rgb`/`#rrggbb`/`rgb()` colours; NaN for any other. */
 export function contrastRatio(a: string, b: string): number {
   const [x, y] = [parse(a), parse(b)];
   return x && y ? ratio(x, y) : Number.NaN;
@@ -32,7 +37,7 @@ export function contrastRatio(a: string, b: string): number {
 /**
  * A graph line that stands out from `ground` by `min` at least: mixed towards
  * black on a light ground, white on a dark one, only as far as needed, so the
- * line keeps its hue. A colour that is not hex is left as it is.
+ * line keeps its hue. A colour that is neither hex nor rgb() is left as it is.
  */
 export function readableLine(colour: string, ground: string, min = 3): string {
   const [line, under] = [parse(colour), parse(ground)];

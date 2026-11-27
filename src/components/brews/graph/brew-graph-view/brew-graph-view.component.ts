@@ -62,10 +62,10 @@ function tenths(sec: number): number {
 }
 
 /**
- * The large graph of a saved brew: every series with data on fitted axes, a
+ * The graph of a saved brew: every series with data on fitted axes, a
  * reference brew underneath, a chip per series to show or hide it with its
- * reference, and a time slider whose values the graph labels at the cursor
- * and the slider says to a screen reader. Content given to it sits at the end
+ * reference and, when maximized, a time slider whose values the graph labels
+ * at the cursor and the slider says to a screen reader. Content given to it sits at the end
  * of the chip row, e.g. a close button.
  */
 @Component({
@@ -93,6 +93,8 @@ export class BrewGraphViewComponent {
 
   public readonly flow = input<BrewFlow | null>(null);
   public readonly reference = input<BrewFlow | null>(null);
+  /** The time slider and the cursor it moves, only in the maximized graph. */
+  public readonly timeSlider = input(false);
 
   private readonly chart = viewChild.required<ElementRef<HTMLElement>>('chart');
 
@@ -254,7 +256,6 @@ export class BrewGraphViewComponent {
       theme: dark ? 'dark' : 'light',
       transparent: false,
       scale: EXPORT_SCALE,
-      compact: true,
     });
   }
 
@@ -277,12 +278,16 @@ export class BrewGraphViewComponent {
   }
 
   private async mount(): Promise<void> {
-    const renderer = new UplotRenderer([
-      new CursorLabelsPlugin({
-        // A drag on the graph moves the slider too, in its steps.
-        onCursorDrag: (t) => this.cursor.set(tenths(t)),
-      }),
-    ]);
+    const renderer = new UplotRenderer(
+      this.timeSlider()
+        ? [
+            new CursorLabelsPlugin({
+              // A drag on the graph moves the slider too, in its steps.
+              onCursorDrag: (t) => this.cursor.set(tenths(t)),
+            }),
+          ]
+        : [],
+    );
     this.renderer = renderer;
     try {
       await renderer.mount(this.chart().nativeElement, {

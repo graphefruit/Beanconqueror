@@ -7,6 +7,10 @@
 .chips {
   display: flex;
   align-items: flex-start;
+}
+
+// Maximized, the chips are the header strip; embedded they sit on the card.
+.chips.header {
   background-color: var(--ion-header-background-color);
 }
 
@@ -19,7 +23,6 @@
   // Embedded in a page that grows with its content it keeps this height.
   min-height: 150px;
   overflow: hidden;
-  background: var(--ion-color-graph-background);
 }
 
 .slider {

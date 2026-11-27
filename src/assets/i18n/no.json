@@ -1273,8 +1273,6 @@
     "SHOW_VISUALIZER": "Vis Visualizer",
     "NO_BREWS_FOUND": "Ingen brygg funnet",
     "NO_GRAPHS_FOUND": "Ingen grafer funnet",
-    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_AXIS": "Angi tidsaksens maksverdi for grafen",
-    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_DESCRIPTION": "Angi tidsaksens maksverdi (sekunder) for både filter og espresso",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_NORMAL_SCREEN": "Filter - Normal skjerm",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_FULL_SCREEN_SCREEN": "Filter - Fullskjerm",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_NORMAL_SCREEN": "Espresso - Normal skjerm",

@@ -1273,8 +1273,6 @@
     "SHOW_VISUALIZER": "Εμφάνιση Visualizer",
     "NO_BREWS_FOUND": "Δεν βρέθηκαν παρασκευές",
     "NO_GRAPHS_FOUND": "Δεν βρέθηκαν γραφήματα",
-    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_AXIS": "Ορίστε τον άξονα μέγιστου χρόνου του γραφήματος",
-    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_DESCRIPTION": "Ρυθμίστε τα μέγιστα δευτερόλεπτα του άξονα χρόνου τόσο για τον φίλτρου όσο και για τον εσπρέσο.",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_NORMAL_SCREEN": "Φίλτρου - Κανονική οθόνη",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_FULL_SCREEN_SCREEN": "Φίλτρου - Πλήρης οθόνη",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_NORMAL_SCREEN": "Εσπρέσο - Κανονική οθόνη",

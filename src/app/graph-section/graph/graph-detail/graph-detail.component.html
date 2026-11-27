@@ -11,7 +11,7 @@
     </div>
   } @else {
     <div class="detail">
-      <app-brew-graph-view [flow]="flow()" [reference]="reference()">
+      <app-brew-graph-view [flow]="flow()" [reference]="reference()" [timeSlider]="true">
         <ng-container *ngTemplateOutlet="close" />
       </app-brew-graph-view>
       @if (referenceMissing()) {

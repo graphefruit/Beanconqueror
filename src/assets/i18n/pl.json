@@ -1273,8 +1273,6 @@
     "SHOW_VISUALIZER": "Pokaż wizualizator",
     "NO_BREWS_FOUND": "Nie znaleziono żadnych naparów",
     "NO_GRAPHS_FOUND": "Nie znaleziono żadnych wykresów",
-    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_AXIS": "Zdefiniuj maksymalną oś czasu wykresu",
-    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_DESCRIPTION": "Ustaw maksymalną liczbę sekund na osi czasu zarówno dla filtra, jak i espresso.",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_NORMAL_SCREEN": "Przelew — Normalny ekran",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_FULL_SCREEN_SCREEN": "Przelew — Pełny ekran",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_NORMAL_SCREEN": "Espresso — Normalny ekran",
