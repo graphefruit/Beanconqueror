@@ -129,19 +129,47 @@ describe('UplotRenderer', () => {
     host.remove();
   });
 
-  it('draws once per frame for many appends and skips idle frames', async () => {
+  it('draws once per frame for many appends and requests no idle frames', async () => {
     await mount();
     feed(buffer, 0, 1);
     await frames.run();
     const afterBuild = probe.draws;
+    expect(frames.pending).toBe(0);
 
     feed(buffer, 1, 30);
     expect(probe.draws).toBe(afterBuild);
+    expect(frames.pending).toBe(1);
     await frames.run();
     expect(probe.draws).toBe(afterBuild + 1);
+    expect(frames.pending).toBe(0);
+  });
+
+  it('requests no frames while the live graph is hidden and draws once it has a size', async () => {
+    await mount();
+    feed(buffer, 0, 1);
     await frames.run();
+    renderer.resize(0, 200);
     await frames.run();
-    expect(probe.draws).toBe(afterBuild + 1);
+    const draws = probe.draws;
+
+    feed(buffer, 1, 2);
+    await frames.run();
+    expect(frames.pending).toBe(0);
+    expect(probe.draws).toBe(draws);
+
+    renderer.resize(400, 200);
+    await frames.run();
+    expect(probe.draws).toBe(draws + 1);
+    expect(plot().width).toBe(400);
+  });
+
+  it('wakes up for a change of the reference buffer', async () => {
+    await mount();
+    const reference = new FlowSeriesBuffer();
+    renderer.setReferences(reference);
+    await frames.run();
+
+    reference.append('weight', 0, 1);
     expect(frames.pending).toBe(1);
   });
 
@@ -612,6 +640,18 @@ describe('UplotRenderer', () => {
     expect(frames.pending).toBe(0);
     expect(host.querySelector('.uplot')).toBeNull();
     renderer.setCursor(1);
+    feed(buffer, 2, 3);
+    expect(frames.pending).toBe(0);
+  });
+
+  it('does not wake up for a growing buffer outside live mode', async () => {
+    await mount('detail');
+    feed(buffer, 0, 1);
+    await frames.run();
+    await frames.run();
+    expect(frames.pending).toBe(0);
+
+    feed(buffer, 1, 2);
     expect(frames.pending).toBe(0);
   });
 

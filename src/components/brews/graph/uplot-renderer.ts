@@ -230,6 +230,7 @@ export class UplotRenderer implements BrewChartPort {
   private signature = '';
   private live: FlowSeriesBuffer | null = null;
   private ref: FlowSeriesBuffer | null = null;
+  private stopWatching: Array<() => void> = [];
   private viewport: Viewport = { mode: 'fitAll' };
   private readonly hidden = new Set<SeriesId>();
   private cursor: number | null = null;
@@ -292,6 +293,7 @@ export class UplotRenderer implements BrewChartPort {
 
   public attach(buffer: FlowSeriesBuffer): void {
     this.live = buffer;
+    this.watchBuffers();
     this.resetData();
     this.markState();
   }
@@ -299,6 +301,7 @@ export class UplotRenderer implements BrewChartPort {
   public setReferences(buffer: FlowSeriesBuffer | null): void {
     if (buffer !== this.ref) {
       this.ref = buffer;
+      this.watchBuffers();
       this.resetData();
       this.markState();
     }
@@ -408,6 +411,7 @@ export class UplotRenderer implements BrewChartPort {
 
   public destroy(): void {
     this.destroyed = true;
+    this.unwatchBuffers();
     if (this.frameHandle !== null) {
       this.cancelFrame(this.frameHandle);
       this.frameHandle = null;
@@ -430,19 +434,36 @@ export class UplotRenderer implements BrewChartPort {
   }
 
   /**
-   * Requests a frame for the next change. In live mode the renderer keeps
-   * watching the buffers' version every frame; a saved brew does not grow,
-   * so the other modes only draw after a setter (attach again after
-   * reloading a buffer), and a list of cards keeps no frame loop running.
+   * In live mode a change of a buffer requests a frame, so an idle or hidden
+   * live graph does no work per frame. A saved brew does not grow, so the
+   * other modes only draw after a setter (attach again after reloading a
+   * buffer).
    */
+  private watchBuffers(): void {
+    this.unwatchBuffers();
+    const wake = (): void => {
+      if (this.opts?.mode === 'live') {
+        this.scheduleFrame();
+      }
+    };
+    this.stopWatching = [this.live, this.ref]
+      .filter((buffer): buffer is FlowSeriesBuffer => buffer !== null)
+      .map((buffer) => buffer.onChange(wake));
+  }
+
+  private unwatchBuffers(): void {
+    this.stopWatching.forEach((stop) => stop());
+    this.stopWatching = [];
+  }
+
+  /** Requests a frame for the next change; collects several into one. */
   private scheduleFrame(): void {
     if (this.destroyed || this.frameHandle !== null || !this.lib) {
       return;
     }
     this.frameHandle = this.requestFrame((now) => {
       this.frameHandle = null;
-      this.tick(now);
-      if (this.opts?.mode === 'live' && this.live) {
+      if (this.tick(now)) {
         this.scheduleFrame();
       }
     });
@@ -451,10 +472,11 @@ export class UplotRenderer implements BrewChartPort {
   /**
    * One frame: draws only when a buffer or the renderer's state changed. New
    * samples alone wait for minDrawIntervalMs; they are drawn on a later frame.
+   * Returns true when samples wait for that later frame.
    */
-  private tick(now: number): void {
+  private tick(now: number): boolean {
     if (!this.lib || !this.el) {
-      return;
+      return false;
     }
     const liveVersion = this.live?.version ?? -1;
     const refVersion = this.ref?.version ?? -1;
@@ -463,12 +485,11 @@ export class UplotRenderer implements BrewChartPort {
       refVersion !== this.lastRefVersion;
     const stateChanged = this.stateDirty || this.structureDirty;
     const drawable = this.size.width > 0 && this.size.height > 0;
-    if (
-      !drawable ||
-      (!dataChanged && !stateChanged) ||
-      (!stateChanged && now - this.lastDrawAt < this.minDrawIntervalMs)
-    ) {
-      return;
+    if (!drawable || (!dataChanged && !stateChanged)) {
+      return false;
+    }
+    if (!stateChanged && now - this.lastDrawAt < this.minDrawIntervalMs) {
+      return true;
     }
     this.lastDrawAt = now;
     this.lastLiveVersion = liveVersion;
@@ -478,6 +499,7 @@ export class UplotRenderer implements BrewChartPort {
     } else {
       this.render();
     }
+    return false;
   }
 
   private rebuild(): void {

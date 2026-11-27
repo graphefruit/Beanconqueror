@@ -165,7 +165,20 @@ export class FlowSeriesBuffer implements SeriesSource {
   /** Clock seconds of the brew's first sample; times count from it. */
   private start = Number.NaN;
 
+  private readonly listeners = new Set<() => void>();
+
   constructor(private readonly initialCapacity = 256) {}
+
+  /** Calls back on every change, until the returned function is called. */
+  public onChange(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  private changed(): void {
+    this.changes++;
+    this.listeners.forEach((listener) => listener());
+  }
 
   public get version(): number {
     return this.changes;
@@ -191,7 +204,7 @@ export class FlowSeriesBuffer implements SeriesSource {
 
   public setCustomAxis(axis: IBrewCustomAxis): void {
     this.axes.set(customSeriesId(axis.key), axis);
-    this.changes++;
+    this.changed();
   }
 
   /** Appends a sample; the series is created on its first sample. */
@@ -209,7 +222,7 @@ export class FlowSeriesBuffer implements SeriesSource {
     store.t[store.length] = t;
     store.y[store.length] = y;
     store.length++;
-    this.changes++;
+    this.changed();
   }
 
   /**
@@ -237,7 +250,7 @@ export class FlowSeriesBuffer implements SeriesSource {
       return false;
     }
     store.y[store.length - 1] = y;
-    this.changes++;
+    this.changed();
     return true;
   }
 
@@ -274,7 +287,7 @@ export class FlowSeriesBuffer implements SeriesSource {
     this.axes.clear();
     this.start = Number.NaN;
     this.clears++;
-    this.changes++;
+    this.changed();
   }
 
   /**
@@ -349,7 +362,7 @@ export class FlowSeriesBuffer implements SeriesSource {
       }
       this.sortSeries(id);
     }
-    this.changes++;
+    this.changed();
     if (this.series.size > 0) {
       return { hasGraph: true, skipped };
     }

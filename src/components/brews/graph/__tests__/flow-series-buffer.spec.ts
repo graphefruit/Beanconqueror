@@ -79,6 +79,21 @@ function importedFlow(): BrewFlow {
 }
 
 describe('FlowSeriesBuffer', () => {
+  it('tells its listeners about every change until they stop listening', () => {
+    const buffer = new FlowSeriesBuffer();
+    const listener = jasmine.createSpy('listener');
+    const stop = buffer.onChange(listener);
+
+    buffer.append('weight', 0, 1);
+    buffer.replaceLast('weight', 2);
+    buffer.clear();
+    expect(listener).toHaveBeenCalledTimes(3);
+
+    stop();
+    buffer.append('weight', 0, 1);
+    expect(listener).toHaveBeenCalledTimes(3);
+  });
+
   it('loads recorded brews without losing a sample', () => {
     for (const recorded of [recordedThird, recordedFourth]) {
       const flow = recorded as unknown as BrewFlow;
