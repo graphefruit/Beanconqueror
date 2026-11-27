@@ -1,15 +1,10 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {
-  ActionSheetController,
-  ModalController,
-  Platform,
-} from '@ionic/angular';
+import { ActionSheetController, ModalController } from '@ionic/angular';
 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxStarsComponent } from 'ngx-stars';
-import { Subject } from 'rxjs';
 
 import en from '../../../assets/i18n/en.json';
 import { Bean } from '../../../classes/bean/bean';
@@ -36,6 +31,7 @@ import { UIToast } from '../../../services/uiToast';
 import { BeanStore } from '../../../stores/beans/bean.store';
 import { FakeStoreSource } from '../../../stores/core/__tests__/fake-store-source';
 import { DeleteCommands, Deletion } from '../../../stores/delete-commands';
+import { BeanShareComponent } from '../../bean-share/bean-share.component';
 import {
   BeanActionEvent,
   BeanInformationComponent,
@@ -199,7 +195,7 @@ describe('BeanInformationComponent', () => {
     modal = spies(['create']);
     actionSheet = spies(['create']);
     server = spies(['getBeanInformation']);
-    share = spies(['shareBean', 'shareImage']);
+    share = spies(['shareBean']);
     image = spies(['viewPhotos']);
     uiHelper = spies(['toFixedIfNecessary', 'copyToClipboard']);
     uiHelper.toFixedIfNecessary.and.callFake((value: number, dp: number) =>
@@ -225,7 +221,6 @@ describe('BeanInformationComponent', () => {
         { provide: UIHelper, useValue: uiHelper },
         { provide: UIAnalytics, useValue: analytics },
         { provide: DeleteCommands, useValue: commands },
-        { provide: Platform, useValue: { is: () => false } },
       ],
     });
     await beans.load([alpha, storedBean('beta', { name: 'Beta' })]);
@@ -828,6 +823,7 @@ describe('BeanInformationComponent', () => {
           'heart-outline',
         ],
         [A.SHARE, 'SHARE_BEAN_URL', 'share-social-outline'],
+        [A.SHARE_IMAGE, 'SHARE_CARD.MENU', 'images-outline'],
         [A.BEANS_CONSUMED, 'BEANS_CONSUMED', 'beanconqueror-finished'],
         [
           A.PHOTO_GALLERY,
@@ -869,6 +865,7 @@ describe('BeanInformationComponent', () => {
         [A.REFRESH_DATA_FROM_QR_CODE, 'beanconqueror-refresh-barcode'],
         [A.TOGGLE_FAVOURITE, 'heart'],
         [A.SHARE, 'share-social-outline'],
+        [A.SHARE_IMAGE, 'images-outline'],
         [A.UNARCHIVE, 'beanconqueror-unfinish'],
         [A.PHOTO_GALLERY, 'beanconqueror-photo-gallery'],
         [A.GENERATE_INTERNAL_SHARE_CODE, 'qr-code-outline'],
@@ -1395,17 +1392,30 @@ describe('BeanInformationComponent', () => {
       expect(warn).not.toHaveBeenCalled();
     });
 
-    it('share an image of the card', async () => {
-      const shared = new Subject<void>();
-      alert.hideLoadingSpinner.and.callFake(async () => shared.next());
-      const done = new Promise<void>((resolve) =>
-        shared.subscribe(() => resolve()),
+    it('share the stored bean as a picture in its own dialog', async () => {
+      const open = spyOn(BeanShareComponent, 'open').and.resolveTo();
+      choose(BEAN_ACTION.SHARE_IMAGE);
+
+      await card.showBeanActions(event());
+
+      expect(analytics.trackEvent).toHaveBeenCalledWith(
+        BEAN_TRACKING.TITLE,
+        BEAN_TRACKING.ACTIONS.SHARE_IMAGE,
       );
+      const [, bean, usage] = open.calls.mostRecent().args;
+      expect(bean).toBe(TestBed.inject(BeanStore).byUuid().get('alpha'));
+      expect(usage.brews).toBe(2);
+      expect(emitted.map(([action]) => action)).toEqual([A.SHARE_IMAGE]);
+    });
 
-      await card.internalBeanAction(BEAN_ACTION.SHARE_IMAGE);
-      await done;
+    it('offer the picture on the card of a frozen group as well', async () => {
+      fixture.componentRef.setInput('beanGroup', {
+        frozenGroupId: 'g',
+        beans: [legacyBean(alpha), legacyBean(beans.entries[1] as IBean)],
+      } satisfies BeanGroup);
+      await fixture.whenStable();
 
-      expect(alert.showLoadingSpinner).toHaveBeenCalled();
+      expect(await offered()).toContain(A.SHARE_IMAGE);
     });
   });
 });
