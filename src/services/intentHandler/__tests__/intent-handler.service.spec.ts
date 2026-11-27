@@ -3,6 +3,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { ModalController } from '@ionic/angular';
 
+import { App, type URLOpenListenerEvent } from '@capacitor/app';
+import { AppWeb } from '@capacitor/app/dist/esm/web';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Settings } from '../../../classes/settings/settings';
@@ -514,6 +516,46 @@ describe('IntentHandlerService', () => {
     expect(uiBeanHelper.addUserSharedBean.calls.allArgs()).toEqual([
       ['ab+cd/='],
     ]);
+  });
+
+  describe('links the operating system opens in the app', () => {
+    let openUrl: ((event: URLOpenListenerEvent) => void) | undefined;
+    let handleDeepLink: jasmine.Spy;
+
+    beforeEach(async () => {
+      // Loads the web implementation, so the listener below is registered within one task.
+      await App.removeAllListeners();
+      openUrl = undefined;
+      spyOn(AppWeb.prototype, 'addListener').and.callFake(
+        (
+          _eventName: string,
+          listener: (event: URLOpenListenerEvent) => void,
+        ) => {
+          openUrl = listener;
+          return Promise.resolve({ remove: () => Promise.resolve() });
+        },
+      );
+      (TestBed.inject(NgZone).run as jasmine.Spy).and.callFake(
+        (fn: () => unknown) => fn(),
+      );
+      handleDeepLink = spyOn(service, 'handleDeepLink').and.resolveTo();
+      service.attachOnHandleOpenUrl();
+      await new Promise((resolve) => setTimeout(resolve));
+    });
+
+    it('only opens the app for a website page without data', () => {
+      openUrl({ url: 'https://beanconqueror.com/app/userbean/' });
+
+      expect(handleDeepLink).not.toHaveBeenCalled();
+    });
+
+    it('hands a link with data to the import', () => {
+      const link = 'https://beanconqueror.com/app/userbean/?shareUserBean0=AAA';
+
+      openUrl({ url: link });
+
+      expect(handleDeepLink).toHaveBeenCalledOnceWith(link);
+    });
   });
 
   describe('links from the website and from roaster codes', () => {
