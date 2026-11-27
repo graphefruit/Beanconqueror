@@ -146,7 +146,6 @@ describe('BrewBrewingGraphComponent shot end', () => {
         data,
         settings,
         isEdit: false,
-        isDetail: false,
         baristamode: false,
         baristaModeTargetWeight: undefined,
         ignoreScaleWeight: false,
@@ -579,7 +578,6 @@ describe('BrewBrewingGraphComponent shot end', () => {
       ).graphHelper.fillDataIntoTraces(
         internals().flow_profile_raw,
         internals().traces,
-        false,
       );
       press(1);
 

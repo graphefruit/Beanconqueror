@@ -454,11 +454,6 @@
       "count": 1
     }
   },
-  "src/app/brew/brew-detail/__tests__/brew-detail-field-order.spec.ts": {
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    }
-  },
   "src/app/brew/brew-detail/brew-detail.component.ts": {
     "@angular-eslint/no-input-rename": {
       "count": 1
@@ -467,16 +462,13 @@
       "count": 1
     },
     "@typescript-eslint/no-floating-promises": {
-      "count": 6
+      "count": 2
     },
     "@typescript-eslint/no-unnecessary-type-assertion": {
       "count": 1
     },
     "no-empty": {
-      "count": 7
-    },
-    "no-var": {
-      "count": 1
+      "count": 2
     }
   },
   "src/app/brew/brew-edit/brew-edit.component.ts": {
@@ -532,7 +524,7 @@
       "count": 3
     },
     "no-empty": {
-      "count": 6
+      "count": 5
     },
     "no-var": {
       "count": 1
@@ -590,7 +582,7 @@
       "count": 2
     },
     "no-empty": {
-      "count": 8
+      "count": 2
     },
     "no-var": {
       "count": 1
@@ -685,32 +677,6 @@
     },
     "no-empty": {
       "count": 2
-    }
-  },
-  "src/app/graph-section/graph/graph-detail/graph-detail.component.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
-      "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 1
-    },
-    "no-empty": {
-      "count": 3
-    },
-    "no-var": {
-      "count": 1
     }
   },
   "src/app/graph-section/graph/graph-edit/graph-edit.component.ts": {
@@ -2589,26 +2555,6 @@
       "count": 1
     }
   },
-  "src/components/graph-display-card/graph-display-card.component.ts": {
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-misused-promises": {
-      "count": 1
-    },
-    "@typescript-eslint/no-unnecessary-type-assertion": {
-      "count": 2
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 1
-    },
-    "no-empty": {
-      "count": 2
-    },
-    "no-var": {
-      "count": 1
-    }
-  },
   "src/components/graph-information-card/graph-information-card.component.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
       "count": 1
@@ -2624,9 +2570,6 @@
     },
     "no-empty": {
       "count": 3
-    },
-    "no-var": {
-      "count": 1
     }
   },
   "src/components/green-bean-information/green-bean-information.component.ts": {
@@ -3225,17 +3168,6 @@
   "src/services/androidPlatform/android-platform.service.ts": {
     "@typescript-eslint/no-empty-function": {
       "count": 3
-    }
-  },
-  "src/services/annotationGraphHelper/annotation-graph-helper.service.ts": {
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 2
-    },
-    "@typescript-eslint/prefer-regexp-exec": {
-      "count": 1
-    },
-    "no-var": {
-      "count": 1
     }
   },
   "src/services/beanSortFilterHelper/bean-sort-filter-helper.service.ts": {

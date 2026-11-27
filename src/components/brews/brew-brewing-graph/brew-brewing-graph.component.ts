@@ -216,7 +216,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   @Output() public dataChange = new EventEmitter<Brew>();
 
   @Input() public isEdit = false;
-  @Input() public isDetail = false;
 
   @Input() public baristamode = false;
   public baristaModeTargetWeight: number = undefined;
@@ -344,7 +343,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   public async instance() {
-    if (this.isEdit || this.isDetail) {
+    if (this.isEdit) {
       // This needs to be done before initialize the flow chart
       if (this.data.flow_profile !== '') {
         // We had a flow profile, so read data now.
@@ -358,102 +357,99 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (this.isDetail === false) {
-      this.toggleGraphElementsOnBaristaMode();
-      let isSomethingConnected = false;
-      if (this.smartScaleConnected()) {
-        await this.__connectSmartScale(true);
-        isSomethingConnected = true;
-      }
-      if (
-        this.pressureDeviceConnected() &&
-        this.data.getPreparation().style_type ===
-          PREPARATION_STYLE_TYPE.ESPRESSO
-      ) {
-        await this.__connectPressureDevice(true);
-        isSomethingConnected = true;
-      }
-      if (this.temperatureDeviceConnected()) {
-        await this.__connectTemperatureDevice(true);
-        isSomethingConnected = true;
-      }
-      const prepDeviceType =
-        this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType();
-      if (
-        this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
-        (prepDeviceType === PreparationDeviceType.METICULOUS ||
-          prepDeviceType === PreparationDeviceType.XENIA ||
-          prepDeviceType === PreparationDeviceType.SANREMO_YOU ||
-          prepDeviceType === PreparationDeviceType.MOVE2)
-      ) {
-        isSomethingConnected = true;
-      }
-      if (isSomethingConnected === true) {
-        this.initializeFlowChart();
-        void this.hintTimeParameter();
-      }
-
-      this.bluetoothSubscription = this.bleManager
-        .attachOnEvent()
-        .subscribe((_type) => {
-          let disconnectTriggered = false;
-          let connectTriggered = false;
-
-          if (_type === CoffeeBluetoothServiceEvent.CONNECTED_SCALE) {
-            connectTriggered = true;
-            this.__connectSmartScale(false);
-          } else if (_type === CoffeeBluetoothServiceEvent.DISCONNECTED_SCALE) {
-            this.deattachToWeightChange();
-            this.deattachToFlowChange();
-            this.deattachToTextToSpeedChange();
-            this.deattachToScaleEvents();
-            disconnectTriggered = true;
-          } else if (_type === CoffeeBluetoothServiceEvent.CONNECTED_PRESSURE) {
-            connectTriggered = true;
-            this.__connectPressureDevice(false);
-          } else if (
-            _type === CoffeeBluetoothServiceEvent.DISCONNECTED_PRESSURE
-          ) {
-            this.deattachToPressureChange();
-            disconnectTriggered = true;
-          } else if (
-            _type === CoffeeBluetoothServiceEvent.CONNECTED_TEMPERATURE
-          ) {
-            connectTriggered = true;
-            this.__connectTemperatureDevice(false);
-          } else if (
-            _type === CoffeeBluetoothServiceEvent.DISCONNECTED_TEMPERATURE
-          ) {
-            this.deattachToTemperatureChange();
-            disconnectTriggered = true;
-          }
-
-          if (disconnectTriggered) {
-            if (
-              !this.smartScaleConnected() &&
-              !this.pressureDeviceConnected() &&
-              !this.temperatureDeviceConnected()
-            ) {
-              // When one is connected we don't pause
-            }
-          }
-          if (connectTriggered) {
-            //Always initialize new as long as the timer is not running
-            if (this.brewComponent.timer?.isTimerRunning() !== true) {
-              this.initializeFlowChart();
-            }
-            void this.hintTimeParameter();
-          }
-          // If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
-          setTimeout(() => {
-            this.graphIconColSize = this.getGraphIonColSize();
-            this.setUIParams();
-            this.checkChanges();
-          }, 200);
-          this.brewComponent?.brewBrewingPreparationDeviceEl?.checkChanges();
-          this.brewComponent?.checkChanges();
-        });
+    this.toggleGraphElementsOnBaristaMode();
+    let isSomethingConnected = false;
+    if (this.smartScaleConnected()) {
+      await this.__connectSmartScale(true);
+      isSomethingConnected = true;
     }
+    if (
+      this.pressureDeviceConnected() &&
+      this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
+    ) {
+      await this.__connectPressureDevice(true);
+      isSomethingConnected = true;
+    }
+    if (this.temperatureDeviceConnected()) {
+      await this.__connectTemperatureDevice(true);
+      isSomethingConnected = true;
+    }
+    const prepDeviceType =
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType();
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      (prepDeviceType === PreparationDeviceType.METICULOUS ||
+        prepDeviceType === PreparationDeviceType.XENIA ||
+        prepDeviceType === PreparationDeviceType.SANREMO_YOU ||
+        prepDeviceType === PreparationDeviceType.MOVE2)
+    ) {
+      isSomethingConnected = true;
+    }
+    if (isSomethingConnected === true) {
+      this.initializeFlowChart();
+      void this.hintTimeParameter();
+    }
+
+    this.bluetoothSubscription = this.bleManager
+      .attachOnEvent()
+      .subscribe((_type) => {
+        let disconnectTriggered = false;
+        let connectTriggered = false;
+
+        if (_type === CoffeeBluetoothServiceEvent.CONNECTED_SCALE) {
+          connectTriggered = true;
+          this.__connectSmartScale(false);
+        } else if (_type === CoffeeBluetoothServiceEvent.DISCONNECTED_SCALE) {
+          this.deattachToWeightChange();
+          this.deattachToFlowChange();
+          this.deattachToTextToSpeedChange();
+          this.deattachToScaleEvents();
+          disconnectTriggered = true;
+        } else if (_type === CoffeeBluetoothServiceEvent.CONNECTED_PRESSURE) {
+          connectTriggered = true;
+          this.__connectPressureDevice(false);
+        } else if (
+          _type === CoffeeBluetoothServiceEvent.DISCONNECTED_PRESSURE
+        ) {
+          this.deattachToPressureChange();
+          disconnectTriggered = true;
+        } else if (
+          _type === CoffeeBluetoothServiceEvent.CONNECTED_TEMPERATURE
+        ) {
+          connectTriggered = true;
+          this.__connectTemperatureDevice(false);
+        } else if (
+          _type === CoffeeBluetoothServiceEvent.DISCONNECTED_TEMPERATURE
+        ) {
+          this.deattachToTemperatureChange();
+          disconnectTriggered = true;
+        }
+
+        if (disconnectTriggered) {
+          if (
+            !this.smartScaleConnected() &&
+            !this.pressureDeviceConnected() &&
+            !this.temperatureDeviceConnected()
+          ) {
+            // When one is connected we don't pause
+          }
+        }
+        if (connectTriggered) {
+          //Always initialize new as long as the timer is not running
+          if (this.brewComponent.timer?.isTimerRunning() !== true) {
+            this.initializeFlowChart();
+          }
+          void this.hintTimeParameter();
+        }
+        // If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
+        setTimeout(() => {
+          this.graphIconColSize = this.getGraphIonColSize();
+          this.setUIParams();
+          this.checkChanges();
+        }, 200);
+        this.brewComponent?.brewBrewingPreparationDeviceEl?.checkChanges();
+        this.brewComponent?.checkChanges();
+      });
   }
 
   private timeParameterHinted = false;
@@ -812,8 +808,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
 
     if (
       this.brewComponent?.timer?.isTimerRunning() !== true ||
-      this.data.brew_time === 0 ||
-      this.isDetail === true
+      this.data.brew_time === 0
     ) {
       if (this.canWePlot()) {
         // Re render, else the lines would not be hidden/shown when having references graphs
@@ -1000,7 +995,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.traces = this.graphHelper.fillTraces(
       this.traces,
       this.graphSettings,
-      this.isDetail,
+      false,
       false,
       this.flow_profile_raw,
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType(),
@@ -1014,7 +1009,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.traceReferences = this.graphHelper.fillTraces(
       this.traceReferences,
       this.graphSettings,
-      this.isDetail,
+      false,
       true,
       this.reference_profile_raw,
       undefined,
@@ -1033,7 +1028,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.getPreparation().style_type,
       this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected(),
       this.brewComponent.maximizeFlowGraphIsShown,
-      this.isDetail,
+      false,
       chartWidth,
       chartHeight,
       false,
@@ -1093,20 +1088,11 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   }
 
   private getChartConfig() {
-    if (this.isDetail === true) {
-      const config = {
-        displayModeBar: false, // this is the line that hides the bar.
-        responsive: true,
-      };
-      return config;
-    } else {
-      const config = {
-        responsive: false,
-        scrollZoom: false,
-        displayModeBar: false, // this is the line that hides the bar.
-      };
-      return config;
-    }
+    return {
+      responsive: false,
+      scrollZoom: false,
+      displayModeBar: false, // this is the line that hides the bar.
+    };
   }
 
   private async __connectPressureDevice(_firstStart: boolean) {
@@ -1452,9 +1438,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         );
 
         if (
-          (this.brewComponent?.timer?.isTimerRunning() === true ||
-            this.data.brew_time === 0) &&
-          this.isDetail === false
+          this.brewComponent?.timer?.isTimerRunning() === true ||
+          this.data.brew_time === 0
         ) {
           setTimeout(() => {
             const prepStyle = this.brewComponent.choosenPreparation.style_type;
@@ -4741,8 +4726,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     if (
       (this.smartScaleConnected() ||
         this.pressureDeviceConnected() ||
-        this.temperatureDeviceConnected() ||
-        this.isDetail) &&
+        this.temperatureDeviceConnected()) &&
       this.baristamode === false
     ) {
       setTimeout(() => {

@@ -1,13 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  effect,
-  ElementRef,
   inject,
   Input,
   OnInit,
-  signal,
-  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -76,28 +72,9 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
   public radioSelection: string;
   public history: any[] = [];
   public readonly entryKey = (entry: { id: string }): string => entry.id;
-  public readonly chartWidth = signal(0);
   public hasMore = true;
   public isLoadingMore = false;
   private lastEntryTime: number | undefined;
-
-  private readonly ionItemEl = viewChild('ionItemEl', { read: ElementRef });
-
-  public constructor() {
-    // Measured when the entry is laid out: the chart width follows the
-    // entry's, also after a rotation or resize.
-    effect((onCleanup) => {
-      const item = this.ionItemEl()?.nativeElement as HTMLElement | undefined;
-      if (!item) {
-        return;
-      }
-      const observer = new ResizeObserver(() =>
-        this.chartWidth.set(item.offsetWidth ? item.offsetWidth - 50 : 0),
-      );
-      observer.observe(item);
-      onCleanup(() => observer.disconnect());
-    });
-  }
 
   public ngOnInit() {
     void this.readHistory();

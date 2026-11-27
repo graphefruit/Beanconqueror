@@ -33,12 +33,16 @@ import {
     [rangeLabel]="label()"
     [rangeUnit]="unit()"
     [rangeOfMax]="ofMax()"
+    [rangeValueFormat]="format()"
   />`,
 })
 class HostComponent {
   public readonly label = signal('Bildqualität');
   public readonly unit = signal('%');
   public readonly ofMax = signal(false);
+  public readonly format = signal<((value: number) => string) | undefined>(
+    undefined,
+  );
 }
 
 function knob(value: number, extraPart = ''): string {
@@ -345,6 +349,23 @@ describe('RangeNameDirective', () => {
       expect(liveRegion.heard).toEqual(['2,5 von 5', '3 of 5']);
       expect(knobs()[0].getAttribute('aria-valuetext')).toBe('3 of 5');
     });
+  });
+
+  it('says a value in the words it is given, and follows new words', async () => {
+    await create(knob(12));
+
+    fixture.componentInstance.format.set((value) => `${value} s, Weight: 30 g`);
+    await settle();
+    expect(knobs()[0].getAttribute('aria-valuetext')).toBe(
+      '12 s, Weight: 30 g',
+    );
+
+    await startDrag(12);
+    fire('ionKnobMoveEnd', 13);
+    expect(knobs()[0].getAttribute('aria-valuetext')).toBe(
+      '13 s, Weight: 30 g',
+    );
+    expect(liveRegion.heard).toEqual(['13 s, Weight: 30 g']);
   });
 
   it('keeps Ionic’s name where no label is given', async () => {

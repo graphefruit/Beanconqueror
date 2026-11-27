@@ -121,6 +121,8 @@ export class RangeNameDirective {
   public readonly rangeUnit = input<string>('');
   /** Says the value against the maximum, e.g. "4 of 5" on a rating. */
   public readonly rangeOfMax = input(false, { transform: booleanAttribute });
+  /** Says a value in words of its own, e.g. a time with what a graph shows at it. */
+  public readonly rangeValueFormat = input<(value: number) => string>();
 
   private readonly rendered = signal(false);
   private readonly language = toSignal(this.translate.onLangChange);
@@ -177,6 +179,7 @@ export class RangeNameDirective {
       this.rangeLabel();
       this.rangeUnit();
       this.rangeOfMax();
+      this.rangeValueFormat();
       this.language();
       if (this.rendered()) {
         this.describeKnobs();
@@ -275,6 +278,10 @@ export class RangeNameDirective {
 
   /** What a screen reader says for a knob at `value`, e.g. "80 %" or "4 of 5". */
   private valueText(value: number): string {
+    const format = this.rangeValueFormat();
+    if (format) {
+      return format(value);
+    }
     const language = this.translate.getCurrentLang() ?? 'en';
     const text = rangeValueText(
       value,

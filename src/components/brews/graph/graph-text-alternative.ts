@@ -1,5 +1,6 @@
 import { describeChart } from '../../../services/a11y/chart-text-alternative.service';
 import type { FlowSeriesBuffer } from './flow-series-buffer';
+import { nearestSample } from './overlays/cursor-labels';
 import type { SeriesDef } from './series-def';
 import { formatSeconds } from './uplot-renderer';
 
@@ -31,4 +32,40 @@ export function describeFlowGraph(
       };
     });
   return describeChart(title, [], series, language, t);
+}
+
+function oneDecimal(language: string): Intl.NumberFormat {
+  const options = { minimumFractionDigits: 1, maximumFractionDigits: 1 };
+  try {
+    return new Intl.NumberFormat(language.replace('_', '-'), options);
+  } catch {
+    return new Intl.NumberFormat('en', options);
+  }
+}
+
+/**
+ * What the time slider of a graph says: the time and the value at it of each
+ * live series in `defs`, as the cursor labels draw them on the canvas, which
+ * a screen reader cannot read, e.g. "12.0 s, Weight: 30.1 g".
+ */
+export function describeCursor(
+  time: number,
+  buffer: FlowSeriesBuffer,
+  defs: readonly SeriesDef[],
+  language: string,
+): string {
+  const number = oneDecimal(language);
+  const parts = [`${number.format(time)} s`];
+  for (const def of defs) {
+    if (def.kind !== 'live') {
+      continue;
+    }
+    const { t, y } = buffer.view(def.id);
+    const i = nearestSample(t, y, time);
+    if (i >= 0) {
+      const unit = def.unit ? ` ${def.unit}` : '';
+      parts.push(`${def.label}: ${number.format(y[i])}${unit}`);
+    }
+  }
+  return parts.join(', ');
 }

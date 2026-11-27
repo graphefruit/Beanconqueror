@@ -1863,6 +1863,7 @@
     "CUT_FLOW_PROFILE_NEW_WEIGHT": "Neues Gewicht",
     "CUT_FLOW_PROFILE_NEW_DURATION": "Neue Dauer",
     "CUT_FLOW_PROFILE_LEFT_RIGHT": "Links\/rechts Abschnitt (Start - Ende)",
+    "CUT_FLOW_PROFILE_SAVE_FAILED": "Der Schnitt konnte nicht gespeichert werden. Die Brühung und ihr Flussprofil sind unverändert.",
     "STATISTIC_RANGE_ALL_TIME": "Seit jeher",
     "STATISTIC_RANGE_THIS_MONTH": "Diesen Monat",
     "STATISTIC_RANGE_LAST_MONTH": "Letzten Monat",
@@ -1896,6 +1897,8 @@
     "PREPARATION_TYPE_GAGGIMATE": "GaggiMate",
     "IMPORT_SHOT_FROM_GAGGIMATE": "Eine Brühung aus GaggiMate importieren",
     "BREW_GRAPH_TIME_SLIDER": "Zeitschieber",
+    "GRAPH_CANNOT_BE_SHOWN": "Dieser Graph lässt sich nicht anzeigen: Die Datei fehlt oder ist beschädigt.",
+    "GRAPH_REFERENCE_CANNOT_BE_SHOWN": "Der Referenzgraph lässt sich nicht anzeigen: Er wurde gelöscht oder die Datei ist beschädigt.",
     "PAGE_SETTINGS_BREW_BY_WEIGHT_WEBHOOK_SECTION": "Webhook für Brew by Weight",
     "BREW_BY_WEIGHT_WEBHOOK": {
         "ACTIVATE": "Webhook bei Erreichen des Zielgewichts aktivieren",

@@ -5,8 +5,7 @@
     <app-header-button header-slot="end" icon="create" buttonClass="big-icon-only" [ariaLabel]="'EDIT_BREW' | translate" (clicked)="edit()" />
   </app-header>
 </ion-header>
-<!--We need to set editActive here aswell, because this will destroy 'everything' else we sometimes have the issue on android that plotly does not render the lines on the first time -->
-@if(loaded && editActive === false) {
+@if(loaded) {
 <ion-content>
   @if(uiShowSectionBeforeBrew) {
     <ion-card class="popover"
@@ -227,8 +226,8 @@
                     <ion-col size="4">
                       <ion-card class="flow-profile ion-text-center" style="height: 100%;">
                         <ion-card-header>
-                          <div>Ø&nbsp;{{getAvgFlow()| toFixed: 2}} g/s</div>
-                          <div>^&nbsp;{{getPeakFlow() | toFixed: 2}}&nbsp;g/s</div>
+                          <div>Ø&nbsp;{{avgFlow() | toFixed: 2}} g/s</div>
+                          <div>^&nbsp;{{peakFlow() | toFixed: 2}}&nbsp;g/s</div>
                         </ion-card-header>
                         <ion-card-content>
                           {{"BREW_AVG_FLOW_WEIGHT_PER_SECOND" | translate}}
@@ -273,14 +272,8 @@
                 </ion-grid>
               </ion-item>
             }
-            @if(editActive===false && data.flow_profile) {
-              <!-- HACK: brewComponent property expects BrewBrewingComponent,
-                         but this component has always just passed 'this' into it.
-                         This is an error with strictTemplates. (See #1074)
-                         Fixing this in brew-brewing-graph doesn't look trivial, so
-                         for now we silence this error by casting to any with
-                         $any(this). -->
-              <brew-brewing-graph #brewBrewingGraphEl [isDetail]='true' [brewComponent]='$any(this)' [(data)]='data' />
+            @if(data.flow_profile && flow() !== undefined) {
+              <app-brew-graph-view [flow]="flow()" [reference]="reference()" />
             }
           }
           @case ('brew_time') {

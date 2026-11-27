@@ -9,7 +9,7 @@ import {
   type UplotOverlayState,
 } from './uplot-plugin';
 
-/** Same values as AnnotationGraphHelperService. */
+/** Spacing of the labels at the cursor, as the Plotly slider had it. */
 export const LABEL_MIN_GAP = 28;
 export const LABEL_EDGE = 15;
 export const LABEL_OFFSET = 55;
@@ -48,7 +48,7 @@ export function nearestSample(
 
 /**
  * Label centres (same order as `targets`) at least `minGap` apart, pushed
- * into [top, bottom] where possible; the AnnotationGraphHelperService layout.
+ * into [top, bottom] where possible.
  */
 export function layoutLabels(
   targets: readonly number[],

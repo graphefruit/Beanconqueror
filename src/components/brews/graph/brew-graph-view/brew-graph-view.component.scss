@@ -1,0 +1,50 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chips {
+  display: flex;
+  align-items: flex-start;
+  background-color: var(--ion-header-background-color);
+}
+
+.chip-list {
+  flex: 1 1 auto;
+}
+
+.chart {
+  flex: 1 1 auto;
+  // Embedded in a page that grows with its content it keeps this height.
+  min-height: 150px;
+  overflow: hidden;
+  background: var(--ion-color-graph-background);
+}
+
+.slider {
+  flex: none;
+  min-height: 72px;
+  background: var(--ion-color-light);
+
+  ion-item:last-child {
+    top: -10px;
+  }
+}
+
+ion-label {
+  display: block;
+  position: relative;
+  top: 5px;
+}
+
+ion-badge {
+  vertical-align: top;
+  --color: black;
+  color: black;
+}
+
+.hint {
+  flex: 1 1 auto;
+  padding: 16px;
+}

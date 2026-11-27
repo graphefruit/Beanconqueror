@@ -309,8 +309,23 @@ export class UIFileHelper extends InstanceClass {
    * deleted while there still is a file at `path`: after a failed move it is
    * the only one left.
    */
-  public async replaceFileFromBlob(
+  public replaceFileFromBlob(
     blob: Blob,
+    path: string,
+    unfinishedPath: string,
+    directory: Directory,
+  ): Promise<void> {
+    return this.__replaceFile(
+      () => this.writeFileFromBlob(blob, unfinishedPath, directory),
+      path,
+      unfinishedPath,
+      directory,
+    );
+  }
+
+  /** `write` puts the new data at `unfinishedPath`. */
+  private async __replaceFile(
+    write: () => Promise<unknown>,
     path: string,
     unfinishedPath: string,
     directory: Directory,
@@ -319,7 +334,7 @@ export class UIFileHelper extends InstanceClass {
       this.deleteFile(unfinishedPath, directory).catch(() => undefined);
     await deleteUnfinished();
     try {
-      await this.writeFileFromBlob(blob, unfinishedPath, directory);
+      await write();
     } catch (error) {
       await deleteUnfinished();
       throw error;
@@ -351,6 +366,44 @@ export class UIFileHelper extends InstanceClass {
       unfinishedPath,
       this.getDataDirectory(),
     );
+  }
+
+  /**
+   * Replaces the text file at `path` as replaceFileFromBlob does and keeps the
+   * file from before at `copyPath`, in place of an older copy. Rejects
+   * without touching `path` when the copy cannot be made. When the replacing
+   * fails and leaves no file at `path`, the copy is moved back there.
+   */
+  public async replaceInternalFileKeepingCopy(
+    text: string,
+    path: string,
+    copyPath: string,
+  ): Promise<void> {
+    const directory = this.getDataDirectory();
+    await this.__copyInternalFile(path, copyPath);
+    const unfinishedPath = path + '.part';
+    try {
+      await this.__replaceFile(
+        () => this.writeFileFromText(text, unfinishedPath, directory),
+        path,
+        unfinishedPath,
+        directory,
+      );
+    } catch (error) {
+      if (!(await this.fileExists({ path, directory }))) {
+        // When moving fails too, the file from before stays at copyPath.
+        await this.renameInternalFile(copyPath, path)
+          .then(() => this.deleteFile(unfinishedPath, directory))
+          .catch(() => undefined);
+      }
+      throw error;
+    }
+  }
+
+  private async __copyInternalFile(from: string, to: string): Promise<void> {
+    const directory = this.getDataDirectory();
+    await this.deleteFile(to, directory).catch(() => undefined);
+    await Filesystem.copy({ from, to, directory, toDirectory: directory });
   }
 
   public async renameInternalFile(from: string, to: string): Promise<void> {

@@ -69,7 +69,6 @@ describe('BrewBrewingGraphComponent without the brew time parameter', () => {
       choosenPreparation: { style_type: PREPARATION_STYLE_TYPE.ESPRESSO },
     });
     Object.assign(component, {
-      isDetail: false,
       graph_threshold_frequency_update_active: false,
       ngZone: { runOutsideAngular: (fn: () => void) => fn() },
       profileDiv: { nativeElement: {} },
