@@ -70,11 +70,15 @@ export function isFreshSanremoStatus(watch: SanremoStopWatch): boolean {
 
 /**
  * A new shot counts its volume from 0, so a running shot with less volume than
- * before is a restart even when no status in between showed the end.
+ * before is a restart even when no status in between showed the end. A restart
+ * cannot show before the stop took effect, so earlier drops are meter jitter,
+ * and a 0 may be the counter cleared on the way to the end.
  */
 export function hasSanremoVolumeRestarted(watch: SanremoStopWatch): boolean {
   return (
     isSanremoShotRunning(watch.groupStatus) &&
+    isFreshSanremoStatus(watch) &&
+    watch.counterVol > 0 &&
     watch.counterVol < (watch.maxRunningVol ?? -1)
   );
 }

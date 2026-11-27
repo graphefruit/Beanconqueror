@@ -163,7 +163,8 @@ describe('SanremoYOUDevice stop confirmation', () => {
     report(1, 352);
     jasmine.clock().tick(300);
     report(1, 362);
-    jasmine.clock().tick(300);
+    // As in the field log: the new shot shows ~1.5 s after the stop.
+    jasmine.clock().tick(1100);
     report(1, 5);
 
     expect(sentStops()).toEqual([
@@ -182,6 +183,22 @@ describe('SanremoYOUDevice stop confirmation', () => {
     jasmine.clock().tick(2000);
     await flush();
     expect(sentStops().length).toBe(2);
+    expect(result).toBe('confirmed');
+  });
+
+  it('sends no second stop for a cleared volume on the way to the end', async () => {
+    stop();
+    jasmine.clock().tick(100);
+    report(1, 352);
+    jasmine.clock().tick(300);
+    report(1, 362);
+    jasmine.clock().tick(600);
+    report(1, 0);
+    jasmine.clock().tick(300);
+    report(0, 400);
+    jasmine.clock().tick(2000);
+    await flush();
+    expect(sentStops().length).toBe(1);
     expect(result).toBe('confirmed');
   });
 

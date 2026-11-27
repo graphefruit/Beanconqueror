@@ -79,11 +79,28 @@ describe('nextSanremoStopStep', () => {
   });
 
   it('resends at once when the running volume drops without a reported end', () => {
-    const w = watch(1);
+    const w = watch(1, { statusAfterMs: 300 });
     noteSanremoStopStatus(w, 1, 35.2);
     expect(nextSanremoStopStep(w, 300)).toBe('wait');
+    w.statusAfterMs = 1500;
     noteSanremoStopStatus(w, 1, 0.5);
-    expect(nextSanremoStopStep(w, 600)).toBe('resend');
+    expect(nextSanremoStopStep(w, 1500)).toBe('resend');
+  });
+
+  it('takes a volume drop before 900 ms for jitter, not a restart', () => {
+    const w = watch(1, { statusAfterMs: 300 });
+    noteSanremoStopStatus(w, 1, 36.2);
+    w.statusAfterMs = 600;
+    noteSanremoStopStatus(w, 1, 36.1);
+    expect(nextSanremoStopStep(w, 600)).toBe('wait');
+  });
+
+  it('takes a cleared volume on the way to the end for no restart', () => {
+    const w = watch(1, { statusAfterMs: 300 });
+    noteSanremoStopStatus(w, 1, 36.2);
+    w.statusAfterMs = 1000;
+    noteSanremoStopStatus(w, 1, 0);
+    expect(nextSanremoStopStep(w, 1000)).toBe('wait');
   });
 
   it('does not resend on a rising volume', () => {
@@ -112,7 +129,7 @@ describe('nextSanremoStopStep', () => {
   });
 
   it('gives up when the volume drops again after the resend', () => {
-    const w = watch(1, { resent: true });
+    const w = watch(1, { resent: true, statusAfterMs: 1000 });
     noteSanremoStopStatus(w, 1, 20);
     noteSanremoStopStatus(w, 1, 0.5);
     expect(nextSanremoStopStep(w, 600)).toBe('failed');
