@@ -351,6 +351,17 @@ describe('BrewBrewingGraphComponent interface for its hosts', () => {
       });
     });
 
+    it('shows the whole brew once the timer is paused, without any device', async () => {
+      component.flow_profile_raw = flowWithMetric();
+      await draw();
+      await component.timerResumed(undefined);
+      expect(lastViewport().mode).toBe('stepped');
+
+      await component.timerPaused(undefined);
+
+      expect(lastViewport()).toEqual({ mode: 'fitAll' });
+    });
+
     it('shows a stored brew whole while the timer stands', async () => {
       component.flow_profile_raw = flowWithMetric();
 

@@ -1403,8 +1403,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       if (temperatureDevice) {
         this.deattachToTemperatureChange();
       }
-      this.updateChart();
     }
+    // A stopped brew is shown whole.
+    this.updateChart();
 
     // If machineStopScriptWasTriggered would be true, we would already hit the weight mark, and therefore the stop was fired, and we don't fire it twice.
     if (
@@ -1521,8 +1522,6 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           .getTime();
       }
 
-      this.updateChart();
-
       if (scale) {
         this.attachToScaleWeightChange();
         this.attachToFlowChange();
@@ -1534,6 +1533,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         this.attachToTemperatureChange();
       }
     }
+    this.updateChart();
   }
 
   /**Called from the preparation device**/
