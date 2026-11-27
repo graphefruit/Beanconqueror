@@ -15,12 +15,10 @@
     </ion-row>
   </ion-grid>
 }
-@if (isDetail === false) {
-  @for (hint of deviceSilenceHints(); track hint) {
-    <ion-item lines="none">
-      <div class="field-label">{{ hint | translate }}</div>
-    </ion-item>
-  }
+@for (hint of deviceSilenceHints(); track hint) {
+  <ion-item lines="none">
+    <div class="field-label">{{ hint | translate }}</div>
+  </ion-item>
 }
 @if(!baristamode) {
 <ion-item [hidden]="shallProfileHidden" class="ion-padding-bottom-half" lines="none">
