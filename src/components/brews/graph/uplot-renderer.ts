@@ -33,7 +33,7 @@ import type {
   Viewport,
 } from './brew-chart-port';
 import { lowerBound, type FlowSeriesBuffer } from './flow-series-buffer';
-import { insetAxesPlugin, insetSide } from './inset-axes';
+import { groundOf, insetAxesPlugin, insetSide } from './inset-axes';
 import type {
   UplotOverlayPlugin,
   UplotOverlayState,
@@ -202,8 +202,8 @@ interface Look {
   ink?: string;
   /** Size factor for fonts and lines, for an export at another scale. */
   k: number;
-  /** A picture without ground: the axis values get no halo. */
-  clear?: boolean;
+  /** Ground behind the axis values; null on a picture without ground. */
+  halo: string | null;
 }
 
 export class UplotRenderer implements BrewChartPort {
@@ -371,7 +371,9 @@ export class UplotRenderer implements BrewChartPort {
             dark: options.theme === 'dark',
             ink: options.ink,
             k,
-            clear: options.transparent,
+            halo: options.transparent
+              ? null
+              : CHART_PALETTE[options.theme].background,
           },
           Math.round(options.width * k),
           Math.round(options.height * k),
@@ -381,7 +383,11 @@ export class UplotRenderer implements BrewChartPort {
           { hooks: { draw: [() => resolve()] } },
         ];
         chart = new lib(opts, this.buildData(), host);
-        this.applyVisibility(chart);
+        // Values in one ink colour cannot be told apart: keep the columns few.
+        this.applyVisibility(
+          chart,
+          this.opts?.mode === 'live' || options.ink !== undefined,
+        );
       });
       await drawn;
       const source = chart.ctx.canvas;
@@ -516,7 +522,13 @@ export class UplotRenderer implements BrewChartPort {
     this.u = new lib(
       this.buildOptions(
         lib,
-        { dark: this.dark, k: 1 },
+        {
+          dark: this.dark,
+          k: 1,
+          halo:
+            groundOf(el) ??
+            CHART_PALETTE[this.dark ? 'dark' : 'light'].background,
+        },
         this.size.width,
         this.size.height,
       ),
@@ -675,9 +687,14 @@ export class UplotRenderer implements BrewChartPort {
             (d) => d.axisId === axisId && d.kind === 'live',
           ) ?? this.layout.drawn.find((d) => d.axisId === axisId);
         const colour = owner ? seriesColour(owner, look.dark) : palette.text;
-        return { index: i + 1, axisId, colour: look.ink ?? colour };
+        return {
+          index: i + 1,
+          axisId,
+          colour: look.ink ?? colour,
+          grid: i === 0,
+        };
       }),
-      halo: look.clear ? null : palette.background,
+      halo: look.halo,
       font: FONT,
       format: (value) => lib.fmtNum(value),
       k,

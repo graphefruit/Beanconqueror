@@ -643,6 +643,28 @@ describe('UplotRenderer', () => {
     expect(await rightmostLine()).toBeGreaterThan(300 - 36);
   });
 
+  it('keeps temperature and water bare in a picture with one ink colour', async () => {
+    await mountThreeAxes('static');
+
+    const image = await decode(
+      await renderer.exportImage({
+        width: 300,
+        height: 150,
+        theme: 'light',
+        ink: '#0000ff',
+        transparent: true,
+        scale: 1,
+      }),
+    );
+
+    // Above the time axis only right value columns could be blue; four
+    // columns in one ink could not be told apart.
+    const ink = pixels(image, 150, 0, 150, 150 - 28).filter(
+      ([r, g, b, a]) => a > 0 && b > 180 && r < 90 && g < 90,
+    );
+    expect(ink.length).toBe(0);
+  });
+
   it('refuses to export without series', async () => {
     renderer = new UplotRenderer([], {
       requestFrame: frames.request,

@@ -54,9 +54,36 @@ export function insetColumns(
   });
 }
 
-/** Baseline of a value just above its grid line, kept inside the plot. */
-export function labelY(pos: number, plotTop: number, px: number): number {
-  return Math.max(pos - LIFT_PX * px, plotTop + FONT_PX * px);
+/**
+ * Where a value's text stands, kept inside the plot: on an axis with grid
+ * lines just above its line (baseline bottom), on one without centred on its
+ * height (baseline middle), since no line shows which height it marks.
+ */
+export function labelY(
+  pos: number,
+  plot: { top: number; bottom: number },
+  px: number,
+  onGrid: boolean,
+): number {
+  if (onGrid) {
+    return Math.max(pos - LIFT_PX * px, plot.top + FONT_PX * px);
+  }
+  const half = (FONT_PX * px) / 2;
+  return Math.min(Math.max(pos, plot.top + half), plot.bottom - half);
+}
+
+/**
+ * The colour of the first ground behind `el`, so the halo matches the card or
+ * page the clear canvas sits on; null when nothing behind it has one.
+ */
+export function groundOf(el: Element | null): string | null {
+  for (let node = el; node; node = node.parentElement) {
+    const colour = getComputedStyle(node).backgroundColor;
+    if (colour && colour !== 'transparent' && !/[,/]\s*0\)$/.test(colour)) {
+      return colour;
+    }
+  }
+  return null;
 }
 
 export interface InsetAxis {
@@ -64,6 +91,8 @@ export interface InsetAxis {
   index: number;
   axisId: AxisId;
   colour: string;
+  /** The axis draws grid lines. */
+  grid: boolean;
 }
 
 export interface InsetAxesSpec {
@@ -92,10 +121,10 @@ export function insetAxesPlugin(spec: InsetAxesSpec): {
   const draw = (u: uPlot): void => {
     const ctx = u.ctx;
     const px = spec.k * pixelRatio(u);
-    const { left, top, width } = u.bbox;
+    const { left, top, width, height } = u.bbox;
+    const plot = { top, bottom: top + height };
     ctx.save();
     ctx.font = `${Math.round(FONT_PX * px)}px ${spec.font}`;
-    ctx.textBaseline = 'bottom';
     ctx.lineJoin = 'round';
     ctx.lineWidth = 3 * px;
     ctx.strokeStyle = spec.halo ?? 'transparent';
@@ -111,9 +140,10 @@ export function insetAxesPlugin(spec: InsetAxesSpec): {
         .sort((a, b) => insetRank(a.axisId) - insetRank(b.axisId))
         .map((a) => ({
           colour: a.colour,
+          baseline: a.grid ? ('bottom' as const) : ('middle' as const),
           labels: (splitsOf.get(a.index) ?? []).map((v) => ({
             text: spec.format(v),
-            y: labelY(u.valToPos(v, a.axisId, true), top, px),
+            y: labelY(u.valToPos(v, a.axisId, true), plot, px, a.grid),
           })),
         }));
       const xs = insetColumns(
@@ -127,6 +157,7 @@ export function insetAxesPlugin(spec: InsetAxesSpec): {
       ctx.textAlign = side;
       columns.forEach((column, i) => {
         ctx.fillStyle = column.colour;
+        ctx.textBaseline = column.baseline;
         for (const label of column.labels) {
           if (spec.halo) {
             ctx.strokeText(label.text, xs[i], label.y);

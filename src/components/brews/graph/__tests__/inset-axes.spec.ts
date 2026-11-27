@@ -1,6 +1,7 @@
 import type uPlot from 'uplot';
 
 import {
+  groundOf,
   insetAxesPlugin,
   insetColumns,
   insetRank,
@@ -14,6 +15,7 @@ interface Call {
   x: number;
   y: number;
   style: string;
+  baseline: string;
 }
 
 /** A chart as the draw hook sees it: 200 × 100 CSS px at pixel ratio 2. */
@@ -36,10 +38,24 @@ function fakeChart(shown: Record<number, boolean>): {
     // Every character 6 canvas px wide.
     measureText: (text: string) => ({ width: text.length * 6 }),
     strokeText(text: string, x: number, y: number) {
-      calls.push({ op: 'stroke', text, x, y, style: this.strokeStyle });
+      calls.push({
+        op: 'stroke',
+        text,
+        x,
+        y,
+        style: this.strokeStyle,
+        baseline: this.textBaseline,
+      });
     },
     fillText(text: string, x: number, y: number) {
-      calls.push({ op: 'fill', text, x, y, style: this.fillStyle });
+      calls.push({
+        op: 'fill',
+        text,
+        x,
+        y,
+        style: this.fillStyle,
+        baseline: this.textBaseline,
+      });
     },
   };
   const u = {
@@ -64,9 +80,9 @@ function drawWith(
 ): Call[] {
   const { plugin, values } = insetAxesPlugin({
     axes: [
-      { index: 1, axisId: 'weight', colour: '#aa0000' },
-      { index: 2, axisId: 'pressure', colour: '#00aa00' },
-      { index: 3, axisId: 'flow', colour: '#0000aa' },
+      { index: 1, axisId: 'weight', colour: '#aa0000', grid: true },
+      { index: 2, axisId: 'pressure', colour: '#00aa00', grid: false },
+      { index: 3, axisId: 'flow', colour: '#0000aa', grid: false },
     ],
     halo,
     font: 'sans-serif',
@@ -105,9 +121,37 @@ describe('inset axes', () => {
   });
 
   it('sets a value just above its grid line and keeps the top one inside', () => {
-    expect(labelY(100, 10, 1)).toBe(98);
-    expect(labelY(160, 10, 2)).toBe(156);
-    expect(labelY(12, 10, 1)).toBe(21);
+    const plot = { top: 10, bottom: 170 };
+    expect(labelY(100, plot, 1, true)).toBe(98);
+    expect(labelY(160, plot, 2, true)).toBe(156);
+    expect(labelY(12, plot, 1, true)).toBe(21);
+  });
+
+  it('centres a value without grid line on its height, inside the plot', () => {
+    const plot = { top: 10, bottom: 170 };
+    expect(labelY(100, plot, 1, false)).toBe(100);
+    expect(labelY(12, plot, 1, false)).toBe(15.5);
+    expect(labelY(170, plot, 2, false)).toBe(159);
+  });
+
+  it('takes the halo from the first ground behind the chart', () => {
+    const card = document.createElement('div');
+    card.style.backgroundColor = '#2a211a';
+    const clear = document.createElement('div');
+    const host = document.createElement('div');
+    card.appendChild(clear).appendChild(host);
+    document.body.appendChild(card);
+    try {
+      expect(groundOf(host)).toBe('rgb(42, 33, 26)');
+      card.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+      document.body.style.backgroundColor = 'transparent';
+      document.documentElement.style.backgroundColor = 'transparent';
+      expect(groundOf(host)).toBeNull();
+    } finally {
+      card.remove();
+      document.body.style.backgroundColor = '';
+      document.documentElement.style.backgroundColor = '';
+    }
   });
 
   it('draws the values of the shown axes in their colour on a halo', () => {
@@ -124,7 +168,18 @@ describe('inset axes', () => {
     expect(column('#aa0000')).toEqual([28]);
     expect(column('#0000aa')).toEqual([372]);
     expect(column('#00aa00')).toEqual([372 - 6 - 12]);
-    expect(fills.find((c) => c.text === '6')?.y).toBe(170 - 6 - 4);
+    // Pressure has no grid line: its value stands centred on its height.
+    const twelve = fills.find((c) => c.text === '12');
+    expect(twelve?.y).toBe(170 - 12);
+    expect(twelve?.baseline).toBe('middle');
+    // Its 0 stays half a line inside the plot's bottom.
+    expect(fills.find((c) => c.text === '0' && c.style === '#00aa00')?.y).toBe(
+      170 - 11,
+    );
+    // Weight sits just above its grid line.
+    const weight = fills.find((c) => c.text === '50' && c.style === '#aa0000');
+    expect(weight?.y).toBe(170 - 50 - 4);
+    expect(weight?.baseline).toBe('bottom');
   });
 
   it('draws no halo on a clear picture', () => {
