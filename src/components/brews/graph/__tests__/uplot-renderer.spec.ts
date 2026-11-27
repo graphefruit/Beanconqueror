@@ -482,8 +482,11 @@ describe('UplotRenderer', () => {
     expect(theme.dark).toBeFalse();
   });
 
-  it('leaves temperature and water axes out of a compact picture, so the lines reach further', async () => {
-    await mount('static');
+  /** Mounts three lines with their own axes; the reach is the rightmost x of the red weight line. */
+  async function mountThreeAxes(
+    mode: ChartMode,
+  ): Promise<(compact?: boolean) => Promise<number>> {
+    await mount(mode);
     renderer.setSeries(
       // Only the weight line is red; the other axes draw their ticks in their own colour.
       defs('live', 'weight', 'temperature', 'waterDispensed').map((def) => {
@@ -498,7 +501,7 @@ describe('UplotRenderer', () => {
     }
     renderer.attach(buffer);
     await frames.run();
-    const rightmostLine = async (compact: boolean): Promise<number> => {
+    return async (compact?: boolean): Promise<number> => {
       const image = await decode(
         await renderer.exportImage({
           width: 300,
@@ -518,6 +521,10 @@ describe('UplotRenderer', () => {
       });
       return right;
     };
+  }
+
+  it('leaves temperature and water axes out of a compact picture, so the lines reach further', async () => {
+    const rightmostLine = await mountThreeAxes('static');
 
     const full = await rightmostLine(false);
     const compact = await rightmostLine(true);
@@ -532,6 +539,12 @@ describe('UplotRenderer', () => {
       true,
       true,
     ]);
+  });
+
+  it('exports a live graph without temperature and water axes, as it shows them', async () => {
+    const rightmostLine = await mountThreeAxes('live');
+
+    expect(await rightmostLine()).toBeGreaterThan(300 - 36);
   });
 
   it('refuses to export without series', async () => {

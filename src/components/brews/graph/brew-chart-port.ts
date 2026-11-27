@@ -53,7 +53,7 @@ export interface ExportImageOptions {
   ink?: string;
   /** Leaves the ground clear instead of the theme's graph background. */
   transparent: boolean;
-  /** Leaves the temperature and water axes bare, as the live graph does, so the lines get wider. */
+  /** Leaves the temperature and water axes bare, so the lines get wider; a live graph's picture always does. */
   compact?: boolean;
   scale: number;
 }

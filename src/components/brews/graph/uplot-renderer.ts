@@ -346,7 +346,10 @@ export class UplotRenderer implements BrewChartPort {
           { hooks: { draw: [() => resolve()] } },
         ];
         chart = new lib(opts, this.buildData(), host);
-        this.applyVisibility(chart, options.compact === true);
+        this.applyVisibility(
+          chart,
+          options.compact === true || this.opts?.mode === 'live',
+        );
       });
       await drawn;
       const source = chart.ctx.canvas;
