@@ -68,25 +68,11 @@ async function startTimer(page: Page): Promise<void> {
   await expect(page.getByRole('button', { name: 'Pause timer' })).toBeVisible();
 }
 
-/**
- * Opens the brew form and waits like a user would before starting the timer.
- * The graph sets up its traces one second after the form opens; a timer
- * started earlier makes the simulated sensor readings hit missing traces (a
- * TypeError in brew-brewing-graph `__setPressureFlow`). Jumping the clock
- * forward at this point hangs the form, so the page's own clock is polled.
- */
-async function openBrewFormAndSettle(page: Page): Promise<void> {
-  await openAddBrew(page);
-  const opened = await page.evaluate(() => Date.now());
-  await expect
-    .poll(() => page.evaluate(() => Date.now()), { timeout: 10_000 })
-    .toBeGreaterThan(opened + 1500);
-}
-
 test('the timer runs, marks the bloom time, pauses, resumes and is saved with the brew', async ({
   page,
 }) => {
-  await openBrewFormAndSettle(page);
+  // The graph takes readings from the start, so the timer starts right away.
+  await openAddBrew(page);
   // Empty when the form opens, filled with 00:00 shortly after.
   await expect(timeField(page)).toHaveValue(/^(00:00)?$/);
 
@@ -141,7 +127,7 @@ test('an espresso method marks the first drip and shows the brew time after it',
 }) => {
   // "Espresso Machine" sorts before "V60", so a new brew starts with it.
   await addPreparationMethod(page, 'Espresso Machine');
-  await openBrewFormAndSettle(page);
+  await openAddBrew(page);
   await expect(
     page.getByRole('button', { name: 'Preparation method, Espresso Machine' }),
   ).toBeVisible();
