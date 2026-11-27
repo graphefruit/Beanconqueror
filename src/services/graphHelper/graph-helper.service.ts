@@ -91,7 +91,6 @@ export class GraphHelperService {
         theme: look.dark ? 'dark' : 'light',
         ink: look.ink,
         transparent: true,
-        compact: true,
         scale: IMAGE_SCALE,
       });
     } finally {

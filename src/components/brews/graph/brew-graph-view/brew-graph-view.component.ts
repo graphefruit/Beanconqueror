@@ -254,7 +254,6 @@ export class BrewGraphViewComponent {
       theme: dark ? 'dark' : 'light',
       transparent: false,
       scale: EXPORT_SCALE,
-      compact: true,
     });
   }
 

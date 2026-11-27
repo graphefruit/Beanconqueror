@@ -553,7 +553,7 @@ describe('UplotRenderer', () => {
   /** Mounts three lines with their own axes; the reach is the rightmost x of the red weight line. */
   async function mountThreeAxes(
     mode: ChartMode,
-  ): Promise<(compact?: boolean) => Promise<number>> {
+  ): Promise<() => Promise<number>> {
     await mount(mode);
     renderer.setSeries(
       // Only the weight line is red; the other axes draw their ticks in their own colour.
@@ -569,7 +569,7 @@ describe('UplotRenderer', () => {
     }
     renderer.attach(buffer);
     await frames.run();
-    return async (compact?: boolean): Promise<number> => {
+    return async (): Promise<number> => {
       const image = await decode(
         await renderer.exportImage({
           width: 300,
@@ -577,7 +577,6 @@ describe('UplotRenderer', () => {
           theme: 'light',
           ink: '#0000ff',
           transparent: true,
-          compact,
           scale: 1,
         }),
       );
@@ -591,22 +590,35 @@ describe('UplotRenderer', () => {
     };
   }
 
-  it('leaves temperature and water axes out of a compact picture, so the lines reach further', async () => {
+  it('draws the value axes inside the plot, so the lines get the whole width', async () => {
     const rightmostLine = await mountThreeAxes('static');
 
-    const full = await rightmostLine(false);
-    const compact = await rightmostLine(true);
-
-    // The two axes of 36 px on the right give their room to the lines.
-    expect(full).toBeLessThanOrEqual(300 - 2 * 36);
-    expect(compact).toBeGreaterThan(300 - 36);
-    // The graph in the app keeps its axes.
+    // Two axes of 36 px beside the plot used to stop the lines at 300 - 72.
+    expect(await rightmostLine()).toBeGreaterThan(300 - 36);
     expect(plot().axes.map((axis) => axis.show)).toEqual([
       true,
       true,
       true,
       true,
     ]);
+  });
+
+  it('keeps the plot in place when an axis shows up after the first frame', async () => {
+    await mount();
+    renderer.setSeries(defs('live', 'weight', 'flowPerSecond', 'pressure'));
+    await frames.run();
+    const empty = { ...plot().bbox };
+
+    buffer.append('weight', 0, 1);
+    buffer.append('flowPerSecond', 0, 1);
+    await frames.run();
+
+    // A right axis that came in later used to stand where the hidden ones had kept room.
+    expect(plot().axes[2].show).toBeTrue();
+    expect(plot().bbox).toEqual(empty);
+    const ratio = plot().ctx.canvas.width / 400;
+    expect(plot().bbox.left).toBe(Math.round(14 * ratio));
+    expect(plot().bbox.left + plot().bbox.width).toBe(Math.round(386 * ratio));
   });
 
   it('exports a live graph without temperature and water axes, as it shows them', async () => {
@@ -734,7 +746,7 @@ describe('UplotRenderer', () => {
       expect(layout.axes).toEqual(['pressure', 'weight', 'temperature']);
     });
 
-    it('keeps temperature and water axes bare only while live or compact', () => {
+    it('keeps temperature and water axes bare only while live', () => {
       expect(axisShown('temperature', true)).toBeFalse();
       expect(axisShown('water', true)).toBeFalse();
       expect(axisShown('weight', true)).toBeTrue();

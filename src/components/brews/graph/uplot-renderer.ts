@@ -33,6 +33,7 @@ import type {
   Viewport,
 } from './brew-chart-port';
 import { lowerBound, type FlowSeriesBuffer } from './flow-series-buffer';
+import { insetAxesPlugin, insetSide } from './inset-axes';
 import type {
   UplotOverlayPlugin,
   UplotOverlayState,
@@ -176,8 +177,8 @@ export function steppedRange(
 }
 
 /**
- * Whether an axis shows its ticks: the live graph and a compact picture keep
- * temperature and water bare, so the lines get the width.
+ * Whether an axis shows its values: the live graph keeps temperature and
+ * water bare, so few columns stand in its small plot.
  */
 export function axisShown(axisId: AxisId, bare: boolean): boolean {
   return !(bare && (axisId === 'temperature' || axisId === 'water'));
@@ -210,6 +211,8 @@ interface Look {
   ink?: string;
   /** Size factor for fonts and lines, for an export at another scale. */
   k: number;
+  /** A picture without ground: the axis values get no halo. */
+  clear?: boolean;
 }
 
 export class UplotRenderer implements BrewChartPort {
@@ -373,7 +376,12 @@ export class UplotRenderer implements BrewChartPort {
       const drawn = new Promise<void>((resolve) => {
         const opts = this.buildOptions(
           lib,
-          { dark: options.theme === 'dark', ink: options.ink, k },
+          {
+            dark: options.theme === 'dark',
+            ink: options.ink,
+            k,
+            clear: options.transparent,
+          },
           Math.round(options.width * k),
           Math.round(options.height * k),
         );
@@ -382,10 +390,7 @@ export class UplotRenderer implements BrewChartPort {
           { hooks: { draw: [() => resolve()] } },
         ];
         chart = new lib(opts, this.buildData(), host);
-        this.applyVisibility(
-          chart,
-          options.compact === true || this.opts?.mode === 'live',
-        );
+        this.applyVisibility(chart);
       });
       await drawn;
       const source = chart.ctx.canvas;
@@ -672,6 +677,20 @@ export class UplotRenderer implements BrewChartPort {
     for (const axisId of this.layout.axes) {
       scales[axisId] = { auto: false, range: identity };
     }
+    const inset = insetAxesPlugin({
+      axes: this.layout.axes.map((axisId, i) => {
+        const owner =
+          this.layout.drawn.find(
+            (d) => d.axisId === axisId && d.kind === 'live',
+          ) ?? this.layout.drawn.find((d) => d.axisId === axisId);
+        const colour = owner ? seriesColour(owner, look.dark) : palette.text;
+        return { index: i + 1, axisId, colour: look.ink ?? colour };
+      }),
+      halo: look.clear ? null : palette.background,
+      font: FONT,
+      format: (value) => lib.fmtNum(value),
+      k,
+    });
     const linear = lib.paths.linear?.();
     const series: uPlot.Series[] = [
       {},
@@ -698,36 +717,31 @@ export class UplotRenderer implements BrewChartPort {
         ticks: { stroke: palette.grid, width: k, size: 5 * k },
         values: (_u, splits) => splits.map(formatSeconds),
       },
-      ...this.layout.axes.map((axisId, i): uPlot.Axis => {
-        const owner =
-          this.layout.drawn.find(
-            (d) => d.axisId === axisId && d.kind === 'live',
-          ) ?? this.layout.drawn.find((d) => d.axisId === axisId);
-        const colour = owner ? seriesColour(owner, look.dark) : palette.text;
-        return {
-          scale: axisId,
-          side: axisId === 'weight' ? 3 : 1,
-          stroke: look.ink ?? colour,
-          font,
-          size: 36 * k,
-          space: 24 * k,
-          grid: { show: i === 0, stroke: palette.grid, width: k },
-          ticks: { stroke: colour, width: k, size: 5 * k },
-          // uPlot only initialises axes created visible; render() hides them.
-          show: true,
-        };
-      }),
+      ...this.layout.axes.map((axisId, i): uPlot.Axis => ({
+        scale: axisId,
+        side: insetSide(axisId) === 'left' ? 3 : 1,
+        size: 0,
+        space: 24 * k,
+        grid: { show: i === 0, stroke: palette.grid, width: k },
+        ticks: { show: false },
+        values: inset.values,
+        // uPlot only initialises axes created visible; render() hides them.
+        show: true,
+      })),
     ];
     return {
       mode: 2,
       width,
       height,
+      // Room for the half time label at either end and the top value.
+      padding: [8 * k, 14 * k, 0, 14 * k],
       legend: { show: false },
       cursor: { show: false, drag: { x: false, y: false, setScale: false } },
       scales,
       series,
       axes,
-      plugins: this.plugins.map((p) => p.hooks()),
+      // Overlays draw last, so the cursor labels lie above the axis values.
+      plugins: [inset.plugin, ...this.plugins.map((p) => p.hooks())],
     };
   }
 

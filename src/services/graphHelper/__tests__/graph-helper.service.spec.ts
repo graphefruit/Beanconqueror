@@ -602,7 +602,6 @@ describe('GraphHelperService graph picture', () => {
         theme: 'light',
         ink: '#4a382c',
         transparent: true,
-        compact: true,
         scale: 3,
       });
       expect(drawnDefs().map((d) => d.id)).toEqual([
