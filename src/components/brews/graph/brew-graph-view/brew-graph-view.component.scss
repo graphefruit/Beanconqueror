@@ -22,13 +22,6 @@
   background: var(--ion-color-graph-background);
 }
 
-:host(.embedded) {
-  .chips,
-  .chart {
-    background: none;
-  }
-}
-
 .slider {
   flex: none;
   min-height: 72px;

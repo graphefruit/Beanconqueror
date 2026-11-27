@@ -66,16 +66,13 @@ function tenths(sec: number): number {
  * reference brew underneath, a chip per series to show or hide it with its
  * reference, and a time slider whose values the graph labels at the cursor
  * and the slider says to a screen reader. Content given to it sits at the end
- * of the chip row, e.g. a close button. Embedded in a page (brew details) it
- * lies on the page's ground like the live graph and leaves the time slider to
- * the large graph.
+ * of the chip row, e.g. a close button.
  */
 @Component({
   selector: 'app-brew-graph-view',
   templateUrl: './brew-graph-view.component.html',
   styleUrls: ['./brew-graph-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[class.embedded]': 'embedded()' },
   imports: [
     DecimalPipe,
     TranslatePipe,
@@ -96,7 +93,6 @@ export class BrewGraphViewComponent {
 
   public readonly flow = input<BrewFlow | null>(null);
   public readonly reference = input<BrewFlow | null>(null);
-  public readonly embedded = input(false);
 
   private readonly chart = viewChild.required<ElementRef<HTMLElement>>('chart');
 
@@ -281,16 +277,12 @@ export class BrewGraphViewComponent {
   }
 
   private async mount(): Promise<void> {
-    const renderer = new UplotRenderer(
-      this.embedded()
-        ? []
-        : [
-            new CursorLabelsPlugin({
-              // A drag on the graph moves the slider too, in its steps.
-              onCursorDrag: (t) => this.cursor.set(tenths(t)),
-            }),
-          ],
-    );
+    const renderer = new UplotRenderer([
+      new CursorLabelsPlugin({
+        // A drag on the graph moves the slider too, in its steps.
+        onCursorDrag: (t) => this.cursor.set(tenths(t)),
+      }),
+    ]);
     this.renderer = renderer;
     try {
       await renderer.mount(this.chart().nativeElement, {

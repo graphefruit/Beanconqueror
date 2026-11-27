@@ -273,7 +273,7 @@
               </ion-item>
             }
             @if(data.flow_profile && flow() !== undefined) {
-              <app-brew-graph-view [flow]="flow()" [reference]="reference()" [embedded]="true" />
+              <app-brew-graph-view [flow]="flow()" [reference]="reference()" />
             }
           }
           @case ('brew_time') {
