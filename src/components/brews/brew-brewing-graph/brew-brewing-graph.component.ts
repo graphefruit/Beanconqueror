@@ -148,6 +148,11 @@ import {
 
 /** Height of the graph in the brew form. */
 const GRAPH_HEIGHT = 150;
+/**
+ * Start event of the scale's own button: its timer runs already, so the app
+ * neither tares, nor waits for the start delay, nor starts the scale again.
+ */
+export const SCALE_BUTTON = 'SCALE_BUTTON';
 
 @Component({
   selector: 'brew-brewing-graph',
@@ -1035,6 +1040,20 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     }
   }
 
+  /** The start button of the scale starts or resumes the brew as the app's does. */
+  private startFromScale(): void {
+    const timer = this.brewComponent?.timer;
+    if (timer?.isTimerRunning() !== false) {
+      return;
+    }
+    const start = timer.timer.hasStarted
+      ? this.brewComponent.timerResumedPressed(SCALE_BUTTON)
+      : this.brewComponent.timerStartPressed(SCALE_BUTTON);
+    start.catch((error) =>
+      this.uiLog.error('Brew - Start from the scale failed', error),
+    );
+  }
+
   private async __connectSmartScale(_firstStart: boolean) {
     if (this.smartScaleConnected()) {
       this.deattachToWeightChange();
@@ -1047,10 +1066,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
           if (event) {
             switch (event.command) {
               case SCALE_TIMER_COMMAND.START:
-                if (this.brewComponent?.timer?.isTimerRunning() === false) {
-                  this.brewComponent.timer?.startTimer();
-                  this.checkChanges();
-                }
+                this.startFromScale();
                 break;
               case SCALE_TIMER_COMMAND.STOP:
                 this.brewComponent.timer?.pauseTimer();
@@ -1080,7 +1096,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
             if (this.brewComponent.timer?.isTimerRunning() === true) {
               this.brewComponent.timer?.pauseTimer();
             } else {
-              this.brewComponent.timer?.startTimer();
+              this.startFromScale();
             }
           }
           this.checkChanges();
@@ -1563,7 +1579,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
       this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected();
 
     if (scale || pressureDevice || temperatureDevice || prepDeviceConnected) {
-      if (scale) {
+      if (scale && _event !== SCALE_BUTTON) {
         scale.setTimer(SCALE_TIMER_COMMAND.START);
       }
       this.startingFlowTime = Date.now();
@@ -1975,7 +1991,8 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     if (
       _event !== 'AUTO_LISTEN_SCALE' &&
       _event !== 'AUTO_START_PRESSURE' &&
-      _event !== 'AUTO_START_TEMPERATURE'
+      _event !== 'AUTO_START_TEMPERATURE' &&
+      _event !== SCALE_BUTTON
     ) {
       const scale: BluetoothScale = this.bleManager.getScale();
       if (scale) {
@@ -2142,7 +2159,9 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
         /** We don't need any delay here anymore, because all taring action was already done before, so just trigger the start
          * This will also reduce the issue that the DiFluid reports the Start and we don't attach anymore to changes.
          * **/
-        scale.setTimer(SCALE_TIMER_COMMAND.START);
+        if (_event !== SCALE_BUTTON) {
+          scale.setTimer(SCALE_TIMER_COMMAND.START);
+        }
       }
 
       if (
