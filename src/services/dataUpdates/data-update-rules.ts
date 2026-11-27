@@ -76,3 +76,26 @@ export function showsFailedDataUpdateHint(
 ): boolean {
   return _failed?.starts === 2;
 }
+
+/** What a start reports to Matomo about its data updates. */
+export type DataUpdateSignal = 'done' | 'backup_failed' | `open:${string}`;
+
+/**
+ * The outcome of the data updates at a start, for the stop criteria of a
+ * staged rollout. Undefined when no update was open on existing data at the
+ * start: every later start and every new install would report done and
+ * hide the few starts at which an update stayed open.
+ */
+export function dataUpdateSignal(
+  _openAtStart: boolean,
+  _backedUp: boolean,
+  _firstOpen: string | undefined,
+): DataUpdateSignal | undefined {
+  if (!_openAtStart) {
+    return undefined;
+  }
+  if (!_backedUp) {
+    return 'backup_failed';
+  }
+  return _firstOpen === undefined ? 'done' : `open:${_firstOpen}`;
+}

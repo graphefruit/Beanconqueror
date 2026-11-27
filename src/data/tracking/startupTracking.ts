@@ -7,5 +7,8 @@ export default {
     STARTUP_VIEW: {
       CATEGORY: 'STARTUP_VIEW',
     },
+    DATA_UPDATE: {
+      CATEGORY: 'DATA_UPDATE',
+    },
   },
 };

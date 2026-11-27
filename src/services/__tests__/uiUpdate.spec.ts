@@ -1183,6 +1183,41 @@ describe('UIUpdate backup before the data updates 16 to 19', () => {
     expect(calls).toEqual(UPDATES);
   });
 
+  it('reports done once every update ran at the start', async () => {
+    markDone(15);
+
+    expect(await uiUpdate.checkUpdate()).toBe('done');
+  });
+
+  it('reports the first update still open', async () => {
+    markDone(15);
+    update16Done = false;
+
+    expect(await uiUpdate.checkUpdate()).toBe('open:UPDATE_16');
+  });
+
+  it('reports a backup that could not be written', async () => {
+    markDone(15);
+    backedUp = false;
+
+    expect(await uiUpdate.checkUpdate()).toBe('backup_failed');
+  });
+
+  it('reports nothing when no update was open, the data is empty or cannot be read', async () => {
+    markDone(19);
+    expect(await uiUpdate.checkUpdate()).toBeUndefined();
+
+    version = new Version();
+    markDone(15);
+    dataState = 'empty';
+    expect(await uiUpdate.checkUpdate()).toBeUndefined();
+
+    version = new Version();
+    markDone(15);
+    dataState = 'unknown';
+    expect(await uiUpdate.checkUpdate()).toBeUndefined();
+  });
+
   it('writes no backup for UPDATE_18 opened again by an import', async () => {
     markDone(19);
 
