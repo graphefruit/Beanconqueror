@@ -3,23 +3,27 @@ import { startWithBeans } from './support/beans';
 import { openAddBrew, showBrewsTab } from './support/brew-form';
 
 const PLOTLY_SCRIPT = '/assets/js/plotly.min.js';
-/** Style the chart inserts the first time it draws. */
-const CHART_STYLE = '#bq-uplot-css';
+/** The lazy chunk of the chart library, named after its module by the build. */
+const UPLOT_CHUNK = /\/uPlot\.esm-[^/]*\.js$/;
 
 // Starts from stored data instead of adding a brew through the form, because
 // the brew form draws its graph and would load the library before the check.
-test('the brew form draws its live graph with uPlot once it opens, not at start-up', async ({
+test('the brew form loads the chart library and draws its live graph, nothing at start-up', async ({
   page,
 }) => {
   const plotly: string[] = [];
+  const uplot: string[] = [];
   page.on('request', (_request) => {
-    if (_request.url().endsWith(PLOTLY_SCRIPT)) {
-      plotly.push(_request.url());
+    const url = _request.url();
+    if (url.endsWith(PLOTLY_SCRIPT)) {
+      plotly.push(url);
+    } else if (UPLOT_CHUNK.test(url)) {
+      uplot.push(url);
     }
   });
   await startWithBeans(page);
 
-  await expect(page.locator(CHART_STYLE)).toHaveCount(0);
+  expect(uplot).toEqual([]);
 
   await showBrewsTab(page);
   await openAddBrew(page);
@@ -29,8 +33,8 @@ test('the brew form draws its live graph with uPlot once it opens, not at start-
   await expect(graph.locator('.uplot canvas').first()).toBeAttached({
     timeout: 10_000,
   });
-  await expect(page.locator(CHART_STYLE)).toHaveCount(1);
-  // The chart is a picture with a name; its canvas and axes are hidden.
+  expect(uplot.length).toBe(1);
+  // The container names the graph; canvas and axes are hidden from screen readers.
   await expect(graph.locator('.uplot')).toHaveAttribute('aria-hidden', 'true');
   expect(plotly).toEqual([]);
   expect(await page.evaluate(() => 'Plotly' in window)).toBe(false);
