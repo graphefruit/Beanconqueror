@@ -71,7 +71,6 @@
     "@meticulous-home/espresso-api": "^0.10.12",
     "@meticulous-home/espresso-profile": "^0.4.2",
     "@ngx-translate/core": "^17.0.0",
-    "@ngx-translate/http-loader": "^17.0.0",
     "@tanstack/angular-virtual": "6.1.12",
     "@zip.js/zip.js": "~2.25.0",
     "ble-central-advertisements": "^1.1.0",
