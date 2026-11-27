@@ -38,9 +38,6 @@
     "no-empty": {
       "count": 2
     },
-    "no-var": {
-      "count": 1
-    },
     "prefer-const": {
       "count": 2
     }
@@ -393,10 +390,7 @@
       "count": 1
     },
     "no-empty": {
-      "count": 3
-    },
-    "no-var": {
-      "count": 1
+      "count": 2
     }
   },
   "src/app/brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component.ts": {
@@ -481,11 +475,8 @@
     "@typescript-eslint/no-floating-promises": {
       "count": 6
     },
-    "no-empty": {
-      "count": 1
-    },
     "no-var": {
-      "count": 2
+      "count": 1
     }
   },
   "src/app/brew/brew-filter/brew-filter.component.ts": {
@@ -525,9 +516,6 @@
     },
     "no-empty": {
       "count": 5
-    },
-    "no-var": {
-      "count": 1
     },
     "prefer-const": {
       "count": 1

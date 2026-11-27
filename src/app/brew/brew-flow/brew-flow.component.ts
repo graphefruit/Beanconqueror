@@ -57,7 +57,6 @@ import { BrewFunction } from '../../../pipes/brew/brewFunction';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
-declare var Plotly;
 @Component({
   selector: 'brew-flow',
   templateUrl: './brew-flow.component.html',
@@ -230,11 +229,9 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   public async ionViewDidEnter() {
     await new Promise((resolve) => {
       setTimeout(() => {
-        document
-          .getElementById('brewFlowContainer')
-          .append(
-            this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement,
-          );
+        this.brewComponent.brewBrewingGraphEl.moveGraphTo(
+          document.getElementById('brewFlowContainer'),
+        );
         resolve(undefined);
       }, 50);
     });
@@ -334,14 +331,9 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
           informationContainerHeight = 0;
         }
 
-        this.brewComponent.brewBrewingGraphEl.lastChartLayout.height =
-          flowHeight - informationContainerHeight;
-
-        this.brewComponent.brewBrewingGraphEl.lastChartLayout.width =
-          document.getElementById('brewFlowContainer').offsetWidth;
-        Plotly.relayout(
-          this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement,
-          this.brewComponent.brewBrewingGraphEl.lastChartLayout,
+        this.brewComponent.brewBrewingGraphEl.resize(
+          document.getElementById('brewFlowContainer').offsetWidth,
+          flowHeight - informationContainerHeight,
         );
       } catch (ex) {}
     }, 50);
@@ -607,9 +599,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public dismiss() {
-    this.brewComponent.brewBrewingGraphEl.canvaContainer.nativeElement.append(
-      this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement,
-    );
+    this.brewComponent.brewBrewingGraphEl.restoreGraph();
     try {
       this.disableHardwareBack.unsubscribe();
       this.stopCamera();

@@ -62,7 +62,6 @@ import {
 } from '../../../stores/brews/brew-form-rules';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 
-declare var Plotly;
 declare var window;
 @Component({
   selector: 'brew-edit',
@@ -178,13 +177,6 @@ export class BrewEditComponent implements OnInit {
 
   public dismiss(): void {
     this.stopScaleTimer();
-    try {
-      if (this.brewBrewing.brewBrewingGraphEl) {
-        Plotly.purge(
-          this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement,
-        );
-      }
-    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,

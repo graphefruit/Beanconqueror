@@ -96,6 +96,6 @@ describe('BrewBrewingGraphComponent without the brew time parameter', () => {
       delete (window as unknown as { Plotly?: unknown }).Plotly;
     }
 
-    expect(component.lastChartLayout.xaxis.range.length).toBe(2);
+    expect(component['lastChartLayout'].xaxis.range.length).toBe(2);
   });
 });
