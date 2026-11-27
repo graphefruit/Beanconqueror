@@ -10,7 +10,6 @@ import { BrewChoosePreparationToBrewComponent } from '../app/brew/brew-choose-pr
 import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.component';
 import { BrewDetailComponent } from '../app/brew/brew-detail/brew-detail.component';
 import { BrewEditComponent } from '../app/brew/brew-edit/brew-edit.component';
-import { BrewFlowComponent } from '../app/brew/brew-flow/brew-flow.component';
 import { BrewRatingComponent } from '../app/brew/brew-rating/brew-rating.component';
 import { BrewSortComponent } from '../app/brew/brew-sort/brew-sort.component';
 import { Bean } from '../classes/bean/bean';
@@ -668,14 +667,6 @@ export class UIBrewHelper {
     if (this.canBrewIfNotShowMessage()) {
       await this.openBrewForm({ brew_flow_preset: _brewFlow });
     }
-  }
-  public async brewFlow() {
-    const modal = await this.modalController.create({
-      component: BrewFlowComponent,
-      id: BrewFlowComponent.COMPONENT_ID,
-    });
-    await modal.present();
-    await modal.onWillDismiss();
   }
   private findBeanByInternalShareCode(internalBeanShareCode: string) {
     const allEntries = this.uiBeanStorage.getAllEntries();

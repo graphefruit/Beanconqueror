@@ -14,10 +14,7 @@
     box-shadow: none;
   }
 
-  #brewFlowContainer {
-  }
-
-  #informationContainer {
+  .information-container {
     display: flex;
     font-size: 24px;
     margin-left: 5px;
@@ -117,7 +114,4 @@
       fill: var(--card-color) !important;
     }
   }
-
-
-
 }

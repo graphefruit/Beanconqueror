@@ -75,7 +75,8 @@ describe('BrewBrewingGraphComponent without the brew time parameter', () => {
       }),
     );
     Object.assign(component, {
-      renderer,
+      renderer: null,
+      maximizedRenderer: renderer,
       liveBuffer: new FlowSeriesBuffer(),
       recording: false,
       settings: {

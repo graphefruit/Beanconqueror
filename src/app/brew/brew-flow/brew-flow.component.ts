@@ -4,7 +4,6 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  HostListener,
   inject,
   Input,
   NgZone,
@@ -44,6 +43,8 @@ import { Subscription } from 'rxjs';
 
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { UIHelper } from 'src/services/uiHelper';
+import { UILog } from 'src/services/uiLog';
+import { UIToast } from 'src/services/uiToast';
 import { Brew } from '../../../classes/brew/brew';
 import { BluetoothScale, sleep } from '../../../classes/devices';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
@@ -88,11 +89,17 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   private readonly platform = inject(Platform);
   private readonly ngZone = inject(NgZone);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly uiLog = inject(UILog);
+  private readonly uiToast = inject(UIToast);
 
   public static readonly COMPONENT_ID: string = 'brew-flow';
 
   @ViewChild('brewFlowContent', { read: ElementRef })
   public brewFlowContent: ElementRef;
+  @ViewChild('brewFlowContainer', { read: ElementRef })
+  public brewFlowContainer: ElementRef<HTMLElement>;
+  @ViewChild('informationContainer', { read: ElementRef })
+  public informationContainer: ElementRef<HTMLElement>;
 
   public cameraIsVisible: boolean = false;
   public gaugeVisible: boolean = false;
@@ -143,8 +150,8 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   public smartScaleBrewRatio: ElementRef;
 
   private disableHardwareBack;
-  /** Only while the graph is shown here may this view size it. */
-  private graphShown = false;
+  /** Sizes the graph whenever the view, the tiles or the camera change. */
+  private graphSizes: ResizeObserver | null = null;
   protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
 
   public graphIconColSize: number = 2.4;
@@ -155,7 +162,6 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
   }
 
   public ngOnInit() {
-    window['bla'] = CameraPreview;
     try {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
         9999,
@@ -229,17 +235,24 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     return this.uiHelper.toFixedIfNecessary(12 / visibleTiles, 1);
   }
   public async ionViewDidEnter() {
-    await new Promise((resolve) => {
-      setTimeout(() => {
-        this.brewComponent.brewBrewingGraphEl.moveGraphTo(
-          document.getElementById('brewFlowContainer'),
-        );
-        this.graphShown = true;
-        resolve(undefined);
-      }, 50);
+    const graph = this.brewComponent.brewBrewingGraphEl;
+    const { width, height } = this.graphSize();
+    await graph.showMaximized(
+      this.brewFlowContainer.nativeElement,
+      width,
+      height,
+    );
+    this.graphSizes = new ResizeObserver(() => {
+      const size = this.graphSize();
+      graph.resizeMaximized(size.width, size.height);
     });
-
-    this.onOrientationChange();
+    for (const el of [
+      this.brewFlowContent.nativeElement,
+      this.brewFlowContainer.nativeElement,
+      this.informationContainer.nativeElement,
+    ]) {
+      this.graphSizes.observe(el);
+    }
 
     this.brewFlowGraphSubscription = this.brewFlowGraphEvent.subscribe(
       (_val) => {
@@ -280,12 +293,8 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
         setTimeout(() => {
           this.graphIconColSize = this.getGraphIonColSize();
           this.checkChanges();
-          this.onOrientationChange();
         }, 250);
       });
-    setTimeout(() => {
-      this.brewComponent.brewBrewingGraphEl.updateChart();
-    }, 150);
   }
 
   private __writeTimeNative(_wantedDisplayFormat) {
@@ -319,31 +328,14 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     }, 15);
   }
 
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange')
-  public onOrientationChange() {
-    setTimeout(() => {
-      // A late timer after dismiss would size the form's own graph.
-      if (!this.graphShown) {
-        return;
-      }
-      try {
-        const flowHeight = this.brewFlowContent.nativeElement.offsetHeight;
-        let informationContainerHeight = 0;
-        try {
-          informationContainerHeight = document.getElementById(
-            'informationContainer',
-          ).offsetHeight;
-        } catch (ex) {
-          informationContainerHeight = 0;
-        }
-
-        this.brewComponent.brewBrewingGraphEl.resize(
-          document.getElementById('brewFlowContainer').offsetWidth,
-          flowHeight - informationContainerHeight,
-        );
-      } catch (ex) {}
-    }, 50);
+  /** The graph takes the width of its column and the height below the tiles. */
+  private graphSize(): { width: number; height: number } {
+    return {
+      width: this.brewFlowContainer.nativeElement.offsetWidth,
+      height:
+        this.brewFlowContent.nativeElement.offsetHeight -
+        this.informationContainer.nativeElement.offsetHeight,
+    };
   }
 
   public pressureDeviceConnected() {
@@ -402,22 +394,12 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     this.brewComponent.timer.pauseTimer();
   }
 
-  public async startListening() {
+  public startListening() {
     this.brewComponent.timer.startListening();
-
-    //await this.waitForPleaseWaitToBeFinished();
-    //After start listening did a reset, we need to change orientation, else the graph is to small
-    setTimeout(() => {
-      this.onOrientationChange();
-    }, 500);
   }
 
-  public async resetTimer(_event) {
+  public resetTimer(_event) {
     this.brewComponent.timer.reset();
-    //await this.waitForPleaseWaitToBeFinished();
-    setTimeout(() => {
-      this.onOrientationChange();
-    }, 500);
   }
 
   public resumeTimer() {
@@ -490,14 +472,58 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       await sleep(500);
       const rect = document
         .getElementById('cameraPreview')
-        .getBoundingClientRect();
+        ?.getBoundingClientRect();
+      if (!rect) {
+        return;
+      }
       await CameraPreview.setPreviewSize({
         width: Math.round(rect.width),
         height: Math.round(rect.height),
         y: Math.round(rect.y),
         x: Math.round(rect.x),
+      }).catch((error: unknown) => {
+        this.uiLog.error('Camera preview could not be resized', error);
       });
     }
+  }
+
+  /** Starts the camera beside the graph; a camera that fails is reported. */
+  private async startCamera(): Promise<void> {
+    if (!this.cameraIsVisible) {
+      return;
+    }
+    try {
+      const rect = document
+        .getElementById('cameraPreview')
+        .getBoundingClientRect();
+      await CameraPreview.start({
+        disableAudio: true,
+        parent: 'cameraPreview',
+        position: 'front',
+        toBack: false,
+        ...(Capacitor.getPlatform() === 'web'
+          ? {}
+          : {
+              width: Math.round(rect.width),
+              height: Math.round(rect.height),
+              y: Math.round(rect.y),
+              x: Math.round(rect.x),
+            }),
+      });
+      await CameraPreview.addListener(
+        'screenResize',
+        this.__resizeCamera.bind(this),
+      );
+    } catch (error) {
+      this.uiLog.error('Camera could not be started', error);
+      this.cameraIsVisible = false;
+      this.checkChanges();
+      void this.uiToast.showInfoToast('CAMERA_COULD_NOT_BE_STARTED');
+      return;
+    }
+    setTimeout(() => {
+      void this.__resizeCamera();
+    }, 250);
   }
 
   private async stopCamera() {
@@ -512,47 +538,14 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
       await this.stopCamera();
     } else {
       this.cameraIsVisible = true;
-      setTimeout(async () => {
-        let cameraPreviewOptions;
-        let rect = document
-          .getElementById('cameraPreview')
-          .getBoundingClientRect();
-        if (Capacitor.getPlatform() !== 'web') {
-          cameraPreviewOptions = {
-            disableAudio: true,
-            width: Math.round(rect.width),
-            height: Math.round(rect.height),
-            y: Math.round(rect.y),
-            x: Math.round(rect.x),
-            parent: 'cameraPreview',
-            position: 'front' as const,
-            toBack: false,
-          };
-        } else {
-          cameraPreviewOptions = {
-            disableAudio: true,
-            parent: 'cameraPreview',
-            position: 'front' as const,
-            toBack: false,
-          };
-        }
-
-        await CameraPreview.start(cameraPreviewOptions);
-
-        await CameraPreview.addListener(
-          'screenResize',
-          this.__resizeCamera.bind(this),
-        );
-
-        setTimeout(async () => {
-          this.__resizeCamera();
-        }, 250);
+      setTimeout(() => {
+        void this.startCamera();
       }, 1000);
     }
-    this.onOrientationChange();
   }
 
   public async ngOnDestroy() {
+    this.releaseGraph();
     if (this.cameraIsVisible) {
       await CameraPreview.stop();
     }
@@ -593,9 +586,15 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
     }
   }
 
+  /** The brew form's own graph stays where it is; only the second one goes. */
+  private releaseGraph(): void {
+    this.graphSizes?.disconnect();
+    this.graphSizes = null;
+    this.brewComponent?.brewBrewingGraphEl?.closeMaximized();
+  }
+
   public dismiss() {
-    this.graphShown = false;
-    this.brewComponent.brewBrewingGraphEl.restoreGraph();
+    this.releaseGraph();
     try {
       this.disableHardwareBack.unsubscribe();
       this.stopCamera();

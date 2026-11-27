@@ -37,32 +37,21 @@ import { App } from '@capacitor/app';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
-import { Bean } from '../../../classes/bean/bean';
 import BaristamodeBrew from '../../../classes/brew/baristamodeBrew';
 import { Brew } from '../../../classes/brew/brew';
 import { BrewFlow } from '../../../classes/brew/brewFlow';
-import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
-import {
-  BluetoothScale,
-  BluetoothTypes,
-  sleep,
-} from '../../../classes/devices';
-import { Mill } from '../../../classes/mill/mill';
+import { BluetoothScale, BluetoothTypes } from '../../../classes/devices';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { SanremoShotData } from '../../../classes/preparationDevice/sanremo/sanremoShotData';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
-import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { Settings } from '../../../classes/settings/settings';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { HeaderButtonComponent } from '../../../components/header/header-button.component';
 import { HeaderComponent } from '../../../components/header/header.component';
-import BEAN_TRACKING from '../../../data/tracking/beanTracking';
-import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { ChipButtonDirective } from '../../../directive/chip-button.directive';
 import { LongPressDirective } from '../../../directive/long-press.directive';
 import { BREW_QUANTITY_TYPES_ENUM } from '../../../enums/brews/brewQuantityTypes';
-import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { BluetoothDeviceChooserPopoverComponent } from '../../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import {
@@ -82,6 +71,7 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
+import { baristaGraphHeight } from './barista-graph-height';
 
 @Component({
   selector: 'app-barista',
@@ -323,12 +313,7 @@ export class BaristaPage implements OnInit, OnDestroy {
       const totalHeight = this.ionContent.nativeElement.offsetHeight;
       const graph = this.brewBrewing.brewBrewingGraphEl;
       const box = graph.graphBox();
-      let chartHeight = totalHeight - (box.top + 85);
-      if (chartHeight <= 100) {
-        chartHeight = 100;
-      }
-      graph.resize(box.width, chartHeight);
-      // Re render, else the lines would not be hidden/shown when having references graphs
+      graph.resize(box.width, baristaGraphHeight(totalHeight, box.top));
     } catch (ex) {}
   }
 

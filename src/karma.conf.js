@@ -15,6 +15,7 @@ const path = require('node:path');
  */
 const NEW_CODE = [
   'src/app/graph-section/graph/graph-detail/**',
+  'src/app/baristamode/barista/barista-graph-height.ts',
   'src/app/brew/brew-popover-cut/brew-popover-cut.component.ts',
   'src/app/profile/**',
   'src/brew-session/**',
@@ -53,7 +54,6 @@ const NEW_CODE = [
   'src/services/deviceIdentity/**',
   'src/services/documentLanguage/**',
   'src/services/excel-import-rules.ts',
-  'src/services/graphHelper/load-plotly.ts',
   'src/services/nfcService/nfc-service.service.ts',
   'src/services/nfcService/nfc-tag-link.ts',
   'src/services/ports/**',
