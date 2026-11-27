@@ -211,6 +211,89 @@ describe('OverlayStackA11yService', () => {
     });
   });
 
+  describe('with the texts Ionic renders inside an alert', () => {
+    /** As Ionic renders it: the texts and buttons in a focusable wrapper. */
+    function createAlert(
+      header: string,
+      message: string,
+      buttons = ['OK'],
+    ): FakeOverlay {
+      const alert = create('ion-alert', { buttons, inputs: [] } as object);
+      alert.innerHTML = `
+        <div class="alert-wrapper" role="alertdialog" tabindex="0">
+          <div class="alert-head"><h2 class="alert-title">${header}</h2></div>
+          <div class="alert-message">${message}</div>
+          ${buttons.map((text) => `<button class="alert-button">${text}</button>`).join('')}
+        </div>`;
+      return alert;
+    }
+
+    function part(alert: FakeOverlay, selector: string): HTMLElement {
+      return alert.querySelector<HTMLElement>(selector);
+    }
+
+    /** The order focus moves in once the alert has opened. */
+    async function focusOrderAfterOpening(alert: FakeOverlay) {
+      const focused: string[] = [];
+      for (const element of alert.querySelectorAll<HTMLElement>('*')) {
+        spyOn(element, 'focus').and.callFake(() =>
+          focused.push(element.className),
+        );
+      }
+      startPresenting(alert);
+      finishPresenting(alert);
+      // Ionic, right after the event: the only button or the wrapper.
+      const buttons = alert.querySelectorAll<HTMLElement>('.alert-button');
+      (buttons.length === 1
+        ? buttons[0]
+        : part(alert, '.alert-wrapper')
+      ).focus();
+      await mutationsDelivered();
+      return focused;
+    }
+
+    it('lets screen readers reach title and message and starts at the title', async () => {
+      const alert = createAlert('Sure?', 'Delete this bean.');
+
+      const focused = await focusOrderAfterOpening(alert);
+
+      expect(part(alert, '.alert-title').getAttribute('tabindex')).toBe('-1');
+      expect(part(alert, '.alert-message').getAttribute('tabindex')).toBe('-1');
+      expect(focused).toEqual(['alert-button', 'alert-title']);
+    });
+
+    it('starts at the message of an alert without title', async () => {
+      const alert = createAlert('', 'Saved.');
+
+      const focused = await focusOrderAfterOpening(alert);
+
+      expect(part(alert, '.alert-title').hasAttribute('tabindex'))
+        .withContext('an empty title is no stop')
+        .toBeFalse();
+      expect(focused).toEqual(['alert-button', 'alert-message']);
+    });
+
+    it('leaves focus on the wrapper of an alert that asks a question', async () => {
+      const alert = createAlert('Sure?', 'Delete this bean.', ['No', 'Yes']);
+
+      const focused = await focusOrderAfterOpening(alert);
+
+      expect(part(alert, '.alert-title').getAttribute('tabindex')).toBe('-1');
+      expect(focused).toEqual(['alert-wrapper']);
+    });
+
+    it('leaves the texts of other overlays alone', async () => {
+      const sheet = create('ion-action-sheet');
+      sheet.innerHTML = '<h2 class="alert-title">Share</h2>';
+
+      startPresenting(sheet);
+      finishPresenting(sheet);
+      await mutationsDelivered();
+
+      expect(sheet.querySelector('h2').hasAttribute('tabindex')).toBeFalse();
+    });
+  });
+
   it('hides a dialog while another one is open above it', async () => {
     const cupping = await present();
     const picker = await present();

@@ -111,6 +111,41 @@ function nameDialogAfterTitle(modal: HTMLElement): void {
   }
 }
 
+/** Title, subtitle and message of an alert, in reading order. */
+const ALERT_TEXT = '.alert-title, .alert-sub-title, .alert-message';
+
+/** Properties of an Ionic alert host that decide where Ionic puts focus. */
+interface AlertHost extends HTMLElement {
+  buttons?: unknown[];
+  inputs?: unknown[];
+}
+
+/**
+ * Ionic makes the dialog wrapper of an alert focusable, and TalkBack reads
+ * text inside a focusable element only as part of that element, which has no
+ * text of its own here: swiping went from the page straight to the buttons.
+ * Title, subtitle and message become focusable themselves, outside the tab
+ * order, so screen readers reach each one.
+ *
+ * An alert with a single button and nothing to fill in gets focus on that
+ * button right after it opened, and a screen reader would say only "OK".
+ * Focus moves on to the first text then, so the alert is read from the top.
+ * Other alerts keep focus on the wrapper, which is named after the title.
+ */
+function exposeAlertText(alert: AlertHost): void {
+  const texts = [...alert.querySelectorAll<HTMLElement>(ALERT_TEXT)].filter(
+    (text) => text.textContent?.trim(),
+  );
+  for (const text of texts) {
+    text.tabIndex = -1;
+  }
+  const first = texts[0];
+  if (first && alert.buttons?.length === 1 && !alert.inputs?.length) {
+    // After Ionic, which focuses the button once this event has run.
+    setTimeout(() => first.focus());
+  }
+}
+
 /**
  * Keeps assistive technology on the overlay on top.
  *
@@ -220,6 +255,9 @@ export class OverlayStackA11yService {
       (phase === 'WillPresent' || phase === 'DidPresent')
     ) {
       nameDialogAfterTitle(overlay);
+    }
+    if (overlay.localName === 'ion-alert' && phase === 'DidPresent') {
+      exposeAlertText(overlay);
     }
     switch (phase) {
       case 'WillPresent':

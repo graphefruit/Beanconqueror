@@ -425,3 +425,51 @@ test('three dialogs stacked at first start are peeled off one by one', async ({
   await expect(addBean).toBeFocused();
   await expect(page.getByRole('dialog')).toHaveCount(1);
 });
+
+/**
+ * Opens an Ionic alert as the app's alert services do, without the steps
+ * that lead to one of them.
+ */
+async function presentAlert(page: Page, buttons: string[]): Promise<void> {
+  await page.evaluate(async (buttonTexts) => {
+    const alert: HTMLElement & { present?: () => Promise<void> } =
+      Object.assign(document.createElement('ion-alert'), {
+        header: 'Data update incomplete',
+        message: 'Some entries could not be updated.',
+        buttons: buttonTexts,
+      });
+    document.querySelector('ion-app')?.append(alert);
+    await alert.present?.();
+  }, buttons);
+}
+
+test('TalkBack reaches title and message of an alert one by one', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await completeFirstRun(page);
+
+  await presentAlert(page, ['OK']);
+  const alert = page.getByRole('alertdialog', {
+    name: 'Data update incomplete',
+  });
+  const title = alert.getByRole('heading', { name: 'Data update incomplete' });
+  const message = alert.getByText('Some entries could not be updated.');
+  // Focusable themselves: TalkBack reads text in the focusable wrapper only
+  // as part of the wrapper, which skips it.
+  await expect(title).toHaveAttribute('tabindex', '-1');
+  await expect(message).toHaveAttribute('tabindex', '-1');
+  // Ionic focuses the only button; the alert is read from its title instead.
+  await expect(title).toBeFocused();
+  // It cannot be operated, so no focus ring marks it.
+  await expect(title).toHaveCSS('outline-style', 'none');
+  await page.keyboard.press(tabKey(page));
+  await expect(alert.getByRole('button', { name: 'OK' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(alert).toHaveCount(0);
+
+  await presentAlert(page, ['No', 'Yes']);
+  await expect(title).toHaveAttribute('tabindex', '-1');
+  // A question keeps focus on the wrapper, which is named after the title.
+  await expect(alert).toBeFocused();
+});
