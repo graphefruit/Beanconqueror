@@ -301,3 +301,11 @@ test('the start sets the app language before the data updates', () => {
   assert.ok(language >= 0 && updates >= 0);
   assert.ok(language < updates);
 });
+
+// Older Android ignores unknown path attributes, so a link would silently not
+// open the app there; lint does not flag them (minSdk 26).
+test('the Android manifest uses no path attributes that need API 31', () => {
+  const manifest = read('android/app/src/main/AndroidManifest.xml');
+
+  assert.doesNotMatch(manifest, /android:path(Suffix|AdvancedPattern)=/);
+});
