@@ -251,6 +251,49 @@ describe('AttachmentExportService', () => {
     expect(await read(`${DIR}/a.jpg`)).toBe('old');
   });
 
+  it('goes on after the last copied file when it was stopped, without copying a complete file again', async () => {
+    const controller = new AbortController();
+    copy.and.callFake(async function (this: FilesystemWeb, _options) {
+      const done = await realCopy(this, _options);
+      if (copy.calls.count() === 2) {
+        controller.abort();
+      }
+      return done;
+    });
+    await service.writeExport(folder, zip(), controller.signal);
+    // A complete file of the staging folder is kept as it is.
+    await write(`${STAGING}/b.jpg`, 'copied before', Directory.External);
+    copy.calls.reset();
+    copy.and.callFake(function (this: FilesystemWeb, _options) {
+      return realCopy(this, _options);
+    });
+
+    const result = await service.writeExport(folder, zip());
+
+    expect(result).toEqual({ missing: 0, aborted: false });
+    expect(copiedFrom()).toEqual(FILES.slice(2));
+    expect(await exported()).toEqual([...FILES, ZIP].sort());
+    expect(await read(`${DIR}/b.jpg`)).toBe('copied before');
+  });
+
+  it('copies a file again that the app was ended in, and only that one', async () => {
+    // As left behind when the app ended while copying c.jpg.
+    await write(`${STAGING}/a.jpg`, 'content of a.jpg', Directory.External);
+    await write(`${STAGING}/b.jpg`, 'content of b.jpg', Directory.External);
+    await write(`${STAGING}/c.jpg.part`, 'cont', Directory.External);
+
+    const result = await service.writeExport(folder, zip());
+
+    expect(result).toEqual({ missing: 0, aborted: false });
+    expect(copiedFrom()).toEqual([
+      'brews/brew-1_flow_profile.json',
+      'c.jpg',
+      'graphs/graph-1_flow_profile.json',
+    ]);
+    expect(await exported()).toEqual([...FILES, ZIP].sort());
+    expect(await read(`${DIR}/c.jpg`)).toBe('content of c.jpg');
+  });
+
   it('does not leave a part file of a copy that failed', async () => {
     copy.and.callFake(async function (this: FilesystemWeb, _options) {
       await realCopy(this, _options);
@@ -266,6 +309,37 @@ describe('AttachmentExportService', () => {
     expect(await exported()).toEqual(
       [...FILES, ZIP].filter((_f) => _f !== 'b.jpg').sort(),
     );
+  });
+
+  it('keeps the complete staging folder when moving fails, and the next export finishes', async () => {
+    let failOnce = true;
+    spyOn(FilesystemWeb.prototype, 'rename').and.callFake(function (
+      this: FilesystemWeb,
+      _options,
+    ) {
+      const to = (_options as { to: string }).to;
+      if (failOnce && to === `${DIR}/c.jpg`) {
+        failOnce = false;
+        return Promise.reject(new Error('no space'));
+      }
+      return realRename(this, _options);
+    });
+
+    await expectAsync(service.writeExport(folder, zip())).toBeRejectedWithError(
+      'no space',
+    );
+    expect(await read(`${STAGING}/c.jpg`)).toBe('content of c.jpg');
+    expect(await read(`${DIR}/${ZIP}`)).toBeUndefined();
+    copy.calls.reset();
+
+    await service.writeExport(folder, zip());
+
+    expect(await exported()).toEqual([...FILES, ZIP].sort());
+    expect(copiedFrom()).toEqual([
+      'a.jpg',
+      'b.jpg',
+      'brews/brew-1_flow_profile.json',
+    ]);
   });
 
   it('logs and goes on when the staging folder cannot be removed', async () => {

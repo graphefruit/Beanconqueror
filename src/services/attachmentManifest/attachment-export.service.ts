@@ -25,8 +25,10 @@ export interface FullExportResult {
  * Everything is first written to a staging folder inside the export folder.
  * Only when all of it is there, files of an earlier export are replaced, the
  * zip last. A failure before that removes the staging folder again, so no
- * files without their zip are left behind. A file is copied as
- * `<name>.part` and only gets its name when complete.
+ * files without their zip are left behind. An export that was stopped, or
+ * ended with the app, keeps its staging folder, and the next one goes on
+ * from there: a file is copied as `<name>.part` and only gets its name when
+ * complete, so a file with its name is never copied again.
  */
 @Service()
 export class AttachmentExportService {
@@ -53,11 +55,17 @@ export class AttachmentExportService {
       path: `${_folder.path}/${AttachmentExportService.STAGING_FOLDER}`,
       directory: _folder.directory,
     };
+    const resuming = await this.uiFileHelper.fileExists(staging);
     let copied: string[];
     let missing: number;
     try {
       const paths = await this.manifest.currentPaths();
-      ({ copied, missing } = await this.__copyAll(paths, staging, _signal));
+      ({ copied, missing } = await this.__copyAll(
+        paths,
+        staging,
+        resuming,
+        _signal,
+      ));
       if (_signal?.aborted) {
         return { missing, aborted: true };
       }
@@ -92,6 +100,7 @@ export class AttachmentExportService {
   private async __copyAll(
     _paths: string[],
     _staging: ExportFolder,
+    _resuming: boolean,
     _signal: AbortSignal | undefined,
   ): Promise<{ copied: string[]; missing: number }> {
     const copied: string[] = [];
@@ -108,8 +117,21 @@ export class AttachmentExportService {
       const path = _paths[i];
       const target = `${_staging.path}/${path}`;
       const unfinished = target + '.part';
+      if (
+        _resuming &&
+        (await this.uiFileHelper.fileExists({
+          path: target,
+          directory: _staging.directory,
+        }))
+      ) {
+        copied.push(path);
+        continue;
+      }
       try {
         await this.__makeParent(_staging, path, made);
+        if (_resuming) {
+          await this.__delete(unfinished, _staging.directory);
+        }
         await Filesystem.copy({
           from: await this.uiFileHelper.resolvePhotoPath(path),
           directory: dataDirectory,
