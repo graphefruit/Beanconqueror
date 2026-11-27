@@ -96,6 +96,11 @@ jobs:
         timeout-minutes: 12
         env:
           TZ: ${{ matrix.tz }}
+          # Undocumented Playwright internal (1.65.1): splits the test count by these weights instead
+          # of evenly, because Chromium shard 2 holds the slow brew journeys. Check after every
+          # Playwright update; an unread variable only falls back to even shards. Derived 28.11.2026
+          # from the e2e step times of three green feature/relaunch runs; WebKit was already even.
+          PWTEST_SHARD_WEIGHTS: ${{ matrix.run.browser == 'chromium' && '7:5:7:6' || '' }}
       # Traces and screenshots only contain synthetic test data; external requests are blocked.
       - uses: actions/upload-artifact@v4
         if: failure()
