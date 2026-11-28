@@ -204,6 +204,9 @@ export class SettingsPage {
   uiHelper = inject(UIHelper);
   private readonly alertCtrl = inject(AlertController);
   private readonly uiAlert = inject(UIAlert);
+  // A field, because the plugin proxy cannot be spied on and unit tests
+  // replace it here.
+  private readonly androidNativeCalls = AndroidNativeCalls;
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiBrewStorage = inject(UIBrewStorage);
@@ -924,20 +927,18 @@ export class SettingsPage {
       );
     }
 
-    this.uiLog.info(logTag, 'Asking for SAF directory');
-    const { safTreeUri } = await AndroidNativeCalls.pickDirectory({
-      takePersistentPermissions: false,
-    });
-    this.uiLog.info(logTag, 'Got SAF tree Uri', safTreeUri);
-
     let cacheDir: CreateTempCacheDirectoryResult | undefined;
     try {
+      const safTreeUri = await this.__pickSafDirectory(logTag);
+      if (!safTreeUri) {
+        return;
+      }
       await this.uiAlert.showLoadingSpinner();
 
       // Attempt to read the main import file from the SAF directory and only
       // proceed with copying the SAF directory to cache if the main file exists.
       const mainFileName = 'Beanconqueror.zip';
-      const { exists } = await AndroidNativeCalls.fileExistsSaf({
+      const { exists } = await this.androidNativeCalls.fileExistsSaf({
         safTreeUri: safTreeUri,
         pathComponents: [mainFileName],
       });
@@ -954,7 +955,7 @@ export class SettingsPage {
       // This allows us to re-use the existing import logic that is common to
       // Android and iOS.
       cacheDir = await this.uiFileHelper.createTempCacheDirectory('safImport');
-      await AndroidNativeCalls.copySafDirectoryToFileDirectory({
+      await this.androidNativeCalls.copySafDirectoryToFileDirectory({
         fromSafTreeUri: safTreeUri,
         toDirectoryUri: cacheDir.uri,
       });
@@ -965,6 +966,10 @@ export class SettingsPage {
         cacheDir.uri,
         mainFileName,
       );
+    } catch (error) {
+      this.uiLog.error(logTag, 'Import failed', error);
+      await this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.showMessageWithDetails('ERROR_ON_FILE_READING', error);
     } finally {
       try {
         if (cacheDir) {
@@ -1023,6 +1028,38 @@ export class SettingsPage {
     }
   }
 
+  /**
+   * The list of files an export into a picked folder writes there until it is
+   * complete; the name is SafExportPlan.MARKER_NAME of the Android app.
+   */
+  private static readonly UNFINISHED_SAF_EXPORT =
+    'Beanconqueror_unfinished_export.txt';
+
+  /** The folder the user picked, or undefined when they closed the picker. */
+  private async __pickSafDirectory(
+    _logTag: string,
+  ): Promise<string | undefined> {
+    this.uiLog.info(_logTag, 'Asking for SAF directory');
+    try {
+      const { safTreeUri } = await this.androidNativeCalls.pickDirectory({
+        takePersistentPermissions: false,
+      });
+      this.uiLog.info(_logTag, 'Got SAF tree Uri', safTreeUri);
+      return safTreeUri;
+    } catch (error) {
+      this.uiLog.info(_logTag, 'No SAF directory picked', error);
+      return undefined;
+    }
+  }
+
+  private __refuseSafExport(_fileName: string): void {
+    void this.uiAlert.showMessage(
+      this.translate.instant('FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS', {
+        fileName: _fileName,
+      }),
+    );
+  }
+
   public async exportToSafDirectoryAndroid(): Promise<void> {
     const logTag = 'exportToDirectoryAndroid:';
 
@@ -1030,30 +1067,25 @@ export class SettingsPage {
       throw new Error('exportToDirectoryAndroid is only available on Android');
     }
 
-    this.uiLog.info(logTag, 'Asking for SAF directory');
-    const { safTreeUri } = await AndroidNativeCalls.pickDirectory({
-      takePersistentPermissions: false,
-    });
-    this.uiLog.info(logTag, 'Got SAF tree Uri', safTreeUri);
-
     let cacheDir: CreateTempCacheDirectoryResult | undefined;
     try {
+      const safTreeUri = await this.__pickSafDirectory(logTag);
+      if (!safTreeUri) {
+        return;
+      }
       await this.uiAlert.showLoadingSpinner();
 
-      const mainFileName = 'Beanconqueror.zip';
-      const { exists } = await AndroidNativeCalls.fileExistsSaf({
-        safTreeUri: safTreeUri,
-        pathComponents: [mainFileName],
-      });
-      if (exists) {
-        this.uiAlert.showMessage(
-          this.translate.instant(
-            'FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS',
-            {
-              fileName: mainFileName,
-            },
-          ),
-        );
+      const mainFileName = AttachmentExportService.ZIP_NAME;
+      const [{ exists }, { exists: unfinished }] = await Promise.all(
+        [mainFileName, SettingsPage.UNFINISHED_SAF_EXPORT].map((_name) =>
+          this.androidNativeCalls.fileExistsSaf({
+            safTreeUri: safTreeUri,
+            pathComponents: [_name],
+          }),
+        ),
+      );
+      if (exists && !unfinished) {
+        this.__refuseSafExport(mainFileName);
         return;
       }
 
@@ -1066,7 +1098,7 @@ export class SettingsPage {
         { path: cacheDir.path, directory: cacheDir.directory },
         false,
       );
-      await AndroidNativeCalls.moveFileDirectoryToSafDirectory({
+      await this.androidNativeCalls.moveFileDirectoryToSafDirectory({
         fromDirectoryUri: cacheDir.uri,
         toSafTreeUri: safTreeUri,
       });
@@ -1075,6 +1107,31 @@ export class SettingsPage {
           this.filesNotCopied > 0 ? 'FILES_NOT_COPIED' : 'EXPORT_COMPLETED',
           { count: this.filesNotCopied },
         ),
+      );
+    } catch (error) {
+      const { code, data } = (error ?? {}) as {
+        code?: string;
+        data?: { fileName?: string };
+      };
+      if (code === 'FILE_EXISTS' && data?.fileName) {
+        this.__refuseSafExport(data.fileName);
+        return;
+      }
+      if (code === 'MARKER_LEFT' && data?.fileName) {
+        void this.uiAlert
+          .showMessage(
+            this.translate.instant('FULL_EXPORT_TO_DIRECTORY_MARKER_LEFT', {
+              fileName: data.fileName,
+            }),
+          )
+          .then(() => this.__reportFilesNotCopied());
+        return;
+      }
+      this.uiLog.error(logTag, 'Export failed', error);
+      await this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.showMessageWithDetails(
+        'FULL_EXPORT_TO_DIRECTORY_FAILED',
+        error,
       );
     } finally {
       try {

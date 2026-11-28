@@ -645,6 +645,151 @@ describe('SettingsPage files of an export and an import', () => {
     });
   });
 
+  describe('the export into a picked folder on Android', () => {
+    const UNFINISHED = 'Beanconqueror_unfinished_export.txt';
+    let inFolder: string[];
+    let moveToFolder: jasmine.Spy;
+    let instant: jasmine.Spy;
+
+    beforeEach(async () => {
+      seedDatabase();
+      await android();
+      inFolder = [];
+      moveToFolder = jasmine.createSpy('moveToFolder').and.resolveTo();
+      Object.assign(page, {
+        androidNativeCalls: {
+          pickDirectory: () => Promise.resolve({ safTreeUri: 'content://x' }),
+          fileExistsSaf: (_options: { pathComponents: string[] }) =>
+            Promise.resolve({
+              exists: inFolder.includes(_options.pathComponents.join('/')),
+            }),
+          moveFileDirectoryToSafDirectory: moveToFolder,
+        },
+      });
+      instant = watchTexts();
+    });
+
+    it('does not write into a folder that holds a complete export', async () => {
+      inFolder = ['Beanconqueror.zip'];
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(moveToFolder).not.toHaveBeenCalled();
+      expect(instant).toHaveBeenCalledWith(
+        'FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS',
+        { fileName: 'Beanconqueror.zip' },
+      );
+    });
+
+    it('goes on with an export that did not finish, though its zip is there', async () => {
+      inFolder = ['Beanconqueror.zip', UNFINISHED];
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(moveToFolder).toHaveBeenCalledTimes(1);
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
+    });
+
+    it('names the file of the folder that stopped the export', async () => {
+      moveToFolder.and.rejectWith(
+        Object.assign(new Error('File exists already'), {
+          code: 'FILE_EXISTS',
+          data: { fileName: 'brews/x.jpg' },
+        }),
+      );
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(instant).toHaveBeenCalledWith(
+        'FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS',
+        { fileName: 'brews/x.jpg' },
+      );
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
+    });
+
+    it('asks the user to delete the marker the folder kept', async () => {
+      moveToFolder.and.rejectWith(
+        Object.assign(new Error('Could not delete'), {
+          code: 'MARKER_LEFT',
+          data: { fileName: UNFINISHED },
+        }),
+      );
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(instant).toHaveBeenCalledWith(
+        'FULL_EXPORT_TO_DIRECTORY_MARKER_LEFT',
+        { fileName: UNFINISHED },
+      );
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
+    });
+
+    it('tells also of the files it could not copy when the marker was kept', async () => {
+      moveToFolder.and.rejectWith(
+        Object.assign(new Error('Could not delete'), {
+          code: 'MARKER_LEFT',
+          data: { fileName: UNFINISHED },
+        }),
+      );
+
+      await page.exportToSafDirectoryAndroid();
+      await new Promise((_resolve) => setTimeout(_resolve));
+
+      expect(showMessage.calls.allArgs()).toEqual([
+        ['FULL_EXPORT_TO_DIRECTORY_MARKER_LEFT'],
+        ['FILES_NOT_COPIED'],
+      ]);
+    });
+
+    it('does nothing when no folder is picked, for the export and the import', async () => {
+      Object.assign(page, {
+        androidNativeCalls: {
+          pickDirectory: () =>
+            Promise.reject(new Error('Intent result was not OK, got result 0')),
+          fileExistsSaf: jasmine.createSpy('fileExistsSaf'),
+          moveFileDirectoryToSafDirectory: moveToFolder,
+        },
+      });
+
+      await page.exportToSafDirectoryAndroid();
+      await page.importFromDirectoryAndroid();
+
+      expect(moveToFolder).not.toHaveBeenCalled();
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
+      expect(log.error).not.toHaveBeenCalled();
+    });
+
+    it('tells when reading the picked folder for the import failed', async () => {
+      const error = new Error('safTreeFile created from safTreeUri was null.');
+      Object.assign(page, {
+        androidNativeCalls: {
+          pickDirectory: () => Promise.resolve({ safTreeUri: 'content://x' }),
+          fileExistsSaf: () => Promise.reject(error),
+        },
+      });
+
+      await page.importFromDirectoryAndroid();
+
+      expect(showMessageWithDetails).toHaveBeenCalledWith(
+        'ERROR_ON_FILE_READING',
+        error,
+      );
+    });
+
+    it('tells when writing into the folder failed', async () => {
+      const error = new Error('The storage provider did not open the file');
+      moveToFolder.and.rejectWith(error);
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(showMessageWithDetails).toHaveBeenCalledWith(
+        'FULL_EXPORT_TO_DIRECTORY_FAILED',
+        error,
+      );
+      expect(log.error).toHaveBeenCalled();
+    });
+  });
+
   describe('importing the files of a backup on Android', () => {
     const IMPORT_DIR = '/CACHE/picked/folder';
     const inBackup = (_file: string) => `picked/folder/${_file}`;
