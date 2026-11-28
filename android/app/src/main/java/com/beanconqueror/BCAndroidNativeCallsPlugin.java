@@ -278,8 +278,10 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
     if (marker == null) {
       marker = create(resolver, root, "text/plain", SafExportPlan.MARKER_NAME);
     }
-    try (OutputStream out = open(resolver.openOutputStream(marker, markerMode))) {
-      out.write(String.join("\n", plan.marked).getBytes(StandardCharsets.UTF_8));
+    if (plan.writeMarker) {
+      try (OutputStream out = open(resolver.openOutputStream(marker, markerMode))) {
+        out.write(String.join("\n", plan.marked).getBytes(StandardCharsets.UTF_8));
+      }
     }
 
     for (String path : plan.order) {
@@ -301,7 +303,20 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
       }
       src.delete();
     }
-    DocumentsContract.deleteDocument(resolver, marker);
+    // A marker left behind would let the next export write over this one.
+    boolean markerDeleted;
+    try {
+      markerDeleted = DocumentsContract.deleteDocument(resolver, marker);
+    } catch (IOException | RuntimeException e) {
+      Log.e(TAG, "Could not delete the marker of the export.", e);
+      markerDeleted = false;
+    }
+    if (!markerDeleted) {
+      JSObject data = new JSObject();
+      data.put("fileName", SafExportPlan.MARKER_NAME);
+      call.reject("Could not delete " + SafExportPlan.MARKER_NAME, "MARKER_LEFT", null, data);
+      return;
+    }
     call.resolve();
   }
 
@@ -312,7 +327,7 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
    */
   private Map<String, Uri> scanSaf(
     File srcDir, String prefix, Uri targetDir, Uri treeUri,
-    Map<String, Uri> folders, List<String> files, Map<String, Uri> taken) {
+    Map<String, Uri> folders, List<String> files, Map<String, Uri> taken) throws IOException {
     Map<String, Uri> children = new HashMap<>();
     Set<String> childFolders = new HashSet<>();
     if (targetDir != null) {
@@ -322,7 +337,11 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
         DocumentsContract.Document.COLUMN_DOCUMENT_ID,
         DocumentsContract.Document.COLUMN_DISPLAY_NAME,
         DocumentsContract.Document.COLUMN_MIME_TYPE}, null, null, null)) {
-        while (cursor != null && cursor.moveToNext()) {
+        // Taken as empty, the folder would let files of the user be written over.
+        if (cursor == null) {
+          throw new IOException("The storage provider did not list the folder " + prefix);
+        }
+        while (cursor.moveToNext()) {
           String name = cursor.getString(1);
           children.put(name, DocumentsContract.buildDocumentUriUsingTree(treeUri, cursor.getString(0)));
           if (DocumentsContract.Document.MIME_TYPE_DIR.equals(cursor.getString(2))) {

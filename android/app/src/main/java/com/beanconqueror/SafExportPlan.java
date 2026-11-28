@@ -28,11 +28,18 @@ final class SafExportPlan {
   final List<String> order;
   /** What the marker lists while they are written. */
   final Set<String> marked;
+  /**
+   * Whether the marker has to be written. One that lists all already is left
+   * as it is, so a restart that is cut off while writing it cannot shorten it.
+   */
+  final boolean writeMarker;
 
-  private SafExportPlan(String conflict, List<String> order, Set<String> marked) {
+  private SafExportPlan(
+    String conflict, List<String> order, Set<String> marked, boolean writeMarker) {
     this.conflict = conflict;
     this.order = order;
     this.marked = marked;
+    this.writeMarker = writeMarker;
   }
 
   /**
@@ -49,7 +56,7 @@ final class SafExportPlan {
   ) {
     for (String path : new TreeSet<>(taken)) {
       if (!marked.contains(path)) {
-        return new SafExportPlan(path, Collections.emptyList(), Collections.emptySet());
+        return new SafExportPlan(path, Collections.emptyList(), Collections.emptySet(), false);
       }
     }
     List<String> order = new ArrayList<>(files);
@@ -58,6 +65,6 @@ final class SafExportPlan {
     }
     Set<String> nowMarked = new TreeSet<>(marked);
     nowMarked.addAll(files);
-    return new SafExportPlan(null, order, nowMarked);
+    return new SafExportPlan(null, order, nowMarked, !nowMarked.equals(marked));
   }
 }

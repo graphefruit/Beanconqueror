@@ -707,6 +707,58 @@ describe('SettingsPage files of an export and an import', () => {
       expect(showMessageWithDetails).not.toHaveBeenCalled();
     });
 
+    it('asks the user to delete the marker the folder kept', async () => {
+      moveToFolder.and.rejectWith(
+        Object.assign(new Error('Could not delete'), {
+          code: 'MARKER_LEFT',
+          data: { fileName: UNFINISHED },
+        }),
+      );
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(instant).toHaveBeenCalledWith(
+        'FULL_EXPORT_TO_DIRECTORY_MARKER_LEFT',
+        { fileName: UNFINISHED },
+      );
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
+    });
+
+    it('does nothing when no folder is picked, for the export and the import', async () => {
+      Object.assign(page, {
+        androidNativeCalls: {
+          pickDirectory: () =>
+            Promise.reject(new Error('Intent result was not OK, got result 0')),
+          fileExistsSaf: jasmine.createSpy('fileExistsSaf'),
+          moveFileDirectoryToSafDirectory: moveToFolder,
+        },
+      });
+
+      await page.exportToSafDirectoryAndroid();
+      await page.importFromDirectoryAndroid();
+
+      expect(moveToFolder).not.toHaveBeenCalled();
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
+      expect(log.error).not.toHaveBeenCalled();
+    });
+
+    it('tells when reading the picked folder for the import failed', async () => {
+      const error = new Error('safTreeFile created from safTreeUri was null.');
+      Object.assign(page, {
+        androidNativeCalls: {
+          pickDirectory: () => Promise.resolve({ safTreeUri: 'content://x' }),
+          fileExistsSaf: () => Promise.reject(error),
+        },
+      });
+
+      await page.importFromDirectoryAndroid();
+
+      expect(showMessageWithDetails).toHaveBeenCalledWith(
+        'ERROR_ON_FILE_READING',
+        error,
+      );
+    });
+
     it('tells when writing into the folder failed', async () => {
       const error = new Error('The storage provider did not open the file');
       moveToFolder.and.rejectWith(error);

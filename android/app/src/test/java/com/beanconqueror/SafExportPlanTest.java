@@ -1,7 +1,9 @@
 package com.beanconqueror;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,6 +29,23 @@ public class SafExportPlanTest {
     assertNull(plan.conflict);
     assertEquals(Arrays.asList("b/photo1.jpg", "b/photo2.jpg", ZIP), plan.order);
     assertEquals(set("b/photo1.jpg", "b/photo2.jpg", ZIP), plan.marked);
+    assertTrue(plan.writeMarker);
+  }
+
+  @Test
+  public void leavesAMarkerThatListsAllTheFilesAsItIs() {
+    SafExportPlan plan = SafExportPlan.of(
+      FILES, set("b/photo1.jpg"), set("b/photo1.jpg", ZIP, "b/photo2.jpg"), ZIP);
+
+    assertFalse(plan.writeMarker);
+  }
+
+  @Test
+  public void writesAMarkerThatMissesAFile() {
+    SafExportPlan plan = SafExportPlan.of(
+      FILES, set("b/photo1.jpg"), set("b/photo1.jpg"), ZIP);
+
+    assertTrue(plan.writeMarker);
   }
 
   @Test

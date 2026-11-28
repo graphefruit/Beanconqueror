@@ -927,14 +927,12 @@ export class SettingsPage {
       );
     }
 
-    this.uiLog.info(logTag, 'Asking for SAF directory');
-    const { safTreeUri } = await this.androidNativeCalls.pickDirectory({
-      takePersistentPermissions: false,
-    });
-    this.uiLog.info(logTag, 'Got SAF tree Uri', safTreeUri);
-
     let cacheDir: CreateTempCacheDirectoryResult | undefined;
     try {
+      const safTreeUri = await this.__pickSafDirectory(logTag);
+      if (!safTreeUri) {
+        return;
+      }
       await this.uiAlert.showLoadingSpinner();
 
       // Attempt to read the main import file from the SAF directory and only
@@ -968,6 +966,10 @@ export class SettingsPage {
         cacheDir.uri,
         mainFileName,
       );
+    } catch (error) {
+      this.uiLog.error(logTag, 'Import failed', error);
+      await this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.showMessageWithDetails('ERROR_ON_FILE_READING', error);
     } finally {
       try {
         if (cacheDir) {
@@ -1033,6 +1035,23 @@ export class SettingsPage {
   private static readonly UNFINISHED_SAF_EXPORT =
     'Beanconqueror_unfinished_export.txt';
 
+  /** The folder the user picked, or undefined when they closed the picker. */
+  private async __pickSafDirectory(
+    _logTag: string,
+  ): Promise<string | undefined> {
+    this.uiLog.info(_logTag, 'Asking for SAF directory');
+    try {
+      const { safTreeUri } = await this.androidNativeCalls.pickDirectory({
+        takePersistentPermissions: false,
+      });
+      this.uiLog.info(_logTag, 'Got SAF tree Uri', safTreeUri);
+      return safTreeUri;
+    } catch (error) {
+      this.uiLog.info(_logTag, 'No SAF directory picked', error);
+      return undefined;
+    }
+  }
+
   private __refuseSafExport(_fileName: string): void {
     void this.uiAlert.showMessage(
       this.translate.instant('FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS', {
@@ -1048,14 +1067,12 @@ export class SettingsPage {
       throw new Error('exportToDirectoryAndroid is only available on Android');
     }
 
-    this.uiLog.info(logTag, 'Asking for SAF directory');
-    const { safTreeUri } = await this.androidNativeCalls.pickDirectory({
-      takePersistentPermissions: false,
-    });
-    this.uiLog.info(logTag, 'Got SAF tree Uri', safTreeUri);
-
     let cacheDir: CreateTempCacheDirectoryResult | undefined;
     try {
+      const safTreeUri = await this.__pickSafDirectory(logTag);
+      if (!safTreeUri) {
+        return;
+      }
       await this.uiAlert.showLoadingSpinner();
 
       const mainFileName = AttachmentExportService.ZIP_NAME;
@@ -1098,6 +1115,14 @@ export class SettingsPage {
       };
       if (code === 'FILE_EXISTS' && data?.fileName) {
         this.__refuseSafExport(data.fileName);
+        return;
+      }
+      if (code === 'MARKER_LEFT' && data?.fileName) {
+        void this.uiAlert.showMessage(
+          this.translate.instant('FULL_EXPORT_TO_DIRECTORY_MARKER_LEFT', {
+            fileName: data.fileName,
+          }),
+        );
         return;
       }
       this.uiLog.error(logTag, 'Export failed', error);
