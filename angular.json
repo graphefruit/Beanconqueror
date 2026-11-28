@@ -149,19 +149,10 @@
     }
   },
   "cli": {
-    "schematicCollections": [
-      "@ionic/angular-toolkit",
-      "@angular-eslint/schematics"
-    ],
+    "schematicCollections": ["@angular-eslint/schematics"],
     "analytics": false
   },
   "schematics": {
-    "@ionic/angular-toolkit:component": {
-      "styleext": "scss"
-    },
-    "@ionic/angular-toolkit:page": {
-      "styleext": "scss"
-    },
     "@schematics/angular:component": {
       "type": "component"
     },
