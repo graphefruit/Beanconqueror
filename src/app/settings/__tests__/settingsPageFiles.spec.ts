@@ -645,6 +645,82 @@ describe('SettingsPage files of an export and an import', () => {
     });
   });
 
+  describe('the export into a picked folder on Android', () => {
+    const UNFINISHED = 'Beanconqueror_unfinished_export.txt';
+    let inFolder: string[];
+    let moveToFolder: jasmine.Spy;
+    let instant: jasmine.Spy;
+
+    beforeEach(async () => {
+      seedDatabase();
+      await android();
+      inFolder = [];
+      moveToFolder = jasmine.createSpy('moveToFolder').and.resolveTo();
+      Object.assign(page, {
+        androidNativeCalls: {
+          pickDirectory: () => Promise.resolve({ safTreeUri: 'content://x' }),
+          fileExistsSaf: (_options: { pathComponents: string[] }) =>
+            Promise.resolve({
+              exists: inFolder.includes(_options.pathComponents.join('/')),
+            }),
+          moveFileDirectoryToSafDirectory: moveToFolder,
+        },
+      });
+      instant = watchTexts();
+    });
+
+    it('does not write into a folder that holds a complete export', async () => {
+      inFolder = ['Beanconqueror.zip'];
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(moveToFolder).not.toHaveBeenCalled();
+      expect(instant).toHaveBeenCalledWith(
+        'FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS',
+        { fileName: 'Beanconqueror.zip' },
+      );
+    });
+
+    it('goes on with an export that did not finish, though its zip is there', async () => {
+      inFolder = ['Beanconqueror.zip', UNFINISHED];
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(moveToFolder).toHaveBeenCalledTimes(1);
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
+    });
+
+    it('names the file of the folder that stopped the export', async () => {
+      moveToFolder.and.rejectWith(
+        Object.assign(new Error('File exists already'), {
+          code: 'FILE_EXISTS',
+          data: { fileName: 'brews/x.jpg' },
+        }),
+      );
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(instant).toHaveBeenCalledWith(
+        'FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS',
+        { fileName: 'brews/x.jpg' },
+      );
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
+    });
+
+    it('tells when writing into the folder failed', async () => {
+      const error = new Error('The storage provider did not open the file');
+      moveToFolder.and.rejectWith(error);
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(showMessageWithDetails).toHaveBeenCalledWith(
+        'FULL_EXPORT_TO_DIRECTORY_FAILED',
+        error,
+      );
+      expect(log.error).toHaveBeenCalled();
+    });
+  });
+
   describe('importing the files of a backup on Android', () => {
     const IMPORT_DIR = '/CACHE/picked/folder';
     const inBackup = (_file: string) => `picked/folder/${_file}`;

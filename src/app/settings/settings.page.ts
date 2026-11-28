@@ -204,6 +204,9 @@ export class SettingsPage {
   uiHelper = inject(UIHelper);
   private readonly alertCtrl = inject(AlertController);
   private readonly uiAlert = inject(UIAlert);
+  // A field, because the plugin proxy cannot be spied on and unit tests
+  // replace it here.
+  private readonly androidNativeCalls = AndroidNativeCalls;
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiBrewStorage = inject(UIBrewStorage);
@@ -925,7 +928,7 @@ export class SettingsPage {
     }
 
     this.uiLog.info(logTag, 'Asking for SAF directory');
-    const { safTreeUri } = await AndroidNativeCalls.pickDirectory({
+    const { safTreeUri } = await this.androidNativeCalls.pickDirectory({
       takePersistentPermissions: false,
     });
     this.uiLog.info(logTag, 'Got SAF tree Uri', safTreeUri);
@@ -937,7 +940,7 @@ export class SettingsPage {
       // Attempt to read the main import file from the SAF directory and only
       // proceed with copying the SAF directory to cache if the main file exists.
       const mainFileName = 'Beanconqueror.zip';
-      const { exists } = await AndroidNativeCalls.fileExistsSaf({
+      const { exists } = await this.androidNativeCalls.fileExistsSaf({
         safTreeUri: safTreeUri,
         pathComponents: [mainFileName],
       });
@@ -954,7 +957,7 @@ export class SettingsPage {
       // This allows us to re-use the existing import logic that is common to
       // Android and iOS.
       cacheDir = await this.uiFileHelper.createTempCacheDirectory('safImport');
-      await AndroidNativeCalls.copySafDirectoryToFileDirectory({
+      await this.androidNativeCalls.copySafDirectoryToFileDirectory({
         fromSafTreeUri: safTreeUri,
         toDirectoryUri: cacheDir.uri,
       });
@@ -1046,7 +1049,7 @@ export class SettingsPage {
     }
 
     this.uiLog.info(logTag, 'Asking for SAF directory');
-    const { safTreeUri } = await AndroidNativeCalls.pickDirectory({
+    const { safTreeUri } = await this.androidNativeCalls.pickDirectory({
       takePersistentPermissions: false,
     });
     this.uiLog.info(logTag, 'Got SAF tree Uri', safTreeUri);
@@ -1058,7 +1061,7 @@ export class SettingsPage {
       const mainFileName = AttachmentExportService.ZIP_NAME;
       const [{ exists }, { exists: unfinished }] = await Promise.all(
         [mainFileName, SettingsPage.UNFINISHED_SAF_EXPORT].map((_name) =>
-          AndroidNativeCalls.fileExistsSaf({
+          this.androidNativeCalls.fileExistsSaf({
             safTreeUri: safTreeUri,
             pathComponents: [_name],
           }),
@@ -1078,7 +1081,7 @@ export class SettingsPage {
         { path: cacheDir.path, directory: cacheDir.directory },
         false,
       );
-      await AndroidNativeCalls.moveFileDirectoryToSafDirectory({
+      await this.androidNativeCalls.moveFileDirectoryToSafDirectory({
         fromDirectoryUri: cacheDir.uri,
         toSafTreeUri: safTreeUri,
       });
