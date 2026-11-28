@@ -65,6 +65,7 @@ import {
   brewFieldLayout,
   EMPTY_BREW_FIELD_LAYOUT,
 } from '../../../brew-session/rules/brewFieldLayout';
+import { storedBrewTexts } from '../../../brew-session/rules/brewSuggestions';
 import { AppEvent } from '../../../classes/appEvent/appEvent';
 import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
@@ -135,6 +136,7 @@ import { UIToast } from '../../../services/uiToast';
 import { UIWaterStorage } from '../../../services/uiWaterStorage';
 import { BrewTimerComponent } from '../../brew-timer/brew-timer.component';
 import { PhotoAddComponent } from '../../photo-add/photo-add.component';
+import { SuggestionListComponent } from '../../suggestion-list/suggestion-list.component';
 import { TimerComponent } from '../../timer/timer.component';
 import {
   BrewBrewingGraphComponent,
@@ -190,6 +192,7 @@ declare var cordova;
     RangeNameDirective,
     IonTextarea,
     IonGrid,
+    SuggestionListComponent,
   ],
 })
 export class BrewBrewingComponent implements OnInit, AfterViewInit {
@@ -284,6 +287,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public readonly PreparationDeviceType = PreparationDeviceType;
 
   public typeaheadSearch = {};
+  public readonly storedPressureProfiles = (): string[] =>
+    storedBrewTexts(this.uiBrewStorage.getAllEntries(), 'pressure_profile');
+  public readonly storedCoffeeTypes = (): string[] =>
+    storedBrewTexts(this.uiBrewStorage.getAllEntries(), 'coffee_type');
 
   public choosenPreparation: Preparation = undefined;
   public choosenMill: Mill = undefined;
@@ -1428,41 +1435,26 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     actualSearchValue = actualSearchValue.toLowerCase();
     let filteredEntries: Array<Brew>;
 
-    let distictedValues = [];
-    if (_type !== 'vessel') {
-      filteredEntries = this.uiBrewStorage
-        .getAllEntries()
-        .filter((e) => e[_type].toLowerCase().includes(actualSearchValue));
-      for (const entry of filteredEntries) {
-        this.typeaheadSearch[_type + 'Results'].push(entry[_type]);
-      }
+    const distictedValues = [];
+    filteredEntries = this.uiBrewStorage
+      .getAllEntries()
+      .filter(
+        (e) =>
+          e.vessel_name !== '' &&
+          e.vessel_name.toLowerCase().includes(actualSearchValue),
+      );
 
-      this.typeaheadSearch[_type + 'Results'].forEach((element) => {
-        if (!distictedValues.includes(element.trim())) {
-          distictedValues.push(element.trim());
-        }
-      });
-    } else {
-      filteredEntries = this.uiBrewStorage
-        .getAllEntries()
-        .filter(
+    for (const entry of filteredEntries) {
+      if (
+        distictedValues.filter(
           (e) =>
-            e.vessel_name !== '' &&
-            e.vessel_name.toLowerCase().includes(actualSearchValue),
-        );
-
-      for (const entry of filteredEntries) {
-        if (
-          distictedValues.filter(
-            (e) =>
-              e.name === entry.vessel_name && e.weight === entry.vessel_weight,
-          ).length <= 0
-        ) {
-          distictedValues.push({
-            name: entry.vessel_name,
-            weight: entry.vessel_weight,
-          });
-        }
+            e.name === entry.vessel_name && e.weight === entry.vessel_weight,
+        ).length <= 0
+      ) {
+        distictedValues.push({
+          name: entry.vessel_name,
+          weight: entry.vessel_weight,
+        });
       }
     }
 
@@ -1503,13 +1495,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public searchResultSelected(_type: string, selected: any): void {
-    if (_type !== 'vessel') {
-      this.data[_type] = selected;
-    } else {
-      this.data.vessel_name = selected['name'];
-      this.data.vessel_weight = selected['weight'];
-    }
-
+    this.data.vessel_name = selected['name'];
+    this.data.vessel_weight = selected['weight'];
     this.onSearchLeave(_type);
   }
 

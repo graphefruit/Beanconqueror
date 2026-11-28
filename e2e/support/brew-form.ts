@@ -16,16 +16,13 @@ import { openFromProfile } from './profile';
 export const BREW_TEST_START = new Date('2026-03-01T09:00:00+01:00');
 
 /**
- * A text field of the brew form. Ionic's scroll assist briefly shows a
- * disabled copy of a focused input with the same name; the user only ever
- * types into the enabled one.
+ * A text field of the brew form; one that suggests earlier values is a
+ * combobox. Ionic's scroll assist briefly shows a disabled copy of a focused
+ * input with the same name; the user only ever types into the enabled one.
  */
 export function brewField(page: Page, name: string | RegExp): Locator {
-  return page.getByRole('textbox', {
-    name,
-    exact: typeof name === 'string',
-    disabled: false,
-  });
+  const field = { name, exact: typeof name === 'string', disabled: false };
+  return page.getByRole('textbox', field).or(page.getByRole('combobox', field));
 }
 
 /** Types a value and leaves the field, which is when numbers are normalized. */

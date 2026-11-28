@@ -80,33 +80,21 @@
             }
           }
           @case ('pressure_profile') {
-            <ion-item lines="inset">
-              <ion-input label-placement="stacked" label='{{"BREW_DATA_PRESSURE_PROFILE" | translate}}'
-                         (ionBlur)="onSearchLeave('pressure_profile')"
-                         (ionInput)="onSearchChange('pressure_profile',$event)"
-                         (ionFocus)="onSearchFocus('pressure_profile');"
-                         [(ngModel)]="data.pressure_profile" autocapitalize="sentences"
-                         placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PRESSURE_PROFILE' | translate}}" spellcheck="false"
-                         type="text" />
-              @if((data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.IS_PRESSURE_PARAMETER_URL,data.pressure_profile])) {
-                <ion-button style="margin-left:0px;" (click)="openURL(data.pressure_profile)"
-                            [attr.aria-label]="'A11Y.OPEN_PRESSURE_PROFILE_URL' | translate"
-                            class="big-icon-only" fill="clear" slot="end" tappable>
-                  <ion-icon aria-hidden="true" class="ion-color-accent" name="globe-outline" slot="icon-only" />
-                </ion-button>
-              }
-            </ion-item>
-            @if(searchResultsAvailable('pressure_profile')) {
-              <ion-item lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-                <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--ion-color-accent-secondary);">
-                  @for(result of getResults('pressure_profile'); track result; let last = $last) {
-                    <ion-item (click)="searchResultSelected('pressure_profile',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
-                      <ion-label>{{result}}</ion-label>
-                    </ion-item>
-                  }
-                </ion-list>
+            <suggestion-list (picked)="data.pressure_profile = $event" [candidates]="storedPressureProfiles">
+              <ion-item lines="inset">
+                <ion-input label-placement="stacked" label='{{"BREW_DATA_PRESSURE_PROFILE" | translate}}'
+                           [(ngModel)]="data.pressure_profile" autocapitalize="sentences"
+                           placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PRESSURE_PROFILE' | translate}}" spellcheck="false"
+                           type="text" />
+                @if((data | brewFunctionPipe: [BREW_FUNCTION_PIPE_ENUM.IS_PRESSURE_PARAMETER_URL,data.pressure_profile])) {
+                  <ion-button style="margin-left:0px;" (click)="openURL(data.pressure_profile)"
+                              [attr.aria-label]="'A11Y.OPEN_PRESSURE_PROFILE_URL' | translate"
+                              class="big-icon-only" fill="clear" slot="end" tappable>
+                    <ion-icon aria-hidden="true" class="ion-color-accent" name="globe-outline" slot="icon-only" />
+                  </ion-button>
+                }
               </ion-item>
-            }
+            </suggestion-list>
           }
           @case ('method_of_preparation_tool') {
             <ion-item
@@ -253,24 +241,12 @@
             </ion-item>
           }
           @case ('coffee_type') {
-            <ion-item lines="inset">
-              <ion-input (ionBlur)="onSearchLeave('coffee_type')"
-                (ionInput)="onSearchChange('coffee_type',$event)"
-                (ionFocus)="onSearchFocus('coffee_type');"
-                label-placement="stacked" label='{{"BREW_DATA_COFFEE_TYPE" | translate}}' [(ngModel)]="data.coffee_type" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_TYPE' | translate}}"
-                type="text" />
-            </ion-item>
-            @if(searchResultsAvailable('coffee_type')) {
-              <ion-item lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-                <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--ion-color-accent-secondary);">
-                  @for(result of getResults('coffee_type'); track result; let last = $last) {
-                    <ion-item (click)="searchResultSelected('coffee_type',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
-                      <ion-label>{{result}}</ion-label>
-                    </ion-item>
-                  }
-                </ion-list>
+            <suggestion-list (picked)="data.coffee_type = $event" [candidates]="storedCoffeeTypes">
+              <ion-item lines="inset">
+                <ion-input label-placement="stacked" label='{{"BREW_DATA_COFFEE_TYPE" | translate}}' [(ngModel)]="data.coffee_type" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_TYPE' | translate}}"
+                  type="text" />
               </ion-item>
-            }
+            </suggestion-list>
           }
           @case ('coffee_concentration') {
             <ion-item lines="inset">

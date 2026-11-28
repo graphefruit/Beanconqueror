@@ -722,4 +722,18 @@ describe('BrewBrewingComponent field order', () => {
     expectStoredTimeShown(temperatureTime, 'first preparation again');
     expectStoredTimeShown(bloomTime, 'first preparation again');
   });
+
+  it('suggests the pressure profiles and coffee types of the stored brews', () => {
+    const stored = Object.assign(new Brew(), {
+      pressure_profile: 'Turbo ',
+      coffee_type: 'Lungo',
+    });
+    const brewStorage = TestBed.inject(
+      UIBrewStorage,
+    ) as jasmine.SpyObj<UIBrewStorage>;
+    brewStorage.getAllEntries.and.returnValue([stored, new Brew()]);
+
+    expect(component.storedPressureProfiles()).toEqual(['Turbo']);
+    expect(component.storedCoffeeTypes()).toEqual(['Lungo']);
+  });
 });
