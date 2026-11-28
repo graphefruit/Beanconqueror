@@ -176,8 +176,8 @@ describe('UIFileHelper', () => {
       readInternalFileAsUint8Array: () =>
         fileHelper.readInternalFileAsUint8Array('a.txt'),
       readInternalJSONFile: () => fileHelper.readInternalJSONFile('a.json'),
-      writeInternalFileFromText: () =>
-        fileHelper.writeInternalFileFromText('text', 'a.txt'),
+      replaceInternalFileFromText: () =>
+        fileHelper.replaceInternalFileFromText('text', 'a.txt'),
       writeInternalFileFromBase64: () =>
         fileHelper.writeInternalFileFromBase64(BYTES_BASE64, 'a.bin'),
       replaceInternalFileFromBlob: () =>
@@ -212,19 +212,18 @@ describe('UIFileHelper', () => {
   describe('text files', () => {
     beforeEach(setupAndroid);
 
-    it('reads back the text it wrote and gives the relative path', async () => {
+    it('reads back the text it wrote', async () => {
       const text = 'Größe: 18,5 g – Ærø ☕ 👍\nzweite Zeile';
 
-      const path = await fileHelper.writeInternalFileFromText(text, 'note.txt');
+      await fileHelper.replaceInternalFileFromText(text, 'note.txt');
 
-      expect(path).toBe('note.txt');
       expect(await fileHelper.readInternalFileAsText('note.txt')).toBe(text);
       // A leading slash names the same file.
       expect(await fileHelper.readInternalFileAsText('/note.txt')).toBe(text);
     });
 
     it('writes into the app data directory', async () => {
-      await fileHelper.writeInternalFileFromText('text', 'note.txt');
+      await fileHelper.replaceInternalFileFromText('text', 'note.txt');
 
       const file = await Filesystem.stat({
         path: 'note.txt',
@@ -235,11 +234,60 @@ describe('UIFileHelper', () => {
     });
 
     it('replaces an existing file', async () => {
-      await fileHelper.writeInternalFileFromText('first', 'note.txt');
-      await fileHelper.writeInternalFileFromText('second', 'note.txt');
+      await fileHelper.replaceInternalFileFromText('first', 'note.txt');
+      await fileHelper.replaceInternalFileFromText('second', 'note.txt');
 
       expect(await fileHelper.readInternalFileAsText('note.txt')).toBe(
         'second',
+      );
+      expect(await namesIn('', Directory.Data)).toEqual(['note.txt']);
+    });
+
+    it('writes to a .part file and renames it when complete', async () => {
+      const write = spyOn(
+        FilesystemWeb.prototype,
+        'writeFile',
+      ).and.callThrough();
+      const rename = spyOn(FilesystemWeb.prototype, 'rename').and.callThrough();
+
+      await fileHelper.replaceInternalFileFromText('graph', 'graphs/a.json');
+
+      expect(write.calls.argsFor(0)[0].path).toBe('graphs/a.json.part');
+      expect(rename).toHaveBeenCalledOnceWith(
+        jasmine.objectContaining({
+          from: 'graphs/a.json.part',
+          to: 'graphs/a.json',
+        }),
+      );
+      expect(await namesIn('graphs', Directory.Data)).toEqual(['a.json']);
+    });
+
+    it('leaves the file from before when writing fails', async () => {
+      await fileHelper.replaceInternalFileFromText('before', 'note.txt');
+      spyOn(fileHelper, 'writeFileFromText').and.rejectWith(
+        new Error('disk full'),
+      );
+
+      await expectAsync(
+        fileHelper.replaceInternalFileFromText('after', 'note.txt'),
+      ).toBeRejectedWithError('disk full');
+      expect(await fileHelper.readInternalFileAsText('note.txt')).toBe(
+        'before',
+      );
+    });
+
+    it('leaves the file from before when the app ends while writing', async () => {
+      await fileHelper.replaceInternalFileFromText('before', 'note.txt');
+      // As when the system ends the app: half the data, no renaming.
+      spyOn(FilesystemWeb.prototype, 'rename').and.rejectWith(
+        new Error('app ended'),
+      );
+
+      await expectAsync(
+        fileHelper.replaceInternalFileFromText('after', 'note.txt'),
+      ).toBeRejected();
+      expect(await fileHelper.readInternalFileAsText('note.txt')).toBe(
+        'before',
       );
       expect(await namesIn('', Directory.Data)).toEqual(['note.txt']);
     });
@@ -274,8 +322,9 @@ describe('UIFileHelper', () => {
     // On a device the plugin answers with base64 unless it is asked for text;
     // the web implementation gives back what was written either way.
     it('asks the plugin for UTF-8 text', async () => {
+      await fileHelper.replaceInternalFileFromText('text', 'note.txt');
+      // Renaming reads the file in the web implementation.
       const read = spyOn(FilesystemWeb.prototype, 'readFile').and.callThrough();
-      await fileHelper.writeInternalFileFromText('text', 'note.txt');
 
       await fileHelper.readInternalFileAsText('note.txt');
       await fileHelper.readInternalFileAsBase64('note.txt');
@@ -303,7 +352,7 @@ describe('UIFileHelper', () => {
 
     beforeEach(async () => {
       setupAndroid();
-      await fileHelper.writeInternalFileFromText('original', PATH);
+      await fileHelper.replaceInternalFileFromText('original', PATH);
     });
 
     it('writes the new text and keeps the file from before', async () => {
@@ -554,7 +603,7 @@ describe('UIFileHelper', () => {
 
     it('parses the file', async () => {
       const data = { BREWS: [{ name: 'Früh', grind_weight: 18.5 }], n: null };
-      await fileHelper.writeInternalFileFromText(
+      await fileHelper.replaceInternalFileFromText(
         JSON.stringify(data),
         'Beanconqueror.json',
       );
@@ -566,7 +615,10 @@ describe('UIFileHelper', () => {
     });
 
     it('logs and rejects when the file is not JSON', async () => {
-      await fileHelper.writeInternalFileFromText('{"BREWS": [', 'broken.json');
+      await fileHelper.replaceInternalFileFromText(
+        '{"BREWS": [',
+        'broken.json',
+      );
 
       await expectAsync(
         fileHelper.readInternalJSONFile('broken.json'),
@@ -575,7 +627,7 @@ describe('UIFileHelper', () => {
     });
 
     it('logs and rejects when the file is empty', async () => {
-      await fileHelper.writeInternalFileFromText('', 'empty.json');
+      await fileHelper.replaceInternalFileFromText('', 'empty.json');
 
       await expectAsync(
         fileHelper.readInternalJSONFile('empty.json'),
@@ -591,8 +643,9 @@ describe('UIFileHelper', () => {
     });
 
     it('known gap: a leading slash is not removed from the name', async () => {
+      await fileHelper.replaceInternalFileFromText('{}', 'data.json');
+      // Renaming reads the file in the web implementation.
       const read = spyOn(FilesystemWeb.prototype, 'readFile').and.callThrough();
-      await fileHelper.writeInternalFileFromText('{}', 'data.json');
 
       await fileHelper.readInternalJSONFile('/data.json');
       await fileHelper.readInternalFileAsText('/data.json');
@@ -607,7 +660,7 @@ describe('UIFileHelper', () => {
     beforeEach(setupAndroid);
 
     it('tells whether a file exists', async () => {
-      await fileHelper.writeInternalFileFromText('text', 'note.txt');
+      await fileHelper.replaceInternalFileFromText('text', 'note.txt');
 
       expect(
         await fileHelper.fileExists({
@@ -631,7 +684,7 @@ describe('UIFileHelper', () => {
     });
 
     it('gives the file in the app data directory', async () => {
-      await fileHelper.writeInternalFileFromText('zip', 'backup.zip');
+      await fileHelper.replaceInternalFileFromText('zip', 'backup.zip');
 
       const file = await fileHelper.statInternalFile('/backup.zip');
 
@@ -644,7 +697,7 @@ describe('UIFileHelper', () => {
     });
 
     it('renames a file in the app data directory', async () => {
-      await fileHelper.writeInternalFileFromText('zip', 'backup.zip.part');
+      await fileHelper.replaceInternalFileFromText('zip', 'backup.zip.part');
 
       await fileHelper.renameInternalFile('backup.zip.part', 'backup.zip');
 
@@ -659,8 +712,8 @@ describe('UIFileHelper', () => {
     });
 
     it('deletes the file and leaves the others', async () => {
-      await fileHelper.writeInternalFileFromText('a', 'a.txt');
-      await fileHelper.writeInternalFileFromText('b', 'b.txt');
+      await fileHelper.replaceInternalFileFromText('a', 'a.txt');
+      await fileHelper.replaceInternalFileFromText('b', 'b.txt');
 
       await fileHelper.deleteInternalFile('a.txt');
 
@@ -705,8 +758,8 @@ describe('UIFileHelper', () => {
         'taken-2' as Uuid,
         'free' as Uuid,
       );
-      await fileHelper.writeInternalFileFromText('1', 'brew_taken-1.jpg');
-      await fileHelper.writeInternalFileFromText('2', 'brew_taken-2.jpg');
+      await fileHelper.replaceInternalFileFromText('1', 'brew_taken-1.jpg');
+      await fileHelper.replaceInternalFileFromText('2', 'brew_taken-2.jpg');
 
       expect(await fileHelper.generateInternalPath('brew', '.jpg')).toBe(
         'brew_free.jpg',
@@ -736,7 +789,7 @@ describe('UIFileHelper', () => {
 
     it('copies a text file with its content', async () => {
       const profile = '{"weight":[{"t":"00:01","v":2.5}]}';
-      await fileHelper.writeInternalFileFromText(profile, 'flow.json');
+      await fileHelper.replaceInternalFileFromText(profile, 'flow.json');
 
       const copy = await fileHelper.duplicateInternalFile('flow.json');
 
@@ -759,7 +812,7 @@ describe('UIFileHelper', () => {
     });
 
     it('known gap: a name without a dot gives its last letter as extension', async () => {
-      await fileHelper.writeInternalFileFromText('text', 'notes');
+      await fileHelper.replaceInternalFileFromText('text', 'notes');
 
       const copy = await fileHelper.duplicateInternalFile('notes');
 
@@ -1029,7 +1082,10 @@ describe('UIFileHelper', () => {
       });
 
       it('keeps the complete internal backup when renaming fails after the one before was deleted', async () => {
-        await fileHelper.writeInternalFileFromText('zip', 'Beanconqueror.zip');
+        await fileHelper.replaceInternalFileFromText(
+          'zip',
+          'Beanconqueror.zip',
+        );
         failMoving();
 
         await expectAsync(
@@ -1289,7 +1345,10 @@ describe('UIFileHelper', () => {
       it('leaves files in other folders alone', async () => {
         today(2026, 3, 20);
         await writeExported(...backupsOf('01_2020', 1, 9));
-        await fileHelper.writeInternalFileFromText('zip', backup('01_01_2020'));
+        await fileHelper.replaceInternalFileFromText(
+          'zip',
+          backup('01_01_2020'),
+        );
         await fileHelper.writeFileFromText(
           'zip',
           'Download/' + backup('01_01_2020'),

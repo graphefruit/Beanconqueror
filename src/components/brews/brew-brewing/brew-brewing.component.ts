@@ -136,7 +136,10 @@ import { UIWaterStorage } from '../../../services/uiWaterStorage';
 import { BrewTimerComponent } from '../../brew-timer/brew-timer.component';
 import { PhotoAddComponent } from '../../photo-add/photo-add.component';
 import { TimerComponent } from '../../timer/timer.component';
-import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-graph.component';
+import {
+  BrewBrewingGraphComponent,
+  SCALE_BUTTON,
+} from '../brew-brewing-graph/brew-brewing-graph.component';
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device/brew-brewing-preparation-device.component';
 
 declare var cordova;
@@ -218,6 +221,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   /** The multiple of the speech interval the brew timer reached last. */
   private spokenTimeStep: number | undefined;
+  private startPressedRunning = false;
 
   @ViewChild('timer', { static: false }) public timer: BrewTimerComponent;
   @ViewChild('brewBrewingGraphEl', { static: false })
@@ -888,6 +892,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (!this.timer) {
       return;
     }
+    // The app and the scale button may both start while one still tares or waits.
+    if (this.startPressedRunning) {
+      return;
+    }
+    this.startPressedRunning = true;
+    try {
+      await this.startPressed(_event);
+    } finally {
+      this.startPressedRunning = false;
+    }
+  }
+
+  private async startPressed(_event) {
     if (this.data.brew_time > 0) {
       if (
         this.brewBrewingGraphEl.smartScaleConnected() ||
@@ -921,7 +938,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (
       _event !== 'AUTO_LISTEN_SCALE' &&
       _event !== 'AUTO_START_PRESSURE' &&
-      _event !== 'AUTO_START_TEMPERATURE'
+      _event !== 'AUTO_START_TEMPERATURE' &&
+      _event !== SCALE_BUTTON
     ) {
       if (this.settings.brew_timer_start_delay_active) {
         await new Promise((resolve) => {
@@ -1352,7 +1370,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public async saveFlowProfile(_uuid: string): Promise<string> {
     try {
       const savingPath = 'brews/' + _uuid + '_flow_profile.json';
-      await this.uiFileHelper.writeInternalFileFromText(
+      await this.uiFileHelper.replaceInternalFileFromText(
         JSON.stringify(this.brewBrewingGraphEl.flow_profile_raw),
         savingPath,
       );
@@ -1369,7 +1387,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public async saveReferenceFlowProfile(_uuid: string): Promise<string> {
     try {
       const savingPath = 'importedGraph/' + _uuid + '_flow_profile.json';
-      await this.uiFileHelper.writeInternalFileFromText(
+      await this.uiFileHelper.replaceInternalFileFromText(
         JSON.stringify(this.brewBrewingGraphEl.reference_profile_raw),
         savingPath,
       );

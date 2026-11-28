@@ -20,7 +20,7 @@ describe('BrewBrewingGraphComponent reset while editing', () => {
   beforeEach(() => {
     uiFileHelper = jasmine.createSpyObj('UIFileHelper', [
       'deleteInternalFile',
-      'writeInternalFileFromText',
+      'replaceInternalFileFromText',
     ]);
     uiFileHelper.deleteInternalFile.and.resolveTo();
     bleManager = jasmine.createSpyObj('CoffeeBluetoothDevicesService', [
@@ -74,7 +74,7 @@ describe('BrewBrewingGraphComponent reset while editing', () => {
     await component.timerReset(undefined);
 
     expect(uiFileHelper.deleteInternalFile).not.toHaveBeenCalled();
-    expect(uiFileHelper.writeInternalFileFromText).not.toHaveBeenCalled();
+    expect(uiFileHelper.replaceInternalFileFromText).not.toHaveBeenCalled();
     // The form no longer refers to the graph, so saving removes it.
     expect(component.data.flow_profile).toBe('');
     expect(component.flow_profile_raw).toEqual(new BrewFlow());
