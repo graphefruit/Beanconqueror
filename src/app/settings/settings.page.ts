@@ -50,7 +50,6 @@ import {
   refreshOutline,
 } from 'ionicons/icons';
 
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { CapacitorHttp } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
@@ -215,7 +214,6 @@ export class SettingsPage {
   private readonly translate = inject(TranslateService);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
   private readonly uiAnalytics = inject(UIAnalytics);
-  private readonly androidPermissions = inject(AndroidPermissions);
   private readonly uiUpdate = inject(UIUpdate);
   private readonly brewReferences = inject(BrewReferencesService);
   private readonly uiVersionStorage = inject(UiVersionStorage);

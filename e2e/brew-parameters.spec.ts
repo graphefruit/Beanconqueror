@@ -16,7 +16,7 @@ import {
   setParameter,
   WATER,
 } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 
 /**
  * Characterization of the brew parameter customizing as it works today:
@@ -32,8 +32,7 @@ test.describe.configure({ timeout: 60_000 });
 
 test.beforeEach(async ({ page }) => {
   await page.clock.install({ time: BREW_TEST_START });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page, BREW_TEST_START);
 });
 
 async function top(locator: Locator): Promise<number> {

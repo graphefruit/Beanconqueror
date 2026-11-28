@@ -1,5 +1,8 @@
 import { expect, type Page } from '@playwright/test';
 
+import { FIRST_BREW_DATA } from './first-brew-data';
+import { seedDatabase } from './seed';
+
 /**
  * Completes the first-run dialogs of a fresh install and adds one bean, a V60,
  * one grinder and one brew through the UI, so brew cards have content. Ends on
@@ -47,6 +50,34 @@ export async function completeFirstRunWithBrew(page: Page): Promise<void> {
   // The home page switches to the Brews tab once the form has closed, and
   // until the brew list is shown its own "Add brew" and brew buttons are
   // still on screen. Ionic selects the tab only when the switch is done.
+  await expect(
+    page.getByRole('tab', { name: 'Brews', selected: true }),
+  ).toBeVisible();
+}
+
+/**
+ * Starts the app with what `completeFirstRunWithBrew` stores, written into the database before
+ * the start, and ends on the Brews tab as that does. For tests that do not check the first run
+ * itself: through the UI it takes up to 22 s of a test's 30 s in a cold WebKit worker. `now` is
+ * the time of the brew; pass the time of a frozen clock.
+ */
+export async function startWithFirstBrew(
+  page: Page,
+  now: Date = new Date(),
+): Promise<void> {
+  const shift = now.getTime() - FIRST_BREW_DATA.BREWS[0].config.created_at;
+  const json = JSON.stringify(FIRST_BREW_DATA, (key, value: unknown) => {
+    if (typeof value !== 'number') {
+      return value;
+    }
+    if (key === 'unix_timestamp') {
+      return value + Math.round(shift / 1000);
+    }
+    return key === 'created_at' || key === 'updated_at' ? value + shift : value;
+  });
+  await seedDatabase(page, {}, json);
+  await page.goto('/');
+  await page.getByRole('tab', { name: 'Brews' }).click();
   await expect(
     page.getByRole('tab', { name: 'Brews', selected: true }),
   ).toBeVisible();
