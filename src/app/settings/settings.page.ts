@@ -53,6 +53,7 @@ import {
 import { CapacitorHttp } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
+import { Share } from '@capacitor/share';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
@@ -111,6 +112,7 @@ import { ToFixedPipe } from '../../pipes/toFixed';
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import { AttachmentExportService } from '../../services/attachmentManifest/attachment-export.service';
 import {
   backupFormatProblem,
   NotABackupError,
@@ -202,6 +204,9 @@ export class SettingsPage {
   uiHelper = inject(UIHelper);
   private readonly alertCtrl = inject(AlertController);
   private readonly uiAlert = inject(UIAlert);
+  // A field, because the plugin proxy cannot be spied on and unit tests
+  // replace it here.
+  private readonly androidNativeCalls = AndroidNativeCalls;
   private readonly uiPreparationStorage = inject(UIPreparationStorage);
   private readonly uiBeanStorage = inject(UIBeanStorage);
   private readonly uiBrewStorage = inject(UIBrewStorage);
@@ -922,20 +927,18 @@ export class SettingsPage {
       );
     }
 
-    this.uiLog.info(logTag, 'Asking for SAF directory');
-    const { safTreeUri } = await AndroidNativeCalls.pickDirectory({
-      takePersistentPermissions: false,
-    });
-    this.uiLog.info(logTag, 'Got SAF tree Uri', safTreeUri);
-
     let cacheDir: CreateTempCacheDirectoryResult | undefined;
     try {
+      const safTreeUri = await this.__pickSafDirectory(logTag);
+      if (!safTreeUri) {
+        return;
+      }
       await this.uiAlert.showLoadingSpinner();
 
       // Attempt to read the main import file from the SAF directory and only
       // proceed with copying the SAF directory to cache if the main file exists.
       const mainFileName = 'Beanconqueror.zip';
-      const { exists } = await AndroidNativeCalls.fileExistsSaf({
+      const { exists } = await this.androidNativeCalls.fileExistsSaf({
         safTreeUri: safTreeUri,
         pathComponents: [mainFileName],
       });
@@ -952,7 +955,7 @@ export class SettingsPage {
       // This allows us to re-use the existing import logic that is common to
       // Android and iOS.
       cacheDir = await this.uiFileHelper.createTempCacheDirectory('safImport');
-      await AndroidNativeCalls.copySafDirectoryToFileDirectory({
+      await this.androidNativeCalls.copySafDirectoryToFileDirectory({
         fromSafTreeUri: safTreeUri,
         toDirectoryUri: cacheDir.uri,
       });
@@ -963,6 +966,10 @@ export class SettingsPage {
         cacheDir.uri,
         mainFileName,
       );
+    } catch (error) {
+      this.uiLog.error(logTag, 'Import failed', error);
+      await this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.showMessageWithDetails('ERROR_ON_FILE_READING', error);
     } finally {
       try {
         if (cacheDir) {
@@ -1021,6 +1028,38 @@ export class SettingsPage {
     }
   }
 
+  /**
+   * The list of files an export into a picked folder writes there until it is
+   * complete; the name is SafExportPlan.MARKER_NAME of the Android app.
+   */
+  private static readonly UNFINISHED_SAF_EXPORT =
+    'Beanconqueror_unfinished_export.txt';
+
+  /** The folder the user picked, or undefined when they closed the picker. */
+  private async __pickSafDirectory(
+    _logTag: string,
+  ): Promise<string | undefined> {
+    this.uiLog.info(_logTag, 'Asking for SAF directory');
+    try {
+      const { safTreeUri } = await this.androidNativeCalls.pickDirectory({
+        takePersistentPermissions: false,
+      });
+      this.uiLog.info(_logTag, 'Got SAF tree Uri', safTreeUri);
+      return safTreeUri;
+    } catch (error) {
+      this.uiLog.info(_logTag, 'No SAF directory picked', error);
+      return undefined;
+    }
+  }
+
+  private __refuseSafExport(_fileName: string): void {
+    void this.uiAlert.showMessage(
+      this.translate.instant('FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS', {
+        fileName: _fileName,
+      }),
+    );
+  }
+
   public async exportToSafDirectoryAndroid(): Promise<void> {
     const logTag = 'exportToDirectoryAndroid:';
 
@@ -1028,30 +1067,25 @@ export class SettingsPage {
       throw new Error('exportToDirectoryAndroid is only available on Android');
     }
 
-    this.uiLog.info(logTag, 'Asking for SAF directory');
-    const { safTreeUri } = await AndroidNativeCalls.pickDirectory({
-      takePersistentPermissions: false,
-    });
-    this.uiLog.info(logTag, 'Got SAF tree Uri', safTreeUri);
-
     let cacheDir: CreateTempCacheDirectoryResult | undefined;
     try {
+      const safTreeUri = await this.__pickSafDirectory(logTag);
+      if (!safTreeUri) {
+        return;
+      }
       await this.uiAlert.showLoadingSpinner();
 
-      const mainFileName = 'Beanconqueror.zip';
-      const { exists } = await AndroidNativeCalls.fileExistsSaf({
-        safTreeUri: safTreeUri,
-        pathComponents: [mainFileName],
-      });
-      if (exists) {
-        this.uiAlert.showMessage(
-          this.translate.instant(
-            'FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS',
-            {
-              fileName: mainFileName,
-            },
-          ),
-        );
+      const mainFileName = AttachmentExportService.ZIP_NAME;
+      const [{ exists }, { exists: unfinished }] = await Promise.all(
+        [mainFileName, SettingsPage.UNFINISHED_SAF_EXPORT].map((_name) =>
+          this.androidNativeCalls.fileExistsSaf({
+            safTreeUri: safTreeUri,
+            pathComponents: [_name],
+          }),
+        ),
+      );
+      if (exists && !unfinished) {
+        this.__refuseSafExport(mainFileName);
         return;
       }
 
@@ -1064,7 +1098,7 @@ export class SettingsPage {
         { path: cacheDir.path, directory: cacheDir.directory },
         false,
       );
-      await AndroidNativeCalls.moveFileDirectoryToSafDirectory({
+      await this.androidNativeCalls.moveFileDirectoryToSafDirectory({
         fromDirectoryUri: cacheDir.uri,
         toSafTreeUri: safTreeUri,
       });
@@ -1073,6 +1107,31 @@ export class SettingsPage {
           this.filesNotCopied > 0 ? 'FILES_NOT_COPIED' : 'EXPORT_COMPLETED',
           { count: this.filesNotCopied },
         ),
+      );
+    } catch (error) {
+      const { code, data } = (error ?? {}) as {
+        code?: string;
+        data?: { fileName?: string };
+      };
+      if (code === 'FILE_EXISTS' && data?.fileName) {
+        this.__refuseSafExport(data.fileName);
+        return;
+      }
+      if (code === 'MARKER_LEFT' && data?.fileName) {
+        void this.uiAlert
+          .showMessage(
+            this.translate.instant('FULL_EXPORT_TO_DIRECTORY_MARKER_LEFT', {
+              fileName: data.fileName,
+            }),
+          )
+          .then(() => this.__reportFilesNotCopied());
+        return;
+      }
+      this.uiLog.error(logTag, 'Export failed', error);
+      await this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.showMessageWithDetails(
+        'FULL_EXPORT_TO_DIRECTORY_FAILED',
+        error,
       );
     } finally {
       try {
@@ -1097,49 +1156,6 @@ export class SettingsPage {
         this.uiAlert.hideLoadingSpinner();
       }
     }
-  }
-
-  private async exportAttachments(exportPath: {
-    path: string;
-    directory: Directory;
-  }) {
-    const exportObjects: any[] = [
-      ...this.uiBeanStorage.getAllEntries(),
-      ...this.uiBrewStorage.getAllEntries(),
-      ...this.uiPreparationStorage.getAllEntries(),
-      ...this.uiMillStorage.getAllEntries(),
-      ...this.uiWaterStorage.getAllEntries(),
-      ...this.uiGreenBeanStorage.getAllEntries(),
-      ...this.uiRoastingMachineStorage.getAllEntries(),
-    ];
-
-    await this._exportAttachments(exportObjects, exportPath);
-  }
-
-  private async exportFlowProfiles(exportPath: {
-    path: string;
-    directory: Directory;
-  }) {
-    const exportObjects: any[] = [...this.uiBrewStorage.getAllEntries()];
-    await this._exportFlowProfiles(exportObjects, exportPath);
-  }
-
-  private async exportGraphProfiles(exportPath: {
-    path: string;
-    directory: Directory;
-  }) {
-    const exportObjects: any[] = [...this.uiGraphStorage.getAllEntries()];
-    await this._exportGraphProfiles(exportObjects, exportPath);
-  }
-
-  private async exportBaristamodeFlowProfiles(exportPath: {
-    path: string;
-    directory: Directory;
-  }) {
-    const exportObjects: any[] = [
-      ...this.uiBaristamodeBrewStorage.getAllEntries(),
-    ];
-    await this.exportStoredData(exportObjects, exportPath);
   }
 
   public async export() {
@@ -1189,28 +1205,32 @@ export class SettingsPage {
     );
     this.filesNotCopied = 0;
 
-    const zipBlob = await this.uiExportImportHelper.buildExportZIP();
-
     // Export attachment files on android because they are stored in the
     // internal storage, which is not accessible for users.
     // On iOS this is not required because the attachments are stored in the
     // documents directory and are user-accessible anyway
-    if (this.isAndroid) {
-      await this.exportAttachments(exportPath);
-      await this.exportFlowProfiles(exportPath);
-      await this.exportGraphProfiles(exportPath);
-      await this.exportBaristamodeFlowProfiles(exportPath);
+    if (!this.isAndroid) {
+      await this.uiFileHelper.exportFile(
+        {
+          fileName: AttachmentExportService.ZIP_NAME,
+          path: exportPath.path,
+          directory: exportPath.directory,
+        },
+        await this.uiExportImportHelper.buildExportZIP(),
+        share,
+      );
+      return;
     }
-
-    await this.uiFileHelper.exportFile(
-      {
-        fileName: 'Beanconqueror.zip',
-        path: exportPath.path,
+    const { missing } =
+      await this.uiExportImportHelper.writeFullExport(exportPath);
+    this.filesNotCopied = missing;
+    if (share) {
+      const { uri } = await Filesystem.getUri({
+        path: `${exportPath.path}/${AttachmentExportService.ZIP_NAME}`,
         directory: exportPath.directory,
-      },
-      zipBlob,
-      share,
-    );
+      });
+      await Share.share({ url: uri });
+    }
   }
 
   public excelExport(): void {
@@ -1390,108 +1410,6 @@ export class SettingsPage {
       });
 
       fileInput.click();
-    }
-  }
-
-  private async _exportAttachments(
-    _storedData:
-      | Bean[]
-      | Brew[]
-      | Preparation[]
-      | Mill[]
-      | GreenBean[]
-      | RoastingMachine[]
-      | Water[],
-    exportPath: {
-      path: string;
-      directory: Directory;
-    },
-  ) {
-    for (const entry of _storedData) {
-      for (const attachment of entry.attachments) {
-        await this._exportFile(attachment, exportPath);
-      }
-    }
-  }
-
-  private async _exportFlowProfiles(
-    _storedData: Brew[],
-    exportPath: {
-      path: string;
-      directory: Directory;
-    },
-  ) {
-    await this.exportStoredData(_storedData, exportPath);
-  }
-
-  private async _exportGraphProfiles(
-    _storedData: Graph[],
-    exportPath: {
-      path: string;
-      directory: Directory;
-    },
-  ) {
-    await this.exportStoredData(_storedData, exportPath);
-  }
-
-  private async exportStoredData(
-    _storedData: Brew[] | Graph[] | BaristamodeBrew[],
-    exportPath: {
-      path: string;
-      directory: Directory;
-    },
-  ) {
-    for (const entry of _storedData) {
-      if (entry.flow_profile && entry.flow_profile.length) {
-        await this._exportFile(entry.getGraphPath(), exportPath);
-      }
-
-      if (
-        entry instanceof Brew &&
-        entry.reference_flow_profile?.type ===
-          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-      ) {
-        await this._exportFile(
-          entry.getGraphPath(BREW_GRAPH_TYPE.IMPORTED_GRAPH),
-          exportPath,
-        );
-      }
-    }
-  }
-
-  private async _exportFile(
-    fileName: string,
-    exportPath: {
-      path: string;
-      directory: Directory;
-    },
-  ) {
-    try {
-      const sourceFile = await this.uiFileHelper.resolvePhotoPath(fileName);
-      const targetFile = `${exportPath.path}/${fileName}`;
-
-      await this.uiFileHelper.makeParentDirs(targetFile, exportPath.directory);
-
-      const copyResult = await Filesystem.copy({
-        from: sourceFile,
-        directory: this.uiFileHelper.getDataDirectory(),
-        to: targetFile,
-        toDirectory: exportPath.directory,
-      });
-      this.uiLog.info(
-        'File',
-        fileName,
-        'exported successfully to',
-        copyResult.uri,
-      );
-    } catch (error) {
-      this.uiLog.error(
-        'Error while exporting',
-        fileName,
-        error,
-        '.The error will be ignored.',
-      );
-      this.filesNotCopied++;
     }
   }
 

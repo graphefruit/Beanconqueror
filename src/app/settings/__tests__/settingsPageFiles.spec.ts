@@ -1,3 +1,4 @@
+import { Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { Platform } from '@ionic/angular';
@@ -10,8 +11,10 @@ import { ShareWeb } from '@capacitor/share/dist/esm/web';
 import { FilePickerWeb } from '@capawesome/capacitor-file-picker/dist/esm/web';
 import { TextReader, Uint8ArrayWriter, ZipWriter } from '@zip.js/zip.js';
 
+import { ATTACHMENT_MANIFEST_STORAGE_KEY } from '../../../classes/changeTracking/localStorageKeys';
 import { Settings } from '../../../classes/settings/settings';
 import { StorageClass } from '../../../classes/storageClass';
+import { AttachmentManifestService } from '../../../services/attachmentManifest/attachment-manifest.service';
 import { NotABackupError } from '../../../services/backup-format-rules';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewStorage';
@@ -173,6 +176,7 @@ describe('SettingsPage files of an export and an import', () => {
   let share: jasmine.Spy;
   let buildExportZIP: jasmine.Spy;
   let exportBrewByWeightsSmall: jasmine.Spy;
+  let manifest: AttachmentManifestService | undefined;
   let storages: {
     beans: UIBeanStorage;
     brews: UIBrewStorage;
@@ -295,7 +299,13 @@ describe('SettingsPage files of an export and an import', () => {
       uiAnalytics: { trackEvent: () => undefined },
       translate: { instant: (_key: string) => _key },
       uiFileHelper: TestBed.inject(UIFileHelper),
-      uiExportImportHelper: { buildExportZIP },
+      uiExportImportHelper: Object.assign(
+        Object.create(UIExportImportHelper.prototype),
+        {
+          buildExportZIP,
+          injector: TestBed.inject(Injector),
+        },
+      ),
       storeHub: new StoreHub(),
       uiExcel: { exportBrewByWeightsSmall },
       // The standard grinder after an import has tests of its own.
@@ -311,6 +321,7 @@ describe('SettingsPage files of an export and an import', () => {
       uiBaristamodeBrewStorage: storages.baristaBrews,
     });
     page = created as unknown as PageUnderTest;
+    manifest = TestBed.inject(AttachmentManifestService);
   }
 
   const android = () => createPage(['capacitor', 'android']);
@@ -363,7 +374,11 @@ describe('SettingsPage files of an export and an import', () => {
     });
   });
 
-  afterEach(clearFiles);
+  afterEach(async () => {
+    manifest?.stop();
+    manifest = undefined;
+    await clearFiles();
+  });
 
   describe('exporting on Android', () => {
     beforeEach(async () => {
@@ -395,7 +410,10 @@ describe('SettingsPage files of an export and an import', () => {
       expect(await filesIn('', Directory.Data)).toEqual(
         SEEDED_FILES.map((_file) => _file),
       );
-      expect(database.set).not.toHaveBeenCalled();
+      // Only the list of files, which stays on the device, is stored.
+      for (const [key] of database.set.calls.allArgs()) {
+        expect(key).toBe(ATTACHMENT_MANIFEST_STORAGE_KEY);
+      }
     });
 
     it('writes the zip of the data and offers to share it', async () => {
@@ -512,7 +530,8 @@ describe('SettingsPage files of an export and an import', () => {
       expect(share).not.toHaveBeenCalled();
     });
 
-    it('known gap: leaves photos and graphs without the zip behind when the zip cannot be written', async () => {
+    it('leaves no photos and graphs without the zip behind, and the earlier export as it was, when the zip cannot be written', async () => {
+      await write(`${EXPORT_DIR}/photo_bean.jpg`, 'old', Directory.External);
       const writeFile = original('writeFile');
       spyOn(FilesystemWeb.prototype, 'writeFile').and.callFake(function (
         this: FilesystemWeb,
@@ -525,9 +544,12 @@ describe('SettingsPage files of an export and an import', () => {
 
       await expectAsync(page.export()).toBeRejectedWithError('disk full');
 
-      expect(await filesIn(EXPORT_DIR, Directory.External)).toEqual(
-        SEEDED_FILES,
-      );
+      expect(await filesIn(EXPORT_DIR, Directory.External)).toEqual([
+        'photo_bean.jpg',
+      ]);
+      expect(
+        await read(`${EXPORT_DIR}/photo_bean.jpg`, Directory.External),
+      ).toBe('old');
       expect(share).not.toHaveBeenCalled();
     });
 
@@ -620,6 +642,151 @@ describe('SettingsPage files of an export and an import', () => {
       );
       expect(showLoadingSpinner).not.toHaveBeenCalled();
       expect(buildExportZIP).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('the export into a picked folder on Android', () => {
+    const UNFINISHED = 'Beanconqueror_unfinished_export.txt';
+    let inFolder: string[];
+    let moveToFolder: jasmine.Spy;
+    let instant: jasmine.Spy;
+
+    beforeEach(async () => {
+      seedDatabase();
+      await android();
+      inFolder = [];
+      moveToFolder = jasmine.createSpy('moveToFolder').and.resolveTo();
+      Object.assign(page, {
+        androidNativeCalls: {
+          pickDirectory: () => Promise.resolve({ safTreeUri: 'content://x' }),
+          fileExistsSaf: (_options: { pathComponents: string[] }) =>
+            Promise.resolve({
+              exists: inFolder.includes(_options.pathComponents.join('/')),
+            }),
+          moveFileDirectoryToSafDirectory: moveToFolder,
+        },
+      });
+      instant = watchTexts();
+    });
+
+    it('does not write into a folder that holds a complete export', async () => {
+      inFolder = ['Beanconqueror.zip'];
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(moveToFolder).not.toHaveBeenCalled();
+      expect(instant).toHaveBeenCalledWith(
+        'FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS',
+        { fileName: 'Beanconqueror.zip' },
+      );
+    });
+
+    it('goes on with an export that did not finish, though its zip is there', async () => {
+      inFolder = ['Beanconqueror.zip', UNFINISHED];
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(moveToFolder).toHaveBeenCalledTimes(1);
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
+    });
+
+    it('names the file of the folder that stopped the export', async () => {
+      moveToFolder.and.rejectWith(
+        Object.assign(new Error('File exists already'), {
+          code: 'FILE_EXISTS',
+          data: { fileName: 'brews/x.jpg' },
+        }),
+      );
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(instant).toHaveBeenCalledWith(
+        'FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS',
+        { fileName: 'brews/x.jpg' },
+      );
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
+    });
+
+    it('asks the user to delete the marker the folder kept', async () => {
+      moveToFolder.and.rejectWith(
+        Object.assign(new Error('Could not delete'), {
+          code: 'MARKER_LEFT',
+          data: { fileName: UNFINISHED },
+        }),
+      );
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(instant).toHaveBeenCalledWith(
+        'FULL_EXPORT_TO_DIRECTORY_MARKER_LEFT',
+        { fileName: UNFINISHED },
+      );
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
+    });
+
+    it('tells also of the files it could not copy when the marker was kept', async () => {
+      moveToFolder.and.rejectWith(
+        Object.assign(new Error('Could not delete'), {
+          code: 'MARKER_LEFT',
+          data: { fileName: UNFINISHED },
+        }),
+      );
+
+      await page.exportToSafDirectoryAndroid();
+      await new Promise((_resolve) => setTimeout(_resolve));
+
+      expect(showMessage.calls.allArgs()).toEqual([
+        ['FULL_EXPORT_TO_DIRECTORY_MARKER_LEFT'],
+        ['FILES_NOT_COPIED'],
+      ]);
+    });
+
+    it('does nothing when no folder is picked, for the export and the import', async () => {
+      Object.assign(page, {
+        androidNativeCalls: {
+          pickDirectory: () =>
+            Promise.reject(new Error('Intent result was not OK, got result 0')),
+          fileExistsSaf: jasmine.createSpy('fileExistsSaf'),
+          moveFileDirectoryToSafDirectory: moveToFolder,
+        },
+      });
+
+      await page.exportToSafDirectoryAndroid();
+      await page.importFromDirectoryAndroid();
+
+      expect(moveToFolder).not.toHaveBeenCalled();
+      expect(showMessageWithDetails).not.toHaveBeenCalled();
+      expect(log.error).not.toHaveBeenCalled();
+    });
+
+    it('tells when reading the picked folder for the import failed', async () => {
+      const error = new Error('safTreeFile created from safTreeUri was null.');
+      Object.assign(page, {
+        androidNativeCalls: {
+          pickDirectory: () => Promise.resolve({ safTreeUri: 'content://x' }),
+          fileExistsSaf: () => Promise.reject(error),
+        },
+      });
+
+      await page.importFromDirectoryAndroid();
+
+      expect(showMessageWithDetails).toHaveBeenCalledWith(
+        'ERROR_ON_FILE_READING',
+        error,
+      );
+    });
+
+    it('tells when writing into the folder failed', async () => {
+      const error = new Error('The storage provider did not open the file');
+      moveToFolder.and.rejectWith(error);
+
+      await page.exportToSafDirectoryAndroid();
+
+      expect(showMessageWithDetails).toHaveBeenCalledWith(
+        'FULL_EXPORT_TO_DIRECTORY_FAILED',
+        error,
+      );
+      expect(log.error).toHaveBeenCalled();
     });
   });
 
