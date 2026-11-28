@@ -90,34 +90,6 @@
       "count": 1
     }
   },
-  "src/app/beans/bean-archive-popover/bean-archive-popover.component.ts": {
-    "@angular-eslint/no-empty-lifecycle-method": {
-      "count": 1
-    },
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
-      "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 2
-    }
-  },
-  "src/app/beans/bean-filter/bean-filter.component.ts": {
-    "@angular-eslint/no-input-rename": {
-      "count": 2
-    },
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
-      "count": 3
-    },
-    "prefer-const": {
-      "count": 1
-    }
-  },
   "src/app/beans/bean-internal-share-code-generator/bean-internal-share-code-generator.component.html": {
     "@angular-eslint/template/alt-text": {
       "count": 1
@@ -230,22 +202,6 @@
       "count": 1
     },
     "prefer-const": {
-      "count": 2
-    }
-  },
-  "src/app/beans/bean-sort/bean-sort.component.html": {
-    "@angular-eslint/template/eqeqeq": {
-      "count": 1
-    }
-  },
-  "src/app/beans/bean-sort/bean-sort.component.ts": {
-    "@angular-eslint/no-input-rename": {
-      "count": 1
-    },
-    "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-floating-promises": {
       "count": 2
     }
   },

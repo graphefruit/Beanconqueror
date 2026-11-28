@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { signal, Type } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ModalController, Platform } from '@ionic/angular';
@@ -9,14 +9,16 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import en from '../../../../assets/i18n/en.json';
 import { Settings } from '../../../../classes/settings/settings';
+import { StorageClass } from '../../../../classes/storageClass';
 import { IBeanPageFilter } from '../../../../interfaces/bean/iBeanPageFilter';
 import { LIVE_REGION } from '../../../../services/a11y/live-region';
 import { ScreenReaderState } from '../../../../services/a11y/screen-reader-state.service';
 import { UIBeanStorage } from '../../../../services/uiBeanStorage';
-import { UIHelper } from '../../../../services/uiHelper';
 import { UIMillStorage } from '../../../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
+import { BeanStore } from '../../../../stores/beans/bean.store';
+import { MemoryDatabase } from '../../../../test-utils/memory-database';
 import { BeanFilterComponent } from '../bean-filter.component';
 
 /** 1 March 2026, noon local time. */
@@ -43,8 +45,7 @@ describe('BeanFilterComponent', () => {
   beforeEach(() => {
     settings = new Settings();
     settings.date_format = 'DD.MM.YYYY';
-    dismiss = jasmine.createSpy('dismiss');
-    const none = { getAllEntries: () => [] };
+    dismiss = jasmine.createSpy('dismiss').and.resolveTo(true);
 
     TestBed.configureTestingModule({
       imports: [BeanFilterComponent, TranslateModule.forRoot()],
@@ -52,18 +53,10 @@ describe('BeanFilterComponent', () => {
         { provide: ModalController, useValue: { dismiss } },
         { provide: Platform, useValue: { is: () => false } },
         {
-          provide: UIHelper,
-          useValue: {
-            copyData: <T>(value: T): T => structuredClone(value),
-          },
-        },
-        {
           provide: UISettingsStorage,
           useValue: { getSettings: () => settings },
         },
-        { provide: UIPreparationStorage, useValue: none },
-        { provide: UIBeanStorage, useValue: none },
-        { provide: UIMillStorage, useValue: none },
+        { provide: BeanStore, useValue: { entries: signal([]) } },
         { provide: ScreenReaderState, useValue: { on: signal(false) } },
         { provide: LIVE_REGION, useValue: { announce: () => undefined } },
       ],
@@ -188,5 +181,95 @@ describe('BeanFilterComponent', () => {
     } finally {
       jasmine.clock().uninstall();
     }
+  });
+});
+
+/** Opening the filter with the real collections in a database in memory. */
+describe('BeanFilterComponent with the stored collections', () => {
+  const COLLECTIONS: [string, Type<StorageClass>][] = [
+    ['BEANS', UIBeanStorage],
+    ['MILL', UIMillStorage],
+    ['PREPARATION', UIPreparationStorage],
+  ];
+  let database: MemoryDatabase;
+
+  const entry = (uuid: string, fields: Record<string, unknown>) => ({
+    config: { uuid, unix_timestamp: 0 },
+    ...fields,
+  });
+
+  beforeEach(() => {
+    database = new MemoryDatabase();
+    TestBed.configureTestingModule({
+      imports: [BeanFilterComponent, TranslateModule.forRoot()],
+      providers: [
+        // The sheet's sliders need the real translations.
+        ...database
+          .providers()
+          .filter(
+            (provider) =>
+              (provider as { provide?: unknown }).provide !== TranslateService,
+          ),
+        { provide: ModalController, useValue: { dismiss: () => undefined } },
+        { provide: Platform, useValue: { is: () => false } },
+        {
+          provide: UISettingsStorage,
+          useValue: { getSettings: () => new Settings() },
+        },
+        { provide: ScreenReaderState, useValue: { on: signal(false) } },
+        { provide: LIVE_REGION, useValue: { announce: () => undefined } },
+      ],
+    });
+  });
+
+  it('leaves the shared lists of beans, grinders and methods in their order', async () => {
+    database.values.set('BEANS', [
+      entry('b2', { name: 'Zeta', roaster: 'Süd', rating: 7 }),
+      entry('b1', { name: 'Alpha', roaster: 'Nord' }),
+    ]);
+    database.values.set('MILL', [
+      entry('m2', { name: 'Zeta mill' }),
+      entry('m1', { name: 'Alpha mill' }),
+    ]);
+    database.values.set('PREPARATION', [
+      entry('p2', { name: 'Zeta method' }),
+      entry('p1', { name: 'Alpha method' }),
+    ]);
+    const lists = new Map<string, { getAllEntries(): { name: string }[] }>();
+    for (const [key, storage] of COLLECTIONS) {
+      const collection = TestBed.inject(storage) as StorageClass & {
+        initializeStorage(): Promise<void>;
+        getAllEntries(): { name: string }[];
+      };
+      await collection.initializeStorage();
+      lists.set(key, collection);
+    }
+    const names = () =>
+      [...lists.values()].map((list) =>
+        list.getAllEntries().map((each) => each.name),
+      );
+    const before = names();
+    expect(before).toEqual([
+      ['Zeta', 'Alpha'],
+      ['Zeta mill', 'Alpha mill'],
+      ['Zeta method', 'Alpha method'],
+    ]);
+
+    const fixture = TestBed.createComponent(BeanFilterComponent);
+    fixture.componentRef.setInput(
+      'bean_filter',
+      new Settings().GET_BEAN_FILTER(),
+    );
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(names()).toEqual(before);
+    // The sheet still sees the stored beans.
+    const shown = fixture.componentInstance as unknown as {
+      roasteries(): string[];
+      maxBeanRating(): number;
+    };
+    expect(shown.roasteries()).toEqual(['Nord', 'Süd']);
+    expect(shown.maxBeanRating()).toBe(7);
   });
 });

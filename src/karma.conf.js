@@ -16,6 +16,9 @@ const path = require('node:path');
 const NEW_CODE = [
   'src/app/graph-section/graph/graph-detail/**',
   'src/app/baristamode/barista/barista-graph-height.ts',
+  'src/app/beans/bean-archive-popover/bean-archive-popover.component.ts',
+  'src/app/beans/bean-filter/bean-filter.component.ts',
+  'src/app/beans/bean-sort/bean-sort.component.ts',
   'src/app/beans/beans-detail/beans-detail.component.ts',
   'src/app/brew/brew-popover-cut/brew-popover-cut.component.ts',
   'src/app/profile/**',
@@ -39,6 +42,7 @@ const NEW_CODE = [
   'src/directive/control-description.directive.ts',
   'src/directive/datetime-button-label.directive.ts',
   'src/directive/icon-button.directive.ts',
+  'src/directive/item-button.directive.ts',
   'src/directive/long-press.directive.ts',
   'src/directive/picker-field.directive.ts',
   'src/directive/range-name.directive.ts',

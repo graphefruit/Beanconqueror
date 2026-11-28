@@ -26,7 +26,7 @@
                 placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
                 style="padding-left:0px!important;width: 100%; min-width: 100%;"
                 multiple="true">
-      @for (key of roasteries; track key) {
+      @for (key of roasteries(); track key) {
         <ion-select-option value="{{key}}">{{key}}</ion-select-option>
       }
     </ion-select>
@@ -63,7 +63,7 @@
     </ion-label>
   </ion-item>
   <ion-item style='margin-top:-10px;'>
-    <ion-range [rangeLabel]="'BREW_DATA_RATING' | translate" min="0" dualKnobs="true" snaps="true" [pinFormatter]='pinFormatter' pin='true'  [max]="maxBeanRating" [step]="$safeNavigationMigration(settings?.bean_rating_steps)" [(ngModel)]="filter.rating">
+    <ion-range [rangeLabel]="'BREW_DATA_RATING' | translate" min="0" dualKnobs="true" snaps="true" [pinFormatter]='pinFormatter' pin='true'  [max]="maxBeanRating()" [step]="settings.bean_rating_steps" [(ngModel)]="filter.rating">
       <ion-icon aria-hidden="true" size="small" slot="start" name="beanconqueror-brew-rating-empty" />
       <ion-icon aria-hidden="true" slot="end" name="beanconqueror-brew-rating-full" />
     </ion-range>

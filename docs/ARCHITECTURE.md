@@ -514,8 +514,11 @@ nothing on disk and only reads; writes still go through the `ui*Storage`
 services and come back to the store as events. `BeanStore`
 (`src/stores/beans/bean.store.ts`) is the first store; the bean list
 (`src/app/beans/beans.page.ts`), the bean card
-(`src/components/bean-information/`) and the bean details
-(`src/app/beans/beans-detail/`) read it.
+(`src/components/bean-information/`), the bean details
+(`src/app/beans/beans-detail/`) and the filter sheet
+(`src/app/beans/bean-filter/`) read it. Reading the store leaves the cached
+instances of the `ui*Storage` services as they are; legacy code that sorted
+them in place changed the order for every other reader.
 
 ```
 legacy code ──▶ UIBeanStorage (StorageClass) ──▶ UIStorage
@@ -1000,6 +1003,10 @@ file maps them onto Ionic's variables at the end.
   A toggle keeps one name and tells its state with `aria-pressed`
   (`e2e/brew-list-toolbar.spec.ts`), one that shows or hides content with
   `aria-expanded` (bean group, barista graph; `e2e/bean-list.spec.ts`).
+  An `ion-item` that is a choice or such a switch gets both through
+  `ItemButtonDirective` (`src/directive/item-button.directive.ts`, the bean
+  sort; `e2e/a11y-bean-filter.spec.ts`), because Ionic's own `button` items
+  do not pass the state on to the button inside them.
   `ion-back-button` is named through a translated `aria-label` in each header;
   Ionic reads it once when the page opens (`e2e/language.spec.ts`).
 - Icons: `ion-icon` is an image to assistive technology. One that only

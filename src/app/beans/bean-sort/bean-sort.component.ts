@@ -3,8 +3,9 @@ import {
   Component,
   computed,
   inject,
-  Input,
-  OnInit,
+  input,
+  linkedSignal,
+  signal,
 } from '@angular/core';
 
 import {
@@ -27,19 +28,47 @@ import { chevronDownOutline, chevronUpOutline } from 'ionicons/icons';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { SheetCloseButtonComponent } from '../../../components/sheet-close-button/sheet-close-button.component';
+import { ItemButtonDirective } from '../../../directive/item-button.directive';
 import { BEAN_SORT_AFTER } from '../../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../../enums/beans/beanSortOrder';
 import { IBeanPageSort } from '../../../interfaces/bean/iBeanPageSort';
-import { UIHelper } from '../../../services/uiHelper';
+import {
+  chooseSortAfter,
+  chooseSortOrder,
+} from '../../../stores/beans/bean-sheet-rules';
 import { SettingsStore } from '../../../stores/settings/settings.store';
+
+/** A criterion of the sheet: what it sorts by, its icon and its text. */
+interface SortChoice {
+  readonly after: BEAN_SORT_AFTER;
+  readonly icon: string;
+  readonly label: string;
+}
+
+const S = BEAN_SORT_AFTER;
+const choice = (after: BEAN_SORT_AFTER, icon: string, label: string) => ({
+  after,
+  icon: `beanconqueror-${icon}`,
+  label,
+});
+
+const MAIN_SORTS: readonly SortChoice[] = [
+  choice(S.NAME, 'filter-aa', 'BEAN_SORT_NAME_OF_BEAN'),
+  choice(S.ROASTER, 'person', 'BEAN_SORT_ROASTER'),
+  choice(S.ROASTING_DATE, 'clock', 'BEAN_SORT_ROASTING_DATE'),
+  choice(S.RATING, 'brew-rating-empty', 'BREW_DATA_RATING'),
+  choice(S.BEAN_AGE, 'clock', 'BEAN_SORT_BEAN_AGE'),
+  choice(S.RECENTLY_USED, 'clock', 'BEAN_SORT_RECENTLY_USED'),
+];
 
 @Component({
   selector: 'app-bean-sort',
   templateUrl: './bean-sort.component.html',
   styleUrls: ['./bean-sort.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslatePipe,
+    ItemButtonDirective,
     IonHeader,
     IonContent,
     IonList,
@@ -54,44 +83,58 @@ import { SettingsStore } from '../../../stores/settings/settings.store';
     SheetCloseButtonComponent,
   ],
 })
-export class BeanSortComponent implements OnInit {
+export class BeanSortComponent {
   private readonly modalController = inject(ModalController);
-  private readonly uiHelper = inject(UIHelper);
   private readonly settingsStore = inject(SettingsStore);
 
   public static readonly COMPONENT_ID = 'bean-sort';
-  public beanSortAfterEnum = BEAN_SORT_AFTER;
-  public beanSortOrderEnum = BEAN_SORT_ORDER;
-  public filter: IBeanPageSort = {
-    sort_order: BEAN_SORT_ORDER.UNKOWN,
-    sort_after: BEAN_SORT_AFTER.UNKOWN,
-  };
+  protected readonly beanSortOrderEnum = BEAN_SORT_ORDER;
+  protected readonly mainSorts = MAIN_SORTS;
 
-  @Input('bean_sort') public bean_sort: any;
+  public readonly bean_sort = input.required<IBeanPageSort>();
 
-  public extendedSortActive: boolean = false;
+  /** The sort as chosen in the sheet so far. */
+  protected readonly sort = linkedSignal(() => ({ ...this.bean_sort() }));
+  protected readonly extendedSortActive = signal(false);
 
-  /** The dates a bean can be sorted by: those the bean form asks for. */
-  protected readonly sortableDates = computed(() => {
+  /** The further criteria; of the dates only those the bean form asks for. */
+  protected readonly extendedSorts = computed((): SortChoice[] => {
     const shown = this.settingsStore.settings().bean_manage_parameters;
-    return {
-      buyDate: shown.buyDate === true,
-      openDate: shown.openDate === true,
-      bestDate: shown.bestDate === true,
-    };
+    const date = (asked: boolean, after: BEAN_SORT_AFTER, label: string) =>
+      asked === true ? [choice(after, 'clock', label)] : [];
+    return [
+      choice(S.BEAN_ROASTING_TYPE, 'filter-aa', 'BEAN_SORT_BEAN_ROASTING_TYPE'),
+      choice(S.WEIGHT, 'filter-aa', 'BEAN_SORT_WEIGHT'),
+      ...date(shown.buyDate, S.BUY_DATE, 'BEAN_DATA_BUY_DATE'),
+      ...date(shown.openDate, S.OPEN_DATE, 'BEAN_DATA_OPEN_DATE'),
+      ...date(shown.bestDate, S.BEST_DATE, 'BEAN_DATA_BEST_DATE'),
+      choice(S.WEIGHT_REMAINING, 'filter-aa', 'BEAN_SORT_WEIGHT_REMAINING'),
+      choice(S.AROMATICS, 'filter-aa', 'BEAN_SORT_AROMATICS'),
+      choice(
+        S.INFORMATION_COUNTRY,
+        'filter-aa',
+        'BEAN_SORT_INFORMATION_COUNTRY',
+      ),
+      choice(S.INFORMATION_REGION, 'filter-aa', 'BEAN_SORT_INFORMATION_REGION'),
+      choice(
+        S.INFORMATION_VARIETY,
+        'filter-aa',
+        'BEAN_SORT_INFORMATION_VARIETY',
+      ),
+      choice(
+        S.INFORMATION_PROCESSING,
+        'filter-aa',
+        'BEAN_SORT_INFORMATION_PROCESSING',
+      ),
+    ];
   });
 
   constructor() {
     addIcons({ chevronDownOutline, chevronUpOutline });
   }
 
-  public ngOnInit() {
-    this.filter = this.uiHelper.copyData(this.bean_sort);
-    this.__reloadFilterSettings();
-  }
-
   public dismiss(): void {
-    this.modalController.dismiss(
+    void this.modalController.dismiss(
       {
         bean_sort: undefined,
       },
@@ -101,9 +144,9 @@ export class BeanSortComponent implements OnInit {
   }
 
   public useFilter() {
-    this.modalController.dismiss(
+    void this.modalController.dismiss(
       {
-        bean_sort: this.uiHelper.copyData(this.filter),
+        bean_sort: { ...this.sort() },
       },
       undefined,
       BeanSortComponent.COMPONENT_ID,
@@ -111,41 +154,22 @@ export class BeanSortComponent implements OnInit {
   }
 
   public resetFilter() {
-    this.filter = {
+    this.sort.set({
       sort_order: BEAN_SORT_ORDER.UNKOWN,
       sort_after: BEAN_SORT_AFTER.UNKOWN,
-    };
+    });
     this.useFilter();
   }
 
-  public setSortOrder(_order: any) {
-    this.filter.sort_order = _order;
-    /**Preset the first sort if nothing is selected yet**/
-    if (this.filter.sort_after === BEAN_SORT_AFTER.UNKOWN) {
-      this.filter.sort_after = BEAN_SORT_AFTER.NAME;
-    }
+  public setSortOrder(order: BEAN_SORT_ORDER) {
+    this.sort.update((sort) => chooseSortOrder(sort, order));
   }
 
-  public setSortAfter(_sort: any) {
-    this.filter.sort_after = _sort;
-    if (this.filter.sort_order === BEAN_SORT_ORDER.UNKOWN) {
-      this.filter.sort_order = BEAN_SORT_ORDER.ASCENDING;
-    }
+  public setSortAfter(after: BEAN_SORT_AFTER) {
+    this.sort.update((sort) => chooseSortAfter(sort, after));
   }
 
   public toggleExtendSort() {
-    this.extendedSortActive = !this.extendedSortActive;
-  }
-
-  public isSortActive(_sort: any) {
-    return this.filter.sort_after === _sort;
-  }
-
-  public isOrderActive(_order: any) {
-    return this.filter.sort_order === _order;
-  }
-
-  private __reloadFilterSettings() {
-    /* Empty for no particular reason */
+    this.extendedSortActive.update((active) => !active);
   }
 }

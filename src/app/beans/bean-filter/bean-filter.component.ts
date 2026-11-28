@@ -1,8 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
-  Input,
+  input,
   OnInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -29,9 +30,6 @@ import {
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { Bean } from '../../../classes/bean/bean';
-import { Mill } from '../../../classes/mill/mill';
-import { Preparation } from '../../../classes/preparation/preparation';
 import { Settings } from '../../../classes/settings/settings';
 import { SheetCloseButtonComponent } from '../../../components/sheet-close-button/sheet-close-button.component';
 import { ChooseDateOverlayDirective } from '../../../directive/choose-date.directive';
@@ -44,17 +42,18 @@ import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
 import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
 import { KeysPipe } from '../../../pipes/keys';
 import { ToFixedPipe } from '../../../pipes/toFixed';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIHelper } from '../../../services/uiHelper';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import {
+  filterRatingMax,
+  filterRoasters,
+} from '../../../stores/beans/bean-sheet-rules';
+import { BeanStore } from '../../../stores/beans/bean.store';
 
 @Component({
   selector: 'app-bean-filter',
   templateUrl: './bean-filter.component.html',
   styleUrls: ['./bean-filter.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ControlDescriptionDirective,
     FormsModule,
@@ -87,128 +86,63 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 })
 export class BeanFilterComponent implements OnInit {
   private readonly modalController = inject(ModalController);
-  readonly uiHelper = inject(UIHelper);
-  private readonly uiSettingsStorage = inject(UISettingsStorage);
-  private readonly uiPreparationStorage = inject(UIPreparationStorage);
-  private readonly uiBeanStorage = inject(UIBeanStorage);
-  private readonly uiMillStorage = inject(UIMillStorage);
+  private readonly beanStore = inject(BeanStore);
 
   public static readonly COMPONENT_ID = 'bean-filter';
-  public settings: Settings;
+  public readonly settings: Settings = inject(UISettingsStorage).getSettings();
 
+  public readonly segment = input('open');
+  public readonly bean_filter = input.required<IBeanPageFilter>();
+
+  /** The filter as changed in the sheet so far. */
   public filter: IBeanPageFilter;
-  public method_of_preparations: Array<Preparation> = [];
-  public beans: Array<Bean> = [];
-  public listBeans: Array<Bean> = [];
-  public mills: Array<Mill> = [];
-  @Input('segment') public segment: string = 'open';
 
-  @Input('bean_filter') public bean_filter: any;
-
-  public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
-
-  public roasteries: Array<string> = undefined;
-
-  public maxBeanRating: number = undefined;
-
-  constructor() {
-    this.settings = this.uiSettingsStorage.getSettings();
-  }
+  protected readonly beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
+  /** Read from the store, so the shared lists of legacy code keep their order. */
+  protected readonly roasteries = computed(() =>
+    filterRoasters(this.beanStore.entries()),
+  );
+  protected readonly maxBeanRating = computed(() =>
+    filterRatingMax(
+      this.beanStore.entries(),
+      this.segment(),
+      this.settings.bean_rating,
+    ),
+  );
 
   public ngOnInit() {
-    this.filter = this.uiHelper.copyData(this.bean_filter);
-    this.__reloadFilterSettings();
-    this.maxBeanRating = this.getMaxBeanRating();
-    this.roasteries = [...new Set(this.listBeans.map((e: Bean) => e.roaster))];
-    this.roasteries = this.roasteries
-      .filter((name: string) => name !== '')
-      .sort((a, b) => {
-        const nameA = a.toUpperCase();
-        const nameB = b.toUpperCase();
-
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-
-        return 0;
-      });
+    this.filter = { ...this.bean_filter() };
   }
 
-  public pinFormatter(value: any) {
-    const parsedFloat = parseFloat(value);
+  public pinFormatter(value: unknown) {
+    const parsedFloat = parseFloat(value as string);
     if (isNaN(parsedFloat)) {
       return `${0}`;
     }
     const newValue = +parsedFloat.toFixed(2);
     return `${newValue}`;
   }
-  public getMaxBeanRating() {
-    const maxSettingsRating = this.settings.bean_rating;
-    const isOpen = this.segment === 'open';
-    let beansFiltered: Array<Bean>;
-
-    beansFiltered = this.listBeans.filter((e) => e.finished === !isOpen);
-
-    let maxBeanRating = maxSettingsRating;
-    if (beansFiltered.length > 0) {
-      const maxRating = beansFiltered.reduce((p, c) =>
-        p.rating > c.rating ? p : c,
-      );
-      maxBeanRating = maxRating.rating;
-    }
-
-    if (maxBeanRating > maxSettingsRating) {
-      return maxBeanRating;
-    }
-    return maxSettingsRating;
-  }
 
   public dismiss(): void {
-    this.modalController.dismiss({
+    void this.modalController.dismiss({
       bean_filter: undefined,
     });
   }
 
   public useFilter() {
-    this.modalController.dismiss({
-      bean_filter: this.uiHelper.copyData(this.filter),
+    void this.modalController.dismiss({
+      bean_filter: { ...this.filter },
     });
   }
 
   public resetFilter() {
     this.filter = this.settings.GET_BEAN_FILTER();
-    this.modalController.dismiss(
+    void this.modalController.dismiss(
       {
-        bean_filter: this.uiHelper.copyData(this.filter),
+        bean_filter: { ...this.filter },
       },
       undefined,
       BeanFilterComponent.COMPONENT_ID,
     );
-  }
-
-  private __reloadFilterSettings() {
-    this.method_of_preparations = this.uiPreparationStorage
-      .getAllEntries()
-      .sort((a, b) => a.name.localeCompare(b.name));
-    this.mills = this.uiMillStorage
-      .getAllEntries()
-      .sort((a, b) => a.name.localeCompare(b.name));
-    this.listBeans = this.uiBeanStorage
-      .getAllEntries()
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    /** we accept open and frozen **/
-    if (this.segment !== 'archive') {
-      this.beans = this.listBeans.filter((e) => e.finished === false);
-      this.mills = this.mills.filter((e) => e.finished === false);
-      this.method_of_preparations = this.method_of_preparations.filter(
-        (e) => e.finished === false,
-      );
-    } else {
-      this.beans = this.listBeans.filter((e) => e.finished === true);
-    }
   }
 }
