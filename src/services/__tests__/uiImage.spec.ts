@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 
 import { AlertController, ModalController, Platform } from '@ionic/angular';
 
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { FilePickerWeb } from '@capawesome/capacitor-file-picker/dist/esm/web';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -30,7 +29,6 @@ describe('UIImage photos removed in a form', () => {
         { provide: AlertController, useValue: {} },
         { provide: ModalController, useValue: {} },
         { provide: Platform, useValue: {} },
-        { provide: AndroidPermissions, useValue: {} },
         { provide: TranslateService, useValue: {} },
         { provide: UIAlert, useValue: {} },
         { provide: UILog, useValue: createMockUILog() },
@@ -111,7 +109,6 @@ describe('UIImage telling why a photo was not added', () => {
         { provide: AlertController, useValue: {} },
         { provide: ModalController, useValue: {} },
         { provide: Platform, useValue: {} },
-        { provide: AndroidPermissions, useValue: {} },
         { provide: TranslateService, useValue: {} },
         { provide: UIAlert, useValue: uiAlert },
         { provide: UILog, useValue: uiLog },
@@ -195,7 +192,6 @@ describe('UIImage choosing a photo', () => {
         { provide: AlertController, useValue: {} },
         { provide: ModalController, useValue: {} },
         { provide: Platform, useValue: { is: () => false } },
-        { provide: AndroidPermissions, useValue: {} },
         { provide: TranslateService, useValue: {} },
         { provide: UIAlert, useValue: uiAlert },
         { provide: UILog, useValue: uiLog },
@@ -246,7 +242,6 @@ describe('UIImage choosing a photo on iOS', () => {
         { provide: AlertController, useValue: {} },
         { provide: ModalController, useValue: {} },
         { provide: Platform, useValue: { is: (_p: string) => _p === 'ios' } },
-        { provide: AndroidPermissions, useValue: {} },
         { provide: TranslateService, useValue: {} },
         { provide: UIAlert, useValue: uiAlert },
         { provide: UILog, useValue: createMockUILog() },
