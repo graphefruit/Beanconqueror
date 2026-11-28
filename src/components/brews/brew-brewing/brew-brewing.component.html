@@ -125,34 +125,23 @@
             </ion-item>
           }
           @case ('vessel') {
-            <ion-item lines="inset">
-              <ion-row style="width:100%" class="ion-no-padding">
-                <ion-col class="ion-no-padding" size="7">
-                  <ion-input label-placement="stacked" label='{{"BREW_DATA_VESSEL_NAME" | translate}}'
-                             (ionBlur)="onSearchLeave('vessel')"
-                             (ionInput)="onSearchChange('vessel',$event)"
-                             (ionFocus)="onSearchFocus('vessel');"
-                             [(ngModel)]="data.vessel_name"
-                             placeholder="{{'BREW_DATA_VESSEL_NAME' | translate}}" type="text" />
-                </ion-col>
-                <ion-col class="ion-no-padding" size="5">
-                  <ion-input label-placement="stacked" label='{{"BREW_DATA_VESSEL_WEIGHT" | translate}}' [(ngModel)]="data.vessel_weight" inputmode="decimal"
-                             placeholder="{{'BREW_DATA_VESSEL_WEIGHT' | translate}}" prevent-characters remove-empty-number
-                             type="text" />
-                </ion-col>
-              </ion-row>
-            </ion-item>
-            @if(searchResultsAvailable('vessel')) {
-              <ion-item lines="none" style="margin-top: 5px;margin-bottom: 5px;">
-                <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: var(--ion-color-accent-secondary);">
-                  @for(result of getResults('vessel'); track result; let last = $last) {
-                    <ion-item (click)="searchResultSelected('vessel',result)" button lines="{{last?'none':''}}" style="--background:var(--ion-color-accent-secondary);">
-                      <ion-label>{{result.name}} - {{result.weight}}</ion-label>
-                    </ion-item>
-                  }
-                </ion-list>
+            <suggestion-list (picked)="data.vessel_name = $event.name; data.vessel_weight = $event.weight"
+                             [candidates]="storedVessels" [label]="vesselLabel">
+              <ion-item lines="inset">
+                <ion-row style="width:100%" class="ion-no-padding">
+                  <ion-col class="ion-no-padding" size="7">
+                    <ion-input label-placement="stacked" label='{{"BREW_DATA_VESSEL_NAME" | translate}}'
+                               [(ngModel)]="data.vessel_name"
+                               placeholder="{{'BREW_DATA_VESSEL_NAME' | translate}}" type="text" />
+                  </ion-col>
+                  <ion-col class="ion-no-padding" size="5">
+                    <ion-input label-placement="stacked" label='{{"BREW_DATA_VESSEL_WEIGHT" | translate}}' [(ngModel)]="data.vessel_weight" inputmode="decimal"
+                               placeholder="{{'BREW_DATA_VESSEL_WEIGHT' | translate}}" prevent-characters remove-empty-number
+                               type="text" />
+                  </ion-col>
+                </ion-row>
               </ion-item>
-            }
+            </suggestion-list>
           }
         }
       }

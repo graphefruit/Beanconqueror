@@ -85,9 +85,11 @@ export function splitAtMatch(
 let nextListId = 0;
 
 /**
- * Suggests values for the text field placed inside it, as a combobox with a
- * listbox below the field: arrow keys move through the suggestions, Enter
- * picks one, Escape closes the list. The number of suggestions is announced.
+ * Suggests values for the first text field placed inside it, as a combobox
+ * with a listbox below the field: arrow keys move through the suggestions,
+ * Enter picks one, Escape closes the list. The number of suggestions is
+ * announced. Other fields placed inside it, such as a weight next to a name,
+ * do not open the list.
  */
 @Component({
   selector: 'suggestion-list',
@@ -96,14 +98,16 @@ let nextListId = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonItem, TranslatePipe],
   host: {
-    '(ionFocus)': 'onFocus()',
+    '(ionFocus)': 'onFocus($event)',
     '(ionInput)': 'onInput($event)',
-    '(ionBlur)': 'onBlur()',
+    '(ionBlur)': 'onBlur($event)',
     '(keydown)': 'onKeydown($event)',
     '(click)': 'onClick($event)',
   },
 })
-export class SuggestionListComponent implements AfterContentInit, OnDestroy {
+export class SuggestionListComponent<T = string>
+  implements AfterContentInit, OnDestroy
+{
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly announcer = inject(Announcer);
   private readonly translate = inject(TranslateService);
@@ -112,8 +116,10 @@ export class SuggestionListComponent implements AfterContentInit, OnDestroy {
    * Every value to suggest from, in the order to suggest them. Called once
    * each time the field gets focus, not on every key.
    */
-  public readonly candidates = input.required<() => readonly string[]>();
-  public readonly picked = output<string>();
+  public readonly candidates = input.required<() => readonly T[]>();
+  /** How a candidate reads in the list and what typing matches. */
+  public readonly label = input<(value: T) => string>(String);
+  public readonly picked = output<T>();
 
   @ContentChild(IonInput) private field?: IonInput;
 
@@ -131,7 +137,8 @@ export class SuggestionListComponent implements AfterContentInit, OnDestroy {
   private readonly nativeInput = signal<HTMLInputElement | undefined>(
     undefined,
   );
-  private pool: readonly string[] = [];
+  /** The candidates by their label, which keeps the first of equal ones. */
+  private pool = new Map<string, T>();
   private focused = false;
   private closeTimer: ReturnType<typeof setTimeout> | undefined;
   private announcement: ProgressAnnouncement | undefined;
@@ -183,24 +190,37 @@ export class SuggestionListComponent implements AfterContentInit, OnDestroy {
     return `${this.listId}-${index}`;
   }
 
-  public onFocus(): void {
+  public onFocus(event: Event): void {
+    if (!this.fromField(event)) {
+      return;
+    }
     clearTimeout(this.closeTimer);
     this.focused = true;
-    this.pool = [...new Set(this.candidates()())];
+    const label = this.label();
+    this.pool = new Map();
+    for (const candidate of this.candidates()()) {
+      const text = label(candidate);
+      if (!this.pool.has(text)) {
+        this.pool.set(text, candidate);
+      }
+    }
   }
 
   public onInput(event: Event): void {
-    if (!this.focused) {
+    if (!this.focused || !this.fromField(event)) {
       return;
     }
     const value = (event.target as { value?: unknown } | null)?.value;
     // A space typed first is dropped; one after the text still narrows the
     // suggestions to those with a following word.
     this.query.set(typeof value === 'string' ? value.trimStart() : '');
-    this.show(matchSuggestions(this.pool, this.query()));
+    this.show(matchSuggestions([...this.pool.keys()], this.query()));
   }
 
-  public onBlur(): void {
+  public onBlur(event: Event): void {
+    if (!this.fromField(event)) {
+      return;
+    }
     clearTimeout(this.closeTimer);
     this.closeTimer = setTimeout(() => {
       this.focused = false;
@@ -210,7 +230,7 @@ export class SuggestionListComponent implements AfterContentInit, OnDestroy {
 
   public onKeydown(event: KeyboardEvent): void {
     const count = this.results().length;
-    if (count === 0) {
+    if (count === 0 || !this.fromField(event)) {
       return;
     }
     const active = this.activeIndex();
@@ -260,9 +280,18 @@ export class SuggestionListComponent implements AfterContentInit, OnDestroy {
     }
   }
 
-  public pick(value: string): void {
-    this.picked.emit(value);
+  /** Picks the candidate shown as `label`. */
+  public pick(label: string): void {
+    const candidate = this.pool.get(label);
+    if (candidate !== undefined) {
+      this.picked.emit(candidate);
+    }
     this.close();
+  }
+
+  private fromField(event: Event): boolean {
+    const field = this.host.nativeElement.querySelector('ion-input');
+    return !field || field.contains(event.target as Node | null);
   }
 
   private show(results: string[]): void {

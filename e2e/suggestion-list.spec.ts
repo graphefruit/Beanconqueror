@@ -3,7 +3,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import { ROASTER_NORTH } from './support/bean-data';
 import { openAddBean, startWithBeans, suggestionField } from './support/beans';
-import { openAddBrew } from './support/brew-form';
+import { brewField, openAddBrew } from './support/brew-form';
 import { contrast, firstColour } from './support/colour';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
@@ -59,6 +59,13 @@ for (const dark of [false, true]) {
 }
 
 /** Earlier brews, each field with two values that share a word and one that does not. */
+const VESSELS = [
+  { vessel_name: 'Carafe', vessel_weight: 300 },
+  { vessel_name: 'Carafe', vessel_weight: 350 },
+  { vessel_name: 'Carafe', vessel_weight: 300 },
+  { vessel_name: 'Cup', vessel_weight: 200 },
+];
+
 const BREW_FIELDS = [
   {
     field: 'pressure_profile',
@@ -85,9 +92,17 @@ async function startWithBrewTexts(page: Page): Promise<void> {
     for (const { field, values } of BREW_FIELDS) {
       brew[field] = values[index] ?? '';
     }
+    Object.assign(
+      brew,
+      VESSELS[index] ?? { vessel_name: '', vessel_weight: 0 },
+    );
   }
   Object.assign(data.SETTINGS[0], {
-    manage_parameters: { pressure_profile: true, coffee_type: true },
+    manage_parameters: {
+      pressure_profile: true,
+      coffee_type: true,
+      vessel: true,
+    },
   });
   await seedDatabase(page, data);
   await page.goto('/');
@@ -135,3 +150,31 @@ for (const { name, query } of BREW_FIELDS) {
     await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
   });
 }
+
+test('the vessel suggestion sets the name and the weight together', async ({
+  page,
+}) => {
+  await startWithBrewTexts(page);
+  const name = suggestionField(page, 'Vessel name');
+  const weight = brewField(page, 'Vessel weight');
+  // The vessel may be taken over from the last brew.
+  await name.fill('');
+  await weight.fill('');
+
+  await name.pressSequentially('car');
+  const options = suggestions(page).getByRole('option');
+  await expect(options).toHaveText(['Carafe – 300 g', 'Carafe – 350 g']);
+  await expect(page.locator('.cdk-live-announcer-element')).toHaveText(
+    '2 suggestions',
+  );
+
+  await name.press('ArrowDown');
+  await name.press('ArrowDown');
+  await name.press('Enter');
+  await expect(name).toHaveValue('Carafe');
+  await expect(weight).toHaveValue('350');
+  await expect(suggestions(page)).toHaveCount(0);
+
+  await weight.fill('3');
+  await expect(suggestions(page)).toHaveCount(0);
+});

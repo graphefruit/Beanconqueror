@@ -320,6 +320,114 @@ describe('SuggestionListComponent', () => {
   }));
 });
 
+interface Vessel {
+  name: string;
+  weight: number;
+}
+
+@Component({
+  template: `
+    <suggestion-list
+      (picked)="picked.push($event)"
+      [candidates]="candidates"
+      [label]="label"
+    >
+      <ion-input class="name" />
+      <ion-input class="weight" />
+    </suggestion-list>
+  `,
+  imports: [SuggestionListComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+})
+class PairHostComponent {
+  public readonly candidates = (): Vessel[] => [
+    { name: 'Carafe', weight: 300 },
+    { name: 'Carafe', weight: 350 },
+    { name: 'Carafe', weight: 300 },
+  ];
+  public readonly label = (vessel: Vessel): string =>
+    `${vessel.name} ${vessel.weight}`;
+  public readonly picked: Vessel[] = [];
+}
+
+describe('SuggestionListComponent with a name and a weight field', () => {
+  let fixture: ComponentFixture<PairHostComponent>;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [PairHostComponent, TranslateModule.forRoot()],
+      providers: [{ provide: LIVE_REGION, useValue: new FakeLiveRegion() }],
+    });
+    fixture = TestBed.createComponent(PairHostComponent);
+    fixture.detectChanges();
+  });
+
+  function input(name: 'name' | 'weight'): HTMLElement {
+    return (fixture.nativeElement as HTMLElement).querySelector(`.${name}`);
+  }
+
+  function send(name: 'name' | 'weight', type: string, value = ''): void {
+    Object.assign(input(name), { value });
+    input(name).dispatchEvent(new CustomEvent(type, { bubbles: true }));
+    fixture.detectChanges();
+  }
+
+  function options(): string[] {
+    return Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll(
+        '[role="option"]',
+      ),
+      (option) => option.textContent.trim(),
+    );
+  }
+
+  it('suggests each candidate once by its label and picks the whole candidate', () => {
+    send('name', 'ionFocus');
+    send('name', 'ionInput', 'car');
+
+    expect(options()).toEqual(['Carafe 300', 'Carafe 350']);
+
+    (fixture.nativeElement as HTMLElement)
+      .querySelectorAll<HTMLElement>('[role="option"]')[1]
+      .click();
+
+    expect(fixture.componentInstance.picked).toEqual([
+      { name: 'Carafe', weight: 350 },
+    ]);
+  });
+
+  it('suggests nothing for what is typed into the other field', () => {
+    send('weight', 'ionFocus');
+    send('weight', 'ionInput', '3');
+
+    expect(options()).toEqual([]);
+  });
+
+  it('closes the list when the focus moves on to the other field', fakeAsync(() => {
+    send('name', 'ionFocus');
+    send('name', 'ionInput', 'car');
+    send('name', 'ionBlur');
+    send('weight', 'ionFocus');
+    tick(150);
+    fixture.detectChanges();
+
+    expect(options()).toEqual([]);
+  }));
+
+  it('leaves the keys of the other field alone', () => {
+    send('name', 'ionFocus');
+    send('name', 'ionInput', 'car');
+    const key = new KeyboardEvent('keydown', {
+      key: 'ArrowDown',
+      bubbles: true,
+      cancelable: true,
+    });
+    input('weight').dispatchEvent(key);
+
+    expect(key.defaultPrevented).toBeFalse();
+  });
+});
+
 @Component({
   template: `
     <suggestion-list (picked)="value = $event" [candidates]="candidates">

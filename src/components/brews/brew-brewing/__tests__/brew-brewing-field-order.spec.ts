@@ -736,4 +736,22 @@ describe('BrewBrewingComponent field order', () => {
     expect(component.storedPressureProfiles()).toEqual(['Turbo']);
     expect(component.storedCoffeeTypes()).toEqual(['Lungo']);
   });
+
+  it('suggests the vessels of the stored brews with their weight', () => {
+    const stored = Object.assign(new Brew(), {
+      vessel_name: 'Carafe',
+      vessel_weight: 300,
+    });
+    const brewStorage = TestBed.inject(
+      UIBrewStorage,
+    ) as jasmine.SpyObj<UIBrewStorage>;
+    brewStorage.getAllEntries.and.returnValue([stored, new Brew()]);
+
+    expect(component.storedVessels()).toEqual([
+      { name: 'Carafe', weight: 300 },
+    ]);
+    expect(component.vesselLabel(component.storedVessels()[0])).toBe(
+      'Carafe – 300 g',
+    );
+  });
 });

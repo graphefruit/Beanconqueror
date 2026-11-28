@@ -31,7 +31,6 @@ import {
   IonInput,
   IonItem,
   IonLabel,
-  IonList,
   IonRange,
   IonRow,
   IonSelect,
@@ -65,7 +64,12 @@ import {
   brewFieldLayout,
   EMPTY_BREW_FIELD_LAYOUT,
 } from '../../../brew-session/rules/brewFieldLayout';
-import { storedBrewTexts } from '../../../brew-session/rules/brewSuggestions';
+import {
+  storedBrewTexts,
+  StoredVessel,
+  storedVessels,
+  vesselLabel,
+} from '../../../brew-session/rules/brewSuggestions';
 import { AppEvent } from '../../../classes/appEvent/appEvent';
 import { Bean } from '../../../classes/bean/bean';
 import { Brew } from '../../../classes/brew/brew';
@@ -182,7 +186,6 @@ declare var cordova;
     IonIcon,
     IonSelect,
     SelectLabelDirective,
-    IonList,
     IonLabel,
     IonRow,
     IonCol,
@@ -286,11 +289,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
   public readonly PreparationDeviceType = PreparationDeviceType;
 
-  public typeaheadSearch = {};
   public readonly storedPressureProfiles = (): string[] =>
     storedBrewTexts(this.uiBrewStorage.getAllEntries(), 'pressure_profile');
   public readonly storedCoffeeTypes = (): string[] =>
     storedBrewTexts(this.uiBrewStorage.getAllEntries(), 'coffee_type');
+  public readonly storedVessels = (): StoredVessel[] =>
+    storedVessels(this.uiBrewStorage.getAllEntries());
+  public readonly vesselLabel = vesselLabel;
 
   public choosenPreparation: Preparation = undefined;
   public choosenMill: Mill = undefined;
@@ -1419,85 +1424,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     await this.uiExcel.exportBrewFlowProfile(
       this.brewBrewingGraphEl.flow_profile_raw,
     );
-  }
-
-  public onSearchChange(_type: string, event: any) {
-    if (!this.typeaheadSearch[_type + 'Focused']) {
-      return;
-    }
-    let actualSearchValue = event.target.value;
-    this.typeaheadSearch[_type + 'ResultsAvailable'] = false;
-    this.typeaheadSearch[_type + 'Results'] = [];
-    if (actualSearchValue === undefined || actualSearchValue === '') {
-      return;
-    }
-
-    actualSearchValue = actualSearchValue.toLowerCase();
-    let filteredEntries: Array<Brew>;
-
-    const distictedValues = [];
-    filteredEntries = this.uiBrewStorage
-      .getAllEntries()
-      .filter(
-        (e) =>
-          e.vessel_name !== '' &&
-          e.vessel_name.toLowerCase().includes(actualSearchValue),
-      );
-
-    for (const entry of filteredEntries) {
-      if (
-        distictedValues.filter(
-          (e) =>
-            e.name === entry.vessel_name && e.weight === entry.vessel_weight,
-        ).length <= 0
-      ) {
-        distictedValues.push({
-          name: entry.vessel_name,
-          weight: entry.vessel_weight,
-        });
-      }
-    }
-
-    // Distinct values
-    this.typeaheadSearch[_type + 'Results'] = distictedValues;
-
-    if (this.typeaheadSearch[_type + 'Results'].length > 0) {
-      this.typeaheadSearch[_type + 'ResultsAvailable'] = true;
-    } else {
-      this.typeaheadSearch[_type + 'ResultsAvailable'] = false;
-    }
-  }
-
-  public searchResultsAvailable(_type): boolean {
-    if (this.typeaheadSearch[_type + 'Results']) {
-      return this.typeaheadSearch[_type + 'Results'].length > 0;
-    }
-    return false;
-  }
-
-  public getResults(_type: string) {
-    if (this.typeaheadSearch[_type + 'Results']) {
-      return this.typeaheadSearch[_type + 'Results'];
-    }
-    return [];
-  }
-
-  public onSearchLeave(_type: string) {
-    setTimeout(() => {
-      this.typeaheadSearch[_type + 'ResultsAvailable'] = false;
-      this.typeaheadSearch[_type + 'Results'] = [];
-      this.typeaheadSearch[_type + 'Focused'] = false;
-    }, 150);
-  }
-
-  public onSearchFocus(_type: string) {
-    this.typeaheadSearch[_type + 'Focused'] = true;
-  }
-
-  public searchResultSelected(_type: string, selected: any): void {
-    this.data.vessel_name = selected['name'];
-    this.data.vessel_weight = selected['weight'];
-    this.onSearchLeave(_type);
   }
 
   public hasWaterEntries(): boolean {
