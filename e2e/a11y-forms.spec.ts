@@ -177,6 +177,15 @@ for (const language of ['en', 'de'] as const) {
       };
       // A short drag, as a finger moves: its first few points pass several
       // values, and only the one the knob ends on is said.
+      await page.evaluate(() => {
+        const drag = { at: [] as number[] };
+        (window as unknown as { drag: typeof drag }).drag = drag;
+        for (const type of ['pointerdown', 'pointermove', 'pointerup']) {
+          window.addEventListener(type, () => drag.at.push(performance.now()), {
+            capture: true,
+          });
+        }
+      });
       await page.mouse.move(x + width / 2, y + height / 2);
       await page.mouse.down();
       for (let step = 1; step <= 6; step++) {
@@ -184,6 +193,9 @@ for (const language of ['en', 'de'] as const) {
         await page.waitForTimeout(50);
       }
       await page.mouse.up();
+      const dragAt = await page.evaluate(
+        () => (window as unknown as { drag: { at: number[] } }).drag.at,
+      );
       await expect(quality).not.toHaveAttribute(
         'aria-valuenow',
         String(before - 1),
@@ -191,11 +203,23 @@ for (const language of ['en', 'de'] as const) {
       const final = (await quality.getAttribute('aria-valuetext')) ?? '';
       await expect(liveRegion(page)).toHaveText(final);
       await page.waitForTimeout(1500);
-      expect(
-        await page.evaluate(
-          () => (window as unknown as { seen: { heard: string[] } }).seen.heard,
-        ),
-      ).toEqual([final]);
+      const heard = await page.evaluate(
+        () => (window as unknown as { seen: { heard: string[] } }).seen.heard,
+      );
+      // The app also says a value on the way when the knob rests 300 ms or
+      // the drag lasts a second (DRAG_SETTLE_MS, DRAG_ANNOUNCE_INTERVAL_MS in
+      // range-name.directive.ts). A busy machine can stretch this drag that
+      // far, so only a drag that stayed quick must say nothing but the end.
+      const longestRest = Math.max(
+        ...dragAt.slice(1).map((at, i) => at - dragAt[i]),
+      );
+      const quick =
+        longestRest < 300 && dragAt[dragAt.length - 1] - dragAt[0] < 1000;
+      expect(heard.at(-1)).toBe(final);
+      expect(heard.filter((said, i) => said === heard[i - 1])).toEqual([]);
+      if (quick) {
+        expect(heard).toEqual([final]);
+      }
       for (const slider of await visible(settings.getByRole('slider')).all()) {
         await expect(slider).not.toHaveAccessibleName(VALUE_ONLY);
       }

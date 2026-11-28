@@ -9,7 +9,7 @@ import {
   setParameter,
   showBrewsTab,
 } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { readStoredValue } from './support/stored-values';
 
 interface StoredConfig {
@@ -69,8 +69,7 @@ async function chooseTool(page: Page, tool: string): Promise<void> {
 test('deleting a preparation tool removes it from the brews that used it', async ({
   page,
 }) => {
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page);
   await openBrewParameterPage(page, 'Manage parameters');
   await setParameter(page, 'Preparation tools', true);
   await backToBrews(page);

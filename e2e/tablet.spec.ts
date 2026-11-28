@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { completeFirstRun } from './support/first-run';
 import {
   measureLayout,
@@ -114,9 +114,8 @@ test('a sheet opens as a centred panel narrower than the screen', async ({
 test('a single full-width action in a sheet stops at the button limit', async ({
   page,
 }) => {
-  await page.goto('/');
   // The filter and sort controls only show once there is a bean.
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page);
   await openTab(page, 'Beans');
   await page.getByRole('button', { name: 'Filter beans' }).click();
 

@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { createBackupZip } from './support/backup-file';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { readStoredValue } from './support/stored-values';
 
 /**
@@ -95,8 +95,7 @@ async function confirmImport(page: Page): Promise<void> {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page);
 });
 
 test('an import asks first and says that the browser saves no backup', async ({
