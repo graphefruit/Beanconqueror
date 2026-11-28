@@ -1,6 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   computed,
   CUSTOM_ELEMENTS_SCHEMA,
@@ -97,6 +98,8 @@ class BrewBrewingGraphStubComponent implements OnDestroy {
   @Output() public dataChange = new EventEmitter<Brew>();
 
   public uiSmartScaleConnected = false;
+  public readonly instance = jasmine.createSpy('instance').and.resolveTo();
+  public readonly preparationChanged = jasmine.createSpy('preparationChanged');
   public flow_profile_raw = {
     weight: [],
     pressureFlow: [],
@@ -131,6 +134,8 @@ describe('BrewBrewingComponent field order', () => {
   let preparation: Preparation;
   let settingsEvents: Subject<unknown>;
   let preparationEvents: Subject<unknown>;
+  /** The preparation select reports a newly chosen method through these. */
+  let preparationSelections: Subject<unknown>;
   /** The layout a test sets in place of the one of the settings. */
   let layout: WritableSignal<BrewFieldLayout | undefined>;
 
@@ -152,6 +157,7 @@ describe('BrewBrewingComponent field order', () => {
 
     settingsEvents = new Subject();
     preparationEvents = new Subject();
+    preparationSelections = new Subject();
     const mockUISettingsStorage = createMockUISettingsStorage();
     mockUISettingsStorage.getSettings.and.returnValue(settings);
     mockUISettingsStorage.attachOnEvent.and.returnValue(settingsEvents);
@@ -263,7 +269,10 @@ describe('BrewBrewingComponent field order', () => {
         },
         {
           provide: EventQueueService,
-          useValue: jasmine.createSpyObj('EventQueueService', ['dispatch']),
+          useValue: jasmine.createSpyObj('EventQueueService', {
+            dispatch: undefined,
+            on: preparationSelections,
+          }),
         },
         {
           provide: HapticService,
@@ -721,5 +730,85 @@ describe('BrewBrewingComponent field order', () => {
     const [temperatureTime, bloomTime] = STORED_TIMERS;
     expectStoredTimeShown(temperatureTime, 'first preparation again');
     expectStoredTimeShown(bloomTime, 'first preparation again');
+  });
+  it('shows the stored grind time when its timer is shown again', () => {
+    component.uiShowSectionBeforeBrew = true;
+    settings.manage_parameters.mill_timer = true;
+    brew.mill_timer = 12;
+    brew.mill_timer_milliseconds = 340;
+    settingsEvents.next({ type: 'UPDATE' });
+    fixture.detectChanges();
+
+    settings.manage_parameters.mill_timer = false;
+    settingsEvents.next({ type: 'UPDATE' });
+    fixture.detectChanges();
+    expect(component.brewMillTimer).toBeUndefined();
+
+    settings.manage_parameters.mill_timer = true;
+    settingsEvents.next({ type: 'UPDATE' });
+    fixture.detectChanges();
+    const timer = component.brewMillTimer;
+    expect(moment(timer.displayingTime).format('mm:ss.SSS')).toBe('00:12.340');
+    expect([timer.getSeconds(), timer.getMilliseconds()]).toEqual([12, 340]);
+  });
+
+  it('gives the brew timer the stored brew time to start with', () => {
+    brew.brew_time = 42;
+    brew.brew_time_milliseconds = 7;
+    settings.manage_parameters.brew_time = false;
+    settingsEvents.next({ type: 'UPDATE' });
+    fixture.detectChanges();
+    settings.manage_parameters.brew_time = true;
+    settingsEvents.next({ type: 'UPDATE' });
+    fixture.detectChanges();
+
+    // The brew timer is inert here; its own test shows the time it gets.
+    const timer = fixture.nativeElement.querySelector('brew-timer') as {
+      initialSeconds?: number;
+      initialMilliseconds?: number;
+    };
+    expect([timer.initialSeconds, timer.initialMilliseconds]).toEqual([42, 7]);
+  });
+
+  describe('choosing a method that shows the section while brewing again', () => {
+    beforeEach(() => {
+      // It reads the tools of the method a moment later.
+      spyOn(component, 'resetPreparationTools').and.stub();
+      component.preparationMethodFocused();
+    });
+
+    /** The select reports the method; the sections follow its parameters. */
+    function chooseMethod(_whileShown: boolean): void {
+      (component.setUIParams as jasmine.Spy).and.callFake(() => {
+        component.uiShowSectionWhileBrew = _whileShown;
+      });
+      preparationSelections.next(undefined);
+    }
+
+    it('connects the devices of the new graph as on opening the form', () => {
+      component.uiShowSectionWhileBrew = false;
+      fixture.componentRef.injector.get(ChangeDetectorRef).markForCheck();
+      fixture.detectChanges();
+      expect(component.brewBrewingGraphEl).toBeUndefined();
+
+      chooseMethod(true);
+
+      expect(component.brewBrewingGraphEl).toBeDefined();
+      expect(graph().instance).toHaveBeenCalledTimes(1);
+      expect(graph().preparationChanged).not.toHaveBeenCalled();
+      expect(BrewBrewingGraphStubComponent.created).toBe(2);
+      // The header reads the new graph; it is rendered with it, so the
+      // following check finds nothing changed.
+      expect(() => fixture.detectChanges()).not.toThrow();
+      expect(BrewBrewingGraphStubComponent.created).toBe(2);
+    });
+
+    it('only tells a graph that stays about the new method', () => {
+      chooseMethod(true);
+
+      expect(graph().preparationChanged).toHaveBeenCalledTimes(1);
+      expect(graph().instance).not.toHaveBeenCalled();
+      expect(BrewBrewingGraphStubComponent.created).toBe(1);
+    });
   });
 });
