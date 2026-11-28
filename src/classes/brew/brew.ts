@@ -2,7 +2,10 @@ import moment from 'moment';
 import { Subscription } from 'rxjs';
 
 import { BREW_GRAPH_TYPE } from '../../enums/brews/brewGraphType';
-import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import {
+  BREW_QUANTITY_TYPES_ENUM,
+  brewQuantityTypeName,
+} from '../../enums/brews/brewQuantityTypes';
 import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { IBean } from '../../interfaces/bean/iBean';
@@ -247,10 +250,10 @@ export class Brew implements IBrew {
   }
 
   public getBrewQuantityTypeName(): string {
-    return BREW_QUANTITY_TYPES_ENUM[this.brew_quantity_type];
+    return brewQuantityTypeName(this.brew_quantity_type);
   }
   public getBrewBeverageQuantityTypeName(): string {
-    return BREW_QUANTITY_TYPES_ENUM[this.brew_beverage_quantity_type];
+    return brewQuantityTypeName(this.brew_beverage_quantity_type);
   }
 
   public getBean(): Bean {

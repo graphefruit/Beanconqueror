@@ -1,6 +1,9 @@
 import moment from 'moment';
 
-import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import {
+  BREW_QUANTITY_TYPES_ENUM,
+  brewQuantityTypeName,
+} from '../../enums/brews/brewQuantityTypes';
 import { IBaristamodeBrew } from '../../interfaces/brew/iBaristamodeBrew';
 import { ICustomInformationBrew } from '../../interfaces/brew/ICustomInformationBrew';
 import { IPreparation } from '../../interfaces/preparation/iPreparation';
@@ -72,7 +75,7 @@ class BaristamodeBrew implements IBaristamodeBrew {
   }
 
   public getBrewBeverageQuantityTypeName(): string {
-    return BREW_QUANTITY_TYPES_ENUM[this.brew_beverage_quantity_type];
+    return brewQuantityTypeName(this.brew_beverage_quantity_type);
   }
 
   private toFixedIfNecessary(value, dp) {
