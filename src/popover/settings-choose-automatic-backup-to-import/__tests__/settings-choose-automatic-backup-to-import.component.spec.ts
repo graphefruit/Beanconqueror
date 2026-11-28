@@ -12,6 +12,7 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import {
+  backupListEntry,
   fileSize,
   SettingsChooseAutomaticBackupToImportComponent,
 } from '../settings-choose-automatic-backup-to-import.component';
@@ -136,6 +137,34 @@ describe('Choosing an automatic backup file to import', () => {
     expect(fileSize(24718)).toBe('0.02MB');
     expect(fileSize(1021246)).toBe('0.97MB');
   });
+
+  it('shows the day in the format of the settings and the local time', () => {
+    const backup = file(
+      'Beanconqueror.zip',
+      4410,
+      new Date(2026, 10, 27, 15, 23).getTime(),
+    );
+
+    expect(backupListEntry(backup, true, 'YYYY-MM-DD')).toEqual({
+      file: backup,
+      beforeDataUpdate: false,
+      latest: true,
+      size: '5kB',
+      date: '2026-11-27 15:23',
+    });
+  });
+
+  it('marks only the internal backup as the latest one', async () => {
+    const internalBackup = file(
+      'Beanconqueror.zip',
+      200,
+      Date.UTC(2026, 10, 11, 10),
+    );
+
+    expect(
+      (await listedEntries(internalBackup)).map((_entry) => _entry.latest),
+    ).toEqual([true, false, false, false]);
+  });
 });
 
 type StencilElement = HTMLElement & {
@@ -154,12 +183,17 @@ describe('Sharing a backup file from the list', () => {
   const beforeImport = file(
     'Beanconqueror_pre_import_2026-11-12_10-00-00-000Z.zip',
     500,
-    Date.UTC(2026, 10, 12, 10),
+    new Date(2026, 10, 12, 11).getTime(),
   );
   const beforeDataUpdate = file(
     'Beanconqueror_pre_migration_UPDATE_16_2026-11-10_10-00-00-000Z.zip',
     700,
-    Date.UTC(2026, 10, 10, 10),
+    new Date(2026, 10, 10, 11, 5).getTime(),
+  );
+  const internalBackup = file(
+    'Beanconqueror.zip',
+    300,
+    new Date(2026, 10, 9, 8, 30).getTime(),
   );
   let shareStoredFile: jasmine.Spy;
   let showMessage: jasmine.Spy;
@@ -177,7 +211,7 @@ describe('Sharing a backup file from the list', () => {
           provide: UIFileHelper,
           useValue: {
             listAutomaticBackupFiles: () => Promise.resolve([]),
-            statInternalFile: () => Promise.resolve(undefined),
+            statInternalFile: () => Promise.resolve(internalBackup),
           },
         },
         {
@@ -197,7 +231,12 @@ describe('Sharing a backup file from the list', () => {
     const translate = TestBed.inject(TranslateService);
     translate.setTranslation('en', {
       BACKUP_BEFORE_DATA_UPDATE: 'Data before the update to 9.0',
-      A11Y: { SHARE_BACKUP_FILE: 'Share {{name}} from {{date}}' },
+      LATEST_AUTOMATIC_BACKUP: 'Latest automatic backup',
+      A11Y: {
+        SHARE_BACKUP_FILE: 'Share {{name}} from {{date}}',
+        SHARE_LATEST_BACKUP_FILE:
+          'Share {{name}}, the latest automatic backup, from {{date}}',
+      },
     });
     translate.use('en');
   });
@@ -215,7 +254,7 @@ describe('Sharing a backup file from the list', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('names the share button of each backup by its label and day', async () => {
+  it('names the share button of each backup by its label, day and time', async () => {
     const element = await render();
 
     const buttons = [
@@ -223,18 +262,25 @@ describe('Sharing a backup file from the list', () => {
     ];
     await Promise.all(buttons.map((_button) => _button.componentOnReady?.()));
     expect(buttons.map(nameOf)).toEqual([
-      `Share ${beforeImport.name} from 12.11.2026`,
-      'Share Data before the update to 9.0 from 10.11.2026',
+      'Share Beanconqueror.zip, the latest automatic backup, from 09.11.2026 08:30',
+      `Share ${beforeImport.name} from 12.11.2026 11:00`,
+      'Share Data before the update to 9.0 from 10.11.2026 11:05',
     ]);
-    expect(
-      element.querySelectorAll('ion-item .field-label')[1].textContent,
-    ).toBe('Data before the update to 9.0');
+    const labels = [...element.querySelectorAll('ion-item ion-label')].map(
+      (_label) =>
+        [..._label.children].map((_line) => _line.textContent).join(' '),
+    );
+    expect(labels).toEqual([
+      'Beanconqueror.zip Latest automatic backup 1kB - 09.11.2026 08:30',
+      `${beforeImport.name} 1kB - 12.11.2026 11:00`,
+      'Data before the update to 9.0 1kB - 10.11.2026 11:05',
+    ]);
   });
 
   it('shares the file of the backup and says nothing more when it was shared or the dialog closed', async () => {
     const element = await render();
 
-    (element.querySelectorAll('ion-item ion-button')[1] as HTMLElement).click();
+    (element.querySelectorAll('ion-item ion-button')[2] as HTMLElement).click();
     await Promise.resolve();
 
     expect(shareStoredFile).toHaveBeenCalledOnceWith(beforeDataUpdate.uri);
