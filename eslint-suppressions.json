@@ -3325,26 +3325,6 @@
       "count": 1
     }
   },
-  "src/services/uiHealthKit.ts": {
-    "@typescript-eslint/no-empty-function": {
-      "count": 2
-    },
-    "@typescript-eslint/no-misused-promises": {
-      "count": 2
-    },
-    "@typescript-eslint/prefer-promise-reject-errors": {
-      "count": 4
-    },
-    "no-async-promise-executor": {
-      "count": 2
-    },
-    "no-empty": {
-      "count": 1
-    },
-    "no-var": {
-      "count": 1
-    }
-  },
   "src/services/uiHelper.ts": {
     "@typescript-eslint/no-floating-promises": {
       "count": 4

@@ -254,9 +254,6 @@ importers:
       cordova-plugin-ble-central:
         specifier: 2.0.0
         version: 2.0.0
-      cordova-plugin-health:
-        specifier: ^2.1.1
-        version: 2.1.1
       eslint:
         specifier: ^9.39.5
         version: 9.39.5
@@ -2823,10 +2820,6 @@ packages:
 
   cordova-plugin-ble-central@2.0.0:
     resolution: {integrity: sha512-IYXIR6EeKJiIprKiGV/9shNktBqAI8AVgACSlJKbF6pqCOXuFXdjaUG9f6ODssSGnV0LEaL9gKtoLLHGaW+FzA==}
-
-  cordova-plugin-health@2.1.1:
-    resolution: {integrity: sha512-PAwJJsZPpUERQIW14r5weZXzcgHev+cQ/B1+DSGKF9dta/v9q1BX0wXIIjBeyVXzFzJwqz9E6voY+HhauTqHdA==}
-    engines: {'0': {name: cordova, version: '>=6.0.0'}}
 
   cors@2.8.6:
     resolution: {integrity: sha512-tJtZBBHA6vjIAaF6EnIaq6laBBP9aq/Y3ouVJjEfoHbRBcHBAHYcMh/w8LDrk2PvIMMq8gmopa5D4V8RmbrxGw==}
@@ -7173,8 +7166,6 @@ snapshots:
   cordova-plugin-android-permissions@1.1.5: {}
 
   cordova-plugin-ble-central@2.0.0: {}
-
-  cordova-plugin-health@2.1.1: {}
 
   cors@2.8.6:
     dependencies:

@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { EXPERIENCE_MODE_ENUM } from '../../enums/settings/experienceMode';
+import { createLegacyData } from '../../test-utils/legacy-data-fixture';
 import { UILog } from '../uiLog';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIStorage } from '../uiStorage';
@@ -170,4 +171,31 @@ describe('UISettingsStorage experience mode for created settings', () => {
     );
     expect(settingsStorage.isModeHintPending()).toBeFalse();
   });
+});
+
+describe('UISettingsStorage after an update from 8.8', () => {
+  afterEach(() => {
+    UISettingsStorage.instance = undefined;
+  });
+
+  for (const tracking of [true, false]) {
+    it(`keeps caffeine tracking ${tracking ? 'on' : 'off'}`, async () => {
+      const legacy = createLegacyData({ brews: 3, beans: 1 });
+      legacy.SETTINGS[0].track_caffeine_consumption = tracking;
+      const storage = createStorage(legacy);
+
+      const settingsStorage = await startSettingsStorage(storage);
+
+      expect(settingsStorage.getSettings().track_caffeine_consumption).toBe(
+        tracking,
+      );
+      expect(
+        (
+          storage.data.get('SETTINGS') as {
+            track_caffeine_consumption: boolean;
+          }[]
+        )[0].track_caffeine_consumption,
+      ).toBe(tracking);
+    });
+  }
 });
