@@ -1,5 +1,6 @@
 import moment from 'moment';
 
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 import { IBean } from '../../interfaces/bean/iBean';
 import { DeepReadonly } from '../core/read-only';
 
@@ -112,4 +113,63 @@ export function beanEntryName(
   ]
     .filter(Boolean)
     .join(', ');
+}
+
+export function isBlend(bean: { readonly beanMix?: BEAN_MIX_ENUM }): boolean {
+  return (
+    BEAN_MIX_ENUM[bean.beanMix as unknown as keyof typeof BEAN_MIX_ENUM] ===
+    BEAN_MIX_ENUM.BLEND
+  );
+}
+
+/** Which of the three ways the roast degree of a bean is shown in. */
+export function roastShownAs(
+  bean: BeanFields<'roast'>,
+): 'unknown' | 'custom' | 'named' {
+  const roast = bean.roast as string;
+  if (roast === 'UNKNOWN') {
+    return 'unknown';
+  }
+  return roast === 'CUSTOM_ROAST' ? 'custom' : 'named';
+}
+
+/**
+ * Seconds of a roast as `HH:mm:ss`; the hours wrap at 24 as on a clock. No
+ * value gives `-`, as a missing crack time does.
+ */
+export function roastTime(seconds: number | null | undefined): string {
+  if (seconds === null || seconds === undefined) {
+    return '-';
+  }
+  const whole = Math.floor(seconds);
+  return [
+    Math.floor(whole / 3600) % 24,
+    Math.floor(whole / 60) % 60,
+    whole % 60,
+  ]
+    .map((part) => String(part).padStart(2, '0'))
+    .join(':');
+}
+
+/** The time of a crack; none or 0 gives `-`. */
+export function crackTime(seconds: number | null | undefined): string {
+  return seconds ? roastTime(seconds) : '-';
+}
+
+/**
+ * What a roast lost of the green beans, as `16.67% (200.0g)`; `-` unless
+ * both weights are known and the roasted beans weigh no more.
+ */
+export function roastWeightLoss(
+  greenBeanWeight: unknown,
+  roastedWeight: unknown,
+): string {
+  const green = Number(greenBeanWeight);
+  const roasted = Number(roastedWeight);
+  if (green > 0 && roasted > 0 && green >= roasted) {
+    const loss = green - roasted;
+    const pct = (loss / green) * 100;
+    return `${pct.toFixed(2)}% (${loss.toFixed(1)}g)`;
+  }
+  return '-';
 }

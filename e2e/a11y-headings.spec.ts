@@ -215,6 +215,7 @@ for (const language of ['en', 'de'] as const) {
             startsWith(t('A11Y.OPTIONS_FOR', { name: '' })),
             t('DETAIL'),
           ),
+        sections: ['BEAN_SORT_MORE_INFORMATION'],
       },
       {
         name: 'add brew',

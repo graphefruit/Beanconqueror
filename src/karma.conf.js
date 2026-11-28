@@ -16,6 +16,7 @@ const path = require('node:path');
 const NEW_CODE = [
   'src/app/graph-section/graph/graph-detail/**',
   'src/app/baristamode/barista/barista-graph-height.ts',
+  'src/app/beans/beans-detail/beans-detail.component.ts',
   'src/app/brew/brew-popover-cut/brew-popover-cut.component.ts',
   'src/app/profile/**',
   'src/brew-session/**',
@@ -24,6 +25,7 @@ const NEW_CODE = [
   'src/classes/preparationDevice/sanremo/sanremo-stop-rules.ts',
   'src/components/actions-popover/actions-popover.component.ts',
   'src/components/bean-information/bean-information.component.ts',
+  'src/components/beans/detail/bean-detail-sort-information/bean-detail-sort-information.component.ts',
   'src/components/brew-share/**',
   'src/components/brews/brew-brewing-graph/live-series-state.ts',
   'src/components/brews/graph/**',

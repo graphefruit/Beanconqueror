@@ -1,5 +1,5 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -7,83 +7,96 @@ import { Bean } from '../../../../../classes/bean/bean';
 import { GreenBean } from '../../../../../classes/green-bean/green-bean';
 import { Settings } from '../../../../../classes/settings/settings';
 import { BEAN_MIX_ENUM } from '../../../../../enums/beans/mix';
+import { IBean } from '../../../../../interfaces/bean/iBean';
 import { IBeanInformation } from '../../../../../interfaces/bean/iBeanInformation';
-import { UIBeanHelper } from '../../../../../services/uiBeanHelper';
 import { UISettingsStorage } from '../../../../../services/uiSettingsStorage';
+import { ingestBean } from '../../../../../stores/beans/bean.store';
 import {
-  createMockUIBeanHelper,
-  createMockUISettingsStorage,
-} from '../../../../../test-utils';
-import { BeanDetailSortInformationComponent } from '../bean-detail-sort-information.component';
+  BeanDetailSortInformationComponent,
+  BeanVarieties,
+} from '../bean-detail-sort-information.component';
 
 describe('BeanDetailSortInformationComponent', () => {
-  let component: BeanDetailSortInformationComponent;
-  let fixture: ComponentFixture<BeanDetailSortInformationComponent>;
   let settings: Settings;
-  let mockUISettingsStorage: jasmine.SpyObj<any>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     settings = new Settings();
-    mockUISettingsStorage = createMockUISettingsStorage();
-    mockUISettingsStorage.getSettings.and.returnValue(settings);
-
     TestBed.configureTestingModule({
       imports: [BeanDetailSortInformationComponent, TranslateModule.forRoot()],
       providers: [
-        { provide: UISettingsStorage, useValue: mockUISettingsStorage },
-        { provide: UIBeanHelper, useValue: createMockUIBeanHelper() },
+        provideZonelessChangeDetection(),
+        {
+          provide: UISettingsStorage,
+          useValue: { getSettings: () => settings },
+        },
       ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    }).compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(BeanDetailSortInformationComponent);
-    component = fixture.componentInstance;
+    });
   });
 
-  function percentageFieldPresent(): boolean {
-    return fixture.nativeElement.textContent.includes('BEAN_DATA_PERCENTAGE');
+  async function show(
+    data: BeanVarieties,
+  ): Promise<ComponentFixture<BeanDetailSortInformationComponent>> {
+    const fixture = TestBed.createComponent(BeanDetailSortInformationComponent);
+    fixture.componentRef.setInput('data', data);
+    await fixture.whenStable();
+    return fixture;
   }
 
-  function setBeanData(beanMix: BEAN_MIX_ENUM): void {
+  function text(
+    fixture: ComponentFixture<BeanDetailSortInformationComponent>,
+  ): string {
+    return (fixture.nativeElement as HTMLElement).textContent ?? '';
+  }
+
+  /** A stored bean with one variety at 60 %, as the store hands it out. */
+  function storedBean(beanMix: BEAN_MIX_ENUM): IBean {
     const bean = new Bean();
     bean.beanMix = beanMix;
     bean.bean_information = [{ percentage: 60 } as IBeanInformation];
-    component.data = bean;
-    fixture.detectChanges();
+    return ingestBean(JSON.stringify(bean));
   }
 
   describe('percentage field visibility', () => {
-    it('should show percentage field when bean is BLEND and percentage setting is enabled', () => {
+    it('should show percentage field when bean is BLEND and percentage setting is enabled', async () => {
       settings.bean_manage_parameters.percentage = true;
-      setBeanData('BLEND' as BEAN_MIX_ENUM);
+      const fixture = await show(storedBean('BLEND' as BEAN_MIX_ENUM));
 
-      expect(percentageFieldPresent()).toBeTrue();
+      expect(text(fixture)).toContain('BEAN_DATA_PERCENTAGE');
+      expect(text(fixture)).toContain('1. BEAN_SORT');
     });
 
-    it('should hide percentage field when bean is SINGLE_ORIGIN', () => {
+    it('should hide percentage field when bean is SINGLE_ORIGIN', async () => {
       settings.bean_manage_parameters.percentage = true;
-      setBeanData('SINGLE_ORIGIN' as BEAN_MIX_ENUM);
+      const fixture = await show(storedBean('SINGLE_ORIGIN' as BEAN_MIX_ENUM));
 
-      expect(percentageFieldPresent()).toBeFalse();
+      expect(text(fixture)).not.toContain('BEAN_DATA_PERCENTAGE');
+      expect(text(fixture)).toContain('BEAN_SORT_INFORMATION');
     });
 
-    it('should hide percentage field when bean is BLEND but percentage setting is disabled', () => {
+    it('should hide percentage field when bean is BLEND but percentage setting is disabled', async () => {
       settings.bean_manage_parameters.percentage = false;
-      setBeanData('BLEND' as BEAN_MIX_ENUM);
+      const fixture = await show(storedBean('BLEND' as BEAN_MIX_ENUM));
 
-      expect(percentageFieldPresent()).toBeFalse();
+      expect(text(fixture)).not.toContain('BEAN_DATA_PERCENTAGE');
     });
 
-    it('should hide percentage field for GreenBean regardless of settings', () => {
+    it('should hide percentage field for GreenBean regardless of settings', async () => {
       settings.bean_manage_parameters.percentage = true;
       const greenBean = new GreenBean();
       greenBean.bean_information = [{ percentage: 60 } as IBeanInformation];
-      component.data = greenBean;
-      fixture.detectChanges();
+      const fixture = await show(greenBean);
 
-      expect(percentageFieldPresent()).toBeFalse();
+      expect(text(fixture)).not.toContain('BEAN_DATA_PERCENTAGE');
+      expect(text(fixture)).toContain('BEAN_SORT_INFORMATION');
     });
+  });
+
+  it('shows only the fields switched on in the bean parameters', async () => {
+    settings.bean_manage_parameters.country = true;
+    settings.bean_manage_parameters.region = false;
+    const fixture = await show(storedBean('SINGLE_ORIGIN' as BEAN_MIX_ENUM));
+
+    expect(text(fixture)).toContain('BEAN_DATA_COUNTRY');
+    expect(text(fixture)).not.toContain('BEAN_DATA_REGION');
   });
 });

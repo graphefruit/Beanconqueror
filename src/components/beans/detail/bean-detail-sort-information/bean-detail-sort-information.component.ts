@@ -1,43 +1,40 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
+  computed,
   inject,
-  Input,
-  OnInit,
-  Output,
+  input,
 } from '@angular/core';
 
 import { IonCard, IonItem, IonLabel } from '@ionic/angular';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { Bean } from '../../../../classes/bean/bean';
-import { GreenBean } from '../../../../classes/green-bean/green-bean';
 import { Settings } from '../../../../classes/settings/settings';
-import { BEAN_FUNCTION_PIPE_ENUM } from '../../../../enums/beans/beanFunctionPipe';
-import { BeanFunction } from '../../../../pipes/bean/beanFunction';
-import { UIBeanHelper } from '../../../../services/uiBeanHelper';
+import { BEAN_MIX_ENUM } from '../../../../enums/beans/mix';
+import { IBeanInformation } from '../../../../interfaces/bean/iBeanInformation';
+import { BeanFieldVisiblePipe } from '../../../../pipes/bean/beanFieldVisible';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
+import { isBlend } from '../../../../stores/beans/bean-rules';
+import { DeepReadonly } from '../../../../stores/core/read-only';
+
+/** A bean or a green bean; a green bean has no mix and is no blend. */
+export interface BeanVarieties {
+  readonly bean_information: readonly DeepReadonly<IBeanInformation>[];
+  readonly beanMix?: BEAN_MIX_ENUM;
+}
 
 @Component({
   selector: 'bean-detail-sort-information',
   templateUrl: './bean-detail-sort-information.component.html',
   styleUrls: ['./bean-detail-sort-information.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [TranslatePipe, BeanFunction, IonCard, IonItem, IonLabel],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [TranslatePipe, BeanFieldVisiblePipe, IonCard, IonItem, IonLabel],
 })
-export class BeanDetailSortInformationComponent implements OnInit {
-  private readonly uiSettingsStorage = inject(UISettingsStorage);
-  readonly uiBeanHelper = inject(UIBeanHelper);
+export class BeanDetailSortInformationComponent {
+  public readonly data = input.required<BeanVarieties>();
 
-  @Input() public data: GreenBean | Bean;
-  @Output() public dataChange = new EventEmitter<GreenBean | Bean>();
-
-  public settings: Settings;
-  public BEAN_FUNCTION_PIPE_ENUM = BEAN_FUNCTION_PIPE_ENUM;
-
-  public ngOnInit() {
-    this.settings = this.uiSettingsStorage.getSettings();
-  }
+  protected readonly settings: Settings =
+    inject(UISettingsStorage).getSettings();
+  protected readonly blend = computed(() => isBlend(this.data()));
 }

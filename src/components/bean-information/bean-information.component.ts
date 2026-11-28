@@ -86,6 +86,7 @@ import {
   isFrozen,
   isScannedBean,
   isSelfRoasted,
+  roastShownAs,
   showsCostPerKg,
 } from '../../stores/beans/bean-rules';
 import { BeanUsageStore, NO_USAGE } from '../../stores/beans/bean-usage.store';
@@ -217,14 +218,7 @@ export class BeanInformationComponent {
   protected readonly roastingTypeUnknown = computed(
     () => (this.shown().bean_roasting_type as string) === 'UNKNOWN',
   );
-  /** Which of the three ways the roast is shown in. */
-  protected readonly roast = computed(() => {
-    const roast = this.shown().roast as string;
-    if (roast === 'UNKNOWN') {
-      return 'unknown';
-    }
-    return roast === 'CUSTOM_ROAST' ? 'custom' : 'named';
-  });
+  protected readonly roast = computed(() => roastShownAs(this.shown()));
   protected readonly flavors = computed((): string[] => {
     const flavor = this.shown().cupped_flavor;
     return [

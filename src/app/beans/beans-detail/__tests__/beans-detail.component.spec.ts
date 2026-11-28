@@ -1,4 +1,4 @@
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ModalController } from '@ionic/angular';
@@ -14,9 +14,11 @@ import { Settings } from '../../../../classes/settings/settings';
 import { IBean } from '../../../../interfaces/bean/iBean';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../../services/uiBeanHelper';
-import { UIBeanStorage } from '../../../../services/uiBeanStorage';
 import { UIHelper } from '../../../../services/uiHelper';
+import { UIRoastingMachineStorage } from '../../../../services/uiRoastingMachineStorage';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
+import { BeanStore } from '../../../../stores/beans/bean.store';
+import { DeepReadonly } from '../../../../stores/core/read-only';
 import { BeansDetailComponent } from '../beans-detail.component';
 
 const NOW = Date.parse('2026-03-01T08:00:00.000Z');
@@ -36,6 +38,7 @@ function readable(element: Element): string {
 
 describe('BeansDetailComponent', () => {
   let settings: Settings;
+  const stored = signal(new Map<string, DeepReadonly<IBean>>());
 
   beforeAll(() => {
     defineSegment();
@@ -43,6 +46,7 @@ describe('BeansDetailComponent', () => {
   });
 
   beforeEach(() => {
+    stored.set(new Map());
     settings = new Settings();
     settings.freeze_coffee_beans = true;
     settings.date_format = 'DD.MM.YYYY';
@@ -51,27 +55,37 @@ describe('BeansDetailComponent', () => {
       imports: [BeansDetailComponent, TranslateModule.forRoot()],
       providers: [
         provideZonelessChangeDetection(),
-        { provide: ModalController, useValue: { dismiss: () => undefined } },
+        {
+          provide: ModalController,
+          useValue: jasmine.createSpyObj<ModalController>('ModalController', {
+            dismiss: Promise.resolve(true),
+          }),
+        },
         {
           provide: UIHelper,
-          useValue: {
-            copyData: (data: unknown): unknown =>
-              JSON.parse(JSON.stringify(data)) as unknown,
-          },
+          useValue: jasmine.createSpyObj<UIHelper>('UIHelper', [
+            'openExternalWebpage',
+          ]),
         },
         { provide: UIAnalytics, useValue: { trackEvent: () => undefined } },
         {
           provide: UIBeanHelper,
-          useValue: {
-            fieldVisible: (field: boolean) =>
-              UIBeanHelper.prototype.fieldVisible(field),
-          },
+          useValue: jasmine.createSpyObj<UIBeanHelper>('UIBeanHelper', {
+            editBean: Promise.resolve(),
+          }),
         },
         {
           provide: UISettingsStorage,
           useValue: { getSettings: () => settings },
         },
-        { provide: UIBeanStorage, useValue: {} },
+        {
+          provide: UIRoastingMachineStorage,
+          useValue: {
+            getByUUID: (uuid: string) =>
+              uuid === 'machine' ? { name: 'Aillio Bullet' } : undefined,
+          },
+        },
+        { provide: BeanStore, useValue: { byUuid: stored } },
       ],
     });
     const translate = TestBed.inject(TranslateService);
@@ -86,12 +100,16 @@ describe('BeansDetailComponent', () => {
   ): Promise<ComponentFixture<BeansDetailComponent>> {
     const fixture = TestBed.createComponent(BeansDetailComponent);
     fixture.componentRef.setInput('bean', bean);
-    fixture.componentInstance.bean_segment = segment;
+    fixture.componentInstance.segment.set(segment);
     fixture.autoDetectChanges();
     await fixture.whenStable();
-    fixture.componentInstance.ionViewDidEnter();
-    fixture.detectChanges();
-    await fixture.whenStable();
+    // Ionic shows its elements once they are hydrated.
+    const element = fixture.nativeElement as HTMLElement;
+    await until(() =>
+      [...element.querySelectorAll('ion-card, ion-item')].every((item) =>
+        item.classList.contains('hydrated'),
+      ),
+    );
     return fixture;
   }
 
@@ -218,7 +236,6 @@ describe('BeansDetailComponent', () => {
         ?.querySelector('[role="slider"]')
         ?.getAttribute('aria-label'),
     ).toBe('Rating');
-    // The stars are set a moment after the details are shown.
     const stars = fixture.debugElement.query(
       (node) => node.name === 'ngx-stars',
     ).componentInstance as NgxStarsComponent;
@@ -291,5 +308,116 @@ describe('BeansDetailComponent', () => {
     for (const shown of ['Ethiopia', '50', 'Brazil', '30', 'Colombia', '20']) {
       expect(values).toContain(shown);
     }
+  });
+  /** A self-roasted bean: the details show its roast first. */
+  function roasted(): IBean {
+    const bean = blend();
+    Object.assign(bean.bean_roast_information, {
+      bean_uuid: 'green',
+      roaster_machine: 'machine',
+      drop_temperature: 210,
+      roast_length: 725,
+      first_crack_minute: 480,
+      second_crack_minute: 0,
+      green_bean_weight: 1200,
+    });
+    return bean;
+  }
+
+  it('shows the roast of a self-roasted bean on a tab of its own', async () => {
+    const fixture = await open(roasted(), 'roastinformation');
+    const element = fixture.nativeElement as HTMLElement;
+    await until(() => tabs(element).some(([, selected]) => selected));
+
+    expect(tabs(element)[0]).toEqual(['Roast information', true]);
+    expect(
+      [...element.querySelectorAll<HTMLElement>('[appTabPanel] ion-item')]
+        .map((item) => item.innerText.replace(/\s+/g, ' ').trim())
+        .slice(0, 9),
+    ).toEqual([
+      'Final temperature of roast: 210',
+      'Roast length: 00:12:05',
+      'Roasting machine: Aillio Bullet',
+      'Green bean weight: 1200',
+      'Weight after roasting: 1000',
+      'Weight loss: 16.67% (200.0g)',
+      'First crack minute: 00:08:00',
+      'First crack temperature: 0',
+      'Second crack minute: -',
+    ]);
+  });
+
+  it('shows the stored state of the bean, also after it was saved again', async () => {
+    const bean = blend();
+    stored.set(new Map([[bean.config.uuid, bean]]));
+    const fixture = await open(bean, 'general');
+    const element = fixture.nativeElement as HTMLElement;
+    const panelText = () =>
+      element
+        .querySelector<HTMLElement>('[appTabPanel]')
+        .innerText.replace(/\s+/g, ' ');
+    expect(panelText()).toContain('Name: Gamma Blend');
+
+    const edited: IBean = { ...roasted(), name: 'Gamma Neu', rating: 3 };
+    stored.set(new Map([[bean.config.uuid, edited]]));
+    await fixture.whenStable();
+
+    const panel = panelText();
+    expect(panel).toContain('Name: Gamma Neu');
+    expect(panel).toContain('Rating 3');
+    expect(tabs(element)[0][0]).toBe('Roast information');
+  });
+
+  it('edits a copy of the shown bean', async () => {
+    const bean = blend();
+    const fixture = await open(bean, 'general');
+    const helper = TestBed.inject(UIBeanHelper) as jasmine.SpyObj<UIBeanHelper>;
+
+    await fixture.componentInstance.edit();
+
+    const edited = helper.editBean.calls.mostRecent().args[0];
+    expect(edited).toBeInstanceOf(Bean);
+    expect(edited).not.toBe(bean as unknown as Bean);
+    expect(edited.name).toBe('Gamma Blend');
+    expect(edited.bean_information).not.toBe(bean.bean_information);
+  });
+
+  it('shows a rating on a custom scale as a number', async () => {
+    settings.bean_rating = 10;
+    const fixture = await open({ ...blend(), rating: 7.5 }, 'general');
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('ngx-stars.brew-stars')).toBeNull();
+    expect(
+      readable(element.querySelector('ion-range .ion-text-right ion-badge')),
+    ).toBe('7.5');
+  });
+
+  it('opens the website of the bean and closes itself', async () => {
+    const fixture = await open(
+      { ...blend(), url: 'https://example.com' },
+      'general',
+    );
+    const helper = TestBed.inject(UIHelper) as jasmine.SpyObj<UIHelper>;
+    const modal = TestBed.inject(
+      ModalController,
+    ) as jasmine.SpyObj<ModalController>;
+
+    fixture.componentInstance.openURL();
+    fixture.componentInstance.dismiss();
+
+    expect(helper.openExternalWebpage.calls.allArgs()).toEqual([
+      ['https://example.com'],
+    ]);
+    expect(modal.dismiss.calls.allArgs()).toEqual([
+      [{ dismissed: true }, undefined, 'bean-detail'],
+    ]);
+  });
+
+  it('opens nothing for a bean without a website', async () => {
+    const fixture = await open(blend(), 'general');
+    fixture.componentInstance.openURL();
+    const helper = TestBed.inject(UIHelper) as jasmine.SpyObj<UIHelper>;
+    expect(helper.openExternalWebpage.calls.count()).toBe(0);
   });
 });

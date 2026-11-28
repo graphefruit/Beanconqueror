@@ -5,11 +5,16 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import {
   beanAgeInDays,
   beanEntryName,
+  crackTime,
   hasFrozenInformation,
   hasPhotos,
+  isBlend,
   isFrozen,
   isScannedBean,
   isSelfRoasted,
+  roastShownAs,
+  roastTime,
+  roastWeightLoss,
   showsCostPerKg,
 } from '../bean-rules';
 import { ingestBean } from '../bean.store';
@@ -344,5 +349,53 @@ describe('bean rules', () => {
         ),
       ).toBe('Brazil Cerrado, F1');
     });
+  });
+});
+
+describe('bean rules of the details', () => {
+  it('isBlend matches Bean.isBlend', () => {
+    for (const beanMix of ['BLEND', 'SINGLE_ORIGIN', 'UNKNOWN', undefined]) {
+      const bean = legacyBean({ beanMix: beanMix as IBean['beanMix'] });
+      expect(isBlend(storeBean(bean)))
+        .withContext(String(beanMix))
+        .toBe(bean.isBlend());
+    }
+    expect(isBlend({})).toBeFalse();
+  });
+
+  it('roastShownAs tells the custom, the named and the unknown roast apart', () => {
+    const shownAs = (roast: string) =>
+      roastShownAs({ roast: roast as IBean['roast'] });
+    expect(shownAs('UNKNOWN')).toBe('unknown');
+    expect(shownAs('CUSTOM_ROAST')).toBe('custom');
+    expect(shownAs('CITY_ROAST')).toBe('named');
+  });
+
+  it('roastTime writes seconds as a clock time', () => {
+    const cases: [number | null | undefined, string][] = [
+      [0, '00:00:00'],
+      [725, '00:12:05'],
+      [725.9, '00:12:05'],
+      [3600 * 25 + 61, '01:01:01'],
+      [null, '-'],
+      [undefined, '-'],
+    ];
+    for (const [seconds, shown] of cases) {
+      expect(roastTime(seconds)).withContext(String(seconds)).toBe(shown);
+    }
+  });
+
+  it('crackTime shows no crack for none or 0', () => {
+    expect(crackTime(480)).toBe('00:08:00');
+    expect(crackTime(0)).toBe('-');
+    expect(crackTime(undefined)).toBe('-');
+  });
+
+  it('roastWeightLoss needs both weights and no gain', () => {
+    expect(roastWeightLoss(1200, 1000)).toBe('16.67% (200.0g)');
+    expect(roastWeightLoss('250', '250')).toBe('0.00% (0.0g)');
+    expect(roastWeightLoss(1000, 1200)).toBe('-');
+    expect(roastWeightLoss(0, 1000)).toBe('-');
+    expect(roastWeightLoss(1000, undefined)).toBe('-');
   });
 });
