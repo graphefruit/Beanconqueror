@@ -7,6 +7,7 @@ import {
   BREW_TEST_START,
   brewAction,
   brewField,
+  chooseInBrewSelect,
   openAddBrew,
   openAddBrewWithoutTime,
   openBrewParameterPage,
@@ -193,6 +194,22 @@ test('an espresso method marks the first drip and shows the brew time after it',
       `Coffee Brew Time:\\s*00:00:${String(brewTime).padStart(2, '0')}$`,
     ),
   );
+});
+
+// The fixture fails the test on any page or console error, e.g. from the
+// pressure line of a timer started before the graph is drawn.
+test('switching to an espresso method in the open form and starting at once records without errors', async ({
+  page,
+}) => {
+  await addPreparationMethod(page, 'Espresso Machine');
+  await openAddBrew(page);
+  await chooseInBrewSelect(page, 'Preparation method', 'V60');
+  await chooseInBrewSelect(page, 'Preparation method', 'Espresso Machine');
+
+  await startTimer(page);
+  await tick(page, 3);
+  await page.getByRole('button', { name: 'Pause timer' }).click();
+  await expectAbout(timeField(page), 3);
 });
 
 test('editing a brew keeps its time and asks for a reset before the timer starts again', async ({

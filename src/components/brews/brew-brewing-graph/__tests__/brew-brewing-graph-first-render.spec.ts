@@ -5,6 +5,7 @@ import { ModalController, Platform } from '@ionic/angular';
 
 import { TranslateService } from '@ngx-translate/core';
 
+import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
 import { Announcer } from '../../../../services/a11y/announcer.service';
 import { CoffeeBluetoothDevicesService } from '../../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { TextToSpeechService } from '../../../../services/textToSpeech/text-to-speech.service';
@@ -87,5 +88,46 @@ describe('BrewBrewingGraphComponent devices on the first render', () => {
     expect(component.uiSmartScaleConnected).toBeFalse();
     expect(component.uiPressureConnected).toBeFalse();
     expect(component.uiTemperatureConnected).toBeFalse();
+  });
+
+  it('records a pressure reading of a timer started before the graph is mounted', () => {
+    scale = {};
+    const component = create();
+    Object.assign(component, {
+      uiHelper: {
+        toFixedIfNecessary: (value: number) => value,
+        getActualTimeWithMilliseconds: () => 0,
+      },
+      brewComponent: { getTime: () => 0 },
+      data: {
+        getPreparation: () => ({ style_type: PREPARATION_STYLE_TYPE.ESPRESSO }),
+      },
+    });
+    const graph = component as unknown as {
+      __setPressureFlow(pressure: { actual: number; old: number }): void;
+    };
+
+    expect(() => graph.__setPressureFlow({ actual: 2, old: 2 })).not.toThrow();
+    expect(component.flow_profile_raw.pressureFlow.length).toBe(1);
+  });
+
+  it('hands the series of the connected scale to the graph before the start', async () => {
+    scale = {};
+    const component = create();
+    const renderer = jasmine.createSpyObj('UplotRenderer', ['setAwaited']);
+    Object.assign(component, {
+      renderer,
+      data: {
+        getPreparation: () => ({ style_type: PREPARATION_STYLE_TYPE.ESPRESSO }),
+      },
+    });
+
+    await (
+      component as unknown as { setUIParams(): Promise<void> }
+    ).setUIParams();
+
+    expect(renderer.setAwaited).toHaveBeenCalledOnceWith(
+      new Set(['weight', 'flowPerSecond', 'realtimeFlow']),
+    );
   });
 });
