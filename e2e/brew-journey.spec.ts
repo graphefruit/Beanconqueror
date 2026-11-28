@@ -198,9 +198,6 @@ test('leaving an edited brew asks first', async ({ page }) => {
 });
 
 test('deleting a brew asks first and removes it', async ({ page }) => {
-  // After the action sheet and the confirmation close, the brew list sometimes
-  // stays hidden from the accessibility tree for several seconds (everything
-  // below it is aria-hidden). The result is therefore checked by visible text.
   await brewAction(page, 'Delete');
   const confirm = page.getByRole('alertdialog', { name: /Delete brew\?/ });
   await confirm.getByRole('button', { name: 'No' }).click();
@@ -215,4 +212,16 @@ test('deleting a brew asks first and removes it', async ({ page }) => {
     page.getByText('No brews added yet').filter({ visible: true }),
   ).toHaveCount(1);
   await expect(page.getByText('In/Out (BR)')).toHaveCount(0);
+  // Once the action sheet and the confirmation have closed, the list must not
+  // stay hidden from screen readers.
+  await expect
+    .poll(() =>
+      page
+        .locator('brew')
+        .evaluate(
+          (list) => list.closest('[aria-hidden="true"], [inert]') === null,
+        ),
+    )
+    .toBe(true);
+  await expect(brewList(page)).toBeVisible();
 });
