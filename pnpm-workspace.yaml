@@ -15,7 +15,6 @@ allowBuilds:
   esbuild: true
   lmdb: true
   msgpackr-extract: true
-  sharp: false # As recommended by https://github.com/lovell/sharp/blob/7b4c4762432b14c62676e860c8034b5cd326f464/docs/src/content/docs/install.md?plain=1#L23
 
 patchedDependencies:
   # Keys code instrumented for coverage by its path too: git worktrees share the
