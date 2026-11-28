@@ -5,6 +5,7 @@ import { BEANS, ROASTER_NORTH } from './support/bean-data';
 import {
   beanAction,
   beanCard,
+  findBean,
   showBeanSegment,
   startWithBeans,
 } from './support/beans';
@@ -110,6 +111,8 @@ test('the photo of the bean goes on the picture only when it is switched on', as
   await startWithBeans(page, {
     photoUrl: `${baseURL}/assets/img/empirical_water_spring.png`,
   });
+  // The blend sits below the fold and the list only draws what is in view.
+  await findBean(page, BEANS.blend);
   await beanAction(page, BEANS.blend, 'Share as image');
 
   const toggle = page.getByRole('switch', { name: 'Show photo' });
@@ -135,6 +138,7 @@ test('the photo of the bean goes on the picture only when it is switched on', as
   await page.getByRole('button', { name: 'Back' }).click();
 
   // A bean without a photo offers no switch.
+  await findBean(page, BEANS.alpha);
   await beanAction(page, BEANS.alpha, 'Share as image');
   await expect(picture(page)).toBeVisible();
   await expect(page.getByRole('switch', { name: 'Show photo' })).toHaveCount(0);
