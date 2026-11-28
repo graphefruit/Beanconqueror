@@ -519,7 +519,7 @@ export class BaristaPage implements OnInit, OnDestroy {
   ): Promise<string> {
     try {
       const savingPath = addedBrewObj.getGraphPath();
-      await this.uiFileHelper.writeInternalFileFromText(
+      await this.uiFileHelper.replaceInternalFileFromText(
         JSON.stringify(_flowProfile),
         savingPath,
       );

@@ -96,7 +96,7 @@ export class UIGraphHelper {
 
   public async saveGraph(_uuid: string, _jsonObj): Promise<string> {
     const savingPath = 'graphs/' + _uuid + '_flow_profile.json';
-    await this.uiFileHelper.writeInternalFileFromText(
+    await this.uiFileHelper.replaceInternalFileFromText(
       JSON.stringify(_jsonObj),
       savingPath,
     );

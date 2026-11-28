@@ -234,11 +234,11 @@ describe('BrewImportService', () => {
     ]);
     brewStorage = new MemoryBrewStorage();
     fileHelper = jasmine.createSpyObj('UIFileHelper', [
-      'writeInternalFileFromText',
+      'replaceInternalFileFromText',
       'deleteInternalFile',
     ]);
     uiLog = jasmine.createSpyObj('UILog', ['log', 'error']);
-    fileHelper.writeInternalFileFromText.and.resolveTo();
+    fileHelper.replaceInternalFileFromText.and.resolveTo();
     fileHelper.deleteInternalFile.and.resolveTo();
 
     uiAlert = jasmine.createSpyObj('UIAlert', ['showConfirm']);
@@ -1670,7 +1670,7 @@ describe('BrewImportService', () => {
     expect(loaded.config.unix_timestamp).toBe(1789907696);
     expect(loaded.flow_profile).toBe('brews/saved-brew_flow_profile.json');
     expect(loaded.customInformation.imported).toEqual(envelope().imported);
-    expect(fileHelper.writeInternalFileFromText.calls.allArgs()).toEqual([
+    expect(fileHelper.replaceInternalFileFromText.calls.allArgs()).toEqual([
       [jasmine.any(String), 'brews/saved-brew_flow_profile.json'],
     ]);
   });
@@ -1684,11 +1684,13 @@ describe('BrewImportService', () => {
 
     expect(result.brew.flow_profile).toBe('');
     expect(loaded.flow_profile).toBe('');
-    expect(fileHelper.writeInternalFileFromText.calls.count()).toBe(0);
+    expect(fileHelper.replaceInternalFileFromText.calls.count()).toBe(0);
   });
 
   it('skips the flow profile and still imports figures when writing flow content fails', async () => {
-    fileHelper.writeInternalFileFromText.and.rejectWith(new Error('disk full'));
+    fileHelper.replaceInternalFileFromText.and.rejectWith(
+      new Error('disk full'),
+    );
 
     const result = await service.import(envelope());
 
@@ -1715,7 +1717,7 @@ describe('BrewImportService', () => {
     expect(error.brewUuid).toBe('saved-brew');
     expect(error.beanUuid).toBe('bean-1');
     expect(error.rolledBack).toBeTrue();
-    expect(fileHelper.writeInternalFileFromText.calls.count()).toBe(0);
+    expect(fileHelper.replaceInternalFileFromText.calls.count()).toBe(0);
     expect(brewStorage.update).not.toHaveBeenCalled();
     expect(brewStorage.removeByObject).not.toHaveBeenCalled();
   });
@@ -1821,7 +1823,7 @@ describe('BrewImportService', () => {
 
     expect(brewStorage.addAndConfirm.calls.count()).toBe(0);
     expect(brewStorage.update.calls.count()).toBe(0);
-    expect(fileHelper.writeInternalFileFromText.calls.count()).toBe(0);
+    expect(fileHelper.replaceInternalFileFromText.calls.count()).toBe(0);
   });
 
   it('loads existing brews without imported provenance from storage', () => {
