@@ -52,6 +52,7 @@ export const SPEC_AREAS: Readonly<Record<string, readonly Area[]>> = {
   'e2e/brew-list.spec.ts': ['@brew'],
   'e2e/brew-parameters.spec.ts': ['@brew'],
   'e2e/brew-quick-action.spec.ts': ['@brew'],
+  'e2e/brew-settings-combinations.spec.ts': ['@brew', '@settings'],
   'e2e/brew-timer.spec.ts': ['@brew'],
   'e2e/brew-values.spec.ts': ['@brew'],
   'e2e/brews-with-missing-references.spec.ts': ['@brew', '@data'],

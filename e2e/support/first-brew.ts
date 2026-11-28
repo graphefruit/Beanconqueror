@@ -55,18 +55,24 @@ export async function completeFirstRunWithBrew(page: Page): Promise<void> {
   ).toBeVisible();
 }
 
+export type FirstBrewData = typeof FIRST_BREW_DATA;
+
 /**
  * Starts the app with what `completeFirstRunWithBrew` stores, written into the database before
  * the start, and ends on the Brews tab as that does. For tests that do not check the first run
  * itself: through the UI it takes up to 22 s of a test's 30 s in a cold WebKit worker. `now` is
- * the time of the brew; pass the time of a frozen clock.
+ * the time of the brew; pass the time of a frozen clock. `change` adjusts a copy of the data
+ * before it is written, e.g. to hide parameters as an existing installation may have them.
  */
 export async function startWithFirstBrew(
   page: Page,
   now: Date = new Date(),
+  change?: (data: FirstBrewData) => void,
 ): Promise<void> {
+  const data = structuredClone(FIRST_BREW_DATA);
+  change?.(data);
   const shift = now.getTime() - FIRST_BREW_DATA.BREWS[0].config.created_at;
-  const json = JSON.stringify(FIRST_BREW_DATA, (key, value: unknown) => {
+  const json = JSON.stringify(data, (key, value: unknown) => {
     if (typeof value !== 'number') {
       return value;
     }

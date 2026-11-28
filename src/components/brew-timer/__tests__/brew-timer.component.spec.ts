@@ -62,9 +62,19 @@ describe('BrewTimerComponent', () => {
   });
 
   /** Opens the timer and lets the time field show its first value. */
-  function open(dripTimerVisible: boolean): void {
+  function open(
+    dripTimerVisible: boolean,
+    initial: { seconds: number; milliseconds?: number } = undefined,
+  ): void {
     fixture = TestBed.createComponent(BrewTimerComponent);
     fixture.componentRef.setInput('label', 'Time');
+    if (initial) {
+      fixture.componentRef.setInput('initialSeconds', initial.seconds);
+      fixture.componentRef.setInput(
+        'initialMilliseconds',
+        initial.milliseconds,
+      );
+    }
     fixture.componentRef.setInput('bloomTimerVisible', true);
     fixture.componentRef.setInput('dripTimerVisible', dripTimerVisible);
     element = fixture.nativeElement as HTMLElement;
@@ -150,6 +160,25 @@ describe('BrewTimerComponent', () => {
     press('Start timer');
     settle(3);
     expect(shownTime()).toBe('00:03');
+    stop();
+  }));
+
+  it('starts with the stored time of a field that is shown again', fakeAsync(() => {
+    open(false, { seconds: 95, milliseconds: 120 });
+
+    expect(shownTime()).toBe('01:35');
+    expect(fixture.componentInstance.getSeconds()).toBe(95);
+    expect(fixture.componentInstance.getMilliseconds()).toBe(120);
+    // A stored time is not run on, as when editing a brew.
+    expect(buttons()).toEqual(['Reset timer', 'Start timer']);
+    stop();
+  }));
+
+  it('starts at zero without a stored time', fakeAsync(() => {
+    open(false, { seconds: undefined });
+
+    expect(shownTime()).toBe('00:00');
+    expect(fixture.componentInstance.getSeconds()).toBe(0);
     stop();
   }));
 
