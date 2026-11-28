@@ -9,6 +9,7 @@ import {
   brewAction,
   brewField,
   brewList,
+  chooseInBrewSelect,
   fillBrewField,
   openAddBrew,
   openBrewParameterPage,
@@ -18,6 +19,7 @@ import {
 } from './support/brew-form';
 import { startWithFirstBrew } from './support/first-brew';
 import { NativeError } from './support/native';
+import { readStoredValue } from './support/stored-values';
 
 /**
  * Characterization of how the brew form reads and shows values today: number
@@ -184,4 +186,49 @@ test('tasting notes picked in the cupping are shown in the brew details', async 
 
   await brewAction(page, 'Details');
   await expect(page.getByText('Lime', { exact: true })).toBeVisible();
+});
+
+test('grind time and brew time keep their stored value when their fields are shown again', async ({
+  page,
+}) => {
+  await page.clock.install({ time: BREW_TEST_START });
+  await startWithFirstBrew(page, BREW_TEST_START, (data) => {
+    data.MILL[0].has_timer = true;
+    data.SETTINGS[0].manage_parameters.mill_timer = true;
+    Object.assign(data.BREWS[0], { mill_timer: 12, brew_time: 30 });
+    // A second method hides both fields by its own parameters.
+    const kalita = structuredClone(data.PREPARATION[0]);
+    kalita.name = 'Kalita Wave';
+    kalita.config.uuid = '3d1c3f0e-5a5e-4b8e-9f43-2a1f6f0c7b11';
+    kalita.use_custom_parameters = true;
+    kalita.manage_parameters = {
+      ...data.SETTINGS[0].manage_parameters,
+      mill_timer: false,
+      brew_time: false,
+    };
+    data.PREPARATION.push(kalita);
+  });
+
+  await brewAction(page, 'Edit');
+  await expect(brewField(page, 'Grind Time')).toHaveValue('00:12');
+  await expect(brewField(page, 'Time')).toHaveValue('00:30');
+
+  await chooseInBrewSelect(page, 'Preparation method', 'Kalita Wave');
+  await expect(brewField(page, 'Grind Time')).toHaveCount(0);
+  await expect(brewField(page, 'Time')).toHaveCount(0);
+  await chooseInBrewSelect(page, 'Preparation method', 'V60');
+  await expect(brewField(page, 'Grind Time')).toHaveValue('00:12');
+  await expect(brewField(page, 'Time')).toHaveValue('00:30');
+  await saveBrew(page);
+
+  await expect
+    .poll(async () => {
+      const [brew] =
+        (await readStoredValue<{ mill_timer: number; brew_time: number }[]>(
+          page,
+          'BREWS',
+        )) ?? [];
+      return [brew?.mill_timer, brew?.brew_time];
+    })
+    .toEqual([12, 30]);
 });

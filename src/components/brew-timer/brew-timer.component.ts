@@ -57,6 +57,13 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   private readonly bleManager = inject(CoffeeBluetoothDevicesService);
 
   @Input() public label: string;
+  /**
+   * The time a new timer starts with, e.g. the stored time of a field that
+   * is rendered again. It is only read when the timer is created; after that
+   * the timer keeps its own time.
+   */
+  @Input() public initialSeconds: number;
+  @Input() public initialMilliseconds: number;
 
   @Output() public timerStarted = new EventEmitter();
   @Output() public timerPaused = new EventEmitter();
@@ -191,6 +198,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.initTimer();
+    // The input is not rendered yet; initTimer writes the time into it.
+    this.holdTime(this.initialSeconds ?? 0, this.initialMilliseconds ?? 0);
   }
 
   public returnWantedDisplayFormat() {
@@ -480,6 +489,11 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.timerTicked.emit();
   }
   public setTime(seconds: number, milliseconds: number = 0): void {
+    this.holdTime(seconds, milliseconds);
+    this.updateBrewTimerText();
+  }
+
+  private holdTime(seconds: number, milliseconds: number): void {
     this.timer.seconds = seconds;
     if (milliseconds !== 0) {
       this.timer.milliseconds = milliseconds;
@@ -489,7 +503,6 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       .add('seconds', this.timer.seconds)
       .add('milliseconds', this.timer.milliseconds)
       .toISOString();
-    this.updateBrewTimerText();
   }
 
   public getSecondsAsDigitalClock(inputSeconds: number): string {

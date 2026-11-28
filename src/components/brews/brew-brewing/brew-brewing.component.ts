@@ -639,9 +639,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       AppEventType.PREPARATION_SELECTION_CHANGED,
     );
     this.preparationMethodFocusedSubscription = eventSubs.subscribe((next) => {
+      const graphShown = !!this.brewBrewingGraphEl;
       this.setChoosenPreparation();
       this.resetPreparationTools();
       this.deattachToPreparationMethodFocused();
+      if (!graphShown && this.uiShowSectionWhileBrew) {
+        // The previous method hid the section with the graph. The new graph connects its devices
+        // as on opening the form; rendering it here, before the next check, keeps the fields that
+        // read it from changing during that check.
+        this.changeDetectorRef.detectChanges();
+        void this.brewBrewingGraphEl?.instance();
+        return;
+      }
       /**If we change the preparation method, we need to inform our graph-element, because we may need to disconnect the pressure device**/
       this.brewBrewingGraphEl?.preparationChanged();
     });
