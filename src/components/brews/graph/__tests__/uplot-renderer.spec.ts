@@ -295,16 +295,18 @@ describe('UplotRenderer', () => {
     expect(plot().axes[2].show).toBeTrue();
   });
 
-  it('keeps temperature and water axes bare in the live graph, as today', async () => {
+  it('shows the temperature axis in the live graph and keeps water bare', async () => {
     await mount();
-    renderer.setSeries(defs('live', 'weight', 'temperature'));
+    renderer.setSeries(defs('live', 'weight', 'temperature', 'waterDispensed'));
     buffer.append('weight', 0, 1);
     buffer.append('temperature', 0, 93);
+    buffer.append('waterDispensed', 0, 5);
     await frames.run();
 
-    expect(plot().axes[1].show).toBeTrue();
-    expect(plot().axes[2].show).toBeFalse();
-    expect(plot().series[2].show).toBeTrue();
+    expect(plot().axes[1].show).withContext('weight axis').toBeTrue();
+    expect(plot().axes[2].show).withContext('temperature axis').toBeTrue();
+    expect(plot().axes[3].show).withContext('water axis').toBeFalse();
+    expect(plot().series[3].show).withContext('water line').toBeTrue();
   });
 
   it('redraws in the other theme when the app theme changes', async () => {
@@ -466,6 +468,19 @@ describe('UplotRenderer', () => {
     renderer.setVisible('flowPerSecond', false);
     await frames.run();
     expect(plot().axes[2].show).withContext('hidden flow').toBeFalse();
+  });
+
+  it('shows the temperature axis of a connected sensor before the first sample', async () => {
+    await mount();
+    renderer.setSeries(defs('live', 'weight', 'temperature'));
+    renderer.setAwaited(new Set(['weight', 'temperature']));
+    await frames.run();
+
+    expect(plot().axes[2].show).withContext('temperature axis').toBeTrue();
+
+    renderer.setVisible('temperature', false);
+    await frames.run();
+    expect(plot().axes[2].show).withContext('hidden temperature').toBeFalse();
   });
 
   it('shows no axis of a saved brew without data', async () => {
@@ -734,7 +749,7 @@ describe('UplotRenderer', () => {
     expect(plot().bbox.left + plot().bbox.width).toBe(Math.round(386 * ratio));
   });
 
-  it('exports a live graph without temperature and water axes, as it shows them', async () => {
+  it('exports a live graph in one ink without temperature and water axes', async () => {
     const rightmostLine = await mountThreeAxes('live');
 
     expect(await rightmostLine()).toBeGreaterThan(300 - 36);
@@ -872,11 +887,14 @@ describe('UplotRenderer', () => {
       expect(layout.axes).toEqual(['pressure', 'weight', 'temperature']);
     });
 
-    it('keeps temperature and water axes bare only while live', () => {
-      expect(axisShown('temperature', true)).toBeFalse();
-      expect(axisShown('water', true)).toBeFalse();
-      expect(axisShown('weight', true)).toBeTrue();
-      expect(axisShown('temperature', false)).toBeTrue();
+    it('keeps water bare while live and temperature only in one ink', () => {
+      expect(axisShown('temperature', true, false)).toBeTrue();
+      expect(axisShown('water', true, false)).toBeFalse();
+      expect(axisShown('weight', true, true)).toBeTrue();
+      expect(axisShown('temperature', false, true)).toBeFalse();
+      expect(axisShown('water', false, true)).toBeFalse();
+      expect(axisShown('temperature', false, false)).toBeTrue();
+      expect(axisShown('water', false, false)).toBeTrue();
     });
   });
 });

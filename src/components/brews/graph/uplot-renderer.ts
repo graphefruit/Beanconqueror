@@ -170,11 +170,19 @@ const TIME_INCRS = [
 ];
 
 /**
- * Whether an axis shows its values: the live graph keeps temperature and
- * water bare, so few columns stand in its small plot.
+ * Whether an axis shows its values: the live graph keeps water bare, so few
+ * columns stand in its small plot; a picture in one ink colour keeps
+ * temperature bare as well, since its columns could not be told apart.
  */
-export function axisShown(axisId: AxisId, bare: boolean): boolean {
-  return !(bare && (axisId === 'temperature' || axisId === 'water'));
+export function axisShown(
+  axisId: AxisId,
+  live: boolean,
+  ink: boolean,
+): boolean {
+  if (axisId === 'water') {
+    return !(live || ink);
+  }
+  return !(ink && axisId === 'temperature');
 }
 
 interface Layout {
@@ -395,10 +403,7 @@ export class UplotRenderer implements BrewChartPort {
         ];
         chart = new lib(opts, this.buildData(), host);
         // Values in one ink colour cannot be told apart: keep the columns few.
-        this.applyVisibility(
-          chart,
-          this.opts?.mode === 'live' || options.ink !== undefined,
-        );
+        this.applyVisibility(chart, options.ink !== undefined);
       });
       await drawn;
       const source = chart.ctx.canvas;
@@ -764,14 +769,14 @@ export class UplotRenderer implements BrewChartPort {
    * and its first axis with a shown series in any case, so grid and range
    * stand from the start, as the brew form always showed them.
    */
-  private axisVisible(axisId: AxisId, bare: boolean): boolean {
+  private axisVisible(axisId: AxisId, ink: boolean): boolean {
+    const live = this.opts?.mode === 'live';
     const shownOn = (id: AxisId): SeriesDef[] =>
-      axisShown(id, bare)
+      axisShown(id, live, ink)
         ? this.layout.drawn.filter(
             (d) => d.axisId === id && !this.hidden.has(d.id),
           )
         : [];
-    const live = this.opts?.mode === 'live';
     const first =
       live && this.layout.axes.find((id) => shownOn(id).length > 0) === axisId;
     return shownOn(axisId).some(
@@ -783,15 +788,12 @@ export class UplotRenderer implements BrewChartPort {
   }
 
   /** Shows the series and axes that have something to show; true when an axis changed. */
-  private applyVisibility(
-    u: uPlot,
-    bare = this.opts?.mode === 'live',
-  ): boolean {
+  private applyVisibility(u: uPlot, ink = false): boolean {
     let axesChanged = false;
     let gridDrawn = false;
     this.layout.axes.forEach((axisId, i) => {
       const axis = u.axes[i + 1];
-      const show = this.axisVisible(axisId, bare);
+      const show = this.axisVisible(axisId, ink);
       // The first axis shown draws the grid, so hiding weight keeps it.
       const grid = show && !gridDrawn;
       gridDrawn ||= grid;
