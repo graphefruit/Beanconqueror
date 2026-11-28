@@ -2204,12 +2204,6 @@
   "src/components/beans/bean-freeze-information/bean-freeze-information.component.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
       "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
-      "count": 1
-    },
-    "no-var": {
-      "count": 1
     }
   },
   "src/components/beans/bean-general-information/bean-general-information.component.html": {
@@ -2219,12 +2213,6 @@
   },
   "src/components/beans/bean-general-information/bean-general-information.component.ts": {
     "@angular-eslint/prefer-on-push-component-change-detection": {
-      "count": 1
-    },
-    "@typescript-eslint/no-empty-function": {
-      "count": 1
-    },
-    "no-var": {
       "count": 1
     }
   },

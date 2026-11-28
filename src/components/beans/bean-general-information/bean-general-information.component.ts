@@ -27,7 +27,7 @@ import {
   Platform,
 } from '@ionic/angular';
 
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
 import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 
@@ -49,6 +49,10 @@ import { BeanFieldVisiblePipe } from '../../../pipes/bean/beanFieldVisible';
 import { KeysPipe } from '../../../pipes/keys';
 import { ToFixedPipe } from '../../../pipes/toFixed';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import {
+  pickedDateValue,
+  VALUE_PICKER_PORT,
+} from '../../../services/ports/value-picker-port';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIHelper } from '../../../services/uiHelper';
@@ -56,7 +60,6 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { PhotoAddComponent } from '../../photo-add/photo-add.component';
 import { SuggestionListComponent } from '../../suggestion-list/suggestion-list.component';
 
-declare var cordova;
 @Component({
   selector: 'bean-general-information',
   templateUrl: './bean-general-information.component.html',
@@ -95,7 +98,7 @@ declare var cordova;
 export class BeanGeneralInformationComponent implements OnInit {
   private readonly platform = inject(Platform);
   private readonly uiBeanStorage = inject(UIBeanStorage);
-  private readonly translate = inject(TranslateService);
+  private readonly valuePicker = inject(VALUE_PICKER_PORT);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
   private readonly bleManager = inject(CoffeeBluetoothDevicesService);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
@@ -121,7 +124,7 @@ export class BeanGeneralInformationComponent implements OnInit {
       .map((bean) => bean.roaster)
       .filter((roaster) => typeof roaster === 'string');
 
-  public maxBeanRating: number = 5;
+  public maxBeanRating = 5;
   public settings: Settings = undefined;
 
   constructor() {
@@ -160,7 +163,7 @@ export class BeanGeneralInformationComponent implements OnInit {
     this.data.weight = this.bleManager.getScaleWeight();
   }
 
-  public chooseDate(_event, _keyIdentifier) {
+  public async chooseDate(_event, _keyIdentifier) {
     _event.target.blur();
     _event.cancelBubble = true;
     _event.preventDefault();
@@ -168,26 +171,13 @@ export class BeanGeneralInformationComponent implements OnInit {
     _event.stopPropagation();
 
     if (this.platform.is('capacitor')) {
-      const myDate = new Date(); // From model.
-
-      cordova.plugins.DateTimePicker.show({
-        mode: 'date',
-        date: myDate,
-        okText: this.translate.instant('CHOOSE'),
-        todayText: this.translate.instant('TODAY'),
-        cancelText: this.translate.instant('CANCEL'),
-        clearText: this.translate.instant('DELETE'),
-        success: (newDate) => {
-          if (newDate === undefined) {
-            this.data[_keyIdentifier] = '';
-          } else {
-            this.data[_keyIdentifier] = moment(newDate).toISOString();
-          }
-
-          this.changeDetectorRef.detectChanges();
-        },
-        error: () => {},
-      });
+      const value = pickedDateValue(
+        await this.valuePicker.pickDate(new Date()),
+      );
+      if (value !== undefined) {
+        this.data[_keyIdentifier] = value;
+        this.changeDetectorRef.detectChanges();
+      }
     } else {
       this.data[_keyIdentifier] = moment(new Date()).toISOString();
     }

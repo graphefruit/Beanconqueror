@@ -1,5 +1,5 @@
 import type { NfcPort, NfcTag, NfcTagEvent } from './nfc-port';
-import type { PortResult } from './port-result';
+import { messageOf, type PortResult } from './port-result';
 
 /** An event of the NFC plugin; see www/phonegap-nfc.js. */
 interface CordovaNfcEvent {
@@ -91,14 +91,4 @@ export class CordovaNfcAdapter implements NfcPort {
       ),
     );
   }
-}
-
-// Cordova plugins fail with plain text as well as with errors.
-function messageOf(error: unknown): string {
-  if (typeof error === 'string') {
-    return error;
-  }
-  return (
-    (error as { message?: string } | undefined)?.message ?? 'Unknown error'
-  );
 }

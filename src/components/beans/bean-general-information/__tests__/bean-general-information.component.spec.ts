@@ -1,6 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
+import { Platform } from '@ionic/angular';
 import { defineCustomElement as defineInput } from '@ionic/core/components/ion-input.js';
 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -10,6 +11,7 @@ import { Settings } from '../../../../classes/settings/settings';
 import { BEAN_MIX_ENUM } from '../../../../enums/beans/mix';
 import { IBeanInformation } from '../../../../interfaces/bean/iBeanInformation';
 import { CoffeeBluetoothDevicesService } from '../../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { VALUE_PICKER_PORT } from '../../../../services/ports/value-picker-port';
 import { UIBeanHelper } from '../../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../../services/uiBeanStorage';
 import { UIHelper } from '../../../../services/uiHelper';
@@ -18,6 +20,7 @@ import {
   createMockUIBeanHelper,
   createMockUISettingsStorage,
 } from '../../../../test-utils';
+import { FakeValuePickerPort } from '../../../../test-utils/fake-value-picker-port';
 import { PhotoAddComponent } from '../../../photo-add/photo-add.component';
 import { BeanGeneralInformationComponent } from '../bean-general-information.component';
 
@@ -25,6 +28,7 @@ describe('BeanGeneralInformationComponent', () => {
   let component: BeanGeneralInformationComponent;
   let fixture: ComponentFixture<BeanGeneralInformationComponent>;
   let settings: Settings;
+  let valuePicker: FakeValuePickerPort;
 
   beforeEach(waitForAsync(() => {
     // Only the mix field is shown: the other fields play no part here.
@@ -43,9 +47,12 @@ describe('BeanGeneralInformationComponent', () => {
       structuredClone(value),
     );
 
+    valuePicker = new FakeValuePickerPort();
+
     TestBed.configureTestingModule({
       imports: [BeanGeneralInformationComponent, TranslateModule.forRoot()],
       providers: [
+        { provide: VALUE_PICKER_PORT, useValue: valuePicker },
         { provide: UISettingsStorage, useValue: mockUISettingsStorage },
         { provide: UIBeanHelper, useValue: createMockUIBeanHelper() },
         {
@@ -216,5 +223,58 @@ describe('BeanGeneralInformationComponent', () => {
       expect(component.data.name).toBe('Ethiopia Guji');
       expect(native.hasAttribute('aria-invalid')).toBeFalse();
     });
+  });
+
+  describe('choosing a date on a device', () => {
+    const CHOSEN = new Date('2026-11-20T00:00:00.000Z');
+    const click = (): Event => {
+      const event = new Event('click');
+      Object.defineProperty(event, 'target', {
+        value: document.createElement('input'),
+      });
+      return event;
+    };
+
+    beforeEach(() => {
+      spyOn(TestBed.inject(Platform), 'is').and.returnValue(true);
+      setBean('SINGLE_ORIGIN' as BEAN_MIX_ENUM, ['']);
+      component.data.buyDate = '2026-01-01T00:00:00.000Z';
+    });
+
+    it('opens the picker on today and stores the chosen date', async () => {
+      valuePicker.answer = {
+        ok: true,
+        value: { kind: 'chosen', date: CHOSEN },
+      };
+
+      await component.chooseDate(click(), 'buyDate');
+
+      expect(component.data.buyDate).toBe('2026-11-20T00:00:00.000Z');
+      expect(valuePicker.starts.length).toBe(1);
+      expect(
+        Math.abs(valuePicker.starts[0].getTime() - Date.now()),
+      ).toBeLessThan(60_000);
+    });
+
+    it('empties the field once the date is cleared', async () => {
+      valuePicker.answer = { ok: true, value: { kind: 'cleared' } };
+
+      await component.chooseDate(click(), 'buyDate');
+
+      expect(component.data.buyDate).toBe('');
+    });
+
+    for (const answer of [
+      { ok: true, value: { kind: 'cancelled' } },
+      { ok: false, error: 'Activity destroyed' },
+    ] as const) {
+      it(`keeps the date when the pick is ${answer.ok ? 'cancelled' : 'failed'}`, async () => {
+        valuePicker.answer = answer;
+
+        await component.chooseDate(click(), 'buyDate');
+
+        expect(component.data.buyDate).toBe('2026-01-01T00:00:00.000Z');
+      });
+    }
   });
 });

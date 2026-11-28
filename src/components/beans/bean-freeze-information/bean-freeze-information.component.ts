@@ -21,7 +21,7 @@ import {
   Platform,
 } from '@ionic/angular';
 
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import moment from 'moment';
 
 import { Bean } from '../../../classes/bean/bean';
@@ -32,10 +32,13 @@ import { SelectLabelDirective } from '../../../directive/select-label.directive'
 import { TransformDateDirective } from '../../../directive/transform-date';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 import { KeysPipe } from '../../../pipes/keys';
+import {
+  pickedDateValue,
+  VALUE_PICKER_PORT,
+} from '../../../services/ports/value-picker-port';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
-declare var cordova;
 @Component({
   selector: 'bean-freeze-information',
   templateUrl: './bean-freeze-information.component.html',
@@ -61,7 +64,7 @@ export class BeanFreezeInformationComponent implements OnInit {
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   readonly uiBeanHelper = inject(UIBeanHelper);
   private readonly platform = inject(Platform);
-  private readonly translate = inject(TranslateService);
+  private readonly valuePicker = inject(VALUE_PICKER_PORT);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
   @Input() public data: Bean;
@@ -73,7 +76,7 @@ export class BeanFreezeInformationComponent implements OnInit {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
-  public chooseDate(_event, _type: string) {
+  public async chooseDate(_event, _type: string) {
     _event.target.blur();
     _event.cancelBubble = true;
     _event.preventDefault();
@@ -81,33 +84,18 @@ export class BeanFreezeInformationComponent implements OnInit {
     _event.stopPropagation();
 
     if (this.platform.is('capacitor')) {
-      const myDate = new Date(); // From model.
-
-      cordova.plugins.DateTimePicker.show({
-        mode: 'date',
-        date: myDate,
-        okText: this.translate.instant('CHOOSE'),
-        todayText: this.translate.instant('TODAY'),
-        cancelText: this.translate.instant('CANCEL'),
-        clearText: this.translate.instant('DELETE'),
-        success: (newDate) => {
-          let choosenDate;
-          if (newDate === undefined) {
-            choosenDate = '';
-          } else {
-            choosenDate = moment(newDate).toISOString();
-          }
-
-          if (_type === 'freeze') {
-            this.data.frozenDate = choosenDate;
-          } else if (_type === 'unfreeze') {
-            this.data.unfrozenDate = choosenDate;
-          }
-
-          this.changeDetectorRef.detectChanges();
-        },
-        error: () => {},
-      });
+      const value = pickedDateValue(
+        await this.valuePicker.pickDate(new Date()),
+      );
+      if (value === undefined) {
+        return;
+      }
+      if (_type === 'freeze') {
+        this.data.frozenDate = value;
+      } else if (_type === 'unfreeze') {
+        this.data.unfrozenDate = value;
+      }
+      this.changeDetectorRef.detectChanges();
     } else {
       if (_type === 'freeze') {
         this.data.frozenDate = moment(new Date()).toISOString();
