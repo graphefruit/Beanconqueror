@@ -32,7 +32,6 @@ import BaristamodeBrew from '../../classes/brew/baristamodeBrew';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { Settings } from '../../classes/settings/settings';
 import { BREW_ACTION } from '../../enums/brews/brewAction';
-import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
 import { FormatDatePipe } from '../../pipes/formatDate';
 import { UIAlert } from '../../services/uiAlert';
 import { UIBaristamodeBrewStorage } from '../../services/uiBaristamodeBrewStorage';
@@ -95,7 +94,6 @@ export class BaristamodeBrewInformationComponent implements OnInit {
   public brewInformationContainer: ElementRef;
 
   public settings: Settings = null;
-  public brewQuantityEnum = BREW_QUANTITY_TYPES_ENUM;
 
   public informationContainerHeight: number = undefined;
   public informationContainerWidth: number = undefined;

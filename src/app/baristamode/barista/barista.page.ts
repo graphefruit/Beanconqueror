@@ -195,7 +195,7 @@ export class BaristaPage implements OnInit, OnDestroy {
     brewObj.brew_time_milliseconds = 2
 
     brewObj.brew_beverage_quantity = 3
-    brewObj.brew_beverage_quantity_type = BREW_QUANTITY_TYPES_ENUM.GR;
+    brewObj.brew_beverage_quantity_type = 'GR' as BREW_QUANTITY_TYPES_ENUM;
 
 
     brewObj.pressure_profile ="P1";
@@ -464,7 +464,7 @@ export class BaristaPage implements OnInit, OnDestroy {
       brewObj.brew_time_milliseconds = _data.brew.brew_time_milliseconds;
 
       brewObj.brew_beverage_quantity = _data.shotWeight;
-      brewObj.brew_beverage_quantity_type = BREW_QUANTITY_TYPES_ENUM.GR;
+      brewObj.brew_beverage_quantity_type = 'GR' as BREW_QUANTITY_TYPES_ENUM;
 
       brewObj.pressure_profile = _data.usedProfile;
       brewObj.desired_beverage_quantity = _data.desiredWeight;

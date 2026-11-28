@@ -2,7 +2,7 @@ import type { Bean } from '../../classes/bean/bean';
 import type { Brew } from '../../classes/brew/brew';
 import type { ListViewBrewParameter } from '../../classes/parameter/listViewBrewParameter';
 import type { Preparation } from '../../classes/preparation/preparation';
-import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { brewQuantityTypeName } from '../../enums/brews/brewQuantityTypes';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { buildBrewImportProvenanceChip } from '../../services/brewImport/brew-import-provenance';
 
@@ -111,7 +111,7 @@ export function brewShareCard(source: BrewShareSource): BrewShareCard {
   add(
     'BREW_DATA_IN_OUT_BR',
     true,
-    `${source.formatNumber(brew.grind_weight)}gr / ${source.formatNumber(quantity)}${BREW_QUANTITY_TYPES_ENUM[unit as unknown as keyof typeof BREW_QUANTITY_TYPES_ENUM] ?? ''} (${texts.ratio})`,
+    `${source.formatNumber(brew.grind_weight)}gr / ${source.formatNumber(quantity)}${brewQuantityTypeName(unit)} (${texts.ratio})`,
   );
   add(
     'BREW_DATA_TIME',

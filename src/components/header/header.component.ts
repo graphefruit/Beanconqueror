@@ -6,6 +6,11 @@ import { IonButtons, IonTitle, IonToolbar } from '@ionic/angular';
   selector: 'app-header',
   imports: [IonToolbar, IonButtons, IonTitle],
   styles: `
+    /* ion-title cuts a long title off with an ellipsis; it wraps instead. */
+    [role='heading'] {
+      white-space: normal;
+      overflow-wrap: break-word;
+    }
     /**
     Removed, because on iOS the margin-top did spawn the element more to the bottom
         ion-toolbar:has(ion-title .subtitle) {

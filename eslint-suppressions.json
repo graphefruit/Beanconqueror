@@ -1355,7 +1355,7 @@
   },
   "src/classes/brew/baristamodeBrew.ts": {
     "@typescript-eslint/no-unsafe-return": {
-      "count": 2
+      "count": 1
     },
     "prefer-const": {
       "count": 2
@@ -1369,7 +1369,7 @@
       "count": 3
     },
     "@typescript-eslint/no-unsafe-return": {
-      "count": 6
+      "count": 4
     },
     "prefer-const": {
       "count": 5
