@@ -57,6 +57,8 @@ export interface BeanShareCard {
   readonly hasNote: boolean;
   /** The bean card shows the notes, so the picture starts with them. */
   readonly noteShown: boolean;
+  /** Path or web address of the first photo of the bean, empty without one. */
+  readonly photo: string;
 }
 
 type Visible = keyof IBeanParameter;
@@ -225,6 +227,7 @@ export function beanShareCard(source: BeanShareSource): BeanShareCard {
     rows,
     hasNote: rows.some((row) => row.note),
     noteShown: visible('note'),
+    photo: (bean.attachments ?? []).find((path) => !!path?.trim()) ?? '',
   };
 }
 
@@ -259,12 +262,22 @@ export function shownBeanShareRows(
 }
 
 /**
+ * The photo as a data address for the picture: drawing it from a data address
+ * does not depend on how the platform serves stored files. Photos are stored
+ * as JPEG or PNG.
+ */
+export function beanSharePhotoSrc(path: string, base64: string): string {
+  const type = /\.png$/i.test(path) ? 'image/png' : 'image/jpeg';
+  return `data:${type};base64,${base64}`;
+}
+
+/**
  * The text a screen reader reads for the picture: everything on it, in the
  * order it is shown.
  */
 export function describeBeanShareCard(
   card: BeanShareCard,
-  shown: { readonly note: boolean },
+  shown: { readonly note: boolean; readonly photo: boolean },
   t: Translate,
 ): string {
   const name = card.roastingType
@@ -294,6 +307,9 @@ export function describeBeanShareCard(
     );
   } else if (card.rating) {
     parts.push(`${t('BREW_DATA_RATING')}: ${card.rating.value}`);
+  }
+  if (shown.photo) {
+    parts.push(t('SHARE_CARD.BEAN_PHOTO'));
   }
   for (const row of shownBeanShareRows(card, shown.note)) {
     parts.push(`${row.prefix}${t(row.labelKey)}: ${row.value}`);

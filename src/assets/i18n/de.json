@@ -1273,11 +1273,13 @@
         "APP_DARK": "App dunkel",
         "SAGE": "Salbei",
         "SHOW_NOTE": "Notizen zeigen",
+        "SHOW_PHOTO": "Foto zeigen",
         "FAILED": "Das Bild konnte nicht geteilt werden. Bitte versuche es noch einmal.",
         "GRAPH_FAILED": "Der Graph konnte dem Bild nicht hinzugefügt werden.",
         "DESCRIPTION": "Bild der Brühung: {{content}}",
         "BEAN_TITLE": "Bohne teilen",
-        "BEAN_DESCRIPTION": "Bild der Bohne: {{content}}"
+        "BEAN_DESCRIPTION": "Bild der Bohne: {{content}}",
+        "BEAN_PHOTO": "Foto der Bohne"
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Refraktometer neu verbinden",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",

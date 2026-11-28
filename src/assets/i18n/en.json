@@ -1273,11 +1273,13 @@
         "APP_DARK": "App dark",
         "SAGE": "Sage",
         "SHOW_NOTE": "Show notes",
+        "SHOW_PHOTO": "Show photo",
         "FAILED": "The image could not be shared. Please try again.",
         "GRAPH_FAILED": "The graph could not be added to the image.",
         "DESCRIPTION": "Image of the brew: {{content}}",
         "BEAN_TITLE": "Share bean",
-        "BEAN_DESCRIPTION": "Image of the bean: {{content}}"
+        "BEAN_DESCRIPTION": "Image of the bean: {{content}}",
+        "BEAN_PHOTO": "Photo of the bean"
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Reconnect refractometer device",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",

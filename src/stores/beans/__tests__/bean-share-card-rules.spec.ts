@@ -5,6 +5,7 @@ import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 import { Translate } from '../../brews/brew-share-card-rules';
 import {
   beanShareCard,
+  beanSharePhotoSrc,
   BeanShareSource,
   describeBeanShareCard,
   shownBeanShareRows,
@@ -121,9 +122,9 @@ describe('bean share card rules', () => {
     ]) {
       expect(shown).not.toContain(hidden);
     }
-    expect(describeBeanShareCard(card(), { note: true }, t)).not.toMatch(
-      /17\.91|7\.77|3\.33|BUY_DATE|COST/,
-    );
+    expect(
+      describeBeanShareCard(card(), { note: true, photo: false }, t),
+    ).not.toMatch(/17\.91|7\.77|3\.33|BUY_DATE|COST/);
   });
 
   it('shows everything else the settings switch on', () => {
@@ -319,18 +320,18 @@ describe('bean share card rules', () => {
     };
     const shown = beanShareCard(source({ t: en }));
 
-    expect(describeBeanShareCard(shown, { note: true }, en)).toBe(
+    expect(describeBeanShareCard(shown, { note: true, photo: false }, en)).toBe(
       'Image of the bean: Unfrozen. Favourite. Yirgacheffe (Filter), Tonino. Frozen id: F-7. ' +
         'Degree of roast: 3 of 5 stars. Rating: 4 of 5 stars. Brews: 3. ' +
         'Type: Single origin. Notes: Sweet. BeanConqueror',
     );
-    expect(describeBeanShareCard(shown, { note: false }, en)).not.toContain(
-      'Notes',
-    );
+    expect(
+      describeBeanShareCard(shown, { note: false, photo: false }, en),
+    ).not.toContain('Notes');
     expect(
       describeBeanShareCard(
         beanShareCard(source({ t: en, customRating: true })),
-        { note: false },
+        { note: false, photo: false },
         en,
       ),
     ).toContain('Rating: 4. ');
@@ -347,8 +348,44 @@ describe('bean share card rules', () => {
 
     expect(shown.name).toBe('');
     expect(shown.roaster).toBe('');
-    expect(describeBeanShareCard(shown, { note: true }, t)).toContain(
-      'BeanConqueror',
+    expect(
+      describeBeanShareCard(shown, { note: true, photo: false }, t),
+    ).toContain('BeanConqueror');
+  });
+
+  it('offers the first photo of the bean, none without one', () => {
+    expect(card().photo).toBe('');
+    bean.attachments = ['', ' ', 'beans/a.jpg', 'beans/b.jpg'];
+    expect(card().photo).toBe('beans/a.jpg');
+    const without = JSON.parse(JSON.stringify(bean)) as IBean;
+    delete without.attachments;
+    expect(card({ bean: without }).photo).toBe('');
+  });
+
+  it('names the photo after the stars while it is shown', () => {
+    bean.rating = 4;
+    bean.note = 'Sweet';
+    const shown = card();
+
+    const described = describeBeanShareCard(
+      shown,
+      { note: true, photo: true },
+      t,
+    );
+    expect(described).toMatch(
+      /5\\?}\. SHARE_CARD\.BEAN_PHOTO\. PAGE_HOME_TOTAL_BREWS: 3/,
+    );
+    expect(
+      describeBeanShareCard(shown, { note: true, photo: false }, t),
+    ).not.toContain('SHARE_CARD.BEAN_PHOTO');
+  });
+
+  it('draws a stored photo from a data address of its type', () => {
+    expect(beanSharePhotoSrc('beans/a.jpg', 'AAA')).toBe(
+      'data:image/jpeg;base64,AAA',
+    );
+    expect(beanSharePhotoSrc('beans/a.PNG', 'BBB')).toBe(
+      'data:image/png;base64,BBB',
     );
   });
 });

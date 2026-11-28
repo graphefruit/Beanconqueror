@@ -101,3 +101,41 @@ test('the card of frozen portions and the frozen notes go on the picture', async
   await expect(picture(page)).not.toHaveAccessibleName(/Vakuumiert/);
   await expect(picture(page)).not.toContainText('Vakuumiert');
 });
+
+test('the photo of the bean goes on the picture only when it is switched on', async ({
+  page,
+  baseURL,
+}) => {
+  // The web build shows an attachment that is a web address as it is.
+  await startWithBeans(page, {
+    photoUrl: `${baseURL}/assets/img/empirical_water_spring.png`,
+  });
+  await beanAction(page, BEANS.blend, 'Share as image');
+
+  const toggle = page.getByRole('switch', { name: 'Show photo' });
+  await expect(toggle).not.toBeChecked();
+  await expect(picture(page).locator('img')).toHaveCount(0);
+  await expect(picture(page)).not.toHaveAccessibleName(/Photo of the bean/);
+
+  await toggle.click();
+  await expect(picture(page).locator('img')).toBeVisible();
+  await expect(picture(page)).toHaveAccessibleName(/\. Photo of the bean\. /);
+  const drawn = page.waitForEvent('console', (message) =>
+    message.text().startsWith('Share - image drawn in'),
+  );
+  await page.getByRole('button', { name: 'Share', exact: true }).click();
+  await drawn;
+  const failed = page.getByRole('alertdialog').filter({
+    hasText: 'The image could not be shared. Please try again.',
+  });
+  await failed.getByRole('button', { name: 'OK' }).click();
+
+  await toggle.click();
+  await expect(picture(page).locator('img')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Back' }).click();
+
+  // A bean without a photo offers no switch.
+  await beanAction(page, BEANS.alpha, 'Share as image');
+  await expect(picture(page)).toBeVisible();
+  await expect(page.getByRole('switch', { name: 'Show photo' })).toHaveCount(0);
+});

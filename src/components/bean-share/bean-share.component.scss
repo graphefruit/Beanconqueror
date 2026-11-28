@@ -25,3 +25,12 @@
   color: var(--share-muted);
   font-size: 3.6cqw;
 }
+
+.share-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  margin-top: 3.5cqw;
+  border-radius: 2.5cqw;
+  object-fit: cover;
+}

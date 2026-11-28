@@ -28,9 +28,12 @@ import { FormatDatePipe } from '../../pipes/formatDate';
 import { ShareService } from '../../services/shareService/share-service.service';
 import { ThemeService } from '../../services/theme/theme.service';
 import { UIAlert } from '../../services/uiAlert';
+import { UIFileHelper } from '../../services/uiFileHelper';
+import { UILog } from '../../services/uiLog';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import {
   beanShareCard,
+  beanSharePhotoSrc,
   describeBeanShareCard,
   shownBeanShareRows,
 } from '../../stores/beans/bean-share-card-rules';
@@ -47,7 +50,7 @@ import { HeaderComponent } from '../header/header.component';
 
 /**
  * Shows the picture of a bean before it is shared: the bean card as the app
- * shows it, in a colour of choice and with or without the notes. As with the
+ * shows it, in a colour of choice and with or without the notes and photo. As with the
  * brew, the picture is drawn from the preview and holds no Ionic components.
  */
 @Component({
@@ -75,6 +78,8 @@ export class BeanShareComponent implements OnInit {
   private readonly settingsStorage = inject(UISettingsStorage);
   private readonly shareService = inject(ShareService);
   private readonly uiAlert = inject(UIAlert);
+  private readonly uiFileHelper = inject(UIFileHelper);
+  private readonly uiLog = inject(UILog);
   private readonly decimal = new DecimalPipe(inject(LOCALE_ID));
   private readonly formatDate = new FormatDatePipe();
   private readonly t = (key: string, params?: object): string =>
@@ -88,6 +93,12 @@ export class BeanShareComponent implements OnInit {
     initialSharePalette(inject(ThemeService).isDarkMode()),
   );
   protected readonly showNote = signal(false);
+  /** The photo, once it is read and can be drawn; until then not offered. */
+  protected readonly photoSrc = signal<string | undefined>(undefined);
+  protected readonly showPhoto = signal(false);
+  protected readonly photoShown = computed(
+    () => this.showPhoto() && !!this.photoSrc(),
+  );
   protected readonly busy = signal(false);
 
   protected readonly card = computed(() => {
@@ -110,7 +121,11 @@ export class BeanShareComponent implements OnInit {
     shownBeanShareRows(this.card(), this.showNote()),
   );
   protected readonly description = computed(() =>
-    describeBeanShareCard(this.card(), { note: this.showNote() }, this.t),
+    describeBeanShareCard(
+      this.card(),
+      { note: this.showNote(), photo: this.photoShown() },
+      this.t,
+    ),
   );
 
   private readonly picture =
@@ -132,6 +147,29 @@ export class BeanShareComponent implements OnInit {
 
   public ngOnInit(): void {
     this.showNote.set(this.card().noteShown);
+    void this.loadPhoto();
+  }
+
+  /** A photo that is missing or cannot be drawn leaves the switch away. */
+  private async loadPhoto(): Promise<void> {
+    const path = this.card().photo;
+    if (!path) {
+      return;
+    }
+    try {
+      const src = path.startsWith('http')
+        ? path
+        : beanSharePhotoSrc(
+            path,
+            await this.uiFileHelper.readInternalFileAsBase64(path),
+          );
+      const image = new Image();
+      image.src = src;
+      await image.decode();
+      this.photoSrc.set(src);
+    } catch (error) {
+      this.uiLog.error('Share - could not read the photo of the bean', error);
+    }
   }
 
   protected async share(): Promise<void> {

@@ -87,6 +87,10 @@
             }
           </div>
         </div>
+        @if (photoShown()) {
+          <!-- Named in the description of the picture. -->
+          <img class="share-photo" alt="" [src]="photoSrc()" />
+        }
         <div class="share-rows">
           @for (row of rows(); track $index) {
             <div class="share-row" [class.share-row-wide]="row.wide">
@@ -121,6 +125,16 @@
     }
   </fieldset>
 
+  @if (photoSrc()) {
+    <ion-toggle
+      class="share-note-toggle share-photo-toggle"
+      justify="space-between"
+      [checked]="showPhoto()"
+      (ionChange)="showPhoto.set($event.detail.checked)"
+    >
+      {{ 'SHARE_CARD.SHOW_PHOTO' | translate }}
+    </ion-toggle>
+  }
   @if (content.hasNote) {
     <ion-toggle
       class="share-note-toggle"

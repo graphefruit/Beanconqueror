@@ -16,12 +16,18 @@ import { IBean } from '../../../interfaces/bean/iBean';
 import { ShareService } from '../../../services/shareService/share-service.service';
 import { ThemeService } from '../../../services/theme/theme.service';
 import { UIAlert } from '../../../services/uiAlert';
+import { UIFileHelper } from '../../../services/uiFileHelper';
+import { UILog } from '../../../services/uiLog';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { BeanUsage } from '../../../stores/beans/bean-usage.store';
 import { SHARE_IMAGE_WIDTH } from '../../brew-share/brew-share.component';
 import { BeanShareComponent } from '../bean-share.component';
 
 type Spies<K extends string> = Record<K, jasmine.Spy>;
+
+/** A white pixel, as a stored photo reads. */
+const PIXEL =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=';
 
 const USAGE: BeanUsage = { brews: 4, grams: 72, lastBrewAt: undefined };
 
@@ -32,6 +38,8 @@ describe('BeanShareComponent', () => {
   let uiAlert: Spies<'showMessage'>;
   let modalController: Spies<'create' | 'dismiss'>;
   let theme: Spies<'isDarkMode'>;
+  let fileHelper: Spies<'readInternalFileAsBase64'>;
+  let uiLog: Spies<'error'>;
 
   beforeEach(() => {
     settings = new Settings();
@@ -46,6 +54,11 @@ describe('BeanShareComponent', () => {
       'dismiss',
     ]);
     theme = jasmine.createSpyObj('ThemeService', { isDarkMode: false });
+    fileHelper = jasmine.createSpyObj('UIFileHelper', [
+      'readInternalFileAsBase64',
+    ]);
+    fileHelper.readInternalFileAsBase64.and.resolveTo(PIXEL);
+    uiLog = jasmine.createSpyObj('UILog', ['error']);
 
     TestBed.overrideComponent(BeanShareComponent, {
       set: { imports: [TranslatePipe], schemas: [NO_ERRORS_SCHEMA] },
@@ -63,6 +76,8 @@ describe('BeanShareComponent', () => {
         { provide: UIAlert, useValue: uiAlert },
         { provide: ModalController, useValue: modalController },
         { provide: ThemeService, useValue: theme },
+        { provide: UIFileHelper, useValue: fileHelper },
+        { provide: UILog, useValue: uiLog },
       ],
     });
     const translate = TestBed.inject(TranslateService);
@@ -74,7 +89,10 @@ describe('BeanShareComponent', () => {
       POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE: 'Favourite',
       FROZEN_BEANS: 'Frozen',
       BEAN_DATA_COST: 'Cost',
-      SHARE_CARD: { BEAN_DESCRIPTION: 'Image of the bean: {{content}}' },
+      SHARE_CARD: {
+        BEAN_DESCRIPTION: 'Image of the bean: {{content}}',
+        BEAN_PHOTO: 'Photo of the bean',
+      },
     });
     translate.use('en');
   });
@@ -251,6 +269,76 @@ describe('BeanShareComponent', () => {
     settings.bean_visible_list_view_parameters.note = false;
     host = await show(bean);
     expect(picture(host).textContent).not.toContain('Sweet and clean');
+  });
+
+  const photoToggle = (host: HTMLElement) =>
+    host.querySelector('.share-photo-toggle');
+
+  /** Until the photo is read and decoded, or it is clear it never will be. */
+  async function photoSettled(): Promise<void> {
+    for (let i = 0; i < 50; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      fixture.detectChanges();
+      if (
+        photoToggle(fixture.nativeElement as HTMLElement) ||
+        uiLog.error.calls.any()
+      ) {
+        return;
+      }
+    }
+  }
+
+  it('offers no photo switch for a bean without a photo', async () => {
+    const host = await show();
+    await photoSettled();
+
+    expect(photoToggle(host)).toBeNull();
+    expect(fileHelper.readInternalFileAsBase64).not.toHaveBeenCalled();
+  });
+
+  it('puts the stored photo on the picture only while it is switched on', async () => {
+    const host = await show(makeBean({ attachments: ['beans/a.png'] }));
+    await photoSettled();
+
+    expect(fileHelper.readInternalFileAsBase64).toHaveBeenCalledOnceWith(
+      'beans/a.png',
+    );
+    expect(photoToggle(host)).not.toBeNull();
+    expect(picture(host).querySelector('img')).toBeNull();
+    expect(picture(host).getAttribute('aria-label')).not.toContain('Photo');
+
+    photoToggle(host).dispatchEvent(
+      new CustomEvent('ionChange', { detail: { checked: true } }),
+    );
+    fixture.detectChanges();
+    const photo = picture(host).querySelector('img');
+    expect(photo.getAttribute('src')).toBe(`data:image/png;base64,${PIXEL}`);
+    expect(photo.getAttribute('alt')).toBe('');
+    expect(picture(host).getAttribute('aria-label')).toMatch(
+      /Tonino\. Photo of the bean\. Roasting date/,
+    );
+
+    photoToggle(host).dispatchEvent(
+      new CustomEvent('ionChange', { detail: { checked: false } }),
+    );
+    fixture.detectChanges();
+    expect(picture(host).querySelector('img')).toBeNull();
+  });
+
+  it('leaves the photo away when its file is missing or cannot be drawn', async () => {
+    fileHelper.readInternalFileAsBase64.and.rejectWith(new Error('missing'));
+    let host = await show(makeBean({ attachments: ['beans/a.jpg'] }));
+    await photoSettled();
+    expect(photoToggle(host)).toBeNull();
+    expect(picture(host).textContent).toContain('Yirgacheffe');
+    expect(uiLog.error).toHaveBeenCalledTimes(1);
+
+    uiLog.error.calls.reset();
+    fileHelper.readInternalFileAsBase64.and.resolveTo('bm90IGFuIGltYWdl');
+    host = await show(makeBean({ attachments: ['beans/a.jpg'] }));
+    await photoSettled();
+    expect(photoToggle(host)).toBeNull();
+    expect(uiLog.error).toHaveBeenCalledTimes(1);
   });
 
   it('shares the picture 1080 pixels wide', async () => {
