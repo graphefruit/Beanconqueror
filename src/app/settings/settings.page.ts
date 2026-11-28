@@ -53,6 +53,7 @@ import {
 import { CapacitorHttp } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Geolocation } from '@capacitor/geolocation';
+import { Share } from '@capacitor/share';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
@@ -111,6 +112,7 @@ import { ToFixedPipe } from '../../pipes/toFixed';
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 import { SettingsChooseAutomaticBackupToImportComponent } from '../../popover/settings-choose-automatic-backup-to-import/settings-choose-automatic-backup-to-import.component';
+import { AttachmentExportService } from '../../services/attachmentManifest/attachment-export.service';
 import {
   backupFormatProblem,
   NotABackupError,
@@ -1099,49 +1101,6 @@ export class SettingsPage {
     }
   }
 
-  private async exportAttachments(exportPath: {
-    path: string;
-    directory: Directory;
-  }) {
-    const exportObjects: any[] = [
-      ...this.uiBeanStorage.getAllEntries(),
-      ...this.uiBrewStorage.getAllEntries(),
-      ...this.uiPreparationStorage.getAllEntries(),
-      ...this.uiMillStorage.getAllEntries(),
-      ...this.uiWaterStorage.getAllEntries(),
-      ...this.uiGreenBeanStorage.getAllEntries(),
-      ...this.uiRoastingMachineStorage.getAllEntries(),
-    ];
-
-    await this._exportAttachments(exportObjects, exportPath);
-  }
-
-  private async exportFlowProfiles(exportPath: {
-    path: string;
-    directory: Directory;
-  }) {
-    const exportObjects: any[] = [...this.uiBrewStorage.getAllEntries()];
-    await this._exportFlowProfiles(exportObjects, exportPath);
-  }
-
-  private async exportGraphProfiles(exportPath: {
-    path: string;
-    directory: Directory;
-  }) {
-    const exportObjects: any[] = [...this.uiGraphStorage.getAllEntries()];
-    await this._exportGraphProfiles(exportObjects, exportPath);
-  }
-
-  private async exportBaristamodeFlowProfiles(exportPath: {
-    path: string;
-    directory: Directory;
-  }) {
-    const exportObjects: any[] = [
-      ...this.uiBaristamodeBrewStorage.getAllEntries(),
-    ];
-    await this.exportStoredData(exportObjects, exportPath);
-  }
-
   public async export() {
     try {
       await this.uiAlert.withLoadingSpinner(async () => {
@@ -1189,28 +1148,32 @@ export class SettingsPage {
     );
     this.filesNotCopied = 0;
 
-    const zipBlob = await this.uiExportImportHelper.buildExportZIP();
-
     // Export attachment files on android because they are stored in the
     // internal storage, which is not accessible for users.
     // On iOS this is not required because the attachments are stored in the
     // documents directory and are user-accessible anyway
-    if (this.isAndroid) {
-      await this.exportAttachments(exportPath);
-      await this.exportFlowProfiles(exportPath);
-      await this.exportGraphProfiles(exportPath);
-      await this.exportBaristamodeFlowProfiles(exportPath);
+    if (!this.isAndroid) {
+      await this.uiFileHelper.exportFile(
+        {
+          fileName: AttachmentExportService.ZIP_NAME,
+          path: exportPath.path,
+          directory: exportPath.directory,
+        },
+        await this.uiExportImportHelper.buildExportZIP(),
+        share,
+      );
+      return;
     }
-
-    await this.uiFileHelper.exportFile(
-      {
-        fileName: 'Beanconqueror.zip',
-        path: exportPath.path,
+    const { missing } =
+      await this.uiExportImportHelper.writeFullExport(exportPath);
+    this.filesNotCopied = missing;
+    if (share) {
+      const { uri } = await Filesystem.getUri({
+        path: `${exportPath.path}/${AttachmentExportService.ZIP_NAME}`,
         directory: exportPath.directory,
-      },
-      zipBlob,
-      share,
-    );
+      });
+      await Share.share({ url: uri });
+    }
   }
 
   public excelExport(): void {
@@ -1390,108 +1353,6 @@ export class SettingsPage {
       });
 
       fileInput.click();
-    }
-  }
-
-  private async _exportAttachments(
-    _storedData:
-      | Bean[]
-      | Brew[]
-      | Preparation[]
-      | Mill[]
-      | GreenBean[]
-      | RoastingMachine[]
-      | Water[],
-    exportPath: {
-      path: string;
-      directory: Directory;
-    },
-  ) {
-    for (const entry of _storedData) {
-      for (const attachment of entry.attachments) {
-        await this._exportFile(attachment, exportPath);
-      }
-    }
-  }
-
-  private async _exportFlowProfiles(
-    _storedData: Brew[],
-    exportPath: {
-      path: string;
-      directory: Directory;
-    },
-  ) {
-    await this.exportStoredData(_storedData, exportPath);
-  }
-
-  private async _exportGraphProfiles(
-    _storedData: Graph[],
-    exportPath: {
-      path: string;
-      directory: Directory;
-    },
-  ) {
-    await this.exportStoredData(_storedData, exportPath);
-  }
-
-  private async exportStoredData(
-    _storedData: Brew[] | Graph[] | BaristamodeBrew[],
-    exportPath: {
-      path: string;
-      directory: Directory;
-    },
-  ) {
-    for (const entry of _storedData) {
-      if (entry.flow_profile && entry.flow_profile.length) {
-        await this._exportFile(entry.getGraphPath(), exportPath);
-      }
-
-      if (
-        entry instanceof Brew &&
-        entry.reference_flow_profile?.type ===
-          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
-      ) {
-        await this._exportFile(
-          entry.getGraphPath(BREW_GRAPH_TYPE.IMPORTED_GRAPH),
-          exportPath,
-        );
-      }
-    }
-  }
-
-  private async _exportFile(
-    fileName: string,
-    exportPath: {
-      path: string;
-      directory: Directory;
-    },
-  ) {
-    try {
-      const sourceFile = await this.uiFileHelper.resolvePhotoPath(fileName);
-      const targetFile = `${exportPath.path}/${fileName}`;
-
-      await this.uiFileHelper.makeParentDirs(targetFile, exportPath.directory);
-
-      const copyResult = await Filesystem.copy({
-        from: sourceFile,
-        directory: this.uiFileHelper.getDataDirectory(),
-        to: targetFile,
-        toDirectory: exportPath.directory,
-      });
-      this.uiLog.info(
-        'File',
-        fileName,
-        'exported successfully to',
-        copyResult.uri,
-      );
-    } catch (error) {
-      this.uiLog.error(
-        'Error while exporting',
-        fileName,
-        error,
-        '.The error will be ignored.',
-      );
-      this.filesNotCopied++;
     }
   }
 

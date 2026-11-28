@@ -1,3 +1,4 @@
+import { Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { Platform } from '@ionic/angular';
@@ -10,8 +11,10 @@ import { ShareWeb } from '@capacitor/share/dist/esm/web';
 import { FilePickerWeb } from '@capawesome/capacitor-file-picker/dist/esm/web';
 import { TextReader, Uint8ArrayWriter, ZipWriter } from '@zip.js/zip.js';
 
+import { ATTACHMENT_MANIFEST_STORAGE_KEY } from '../../../classes/changeTracking/localStorageKeys';
 import { Settings } from '../../../classes/settings/settings';
 import { StorageClass } from '../../../classes/storageClass';
+import { AttachmentManifestService } from '../../../services/attachmentManifest/attachment-manifest.service';
 import { NotABackupError } from '../../../services/backup-format-rules';
 import { UIAlert } from '../../../services/uiAlert';
 import { UIBaristamodeBrewStorage } from '../../../services/uiBaristamodeBrewStorage';
@@ -173,6 +176,7 @@ describe('SettingsPage files of an export and an import', () => {
   let share: jasmine.Spy;
   let buildExportZIP: jasmine.Spy;
   let exportBrewByWeightsSmall: jasmine.Spy;
+  let manifest: AttachmentManifestService | undefined;
   let storages: {
     beans: UIBeanStorage;
     brews: UIBrewStorage;
@@ -295,7 +299,13 @@ describe('SettingsPage files of an export and an import', () => {
       uiAnalytics: { trackEvent: () => undefined },
       translate: { instant: (_key: string) => _key },
       uiFileHelper: TestBed.inject(UIFileHelper),
-      uiExportImportHelper: { buildExportZIP },
+      uiExportImportHelper: Object.assign(
+        Object.create(UIExportImportHelper.prototype),
+        {
+          buildExportZIP,
+          injector: TestBed.inject(Injector),
+        },
+      ),
       storeHub: new StoreHub(),
       uiExcel: { exportBrewByWeightsSmall },
       // The standard grinder after an import has tests of its own.
@@ -311,6 +321,7 @@ describe('SettingsPage files of an export and an import', () => {
       uiBaristamodeBrewStorage: storages.baristaBrews,
     });
     page = created as unknown as PageUnderTest;
+    manifest = TestBed.inject(AttachmentManifestService);
   }
 
   const android = () => createPage(['capacitor', 'android']);
@@ -363,7 +374,11 @@ describe('SettingsPage files of an export and an import', () => {
     });
   });
 
-  afterEach(clearFiles);
+  afterEach(async () => {
+    manifest?.stop();
+    manifest = undefined;
+    await clearFiles();
+  });
 
   describe('exporting on Android', () => {
     beforeEach(async () => {
@@ -395,7 +410,10 @@ describe('SettingsPage files of an export and an import', () => {
       expect(await filesIn('', Directory.Data)).toEqual(
         SEEDED_FILES.map((_file) => _file),
       );
-      expect(database.set).not.toHaveBeenCalled();
+      // Only the list of files, which stays on the device, is stored.
+      for (const [key] of database.set.calls.allArgs()) {
+        expect(key).toBe(ATTACHMENT_MANIFEST_STORAGE_KEY);
+      }
     });
 
     it('writes the zip of the data and offers to share it', async () => {
@@ -512,7 +530,8 @@ describe('SettingsPage files of an export and an import', () => {
       expect(share).not.toHaveBeenCalled();
     });
 
-    it('known gap: leaves photos and graphs without the zip behind when the zip cannot be written', async () => {
+    it('leaves no photos and graphs without the zip behind, and the earlier export as it was, when the zip cannot be written', async () => {
+      await write(`${EXPORT_DIR}/photo_bean.jpg`, 'old', Directory.External);
       const writeFile = original('writeFile');
       spyOn(FilesystemWeb.prototype, 'writeFile').and.callFake(function (
         this: FilesystemWeb,
@@ -525,9 +544,12 @@ describe('SettingsPage files of an export and an import', () => {
 
       await expectAsync(page.export()).toBeRejectedWithError('disk full');
 
-      expect(await filesIn(EXPORT_DIR, Directory.External)).toEqual(
-        SEEDED_FILES,
-      );
+      expect(await filesIn(EXPORT_DIR, Directory.External)).toEqual([
+        'photo_bean.jpg',
+      ]);
+      expect(
+        await read(`${EXPORT_DIR}/photo_bean.jpg`, Directory.External),
+      ).toBe('old');
       expect(share).not.toHaveBeenCalled();
     });
 
