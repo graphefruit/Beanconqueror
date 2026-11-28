@@ -227,6 +227,7 @@ export class UplotRenderer implements BrewChartPort {
   private stopWatching: Array<() => void> = [];
   private viewport: Viewport = { mode: 'fitAll' };
   private readonly hidden = new Set<SeriesId>();
+  private awaited: ReadonlySet<SeriesId> = new Set();
   private cursor: number | null = null;
   private cut: readonly [number, number] | null = null;
   private annotations: readonly ChartAnnotation[] = [];
@@ -316,6 +317,12 @@ export class UplotRenderer implements BrewChartPort {
     } else {
       this.hidden.add(seriesId);
     }
+    this.markState();
+  }
+
+  /** Live series a connected device delivers; their axes show before the first sample. */
+  public setAwaited(seriesIds: ReadonlySet<SeriesId>): void {
+    this.awaited = seriesIds;
     this.markState();
   }
 
@@ -753,8 +760,9 @@ export class UplotRenderer implements BrewChartPort {
 
   /**
    * An axis shows when a shown series on it has data. The live graph shows
-   * its first axis with a shown series before the first sample too, so grid
-   * and range stand from the start, as the brew form always showed them.
+   * the axes of the series a device delivers before the first sample too,
+   * and its first axis with a shown series in any case, so grid and range
+   * stand from the start, as the brew form always showed them.
    */
   private axisVisible(axisId: AxisId, bare: boolean): boolean {
     const shownOn = (id: AxisId): SeriesDef[] =>
@@ -763,10 +771,15 @@ export class UplotRenderer implements BrewChartPort {
             (d) => d.axisId === id && !this.hidden.has(d.id),
           )
         : [];
-    const awaited =
-      this.opts?.mode === 'live' &&
-      this.layout.axes.find((id) => shownOn(id).length > 0) === axisId;
-    return shownOn(axisId).some((d) => awaited || this.hasData(d));
+    const live = this.opts?.mode === 'live';
+    const first =
+      live && this.layout.axes.find((id) => shownOn(id).length > 0) === axisId;
+    return shownOn(axisId).some(
+      (d) =>
+        first ||
+        this.hasData(d) ||
+        (live && d.kind === 'live' && this.awaited.has(d.id)),
+    );
   }
 
   /** Shows the series and axes that have something to show; true when an axis changed. */

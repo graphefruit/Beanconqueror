@@ -1,3 +1,4 @@
+import { PreparationDeviceType } from '../../../../classes/preparationDevice';
 import { Settings } from '../../../../classes/settings/settings';
 import { DEFAULT_GRAPH_COLORS } from '../../../../data/defaultGraphColors';
 import { PREPARATION_STYLE_TYPE } from '../../../../enums/preparations/preparationStyleTypes';
@@ -10,11 +11,13 @@ import {
   type SeriesKind,
 } from '../../graph/series-def';
 import {
+  awaitedLiveSeries,
   initiallyHidden,
   liveSeriesId,
   liveSeriesState,
   liveViewport,
   shownReferenceDefs,
+  type ConnectedDevices,
 } from '../live-series-state';
 
 const translate = (key: string): string => `t(${key})`;
@@ -112,6 +115,61 @@ describe('initiallyHidden', () => {
     expect([...initiallyHidden(defs, graph)]).toEqual([
       'realtimeFlow',
       'custom:boiler',
+    ]);
+  });
+});
+
+describe('awaitedLiveSeries', () => {
+  const none: ConnectedDevices = {
+    scale: false,
+    scaleTwoWeights: false,
+    pressure: false,
+    temperature: false,
+    machine: undefined,
+    style: PREPARATION_STYLE_TYPE.ESPRESSO,
+  };
+  const ids = (devices: Partial<ConnectedDevices>): SeriesId[] => [
+    ...awaitedLiveSeries({ ...none, ...devices }),
+  ];
+
+  it('awaits weight and both flows from a scale', () => {
+    expect(ids({ scale: true })).toEqual([
+      'weight',
+      'flowPerSecond',
+      'realtimeFlow',
+    ]);
+    expect(ids({})).toEqual([]);
+  });
+
+  it('awaits pressure from a sensor only for espresso, temperature always', () => {
+    expect(ids({ pressure: true, temperature: true })).toEqual([
+      'pressure',
+      'temperature',
+    ]);
+    expect(
+      ids({ pressure: true, style: PREPARATION_STYLE_TYPE.POUR_OVER }),
+    ).toEqual([]);
+  });
+
+  it('awaits what a machine and a scale with two weights deliver', () => {
+    expect(ids({ machine: PreparationDeviceType.METICULOUS })).toEqual([
+      'weight',
+      'flowPerSecond',
+      'realtimeFlow',
+      'pressure',
+    ]);
+    expect(ids({ machine: PreparationDeviceType.SANREMO_YOU })).toEqual([
+      'pressure',
+      'temperature',
+      'waterDispensed',
+      'waterDispensedFlowSecond',
+    ]);
+    expect(ids({ machine: PreparationDeviceType.GAGGIMATE })).toContain(
+      'waterDispensed',
+    );
+    expect(ids({ scaleTwoWeights: true })).toEqual([
+      'weightSecond',
+      'realtimeFlowSecond',
     ]);
   });
 });

@@ -139,6 +139,7 @@ import {
 import { UplotRenderer } from '../graph/uplot-renderer';
 import { pendingEspressoJump, type PendingJump } from './espresso-weight-jump';
 import {
+  awaitedLiveSeries,
   initiallyHidden,
   liveSeriesId,
   liveSeriesState,
@@ -295,6 +296,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
   private maximizedRenderer: UplotRenderer | null = null;
   private readonly seriesDefs = signal<readonly SeriesDef[]>([]);
   private readonly hiddenSeries = signal<ReadonlySet<SeriesId>>(new Set());
+  private awaitedSeries: ReadonlySet<SeriesId> = new Set();
   /** Chip state of the live series; read this instead of the drawing internals. */
   public readonly seriesState = computed(() =>
     liveSeriesState(this.seriesDefs(), this.hiddenSeries(), this.theme.dark()),
@@ -580,6 +582,19 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     this.uiSmartScaleConnectedSupportsTwoWeights =
       this.smartScaleSupportsTwoWeight();
     this.uiSmartScaleSupportsTaring = this.smartScaleSupportsTaring();
+    this.awaitedSeries = awaitedLiveSeries({
+      scale: this.uiSmartScaleConnected,
+      scaleTwoWeights: this.uiSmartScaleConnectedSupportsTwoWeights === true,
+      pressure: this.uiPressureConnected,
+      temperature: this.uiTemperatureConnected,
+      machine: this.uiPreparationDeviceConnected
+        ? this.uiPreparationDeviceType
+        : undefined,
+      style: this.data?.getPreparation()?.style_type,
+    });
+    this.renderers().forEach((renderer) =>
+      renderer.setAwaited(this.awaitedSeries),
+    );
   }
 
   /** Loads the reference the brew was made against; see loadReference. */
@@ -869,6 +884,7 @@ export class BrewBrewingGraphComponent implements OnInit, OnDestroy {
     for (const def of defs) {
       renderer.setVisible(def.id, !hidden.has(def.id));
     }
+    renderer.setAwaited(this.awaitedSeries);
   }
 
   private renderers(): UplotRenderer[] {
