@@ -112,8 +112,17 @@ export class WelcomePopoverComponent implements OnInit {
     this.showNextStep();
   }
 
-  public next() {
-    setTimeout(() => this.showNextStep(), 500);
+  /**
+   * Leads on once the form of the step has closed: until then Ionic keeps the
+   * focus in the form, and afterwards it hands the focus back to the button
+   * that opened it, which is hidden once the next step shows.
+   */
+  private async next(): Promise<void> {
+    const form = await this.modalController.getTop();
+    if (form && form !== this.host.closest('ion-modal')) {
+      await form.onDidDismiss();
+    }
+    this.showNextStep();
   }
 
   /**
@@ -136,17 +145,17 @@ export class WelcomePopoverComponent implements OnInit {
 
   public async addBean() {
     await this.uiBeanHelper.addBean(true);
-    this.next();
+    await this.next();
   }
 
   public async addPreparation() {
     await this.uiPreparationHelper.addPreparation(true);
-    this.next();
+    await this.next();
   }
 
   public async addMill() {
     await this.uiMillHelper.addMill(true);
-    this.next();
+    await this.next();
   }
 
   public async finish() {

@@ -7,7 +7,7 @@ import {
   brewField,
   openAddBrew,
 } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { completeFirstRun } from './support/first-run';
 import { tabKey } from './support/keyboard';
 import { openTab } from './support/layout';
@@ -293,8 +293,7 @@ test('the aroma picker hides the tasting dialog until it closes', async ({
   page,
 }) => {
   await page.clock.install({ time: BREW_TEST_START });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page, BREW_TEST_START);
   await brewAction(page, 'Cupping');
   const addAromas = page.getByRole('button', { name: 'Add aromas/flavors' });
   await expect(addAromas).toBeVisible();
@@ -342,8 +341,7 @@ test('a sheet hides the brew form, also where the form shows above it', async ({
   page,
 }) => {
   await page.clock.install({ time: BREW_TEST_START });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page, BREW_TEST_START);
   await openAddBrew(page);
   const groundCoffee = brewField(page, 'Ground Coffee (gr)');
   await expect(groundCoffee).toBeVisible();
@@ -422,7 +420,13 @@ test('three dialogs stacked at first start are peeled off one by one', async ({
 
   await page.keyboard.press('Escape');
   await expect(beanName).toHaveCount(0);
-  await expect(addBean).toBeFocused();
+  // Once the form has closed, the welcome dialog leads on to the next step,
+  // whose heading takes the focus over from Add bean.
+  await expect(
+    page
+      .getByRole('group', { name: 'Step 3 of 5' })
+      .getByRole('heading', { level: 2 }),
+  ).toBeFocused();
   await expect(page.getByRole('dialog')).toHaveCount(1);
 });
 

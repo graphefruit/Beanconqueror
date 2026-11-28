@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { readStoredValue, writeStoredValue } from './support/stored-values';
 
 interface StoredBrew {
@@ -16,8 +16,7 @@ const CLEANUP = 'UPDATE_17';
 test('copies of a brew left by an older version are cleaned up at start', async ({
   page,
 }) => {
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page);
 
   const [brew] = (await readStoredValue<StoredBrew[]>(page, 'BREWS')) ?? [];
   const [version] =

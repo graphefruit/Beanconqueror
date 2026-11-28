@@ -16,7 +16,7 @@ import {
   setParameter,
   WATER,
 } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { NativeError } from './support/native';
 
 /**
@@ -32,8 +32,7 @@ test.describe.configure({ timeout: 60_000 });
 
 async function start(page: Page): Promise<void> {
   await page.clock.install({ time: BREW_TEST_START });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page, BREW_TEST_START);
 }
 
 test('the brew ratio follows dose and water live and ignores the water unit', async ({

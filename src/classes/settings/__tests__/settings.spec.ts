@@ -229,4 +229,18 @@ describe('Settings', () => {
       });
     }
   });
+
+  it('moves stored graph colours at a former default, keeps chosen ones', () => {
+    const stored = JSON.parse(JSON.stringify(new Settings())) as Settings;
+    stored.graph_colors.weight.active.light = '#cdc2ac';
+    stored.graph_colors.pressure.active.light = '#ff00ff';
+    const settings = new Settings();
+
+    settings.initializeByObject(stored);
+
+    expect(settings.graph_colors.weight.active.light).toBe(
+      new Settings().graph_colors.weight.active.light,
+    );
+    expect(settings.graph_colors.pressure.active.light).toBe('#ff00ff');
+  });
 });

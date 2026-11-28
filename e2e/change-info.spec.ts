@@ -1,6 +1,22 @@
 import { expect, test } from './fixtures';
 import { completeFirstRunWithBrew } from './support/first-brew';
+import { FIRST_BREW_DATA } from './support/first-brew-data';
 import { readStoredValue } from './support/stored-values';
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+const TIMES = ['unix_timestamp', 'created_at', 'updated_at'];
+
+/** Leaves out what differs between two first runs: ids and times. */
+function comparable(value: unknown): unknown {
+  return JSON.parse(
+    JSON.stringify(value, (key, field: unknown) => {
+      if (TIMES.includes(key)) {
+        return 0;
+      }
+      return typeof field === 'string' && UUID.test(field) ? 'uuid' : field;
+    }),
+  );
+}
 
 interface StoredEntry {
   config: {
@@ -41,4 +57,13 @@ test('entries added through the app carry change info of this device', async ({
     Array<{ config?: StoredEntry['config'] }>
   >(page, 'SETTINGS');
   expect(settings?.[0].config?.rev).toBeUndefined();
+
+  // The other brew tests start from this data instead of a first run.
+  for (const [key, value] of Object.entries(FIRST_BREW_DATA)) {
+    await expect
+      .poll(async () => comparable(await readStoredValue(page, key)), {
+        message: key,
+      })
+      .toEqual(comparable(value));
+  }
 });

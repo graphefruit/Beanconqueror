@@ -2,7 +2,6 @@ import { inject, Service } from '@angular/core';
 
 import { AlertController, ModalController, Platform } from '@ionic/angular';
 
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import {
   Camera,
   CameraDirection,
@@ -36,7 +35,6 @@ import { UISettingsStorage } from './uiSettingsStorage';
 export class UIImage {
   private readonly alertController = inject(AlertController);
   private readonly platform = inject(Platform);
-  private readonly androidPermissions = inject(AndroidPermissions);
   private readonly uiFileHelper = inject(UIFileHelper);
   private readonly translate = inject(TranslateService);
   private readonly uiAlert = inject(UIAlert);

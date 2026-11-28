@@ -1,4 +1,7 @@
-import { DEFAULT_GRAPH_COLORS } from '../../data/defaultGraphColors';
+import {
+  DEFAULT_GRAPH_COLORS,
+  replaceFormerDefaults,
+} from '../../data/defaultGraphColors';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { BREW_DISPLAY_IMAGE_TYPE } from '../../enums/brews/brewDisplayImageType';
@@ -704,6 +707,7 @@ export class Settings implements ISettings {
         JSON.stringify(DEFAULT_GRAPH_COLORS.customTrace),
       );
     }
+    replaceFormerDefaults(this.graph_colors);
     // We need to reassign brew order here, else the class would be dismissed.
 
     this.manage_parameters = new ManageBrewParameter();

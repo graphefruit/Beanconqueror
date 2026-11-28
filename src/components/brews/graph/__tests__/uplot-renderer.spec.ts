@@ -239,6 +239,19 @@ describe('UplotRenderer', () => {
     expect(plot().scales.pressure.max).toBe(11);
   });
 
+  it('draws reference lines dashed and live lines solid', async () => {
+    await mount();
+    renderer.setSeries([
+      ...defs('reference', 'weight'),
+      ...defs('live', 'weight'),
+    ]);
+    renderer.setReferences(new FlowSeriesBuffer());
+    feed(buffer, 0, 1);
+    await frames.run();
+    expect(plot().series[1].dash?.length).toBe(2);
+    expect(plot().series[2].dash).toBeUndefined();
+  });
+
   it('starts over when the live buffer is cleared', async () => {
     await mount();
     buffer.append('weight', 0, 80);

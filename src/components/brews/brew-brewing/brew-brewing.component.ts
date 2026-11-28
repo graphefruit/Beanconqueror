@@ -882,6 +882,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public async timerStartPressed(_event) {
+    // Without the brew time parameter there is no timer, and a brew records
+    // only while it runs: a pressure or temperature threshold starts nothing.
+    // The graph has said so when the device connected.
+    if (!this.timer) {
+      return;
+    }
     if (this.data.brew_time > 0) {
       if (
         this.brewBrewingGraphEl.smartScaleConnected() ||

@@ -9,7 +9,6 @@ import {
 } from '@ionic/angular';
 import { defineCustomElement as defineCheckbox } from '@ionic/core/components/ion-checkbox.js';
 
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import de from '../../../assets/i18n/de.json';
@@ -77,7 +76,6 @@ const UNUSED = [
   AlertController,
   ModalController,
   NavController,
-  AndroidPermissions,
   UILog,
   UIAnalytics,
   UIUpdate,
