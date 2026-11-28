@@ -1546,6 +1546,7 @@
     "PRE_IMPORT_BACKUP_FAILED": "Nothing was imported: your current data could not be saved as a backup first. Please check the free storage and try again.",
     "MIGRATION_BACKUP_FAILED": "An update of your data was not made: your current data could not be saved as a backup first. Please check the free storage. The update is tried again at the next start.",
     "BACKUP_BEFORE_DATA_UPDATE": "Data before the update to 9.0",
+    "LATEST_AUTOMATIC_BACKUP": "Latest automatic backup, updated after every change",
     "BACKUP_NOT_SHARED": "The backup could not be shared. Please try again.",
     "DATA_UPDATE_FAILED_TITLE": "Data update incomplete",
     "DATA_UPDATE_FAILED": "Part of your data could not be updated. Nothing is lost: your data from before the update is saved as a backup, and you can keep using the app. If you share the logs with us, we can find the cause.",
@@ -1937,6 +1938,7 @@
     },
     "A11Y": {
         "SHARE_BACKUP_FILE": "Share {{name}} from {{date}}",
+        "SHARE_LATEST_BACKUP_FILE": "Share {{name}}, the latest automatic backup, from {{date}}",
         "CLOSE_DIALOG": "Close dialog",
         "FILTER_BREWS": "Filter brews",
         "FILTER_BREWS_ACTIVE": "Filter brews (active)",
