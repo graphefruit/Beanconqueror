@@ -8,7 +8,7 @@ import {
   openAddBrew,
   saveBrew,
 } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import type { NativeBoundary } from './support/native';
 import { mainTabName } from './support/texts';
 import { toast } from './support/toast';
@@ -28,8 +28,7 @@ function runQuickAction(native: NativeBoundary, type: string): Promise<void> {
 
 test.beforeEach(async ({ page, native }) => {
   await native.mockCapacitor('QuickAction', {});
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page);
 });
 
 test('the Brew quick action during a brew keeps the open brew form', async ({

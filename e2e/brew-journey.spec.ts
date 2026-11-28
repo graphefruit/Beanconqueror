@@ -12,7 +12,7 @@ import {
   topDialog,
   WATER,
 } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { toast } from './support/toast';
 
 /**
@@ -28,8 +28,7 @@ const DISCARD_QUESTION = /Brewing information has been modified/;
 
 test.beforeEach(async ({ page }) => {
   await page.clock.install({ time: BREW_TEST_START });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page, BREW_TEST_START);
 });
 
 test('a new brew shows its entered values in the list and in the details', async ({

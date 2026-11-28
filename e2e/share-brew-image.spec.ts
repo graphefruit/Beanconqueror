@@ -2,7 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { BREW_TEST_START, brewList } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
 
@@ -42,8 +42,7 @@ test('a brew is shared as a picture of its card, in a colour of choice', async (
   page,
 }) => {
   await page.clock.install({ time: BREW_TEST_START });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page, BREW_TEST_START);
   await shareAsImage(page);
 
   await expect(
