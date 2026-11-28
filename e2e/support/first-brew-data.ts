@@ -847,8 +847,6 @@ export const FIRST_BREW_DATA = {
       bluetooth_scale_first_drip_threshold: 0.1,
       bluetooth_scale_espresso_just_one_cup: false,
       bluetooth_scale_acaia_connection_mode: 'V2',
-      graph_threshold_frequency_update: false,
-      graph_threshold_frequency_interval: 200,
       maximize_hide_value_cards_on_maximize_screen: false,
       scale_log: false,
       pressure_id: '',
