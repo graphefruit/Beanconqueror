@@ -1,0 +1,36 @@
+// On top of the brew picture's styles, which the bean picture shares.
+
+.share-mark-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 32;
+}
+
+.share-roasting-type {
+  font-weight: 400;
+}
+
+.share-side {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 1.5cqw;
+  align-items: flex-end;
+  align-self: flex-start;
+}
+
+.share-frozen-id {
+  color: var(--share-muted);
+  font-size: 3.6cqw;
+}
+
+.share-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  margin-top: 3.5cqw;
+  border-radius: 2.5cqw;
+  object-fit: cover;
+}

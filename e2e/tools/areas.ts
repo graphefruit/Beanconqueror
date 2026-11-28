@@ -89,6 +89,7 @@ export const SPEC_AREAS: Readonly<Record<string, readonly Area[]>> = {
   'e2e/reading-order.spec.ts': ['@a11y', '@brew'],
   'e2e/sections.spec.ts': ['@profile', '@settings'],
   'e2e/sheet-close.spec.ts': ['@a11y', '@bean', '@brew'],
+  'e2e/share-bean-image.spec.ts': ['@bean'],
   'e2e/share-brew-image.spec.ts': ['@brew'],
   'e2e/share-logs.spec.ts': ['@info'],
   [SMOKE_SPEC]: ['@app'],

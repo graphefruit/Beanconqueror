@@ -87,6 +87,11 @@ describe('bean action rules', () => {
           icon: 'share-social-outline',
         },
         {
+          role: A.SHARE_IMAGE,
+          translationKey: 'SHARE_CARD.MENU',
+          icon: 'images-outline',
+        },
+        {
           role: A.BEANS_CONSUMED,
           translationKey: 'BEANS_CONSUMED',
           icon: 'beanconqueror-finished',
@@ -127,6 +132,7 @@ describe('bean action rules', () => {
         A.REFRESH_DATA_FROM_QR_CODE,
         A.TOGGLE_FAVOURITE,
         A.SHARE,
+        A.SHARE_IMAGE,
         A.UNARCHIVE,
         A.PHOTO_GALLERY,
         A.GENERATE_INTERNAL_SHARE_CODE,
@@ -137,7 +143,7 @@ describe('bean action rules', () => {
         translationKey: 'POPOVER_UNFREEZE_COFFEE_BEAN',
         icon: 'thermometer-outline',
       });
-      expect(frozenArchive[11]).toEqual({
+      expect(frozenArchive[12]).toEqual({
         role: A.UNARCHIVE,
         translationKey: 'BEANS_UNARCHIVE',
         icon: 'beanconqueror-unfinish',
@@ -163,6 +169,7 @@ describe('bean action rules', () => {
         A.CUPPING,
         A.TOGGLE_FAVOURITE,
         A.SHARE,
+        A.SHARE_IMAGE,
         A.GENERATE_INTERNAL_SHARE_CODE,
         A.DELETE,
       ]);
