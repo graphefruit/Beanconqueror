@@ -724,6 +724,23 @@ describe('SettingsPage files of an export and an import', () => {
       expect(showMessageWithDetails).not.toHaveBeenCalled();
     });
 
+    it('tells also of the files it could not copy when the marker was kept', async () => {
+      moveToFolder.and.rejectWith(
+        Object.assign(new Error('Could not delete'), {
+          code: 'MARKER_LEFT',
+          data: { fileName: UNFINISHED },
+        }),
+      );
+
+      await page.exportToSafDirectoryAndroid();
+      await new Promise((_resolve) => setTimeout(_resolve));
+
+      expect(showMessage.calls.allArgs()).toEqual([
+        ['FULL_EXPORT_TO_DIRECTORY_MARKER_LEFT'],
+        ['FILES_NOT_COPIED'],
+      ]);
+    });
+
     it('does nothing when no folder is picked, for the export and the import', async () => {
       Object.assign(page, {
         androidNativeCalls: {

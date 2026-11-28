@@ -1118,11 +1118,13 @@ export class SettingsPage {
         return;
       }
       if (code === 'MARKER_LEFT' && data?.fileName) {
-        void this.uiAlert.showMessage(
-          this.translate.instant('FULL_EXPORT_TO_DIRECTORY_MARKER_LEFT', {
-            fileName: data.fileName,
-          }),
-        );
+        void this.uiAlert
+          .showMessage(
+            this.translate.instant('FULL_EXPORT_TO_DIRECTORY_MARKER_LEFT', {
+              fileName: data.fileName,
+            }),
+          )
+          .then(() => this.__reportFilesNotCopied());
         return;
       }
       this.uiLog.error(logTag, 'Export failed', error);
