@@ -109,7 +109,6 @@
     "angular-eslint": "^22.8.0",
     "cordova-plugin-android-permissions": "^1.1.5",
     "cordova-plugin-ble-central": "2.0.0",
-    "cordova-plugin-health": "^2.1.1",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",

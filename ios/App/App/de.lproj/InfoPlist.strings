@@ -3,3 +3,5 @@
 "Bean" = "Neue Bohne";
 "Preparation method" = "Neue Brühmethode";
 "Grinder" = "Neue Mühle";
+/* Shown in the Apple Health dialog when caffeine tracking is turned on. */
+"NSHealthUpdateUsageDescription" = "BeanConqueror speichert das Koffein deiner Brühungen in Apple Health.";

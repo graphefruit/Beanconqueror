@@ -18,6 +18,7 @@ import { environment } from '../../../environments/environment';
 import { BrewReferencesService } from '../../../services/brewReferences/brew-references.service';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { CurrencyService } from '../../../services/currencyService/currency.service';
+import { HEALTH_PORT } from '../../../services/ports/health-port';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { ThemeService } from '../../../services/theme/theme.service';
@@ -45,6 +46,7 @@ import { UIWaterStorage } from '../../../services/uiWaterStorage';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 import { StoreHub } from '../../../stores/core/store-hub';
 import { accessibleName } from '../../../test-utils';
+import { FakeHealthPort } from '../../../test-utils/fake-health-port';
 import { SettingsPage } from '../settings.page';
 
 /**
@@ -113,6 +115,8 @@ describe('SettingsPage rendered', () => {
   let settings: Settings;
   let platforms: string[];
   let showMessage: jasmine.Spy;
+  let showConfirm: jasmine.Spy;
+  let health: FakeHealthPort;
   let saveSettings: jasmine.Spy;
   let fixture: ComponentFixture<SettingsPage>;
 
@@ -124,6 +128,9 @@ describe('SettingsPage rendered', () => {
     settings = new Settings();
     platforms = [];
     showMessage = jasmine.createSpy('showMessage').and.resolveTo();
+    showConfirm = jasmine.createSpy('showConfirm').and.resolveTo('YES');
+    health = new FakeHealthPort();
+    health.available = false;
     // pnpm e2e serves the development build, which keeps pitch and rate.
     environment.production = false;
     TestBed.configureTestingModule({
@@ -139,16 +146,14 @@ describe('SettingsPage rendered', () => {
           provide: Platform,
           useValue: { is: (name: string) => platforms.includes(name) },
         },
-        { provide: UIAlert, useValue: { showMessage } },
+        { provide: UIAlert, useValue: { showMessage, showConfirm } },
         {
           provide: UISettingsStorage,
           useValue: { getSettings: () => settings },
         },
         { provide: CurrencyService, useValue: { getCurrencies: () => ({}) } },
-        {
-          provide: UIHealthKit,
-          useValue: { isAvailable: () => Promise.reject(new Error('none')) },
-        },
+        UIHealthKit,
+        { provide: HEALTH_PORT, useFactory: () => health },
         { provide: TextToSpeechService, useValue: { available: true } },
       ],
     });
@@ -328,6 +333,57 @@ describe('SettingsPage rendered', () => {
         .map(nameOf)
         .filter((name) => /^Activate .* section$/.test(name)),
     ).toEqual([]);
+  });
+
+  describe('caffeine tracking', () => {
+    const name = () => t('PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION');
+
+    /** The page does not wait for the answer of Health. */
+    async function ask(): Promise<void> {
+      await fixture.componentInstance.checkHealthPlugin();
+      await new Promise((resolve) => setTimeout(resolve));
+    }
+
+    it('is offered only where Apple Health is available', async () => {
+      expect(checkbox(await render(), name())).toBeUndefined();
+
+      health.available = true;
+      fixture.destroy();
+      expect(checkbox(await render(), name())).toBeDefined();
+    });
+
+    it('turns on once writing caffeine is allowed', async () => {
+      health.available = true;
+      await render();
+
+      await ask();
+
+      expect(health.requests).toBe(1);
+      expect(settings.track_caffeine_consumption).toBeTrue();
+      expect(saveSettings).toHaveBeenCalledTimes(1);
+    });
+
+    it('stays off when the user declines in Health', async () => {
+      health.available = true;
+      health.grants = false;
+      await render();
+
+      await ask();
+
+      expect(settings.track_caffeine_consumption).toBeFalse();
+      expect(saveSettings).toHaveBeenCalledTimes(1);
+    });
+
+    it('asks Health nothing when the user says no in the app', async () => {
+      health.available = true;
+      showConfirm.and.resolveTo('NO');
+      await render();
+
+      await ask();
+
+      expect(health.requests).toBe(0);
+      expect(settings.track_caffeine_consumption).toBeFalse();
+    });
   });
 
   describe('speech', () => {

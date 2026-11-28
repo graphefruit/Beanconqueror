@@ -22,17 +22,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
 
-    <!-- Remove health-related permissions and queries that are added by the Cordova Health plugin.
-         We don't use this plugin on Android, so we can remove these -->
-    <queries>
-      <package android:name="com.google.android.apps.fitness" tools:node="remove" />
-    </queries>
-
-    <uses-permission android:name="android.gms.permission.ACTIVITY_RECOGNITION" tools:node="remove" />
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" tools:node="remove" />
-    <uses-permission android:name="android.permission.BODY_SENSORS" tools:node="remove" />
-    <!-- End of removed entries for Cordova Health plugin -->
-
     <!-- Remove the need of autofocus, which came with the latest camera plugin we don't use on android at all -->
     <uses-feature android:name="android.hardware.camera.autofocus"  tools:node="remove" />
 

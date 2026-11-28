@@ -314,6 +314,7 @@ class MagicTapContainerViewController: UIViewController {
         capacitorViewController.bridge?.registerPluginInstance(quickActionPlugin)
         capacitorViewController.bridge?.registerPluginInstance(nativeLogPlugin)
         capacitorViewController.bridge?.registerPluginInstance(WidgetPlugin())
+        capacitorViewController.bridge?.registerPluginInstance(CaffeineHealthPlugin())
     }
 
     override var childForStatusBarStyle: UIViewController? {

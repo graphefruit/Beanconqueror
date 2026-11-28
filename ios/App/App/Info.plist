@@ -108,7 +108,7 @@
 	<key>NSHealthShareUsageDescription</key>
 	<string>App needs read access to see the caffeinate amount which was tracked with this coffee app</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>App needs write access to add the drunken caffeinate amount with the tracked brews</string>
+	<string>BeanConqueror saves the caffeine of your brews in Apple Health.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
