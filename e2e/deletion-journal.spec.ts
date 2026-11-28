@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { readStoredValue } from './support/stored-values';
 import { toast } from './support/toast';
 
@@ -18,8 +18,7 @@ interface StoredNote {
 test('deleting a brew removes it at once and keeps a local note of it', async ({
   page,
 }) => {
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page);
 
   const [brew] = (await readStoredValue<StoredEntry[]>(page, 'BREWS')) ?? [];
   const device = await readStoredValue<{ device_id: string }>(page, 'DEVICE');

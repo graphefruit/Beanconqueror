@@ -2,7 +2,7 @@ import { expect, test } from './fixtures';
 import { BEANS } from './support/bean-data';
 import { beanCard, dialogsClosed, startWithBeans } from './support/beans';
 import { BREW_TEST_START, openAddBrew } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 
 /**
  * Sheets without a cancel button of their own end with "Close dialog" while
@@ -31,8 +31,7 @@ test('the device menu of the brew form shows no close button without a screen re
   page,
 }) => {
   await page.clock.install({ time: BREW_TEST_START });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page, BREW_TEST_START);
   await openAddBrew(page);
   await page.getByRole('button', { name: 'Brew options' }).click();
   await expect(

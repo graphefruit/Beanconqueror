@@ -7,7 +7,7 @@ import {
   openAddBrew,
   WATER,
 } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { tabKey } from './support/keyboard';
 import { waitForAnimations } from './support/layout';
 import { textStops } from './support/screen-reader';
@@ -17,13 +17,12 @@ import { generateDataSet } from './support/synthetic-data';
 /**
  * The brew form for keyboard and screen reader users. The tests of the form
  * as a whole start like the brew parameter tests: one bean, a V60, one grinder
- * and one brew, added through the UI.
+ * and one brew, as the first run leaves them.
  */
 
 async function startWithBrew(page: Page): Promise<void> {
   await page.clock.install({ time: BREW_TEST_START });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page, BREW_TEST_START);
 }
 
 /**
@@ -57,8 +56,8 @@ async function markFocused(page: Page): Promise<string | null> {
 }
 
 test('every Tab stop of the brew form has a name', async ({ page }) => {
-  // In WebKit on CI the first run of a worker spends up to 23 s in the setup
-  // above, and the 31 stops take 7 s more.
+  // In WebKit on CI the 31 stops take 7 s, on top of the start of a cold
+  // worker.
   test.slow();
   await startWithBrew(page);
   await openAddBrew(page);

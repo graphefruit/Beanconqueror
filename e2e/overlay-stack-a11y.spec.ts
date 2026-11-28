@@ -7,7 +7,7 @@ import {
   brewField,
   openAddBrew,
 } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { completeFirstRun } from './support/first-run';
 import { tabKey } from './support/keyboard';
 import { openTab } from './support/layout';
@@ -293,8 +293,7 @@ test('the aroma picker hides the tasting dialog until it closes', async ({
   page,
 }) => {
   await page.clock.install({ time: BREW_TEST_START });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page, BREW_TEST_START);
   await brewAction(page, 'Cupping');
   const addAromas = page.getByRole('button', { name: 'Add aromas/flavors' });
   await expect(addAromas).toBeVisible();
@@ -342,8 +341,7 @@ test('a sheet hides the brew form, also where the form shows above it', async ({
   page,
 }) => {
   await page.clock.install({ time: BREW_TEST_START });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page, BREW_TEST_START);
   await openAddBrew(page);
   const groundCoffee = brewField(page, 'Ground Coffee (gr)');
   await expect(groundCoffee).toBeVisible();

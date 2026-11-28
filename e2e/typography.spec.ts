@@ -3,7 +3,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect, test } from './fixtures';
 import { BEANS } from './support/bean-data';
 import { beanAction, startWithBeans } from './support/beans';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { completeFirstRun } from './support/first-run';
 
 /**
@@ -104,9 +104,9 @@ test.describe('brew cards at 200 % text size', () => {
   test.beforeEach(async ({ page }) => {
     // A fixed date keeps the cards' text the same on every run; September is
     // the longest English month name the home card shows.
-    await page.clock.setFixedTime(new Date('2026-09-23T10:30:00+02:00'));
-    await page.goto('/');
-    await completeFirstRunWithBrew(page);
+    const now = new Date('2026-09-23T10:30:00+02:00');
+    await page.clock.setFixedTime(now);
+    await startWithFirstBrew(page, now);
   });
 
   test('the brew list card keeps labels, date and time readable', async ({

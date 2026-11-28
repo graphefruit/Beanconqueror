@@ -13,7 +13,7 @@ import {
   setParameter,
   WATER,
 } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { tabOrder } from './support/layout';
 
 /**
@@ -30,8 +30,7 @@ test.describe.configure({ timeout: 60_000 });
 
 test.beforeEach(async ({ page }) => {
   await page.clock.install({ time: BREW_TEST_START });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page, BREW_TEST_START);
 });
 
 async function top(locator: Locator): Promise<number> {

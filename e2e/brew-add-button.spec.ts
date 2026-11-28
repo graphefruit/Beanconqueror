@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { seedDatabase } from './support/seed';
 import { generateDataSet } from './support/synthetic-data';
 import { isUncovered, scrollToEnd, VIRTUAL_LIST } from './support/virtual-list';
@@ -32,8 +32,7 @@ function addBrew(page: Page) {
 test('the add button floats at the bottom right above the tab bar', async ({
   page,
 }) => {
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page);
   await showBrews(page);
 
   await expect(addBrew(page)).toHaveCount(1);
@@ -55,8 +54,7 @@ test('the add button floats at the bottom right above the tab bar', async ({
 test('a long press on the add button offers the last brew as preset', async ({
   page,
 }) => {
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page);
   await showBrews(page);
 
   // Held down: the finger is lifted only after the sheet has opened.

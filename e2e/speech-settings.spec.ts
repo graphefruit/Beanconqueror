@@ -2,7 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import { expect, test } from './fixtures';
 import { BREW_TEST_START, openAddBrew } from './support/brew-form';
-import { completeFirstRunWithBrew } from './support/first-brew';
+import { startWithFirstBrew } from './support/first-brew';
 import { openFromProfile } from './support/profile';
 import { mainTabName } from './support/texts';
 
@@ -54,8 +54,7 @@ async function switchOff(checkbox: Locator): Promise<void> {
 test('the brew time slider follows the arrow keys and leaves with its switch', async ({
   page,
 }) => {
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page);
   await openSpeechSettings(page);
   await expect(brewTimeEvery(page)).toHaveAttribute('aria-valuetext', '5 s');
 
@@ -79,8 +78,7 @@ test('says the brew start, the brew time the timer shows and the brew end', asyn
 }) => {
   await page.addInitScript(recordSpeech);
   await page.clock.install({ time: BREW_TEST_START });
-  await page.goto('/');
-  await completeFirstRunWithBrew(page);
+  await startWithFirstBrew(page, BREW_TEST_START);
   await openSpeechSettings(page);
   // The web build feeds simulated scale weights; without them the time is heard alone.
   await switchOff(weight(page));
