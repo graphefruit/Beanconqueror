@@ -2282,11 +2282,6 @@
       "count": 1
     }
   },
-  "src/components/beans/detail/bean-detail-sort-information/__tests__/bean-detail-sort-information.component.spec.ts": {
-    "@typescript-eslint/no-unsafe-return": {
-      "count": 1
-    }
-  },
   "src/components/beans/green-bean-general-information/green-bean-general-information.component.ts": {
     "@angular-eslint/no-empty-lifecycle-method": {
       "count": 1
