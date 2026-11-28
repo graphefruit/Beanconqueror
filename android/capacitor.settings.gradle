@@ -63,4 +63,4 @@ include ':capgo-camera-preview'
 project(':capgo-camera-preview').projectDir = new File('../node_modules/.pnpm/@capgo+camera-preview@8.15.4_@capacitor+core@8.6.2/node_modules/@capgo/camera-preview/android')
 
 include ':capgo-capacitor-llm'
-project(':capgo-capacitor-llm').projectDir = new File('../node_modules/.pnpm/@capgo+capacitor-llm@8.0.19_@capacitor+core@8.6.2_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm/android')
+project(':capgo-capacitor-llm').projectDir = new File('../node_modules/.pnpm/@capgo+capacitor-llm@8.2.4_@capacitor+core@8.6.2_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm/android')
