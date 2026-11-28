@@ -11,17 +11,20 @@ import { completeFirstRunWithBrew } from './support/first-brew';
 import { tabKey } from './support/keyboard';
 import { waitForAnimations } from './support/layout';
 import { textStops } from './support/screen-reader';
+import { seedDatabase } from './support/seed';
+import { generateDataSet } from './support/synthetic-data';
 
 /**
- * The brew form for keyboard and screen reader users. Each test starts like
- * the brew parameter tests: one bean, a V60, one grinder and one brew.
+ * The brew form for keyboard and screen reader users. The tests of the form
+ * as a whole start like the brew parameter tests: one bean, a V60, one grinder
+ * and one brew, added through the UI.
  */
 
-test.beforeEach(async ({ page }) => {
+async function startWithBrew(page: Page): Promise<void> {
   await page.clock.install({ time: BREW_TEST_START });
   await page.goto('/');
   await completeFirstRunWithBrew(page);
-});
+}
 
 /**
  * Marks the element that has focus, down through shadow roots, so it can be
@@ -57,6 +60,7 @@ test('every Tab stop of the brew form has a name', async ({ page }) => {
   // In WebKit on CI the first run of a worker spends up to 23 s in the setup
   // above, and the 31 stops take 7 s more.
   test.slow();
+  await startWithBrew(page);
   await openAddBrew(page);
   const focused = page.locator('[data-e2e-tab-stop]');
 
@@ -83,16 +87,30 @@ test('every Tab stop of the brew form has a name', async ({ page }) => {
 test('the choosers of the brew form open from a tap and from a screen reader', async ({
   page,
 }) => {
+  // Stored data instead of the first run through the UI: in WebKit on CI the
+  // first test of a worker spends 22 s in that, and the four choosers below
+  // take 10 s more, past the 30 s a test has.
+  const data = generateDataSet({
+    brews: 1,
+    beans: 1,
+    archivedBeanShare: 0,
+    endDate: BREW_TEST_START,
+  });
+  await page.clock.install({ time: BREW_TEST_START });
+  await seedDatabase(page, data);
+  await page.goto('/');
   await openAddBrew(page);
 
   // Ionic draws the visible field over its button, so a tap lands on the
   // field; TalkBack and VoiceOver activate the button itself.
-  for (const [label, option] of [
-    ['Bean Type', 'Ethiopia Yirgacheffe Natural'],
-    ['Grinder', 'Comandante C40'],
-  ]) {
-    const select = page.getByRole('button', { name: `${label}, ${option}` });
-    const radio = page.getByRole('radio', { name: new RegExp(`^${option}`) });
+  for (const label of ['Bean Type', 'Grinder']) {
+    const select = page.getByRole('button', { name: `${label}, ` });
+    const option = (await select.getAttribute('aria-label'))!.slice(
+      label.length + 2,
+    );
+    const radio = page.getByRole('radio', {
+      name: new RegExp(`^${option.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`),
+    });
     for (const activate of [
       async () => {
         const box = (await select.boundingBox())!;
@@ -117,6 +135,7 @@ test('the choosers of the brew form open from a tap and from a screen reader', a
 test('a screen reader stops once on each field of the brew form', async ({
   page,
 }) => {
+  await startWithBrew(page);
   await openAddBrew(page);
   const form = page.locator('brew-brewing');
 
