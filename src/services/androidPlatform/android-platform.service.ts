@@ -2,8 +2,6 @@ import { inject, Service } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-
 import { AutomaticBackupService } from '../automaticBackup/automatic-backup.service';
 import { UIAlert } from '../uiAlert';
 import { UIBrewStorage } from '../uiBrewStorage';
@@ -24,7 +22,6 @@ export class AndroidPlatformService {
   private readonly widgetSnapshot = inject(WidgetSnapshotService);
   private readonly platform = inject(Platform);
   private readonly uiHelper = inject(UIHelper);
-  private readonly androidPermissions = inject(AndroidPermissions);
   private readonly uiAlert = inject(UIAlert);
   private readonly uiSettingsStorage = inject(UISettingsStorage);
   private readonly uiBrewStorage = inject(UIBrewStorage);

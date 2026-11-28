@@ -422,7 +422,13 @@ test('three dialogs stacked at first start are peeled off one by one', async ({
 
   await page.keyboard.press('Escape');
   await expect(beanName).toHaveCount(0);
-  await expect(addBean).toBeFocused();
+  // Once the form has closed, the welcome dialog leads on to the next step,
+  // whose heading takes the focus over from Add bean.
+  await expect(
+    page
+      .getByRole('group', { name: 'Step 3 of 5' })
+      .getByRole('heading', { level: 2 }),
+  ).toBeFocused();
   await expect(page.getByRole('dialog')).toHaveCount(1);
 });
 
