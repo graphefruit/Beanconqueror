@@ -453,6 +453,21 @@ describe('UplotRenderer', () => {
     );
   });
 
+  it('shows the axes of the series the devices deliver before the first sample', async () => {
+    await mount();
+    renderer.setSeries(defs('live', 'weight', 'flowPerSecond', 'pressure'));
+    renderer.setAwaited(new Set(['weight', 'flowPerSecond']));
+    await frames.run();
+
+    expect(plot().axes[1].show).withContext('weight axis').toBeTrue();
+    expect(plot().axes[2].show).withContext('flow axis').toBeTrue();
+    expect(plot().axes[3].show).withContext('pressure axis').toBeFalse();
+
+    renderer.setVisible('flowPerSecond', false);
+    await frames.run();
+    expect(plot().axes[2].show).withContext('hidden flow').toBeFalse();
+  });
+
   it('shows no axis of a saved brew without data', async () => {
     await mount('detail');
     await frames.run();

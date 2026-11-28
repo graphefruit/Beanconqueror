@@ -1,3 +1,4 @@
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import type { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
 import type { ISettings } from '../../../interfaces/settings/iSettings';
@@ -88,6 +89,54 @@ export function initiallyHidden(
       .filter((def) => !initiallyVisible(def, graphSettings))
       .map((def) => def.id),
   );
+}
+
+/** The devices the brew form has connected, as its chips ask for them. */
+export interface ConnectedDevices {
+  scale: boolean;
+  scaleTwoWeights: boolean;
+  pressure: boolean;
+  temperature: boolean;
+  /** Type of the connected machine, undefined without one. */
+  machine: PreparationDeviceType | undefined;
+  style: PREPARATION_STYLE_TYPE | undefined;
+}
+
+/**
+ * The live series the connected devices deliver, by the rules of the chips,
+ * so the graph shows their axes before the first sample.
+ */
+export function awaitedLiveSeries(devices: ConnectedDevices): Set<SeriesId> {
+  const { machine } = devices;
+  const ids: SeriesId[] = [];
+  if (devices.scale || machine === PreparationDeviceType.METICULOUS) {
+    ids.push('weight', 'flowPerSecond', 'realtimeFlow');
+  }
+  if (
+    (devices.pressure && devices.style === PREPARATION_STYLE_TYPE.ESPRESSO) ||
+    machine !== undefined
+  ) {
+    ids.push('pressure');
+  }
+  if (
+    devices.temperature ||
+    (machine !== undefined && machine !== PreparationDeviceType.METICULOUS)
+  ) {
+    ids.push('temperature');
+  }
+  if (
+    machine === PreparationDeviceType.SANREMO_YOU ||
+    machine === PreparationDeviceType.GAGGIMATE
+  ) {
+    ids.push('waterDispensed');
+  }
+  if (machine === PreparationDeviceType.SANREMO_YOU) {
+    ids.push('waterDispensedFlowSecond');
+  }
+  if (devices.scaleTwoWeights) {
+    ids.push('weightSecond', 'realtimeFlowSecond');
+  }
+  return new Set(ids);
 }
 
 /** Which kinds of sensor the brew form shows a reference line for. */
