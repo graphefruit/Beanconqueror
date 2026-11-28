@@ -92,7 +92,9 @@ jobs:
       # pnpm e2e serves this development build; see playwright.config.ts.
       - run: pnpm run build
         timeout-minutes: 4
-      - run: pnpm e2e --project='*-${{ matrix.run.browser }}' --shard=${{ matrix.run.shard }}
+      # WebKit keeps two workers: it was never the slowest job, and three made timing-sensitive
+      # focus tests flaky on the 4-vCPU runner (28.11.2026).
+      - run: pnpm e2e --project='*-${{ matrix.run.browser }}' --shard=${{ matrix.run.shard }} --workers=${{ matrix.run.browser == 'webkit' && 2 || 3 }}
         timeout-minutes: 12
         env:
           TZ: ${{ matrix.tz }}

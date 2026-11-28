@@ -219,3 +219,47 @@ describe('WelcomePopoverComponent with Swiper', () => {
     host.remove();
   });
 });
+
+describe('WelcomePopoverComponent after the form of a step', () => {
+  it('leads on only once the form has closed', async () => {
+    let formClosed: () => void = () => undefined;
+    let closing: () => void = () => undefined;
+    const closingStarted = new Promise<void>((resolve) => (closing = resolve));
+    const form = {
+      onDidDismiss: () => {
+        closing();
+        return new Promise<void>((resolve) => (formClosed = resolve));
+      },
+    };
+    TestBed.configureTestingModule({
+      imports: [WelcomePopoverComponent, TranslateModule.forRoot()],
+      providers: [
+        ...PROVIDERS,
+        {
+          provide: ModalController,
+          useValue: { getTop: () => Promise.resolve(form) },
+        },
+        {
+          provide: UIBeanHelper,
+          useValue: { addBean: () => Promise.resolve() },
+        },
+      ],
+    });
+    const fixture = TestBed.createComponent(WelcomePopoverComponent);
+    fixture.detectChanges();
+    Object.assign(fixture.nativeElement.querySelector('swiper-container'), {
+      swiper: { slideNext: () => undefined },
+    });
+    const welcome = fixture.componentInstance;
+    const step = welcome.slide;
+
+    // The form is told to close, but its closing animation still runs.
+    const added = welcome.addBean();
+    await closingStarted;
+    expect(welcome.slide).toBe(step);
+
+    formClosed();
+    await added;
+    expect(welcome.slide).toBe(step + 1);
+  });
+});
