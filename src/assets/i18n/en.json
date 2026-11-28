@@ -1422,6 +1422,7 @@
     "FULL_EXPORT_TO_DIRECTORY": "Full export to directory",
     "FULL_EXPORT_TO_DIRECTORY_DESCRIPTION": "Export all data (including all pictures and flow profiles) to the selected directory.",
     "FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS": "{{fileName}} already exists in the selected directory. Please clean up the directory and try again.",
+    "FULL_EXPORT_TO_DIRECTORY_FAILED": "The export could not be finished. Start it again in the same folder to go on; files it already wrote there are replaced.",
     "EXPORT_COMPLETED": "Export was completed.",
     "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
     "SEARCH_BLUETOOTH_DEVICES": "Search Bluetooth Devices",

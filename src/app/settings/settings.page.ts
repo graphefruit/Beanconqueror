@@ -1023,6 +1023,21 @@ export class SettingsPage {
     }
   }
 
+  /**
+   * The list of files an export into a picked folder writes there until it is
+   * complete; the name is SafExportPlan.MARKER_NAME of the Android app.
+   */
+  private static readonly UNFINISHED_SAF_EXPORT =
+    'Beanconqueror_unfinished_export.txt';
+
+  private __refuseSafExport(_fileName: string): void {
+    void this.uiAlert.showMessage(
+      this.translate.instant('FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS', {
+        fileName: _fileName,
+      }),
+    );
+  }
+
   public async exportToSafDirectoryAndroid(): Promise<void> {
     const logTag = 'exportToDirectoryAndroid:';
 
@@ -1040,20 +1055,17 @@ export class SettingsPage {
     try {
       await this.uiAlert.showLoadingSpinner();
 
-      const mainFileName = 'Beanconqueror.zip';
-      const { exists } = await AndroidNativeCalls.fileExistsSaf({
-        safTreeUri: safTreeUri,
-        pathComponents: [mainFileName],
-      });
-      if (exists) {
-        this.uiAlert.showMessage(
-          this.translate.instant(
-            'FULL_EXPORT_TO_DIRECTORY_FILE_ALREADY_EXISTS',
-            {
-              fileName: mainFileName,
-            },
-          ),
-        );
+      const mainFileName = AttachmentExportService.ZIP_NAME;
+      const [{ exists }, { exists: unfinished }] = await Promise.all(
+        [mainFileName, SettingsPage.UNFINISHED_SAF_EXPORT].map((_name) =>
+          AndroidNativeCalls.fileExistsSaf({
+            safTreeUri: safTreeUri,
+            pathComponents: [_name],
+          }),
+        ),
+      );
+      if (exists && !unfinished) {
+        this.__refuseSafExport(mainFileName);
         return;
       }
 
@@ -1075,6 +1087,21 @@ export class SettingsPage {
           this.filesNotCopied > 0 ? 'FILES_NOT_COPIED' : 'EXPORT_COMPLETED',
           { count: this.filesNotCopied },
         ),
+      );
+    } catch (error) {
+      const { code, data } = (error ?? {}) as {
+        code?: string;
+        data?: { fileName?: string };
+      };
+      if (code === 'FILE_EXISTS' && data?.fileName) {
+        this.__refuseSafExport(data.fileName);
+        return;
+      }
+      this.uiLog.error(logTag, 'Export failed', error);
+      await this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.showMessageWithDetails(
+        'FULL_EXPORT_TO_DIRECTORY_FAILED',
+        error,
       );
     } finally {
       try {

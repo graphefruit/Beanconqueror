@@ -1,9 +1,12 @@
 package com.beanconqueror;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -20,13 +23,21 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 
 import org.json.JSONException;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @CapacitorPlugin(name = "BCAndroidNativeCalls")
 public class BCAndroidNativeCallsPlugin extends Plugin {
@@ -219,49 +230,162 @@ public class BCAndroidNativeCallsPlugin extends Plugin {
     Log.d(TAG, "Got request to move " + fromDirectoryUri + "(resolved to" + fromDirectory + "to " +
       toSafTreeUri);
 
-    DocumentFile toSafTree = DocumentFile.fromTreeUri(getContext(), toSafTreeUri);
-
     try {
-      this.moveFileDirectoryToSafDirectoryRecursive(fromDirectory, toSafTree);
-      call.resolve();
-    } catch (IOException e) {
+      this.writeExportToSaf(fromDirectory, toSafTreeUri, call);
+    } catch (IOException | RuntimeException e) {
       Log.e(TAG, "Error while moving directory to SAF.", e);
       call.reject("An error occurred while moving", e);
     }
   }
 
-  private void moveFileDirectoryToSafDirectoryRecursive(File srcDir, DocumentFile targetSafDir)
+  /**
+   * Writes the files of srcDir into the SAF folder as SafExportPlan says and
+   * deletes each one after it was written.
+   */
+  private void writeExportToSaf(File srcDir, Uri treeUri, PluginCall call)
     throws IOException {
-    for (File src : srcDir.listFiles()) {
-      if (src.isDirectory()) {
-        // create the target directory first, then recurse
-        String dirName = src.getName();
-        Log.d(TAG,
-          "Creating target directory " + dirName + " in SAF directory " + targetSafDir.getUri());
-        DocumentFile targetDir = targetSafDir.createDirectory(dirName);
-        moveFileDirectoryToSafDirectoryRecursive(src, targetDir);
-        // after the directory was copied, delete it
-        src.delete();
-        continue;
-      }
+    ContentResolver resolver = getContext().getContentResolver();
+    Uri root = DocumentsContract.buildDocumentUriUsingTree(
+      treeUri, DocumentsContract.getTreeDocumentId(treeUri));
+    Map<String, Uri> folders = new HashMap<>();
+    folders.put("", root);
+    List<String> files = new ArrayList<>();
+    Map<String, Uri> taken = new HashMap<>();
+    Map<String, Uri> rootChildren = scanSaf(srcDir, "", root, treeUri, folders, files, taken);
 
-      // src is a file, copy it manually
-      // First we need to create the target file, which for some reason needs a MIME type
-      Uri srcUri = Uri.fromFile(src);
-      String fileExtension = MimeTypeMap.getFileExtensionFromUrl(srcUri.toString());
-      String mimeType =
-        MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
-      DocumentFile target = targetSafDir.createFile(mimeType, src.getName());
-      Log.d(TAG, "Moving file " + src + " to SAF file " + target.getUri());
-
-      try (InputStream srcStream = new FileInputStream(src);
-           OutputStream targetStream = getContext().getContentResolver()
-                                                   .openOutputStream(target.getUri())) {
-        this.transferStream(srcStream, targetStream);
+    Uri marker = rootChildren.get(SafExportPlan.MARKER_NAME);
+    Set<String> marked = new HashSet<>();
+    if (marker != null) {
+      try (BufferedReader reader = new BufferedReader(
+        new InputStreamReader(open(resolver.openInputStream(marker)), StandardCharsets.UTF_8))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+          marked.add(line);
+        }
       }
-      // After we're done, delete the src file
+    }
+    SafExportPlan plan = SafExportPlan.of(files, taken.keySet(), marked, "Beanconqueror.zip");
+    if (plan.conflict != null) {
+      JSObject data = new JSObject();
+      data.put("fileName", plan.conflict);
+      call.reject("File exists already: " + plan.conflict, "FILE_EXISTS", null, data);
+      return;
+    }
+
+    // "wt" truncates a file written over; a new one is opened as before,
+    // because not every provider takes "wt".
+    String markerMode = marker == null ? "w" : "wt";
+    if (marker == null) {
+      marker = create(resolver, root, "text/plain", SafExportPlan.MARKER_NAME);
+    }
+    try (OutputStream out = open(resolver.openOutputStream(marker, markerMode))) {
+      out.write(String.join("\n", plan.marked).getBytes(StandardCharsets.UTF_8));
+    }
+
+    for (String path : plan.order) {
+      int slash = path.lastIndexOf('/');
+      String name = path.substring(slash + 1);
+      Uri target = taken.get(path);
+      String mode = target == null ? "w" : "wt";
+      if (target == null) {
+        Uri parent = folder(resolver, folders, slash < 0 ? "" : path.substring(0, slash));
+        String mimeType = MimeTypeMap.getSingleton()
+          .getMimeTypeFromExtension(name.substring(name.lastIndexOf('.') + 1).toLowerCase());
+        target = create(resolver, parent, mimeType == null ? "application/octet-stream" : mimeType, name);
+      }
+      File src = new File(srcDir, path);
+      Log.d(TAG, "Moving file " + src + " to SAF file " + target);
+      try (InputStream in = new FileInputStream(src);
+           OutputStream out = open(resolver.openOutputStream(target, mode))) {
+        this.transferStream(in, out);
+      }
       src.delete();
     }
+    DocumentsContract.deleteDocument(resolver, marker);
+    call.resolve();
+  }
+
+  /**
+   * Lists the files of srcDir (relative to the export root) into files, and
+   * into taken those the SAF folder has already, or whose folder is a file
+   * there. Returns the children of targetDir.
+   */
+  private Map<String, Uri> scanSaf(
+    File srcDir, String prefix, Uri targetDir, Uri treeUri,
+    Map<String, Uri> folders, List<String> files, Map<String, Uri> taken) {
+    Map<String, Uri> children = new HashMap<>();
+    Set<String> childFolders = new HashSet<>();
+    if (targetDir != null) {
+      Uri childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
+        treeUri, DocumentsContract.getDocumentId(targetDir));
+      try (Cursor cursor = getContext().getContentResolver().query(childrenUri, new String[]{
+        DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+        DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+        DocumentsContract.Document.COLUMN_MIME_TYPE}, null, null, null)) {
+        while (cursor != null && cursor.moveToNext()) {
+          String name = cursor.getString(1);
+          children.put(name, DocumentsContract.buildDocumentUriUsingTree(treeUri, cursor.getString(0)));
+          if (DocumentsContract.Document.MIME_TYPE_DIR.equals(cursor.getString(2))) {
+            childFolders.add(name);
+          }
+        }
+      }
+    }
+    File[] srcFiles = srcDir.listFiles();
+    if (srcFiles == null) {
+      return children;
+    }
+    for (File src : srcFiles) {
+      String path = prefix + src.getName();
+      Uri there = children.get(src.getName());
+      if (src.isDirectory()) {
+        boolean isFolder = childFolders.contains(src.getName());
+        if (there != null && !isFolder) {
+          taken.put(path, there);
+        }
+        if (isFolder) {
+          folders.put(path, there);
+        }
+        scanSaf(src, path + "/", isFolder ? there : null, treeUri, folders, files, taken);
+      } else {
+        files.add(path);
+        if (there != null) {
+          taken.put(path, there);
+        }
+      }
+    }
+    return children;
+  }
+
+  /** The SAF folder at path, created with its parents where they are missing. */
+  private Uri folder(ContentResolver resolver, Map<String, Uri> folders, String path)
+    throws IOException {
+    Uri known = folders.get(path);
+    if (known != null) {
+      return known;
+    }
+    int slash = path.lastIndexOf('/');
+    Uri parent = folder(resolver, folders, slash < 0 ? "" : path.substring(0, slash));
+    Uri created = create(resolver, parent, DocumentsContract.Document.MIME_TYPE_DIR,
+      path.substring(slash + 1));
+    folders.put(path, created);
+    return created;
+  }
+
+  private static Uri create(ContentResolver resolver, Uri parent, String mimeType, String name)
+    throws IOException {
+    Uri created = DocumentsContract.createDocument(resolver, parent, mimeType, name);
+    if (created == null) {
+      throw new IOException("Could not create " + name);
+    }
+    return created;
+  }
+
+  private static <T> T open(T stream) throws IOException {
+    if (stream == null) {
+      throw new IOException("The storage provider did not open the file");
+    }
+    return stream;
   }
 
   private void transferStream(InputStream in, OutputStream out) throws IOException {
