@@ -1139,7 +1139,6 @@
     "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Heartbeat timer - Nur Acaia Waagen!",
     "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Wird nur für Acaia Waagen verwendet!!! Alte Acaia Wagen benötigen ein Heartbeat timer, falls du Probleme mit der Waage hast, versuch die Zeit zu minimieren",
     "SHARE_BEAN_URL": "Teilen als URL",
-    "SHARE_BEAN_IMAGE": "Teilen als Bild",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE": "Espresso - Stoppe die Brühung automatisch",
     "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Diese Einstellung wird nur für Zubereitungsmethoden mit 'Espresso' verwendet. Die Brühung wird automatisch gestoppt, sobald keine Flussveränderung mehr erkannt wird.",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "Die Brührate wird für alle Zubereitungsmethoden außer 'Espresso' hiermit kalkuliert",
@@ -1274,9 +1273,13 @@
         "APP_DARK": "App dunkel",
         "SAGE": "Salbei",
         "SHOW_NOTE": "Notizen zeigen",
+        "SHOW_PHOTO": "Foto zeigen",
         "FAILED": "Das Bild konnte nicht geteilt werden. Bitte versuche es noch einmal.",
         "GRAPH_FAILED": "Der Graph konnte dem Bild nicht hinzugefügt werden.",
-        "DESCRIPTION": "Bild der Brühung: {{content}}"
+        "DESCRIPTION": "Bild der Brühung: {{content}}",
+        "BEAN_TITLE": "Bohne teilen",
+        "BEAN_DESCRIPTION": "Bild der Bohne: {{content}}",
+        "BEAN_PHOTO": "Foto der Bohne"
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Refraktometer neu verbinden",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",

@@ -74,6 +74,7 @@ export function beanActions(
       bean.favourite ? 'heart' : 'heart-outline',
     ],
     [A.SHARE, 'SHARE_BEAN_URL', 'share-social-outline'],
+    [A.SHARE_IMAGE, 'SHARE_CARD.MENU', 'images-outline'],
     [
       A.BEANS_CONSUMED,
       'BEANS_CONSUMED',

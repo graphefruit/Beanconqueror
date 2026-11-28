@@ -4,13 +4,11 @@ import {
   Component,
   computed,
   effect,
-  ElementRef,
   EventEmitter,
   inject,
   input,
   output,
   Output,
-  ViewChild,
   viewChild,
 } from '@angular/core';
 
@@ -27,7 +25,6 @@ import {
   IonRow,
   IonText,
   ModalController,
-  Platform,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -44,7 +41,6 @@ import {
 } from 'ionicons/icons';
 
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import * as htmlToImage from 'html-to-image';
 import moment from 'moment/moment';
 import { NgxStarsComponent, NgxStarsModule } from 'ngx-stars';
 
@@ -102,6 +98,7 @@ import {
   popoverAction,
 } from '../actions-popover/actions-popover.component';
 import { AsyncImageComponent } from '../async-image/async-image.component';
+import { BeanShareComponent } from '../bean-share/bean-share.component';
 
 /** What a bean card sends after an action, with the bean it worked on. */
 export type BeanActionEvent = [BEAN_ACTION, Bean];
@@ -151,7 +148,6 @@ export class BeanInformationComponent {
   );
   readonly uiHelper = inject(UIHelper);
   private readonly translate = inject(TranslateService);
-  private readonly platform = inject(Platform);
   private readonly uiBrewHelper = inject(UIBrewHelper);
   private actionSheetCtrl = inject(ActionSheetController);
   private readonly currencyService = inject(CurrencyService);
@@ -173,8 +169,6 @@ export class BeanInformationComponent {
   public readonly disabled = input(false);
   public readonly collapsed = input(false);
   public readonly isGroupChild = input(false);
-  @ViewChild('card', { read: ElementRef })
-  public cardEl: ElementRef;
   private readonly beanStars = viewChild('beanStars', {
     read: NgxStarsComponent,
   });
@@ -509,50 +503,11 @@ export class BeanInformationComponent {
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.SHARE_IMAGE,
     );
-    await this.uiAlert.showLoadingSpinner();
-    if (this.platform.is('ios')) {
-      htmlToImage
-        .toPng(this.cardEl.nativeElement)
-        .then((_dataURL) => {
-          // On iOS we need to do this a second time, because the rendering doesn't render everything (strange thing)
-          setTimeout(() => {
-            htmlToImage
-              .toPng(this.cardEl.nativeElement)
-              .then(async (_dataURLSecond) => {
-                await this.uiAlert.hideLoadingSpinner();
-                setTimeout(() => {
-                  if (
-                    _dataURLSecond.length > 20 &&
-                    _dataURLSecond.length > _dataURL.length
-                  ) {
-                    this.shareService.shareImage(_dataURLSecond);
-                  } else {
-                    this.shareService.shareImage(_dataURL);
-                  }
-                }, 50);
-              })
-              .catch(async (error) => {
-                await this.uiAlert.hideLoadingSpinner();
-              });
-          }, 500);
-        })
-        .catch(async (error) => {
-          await this.uiAlert.hideLoadingSpinner();
-        });
-    } else {
-      htmlToImage
-        .toPng(this.cardEl.nativeElement)
-        .then(async (_dataURL) => {
-          await this.uiAlert.hideLoadingSpinner();
-
-          setTimeout(() => {
-            this.shareService.shareImage(_dataURL);
-          }, 50);
-        })
-        .catch(async (error) => {
-          await this.uiAlert.hideLoadingSpinner();
-        });
-    }
+    await BeanShareComponent.open(
+      this.modalController,
+      this.shown(),
+      this.usage(),
+    );
   }
 
   public async showBrews() {

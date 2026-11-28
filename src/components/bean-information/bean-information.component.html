@@ -2,7 +2,7 @@
 @let customRatingRange = settings.bean_rating !== 5 || settings.bean_rating_steps !== 1;
 <ion-card class="long-card" tappable (click)="showBean()" (long-press)="longPressEditBean($event)"
   [class.group-card]="beanGroup()" [class.group-child-card]="isGroupChild()">
-  <ion-card-content #card class="no-ion-col-vertical-padding ion-padding-top">
+  <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom no-padding-top">
       <ion-row>
         <ion-col class="expand-fill-space" style="margin: auto 0;">
