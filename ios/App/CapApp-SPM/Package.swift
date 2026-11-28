@@ -31,10 +31,9 @@ let package = Package(
         .package(name: "CapacitorStatusBar", path: "../../../node_modules/.pnpm/@capacitor+status-bar@8.0.4_@capacitor+core@8.6.2/node_modules/@capacitor/status-bar"),
         .package(name: "CapawesomeCapacitorFilePicker", path: "../../../node_modules/.pnpm/@capawesome+capacitor-file-picker@8.1.1_@capacitor+core@8.6.2/node_modules/@capawesome/capacitor-file-picker"),
         .package(name: "CapgoCameraPreview", path: "../../../node_modules/.pnpm/@capgo+camera-preview@8.15.4_@capacitor+core@8.6.2/node_modules/@capgo/camera-preview"),
-        .package(name: "CapgoCapacitorLlm", path: "../../../node_modules/.pnpm/@capgo+capacitor-llm@8.0.19_@capacitor+core@8.6.2_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm"),
+        .package(name: "CapgoCapacitorLlm", path: "../../../node_modules/.pnpm/@capgo+capacitor-llm@8.2.4_@capacitor+core@8.6.2_@mediapipe+tasks-genai@0.10.30/node_modules/@capgo/capacitor-llm"),
         .package(name: "CommunityCordovaPluginNfc", path: "../../capacitor-cordova-ios-plugins/sources/CommunityCordovaPluginNfc"),
         .package(name: "CordovaPluginBleCentral", path: "../../capacitor-cordova-ios-plugins/sources/CordovaPluginBleCentral"),
-        .package(name: "CordovaPluginHealth", path: "../../capacitor-cordova-ios-plugins/sources/CordovaPluginHealth"),
         .package(name: "SkwasCordovaPluginDatetimepicker", path: "../../capacitor-cordova-ios-plugins/sources/SkwasCordovaPluginDatetimepicker")
     ],
     targets: [
@@ -65,7 +64,6 @@ let package = Package(
                 .product(name: "CapgoCapacitorLlm", package: "CapgoCapacitorLlm"),
                 .product(name: "CommunityCordovaPluginNfc", package: "CommunityCordovaPluginNfc"),
                 .product(name: "CordovaPluginBleCentral", package: "CordovaPluginBleCentral"),
-                .product(name: "CordovaPluginHealth", package: "CordovaPluginHealth"),
                 .product(name: "SkwasCordovaPluginDatetimepicker", package: "SkwasCordovaPluginDatetimepicker")
             ]
         )

@@ -369,10 +369,29 @@ export class UIFileHelper extends InstanceClass {
   }
 
   /**
-   * Replaces the text file at `path` as replaceFileFromBlob does and keeps the
-   * file from before at `copyPath`, in place of an older copy. Rejects
-   * without touching `path` when the copy cannot be made. When the replacing
-   * fails and leaves no file at `path`, the copy is moved back there.
+   * Writes the text file at `path` as replaceFileFromBlob does, through
+   * `path + '.part'`: when the app ends while it writes, a file from before
+   * stays complete.
+   */
+  public async replaceInternalFileFromText(
+    text: string,
+    path: string,
+  ): Promise<void> {
+    const directory = this.getDataDirectory();
+    const unfinishedPath = path + '.part';
+    await this.__replaceFile(
+      () => this.writeFileFromText(text, unfinishedPath, directory),
+      path,
+      unfinishedPath,
+      directory,
+    );
+  }
+
+  /**
+   * Replaces the text file at `path` as replaceInternalFileFromText does and
+   * keeps the file from before at `copyPath`, in place of an older copy.
+   * Rejects without touching `path` when the copy cannot be made. When the
+   * replacing fails and leaves no file at `path`, the copy is moved back there.
    */
   public async replaceInternalFileKeepingCopy(
     text: string,
@@ -381,19 +400,13 @@ export class UIFileHelper extends InstanceClass {
   ): Promise<void> {
     const directory = this.getDataDirectory();
     await this.__copyInternalFile(path, copyPath);
-    const unfinishedPath = path + '.part';
     try {
-      await this.__replaceFile(
-        () => this.writeFileFromText(text, unfinishedPath, directory),
-        path,
-        unfinishedPath,
-        directory,
-      );
+      await this.replaceInternalFileFromText(text, path);
     } catch (error) {
       if (!(await this.fileExists({ path, directory }))) {
         // When moving fails too, the file from before stays at copyPath.
         await this.renameInternalFile(copyPath, path)
-          .then(() => this.deleteFile(unfinishedPath, directory))
+          .then(() => this.deleteFile(path + '.part', directory))
           .catch(() => undefined);
       }
       throw error;
@@ -455,14 +468,6 @@ export class UIFileHelper extends InstanceClass {
     // absolute path returned in writeResult.uri for backwards compatibility
     // with cordova-plugin-file.
     return path;
-  }
-
-  public async writeInternalFileFromText(
-    text: string,
-    path: string,
-  ): Promise<string> {
-    this.uiLog.debug('writeInternalFileFromText for path', path);
-    return this.writeFileFromText(text, path, this.getDataDirectory());
   }
 
   public async generateInternalPath(

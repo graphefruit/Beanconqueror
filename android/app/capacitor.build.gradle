@@ -31,8 +31,6 @@ dependencies {
     implementation project(':capgo-camera-preview')
     implementation project(':capgo-capacitor-llm')
     implementation "androidx.annotation:annotation:*"
-    implementation "com.google.android.gms:play-services-fitness:21.1.0"
-    implementation "com.google.android.gms:play-services-auth:20.2.0"
     implementation "com.android.support:support-annotations:+"
 }
 

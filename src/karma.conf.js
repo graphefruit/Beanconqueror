@@ -41,6 +41,7 @@ const NEW_CODE = [
   'src/directive/picker-field.directive.ts',
   'src/directive/range-name.directive.ts',
   'src/directive/tab-panel.directive.ts',
+  'src/native/caffeine-health-plugin.ts',
   'src/native/quick-action-plugin.ts',
   'src/native/widget-plugin.ts',
   'src/services/a11y/**',
@@ -65,6 +66,7 @@ const NEW_CODE = [
   'src/services/theme/theme-plugins.ts',
   'src/services/translate/**',
   'src/services/uiAnalytics.ts',
+  'src/services/uiHealthKit.ts',
   'src/services/widgetSnapshot/**',
   'src/stores/**',
 ];

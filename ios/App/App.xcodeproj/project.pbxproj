@@ -20,6 +20,7 @@
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		7A1C5E0A2EC5A00100B3D001 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1C5E092EC5A00100B3D001 /* SceneDelegate.swift */; };
 		7A1C5E0B2EC5A00100B3D001 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7A1C5E0C2EC5A00100B3D001 /* InfoPlist.strings */; };
+		3D7C1A5E2F0B4C6D8E9A0B11 /* CaffeineHealthPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7C1A5E2F0B4C6D8E9A0B12 /* CaffeineHealthPlugin.swift */; };
 		BCB797A0847BB9A7ACFD117D /* WidgetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34A65EC7533B24E473878B3 /* WidgetPlugin.swift */; };
 		C8C7ADAF0D5677B0A0D7C51C /* BrewWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 033E848F8B97F1831DAE6582 /* BrewWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F73902BF45D0BF6EEF6DC25A /* BrewWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83DFB600431494440FC2980 /* BrewWidget.swift */; };
@@ -65,6 +66,7 @@
 		7A1C5E092EC5A00100B3D001 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		7A1C5E0D2EC5A00100B3D001 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		7A1C5E0E2EC5A00100B3D001 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		3D7C1A5E2F0B4C6D8E9A0B12 /* CaffeineHealthPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CaffeineHealthPlugin.swift; sourceTree = "<group>"; };
 		A34A65EC7533B24E473878B3 /* WidgetPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetPlugin.swift; sourceTree = "<group>"; };
 		A83DFB600431494440FC2980 /* BrewWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BrewWidget.swift; sourceTree = "<group>"; };
 		B57D0F662CB1168E001FE27F /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 				2FAD9762203C412B000D30F8 /* config.xml */,
 				50B271D01FEDC1A000F3C39B /* public */,
 				A34A65EC7533B24E473878B3 /* WidgetPlugin.swift */,
+				3D7C1A5E2F0B4C6D8E9A0B12 /* CaffeineHealthPlugin.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				7A1C5E0A2EC5A00100B3D001 /* SceneDelegate.swift in Sources */,
 				BCB797A0847BB9A7ACFD117D /* WidgetPlugin.swift in Sources */,
+				3D7C1A5E2F0B4C6D8E9A0B11 /* CaffeineHealthPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

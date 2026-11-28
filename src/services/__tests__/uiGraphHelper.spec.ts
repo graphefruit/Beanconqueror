@@ -19,7 +19,10 @@ describe('UIGraphHelper', () => {
 
   beforeEach(() => {
     uiAlert = createMockUIAlert();
-    uiFileHelper = jasmine.createSpyObj('UIFileHelper', ['readJSONFile']);
+    uiFileHelper = jasmine.createSpyObj('UIFileHelper', [
+      'readJSONFile',
+      'replaceInternalFileFromText',
+    ]);
     uiLog = createMockUILog();
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot()],
@@ -34,6 +37,20 @@ describe('UIGraphHelper', () => {
     spyOn(FilePickerWeb.prototype, 'pickFiles').and.resolveTo({
       files: [{ path: '/picked/graph.json', mimeType: '', name: 'graph.json' }],
     } as Awaited<ReturnType<FilePickerWeb['pickFiles']>>);
+  });
+
+  describe('saving a graph', () => {
+    it('replaces the graph file whole, so a crash keeps the one from before', async () => {
+      uiFileHelper.replaceInternalFileFromText.and.resolveTo();
+
+      expect(await helper.saveGraph('a', { weight: [] })).toBe(
+        'graphs/a_flow_profile.json',
+      );
+      expect(uiFileHelper.replaceInternalFileFromText).toHaveBeenCalledOnceWith(
+        '{"weight":[]}',
+        'graphs/a_flow_profile.json',
+      );
+    });
   });
 
   describe('choosing a graph file', () => {

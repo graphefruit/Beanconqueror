@@ -1,71 +1,35 @@
 import { inject, Service } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
-
-declare var navigator;
+import { HEALTH_PORT } from './ports/health-port';
+import { UILog } from './uiLog';
 
 @Service()
 export class UIHealthKit {
-  private platform = inject(Platform);
+  private readonly health = inject(HEALTH_PORT);
+  private readonly uiLog = inject(UILog);
 
-  public isAvailable(): Promise<any> {
-    const promise = new Promise(async (resolve, reject) => {
-      if (this.platform.is('ios') && this.platform.is('capacitor')) {
-        navigator.health.isAvailable(
-          (e) => {
-            resolve(true);
-          },
-          (e) => {
-            reject(false);
-          },
-        );
-      } else {
-        reject(false);
+  /** Resolves when Apple Health can be used, rejects otherwise. */
+  public async isAvailable(): Promise<void> {
+    if (!(await this.health.isAvailable())) {
+      throw new Error('Health unavailable');
+    }
+  }
+
+  /** Resolves once writing caffeine is allowed; rejects when Health is missing or declined. */
+  public async requestAuthorization(): Promise<void> {
+    const result = await this.health.requestCaffeineWrite();
+    if (result.ok === false) {
+      this.uiLog.error(`Health authorization failed: ${result.error}`);
+      throw new Error(result.error);
+    }
+  }
+
+  /** Writes `_amount` grams of caffeine; a failure is only logged, the brew is saved anyway. */
+  public trackCaffeineConsumption(_amount: number, _date: Date): void {
+    void this.health.storeCaffeine(_amount, _date).then((result) => {
+      if (result.ok === false) {
+        this.uiLog.error(`Health caffeine not stored: ${result.error}`);
       }
     });
-    return promise;
-  }
-
-  public requestAuthorization(): Promise<any> {
-    const promise = new Promise(async (resolve, reject) => {
-      this.isAvailable().then(
-        () => {
-          navigator.health.requestAuthorization(
-            [
-              'nutrition.caffeine', // Read and write permissions
-              {
-                write: [], // Write only permission
-              },
-            ],
-            (e) => {
-              resolve(undefined);
-            },
-            (e) => {
-              reject();
-            },
-          );
-        },
-        (e) => {
-          reject();
-        },
-      );
-    });
-    return promise;
-  }
-
-  public trackCaffeineConsumption(_amount: number, _date: Date) {
-    try {
-      navigator.health.store(
-        {
-          startDate: _date, // three days ago
-          endDate: _date, // now
-          dataType: 'nutrition.caffeine',
-          value: _amount,
-          unit: 'g',
-        },
-        (e) => {},
-        (e) => {},
-      );
-    } catch (ex) {}
   }
 }

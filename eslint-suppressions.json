@@ -2255,7 +2255,7 @@
   },
   "src/components/bean-information/bean-information.component.ts": {
     "@typescript-eslint/no-floating-promises": {
-      "count": 9
+      "count": 6
     },
     "eqeqeq": {
       "count": 1
@@ -3322,26 +3322,6 @@
   },
   "src/services/uiGreenBeanStorage.ts": {
     "@typescript-eslint/no-unsafe-return": {
-      "count": 1
-    }
-  },
-  "src/services/uiHealthKit.ts": {
-    "@typescript-eslint/no-empty-function": {
-      "count": 2
-    },
-    "@typescript-eslint/no-misused-promises": {
-      "count": 2
-    },
-    "@typescript-eslint/prefer-promise-reject-errors": {
-      "count": 4
-    },
-    "no-async-promise-executor": {
-      "count": 2
-    },
-    "no-empty": {
-      "count": 1
-    },
-    "no-var": {
       "count": 1
     }
   },

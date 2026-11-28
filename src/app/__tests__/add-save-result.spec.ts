@@ -61,7 +61,7 @@ describe('Adding an entry outside the forms', () => {
       'readInternalFileAsBase64',
       'generateInternalPath',
       'writeInternalFileFromBase64',
-      'writeInternalFileFromText',
+      'replaceInternalFileFromText',
       'deleteInternalFile',
     ]);
     uiFileHelper.readInternalFileAsBase64.and.resolveTo('no-image');
@@ -69,7 +69,7 @@ describe('Adding an entry outside the forms', () => {
     uiFileHelper.writeInternalFileFromBase64.and.resolveTo({
       path: 'photo-copy.jpg',
     });
-    uiFileHelper.writeInternalFileFromText.and.resolveTo();
+    uiFileHelper.replaceInternalFileFromText.and.resolveTo();
     uiFileHelper.deleteInternalFile.and.resolveTo();
   });
 
@@ -211,14 +211,14 @@ describe('Adding an entry outside the forms', () => {
 
       await save();
 
-      expect(uiFileHelper.writeInternalFileFromText).toHaveBeenCalledTimes(1);
+      expect(uiFileHelper.replaceInternalFileFromText).toHaveBeenCalledTimes(1);
       expect(storage.update).toHaveBeenCalledTimes(1);
     });
 
     it('gets no flow profile file when it was not stored', async () => {
       await save();
 
-      expect(uiFileHelper.writeInternalFileFromText).not.toHaveBeenCalled();
+      expect(uiFileHelper.replaceInternalFileFromText).not.toHaveBeenCalled();
       expect(storage.update).not.toHaveBeenCalled();
     });
   });

@@ -1201,30 +1201,6 @@
         </ion-item>
 
         <ion-item>
-          <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
-            [(ngModel)]="settings.graph_threshold_frequency_update">
-            <div class='ion-label' style="white-space: normal;">
-              <div class="field-label">{{ "GRAPH_UPDATE_INTERVAL_TITLE" | translate }}</div>
-              <p>{{ "GRAPH_UPDATE_INTERVAL_DESCRIPTION" | translate }}</p>
-            </div>
-          </ion-checkbox>
-        </ion-item>
-        @if (settings.graph_threshold_frequency_update) {
-        <ion-item>
-          <div class='ion-label' style="white-space: normal;">
-            <div class="field-label">{{ "GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE" | translate }}</div>
-            <p>{{ "GRAPH_UPDATE_FREQUENCY_INTERVAL_DESCRIPTION" | translate }}</p>
-          </div>
-          <ion-range [rangeLabel]="'GRAPH_UPDATE_FREQUENCY_INTERVAL_TITLE' | translate" rangeUnit="ms" [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="100"
-            snaps="true" max="500" step="10" (ngModelChange)="saveSettings()"
-            [(ngModel)]="settings.graph_threshold_frequency_interval">
-            <div class='ion-label' slot="end">{{ settings.graph_threshold_frequency_interval| toFixed: 0 }}
-            </div>
-          </ion-range>
-        </ion-item>
-        }
-
-        <ion-item>
           <ion-checkbox label-placement='start' (ionChange)="toggleLog();" [(ngModel)]="settings.scale_log">
             <div class="ion-label" style="white-space: normal;">
               <div class="field-label">{{ "SMART_SCALE_LOG" | translate }}</div>
